@@ -1,61 +1,39 @@
 import { describe, expect, it, vi } from 'vitest';
-
 import {
-  CreateEntityCommand,
-  CreateFulfillmentPairCommand,
-  ModelSessionValidationError,
-  UpdateEntityCommand,
   createModelSession,
-  type ModelCommand,
+  ModelSessionValidationError,
+  addAttributeMutator,
+  deleteEntityMutator,
+  removeAttributeMutator,
+  updateEntityMutator,
   type ModelSessionEvent,
 } from '../index.js';
 import { createProcurementModel } from '../testing/modelFixture.js';
 
-const session = (
-  overrides: Partial<Parameters<typeof createModelSession>[0]> = {},
-) => createModelSession({ document: createProcurementModel(), ...overrides });
+const base = () => createProcurementModel();
+const session = (options = {}) =>
+  createModelSession({ document: base(), ...options });
 
-describe('dispatch', () => {
-  it('applies a command and exposes the new document', () => {
+describe('mutate', () => {
+  it('updates a document immutably, invalidates the cached graph and emits labels and affected ids', () => {
     const subject = session();
-
-    subject.dispatch(
-      new UpdateEntityCommand('request.payment', { label: '付款申请' }),
+    const before = subject.getDocument();
+    const graph = subject.getGraph();
+    expect(subject.getGraph()).toBe(graph);
+    const listener = vi.fn();
+    subject.subscribe(listener);
+    const result = subject.mutate(
+      (draft) =>
+        updateEntityMutator(draft, 'request.payment', { label: '付款申请' }),
+      'update-entity',
     );
-
+    expect(result.label).toBe('付款申请');
     expect(
-      subject
-        .getDocument()
-        .entities.find((entity) => entity.id === 'request.payment')?.label,
-    ).toBe('付款申请');
-  });
-
-  it('rebuilds the graph only after the document changes', () => {
-    const subject = session();
-    const before = subject.getGraph();
-
-    expect(subject.getGraph()).toBe(before);
-
-    subject.dispatch(
-      new UpdateEntityCommand('request.payment', { label: '付款申请' }),
-    );
-
-    expect(subject.getGraph()).not.toBe(before);
-    expect(subject.getGraph().getEntity('request.payment')?.label).toBe(
-      '付款申请',
-    );
-  });
-
-  it('emits document and history events', () => {
-    const subject = session();
-    const events: ModelSessionEvent[] = [];
-
-    subject.subscribe((event) => events.push(event));
-    subject.dispatch(
-      new UpdateEntityCommand('request.payment', { label: '付款申请' }),
-    );
-
-    expect(events).toEqual([
+      before.entities.find((entity) => entity.id === 'request.payment')?.label,
+    ).not.toBe('付款申请');
+    expect(subject.getGraph()).not.toBe(graph);
+    expect(subject.getDocument().entities[0]).toBe(before.entities[0]);
+    expect(listener.mock.calls.map(([event]) => event)).toEqual([
       {
         type: 'document-changed',
         commands: ['update-entity'],
@@ -65,403 +43,242 @@ describe('dispatch', () => {
     ]);
   });
 
-  it('stops notifying unsubscribed listeners', () => {
+  it('snapshots nested draft results instead of leaking revoked proxies', () => {
     const subject = session();
+    const result = subject.mutate((draft) => {
+      draft.entities[0].label = '新名称';
+      return { entity: draft.entities[0], entities: [draft.entities[1]] };
+    });
+    expect(result.entity.label).toBe('新名称');
+    expect(JSON.stringify(result)).toContain('新名称');
+  });
+
+  it('treats a closure with several writes as one undo step', () => {
+    const subject = session();
+    const before = subject.getDocument();
+    subject.mutate((draft) => {
+      updateEntityMutator(draft, 'request.payment', { label: 'A' });
+      updateEntityMutator(draft, 'confirmation.payment', { label: 'B' });
+    }, 'pair-labels');
+    const after = subject.getDocument();
+    expect(subject.undo()).toBe(true);
+    expect(subject.getDocument()).toStrictEqual(before);
+    expect(subject.canUndo()).toBe(false);
+    expect(subject.redo()).toBe(true);
+    expect(subject.getDocument()).toStrictEqual(after);
+    expect(subject.redo()).toBe(false);
+  });
+
+  it('ignores no-ops without events, graph invalidation or redo loss', () => {
+    const subject = session();
+    subject.mutate((draft) => {
+      draft.entities[0].label = 'changed';
+    });
+    subject.undo();
+    const before = subject.getDocument();
+    const graph = subject.getGraph();
     const listener = vi.fn();
-    const unsubscribe = subject.subscribe(listener);
-
-    unsubscribe();
-    subject.dispatch(
-      new UpdateEntityCommand('request.payment', { label: '付款申请' }),
-    );
-
+    subject.subscribe(listener);
+    expect(subject.mutate(() => 42)).toBe(42);
+    subject.mutate((draft) => {
+      draft.entities[0].label = before.entities[0].label;
+    });
+    expect(subject.getDocument()).toBe(before);
+    expect(subject.getGraph()).toBe(graph);
+    expect(subject.canRedo()).toBe(true);
     expect(listener).not.toHaveBeenCalled();
   });
 
-  it('returns the command result', () => {
+  it('rolls back recipe exceptions without changing state, selection, history, graph or events', () => {
     const subject = session();
-    const entity = {
-      type: 'entity' as const,
-      id: 'party.new-agent',
-      label: '新经办人',
-      category: 'participant' as const,
-      kind: 'party' as const,
-    };
+    subject.select('request.payment');
+    const before = subject.getDocument();
+    const graph = subject.getGraph();
+    const listener = vi.fn();
+    subject.subscribe(listener);
+    expect(() =>
+      subject.mutate((draft) => {
+        updateEntityMutator(draft, 'request.payment', { label: 'A' });
+        updateEntityMutator(draft, 'request.ghost', { label: 'B' });
+      }),
+    ).toThrow(/unknown entity/);
+    expect(subject.getDocument()).toBe(before);
+    expect(subject.getGraph()).toBe(graph);
+    expect(subject.getSelection().nodeId).toBe('request.payment');
+    expect(subject.canUndo()).toBe(false);
+    expect(listener).not.toHaveBeenCalled();
+  });
 
-    expect(subject.dispatch(new CreateEntityCommand(entity))).toEqual(entity);
+  it('unsubscribe stops notifications', () => {
+    const subject = session();
+    const listener = vi.fn();
+    const unsubscribe = subject.subscribe(listener);
+    unsubscribe();
+    subject.mutate((draft) => {
+      draft.entities[0].label = 'changed';
+    });
+    expect(listener).not.toHaveBeenCalled();
   });
 });
 
 describe('undo and redo', () => {
-  it('restores the exact previous document', () => {
+  it('returns false on empty history and clears redo after a new edit', () => {
     const subject = session();
-    const before = structuredClone(subject.getDocument());
-
-    subject.dispatch(
-      new UpdateEntityCommand('request.payment', { label: '付款申请' }),
-    );
-
-    expect(subject.canUndo()).toBe(true);
-    expect(subject.undo()).toBe(true);
-    expect(subject.getDocument()).toEqual(before);
-    expect(subject.canUndo()).toBe(false);
-    expect(subject.canRedo()).toBe(true);
-  });
-
-  it('replays a command on redo', () => {
-    const subject = session();
-
-    subject.dispatch(
-      new UpdateEntityCommand('request.payment', { label: '付款申请' }),
-    );
-    subject.undo();
-    expect(subject.redo()).toBe(true);
-    expect(
-      subject
-        .getDocument()
-        .entities.find((entity) => entity.id === 'request.payment')?.label,
-    ).toBe('付款申请');
-    expect(subject.canRedo()).toBe(false);
-  });
-
-  it('drops the redo stack when a new command lands', () => {
-    const subject = session();
-
-    subject.dispatch(
-      new UpdateEntityCommand('request.payment', { label: 'A' }),
-    );
-    subject.undo();
-    subject.dispatch(
-      new UpdateEntityCommand('request.payment', { label: 'B' }),
-    );
-
-    expect(subject.canRedo()).toBe(false);
-  });
-
-  it('survives a long undo/redo chain', () => {
-    const subject = session();
-    const before = structuredClone(subject.getDocument());
-
-    for (let index = 0; index < 10; index += 1) {
-      subject.dispatch(
-        new UpdateEntityCommand('request.payment', { label: `label-${index}` }),
-      );
-    }
-
-    expect(subject.undo()).toBe(true);
-    expect(subject.undo()).toBe(true);
-    expect(subject.undo()).toBe(true);
-    expect(subject.redo()).toBe(true);
-
-    while (subject.undo()) {
-      // drain
-    }
-
-    expect(subject.getDocument()).toEqual(before);
-  });
-
-  it('caps history at the configured limit', () => {
-    const subject = session({ historyLimit: 2 });
-    const start = structuredClone(subject.getDocument());
-
-    subject.dispatch(
-      new UpdateEntityCommand('request.payment', { label: 'A' }),
-    );
-    subject.dispatch(
-      new UpdateEntityCommand('request.payment', { label: 'B' }),
-    );
-    subject.dispatch(
-      new UpdateEntityCommand('request.payment', { label: 'C' }),
-    );
-
-    expect(subject.undo()).toBe(true);
-    expect(subject.undo()).toBe(true);
-    expect(subject.undo()).toBe(false);
-    expect(subject.getDocument()).not.toEqual(start);
-  });
-
-  it('does nothing on an empty stack', () => {
-    const subject = session();
-
     expect(subject.undo()).toBe(false);
     expect(subject.redo()).toBe(false);
-    expect(subject.getDocument()).toEqual(createProcurementModel());
-  });
-});
-
-describe('dispatchAll', () => {
-  it('applies commands as one undo step', () => {
-    const subject = session();
-    const before = structuredClone(subject.getDocument());
-    const results = subject.dispatchAll([
-      new UpdateEntityCommand('request.payment', { label: 'A' }),
-      new UpdateEntityCommand('confirmation.payment', { label: 'B' }),
-    ]);
-
-    expect(results).toHaveLength(2);
-    expect(subject.undo()).toBe(true);
-    expect(subject.getDocument()).toEqual(before);
-    expect(subject.canUndo()).toBe(false);
-  });
-
-  it('reports the label and combined affected ids', () => {
-    const subject = session();
-    const events: ModelSessionEvent[] = [];
-
-    subject.subscribe((event) => events.push(event));
-    subject.dispatchAll(
-      [
-        new UpdateEntityCommand('request.payment', { label: 'A' }),
-        new UpdateEntityCommand('confirmation.payment', { label: 'B' }),
-      ],
-      'batch-label',
-    );
-
-    expect(events[0]).toEqual({
-      type: 'document-changed',
-      commands: ['update-entity', 'update-entity'],
-      affectedIds: ['request.payment', 'confirmation.payment'],
+    subject.mutate((draft) => {
+      draft.entities[0].label = 'A';
     });
-  });
-
-  it('does not commit when a command fails midway', () => {
-    const subject = session();
-    const before = structuredClone(subject.getDocument());
-
-    expect(() =>
-      subject.dispatchAll([
-        new UpdateEntityCommand('request.payment', { label: 'A' }),
-        new UpdateEntityCommand('request.ghost', { label: 'B' }),
-      ]),
-    ).toThrow();
-    expect(subject.getDocument()).toEqual(before);
-    expect(subject.canUndo()).toBe(false);
-  });
-});
-
-describe('validation gate', () => {
-  const breakingCommand = (): ModelCommand<unknown> =>
-    ({
-      type: 'break-model',
-      apply: (document) => ({
-        document: {
-          ...document,
-          entities: document.entities.filter(
-            (entity) => entity.id !== 'request.payment',
-          ),
-        },
-        inverse: {
-          type: 'noop',
-          apply: () => ({
-            document,
-            inverse: {} as never,
-            affectedIds: [],
-            result: null,
-          }),
-        },
-        affectedIds: ['request.payment'],
-        result: null,
-      }),
-    }) as ModelCommand<unknown>;
-
-  it('accepts valid transitions when the gate is on', () => {
-    const subject = session({ validateOnDispatch: true });
-
-    expect(() =>
-      subject.dispatch(
-        new UpdateEntityCommand('request.payment', { label: 'A' }),
-      ),
-    ).not.toThrow();
-    expect(subject.validate().valid).toBe(true);
-  });
-
-  it('rejects an invalid document without committing it', () => {
-    const subject = session({ validateOnDispatch: true });
-    const before = structuredClone(subject.getDocument());
-
-    expect(() => subject.dispatch(breakingCommand())).toThrow(
-      ModelSessionValidationError,
-    );
-    expect(subject.getDocument()).toEqual(before);
-    expect(subject.canUndo()).toBe(false);
-  });
-
-  it('allows transiently incomplete edits when the gate is off', () => {
-    const subject = session();
-
-    expect(() => subject.dispatch(breakingCommand())).not.toThrow();
-    expect(subject.validate().valid).toBe(false);
-  });
-
-  it('reports issues from validate()', () => {
-    const subject = session();
-
-    subject.dispatch(breakingCommand());
-
-    expect(subject.validate().issues.map((issue) => issue.code)).toContain(
-      'relationship.endpoint.unresolved',
-    );
-  });
-});
-
-describe('selection', () => {
-  it('tracks node and attribute selection', () => {
-    const subject = session();
-    const events: ModelSessionEvent[] = [];
-
-    subject.subscribe((event) => events.push(event));
-    subject.select('request.payment');
-    subject.selectAttribute('request.payment', 'requested_minor_units');
-
-    expect(subject.getSelection()).toEqual({
-      nodeId: 'request.payment',
-      attributeName: 'requested_minor_units',
+    subject.undo();
+    subject.mutate((draft) => {
+      draft.entities[0].label = 'B';
     });
-    expect(
-      events.filter((event) => event.type === 'selection-changed'),
-    ).toHaveLength(2);
-  });
-
-  it('clears the selection when the selected object disappears', () => {
-    const subject = session();
-    const events: ModelSessionEvent[] = [];
-
-    subject.select('confirmation.payment');
-    subject.subscribe((event) => events.push(event));
-    subject.dispatchAll([
-      new UpdateEntityCommand('confirmation.payment', { label: 'x' }),
-    ]);
-    subject.dispatch(
-      new (class {
-        readonly type = 'drop-confirmation';
-        apply = (document: ReturnType<typeof subject.getDocument>) => ({
-          document: {
-            ...document,
-            relationships: document.relationships.filter(
-              (relationship) =>
-                relationship.targetRef !== 'confirmation.payment' &&
-                relationship.sourceRef !== 'confirmation.payment',
-            ),
-            entities: document.entities.filter(
-              (entity) => entity.id !== 'confirmation.payment',
-            ),
-          },
-          inverse: {
-            type: 'noop',
-            apply: () => ({
-              document,
-              inverse: {} as never,
-              affectedIds: [],
-              result: null,
-            }),
-          },
-          affectedIds: ['confirmation.payment'],
-          result: null,
-        });
-      })(),
-    );
-
-    expect(subject.getSelection()).toEqual({
-      nodeId: null,
-      attributeName: null,
-    });
-    expect(events.some((event) => event.type === 'selection-changed')).toBe(
-      true,
-    );
-  });
-
-  it('clears the selection explicitly', () => {
-    const subject = session();
-
-    subject.selectAttribute('request.payment', 'started_at');
-    subject.clearSelection();
-
-    expect(subject.getSelection()).toEqual({
-      nodeId: null,
-      attributeName: null,
-    });
-  });
-});
-
-describe('replaceDocument', () => {
-  it('replaces the document and undoes back to the previous one', () => {
-    const subject = session();
-    const before = structuredClone(subject.getDocument());
-    const next = createProcurementModel();
-
-    next.manifest.name = '重命名模型';
-
-    subject.replaceDocument(next);
-
-    expect(subject.getDocument().manifest.name).toBe('重命名模型');
-    expect(subject.undo()).toBe(true);
-    expect(subject.getDocument()).toEqual(before);
-  });
-
-  it('can reset history on reload', () => {
-    const subject = session();
-
-    subject.dispatch(
-      new UpdateEntityCommand('request.payment', { label: 'A' }),
-    );
-    subject.replaceDocument(createProcurementModel(), { resetHistory: true });
-
-    expect(subject.canUndo()).toBe(false);
     expect(subject.canRedo()).toBe(false);
   });
+
+  it.each([1, 3, 100])('caps history at %i steps', (historyLimit) => {
+    const subject = session({ historyLimit });
+    for (let i = 0; i < historyLimit + 2; i++) {
+      subject.mutate((draft) => {
+        draft.entities[0].label = String(i);
+      });
+    }
+    for (let i = 0; i < historyLimit; i++) expect(subject.undo()).toBe(true);
+    expect(subject.getDocument().entities[0].label).toBe('1');
+    expect(subject.undo()).toBe(false);
+    for (let i = 0; i < historyLimit; i++) expect(subject.redo()).toBe(true);
+    expect(subject.redo()).toBe(false);
+  });
+
+  it('round-trips cascading deletion and reports deleted ids, not just shifted indices', () => {
+    const subject = session();
+    const before = subject.getDocument();
+    const listener = vi.fn();
+    subject.subscribe(listener);
+    subject.mutate(
+      (draft) =>
+        deleteEntityMutator(draft, 'request.payment', { cascade: true }),
+      'delete-entity',
+    );
+    const event = listener.mock.calls[0][0] as Extract<
+      ModelSessionEvent,
+      { type: 'document-changed' }
+    >;
+    expect(event.affectedIds).toContain('request.payment');
+    expect(event.affectedIds).toContain('rule.payment-completed');
+    expect(event.affectedIds).not.toContain('thing.product');
+    const after = subject.getDocument();
+    subject.undo();
+    expect(subject.getDocument()).toStrictEqual(before);
+    subject.redo();
+    expect(subject.getDocument()).toStrictEqual(after);
+  });
+
+  it('round-trips absent optional fields and original attribute order', () => {
+    const subject = session();
+    const before = subject.getDocument();
+    subject.mutate((draft) => {
+      updateEntityMutator(draft, 'thing.product', { notes: 'memo' });
+      addAttributeMutator(
+        draft,
+        'thing.product',
+        {
+          name: 'memo',
+          label: '备注',
+          meaning: '用户填写',
+          valueType: 'string',
+        },
+        0,
+      );
+    });
+    subject.undo();
+    expect(subject.getDocument()).toStrictEqual(before);
+  });
 });
 
-describe('composite commands through the session', () => {
-  it('treats a fulfillment pair as one undo step', () => {
-    const subject = session();
-    const before = structuredClone(subject.getDocument());
-
-    subject.dispatch(
-      new CreateFulfillmentPairCommand({
-        contextRef: 'context.procurement',
-        request: {
-          id: 'request.delivery',
-          label: '发货请求',
-          responsibleRoleRef: 'role.seller',
-          attributes: [
-            {
-              name: 'started_at',
-              label: '请求时间',
-              meaning: '卖方提出发货请求的业务时间',
-              valueType: 'timestamp',
-              required: true,
-              keyData: true,
-            },
-            {
-              name: 'expired_at',
-              label: '截止时间',
-              meaning: '卖方完成发货的截止时间',
-              valueType: 'timestamp',
-              required: true,
-              keyData: true,
-            },
-          ],
-        },
-        confirmation: {
-          id: 'confirmation.delivery',
-          label: '收货确认',
-          responsibleRoleRef: 'role.buyer',
-          attributes: [
-            {
-              name: 'confirmed_at',
-              label: '确认时间',
-              meaning: '买方形成收货确认的业务时间',
-              valueType: 'timestamp',
-              required: true,
-              keyData: true,
-            },
-          ],
-        },
+describe('static validation', () => {
+  it('rejects mutations and patch batches atomically while preserving redo', () => {
+    const subject = session({ validateOnDispatch: true });
+    subject.mutate((draft) => {
+      draft.entities[0].label = 'A';
+    });
+    subject.undo();
+    const before = subject.getDocument();
+    const listener = vi.fn();
+    subject.subscribe(listener);
+    expect(() =>
+      subject.mutate((draft) => {
+        draft.relationships[0].targetRef = 'entity.ghost';
       }),
-    );
+    ).toThrow(ModelSessionValidationError);
+    expect(() =>
+      subject.applyPatchBatch([
+        {
+          op: 'replace',
+          path: '/relationships/0/targetRef',
+          value: 'entity.ghost',
+        },
+      ]),
+    ).toThrow(ModelSessionValidationError);
+    expect(subject.getDocument()).toBe(before);
+    expect(subject.canRedo()).toBe(true);
+    expect(listener).not.toHaveBeenCalled();
+  });
 
-    expect(subject.getDocument().entities).toHaveLength(14);
+  it('permits progressive edits by default and exposes their diagnostics', () => {
+    const subject = session();
+    subject.mutate((draft) => {
+      draft.relationships[0].targetRef = 'entity.ghost';
+    });
+    expect(subject.validate().valid).toBe(false);
+    subject.undo();
+    expect(subject.validate().valid).toBe(true);
+  });
+});
+
+describe('selection and replacement', () => {
+  it('keeps selection outside history and clears removed entities and attributes', () => {
+    const subject = session();
+    subject.select('thing.product');
+    subject.selectAttribute('contract.procurement', 'total_minor_units');
+    expect(subject.canUndo()).toBe(false);
+    subject.mutate((draft) =>
+      removeAttributeMutator(
+        draft,
+        'contract.procurement',
+        'total_minor_units',
+        { cascade: true },
+      ),
+    );
+    expect(subject.getSelection()).toEqual({
+      nodeId: 'contract.procurement',
+      attributeName: null,
+    });
+    subject.select('request.payment');
+    subject.mutate((draft) =>
+      deleteEntityMutator(draft, 'request.payment', { cascade: true }),
+    );
+    expect(subject.getSelection()).toEqual({
+      nodeId: null,
+      attributeName: null,
+    });
+    subject.undo();
+    expect(subject.getSelection().nodeId).toBe(null);
+    subject.clearSelection();
+  });
+
+  it('records replacements in history unless reloading with resetHistory', () => {
+    const subject = session();
+    const before = subject.getDocument();
+    const replacement = base();
+    replacement.manifest.name = 'Replacement';
+    subject.replaceDocument(replacement);
     expect(subject.undo()).toBe(true);
-    expect(subject.getDocument()).toEqual(before);
+    expect(subject.getDocument()).toStrictEqual(before);
+    expect(subject.redo()).toBe(true);
+    expect(subject.getDocument()).toStrictEqual(replacement);
+    subject.replaceDocument(before, { resetHistory: true });
+    expect(subject.canUndo()).toBe(false);
+    expect(subject.canRedo()).toBe(false);
   });
 });

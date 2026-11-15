@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   createModelSession,
-  UpdateEntityCommand,
+  updateEntityMutator,
 } from '@evidence-poc/evidence-model-core';
 import {
   readModelDirectory,
@@ -148,10 +148,12 @@ describe('product-procurement end to end', () => {
     )!.id;
 
     for (let index = 0; index < 50; index += 1) {
-      session.dispatch(
-        new UpdateEntityCommand(contractId, {
-          label: `采购协议 v${index}（Procurement Contract）`,
-        }),
+      session.mutate(
+        (draft) =>
+          updateEntityMutator(draft, contractId, {
+            label: `采购协议 v${index}（Procurement Contract）`,
+          }),
+        'update-entity',
       );
     }
 
@@ -176,16 +178,15 @@ describe('product-procurement end to end', () => {
           entity.category === 'evidence' && entity.kind === 'contract',
       )!;
 
-      session.dispatch(
-        new UpdateEntityCommand(contract.id, {
-          label: '采购协议（Procurement Contract, v2）',
-        }),
+      session.mutate(
+        (draft) =>
+          updateEntityMutator(draft, contract.id, {
+            label: '采购协议（Procurement Contract, v2）',
+          }),
+        'update-entity',
       );
 
-      const first = await writeModelDirectory(
-        modelRoot,
-        session.getDocument(),
-      );
+      const first = await writeModelDirectory(modelRoot, session.getDocument());
 
       expect(first.written.length).toBeGreaterThan(0);
 
@@ -200,8 +201,7 @@ describe('product-procurement end to end', () => {
       const reparsed = await readModelDirectory(modelRoot);
 
       expect(
-        reparsed.document.entities.find(({ id }) => id === contract.id)
-          ?.label,
+        reparsed.document.entities.find(({ id }) => id === contract.id)?.label,
       ).toBe('采购协议（Procurement Contract, v2）');
       expect(strictValidateDomainModel(reparsed.document).valid).toBe(true);
     });

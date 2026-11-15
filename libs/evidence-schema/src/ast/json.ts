@@ -4,7 +4,7 @@ import { z } from 'zod';
  * Check ancestors (not a global seen set): aliases are valid, cycles are not.
  * A recursive Zod lazy schema would overflow on such cycles before reporting.
  */
-const isJsonValue = (
+export const isJsonValue = (
   value: unknown,
   ancestors = new Set<object>(),
 ): boolean => {

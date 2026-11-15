@@ -404,7 +404,10 @@ describe('agent patch transport', () => {
 
     const result = await apply.execute(
       'call-1',
-      { rationale: '补齐退货', commands: [{ type: 'create-entity' }] },
+      {
+        rationale: '补齐退货',
+        patches: [{ op: 'add', path: '/entities/-', value: {} }],
+      },
       undefined,
       undefined,
       {} as never,
@@ -472,15 +475,24 @@ describe('agent patch transport', () => {
       });
 
       expect(result.isError).toBeUndefined();
-      expect(patches[0]?.commands).toEqual([
-        expect.objectContaining({
-          type: 'create-fulfillment-pair',
-          input: expect.objectContaining({
-            contextRef: 'context.procurement',
-            contractReferenceId: 'relation.request.refund-references-contract',
+      expect(patches[0]?.patches).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            op: 'add',
+            path: expect.stringMatching(/^\/entities\//),
+            value: expect.objectContaining({
+              id: 'request.refund',
+              contextRef: 'context.procurement',
+            }),
           }),
-        }),
-      ]);
+          expect.objectContaining({
+            op: 'add',
+            value: expect.objectContaining({
+              id: 'relation.request.refund-references-contract',
+            }),
+          }),
+        ]),
+      );
     } finally {
       await rm(tempRoot, { recursive: true, force: true });
     }

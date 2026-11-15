@@ -1,8 +1,10 @@
+import { runMutation } from '../testing/runMutation.js';
+import type { ModelRecipe } from '../session/types.js';
 import { describe, expect, it } from 'vitest';
 
 import {
-  CreateFulfillmentPairCommand,
-  ModelCommandError,
+  createFulfillmentPairMutator,
+  ModelMutationError,
   createDomainGraph,
   type CreateFulfillmentPairInput,
 } from '../index.js';
@@ -14,12 +16,12 @@ const expectCode = (work: () => unknown, code: string): void => {
   try {
     work();
   } catch (error) {
-    expect(error).toBeInstanceOf(ModelCommandError);
-    expect((error as ModelCommandError).code).toBe(code);
+    expect(error).toBeInstanceOf(ModelMutationError);
+    expect((error as ModelMutationError).code).toBe(code);
     return;
   }
 
-  throw new Error(`expected command to fail with ${code}`);
+  throw new Error(`expected mutation to fail with ${code}`);
 };
 
 const input = (
@@ -68,11 +70,13 @@ const input = (
   ...overrides,
 });
 
-describe('CreateFulfillmentPairCommand', () => {
+describe('createFulfillmentPairMutator', () => {
   it('creates request, confirmation, references and completion rule', () => {
     const document = base();
     const snapshot = structuredClone(document);
-    const outcome = new CreateFulfillmentPairCommand(input()).apply(document);
+    const outcome = runMutation(document, (draft: Parameters<ModelRecipe>[0]) =>
+      createFulfillmentPairMutator(draft, input()),
+    );
 
     expect(document).toEqual(snapshot);
     expect(outcome.document.entities.map((entity) => entity.id)).toEqual(
@@ -103,7 +107,9 @@ describe('CreateFulfillmentPairCommand', () => {
   });
 
   it('produces a pair the graph can derive', () => {
-    const outcome = new CreateFulfillmentPairCommand(input()).apply(base());
+    const outcome = runMutation(base(), (draft: Parameters<ModelRecipe>[0]) =>
+      createFulfillmentPairMutator(draft, input()),
+    );
     const pair = createDomainGraph(outcome.document).fulfillmentPair(
       'request.delivery',
     );
@@ -118,17 +124,22 @@ describe('CreateFulfillmentPairCommand', () => {
 
   it('undoes the whole pair in one step', () => {
     const document = base();
-    const outcome = new CreateFulfillmentPairCommand(input()).apply(document);
+    const outcome = runMutation(document, (draft: Parameters<ModelRecipe>[0]) =>
+      createFulfillmentPairMutator(draft, input()),
+    );
 
-    expect(outcome.inverse.apply(outcome.document).document).toEqual(document);
+    expect(outcome.undo()).toEqual(document);
   });
 
   it('requires a Contract Context', () => {
     expectCode(
       () =>
-        new CreateFulfillmentPairCommand(
-          input({ contextRef: 'context.catalogue' }),
-        ).apply(base()),
+        runMutation(base(), (draft: Parameters<ModelRecipe>[0]) =>
+          createFulfillmentPairMutator(
+            draft,
+            input({ contextRef: 'context.catalogue' }),
+          ),
+        ),
       'context.notContract',
     );
   });
@@ -136,14 +147,17 @@ describe('CreateFulfillmentPairCommand', () => {
   it('requires responsible roles bound by the root Contract', () => {
     expectCode(
       () =>
-        new CreateFulfillmentPairCommand(
-          input({
-            request: {
-              ...input().request,
-              responsibleRoleRef: 'role.catalogue-item',
-            },
-          }),
-        ).apply(base()),
+        runMutation(base(), (draft: Parameters<ModelRecipe>[0]) =>
+          createFulfillmentPairMutator(
+            draft,
+            input({
+              request: {
+                ...input().request,
+                responsibleRoleRef: 'role.catalogue-item',
+              },
+            }),
+          ),
+        ),
       'role.notBound',
     );
   });
@@ -151,21 +165,29 @@ describe('CreateFulfillmentPairCommand', () => {
   it('requires modeled business times', () => {
     expectCode(
       () =>
-        new CreateFulfillmentPairCommand(
-          input({
-            request: {
-              ...input().request,
-              attributes: input().request.attributes.slice(0, 1),
-            },
-          }),
-        ).apply(base()),
+        runMutation(base(), (draft: Parameters<ModelRecipe>[0]) =>
+          createFulfillmentPairMutator(
+            draft,
+            input({
+              request: {
+                ...input().request,
+                attributes: input().request.attributes.slice(0, 1),
+              },
+            }),
+          ),
+        ),
       'attribute.time.missing',
     );
     expectCode(
       () =>
-        new CreateFulfillmentPairCommand(
-          input({ confirmation: { ...input().confirmation, attributes: [] } }),
-        ).apply(base()),
+        runMutation(base(), (draft: Parameters<ModelRecipe>[0]) =>
+          createFulfillmentPairMutator(
+            draft,
+            input({
+              confirmation: { ...input().confirmation, attributes: [] },
+            }),
+          ),
+        ),
       'attribute.time.missing',
     );
   });
@@ -173,11 +195,14 @@ describe('CreateFulfillmentPairCommand', () => {
   it('rejects identical request and confirmation ids', () => {
     expectCode(
       () =>
-        new CreateFulfillmentPairCommand(
-          input({
-            confirmation: { ...input().confirmation, id: input().request.id },
-          }),
-        ).apply(base()),
+        runMutation(base(), (draft: Parameters<ModelRecipe>[0]) =>
+          createFulfillmentPairMutator(
+            draft,
+            input({
+              confirmation: { ...input().confirmation, id: input().request.id },
+            }),
+          ),
+        ),
       'id.duplicate',
     );
   });
@@ -185,21 +210,27 @@ describe('CreateFulfillmentPairCommand', () => {
   it('rejects a pair that collides with an existing id', () => {
     expectCode(
       () =>
-        new CreateFulfillmentPairCommand(
-          input({ request: { ...input().request, id: 'request.payment' } }),
-        ).apply(base()),
+        runMutation(base(), (draft: Parameters<ModelRecipe>[0]) =>
+          createFulfillmentPairMutator(
+            draft,
+            input({ request: { ...input().request, id: 'request.payment' } }),
+          ),
+        ),
       'id.duplicate',
     );
   });
 
   it('honours explicit rule and reference ids', () => {
-    const outcome = new CreateFulfillmentPairCommand(
-      input({
-        referenceId: 'relation.custom-reference',
-        ruleId: 'rule.custom-completion',
-        completionExpression: 'confirmations.size() > 0',
-      }),
-    ).apply(base());
+    const outcome = runMutation(base(), (draft: Parameters<ModelRecipe>[0]) =>
+      createFulfillmentPairMutator(
+        draft,
+        input({
+          referenceId: 'relation.custom-reference',
+          ruleId: 'rule.custom-completion',
+          completionExpression: 'confirmations.size() > 0',
+        }),
+      ),
+    );
 
     expect(outcome.result.reference.id).toBe('relation.custom-reference');
     expect(outcome.result.rule.id).toBe('rule.custom-completion');

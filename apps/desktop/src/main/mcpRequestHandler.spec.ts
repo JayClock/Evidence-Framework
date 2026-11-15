@@ -112,7 +112,9 @@ describe('createMcpRequestHandler', () => {
       method: 'apply_model_patch',
       patch: {
         rationale: '补充来源',
-        commands: [{ type: 'update-attribute' }],
+        patches: [
+          { op: 'replace', path: '/entities/0/label', value: 'updated' },
+        ],
       },
     });
 

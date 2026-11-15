@@ -1,12 +1,14 @@
 import type { ToolAnnotations } from '@modelcontextprotocol/sdk/types.js';
 import {
-  addBreachCompensation,
-  introduceFulfillmentPair,
-  roleifyAndInvertDependency,
-  type OperatorPatch,
+  createModelPatch,
+  addBreachCompensationMutator,
+  introduceFulfillmentPairMutator,
+  roleifyAndInvertDependencyMutator,
+  type OperatorResult,
 } from '@evidence-poc/evidence-model-core';
 import { z } from 'zod';
 import {
+  ModelPatchRequestSchema,
   BreachCompensationIntentSchema,
   DomainIdSchema,
   FulfillmentPairIntentSchema,
@@ -96,14 +98,14 @@ const runOperator = async (
     document: Awaited<
       ReturnType<EvidenceMcpAppClient['getDomainModel']>
     >['document'],
-  ) => OperatorPatch,
+  ) => OperatorResult,
 ): Promise<EvidenceToolResult> => {
-  let patch: OperatorPatch;
+  let patch: ReturnType<typeof createModelPatch<OperatorResult>>;
 
   try {
     const model = await client.getDomainModel({ includeRules: true });
 
-    patch = build(model.document);
+    patch = createModelPatch(model.document, build);
   } catch (error) {
     const message = error instanceof Error ? error.message : '未知原因';
 
@@ -116,11 +118,11 @@ const runOperator = async (
 
   const result = await client.applyModelPatch({
     rationale,
-    commands: patch.commands,
+    patches: patch.patches,
   });
 
   return result.success
-    ? json({ ...result, createdIds: patch.createdIds })
+    ? json({ ...result, createdIds: patch.result.createdIds })
     : {
         text: JSON.stringify(result, null, 2),
         value: result,
@@ -233,19 +235,8 @@ export const createEvidenceTools = (
     name: TOOL_NAMES.applyPatch,
     title: '提交模型补丁',
     description:
-      '把强类型 ModelCommand 补丁提交给桌面端内存模型：画布立即更新、用户可 Cmd+Z 撤销。补丁先在克隆图上做静态检查，破坏红线即整体拒绝。',
-    inputSchema: z
-      .object({
-        rationale: z
-          .string()
-          .min(1)
-          .describe('本批修改的业务理由，会显示在桌面端活动流里。'),
-        commands: z
-          .array(z.unknown())
-          .min(1)
-          .describe('ModelCommand 数组，每项必须带 type 字段。'),
-      })
-      .strict(),
+      '把 RFC 6902 JSON Patch 提交给桌面端内存模型，path/from 使用 JSON Pointer（例如 /entities/0/label），支持 add/remove/replace/move/copy/test；整批原子应用，用户可 Cmd+Z 撤销。',
+    inputSchema: ModelPatchRequestSchema,
     annotations: WRITES_MODEL,
     run: async (input) => {
       const result = await client.applyModelPatch(input);
@@ -270,7 +261,7 @@ export const createEvidenceTools = (
       return runOperator(
         client,
         `新增履约项：${intent.request.label} / ${intent.confirmation.label}`,
-        (document) => introduceFulfillmentPair(document, intent),
+        (document) => introduceFulfillmentPairMutator(document, intent),
       );
     },
   }),
@@ -285,7 +276,7 @@ export const createEvidenceTools = (
       const intent = input;
 
       return runOperator(client, `违约补偿：${intent.condition}`, (document) =>
-        addBreachCompensation(document, intent),
+        addBreachCompensationMutator(document, intent),
       );
     },
   }),
@@ -302,7 +293,7 @@ export const createEvidenceTools = (
       return runOperator(
         client,
         `反转依赖：${intent.socket.label} 交由 ${intent.supporting.contract.label} 履约`,
-        (document) => roleifyAndInvertDependency(document, intent),
+        (document) => roleifyAndInvertDependencyMutator(document, intent),
       );
     },
   }),

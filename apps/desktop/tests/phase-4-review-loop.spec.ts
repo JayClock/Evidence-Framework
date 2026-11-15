@@ -86,10 +86,11 @@ describe('phase 4 review-authoring loop', () => {
         requestId: 'phase4-patch',
         patch: {
           rationale: '补充审计员',
-          commands: [
+          patches: [
             {
-              type: 'create-entity',
-              entity: {
+              op: 'add',
+              path: '/entities/-',
+              value: {
                 type: 'entity',
                 id: 'party.auditor',
                 category: 'participant',
@@ -107,9 +108,7 @@ describe('phase 4 review-authoring loop', () => {
     fireEvent.click(screen.getByRole('button', { name: '保留' }));
     fireEvent.click(screen.getByText('保存'));
     await waitFor(() =>
-      expect(
-        screen.getByRole('button', { name: '导出审查页' }),
-      ).toBeEnabled(),
+      expect(screen.getByRole('button', { name: '导出审查页' })).toBeEnabled(),
     );
     fireEvent.keyDown(window, { key: 'k', metaKey: true });
     fireEvent.click(

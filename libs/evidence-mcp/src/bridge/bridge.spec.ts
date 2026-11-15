@@ -12,7 +12,10 @@ import type { EvidenceMcpAppClient, McpAppState } from '../types.js';
 const openEndpoints: string[] = [];
 
 const endpointFor = (name: string): string => {
-  const endpoint = join(tmpdir(), `evidence-mcp-test-${process.pid}-${name}.sock`);
+  const endpoint = join(
+    tmpdir(),
+    `evidence-mcp-test-${process.pid}-${name}.sock`,
+  );
 
   openEndpoints.push(endpoint);
 
@@ -200,7 +203,9 @@ describe('createEvidenceMcpBridgeClient', () => {
       await client.getScreenshot({ targetNodeId: 'evidence.request' });
       await client.applyModelPatch({
         rationale: '测试',
-        commands: [{ type: 'update-attribute' }],
+        patches: [
+          { op: 'replace', path: '/entities/0/label', value: 'updated' },
+        ],
       });
       await client.runStageGate({ target: 'api' });
 

@@ -163,7 +163,7 @@ describe('shared Zod input contracts', () => {
       throw new Error('expected gate and patch tools');
     await expect(stageGate.run({ target: 'invalid' })).rejects.toThrow();
     await expect(
-      applyPatch.run({ rationale: 'x', commands: [] }),
+      applyPatch.run({ rationale: 'x', patches: [] }),
     ).rejects.toThrow();
     expect(client.runStageGate).not.toHaveBeenCalled();
     expect(client.applyModelPatch).not.toHaveBeenCalled();
@@ -361,7 +361,7 @@ describe('createEvidenceTools', () => {
     )!;
     const result = await tool.run({
       rationale: '补充关键数据来源',
-      commands: [{ type: 'update-attribute' }],
+      patches: [{ op: 'replace', path: '/entities/0/label', value: 'updated' }],
     });
 
     expect(result.isError).toBe(true);
@@ -405,7 +405,12 @@ describe('createEvidenceTools', () => {
 
     expect(client.applyModelPatch).toHaveBeenCalledWith({
       rationale: '新增履约项：退款申请 / 退款确认',
-      commands: [expect.objectContaining({ type: 'create-fulfillment-pair' })],
+      patches: expect.arrayContaining([
+        expect.objectContaining({
+          op: 'add',
+          value: expect.objectContaining({ id: 'request.refund' }),
+        }),
+      ]),
     });
     expect(result.isError).toBeUndefined();
     expect(JSON.parse(result.text)).toMatchObject({

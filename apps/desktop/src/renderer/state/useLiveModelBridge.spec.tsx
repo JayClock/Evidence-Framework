@@ -2,7 +2,7 @@ import { act, renderHook } from '@testing-library/react';
 import { expect, it, vi } from 'vitest';
 import {
   createModelSession,
-  UpdateEntityCommand,
+  updateEntityMutator,
 } from '@evidence-poc/evidence-model-core';
 import { installDesktopApi } from '../test-support/desktopApi';
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
@@ -21,8 +21,10 @@ it('publishes each document transition immediately, not selection changes, and k
   act(() => session.select('evidence.contract'));
   expect(notify).toHaveBeenCalledOnce();
   act(() =>
-    session.dispatch(
-      new UpdateEntityCommand('evidence.contract', { label: 'new' }),
+    session.mutate(
+      (draft) =>
+        updateEntityMutator(draft, 'evidence.contract', { label: 'new' }),
+      'update-entity',
     ),
   );
   // The notification is sent synchronously during dispatch, before an agent patch is acknowledged.

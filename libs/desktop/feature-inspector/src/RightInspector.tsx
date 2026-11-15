@@ -8,7 +8,7 @@ import {
   getReferenceConstraint,
 } from '@evidence-poc/evidence-schema';
 import {
-  UpdateEntityCommand,
+  updateEntityMutator,
   type DomainGraph,
   type ModelSelection,
   type ModelSession,
@@ -118,7 +118,10 @@ export const RightInspector = ({
                   {attributeCount} 个字段
                 </span>
               </span>
-              <span aria-hidden="true" className="shrink-0 text-evidence-accent">
+              <span
+                aria-hidden="true"
+                className="shrink-0 text-evidence-accent"
+              >
                 →
               </span>
             </button>
@@ -186,7 +189,10 @@ const InspectorBody = ({
   );
 
   const patch = (fields: Readonly<Partial<EntityAST>>) => {
-    session.dispatch(new UpdateEntityCommand(entity.id, fields));
+    session.mutate(
+      (draft) => updateEntityMutator(draft, entity.id, fields),
+      'update-entity',
+    );
   };
 
   return (

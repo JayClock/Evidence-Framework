@@ -6,11 +6,12 @@ import {
   isEvidenceEntity,
 } from '@evidence-poc/evidence-schema';
 import {
-  BindBreachRuleCommand,
-  PairFulfillmentCommand,
-  UpdateRuleCommand,
+  bindBreachRuleMutator,
+  pairFulfillmentMutator,
+  updateRuleMutator,
   type DomainGraph,
   type ModelSession,
+  type ModelRecipe,
 } from '@evidence-poc/evidence-model-core';
 
 import { CelCodeMirrorEditor } from './cel/CelCodeMirrorEditor';
@@ -122,13 +123,11 @@ export const FulfillmentPairSection = ({
               onCancel={() => setPairing(false)}
               onPair={(confirmationId) => {
                 setError(
-                  dispatchOrReportError(
-                    session,
-                    () =>
-                      new PairFulfillmentCommand({
-                        requestRef: entity.id,
-                        confirmationRef: confirmationId,
-                      }),
+                  dispatchOrReportError(session, (draft) =>
+                    pairFulfillmentMutator(draft, {
+                      requestRef: entity.id,
+                      confirmationRef: confirmationId,
+                    }),
                   ),
                 );
                 setPairing(false);
@@ -163,13 +162,11 @@ export const FulfillmentPairSection = ({
                   onCancel={() => setBreaching(false)}
                   onBind={(rule) => {
                     setError(
-                      dispatchOrReportError(
-                        session,
-                        () =>
-                          new BindBreachRuleCommand({
-                            requestRef: entity.id,
-                            rule,
-                          }),
+                      dispatchOrReportError(session, (draft) =>
+                        bindBreachRuleMutator(draft, {
+                          requestRef: entity.id,
+                          rule,
+                        }),
                       ),
                     );
                     setBreaching(false);
@@ -215,10 +212,10 @@ export const FulfillmentPairSection = ({
  */
 const dispatchOrReportError = (
   session: ModelSession,
-  create: () => Parameters<ModelSession['dispatch']>[0],
+  recipe: ModelRecipe<unknown>,
 ): string | null => {
   try {
-    session.dispatch(create());
+    session.mutate(recipe, 'update-fulfillment');
 
     return null;
   } catch (error) {
@@ -264,7 +261,10 @@ const CompletionRuleEditor = ({
         ariaLabel={`${rule.id} CEL 表达式`}
         onCommit={(expression) => {
           if (expression !== rule.expression) {
-            session.dispatch(new UpdateRuleCommand(rule.id, { expression }));
+            session.mutate(
+              (draft) => updateRuleMutator(draft, rule.id, { expression }),
+              'update-rule',
+            );
           }
         }}
       />

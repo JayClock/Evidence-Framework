@@ -1,8 +1,10 @@
+import { runMutation } from '../testing/runMutation.js';
+import type { ModelRecipe } from '../session/types.js';
 import { describe, expect, it } from 'vitest';
 
 import {
-  BindDerivedRuleCommand,
-  ModelCommandError,
+  bindDerivedRuleMutator,
+  ModelMutationError,
   assertMandatoryTime,
 } from '../index.js';
 import { createProcurementModel } from '../testing/modelFixture.js';
@@ -13,33 +15,35 @@ const expectCode = (work: () => unknown, code: string): void => {
   try {
     work();
   } catch (error) {
-    expect(error).toBeInstanceOf(ModelCommandError);
-    expect((error as ModelCommandError).code).toBe(code);
+    expect(error).toBeInstanceOf(ModelMutationError);
+    expect((error as ModelMutationError).code).toBe(code);
     return;
   }
 
-  throw new Error(`expected command to fail with ${code}`);
+  throw new Error(`expected mutation to fail with ${code}`);
 };
 
-const bind = (attribute = 'requested_minor_units') =>
-  new BindDerivedRuleCommand({
-    entityRef: 'request.payment',
-    attribute,
-    rule: {
-      id: 'rule.requested-amount-derived',
-      label: '请求金额派生',
-      description: '按协议数量与约定单价派生请求金额。',
-      bindings: { contract: { ref: 'contract.procurement' } },
-      expression: 'contract.quantity * 100',
-      resultType: 'int',
-    },
-  });
+const bind =
+  (attribute = 'requested_minor_units') =>
+  (draft: Parameters<ModelRecipe>[0]) =>
+    bindDerivedRuleMutator(draft, {
+      entityRef: 'request.payment',
+      attribute,
+      rule: {
+        id: 'rule.requested-amount-derived',
+        label: '请求金额派生',
+        description: '按协议数量与约定单价派生请求金额。',
+        bindings: { contract: { ref: 'contract.procurement' } },
+        expression: 'contract.quantity * 100',
+        resultType: 'int',
+      },
+    });
 
-describe('BindDerivedRuleCommand', () => {
+describe('bindDerivedRuleMutator', () => {
   it('creates the rule and the attribute reference together', () => {
     const document = base();
     const snapshot = structuredClone(document);
-    const outcome = bind().apply(document);
+    const outcome = runMutation(document, bind());
     const request = outcome.document.entities.find(
       (entity) => entity.id === 'request.payment',
     );
@@ -61,59 +65,62 @@ describe('BindDerivedRuleCommand', () => {
         attribute: 'requested_minor_units',
       },
     });
-    expect(outcome.affectedIds).toEqual([
-      'rule.requested-amount-derived',
-      'request.payment',
-    ]);
+    expect(new Set(outcome.affectedIds)).toEqual(
+      new Set(['rule.requested-amount-derived', 'request.payment']),
+    );
   });
 
   it('is undone in one step', () => {
     const document = base();
-    const outcome = bind().apply(document);
+    const outcome = runMutation(document, bind());
 
-    expect(outcome.inverse.apply(outcome.document).document).toEqual(document);
+    expect(outcome.undo()).toEqual(document);
   });
 
   it('refuses to rebind an attribute that already has a derivation', () => {
-    const bound = bind().apply(base()).document;
+    const bound = runMutation(base(), bind()).document;
 
     expectCode(
       () =>
-        new BindDerivedRuleCommand({
-          entityRef: 'request.payment',
-          attribute: 'requested_minor_units',
-          rule: {
-            id: 'rule.requested-amount-again',
-            label: '重复派生',
-            description: '重复派生同一字段。',
-            bindings: { contract: { ref: 'contract.procurement' } },
-            expression: '1',
-            resultType: 'int',
-          },
-        }).apply(bound),
+        runMutation(bound, (draft: Parameters<ModelRecipe>[0]) =>
+          bindDerivedRuleMutator(draft, {
+            entityRef: 'request.payment',
+            attribute: 'requested_minor_units',
+            rule: {
+              id: 'rule.requested-amount-again',
+              label: '重复派生',
+              description: '重复派生同一字段。',
+              bindings: { contract: { ref: 'contract.procurement' } },
+              expression: '1',
+              resultType: 'int',
+            },
+          }),
+        ),
       'derivation.alreadyBound',
     );
     expectCode(
       () =>
-        new BindDerivedRuleCommand({
-          entityRef: 'contract.procurement',
-          attribute: 'total_minor_units',
-          rule: {
-            id: 'rule.total-again',
-            label: '重复派生',
-            description: '重复派生同一字段。',
-            bindings: { contract: { ref: 'contract.procurement' } },
-            expression: '1',
-            resultType: 'int',
-          },
-        }).apply(base()),
+        runMutation(base(), (draft: Parameters<ModelRecipe>[0]) =>
+          bindDerivedRuleMutator(draft, {
+            entityRef: 'contract.procurement',
+            attribute: 'total_minor_units',
+            rule: {
+              id: 'rule.total-again',
+              label: '重复派生',
+              description: '重复派生同一字段。',
+              bindings: { contract: { ref: 'contract.procurement' } },
+              expression: '1',
+              resultType: 'int',
+            },
+          }),
+        ),
       'derivation.alreadyBound',
     );
   });
 
   it('requires the attribute to exist', () => {
     expectCode(
-      () => bind('ghost_attribute').apply(base()),
+      () => runMutation(base(), bind('ghost_attribute')),
       'attribute.notFound',
     );
   });
@@ -121,18 +128,20 @@ describe('BindDerivedRuleCommand', () => {
   it('rejects entities without a Context', () => {
     expectCode(
       () =>
-        new BindDerivedRuleCommand({
-          entityRef: 'party.buyer-agent',
-          attribute: 'anything',
-          rule: {
-            id: 'rule.party-derived',
-            label: '无意义派生',
-            description: '外部参与者没有上下文。',
-            bindings: {},
-            expression: '1',
-            resultType: 'int',
-          },
-        }).apply(base()),
+        runMutation(base(), (draft: Parameters<ModelRecipe>[0]) =>
+          bindDerivedRuleMutator(draft, {
+            entityRef: 'party.buyer-agent',
+            attribute: 'anything',
+            rule: {
+              id: 'rule.party-derived',
+              label: '无意义派生',
+              description: '外部参与者没有上下文。',
+              bindings: {},
+              expression: '1',
+              resultType: 'int',
+            },
+          }),
+        ),
       'attribute.notFound',
     );
   });

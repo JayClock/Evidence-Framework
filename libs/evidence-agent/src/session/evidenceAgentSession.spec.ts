@@ -245,7 +245,8 @@ describe('createEvidenceAgentSession', () => {
         cwd: '/workspace/project',
         resourceLoader: { reload: expect.any(Function) },
         sessionManager: {
-          sessionFile: '/workspace/project/.evidence/branches/br-a/session.jsonl',
+          sessionFile:
+            '/workspace/project/.evidence/branches/br-a/session.jsonl',
         },
       },
     ]);
@@ -262,7 +263,9 @@ describe('createEvidenceAgentSession', () => {
 
     await before.start();
 
-    expect(before.getSessionFile()).toBe('/home/modeler/.pi/agent/sessions/x.jsonl');
+    expect(before.getSessionFile()).toBe(
+      '/home/modeler/.pi/agent/sessions/x.jsonl',
+    );
   });
 
   it('streams projected events to subscribers', async () => {
@@ -284,7 +287,7 @@ describe('createEvidenceAgentSession', () => {
       type: 'tool_execution_start',
       toolCallId: 'call-9',
       toolName: 'apply_model_patch',
-      args: { commands: [] },
+      args: { patches: [] },
     });
     unsubscribe();
     fake.emit({ type: 'agent_settled', aborted: false });
@@ -295,7 +298,7 @@ describe('createEvidenceAgentSession', () => {
         type: 'tool-call-started',
         toolCallId: 'call-9',
         toolName: 'apply_model_patch',
-        input: { commands: [] },
+        input: { patches: [] },
       },
     ]);
   });

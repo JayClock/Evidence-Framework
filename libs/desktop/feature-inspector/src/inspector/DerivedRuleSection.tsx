@@ -6,8 +6,8 @@ import type {
   ValueType,
 } from '@evidence-poc/evidence-schema';
 import {
-  BindDerivedRuleCommand,
-  UpdateRuleCommand,
+  bindDerivedRuleMutator,
+  updateRuleMutator,
   analyzeCelExpression,
   bindingsForAliases,
   type DomainGraph,
@@ -74,12 +74,14 @@ export const DerivedRuleSection = ({
             candidates={candidates}
             onCancel={closeBinding}
             onBind={(input) => {
-              session.dispatch(
-                new BindDerivedRuleCommand({
-                  entityRef: entity.id,
-                  attribute: attribute.name,
-                  rule: input,
-                }),
+              session.mutate(
+                (draft) =>
+                  bindDerivedRuleMutator(draft, {
+                    entityRef: entity.id,
+                    attribute: attribute.name,
+                    rule: input,
+                  }),
+                'bind-derived-rule',
               );
               closeBinding();
             }}
@@ -128,7 +130,10 @@ export const DerivedRuleSection = ({
           ariaLabel={ariaLabel}
           onCommit={(expression) => {
             if (expression !== rule.expression) {
-              session.dispatch(new UpdateRuleCommand(rule.id, { expression }));
+              session.mutate(
+                (draft) => updateRuleMutator(draft, rule.id, { expression }),
+                'update-rule',
+              );
             }
           }}
         />

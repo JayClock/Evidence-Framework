@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   MODEL_BUNDLE_TYPE,
-  UpdateEntityCommand,
+  updateEntityMutator,
   createModelSession,
   MODEL_README_PATH,
   isModelBundlePath,
@@ -148,10 +148,12 @@ describe('editing a bundled document', () => {
       document: parseModelBundleText(text).document,
     });
 
-    session.dispatch(
-      new UpdateEntityCommand('contract.procurement', {
-        label: '采购合同（Procurement Contract）',
-      }),
+    session.mutate(
+      (draft) =>
+        updateEntityMutator(draft, 'contract.procurement', {
+          label: '采购合同（Procurement Contract）',
+        }),
+      'update-entity',
     );
 
     const rewritten = JSON.parse(

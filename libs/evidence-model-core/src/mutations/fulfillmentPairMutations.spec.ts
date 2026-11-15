@@ -1,13 +1,15 @@
+import { runMutation } from '../testing/runMutation.js';
+import type { ModelRecipe } from '../session/types.js';
 import { describe, expect, it } from 'vitest';
 
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
 import {
-  BindBreachRuleCommand,
-  PairFulfillmentCommand,
+  bindBreachRuleMutator,
+  pairFulfillmentMutator,
   breachRuleOf,
   completionRuleOf,
-} from './fulfillmentPairCommands.js';
+} from './fulfillmentPairMutations.js';
 
 const document = (): DomainModelDocument => ({
   manifest: {
@@ -150,12 +152,16 @@ const document = (): DomainModelDocument => ({
   rules: [],
 });
 
-describe('PairFulfillmentCommand', () => {
+describe('pairFulfillmentMutator', () => {
   it('creates the reference and the completion rule in one step', () => {
-    const outcome = new PairFulfillmentCommand({
-      requestRef: 'evidence.request',
-      confirmationRef: 'evidence.confirmation',
-    }).apply(document());
+    const outcome = runMutation(
+      document(),
+      (draft: Parameters<ModelRecipe>[0]) =>
+        pairFulfillmentMutator(draft, {
+          requestRef: 'evidence.request',
+          confirmationRef: 'evidence.confirmation',
+        }),
+    );
 
     expect(outcome.document.rules).toHaveLength(1);
     expect(outcome.document.relationships).toHaveLength(1);
@@ -172,7 +178,7 @@ describe('PairFulfillmentCommand', () => {
       'rule.evidence.request-completed',
     );
 
-    const restored = outcome.inverse.apply(outcome.document).document;
+    const restored = outcome.undo();
 
     expect(restored.rules).toHaveLength(0);
     expect(restored.relationships).toHaveLength(0);
@@ -192,10 +198,14 @@ describe('PairFulfillmentCommand', () => {
         },
       ],
     };
-    const outcome = new PairFulfillmentCommand({
-      requestRef: 'evidence.request',
-      confirmationRef: 'evidence.confirmation',
-    }).apply(withReference);
+    const outcome = runMutation(
+      withReference,
+      (draft: Parameters<ModelRecipe>[0]) =>
+        pairFulfillmentMutator(draft, {
+          requestRef: 'evidence.request',
+          confirmationRef: 'evidence.confirmation',
+        }),
+    );
 
     expect(outcome.document.relationships).toHaveLength(1);
     expect(outcome.result.reference).toBeNull();
@@ -203,52 +213,67 @@ describe('PairFulfillmentCommand', () => {
 
   it('refuses a supporting proof as the result side', () => {
     expect(() =>
-      new PairFulfillmentCommand({
-        requestRef: 'evidence.request',
-        confirmationRef: 'evidence.proof',
-      }).apply(document()),
+      runMutation(document(), (draft: Parameters<ModelRecipe>[0]) =>
+        pairFulfillmentMutator(draft, {
+          requestRef: 'evidence.request',
+          confirmationRef: 'evidence.proof',
+        }),
+      ),
     ).toThrowError(/not a fulfillment confirmation/);
   });
 
   it('refuses a confirmation from another contract', () => {
     expect(() =>
-      new PairFulfillmentCommand({
-        requestRef: 'evidence.request',
-        confirmationRef: 'evidence.foreign-confirmation',
-      }).apply(document()),
+      runMutation(document(), (draft: Parameters<ModelRecipe>[0]) =>
+        pairFulfillmentMutator(draft, {
+          requestRef: 'evidence.request',
+          confirmationRef: 'evidence.foreign-confirmation',
+        }),
+      ),
     ).toThrowError(/same Contract Context/);
   });
 
   it('refuses to decide the same request twice', () => {
-    const paired = new PairFulfillmentCommand({
-      requestRef: 'evidence.request',
-      confirmationRef: 'evidence.confirmation',
-    }).apply(document());
+    const paired = runMutation(
+      document(),
+      (draft: Parameters<ModelRecipe>[0]) =>
+        pairFulfillmentMutator(draft, {
+          requestRef: 'evidence.request',
+          confirmationRef: 'evidence.confirmation',
+        }),
+    );
 
     expect(() =>
-      new PairFulfillmentCommand({
-        requestRef: 'evidence.request',
-        confirmationRef: 'evidence.confirmation',
-      }).apply(paired.document),
+      runMutation(paired.document, (draft: Parameters<ModelRecipe>[0]) =>
+        pairFulfillmentMutator(draft, {
+          requestRef: 'evidence.request',
+          confirmationRef: 'evidence.confirmation',
+        }),
+      ),
     ).toThrowError(/already decided by rule/);
   });
 });
 
-describe('BindBreachRuleCommand', () => {
+describe('bindBreachRuleMutator', () => {
   const breachRule = {
     id: 'rule.request-breach',
     label: '超期未交付（Late Delivery）',
     description: '请求失效前没有任何交付确认形成。',
     bindings: { request: { ref: 'evidence.request' } },
-    expression: '!confirmations.exists(c, c.confirmed_at <= request.expired_at)',
+    expression:
+      '!confirmations.exists(c, c.confirmed_at <= request.expired_at)',
     resultType: 'bool' as const,
   };
 
   it('adds the breach condition with the request context', () => {
-    const outcome = new BindBreachRuleCommand({
-      requestRef: 'evidence.request',
-      rule: breachRule,
-    }).apply(document());
+    const outcome = runMutation(
+      document(),
+      (draft: Parameters<ModelRecipe>[0]) =>
+        bindBreachRuleMutator(draft, {
+          requestRef: 'evidence.request',
+          rule: breachRule,
+        }),
+    );
 
     const rule = breachRuleOf(outcome.document, 'evidence.request');
 
@@ -262,24 +287,30 @@ describe('BindBreachRuleCommand', () => {
 
   it('requires the rule to bind its request', () => {
     expect(() =>
-      new BindBreachRuleCommand({
-        requestRef: 'evidence.request',
-        rule: { ...breachRule, id: 'rule.unbound', bindings: {} },
-      }).apply(document()),
+      runMutation(document(), (draft: Parameters<ModelRecipe>[0]) =>
+        bindBreachRuleMutator(draft, {
+          requestRef: 'evidence.request',
+          rule: { ...breachRule, id: 'rule.unbound', bindings: {} },
+        }),
+      ),
     ).toThrowError(/must bind the request/);
   });
 
   it('refuses a second breach rule for the same request', () => {
-    const bound = new BindBreachRuleCommand({
-      requestRef: 'evidence.request',
-      rule: breachRule,
-    }).apply(document());
+    const bound = runMutation(document(), (draft: Parameters<ModelRecipe>[0]) =>
+      bindBreachRuleMutator(draft, {
+        requestRef: 'evidence.request',
+        rule: breachRule,
+      }),
+    );
 
     expect(() =>
-      new BindBreachRuleCommand({
-        requestRef: 'evidence.request',
-        rule: { ...breachRule, id: 'rule.request-breach-2' },
-      }).apply(bound.document),
+      runMutation(bound.document, (draft: Parameters<ModelRecipe>[0]) =>
+        bindBreachRuleMutator(draft, {
+          requestRef: 'evidence.request',
+          rule: { ...breachRule, id: 'rule.request-breach-2' },
+        }),
+      ),
     ).toThrowError(/already declares breach rule/);
   });
 });

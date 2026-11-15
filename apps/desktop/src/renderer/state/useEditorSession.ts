@@ -76,7 +76,7 @@ const readState = (
  * Owns the Phase 1 `ModelSession` for one editor window.
  *
  * Every edit path (inspector, keyboard, future agent) goes through
- * `session.dispatch`, so undo/redo and the canvas stay in step.
+ * `session.mutate`, so undo/redo and the canvas stay in step.
  */
 export const useEditorSession = (
   project: EvidenceProjectSummary,

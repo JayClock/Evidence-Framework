@@ -178,9 +178,7 @@ const createHandlers = (overrides: Partial<EvidenceToolsHandlers> = {}) => {
 
       return {
         success: true,
-        appliedCommands: patch.commands.map(
-          (command) => (command as { type: string }).type,
-        ),
+        appliedCommands: patch.patches.map((operation) => operation.op),
       } satisfies ModelPatchResult;
     },
     getCanvasContext: async () => canvasContext,
@@ -217,12 +215,8 @@ describe('API projection tools', () => {
     const fake = createFakePi();
     createEvidenceToolsExtension(handlers)(fake.pi);
     const result = await invoke(fake.tool(TOOL_NAMES.getApiDiff), {
-      proposedCommands: [
-        {
-          type: 'update-entity',
-          entityId: 'contract.procurement',
-          patch: { label: '新合同' },
-        },
+      proposedPatches: [
+        { op: 'replace', path: '/entities/1/label', value: '新合同' },
       ],
     });
     expect(result.details).toMatchObject({
@@ -260,7 +254,7 @@ describe('API projection tools', () => {
     const fake = createFakePi();
     createEvidenceToolsExtension(handlers)(fake.pi);
     await expect(
-      invoke(fake.tool(TOOL_NAMES.getApiDiff), { proposedCommands: [{}] }),
+      invoke(fake.tool(TOOL_NAMES.getApiDiff), { proposedPatches: [{}] }),
     ).rejects.toThrow();
     expect(patches).toEqual([]);
   });
@@ -316,23 +310,31 @@ describe('createEvidenceToolsExtension', () => {
 
     const result = await invoke(fake.tool(TOOL_NAMES.applyModelPatch), {
       rationale: '补齐退货确认端',
-      commands: [
-        { type: 'create-entity', entity: { id: 'evidence.return' } },
-        { type: 'create-relationship', id: 'relation.return' },
+      patches: [
+        { op: 'add', path: '/entities/-', value: { id: 'evidence.return' } },
+        {
+          op: 'add',
+          path: '/relationships/-',
+          value: { id: 'relation.return' },
+        },
       ],
     });
 
     expect(patches).toEqual([
       {
         rationale: '补齐退货确认端',
-        commands: [
-          { type: 'create-entity', entity: { id: 'evidence.return' } },
-          { type: 'create-relationship', id: 'relation.return' },
+        patches: [
+          { op: 'add', path: '/entities/-', value: { id: 'evidence.return' } },
+          {
+            op: 'add',
+            path: '/relationships/-',
+            value: { id: 'relation.return' },
+          },
         ],
       },
     ]);
     expect(result.content[0]?.text).toBe(
-      '补丁已应用（create-entity, create-relationship）：补齐退货确认端',
+      '补丁已应用（add, add）：补齐退货确认端',
     );
     expect(result.isError).toBeUndefined();
   });
@@ -349,7 +351,7 @@ describe('createEvidenceToolsExtension', () => {
 
     const result = await invoke(fake.tool(TOOL_NAMES.applyModelPatch), {
       rationale: '尝试',
-      commands: [{ type: 'create-entity' }],
+      patches: [{ op: 'add', path: '/entities/-', value: {} }],
     });
 
     expect(result.isError).toBe(true);
@@ -366,9 +368,9 @@ describe('createEvidenceToolsExtension', () => {
     await expect(
       invoke(fake.tool(TOOL_NAMES.applyModelPatch), {
         rationale: '坏补丁',
-        commands: [{ entity: {} }],
+        patches: [{ entity: {} }],
       }),
-    ).rejects.toThrow('commands[0] 缺少字符串 type 字段。');
+    ).rejects.toThrow();
     expect(patches).toEqual([]);
   });
 
@@ -409,9 +411,16 @@ describe('createEvidenceToolsExtension', () => {
     expect(patches).toEqual([
       {
         rationale: '新增履约项：退款申请 / 退款到账确认',
-        commands: [
-          expect.objectContaining({ type: 'create-fulfillment-pair' }),
-        ],
+        patches: expect.arrayContaining([
+          expect.objectContaining({
+            op: 'add',
+            value: expect.objectContaining({ id: 'request.refund' }),
+          }),
+          expect.objectContaining({
+            op: 'add',
+            value: expect.objectContaining({ id: 'confirmation.refund' }),
+          }),
+        ]),
       },
     ]);
     expect(result.isError).toBeUndefined();
@@ -631,13 +640,21 @@ describe('the workshop readings', () => {
     });
 
     expect(result.isError).toBeUndefined();
-    expect(
-      patches[0]?.commands.map((command) => (command as { type: string }).type),
-    ).toEqual([
-      'create-entity',
-      'create-entity',
-      'add-attribute',
-      'bind-derived-rule',
-    ]);
+    expect(patches[0]?.patches).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          op: 'add',
+          value: expect.objectContaining({ id: 'context.fee-rules' }),
+        }),
+        expect.objectContaining({
+          op: 'add',
+          value: expect.objectContaining({ id: 'thing.fee-calculator' }),
+        }),
+        expect.objectContaining({
+          op: 'add',
+          value: expect.objectContaining({ id: 'rule.service-fee' }),
+        }),
+      ]),
+    );
   });
 });

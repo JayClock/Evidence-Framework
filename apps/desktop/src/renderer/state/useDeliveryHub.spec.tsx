@@ -2,7 +2,7 @@ import { act, renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   createModelSession,
-  UpdateEntityCommand,
+  updateEntityMutator,
 } from '@evidence-poc/evidence-model-core';
 import type {
   LiveDeliveryInput,
@@ -27,7 +27,10 @@ const setup = () => {
   api.projects.deliveryLivePreview = request;
   const hook = renderHook(() => useDeliveryHub('/models/test', session, base));
   const edit = (label: string) =>
-    session.dispatch(new UpdateEntityCommand('evidence.contract', { label }));
+    session.mutate(
+      (draft) => updateEntityMutator(draft, 'evidence.contract', { label }),
+      'update-entity',
+    );
   return { api, base, session, request, hook, edit };
 };
 const tick = async () => {

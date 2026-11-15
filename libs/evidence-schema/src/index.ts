@@ -1,4 +1,11 @@
 export {
+  JsonPatchItemSchema,
+  JsonPatchSchema,
+  ModelPatchRequestSchema,
+  type JsonPatchOperation,
+} from './ast/jsonPatch.js';
+
+export {
   ATTRIBUTE_NAME_PATTERN,
   CEL_VARIABLE_PATTERN,
   DOMAIN_ID_PATTERN,

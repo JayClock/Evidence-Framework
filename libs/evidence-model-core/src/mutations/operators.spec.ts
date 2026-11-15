@@ -3,42 +3,14 @@ import { describe, expect, it } from 'vitest';
 import { strictValidateDomainModel } from '@evidence-poc/evidence-schema';
 
 import {
-  addBreachCompensation,
-  introduceFulfillmentPair,
-  isolateDomainCalculator,
-  roleifyAndInvertDependency,
+  addBreachCompensationMutator,
+  introduceFulfillmentPairMutator,
+  isolateDomainCalculatorMutator,
+  roleifyAndInvertDependencyMutator,
   type FulfillmentPairIntent,
 } from './operators.js';
-import { decodeModelPatch, type ModelPatchCommand } from './patches.js';
-import { createModelSession } from '../session/createModelSession.js';
+import { runMutation } from '../testing/runMutation.js';
 import { createProcurementModel } from '../testing/modelFixture.js';
-
-const apply = (
-  model = createProcurementModel(),
-  patch: { commands: readonly unknown[] },
-) => {
-  const session = createModelSession({ document: model });
-
-  session.dispatchAll(decodeModelPatch(patch.commands));
-
-  return { session, document: session.getDocument() };
-};
-
-/**
- * First command of a patch, narrowed to the pair command it must be.
- *
- * Reading the union member directly keeps the assertion honest: a test that
- * casts to `any` would still pass if the operator stopped emitting the command.
- */
-const pairCommandOf = (commands: readonly ModelPatchCommand[]) => {
-  const command = commands[0];
-
-  if (command?.type !== 'create-fulfillment-pair') {
-    throw new Error('the operator did not emit a fulfillment pair command');
-  }
-
-  return command;
-};
 
 const pairIntent = (
   overrides: Partial<FulfillmentPairIntent> = {},
@@ -62,10 +34,15 @@ describe('introduceFulfillmentPair', () => {
   it('writes a request, a confirmation and the reference to the root contract', () => {
     const model = createProcurementModel();
     const intent = pairIntent();
-    const patch = introduceFulfillmentPair(model, intent);
-    const { document } = apply(model, patch);
+    const patch = runMutation(model, (draft) =>
+      introduceFulfillmentPairMutator(draft, intent),
+    );
+    const { document } = patch;
 
-    expect(patch.createdIds).toEqual(['request.refund', 'confirmation.refund']);
+    expect(patch.result.createdIds).toEqual([
+      'request.refund',
+      'confirmation.refund',
+    ]);
     expect(
       document.entities.find((entity) => entity.id === 'request.refund'),
     ).toMatchObject({
@@ -99,30 +76,34 @@ describe('introduceFulfillmentPair', () => {
   });
 
   it('models the mandatory business time instead of leaving it to the caller', () => {
-    const patch = introduceFulfillmentPair(createProcurementModel(), pairIntent());
-    const moment = pairCommandOf(patch.commands);
-
-    expect(moment.type).toBe('create-fulfillment-pair');
-    expect(moment.input.request.attributes.map((item) => item.name)).toEqual([
-      'started_at',
-      'expired_at',
-    ]);
+    const patch = runMutation(createProcurementModel(), (draft) =>
+      introduceFulfillmentPairMutator(draft, pairIntent()),
+    );
     expect(
-      moment.input.confirmation.attributes.map((item) => item.name),
+      patch.document.entities
+        .find((entity) => entity.id === 'request.refund')
+        ?.attributes?.map((item) => item.name),
+    ).toEqual(['started_at', 'expired_at']);
+    expect(
+      patch.document.entities
+        .find((entity) => entity.id === 'confirmation.refund')
+        ?.attributes?.map((item) => item.name),
     ).toEqual(['confirmed_at']);
   });
 
   it('keeps the proof as its own evidence and links it to the confirmation', () => {
     const model = createProcurementModel();
-    const patch = introduceFulfillmentPair(
-      model,
-      pairIntent({
-        proof: { id: 'evidence.refund-receipt', label: '退款水单' },
-      }),
+    const patch = runMutation(model, (draft) =>
+      introduceFulfillmentPairMutator(
+        draft,
+        pairIntent({
+          proof: { id: 'evidence.refund-receipt', label: '退款水单' },
+        }),
+      ),
     );
-    const { document } = apply(model, patch);
+    const { document } = patch;
 
-    expect(patch.createdIds).toEqual([
+    expect(patch.result.createdIds).toEqual([
       'evidence.refund-receipt',
       'request.refund',
       'confirmation.refund',
@@ -146,14 +127,16 @@ describe('introduceFulfillmentPair', () => {
 
   it('refuses a context it cannot name', () => {
     expect(() =>
-      introduceFulfillmentPair(
-        createProcurementModel(),
-        pairIntent({ contextRef: 'context.unknown' }),
+      runMutation(createProcurementModel(), (draft) =>
+        introduceFulfillmentPairMutator(
+          draft,
+          pairIntent({ contextRef: 'context.unknown' }),
+        ),
       ),
     ).toThrow("未知的上下文 'context.unknown'");
   });
 
-  it('omits the contract reference when the context has no single root contract', () => {
+  it('rejects a context with no single root contract atomically', () => {
     const model = createProcurementModel();
     const detached = {
       ...model,
@@ -163,36 +146,42 @@ describe('introduceFulfillmentPair', () => {
           : entity,
       ),
     };
-    const patch = introduceFulfillmentPair(detached, pairIntent());
-
-    expect(pairCommandOf(patch.commands).input.contractReferenceId).toBeUndefined();
+    expect(() =>
+      runMutation(detached, (draft) =>
+        introduceFulfillmentPairMutator(draft, pairIntent()),
+      ),
+    ).toThrow(/requires exactly one root Contract/);
   });
 });
 
 describe('addBreachCompensation', () => {
   it('declares the breach and the compensation pair that answers it', () => {
     const model = createProcurementModel();
-    const patch = addBreachCompensation(model, {
-      requestRef: 'request.payment',
-      confirmationRef: 'confirmation.payment',
-      condition: '超过约定窗口仍未到账',
-      request: {
-        id: 'request.penalty',
-        label: '逾期违约金申请',
-        responsibleRoleRef: 'role.seller',
-        window: '5 个工作日',
-      },
-      confirmation: {
-        id: 'confirmation.penalty',
-        label: '违约金到账确认',
-        responsibleRoleRef: 'role.buyer',
-      },
-    });
-    const { document } = apply(model, patch);
+    const patch = runMutation(model, (draft) =>
+      addBreachCompensationMutator(draft, {
+        requestRef: 'request.payment',
+        confirmationRef: 'confirmation.payment',
+        condition: '超过约定窗口仍未到账',
+        request: {
+          id: 'request.penalty',
+          label: '逾期违约金申请',
+          responsibleRoleRef: 'role.seller',
+          window: '5 个工作日',
+        },
+        confirmation: {
+          id: 'confirmation.penalty',
+          label: '违约金到账确认',
+          responsibleRoleRef: 'role.buyer',
+        },
+      }),
+    );
+    const { document } = patch;
 
-    expect(patch.createdIds[0]).toBe('rule.request.payment-breached');
+    expect(patch.result.createdIds[0]).toBe('rule.request.payment-breached');
     expect(
-      document.rules.find((rule) => rule.id === 'rule.request.payment-breached'),
+      document.rules.find(
+        (rule) => rule.id === 'rule.request.payment-breached',
+      ),
     ).toMatchObject({
       kind: 'breach',
       description: '超过约定窗口仍未到账',
@@ -201,58 +190,56 @@ describe('addBreachCompensation', () => {
       document.entities.some((entity) => entity.id === 'request.penalty'),
     ).toBe(true);
     expect(
-      document.entities.some(
-        (entity) => entity.id === 'confirmation.penalty',
-      ),
+      document.entities.some((entity) => entity.id === 'confirmation.penalty'),
     ).toBe(true);
   });
 
   it('keeps the model free of hidden retries: the breach is a rule, not an undo', () => {
-    const patch = addBreachCompensation(createProcurementModel(), {
-      requestRef: 'request.payment',
-      confirmationRef: 'confirmation.payment',
-      condition: '超过约定窗口仍未到账',
-      request: {
-        id: 'request.penalty',
-        label: '逾期违约金申请',
-        responsibleRoleRef: 'role.seller',
-      },
-      confirmation: {
-        id: 'confirmation.penalty',
-        label: '违约金到账确认',
-        responsibleRoleRef: 'role.buyer',
-      },
-    });
-    const [breach] = patch.commands;
-
-    if (breach?.type !== 'bind-breach-rule') {
-      throw new Error('the operator did not emit a breach rule');
-    }
-
-    expect(breach.input.rule.expression).toContain('now > request.expired_at');
-    expect(patch.commands.map((command) => command.type)).toEqual([
-      'bind-breach-rule',
-      'create-fulfillment-pair',
-    ]);
-  });
-
-  it('rejects a request that does not exist', () => {
-    expect(() =>
-      addBreachCompensation(createProcurementModel(), {
-        requestRef: 'request.ghost',
+    const patch = runMutation(createProcurementModel(), (draft) =>
+      addBreachCompensationMutator(draft, {
+        requestRef: 'request.payment',
         confirmationRef: 'confirmation.payment',
-        condition: '不存在',
+        condition: '超过约定窗口仍未到账',
         request: {
           id: 'request.penalty',
-          label: '违约金申请',
+          label: '逾期违约金申请',
           responsibleRoleRef: 'role.seller',
         },
         confirmation: {
           id: 'confirmation.penalty',
-          label: '违约金确认',
+          label: '违约金到账确认',
           responsibleRoleRef: 'role.buyer',
         },
       }),
+    );
+    expect(
+      patch.document.rules.find((rule) => rule.kind === 'breach')?.expression,
+    ).toContain('now > request.expired_at');
+    expect(
+      patch.document.entities.some((entity) => entity.id === 'request.penalty'),
+    ).toBe(true);
+    expect(patch.undo()).toStrictEqual(createProcurementModel());
+  });
+
+  it('rejects a request that does not exist', () => {
+    expect(() =>
+      runMutation(createProcurementModel(), (draft) =>
+        addBreachCompensationMutator(draft, {
+          requestRef: 'request.ghost',
+          confirmationRef: 'confirmation.payment',
+          condition: '不存在',
+          request: {
+            id: 'request.penalty',
+            label: '违约金申请',
+            responsibleRoleRef: 'role.seller',
+          },
+          confirmation: {
+            id: 'confirmation.penalty',
+            label: '违约金确认',
+            responsibleRoleRef: 'role.buyer',
+          },
+        }),
+      ),
     ).toThrow("'request.ghost' 不是履约请求");
   });
 });
@@ -260,21 +247,26 @@ describe('addBreachCompensation', () => {
 describe('roleifyAndInvertDependency', () => {
   it('moves the capability into its own contract and lets the confirmation play the role', () => {
     const model = createProcurementModel();
-    const patch = roleifyAndInvertDependency(model, {
-      targetConfirmationRef: 'confirmation.payment',
-      socket: { id: 'role.payment-capability', label: '付款能力' },
-      supporting: {
-        context: { id: 'context.wallet', label: '钱包支付服务' },
-        contract: { id: 'contract.wallet', label: '钱包支付服务协议' },
-        provider: { id: 'role.wallet-provider', label: '钱包服务商' },
-        consumer: { id: 'role.wallet-user', label: '付款用户' },
-        request: { id: 'request.wallet-charge', label: '钱包扣款请求' },
-        confirmation: { id: 'confirmation.wallet-charge', label: '钱包扣款确认' },
-      },
-    });
-    const { document } = apply(model, patch);
+    const patch = runMutation(model, (draft) =>
+      roleifyAndInvertDependencyMutator(draft, {
+        targetConfirmationRef: 'confirmation.payment',
+        socket: { id: 'role.payment-capability', label: '付款能力' },
+        supporting: {
+          context: { id: 'context.wallet', label: '钱包支付服务' },
+          contract: { id: 'contract.wallet', label: '钱包支付服务协议' },
+          provider: { id: 'role.wallet-provider', label: '钱包服务商' },
+          consumer: { id: 'role.wallet-user', label: '付款用户' },
+          request: { id: 'request.wallet-charge', label: '钱包扣款请求' },
+          confirmation: {
+            id: 'confirmation.wallet-charge',
+            label: '钱包扣款确认',
+          },
+        },
+      }),
+    );
+    const { document } = patch;
 
-    expect(patch.createdIds).toEqual([
+    expect(patch.result.createdIds).toEqual([
       'role.payment-capability',
       'context.wallet',
       'role.wallet-provider',
@@ -284,7 +276,9 @@ describe('roleifyAndInvertDependency', () => {
       'confirmation.wallet-charge',
     ]);
     expect(
-      document.entities.find((entity) => entity.id === 'role.payment-capability'),
+      document.entities.find(
+        (entity) => entity.id === 'role.payment-capability',
+      ),
     ).toMatchObject({
       category: 'role',
       kind: 'evidence',
@@ -311,19 +305,24 @@ describe('roleifyAndInvertDependency', () => {
 
   it('leaves the core contract independent of the provider parties', () => {
     const model = createProcurementModel();
-    const patch = roleifyAndInvertDependency(model, {
-      targetConfirmationRef: 'confirmation.payment',
-      socket: { id: 'role.payment-capability', label: '付款能力' },
-      supporting: {
-        context: { id: 'context.wallet', label: '钱包支付服务' },
-        contract: { id: 'contract.wallet', label: '钱包支付服务协议' },
-        provider: { id: 'role.wallet-provider', label: '钱包服务商' },
-        consumer: { id: 'role.wallet-user', label: '付款用户' },
-        request: { id: 'request.wallet-charge', label: '钱包扣款请求' },
-        confirmation: { id: 'confirmation.wallet-charge', label: '钱包扣款确认' },
-      },
-    });
-    const { document } = apply(model, patch);
+    const patch = runMutation(model, (draft) =>
+      roleifyAndInvertDependencyMutator(draft, {
+        targetConfirmationRef: 'confirmation.payment',
+        socket: { id: 'role.payment-capability', label: '付款能力' },
+        supporting: {
+          context: { id: 'context.wallet', label: '钱包支付服务' },
+          contract: { id: 'contract.wallet', label: '钱包支付服务协议' },
+          provider: { id: 'role.wallet-provider', label: '钱包服务商' },
+          consumer: { id: 'role.wallet-user', label: '付款用户' },
+          request: { id: 'request.wallet-charge', label: '钱包扣款请求' },
+          confirmation: {
+            id: 'confirmation.wallet-charge',
+            label: '钱包扣款确认',
+          },
+        },
+      }),
+    );
+    const { document } = patch;
     const coreContract = document.entities.find(
       (entity) => entity.id === 'contract.procurement',
     );
@@ -338,27 +337,9 @@ describe('roleifyAndInvertDependency', () => {
 
   it('keeps the resulting model free of static FM issues', () => {
     const model = createProcurementModel();
-    const patch = roleifyAndInvertDependency(model, {
-      targetConfirmationRef: 'confirmation.payment',
-      socket: { id: 'role.payment-capability', label: '付款能力' },
-      supporting: {
-        context: { id: 'context.wallet', label: '钱包支付服务' },
-        contract: { id: 'contract.wallet', label: '钱包支付服务协议' },
-        provider: { id: 'role.wallet-provider', label: '钱包服务商' },
-        consumer: { id: 'role.wallet-user', label: '付款用户' },
-        request: { id: 'request.wallet-charge', label: '钱包扣款请求' },
-        confirmation: { id: 'confirmation.wallet-charge', label: '钱包扣款确认' },
-      },
-    });
-    const { document } = apply(model, patch);
-
-    expect(strictValidateDomainModel(document).issues).toEqual([]);
-  });
-
-  it('rejects a target that is not a fulfillment confirmation', () => {
-    expect(() =>
-      roleifyAndInvertDependency(createProcurementModel(), {
-        targetConfirmationRef: 'request.payment',
+    const patch = runMutation(model, (draft) =>
+      roleifyAndInvertDependencyMutator(draft, {
+        targetConfirmationRef: 'confirmation.payment',
         socket: { id: 'role.payment-capability', label: '付款能力' },
         supporting: {
           context: { id: 'context.wallet', label: '钱包支付服务' },
@@ -372,6 +353,31 @@ describe('roleifyAndInvertDependency', () => {
           },
         },
       }),
+    );
+    const { document } = patch;
+
+    expect(strictValidateDomainModel(document).issues).toEqual([]);
+  });
+
+  it('rejects a target that is not a fulfillment confirmation', () => {
+    expect(() =>
+      runMutation(createProcurementModel(), (draft) =>
+        roleifyAndInvertDependencyMutator(draft, {
+          targetConfirmationRef: 'request.payment',
+          socket: { id: 'role.payment-capability', label: '付款能力' },
+          supporting: {
+            context: { id: 'context.wallet', label: '钱包支付服务' },
+            contract: { id: 'contract.wallet', label: '钱包支付服务协议' },
+            provider: { id: 'role.wallet-provider', label: '钱包服务商' },
+            consumer: { id: 'role.wallet-user', label: '付款用户' },
+            request: { id: 'request.wallet-charge', label: '钱包扣款请求' },
+            confirmation: {
+              id: 'confirmation.wallet-charge',
+              label: '钱包扣款确认',
+            },
+          },
+        }),
+      ),
     ).toThrow('是时段凭证');
   });
 });
@@ -417,10 +423,12 @@ const calculatorIntent = (overrides: Record<string, unknown> = {}) => ({
 describe('isolateDomainCalculator', () => {
   it('creates the Domain Context, the component and the derivation together', () => {
     const model = createProcurementModel();
-    const patch = isolateDomainCalculator(model, calculatorIntent());
-    const { document } = apply(model, patch);
+    const patch = runMutation(model, (draft) =>
+      isolateDomainCalculatorMutator(draft, calculatorIntent()),
+    );
+    const { document } = patch;
 
-    expect(patch.createdIds).toEqual([
+    expect(patch.result.createdIds).toEqual([
       'context.fee-rules',
       'thing.fee-calculator',
       'request.payment.service_fee',
@@ -441,15 +449,21 @@ describe('isolateDomainCalculator', () => {
 
   it('binds both sides of the link the static check demands', () => {
     const model = createProcurementModel();
-    const { document } = apply(model, isolateDomainCalculator(model, calculatorIntent()));
+    const { document } = runMutation(model, (draft) =>
+      isolateDomainCalculatorMutator(draft, calculatorIntent()),
+    );
     const request = document.entities.find(
       (entity) => entity.id === 'request.payment',
     );
 
     expect(
-      request?.attributes?.find((attribute) => attribute.name === 'service_fee'),
+      request?.attributes?.find(
+        (attribute) => attribute.name === 'service_fee',
+      ),
     ).toMatchObject({ derivedByRuleRef: 'rule.service-fee' });
-    expect(document.rules.find((rule) => rule.id === 'rule.service-fee')).toMatchObject({
+    expect(
+      document.rules.find((rule) => rule.id === 'rule.service-fee'),
+    ).toMatchObject({
       contextRef: 'context.procurement',
       target: { entityRef: 'request.payment', attribute: 'service_fee' },
     });
@@ -457,51 +471,63 @@ describe('isolateDomainCalculator', () => {
 
   it('keeps the resulting model free of static FM issues', () => {
     const model = createProcurementModel();
-    const { document } = apply(model, isolateDomainCalculator(model, calculatorIntent()));
+    const { document } = runMutation(model, (draft) =>
+      isolateDomainCalculatorMutator(draft, calculatorIntent()),
+    );
 
     expect(strictValidateDomainModel(document).issues).toEqual([]);
   });
 
   it('reuses a Domain Context that already exists instead of creating a second', () => {
     const model = createProcurementModel();
-    const patch = isolateDomainCalculator(model, {
-      ...calculatorIntent(),
-      context: { id: 'context.catalogue', label: '商品目录上下文' },
-    });
+    const patch = runMutation(model, (draft) =>
+      isolateDomainCalculatorMutator(draft, {
+        ...calculatorIntent(),
+        context: { id: 'context.catalogue', label: '商品目录上下文' },
+      }),
+    );
 
-    expect(patch.createdIds).not.toContain('context.catalogue');
+    expect(patch.result.createdIds).not.toContain('context.catalogue');
   });
 
   it('adds an attribute that the host does not carry yet', () => {
     const model = createProcurementModel();
-    const patch = isolateDomainCalculator(model, {
-      ...calculatorIntent(),
-      host: {
-        ref: 'confirmation.payment',
-        attribute: {
-          name: 'net_amount',
-          label: '实收金额',
-          meaning: '扣费后的实收金额',
-          valueType: 'money' as const,
-          required: true,
-          keyData: true,
+    const patch = runMutation(model, (draft) =>
+      isolateDomainCalculatorMutator(draft, {
+        ...calculatorIntent(),
+        host: {
+          ref: 'confirmation.payment',
+          attribute: {
+            name: 'net_amount',
+            label: '实收金额',
+            meaning: '扣费后的实收金额',
+            valueType: 'money' as const,
+            required: true,
+            keyData: true,
+          },
         },
-      },
-      rule: {
-        id: 'rule.net-amount',
-        label: '实收金额派生',
-        description: '实收金额 = 请求金额 × 费率',
-        expression: 'host.requested_minor_units * calculator.rate',
-        resultType: 'money' as const,
-      },
-    });
+        rule: {
+          id: 'rule.net-amount',
+          label: '实收金额派生',
+          description: '实收金额 = 请求金额 × 费率',
+          expression: 'host.requested_minor_units * calculator.rate',
+          resultType: 'money' as const,
+        },
+      }),
+    );
 
-    expect(patch.commands.map((command) => command.type)).toContain('add-attribute');
+    expect(
+      patch.document.entities
+        .find((entity) => entity.id === 'confirmation.payment')
+        ?.attributes?.some((attribute) => attribute.name === 'net_amount'),
+    ).toBe(true);
   });
 
   it('refuses to overwrite a value that is already derived', () => {
     const model = createProcurementModel();
-    const request = model.entities.find((entity) => entity.id === 'request.payment');
+    const request = model.entities.find(
+      (entity) => entity.id === 'request.payment',
+    );
 
     if (request?.category !== 'evidence') {
       throw new Error('fixture changed');
@@ -516,29 +542,30 @@ describe('isolateDomainCalculator', () => {
     });
 
     expect(() =>
-      isolateDomainCalculator(model, {
-        ...calculatorIntent(),
-        host: {
-          ref: 'request.payment',
-          attribute: {
-            name: 'already_derived',
-            label: '已有派生',
-            meaning: '已经由规则写入',
-            valueType: 'int',
+      runMutation(model, (draft) =>
+        isolateDomainCalculatorMutator(draft, {
+          ...calculatorIntent(),
+          host: {
+            ref: 'request.payment',
+            attribute: {
+              name: 'already_derived',
+              label: '已有派生',
+              meaning: '已经由规则写入',
+              valueType: 'int',
+            },
           },
-        },
-      }),
+        }),
+      ),
     ).toThrow('已有派生规则');
   });
 
   it('refuses a context that is not a Domain Context', () => {
     expect(() =>
-      isolateDomainCalculator(
-        createProcurementModel(),
-        {
+      runMutation(createProcurementModel(), (draft) =>
+        isolateDomainCalculatorMutator(draft, {
           ...calculatorIntent(),
           context: { id: 'context.procurement', label: '采购上下文' },
-        },
+        }),
       ),
     ).toThrow('不是领域上下文');
   });

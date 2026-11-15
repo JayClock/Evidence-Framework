@@ -1,51 +1,32 @@
+import { applyPatches, produceWithPatches, type Patch } from 'immer';
 import {
   type DomainModelDocument,
+  type JsonPatchOperation,
   type ValidationResult,
   strictValidateDomainModel,
 } from '@evidence-poc/evidence-schema';
-
-import type { ModelCommand } from '../commands/types.js';
-import {
-  CommandSequence,
-  ReplaceDocumentCommand,
-} from '../commands/sequence.js';
 import { createDomainGraph, type DomainGraph } from '../model/graph.js';
-
-export interface ModelSelection {
-  nodeId: string | null;
-  attributeName: string | null;
-}
-
-export type ModelSessionEvent =
-  | {
-      type: 'document-changed';
-      commands: readonly string[];
-      affectedIds: readonly string[];
-    }
-  | { type: 'selection-changed'; selection: ModelSelection }
-  | { type: 'history-changed'; canUndo: boolean; canRedo: boolean };
+import { applyJsonPatchMutator } from './jsonPatches.js';
+import { snapshotRecipeResult } from './recipeResult.js';
+import type {
+  HistoryEntry,
+  ModelRecipe,
+  ModelSelection,
+  ModelSessionEvent,
+} from './types.js';
 
 export interface ModelSessionOptions {
   document: DomainModelDocument;
-  /** Maximum undo steps kept in memory; older steps are dropped. */
   historyLimit?: number;
-  /**
-   * Reject a transition that breaks static FM checks.
-   *
-   * Off by default because progressive modeling saves one object at a time;
-   * agent commits and import flows turn it on to protect the saved tree.
-   */
+  /** Progressive editing may be incomplete; opt in to reject static FM violations. */
   validateOnDispatch?: boolean;
 }
 
 export class ModelSessionValidationError extends Error {
   readonly issues: readonly string[];
-
   constructor(result: ValidationResult) {
     super(
-      `dispatch rejected: ${result.issues.length} static FM issue(s); first: ${
-        result.issues[0]?.message ?? 'unknown'
-      }`,
+      `mutation rejected: ${result.issues.length} static FM issue(s); first: ${result.issues[0]?.message ?? 'unknown'}`,
     );
     this.name = 'ModelSessionValidationError';
     this.issues = result.issues.map(
@@ -61,19 +42,13 @@ export interface ModelSession {
   validate(): ValidationResult;
   canUndo(): boolean;
   canRedo(): boolean;
-  /** Applies one command and records it as a single undo step. */
-  dispatch<TResult>(command: ModelCommand<TResult>): TResult;
-  /** Applies commands as one transaction and one undo step. */
-  dispatchAll<TResult>(
-    commands: readonly ModelCommand<TResult>[],
-    label?: string,
-  ): readonly TResult[];
+  mutate<TResult>(recipe: ModelRecipe<TResult>, label?: string): TResult;
+  applyPatchBatch(patches: readonly JsonPatchOperation[], label?: string): void;
   undo(): boolean;
   redo(): boolean;
   select(nodeId: string | null): void;
   selectAttribute(nodeId: string, attributeName: string | null): void;
   clearSelection(): void;
-  /** Replaces the document, e.g. after reloading the source tree from disk. */
   replaceDocument(
     document: DomainModelDocument,
     options?: { resetHistory?: boolean },
@@ -81,164 +56,144 @@ export interface ModelSession {
   subscribe(listener: (event: ModelSessionEvent) => void): () => void;
 }
 
-interface HistoryEntry {
-  label: string;
-  forward: ModelCommand<unknown>;
-  inverse: ModelCommand<unknown>;
-}
-
-const DEFAULT_HISTORY_LIMIT = 100;
-
-const emptySelection: ModelSelection = { nodeId: null, attributeName: null };
+/** Array shifts are not changes to the shifted objects. Include deleted/renamed
+ * identities from before as well as additions from after, plus edge endpoints. */
+export const extractAffectedIds = (
+  before: DomainModelDocument,
+  after: DomainModelDocument,
+): readonly string[] => {
+  const affected = new Set<string>();
+  const previous = new Map(
+    [...before.entities, ...before.relationships, ...before.rules].map(
+      (item) => [item.id, item],
+    ),
+  );
+  const next = new Map(
+    [...after.entities, ...after.relationships, ...after.rules].map((item) => [
+      item.id,
+      item,
+    ]),
+  );
+  for (const [id, item] of [...previous, ...next]) {
+    if (previous.get(id) === next.get(id)) continue;
+    affected.add(id);
+    if (item.type === 'relationship') {
+      affected.add(item.sourceRef);
+      affected.add(item.targetRef);
+    }
+  }
+  return [...affected];
+};
 
 export function createModelSession(options: ModelSessionOptions): ModelSession {
-  const historyLimit = Math.max(
-    1,
-    options.historyLimit ?? DEFAULT_HISTORY_LIMIT,
-  );
+  const historyLimit = Number.isFinite(options.historyLimit)
+    ? Math.max(1, Math.floor(options.historyLimit!))
+    : 100;
   const listeners = new Set<(event: ModelSessionEvent) => void>();
   let document = options.document;
   let graph: DomainGraph | undefined;
-  let selection: ModelSelection = emptySelection;
+  let selection: ModelSelection = { nodeId: null, attributeName: null };
   let undoStack: HistoryEntry[] = [];
   let redoStack: HistoryEntry[] = [];
-
   const emit = (event: ModelSessionEvent): void => {
-    for (const listener of listeners) {
-      listener(event);
-    }
+    for (const listener of listeners) listener(event);
   };
-
-  const emitHistory = (): void => {
+  const emitHistory = (): void =>
     emit({
       type: 'history-changed',
       canUndo: undoStack.length > 0,
       canRedo: redoStack.length > 0,
     });
-  };
-
-  const applyDocument = (next: DomainModelDocument): void => {
+  const updateDocument = (next: DomainModelDocument): void => {
     document = next;
     graph = undefined;
-
-    if (
-      selection.nodeId !== null &&
-      !document.entities.some((entity) => entity.id === selection.nodeId)
+    const selected = document.entities.find(
+      (entity) => entity.id === selection.nodeId,
+    );
+    if (selection.nodeId !== null && selected === undefined) {
+      selection = { nodeId: null, attributeName: null };
+      emit({ type: 'selection-changed', selection });
+    } else if (
+      selection.attributeName !== null &&
+      !selected?.attributes?.some(
+        (attribute) => attribute.name === selection.attributeName,
+      )
     ) {
-      selection = emptySelection;
+      selection = { nodeId: selection.nodeId, attributeName: null };
       emit({ type: 'selection-changed', selection });
     }
   };
-
   const guard = (next: DomainModelDocument): void => {
-    if (options.validateOnDispatch === true) {
-      const result = strictValidateDomainModel(next);
-
-      if (!result.valid) {
-        throw new ModelSessionValidationError(result);
-      }
+    if (options.validateOnDispatch) {
+      const validation = strictValidateDomainModel(next);
+      if (!validation.valid) throw new ModelSessionValidationError(validation);
     }
   };
-
-  const record = (entry: HistoryEntry): void => {
-    undoStack = [...undoStack, entry].slice(-historyLimit);
+  const record = (
+    next: DomainModelDocument,
+    patches: Patch[],
+    inversePatches: Patch[],
+    label: string,
+  ): void => {
+    if (patches.length === 0) return;
+    guard(next);
+    const affectedIds = extractAffectedIds(document, next);
+    undoStack = [
+      ...undoStack,
+      { label, patches, inversePatches, affectedIds },
+    ].slice(-historyLimit);
     redoStack = [];
+    updateDocument(next);
+    emit({ type: 'document-changed', commands: [label], affectedIds });
+    emitHistory();
   };
-
+  const mutate = <TResult>(
+    recipe: ModelRecipe<TResult>,
+    label = 'mutation',
+  ): TResult => {
+    let result!: TResult;
+    const [next, patches, inverse] = produceWithPatches(document, (draft) => {
+      result = snapshotRecipeResult(recipe(draft));
+    });
+    record(next, patches, inverse, label);
+    return result;
+  };
+  const travel = (undo: boolean): boolean => {
+    const entry = (undo ? undoStack : redoStack).at(-1);
+    if (!entry) return false;
+    const next = applyPatches(
+      document,
+      undo ? entry.inversePatches : entry.patches,
+    );
+    if (undo) {
+      undoStack.pop();
+      redoStack.push(entry);
+    } else {
+      redoStack.pop();
+      undoStack.push(entry);
+    }
+    updateDocument(next);
+    emit({
+      type: 'document-changed',
+      commands: [`${undo ? 'undo' : 'redo'}:${entry.label}`],
+      affectedIds: entry.affectedIds,
+    });
+    emitHistory();
+    return true;
+  };
   return {
     getDocument: () => document,
-    getGraph: () => {
-      graph ??= createDomainGraph(document);
-
-      return graph;
-    },
+    getGraph: () => (graph ??= createDomainGraph(document)),
     getSelection: () => selection,
     validate: () => strictValidateDomainModel(document),
     canUndo: () => undoStack.length > 0,
     canRedo: () => redoStack.length > 0,
-    dispatch: <TResult>(command: ModelCommand<TResult>): TResult => {
-      const outcome = command.apply(document);
-      guard(outcome.document);
-      applyDocument(outcome.document);
-      record({
-        label: command.type,
-        forward: command as ModelCommand<unknown>,
-        inverse: outcome.inverse,
-      });
-      emit({
-        type: 'document-changed',
-        commands: [command.type],
-        affectedIds: outcome.affectedIds,
-      });
-      emitHistory();
-
-      return outcome.result;
+    mutate,
+    applyPatchBatch: (patches, label = 'batch-patches') => {
+      mutate((draft) => applyJsonPatchMutator(draft, patches), label);
     },
-    dispatchAll: <TResult>(
-      commands: readonly ModelCommand<TResult>[],
-      label = 'sequence',
-    ): readonly TResult[] => {
-      const sequence = new CommandSequence(
-        commands as readonly ModelCommand<unknown>[],
-        label,
-      );
-      const outcome = sequence.apply(document);
-      guard(outcome.document);
-      applyDocument(outcome.document);
-      record({
-        label,
-        forward: sequence,
-        inverse: outcome.inverse,
-      });
-      emit({
-        type: 'document-changed',
-        commands: commands.map((command) => command.type),
-        affectedIds: outcome.affectedIds,
-      });
-      emitHistory();
-
-      return outcome.result as TResult[];
-    },
-    undo: () => {
-      const entry = undoStack[undoStack.length - 1];
-
-      if (entry === undefined) {
-        return false;
-      }
-
-      const outcome = entry.inverse.apply(document);
-      undoStack = undoStack.slice(0, -1);
-      redoStack = [...redoStack, entry];
-      applyDocument(outcome.document);
-      emit({
-        type: 'document-changed',
-        commands: [`undo:${entry.label}`],
-        affectedIds: outcome.affectedIds,
-      });
-      emitHistory();
-
-      return true;
-    },
-    redo: () => {
-      const entry = redoStack[redoStack.length - 1];
-
-      if (entry === undefined) {
-        return false;
-      }
-
-      const outcome = entry.forward.apply(document);
-      redoStack = redoStack.slice(0, -1);
-      undoStack = [...undoStack, entry].slice(-historyLimit);
-      applyDocument(outcome.document);
-      emit({
-        type: 'document-changed',
-        commands: [`redo:${entry.label}`],
-        affectedIds: outcome.affectedIds,
-      });
-      emitHistory();
-
-      return true;
-    },
+    undo: () => travel(true),
+    redo: () => travel(false),
     select: (nodeId) => {
       selection = { nodeId, attributeName: null };
       emit({ type: 'selection-changed', selection });
@@ -248,35 +203,31 @@ export function createModelSession(options: ModelSessionOptions): ModelSession {
       emit({ type: 'selection-changed', selection });
     },
     clearSelection: () => {
-      selection = emptySelection;
+      selection = { nodeId: null, attributeName: null };
       emit({ type: 'selection-changed', selection });
     },
-    replaceDocument: (next, replaceOptions = {}) => {
-      const previous = document;
-
-      applyDocument(next);
-
-      if (replaceOptions.resetHistory === true) {
+    replaceDocument: (next, opts) => {
+      if (opts?.resetHistory) {
         undoStack = [];
         redoStack = [];
-      } else {
-        record({
-          label: 'replace-document',
-          forward: new ReplaceDocumentCommand(next),
-          inverse: new ReplaceDocumentCommand(previous),
+        const affectedIds = extractAffectedIds(document, next);
+        updateDocument(next);
+        emit({
+          type: 'document-changed',
+          commands: ['replace-document'],
+          affectedIds,
         });
+        emitHistory();
+      } else {
+        const [replacement, patches, inverse] = produceWithPatches(
+          document,
+          () => next,
+        );
+        record(replacement, patches, inverse, 'replace-document');
       }
-
-      emit({
-        type: 'document-changed',
-        commands: ['replace-document'],
-        affectedIds: next.entities.map((entity) => entity.id),
-      });
-      emitHistory();
     },
     subscribe: (listener) => {
       listeners.add(listener);
-
       return () => {
         listeners.delete(listener);
       };

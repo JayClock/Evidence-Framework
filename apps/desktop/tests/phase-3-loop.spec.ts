@@ -9,10 +9,7 @@ import {
   type ModelPatchRequest,
   type SensorReport,
 } from '@evidence-poc/evidence-agent';
-import {
-  createModelSession,
-  decodeModelPatch,
-} from '@evidence-poc/evidence-model-core';
+import { createModelSession } from '@evidence-poc/evidence-model-core';
 import { readModelDirectory } from '@evidence-poc/evidence-model-io';
 import type { EntityAST } from '@evidence-poc/evidence-schema';
 
@@ -125,13 +122,11 @@ describe('phase 3 control loop', () => {
         publishReport: (report) => published.push(report),
         requestPatch: async (patch) => {
           applied.push(patch);
-          const commands = decodeModelPatch(patch.commands);
-
-          session.dispatchAll(commands, `agent:${patch.rationale}`);
+          session.applyPatchBatch(patch.patches, `agent:${patch.rationale}`);
 
           return {
             success: true,
-            appliedCommands: commands.map((command) => command.type),
+            appliedCommands: patch.patches.map((operation) => operation.op),
           };
         },
       },
@@ -169,14 +164,14 @@ describe('phase 3 control loop', () => {
 
     const appliedResult = await apply?.execute('call-1', {
       rationale: '补一个审计员参与方',
-      commands: [{ type: 'create-entity', entity: auditor }],
+      patches: [{ op: 'add', path: '/entities/-', value: auditor }],
     });
 
     expect(appliedResult?.isError).toBeUndefined();
     expect(applied).toEqual([
       {
         rationale: '补一个审计员参与方',
-        commands: [{ type: 'create-entity', entity: auditor }],
+        patches: [{ op: 'add', path: '/entities/-', value: auditor }],
       },
     ]);
     expect(

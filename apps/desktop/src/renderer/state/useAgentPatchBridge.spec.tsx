@@ -39,7 +39,9 @@ describe('useAgentPatchBridge', () => {
       requestId: 'patch-1',
       patch: {
         rationale: '新增审计员',
-        commands: [{ type: 'create-entity', entity: extraParticipant() }],
+        patches: [
+          { op: 'add', path: '/entities/-', value: extraParticipant() },
+        ],
       },
     });
 
@@ -53,7 +55,7 @@ describe('useAgentPatchBridge', () => {
         requestId: 'patch-1',
         result: {
           success: true,
-          appliedCommands: ['create-entity'],
+          appliedCommands: ['add'],
         },
       },
     ]);
@@ -71,7 +73,7 @@ describe('useAgentPatchBridge', () => {
       requestId: 'patch-2',
       patch: {
         rationale: '删掉根合同',
-        commands: [{ type: 'delete-entity', entityId: 'evidence.contract' }],
+        patches: [{ op: 'remove', path: '/entities/9999' }],
       },
     });
 
@@ -98,7 +100,10 @@ describe('useAgentPatchBridge', () => {
     render(<BridgeHarness session={session} />);
     api.agentMock.requestPatch({
       requestId: 'patch-3',
-      patch: { rationale: '坏数据', commands: [{ type: 'drop-table' }] },
+      patch: {
+        rationale: '坏数据',
+        patches: [{ op: 'replace', path: 'not-a-pointer', value: 'bad' }],
+      },
     });
 
     expect(api.agentMock.patchResponses).toEqual([
@@ -106,8 +111,7 @@ describe('useAgentPatchBridge', () => {
         requestId: 'patch-3',
         result: {
           success: false,
-          error:
-            "commands[0].type 'drop-table' is not a supported model command.",
+          error: expect.any(String),
         },
       },
     ]);
@@ -125,7 +129,9 @@ describe('useAgentPatchBridge', () => {
       requestId: 'patch-5',
       patch: {
         rationale: '新增审计员',
-        commands: [{ type: 'create-entity', entity: extraParticipant() }],
+        patches: [
+          { op: 'add', path: '/entities/-', value: extraParticipant() },
+        ],
       },
     });
 
@@ -133,7 +139,7 @@ describe('useAgentPatchBridge', () => {
     const patch = onApplied.mock.calls[0]?.[0] as AppliedPatch;
 
     expect(patch.rationale).toBe('新增审计员');
-    expect(patch.commands).toEqual(['create-entity']);
+    expect(patch.commands).toEqual(['add']);
     expect(patch.before).toBe(before);
     expect(patch.after).toBe(session.getDocument());
   });
@@ -148,7 +154,7 @@ describe('useAgentPatchBridge', () => {
       requestId: 'patch-6',
       patch: {
         rationale: '删掉根合同',
-        commands: [{ type: 'delete-entity', entityId: 'evidence.contract' }],
+        patches: [{ op: 'remove', path: '/entities/9999' }],
       },
     });
 
@@ -163,7 +169,7 @@ describe('useAgentPatchBridge', () => {
     unmount();
     api.agentMock.requestPatch({
       requestId: 'patch-4',
-      patch: { rationale: '延迟到达', commands: [] },
+      patch: { rationale: '延迟到达', patches: [] },
     });
 
     expect(api.agentMock.patchResponses).toEqual([]);

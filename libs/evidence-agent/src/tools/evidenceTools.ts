@@ -8,18 +8,22 @@ import {
   DomainIdSchema,
   FulfillmentPairIntentSchema,
   RoleInversionIntentSchema,
+  ModelPatchRequestSchema,
+  JsonPatchSchema,
+  type JsonPatchOperation,
   type DomainModelDocument,
 } from '@evidence-poc/evidence-schema';
 import {
-  decodeModelPatch,
-  addBreachCompensation,
+  applyModelPatches,
+  createModelPatch,
+  addBreachCompensationMutator,
   annotateContractClauses,
   domainNounOf,
-  introduceFulfillmentPair,
-  isolateDomainCalculator,
+  introduceFulfillmentPairMutator,
+  isolateDomainCalculatorMutator,
   parseBlueprint,
-  roleifyAndInvertDependency,
-  type OperatorPatch,
+  roleifyAndInvertDependencyMutator,
+  type OperatorResult,
 } from '@evidence-poc/evidence-model-core';
 import { z } from 'zod';
 import { registerZodTool } from './registerZodTool.js';
@@ -35,7 +39,7 @@ const nonEmptyText = (description?: string) =>
 
 const apiDiffParameters = z
   .object({
-    proposedCommands: z.array(z.unknown()).optional(),
+    proposedPatches: JsonPatchSchema.optional(),
   })
   .strict();
 const syncApiParameters = z.object({ rationale: nonEmptyText() }).strict();
@@ -46,15 +50,7 @@ const sensorParameters = z
     ).optional(),
   })
   .strict();
-const applyPatchParameters = z
-  .object({
-    rationale: nonEmptyText('本批修改的业务理由，会显示在活动流里。'),
-    commands: z
-      .array(z.unknown())
-      .min(1)
-      .describe('ModelCommand 数组，每项必须带 type 字段。'),
-  })
-  .strict();
+const applyPatchParameters = ModelPatchRequestSchema;
 const emptyParameters = z.object({}).strict();
 const clauseParameters = z
   .object({
@@ -84,10 +80,10 @@ export interface CanvasContext {
   };
 }
 
-/** One proposed change set. Commands stay opaque here and are validated downstream. */
+/** One RFC 6902 change set, validated again at the renderer boundary. */
 export interface ModelPatchRequest {
   rationale: string;
-  commands: readonly unknown[];
+  patches: readonly JsonPatchOperation[];
 }
 
 export type ModelPatchResult =
@@ -137,19 +133,6 @@ const textResult = <T>(value: T, text: string) => ({
   details: value,
 });
 
-const commandTypes = (commands: readonly unknown[]): string[] =>
-  commands.map((command, index) => {
-    if (
-      typeof command !== 'object' ||
-      command === null ||
-      typeof (command as { type?: unknown }).type !== 'string'
-    ) {
-      throw new Error(`commands[${index}] 缺少字符串 type 字段。`);
-    }
-
-    return (command as { type: string }).type;
-  });
-
 /**
  * Builds the tools that turn the desktop into the agent's hands and eyes.
  *
@@ -168,12 +151,12 @@ export const createEvidenceToolsExtension =
       parameters: apiDiffParameters,
       execute: async (_id, params) => {
         const current = await handlers.loadDocument();
-        let proposed = current;
-        for (const command of decodeModelPatch(params.proposedCommands ?? [])) {
-          proposed = command.apply(proposed).document;
-        }
+        const proposed = applyModelPatches(
+          current,
+          params.proposedPatches ?? [],
+        );
         const base =
-          params.proposedCommands === undefined
+          params.proposedPatches === undefined
             ? await handlers.loadBaseDocument?.()
             : current;
         const outcome = await checkNativeApiSensor({
@@ -243,14 +226,11 @@ export const createEvidenceToolsExtension =
       name: TOOL_NAMES.applyModelPatch,
       label: '应用模型补丁',
       description:
-        '把强类型 ModelCommand 补丁提交给桌面端内存模型，画布立即更新且用户可按 Cmd+Z 撤销。不要直接改 .evidence/fm 文件。',
+        '把 RFC 6902 JSON Patch 提交给桌面端内存模型，path/from 使用 JSON Pointer（如 /entities/0/label）；支持 add/remove/replace/move/copy/test，画布立即更新且用户可按 Cmd+Z 撤销。不要直接改 .evidence/fm 文件。',
       parameters: applyPatchParameters,
       execute: async (_toolCallId, params) => {
-        const types = commandTypes(params.commands);
-        const result = await handlers.applyModelPatch({
-          rationale: params.rationale,
-          commands: params.commands,
-        });
+        const types = params.patches.map((patch) => patch.op);
+        const result = await handlers.applyModelPatch(params);
 
         return result.success
           ? textResult<ModelPatchResult>(
@@ -394,12 +374,12 @@ export const createEvidenceToolsExtension =
      */
     const runOperator = async (
       rationale: string,
-      build: (document: DomainModelDocument) => OperatorPatch,
+      build: (document: DomainModelDocument) => OperatorResult,
     ): Promise<OperatorToolResult> => {
-      let patch: OperatorPatch;
+      let patch: ReturnType<typeof createModelPatch<OperatorResult>>;
 
       try {
-        patch = build(await handlers.loadDocument());
+        patch = createModelPatch(await handlers.loadDocument(), build);
       } catch (error) {
         const message = error instanceof Error ? error.message : '未知原因';
 
@@ -412,13 +392,13 @@ export const createEvidenceToolsExtension =
 
       const result = await handlers.applyModelPatch({
         rationale,
-        commands: patch.commands,
+        patches: patch.patches,
       });
 
       return result.success
         ? operatorResult(
-            { ...result, createdIds: patch.createdIds },
-            `已写入：${patch.createdIds.join(', ')}。`,
+            { ...result, createdIds: patch.result.createdIds },
+            `已写入：${patch.result.createdIds.join(', ')}。`,
           )
         : operatorResult(result, `补丁被拒绝：${result.error}`, true);
     };
@@ -432,7 +412,7 @@ export const createEvidenceToolsExtension =
       execute: async (_toolCallId, params) =>
         runOperator(
           `新增履约项：${params.request.label} / ${params.confirmation.label}`,
-          (document) => introduceFulfillmentPair(document, params),
+          (document) => introduceFulfillmentPairMutator(document, params),
         ),
     });
 
@@ -444,7 +424,7 @@ export const createEvidenceToolsExtension =
       parameters: BreachCompensationIntentSchema,
       execute: async (_toolCallId, params) =>
         runOperator(`违约补偿：${params.condition}`, (document) =>
-          addBreachCompensation(document, params),
+          addBreachCompensationMutator(document, params),
         ),
     });
 
@@ -457,7 +437,7 @@ export const createEvidenceToolsExtension =
       execute: async (_toolCallId, params) =>
         runOperator(
           `反转依赖：${params.socket.label} 交由 ${params.supporting.contract.label} 履约`,
-          (document) => roleifyAndInvertDependency(document, params),
+          (document) => roleifyAndInvertDependencyMutator(document, params),
         ),
     });
 
@@ -469,7 +449,7 @@ export const createEvidenceToolsExtension =
       parameters: DomainCalculatorIntentSchema,
       execute: async (_toolCallId, params) =>
         runOperator(`抽出领域计算：${params.calculator.label}`, (document) =>
-          isolateDomainCalculator(document, params),
+          isolateDomainCalculatorMutator(document, params),
         ),
     });
   };

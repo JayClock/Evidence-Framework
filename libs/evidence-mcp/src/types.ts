@@ -1,4 +1,7 @@
-import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
+import type {
+  DomainModelDocument,
+  JsonPatchOperation,
+} from '@evidence-poc/evidence-schema';
 
 /** Stable failure reasons a bridge call can report. */
 export type EvidenceMcpErrorCode =
@@ -99,7 +102,7 @@ export interface McpScreenshot {
 
 export interface McpPatchInput {
   rationale: string;
-  commands: readonly unknown[];
+  patches: readonly JsonPatchOperation[];
 }
 
 export interface McpPatchResult {

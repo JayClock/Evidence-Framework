@@ -16,9 +16,9 @@ import {
   type ValueType,
 } from '@evidence-poc/evidence-schema';
 import {
-  AddAttributeCommand,
-  RemoveAttributeCommand,
-  UpdateAttributeCommand,
+  addAttributeMutator,
+  removeAttributeMutator,
+  updateAttributeMutator,
   buildKeyDataLedger,
   type DomainGraph,
   type ModelSession,
@@ -94,8 +94,10 @@ export const AttributeDataGrid = ({
     attribute: AttributeAST,
     patch: Readonly<Partial<AttributeAST>>,
   ) => {
-    session.dispatch(
-      new UpdateAttributeCommand(entity.id, attribute.name, patch),
+    session.mutate(
+      (draft) =>
+        updateAttributeMutator(draft, entity.id, attribute.name, patch),
+      'update-attribute',
     );
   };
 
@@ -220,10 +222,12 @@ export const AttributeDataGrid = ({
               type="button"
               aria-label={`删除属性 ${attribute.name}`}
               onClick={() =>
-                session.dispatch(
-                  new RemoveAttributeCommand(entity.id, attribute.name, {
-                    cascade: true,
-                  }),
+                session.mutate(
+                  (draft) =>
+                    removeAttributeMutator(draft, entity.id, attribute.name, {
+                      cascade: true,
+                    }),
+                  'remove-attribute',
                 )
               }
               className="rounded border border-evidence-line px-1 py-0.5 text-[9px] text-evidence-muted hover:border-evidence-evidence hover:text-evidence-evidence"
@@ -363,13 +367,15 @@ export const AttributeDataGrid = ({
         onClick={() => {
           const next = nextAttributeName(attributes);
 
-          session.dispatch(
-            new AddAttributeCommand(entity.id, {
-              name: next.name,
-              label: `新属性（New Attribute ${next.index}）`,
-              meaning: '待补充提供方与算法。',
-              valueType: 'string',
-            }),
+          session.mutate(
+            (draft) =>
+              addAttributeMutator(draft, entity.id, {
+                name: next.name,
+                label: `新属性（New Attribute ${next.index}）`,
+                meaning: '待补充提供方与算法。',
+                valueType: 'string',
+              }),
+            'add-attribute',
           );
         }}
         className="w-full rounded border border-dashed border-evidence-line py-1 text-[10px] text-evidence-muted hover:border-evidence-accent hover:text-evidence-ink"

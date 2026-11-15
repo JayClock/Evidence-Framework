@@ -89,8 +89,9 @@ describe('useMcpBridge', () => {
     );
 
     expect(response).toMatchObject({ success: true });
-    const result = (response as { result: { document: { entities: { id: string }[] } } })
-      .result;
+    const result = (
+      response as { result: { document: { entities: { id: string }[] } } }
+    ).result;
 
     expect(result.document.entities.map((entity) => entity.id)).toEqual([
       'context.catalog',
@@ -146,12 +147,11 @@ describe('useMcpBridge', () => {
       api,
       request('apply_model_patch', {
         rationale: '标注请求开始时间',
-        commands: [
+        patches: [
           {
-            type: 'update-attribute',
-            entityId: 'evidence.request',
-            attribute: 'started_at',
-            patch: { keyData: false },
+            op: 'replace',
+            path: '/entities/8/attributes/0/keyData',
+            value: false,
           },
         ],
       }),
@@ -159,7 +159,7 @@ describe('useMcpBridge', () => {
 
     expect(response).toMatchObject({
       success: true,
-      result: { success: true, appliedCommands: ['update-attribute'] },
+      result: { success: true, appliedCommands: ['replace'] },
     });
     expect(
       session.getGraph().attribute('evidence.request', 'started_at')?.keyData,
@@ -179,7 +179,7 @@ describe('useMcpBridge', () => {
       api,
       request('apply_model_patch', {
         rationale: '删除被引用的实体',
-        commands: [{ type: 'delete-entity', entityId: 'evidence.request' }],
+        patches: [{ op: 'remove', path: '/entities/9999' }],
       }),
     );
 
@@ -187,7 +187,7 @@ describe('useMcpBridge', () => {
       success: true,
       result: { success: false, appliedCommands: [] },
     });
-    expect(JSON.stringify(response)).toContain('entity.referenced');
+    expect(JSON.stringify(response)).toContain('OPERATION_PATH_UNRESOLVABLE');
   });
 
   it('returns null when the canvas is not laid out', async () => {

@@ -4,7 +4,6 @@ import { describe, expect, it } from 'vitest';
 
 import {
   createModelSession,
-  decodeModelPatch,
   type ModelSession,
 } from '@evidence-poc/evidence-model-core';
 import type { EntityAST } from '@evidence-poc/evidence-schema';
@@ -32,7 +31,10 @@ const ReviewHarness = ({
   // or the hook keeps seeing a document the rest of the app already replaced.
   const [version, bump] = useState(0);
 
-  useEffect(() => session.subscribe(() => bump((value) => value + 1)), [session]);
+  useEffect(
+    () => session.subscribe(() => bump((value) => value + 1)),
+    [session],
+  );
 
   const controller = usePatchReview(session, session.getDocument());
 
@@ -71,10 +73,12 @@ const setup = () => {
     rationale = '新增审计员',
   ): void => {
     act(() => {
-      session.dispatchAll(
-        decodeModelPatch(
-          entities.map((entity) => ({ type: 'create-entity', entity })),
-        ),
+      session.applyPatchBatch(
+        entities.map((entity) => ({
+          op: 'add' as const,
+          path: '/entities/-',
+          value: entity,
+        })),
         `agent:${rationale}`,
       );
     });
@@ -101,14 +105,13 @@ const setup = () => {
     },
     editOnTop: () => {
       act(() => {
-        session.dispatchAll(
-          decodeModelPatch([
-            {
-              type: 'create-entity',
-              entity: participant('party.witness', '见证人'),
-            },
-          ]),
-        );
+        session.applyPatchBatch([
+          {
+            op: 'add',
+            path: '/entities/-',
+            value: participant('party.witness', '见证人'),
+          },
+        ]);
       });
     },
   };

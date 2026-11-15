@@ -1,10 +1,10 @@
 import { useLayoutEffect } from 'react';
 
+import type { ModelSession } from '@evidence-poc/evidence-model-core';
 import {
-  decodeModelPatch,
-  type ModelSession,
-} from '@evidence-poc/evidence-model-core';
-import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
+  ModelPatchRequestSchema,
+  type DomainModelDocument,
+} from '@evidence-poc/evidence-schema';
 
 /** One agent patch that actually reached the model. */
 export interface AppliedPatch {
@@ -37,20 +37,20 @@ export const useAgentPatchBridge = (
         const before = session.getDocument();
 
         try {
-          const commands = decodeModelPatch(patch.commands);
-
-          session.dispatchAll(commands, `agent:${patch.rationale}`);
+          const parsed = ModelPatchRequestSchema.parse(patch);
+          const commands = parsed.patches.map((operation) => operation.op);
+          session.applyPatchBatch(parsed.patches, `agent:${parsed.rationale}`);
 
           window.evidenceAPI.agent.respondPatch({
             requestId,
             result: {
               success: true,
-              appliedCommands: commands.map((command) => command.type),
+              appliedCommands: commands,
             },
           });
           onApplied?.({
             rationale: patch.rationale,
-            commands: commands.map((command) => command.type),
+            commands,
             before,
             after: session.getDocument(),
           });

@@ -9,7 +9,7 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 
 import type { AttributeAST } from '@evidence-poc/evidence-schema';
 import {
-  UpdateAttributeCommand,
+  updateAttributeMutator,
   type ModelSession,
 } from '@evidence-poc/evidence-model-core';
 
@@ -104,8 +104,10 @@ export const DomainLedgerTable = ({
 
   const updateAttribute = useCallback(
     (entityId: string, attributeName: string, patch: Partial<AttributeAST>) => {
-      session.dispatch(
-        new UpdateAttributeCommand(entityId, attributeName, patch),
+      session.mutate(
+        (draft) =>
+          updateAttributeMutator(draft, entityId, attributeName, patch),
+        'update-attribute',
       );
     },
     [session],

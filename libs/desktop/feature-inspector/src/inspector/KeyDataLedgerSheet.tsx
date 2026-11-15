@@ -13,8 +13,8 @@ import {
   type ValueType,
 } from '@evidence-poc/evidence-schema';
 import {
-  UpdateAttributeCommand,
-  UpdateRuleCommand,
+  updateAttributeMutator,
+  updateRuleMutator,
   buildKeyDataLedger,
   type DomainGraph,
   type ModelSession,
@@ -165,8 +165,10 @@ export const KeyDataLedgerSheet = ({
               return;
             }
 
-            session.dispatch(
-              new UpdateRuleCommand(activeRule.id, { expression }),
+            session.mutate(
+              (draft) =>
+                updateRuleMutator(draft, activeRule.id, { expression }),
+              'update-rule',
             );
           }}
         />
@@ -255,10 +257,12 @@ const LedgerRow = ({
             value={attribute.valueType ?? 'string'}
             onClick={(event) => event.stopPropagation()}
             onChange={(event) =>
-              session.dispatch(
-                new UpdateAttributeCommand(entity.id, attribute.name, {
-                  valueType: event.target.value as ValueType,
-                }),
+              session.mutate(
+                (draft) =>
+                  updateAttributeMutator(draft, entity.id, attribute.name, {
+                    valueType: event.target.value as ValueType,
+                  }),
+                'update-attribute',
               )
             }
             className="rounded border border-evidence-line bg-white px-1 py-0.5 font-mono text-[10px] text-evidence-accent"
@@ -278,10 +282,12 @@ const LedgerRow = ({
           checked={attribute.required === true}
           onClick={(event) => event.stopPropagation()}
           onChange={(event) =>
-            session.dispatch(
-              new UpdateAttributeCommand(entity.id, attribute.name, {
-                required: event.target.checked || undefined,
-              }),
+            session.mutate(
+              (draft) =>
+                updateAttributeMutator(draft, entity.id, attribute.name, {
+                  required: event.target.checked || undefined,
+                }),
+              'update-attribute',
             )
           }
         />

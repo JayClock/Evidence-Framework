@@ -2,10 +2,10 @@ import { useEffect, useRef } from 'react';
 
 import {
   buildKeyDataLedger,
-  decodeModelPatch,
   type DomainGraph,
   type ModelSession,
 } from '@evidence-poc/evidence-model-core';
+import { ModelPatchRequestSchema } from '@evidence-poc/evidence-schema';
 import type {
   DomainModelDocument,
   ValidationResult,
@@ -193,7 +193,7 @@ const captureRect = ({
 /**
  * Answers MCP tool calls that need the live `ModelSession`.
  *
- * Every mutation goes through `session.dispatch`, so an external agent's edit is
+ * Every mutation goes through `session.mutate`, so an external agent's edit is
  * one undo step the modeler can reverse with ⌘Z — exactly like a human edit.
  */
 export const useMcpBridge = (context: McpBridgeContext): void => {
@@ -299,25 +299,18 @@ export const useMcpBridge = (context: McpBridgeContext): void => {
   );
 };
 
-const applyPatch = (
-  context: McpBridgeContext,
-  payload: unknown,
-): unknown => {
-  const patch = payload as {
-    rationale?: string;
-    commands?: readonly unknown[];
-  } | null;
-  const commands = patch?.commands ?? [];
-
+const applyPatch = (context: McpBridgeContext, payload: unknown): unknown => {
   try {
-    const decoded = decodeModelPatch(commands);
-    context.session.dispatchAll(decoded, 'mcp-patch');
+    const patch = ModelPatchRequestSchema.parse(payload);
+    const before = context.session.getDocument();
+    context.session.applyPatchBatch(patch.patches, `mcp:${patch.rationale}`);
     const validation = context.session.validate();
 
     return {
       success: true,
-      appliedCommands: decoded.map((command) => command.type),
-      revision: context.revision + 1,
+      appliedCommands: patch.patches.map((operation) => operation.op),
+      revision:
+        context.revision + Number(before !== context.session.getDocument()),
       undoable: context.session.canUndo(),
       diagnostics: validation.valid
         ? []

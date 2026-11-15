@@ -405,10 +405,11 @@ describe('EditorScreen sensors', () => {
         requestId: 'patch-review',
         patch: {
           rationale: '新增审计员参与方',
-          commands: [
+          patches: [
             {
-              type: 'create-entity',
-              entity: {
+              op: 'add',
+              path: '/entities/-',
+              value: {
                 type: 'entity',
                 id: 'party.auditor',
                 category: 'participant',
@@ -451,10 +452,11 @@ describe('EditorScreen sensors', () => {
         requestId: 'patch-keep',
         patch: {
           rationale: '新增审计员参与方',
-          commands: [
+          patches: [
             {
-              type: 'create-entity',
-              entity: {
+              op: 'add',
+              path: '/entities/-',
+              value: {
                 type: 'entity',
                 id: 'party.auditor',
                 category: 'participant',
