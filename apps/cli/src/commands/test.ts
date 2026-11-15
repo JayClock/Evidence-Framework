@@ -2,9 +2,13 @@ import { readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 import {
   runAcceptanceSuite,
+  type AcceptanceGate,
   validateAsOf,
   validateTargetUrl,
 } from '@evidence-poc/evidence-api/runner';
+import { renderDeliverables } from '@evidence-poc/evidence-api';
+import { loadModel } from '../model.js';
+import { markdownReport, junitReport } from '../ui/markdownReporter.js';
 import { argumentsFor, stringOption, type CommandContext } from '../context.js';
 import {
   trafficLightReport,
@@ -63,11 +67,32 @@ export async function testCommand(
     timeout: { type: 'string', default: '5000' },
     verbose: { type: 'boolean' },
     json: { type: 'boolean' },
+    gate: { type: 'string' },
+    'baseline-model': { type: 'string' },
+    filter: { type: 'string' },
+    tag: { type: 'string', multiple: true },
+    'detect-drift': { type: 'boolean' },
+    'strict-drift': { type: 'boolean' },
+    'allow-pending': { type: 'boolean' },
+    report: { type: 'string' },
   });
   if (positionals.length)
     throw new Error(
       'usage: evidence test --target URL [--scenarios file|dir] [--as-of UTC] [--timeout ms] [--verbose|--json]',
     );
+  const gate = stringOption(values.gate);
+  if (gate !== undefined && gate !== 'regression' && gate !== 'dod')
+    throw new Error('--gate must be regression or dod');
+  if (values['allow-pending'] && gate !== 'dod')
+    throw new Error('--allow-pending is only valid for --gate dod');
+  const baselinePath = stringOption(values['baseline-model']);
+  if (baselinePath && !gate)
+    throw new Error('--baseline-model requires --gate');
+  const format = stringOption(values.report);
+  if (format && !['markdown', 'junit'].includes(format))
+    throw new Error('--report must be markdown or junit');
+  if (format && values.json)
+    throw new Error('--report and --json are mutually exclusive');
   const target = stringOption(values.target);
   if (target === undefined) throw new Error('--target is required');
   const targetUrl = validateTargetUrl(target);
@@ -89,6 +114,18 @@ export async function testCommand(
     throw new Error(
       'No *.stepci.yml suites found. Run evidence export --tests first.',
     );
+  if (baselinePath && files.length !== 1)
+    throw new Error(
+      '--baseline-model requires exactly one generated Step CI suite',
+    );
+  const baselineYaml = baselinePath
+    ? (
+        await renderDeliverables(
+          await loadModel(path.resolve(context.cwd, baselinePath)),
+          { openapi: false, tests: true, format: 'stepci' },
+        )
+      ).files['acceptance.stepci.yml']
+    : undefined;
   await healthProbe(targetUrl, timeoutMs);
   const suites = [];
   for (const suitePath of files)
@@ -98,6 +135,15 @@ export async function testCommand(
         targetUrl,
         ...(asOf === undefined ? {} : { asOf }),
         timeoutMs,
+        ...(gate ? { gate: gate as AcceptanceGate } : {}),
+        ...(baselineYaml === undefined ? {} : { baselineYaml }),
+        ...(values.filter === undefined
+          ? {}
+          : { filter: stringOption(values.filter)! }),
+        ...(values.tag === undefined ? {} : { tags: values.tag as string[] }),
+        detectDrift:
+          values['detect-drift'] === true || values['strict-drift'] === true,
+        strictDrift: values['strict-drift'] === true,
       }),
     );
   const report: AcceptanceReport = {
@@ -109,14 +155,29 @@ export async function testCommand(
       0,
     ),
     suites,
+    ...(gate ? { gate: gate as AcceptanceGate } : {}),
+    pending:
+      values['allow-pending'] === true &&
+      !suites.every((suite) => suite.passed) &&
+      !suites.some((suite) =>
+        suite.steps.some(
+          (step) =>
+            step.errored ||
+            (values['strict-drift'] && step.driftIssues?.length),
+        ),
+      ),
   };
   context.stdout(
     values.json
       ? JSON.stringify(report, null, 2)
-      : trafficLightReport(report, {
-          color: context.color,
-          verbose: values.verbose === true,
-        }),
+      : format === 'markdown'
+        ? markdownReport(report)
+        : format === 'junit'
+          ? junitReport(report)
+          : trafficLightReport(report, {
+              color: context.color,
+              verbose: values.verbose === true,
+            }),
   );
-  return report.passed ? 0 : 1;
+  return report.passed || report.pending ? 0 : 1;
 }

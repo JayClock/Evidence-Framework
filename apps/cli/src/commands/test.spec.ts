@@ -18,6 +18,8 @@ env:
   asOf: "2026-03-31T10:00:00Z"
 tests:
   flow:
+    env:
+      evidenceTags: '["dod", "payment"]'
     steps:
       - name: payment
         http:
@@ -82,6 +84,39 @@ it('prints green, red and parseable JSON, ignoring a 404 health probe', async ()
       '2026-04-01T10:00:00Z',
     ]);
     expect(errors).toEqual([]);
+    expect(
+      await dispatch(
+        [...args, '--gate', 'dod', '--allow-pending', '--json'],
+        context,
+      ),
+    ).toBe(0);
+    expect(JSON.parse(output.pop()!)).toMatchObject({
+      passed: false,
+      pending: true,
+      gate: 'dod',
+    });
+    expect(
+      await dispatch(
+        [...args, '--gate', 'dod', '--report', 'markdown'],
+        context,
+      ),
+    ).toBe(1);
+    expect(output.pop()).toContain('- [ ]');
+    expect(
+      await dispatch([...args, '--gate', 'dod', '--report', 'junit'], context),
+    ).toBe(1);
+    expect(output.pop()).toContain('<failure');
+    expect(
+      await dispatch(
+        [...args, '--filter', 'flow', '--tag', 'dod', '--tag', 'payment'],
+        context,
+      ),
+    ).toBe(1);
+    expect(errors).toEqual([]);
+    expect(
+      await dispatch([...args, '--filter', 'missing', '--json'], context),
+    ).toBe(1);
+    expect(JSON.parse(output.pop()!).error).toContain('No acceptance flows');
   } finally {
     server.closeAllConnections();
     await new Promise<void>((resolve) => server.close(() => resolve()));
@@ -107,6 +142,11 @@ it('fails closed for unreachable targets, invalid clocks and unsupported inputs'
     ['--as-of', '2026-02-30T00:00:00Z'],
     ['--timeout', '0'],
     ['--unknown'],
+    ['--gate', 'unknown'],
+    ['--allow-pending'],
+    ['--baseline-model', 'model.json'],
+    ['--report', 'invalid'],
+    ['--report', 'markdown'],
   ])
     expect(await dispatch([...args, ...extra], context)).toBe(1);
   expect(

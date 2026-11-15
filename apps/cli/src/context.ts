@@ -22,7 +22,7 @@ export function argumentsFor(
   const seen = new Set<string>();
   for (const token of parsed.tokens) {
     if (token.kind !== 'option') continue;
-    if (seen.has(token.name))
+    if (seen.has(token.name) && !options[token.name]?.multiple)
       throw new Error(`Duplicate option: --${token.name}`);
     seen.add(token.name);
   }

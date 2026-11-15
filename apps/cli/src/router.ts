@@ -7,13 +7,18 @@ import type { CommandContext } from './context.js';
 const HELP = `Evidence — model-driven contracts and black-box acceptance
 
 Usage:
-  evidence export [--model path] [--openapi] [--tests] [--format stepci|hurl] [--out dir]
-  evidence test --target URL [--scenarios file|dir] [--as-of UTC] [--timeout ms] [--verbose|--json]
+  evidence export [--model path] [--openapi] [--tests] [--format stepci|hurl] [--out dir] [--verify]
+  evidence test --target URL [--scenarios file|dir] [--as-of UTC] [--timeout ms] [--verbose|--json|--report markdown|junit]
+                [--gate regression|dod] [--baseline-model path] [--filter pattern] [--tag label ...]
+                [--detect-drift] [--strict-drift] [--allow-pending]
   evidence check [model] [--json]
   evidence diff api <old-model> <new-model> [--format json|markdown]
   evidence --help
 
 Model paths may be source directories or *.evidence.json bundles.
+Gates are strict by default. --allow-pending is DoD-only and never reports failed tests as passed.
+Regression runs original baseline tests; DoD runs new/changed complete flows.
+Without a baseline, gates require explicit regression/dod tags in example test metadata.
 `;
 
 export async function dispatch(

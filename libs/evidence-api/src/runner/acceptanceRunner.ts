@@ -41,6 +41,7 @@ export interface StepExecutionResult {
   readonly expectedStatus?: unknown;
   readonly passed: boolean;
   readonly skipped: boolean;
+  readonly errored?: boolean;
   readonly durationMs: number;
   readonly assertions: readonly AssertionResult[];
   readonly failureDetails?: string;
@@ -158,6 +159,7 @@ function normalizeStep(
       !step.skipped &&
       !(strictDrift && drift?.hasDrift),
     skipped: step.skipped,
+    errored: step.errored,
     durationMs: step.duration,
     assertions,
     ...(drift ? { driftIssues: drift.issues } : {}),
