@@ -12,9 +12,11 @@
   "include": ["src/**/*.ts"],
   "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts"],
   "references": [
+    { "path": "../../libs/evidence-agent/tsconfig.lib.json" },
     { "path": "../../libs/evidence-api/tsconfig.lib.json" },
     { "path": "../../libs/evidence-model-core/tsconfig.lib.json" },
     { "path": "../../libs/evidence-model-io/tsconfig.lib.json" },
+    { "path": "../../libs/evidence-schema/tsconfig.lib.json" },
     { "path": "../../libs/evidence-visualization/tsconfig.lib.json" }
   ]
 }

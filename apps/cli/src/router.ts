@@ -6,6 +6,7 @@ import { diffCommand } from './commands/diff.js';
 import { modelCommand } from './commands/model.js';
 import { reviewCommand } from './commands/review.js';
 import { apiCommand } from './commands/api.js';
+import { storyCommand } from './commands/story.js';
 import {
   stringOption,
   type CommandContext,
@@ -29,6 +30,21 @@ export function createCli(context: CommandContext = defaultContext()): CAC {
     .option('--json', 'Machine-readable report')
     .action((model: string | undefined, options: CommandOptions) =>
       checkCommand(model, options, context),
+    );
+  cli
+    .command(
+      'story [model]',
+      'Project declared flow scenarios into business stories (default model: .evidence/fm)',
+    )
+    .option('--flow <id>', 'Filter by exact flow ID')
+    .option('--format <type>', 'Output format: markdown | json | text', {
+      default: 'markdown',
+    })
+    .option('--export <file>', 'Export story projection to a file')
+    .option('--no-ai', 'Offline fact cards without LLM expansion')
+    .option('--compact', 'Compact stories (single-line JSON)')
+    .action((model: string | undefined, options: CommandOptions) =>
+      storyCommand(model, options, context),
     );
   cli
     .command('test', 'Run black-box HTTP acceptance suites')
@@ -147,7 +163,7 @@ export function createCli(context: CommandContext = defaultContext()): CAC {
         'Options:',
         ...options.map(
           (option) =>
-            `  ${option.rawName}  ${option.description}${option.config.default === undefined ? '' : ` (default: ${option.config.default})`}`,
+            `  ${option.rawName}  ${option.description}${option.config.default === undefined ? '' : ` (default: ${option.negated ? !option.config.default : option.config.default})`}`,
         ),
       ].join('\n'),
     );
@@ -162,17 +178,21 @@ function validateInvocation(cli: CAC): void {
     throw new Error(
       `Unknown command: ${cli.args[0] ?? ''}. Run evidence --help.`,
     );
-  // mri may overwrite mixed short/long aliases instead of preserving an array.
+  // mri may overwrite mixed aliases or repeated negations instead of
+  // preserving an array.
   const raw = cli.rawArgs.slice(2);
   const end = raw.indexOf('--');
   const flags = end < 0 ? raw : raw.slice(0, end);
   for (const option of command.options.filter(
-    (entry) => entry.names.length > 1,
+    (entry) => entry.names.length > 1 || entry.negated,
   )) {
     const count = flags.filter((token) =>
       option.names.some((name) => {
         const flag = `${name.length === 1 ? '-' : '--'}${name}`;
-        return token === flag || token.startsWith(`${flag}=`);
+        const spellings = [flag, ...(option.negated ? [`--no-${name}`] : [])];
+        return spellings.some(
+          (spelling) => token === spelling || token.startsWith(`${spelling}=`),
+        );
       }),
     ).length;
     if (count > 1) throw new Error(`Duplicate option: --${option.name}`);

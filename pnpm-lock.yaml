@@ -277,6 +277,9 @@ importers:
 
   apps/cli:
     dependencies:
+      '@evidence-poc/evidence-agent':
+        specifier: workspace:*
+        version: link:../../libs/evidence-agent
       '@evidence-poc/evidence-api':
         specifier: workspace:*
         version: link:../../libs/evidence-api
@@ -286,6 +289,9 @@ importers:
       '@evidence-poc/evidence-model-io':
         specifier: workspace:*
         version: link:../../libs/evidence-model-io
+      '@evidence-poc/evidence-schema':
+        specifier: workspace:*
+        version: link:../../libs/evidence-schema
       '@evidence-poc/evidence-visualization':
         specifier: workspace:*
         version: link:../../libs/evidence-visualization
