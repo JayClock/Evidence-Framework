@@ -9,7 +9,11 @@ import {
 import { renderDeliverables } from '@evidence-poc/evidence-api';
 import { loadModel } from '../model.js';
 import { markdownReport, junitReport } from '../ui/markdownReporter.js';
-import { argumentsFor, stringOption, type CommandContext } from '../context.js';
+import {
+  stringOption,
+  type CommandContext,
+  type CommandOptions,
+} from '../context.js';
 import {
   trafficLightReport,
   type AcceptanceReport,
@@ -57,36 +61,15 @@ async function healthProbe(target: string, timeoutMs: number): Promise<void> {
 }
 
 export async function testCommand(
-  argv: readonly string[],
+  values: CommandOptions,
   context: CommandContext,
 ): Promise<number> {
-  const { values, positionals } = argumentsFor(argv, {
-    target: { type: 'string' },
-    scenarios: { type: 'string', default: 'dist' },
-    'as-of': { type: 'string' },
-    timeout: { type: 'string', default: '5000' },
-    verbose: { type: 'boolean' },
-    json: { type: 'boolean' },
-    gate: { type: 'string' },
-    'baseline-model': { type: 'string' },
-    filter: { type: 'string' },
-    tag: { type: 'string', multiple: true },
-    'detect-drift': { type: 'boolean' },
-    'strict-drift': { type: 'boolean' },
-    'allow-pending': { type: 'boolean' },
-    report: { type: 'string' },
-    'report-dir': { type: 'string' },
-  });
-  if (positionals.length)
-    throw new Error(
-      'usage: evidence test --target URL [--scenarios file|dir] [--as-of UTC] [--timeout ms] [--verbose|--json]',
-    );
   const gate = stringOption(values.gate);
   if (gate !== undefined && gate !== 'regression' && gate !== 'dod')
     throw new Error('--gate must be regression or dod');
-  if (values['allow-pending'] && gate !== 'dod')
+  if (values.allowPending && gate !== 'dod')
     throw new Error('--allow-pending is only valid for --gate dod');
-  const baselinePath = stringOption(values['baseline-model']);
+  const baselinePath = stringOption(values.baselineModel);
   if (baselinePath && !gate)
     throw new Error('--baseline-model requires --gate');
   const format = stringOption(values.report);
@@ -97,7 +80,7 @@ export async function testCommand(
   const target = stringOption(values.target);
   if (target === undefined) throw new Error('--target is required');
   const targetUrl = validateTargetUrl(target);
-  const clock = stringOption(values['as-of']);
+  const clock = stringOption(values.asOf);
   const asOf = clock === undefined ? undefined : validateAsOf(clock);
   const timeoutMs = Number(stringOption(values.timeout));
   if (
@@ -142,9 +125,8 @@ export async function testCommand(
           ? {}
           : { filter: stringOption(values.filter)! }),
         ...(values.tag === undefined ? {} : { tags: values.tag as string[] }),
-        detectDrift:
-          values['detect-drift'] === true || values['strict-drift'] === true,
-        strictDrift: values['strict-drift'] === true,
+        detectDrift: values.detectDrift === true || values.strictDrift === true,
+        strictDrift: values.strictDrift === true,
       }),
     );
   const report: AcceptanceReport = {
@@ -158,17 +140,16 @@ export async function testCommand(
     suites,
     ...(gate ? { gate: gate as AcceptanceGate } : {}),
     pending:
-      values['allow-pending'] === true &&
+      values.allowPending === true &&
       !suites.every((suite) => suite.passed) &&
       !suites.some((suite) =>
         suite.steps.some(
           (step) =>
-            step.errored ||
-            (values['strict-drift'] && step.driftIssues?.length),
+            step.errored || (values.strictDrift && step.driftIssues?.length),
         ),
       ),
   };
-  const reportDir = stringOption(values['report-dir']);
+  const reportDir = stringOption(values.reportDir);
   if (reportDir) {
     const directory = path.resolve(context.cwd, reportDir);
     await mkdir(directory, { recursive: true });

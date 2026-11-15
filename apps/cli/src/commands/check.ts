@@ -1,21 +1,26 @@
 import path from 'node:path';
 import { buildFmCheckReport } from '@evidence-poc/evidence-model-core';
-import { argumentsFor, type CommandContext } from '../context.js';
+import {
+  stringOption,
+  type CommandContext,
+  type CommandOptions,
+} from '../context.js';
 import { loadModel } from '../model.js';
 
 export async function checkCommand(
-  argv: readonly string[],
+  modelPath: string | undefined,
+  values: CommandOptions,
   context: CommandContext,
 ): Promise<number> {
-  const { values, positionals } = argumentsFor(argv, {
-    json: { type: 'boolean' },
-  });
-  if (positionals.length > 1)
-    throw new Error('usage: evidence check [model] [--json]');
   const model = await loadModel(
-    path.resolve(context.cwd, positionals[0] ?? '.evidence/fm'),
+    path.resolve(context.cwd, modelPath ?? '.evidence/fm'),
   );
-  const { report } = buildFmCheckReport({ model });
+  const scopeRefs = values.scope as string[] | undefined;
+  scopeRefs?.forEach(stringOption);
+  const { report } = buildFmCheckReport({
+    model,
+    ...(scopeRefs ? { scopeRefs } : {}),
+  });
   context.stdout(
     values.json
       ? JSON.stringify(report, null, 2)

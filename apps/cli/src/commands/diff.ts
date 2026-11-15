@@ -1,30 +1,26 @@
 import path from 'node:path';
-import { runCli } from '@evidence-poc/evidence-api/cli';
-import { argumentsFor, stringOption, type CommandContext } from '../context.js';
+import { runDiff } from '@evidence-poc/evidence-api/cli';
+import {
+  stringOption,
+  type CommandOptions,
+  type CommandContext,
+} from '../context.js';
 
 export async function diffCommand(
-  argv: readonly string[],
+  base: string,
+  target: string,
+  options: CommandOptions,
   context: CommandContext,
 ): Promise<number> {
-  const { values, positionals } = argumentsFor(argv, {
-    format: { type: 'string', default: 'json' },
-  });
-  if (positionals.length !== 3 || positionals[0] !== 'api')
-    throw new Error(
-      'usage: evidence diff api <old-model> <new-model> [--format json|markdown]',
-    );
-  const format = stringOption(values.format)!;
-  if (!['json', 'markdown'].includes(format))
+  const format = stringOption(options.format) ?? 'markdown';
+  if (format !== 'json' && format !== 'markdown')
     throw new Error('--format must be json or markdown');
-  const result = await runCli([
-    'diff',
-    '--base',
-    path.resolve(context.cwd, positionals[1]!),
-    '--target',
-    path.resolve(context.cwd, positionals[2]!),
-    '--format',
+  const result = await runDiff({
+    command: 'diff',
+    base: path.resolve(context.cwd, base),
+    target: path.resolve(context.cwd, target),
     format,
-  ]);
+  });
   if (result.error) throw new Error(result.error);
   context.stdout(
     typeof result.output === 'string'

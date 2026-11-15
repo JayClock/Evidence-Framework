@@ -18,6 +18,12 @@
       "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
+    "./commands": {
+      "@evidence-poc/source": "./src/commands.ts",
+      "types": "./dist/commands.d.ts",
+      "import": "./dist/commands.js",
+      "default": "./dist/commands.js"
+    },
     "./cli": {
       "@evidence-poc/source": "./src/cli.ts",
       "types": "./dist/cli.d.ts",

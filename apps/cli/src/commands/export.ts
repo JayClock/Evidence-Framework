@@ -1,7 +1,11 @@
 import { mkdirSync, realpathSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { renderDeliverables, writeOutput } from '@evidence-poc/evidence-api';
-import { argumentsFor, stringOption, type CommandContext } from '../context.js';
+import {
+  stringOption,
+  type CommandContext,
+  type CommandOptions,
+} from '../context.js';
 import { loadModel } from '../model.js';
 
 function canonical(file: string): string {
@@ -80,21 +84,9 @@ export function verifyDeliverables(
 }
 
 export async function exportCommand(
-  argv: readonly string[],
+  values: CommandOptions,
   context: CommandContext,
 ): Promise<number> {
-  const { values, positionals } = argumentsFor(argv, {
-    model: { type: 'string', default: '.evidence/fm' },
-    out: { type: 'string', default: 'dist' },
-    verify: { type: 'boolean' },
-    openapi: { type: 'boolean' },
-    tests: { type: 'boolean' },
-    format: { type: 'string', default: 'stepci' },
-  });
-  if (positionals.length)
-    throw new Error(
-      'usage: evidence export [--model path] [--openapi] [--tests] [--format stepci|hurl] [--out dir]',
-    );
   const format = stringOption(values.format)!;
   if (format !== 'stepci' && format !== 'hurl')
     throw new Error('--format must be stepci or hurl');

@@ -14,6 +14,7 @@
   "references": [
     { "path": "../../libs/evidence-api/tsconfig.lib.json" },
     { "path": "../../libs/evidence-model-core/tsconfig.lib.json" },
-    { "path": "../../libs/evidence-model-io/tsconfig.lib.json" }
+    { "path": "../../libs/evidence-model-io/tsconfig.lib.json" },
+    { "path": "../../libs/evidence-visualization/tsconfig.lib.json" }
   ]
 }

@@ -217,7 +217,7 @@ const refused = (code: string, message: string): CliResult => ({
   exitCode: 1,
 });
 
-const runDiff = async (options: DiffCliOptions): Promise<CliResult> => {
+export const runDiff = async (options: DiffCliOptions): Promise<CliResult> => {
   for (const [value, name, required] of [
     [options.base, 'base', true],
     [options.target, 'target', true],

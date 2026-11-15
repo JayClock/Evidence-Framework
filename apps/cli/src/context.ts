@@ -1,5 +1,3 @@
-import { parseArgs, type ParseArgsOptionsConfig } from 'node:util';
-
 export interface CommandContext {
   readonly cwd: string;
   readonly stdout: (text: string) => void;
@@ -7,32 +5,15 @@ export interface CommandContext {
   readonly color: boolean;
 }
 
-/** Node's strict parser plus duplicate-option rejection (no silent last-wins). */
-export function argumentsFor(
-  argv: readonly string[],
-  options: ParseArgsOptionsConfig,
-) {
-  const parsed = parseArgs({
-    args: [...argv],
-    options,
-    allowPositionals: true,
-    strict: true,
-    tokens: true,
-  });
-  const seen = new Set<string>();
-  for (const token of parsed.tokens) {
-    if (token.kind !== 'option') continue;
-    if (seen.has(token.name) && !options[token.name]?.multiple)
-      throw new Error(`Duplicate option: --${token.name}`);
-    seen.add(token.name);
-  }
-  return parsed;
-}
+/** cac normalizes dashed option names to camelCase. */
+export type CommandOptions = Record<
+  string,
+  string | number | boolean | string[] | undefined
+>;
 
-export function stringOption(
-  value: string | boolean | (string | boolean)[] | undefined,
-): string | undefined {
+export function stringOption(value: unknown): string | undefined {
   if (value === undefined) return undefined;
+  if (typeof value === 'number' && Number.isFinite(value)) return String(value);
   if (typeof value !== 'string' || !value.trim())
     throw new Error('Expected a nonempty option value');
   return value;
