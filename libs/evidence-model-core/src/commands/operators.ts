@@ -3,8 +3,17 @@ import type {
   DomainModelDocument,
   EvidenceEntityAST,
   RoleEntityAST,
-  RuleAST,
-  RuleBinding,
+  FulfillmentPairIntent,
+  BreachCompensationIntent,
+  RoleInversionIntent,
+  DomainCalculatorIntent,
+} from '@evidence-poc/evidence-schema';
+
+export type {
+  FulfillmentPairIntent,
+  BreachCompensationIntent,
+  RoleInversionIntent,
+  DomainCalculatorIntent,
 } from '@evidence-poc/evidence-schema';
 
 import type { CreateFulfillmentPairInput } from './fulfillmentCommands.js';
@@ -99,10 +108,7 @@ const pairInput = ({
     id: request.id,
     label: request.label,
     responsibleRoleRef: request.responsibleRoleRef,
-    attributes: [
-      startedAt(request.window),
-      expiredAt(request.window),
-    ],
+    attributes: [startedAt(request.window), expiredAt(request.window)],
   },
   confirmation: {
     id: confirmation.id,
@@ -138,30 +144,6 @@ const rootContractOf = (
   return roots.length === 1 ? roots[0] : undefined;
 };
 
-export interface FulfillmentPairIntent {
-  /** Contract Context that owns both moments. */
-  contextRef: string;
-  request: {
-    id: string;
-    label: string;
-    /** Party Role demanding the performance; must be bound by the root Contract. */
-    responsibleRoleRef: string;
-    /** Business window, e.g. `7 个工作日`. */
-    window?: string;
-  };
-  confirmation: {
-    id: string;
-    label: string;
-    responsibleRoleRef: string;
-  };
-  /** Supporting proof the model keeps next to the confirmation. */
-  proof?: {
-    id: string;
-    label: string;
-    responsibleRoleRef?: string;
-  };
-}
-
 /**
  * Assembles one main fulfillment pair, plus its proof when the caller names one.
  *
@@ -185,7 +167,8 @@ export const introduceFulfillmentPair = (
       label: intent.proof.label,
       contextRef: intent.contextRef,
       responsibleRoleRef:
-        intent.proof.responsibleRoleRef ?? intent.confirmation.responsibleRoleRef,
+        intent.proof.responsibleRoleRef ??
+        intent.confirmation.responsibleRoleRef,
       attributes: [createdAt(intent.proof.label)],
     };
 
@@ -227,32 +210,6 @@ export const introduceFulfillmentPair = (
     ],
   };
 };
-
-export interface BreachCompensationIntent {
-  /** Request whose missed deadline is the breach. */
-  requestRef: string;
-  /** Confirmation that would have closed that request. */
-  confirmationRef: string;
-  /** The breach in business language, e.g. `超过约定窗口仍未到账`. */
-  condition: string;
-  /** Compensation pair the breach triggers. */
-  request: {
-    id: string;
-    label: string;
-    responsibleRoleRef: string;
-    window?: string;
-  };
-  confirmation: {
-    id: string;
-    label: string;
-    responsibleRoleRef: string;
-  };
-  proof?: {
-    id: string;
-    label: string;
-    responsibleRoleRef?: string;
-  };
-}
 
 /**
  * Assembles the breach condition plus the fulfillment pair it triggers.
@@ -319,24 +276,6 @@ export const addBreachCompensation = (
     ],
   };
 };
-
-export interface RoleInversionIntent {
-  /** Confirmation the core contract currently treats as its own result. */
-  targetConfirmationRef: string;
-  /** The capability the core contract depends on, as a role it can name. */
-  socket: { id: string; label: string };
-  /** The contract the capability actually comes from. */
-  supporting: {
-    context: { id: string; label: string };
-    contract: { id: string; label: string; signedAtMeaning?: string };
-    /** Party that performs the capability. */
-    provider: { id: string; label: string };
-    /** Party that asks for it. */
-    consumer: { id: string; label: string };
-    request: { id: string; label: string; window?: string };
-    confirmation: { id: string; label: string };
-  };
-}
 
 /**
  * Reverses a dependency: the capability becomes a role the core contract owns,
@@ -484,35 +423,6 @@ export const roleifyAndInvertDependency = (
   };
 };
 
-export interface DomainCalculatorIntent {
-  /** Entity that owns the computed value, usually an evidence in the contract. */
-  host: { ref: string; attribute: AttributeAST };
-  /** Domain Context the calculation lives in; created when absent. */
-  context: { id: string; label: string };
-  /** The component itself: what the calculation is called and what it reads. */
-  calculator: {
-    id: string;
-    label: string;
-    role?: 'calculator' | 'checker';
-    meaning?: string;
-    attributes?: AttributeAST[];
-  };
-  /** Derivation that writes the host attribute from the calculator. */
-  rule: {
-    id: string;
-    label: string;
-    description: string;
-    expression: string;
-    resultType: RuleAST['resultType'];
-    /** Alias the expression uses for the component; defaults to `calculator`. */
-    alias?: string;
-  };
-  /** Extra bindings the expression needs, by alias. */
-  bindings?: Record<string, RuleBinding>;
-  /** Further reads of the host entity the expression makes, by alias. */
-  hostAlias?: string;
-}
-
 /**
  * Takes a calculation out of the agreement and puts it in the Domain Context.
  *
@@ -527,10 +437,14 @@ export const isolateDomainCalculator = (
   document: DomainModelDocument,
   intent: DomainCalculatorIntent,
 ): OperatorPatch => {
-  const host = document.entities.find((entity) => entity.id === intent.host.ref);
+  const host = document.entities.find(
+    (entity) => entity.id === intent.host.ref,
+  );
 
   if (host === undefined) {
-    throw new Error(`未知的宿主对象 '${intent.host.ref}'，无法为它抽出领域计算。`);
+    throw new Error(
+      `未知的宿主对象 '${intent.host.ref}'，无法为它抽出领域计算。`,
+    );
   }
 
   if (host.category === 'context') {
@@ -568,12 +482,19 @@ export const isolateDomainCalculator = (
       },
     });
     createdIds.push(intent.context.id);
-  } else if (existingContext.category !== 'context' || existingContext.kind !== 'domain') {
-    throw new Error(`'${intent.context.id}' 不是领域上下文，计算不能放在那里。`);
+  } else if (
+    existingContext.category !== 'context' ||
+    existingContext.kind !== 'domain'
+  ) {
+    throw new Error(
+      `'${intent.context.id}' 不是领域上下文，计算不能放在那里。`,
+    );
   }
 
   if (document.entities.some((entity) => entity.id === intent.calculator.id)) {
-    throw new Error(`'${intent.calculator.id}' 已被占用，领域组件需要新的标识。`);
+    throw new Error(
+      `'${intent.calculator.id}' 已被占用，领域组件需要新的标识。`,
+    );
   }
 
   commands.push({
