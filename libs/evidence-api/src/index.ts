@@ -1,3 +1,8 @@
+export {
+  createDriftInspector,
+  inspectPayloadDrift,
+} from './runner/driftInspector.js';
+export type { DriftIssue, DriftReport } from './runner/driftInspector.js';
 export { renderDeliverables } from './renderDeliverables.js';
 export {
   projectAcceptanceTests,

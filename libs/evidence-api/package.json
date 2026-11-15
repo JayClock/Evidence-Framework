@@ -89,9 +89,10 @@
     "@evidence-poc/evidence-model-core": "workspace:*",
     "@evidence-poc/evidence-model-io": "workspace:*",
     "@evidence-poc/evidence-schema": "workspace:*",
-    "@stepci/runner": "2.0.7",
     "@seriousme/openapi-schema-validator": "2.11.0",
+    "@stepci/runner": "2.0.7",
     "ajv": "^8.20.0",
+    "ajv-formats": "3.0.1",
     "tslib": "^2.3.0",
     "yaml": "2.9.1"
   },
