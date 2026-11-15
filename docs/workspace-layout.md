@@ -33,7 +33,9 @@ libraries with a `bin`/`cli` entry rather than separate apps.
 
 pnpm is pinned in `package.json` (`"packageManager": "pnpm@12.16.1"`); the
 lockfile is `pnpm-lock.yaml` and CI should install with
-`pnpm install --frozen-lockfile`.
+`pnpm install --frozen-lockfile`, then run `pnpm api:setup` before API
+compatibility checks and their tests. The latter provisions the pinned native
+`oasdiff`; it is an explicit setup step, not a pnpm install hook.
 
 `pnpm-workspace.yaml` is the only place workspace settings live — pnpm 10 moved
 them out of `.npmrc` and `package.json`, and an `.npmrc` setting is silently
@@ -49,7 +51,8 @@ ignored. Every key in it is there for a reason:
 Because the linker is hoisted, an undeclared import can still resolve locally;
 the `@nx/dependency-checks` rule, not the installer, is the guard.
 `node_modules/.cache` holds the build caches (Nx, Vite, the desktop resource
-tree), so deleting `node_modules` means rerunning `pnpm install`.
+tree) and the provisioned `oasdiff` binary. After deleting `node_modules`, rerun
+`pnpm install` and `pnpm api:setup` before API compatibility checks or their tests.
 
 ## How imports resolve
 
@@ -101,7 +104,8 @@ Tags drive `@nx/enforce-module-boundaries` in `eslint.config.mjs`:
 
 ```bash
 pnpm install                                 # from the lockfile
-pnpm install --frozen-lockfile               # what CI runs
+pnpm install --frozen-lockfile               # dependency install in CI
+pnpm api:setup                              # pinned oasdiff for API diff/tests
 pnpm add --filter @evidence-poc/desktop zustand     # add a dep to one project
 pnpm add -Dw vitest                          # add root dev tooling
 

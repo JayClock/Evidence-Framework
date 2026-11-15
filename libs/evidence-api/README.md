@@ -10,9 +10,22 @@ pnpm api:setup
 pnpm nx build evidence-api
 ```
 
-`api:setup` downloads the official release for macOS, Linux or Windows (x64/arm64), verifies a pinned SHA-256 digest and executable version, and stores it under `node_modules/.cache/evidence/oasdiff/`. Extraction uses the operating system's `tar`. It needs network access only during installation; export and comparison run offline. No Go toolchain or Docker is required.
+`pnpm install` installs package dependencies; it does **not** provision `oasdiff`.
+Run `pnpm api:setup` before API comparisons or their tests, and again after deleting
+`node_modules` or the tool cache. Setup downloads the official release for macOS,
+Linux or Windows (x64/arm64), verifies a pinned SHA-256 digest and executable
+version, and stores it under `node_modules/.cache/evidence/oasdiff/`. A matching
+cached binary is reused. Extraction uses the operating system's `tar`; network
+access is needed only when downloading the release. Export and comparison run
+offline. No Go toolchain or Docker is required.
 
-The runner selects `EVIDENCE_OASDIFF_BIN` first, then the workspace cache found above the working directory, then `oasdiff` on `PATH`. Outside a workspace, including a packaged desktop installation, configure an absolute executable path or install the pinned version on `PATH`. The desktop and Agent report an unavailable comparison rather than a compatible contract when the tool cannot run. No binary is downloaded during analysis.
+The runner selects `EVIDENCE_OASDIFF_BIN` first, then the cache found above the
+installed Evidence package (not the caller's working directory), then `oasdiff`
+on `PATH`. In environments without that cache, including a packaged desktop
+installation, configure an absolute executable path or install the pinned version
+on `PATH`. The desktop and Agent report an unavailable comparison rather than a
+compatible contract when the tool cannot run. No binary is downloaded during
+analysis.
 
 ## Commands
 

@@ -120,8 +120,9 @@
 ### 启动桌面建模工作台
 
 ```bash
-# 1. 安装依赖
+# 1. 安装工作区依赖，并单独准备 API 兼容性检查及相关测试所需的 oasdiff
 pnpm install
+pnpm api:setup
 
 # 2. 运行各模块测试与静态校验
 pnpm test
@@ -129,6 +130,8 @@ pnpm test
 # 3. 启动桌面端可视化建模工作台
 pnpm desktop
 ```
+
+`pnpm install` 不会自动安装 `oasdiff`。`pnpm api:setup` 下载固定版本的预编译二进制并校验归档校验和及可执行文件版本，无需 Go 或 Docker；已有匹配版本时复用缓存。删除 `node_modules` 或工具缓存后，需在 API 比对及相关测试前重新运行。详见 [ENVIRONMENT.md](ENVIRONMENT.md)。
 
 ### 命令行打包与检查模型
 

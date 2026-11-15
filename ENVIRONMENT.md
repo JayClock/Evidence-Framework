@@ -1,10 +1,14 @@
 # Environment
 
-One toolchain: Node.js and pnpm. `pnpm install` is the whole setup — there is no
-interpreter to pin, no virtualenv to repair and no lockfile for a second runtime.
+One toolchain: Node.js and pnpm. `pnpm install` installs the workspace dependencies;
+run `pnpm api:setup` separately to provision the pinned native `oasdiff` used by
+API compatibility checks and their tests. There is no interpreter to pin, no
+virtualenv to repair and no lockfile for a second runtime. The prebuilt binary
+needs neither a Go toolchain nor Docker.
 
 ```bash
 pnpm install
+pnpm api:setup
 npx nx run-many -t test typecheck lint
 npx nx start desktop
 ```
@@ -75,10 +79,17 @@ must not trust client headers. See `examples/dogfood-backend/README.md` for
 request-scoped Node/Go/Spring/Python templates and red/green fault demonstrations.
 The Go/Java/Python files are integration references, not repository runtimes.
 
-API diff uses the pinned native `oasdiff` provisioned by `pnpm install`, resolved
-relative to the installed Evidence package even when the caller's working
-directory is elsewhere. `EVIDENCE_OASDIFF_BIN` can select an explicitly installed
-matching binary. Missing/incompatible tools fail closed with full diagnostics.
+API diff uses the pinned native `oasdiff` provisioned explicitly by
+`pnpm api:setup`, not by `pnpm install`. Setup downloads the official release and
+verifies its archive checksum and executable version; a matching cached binary
+is reused. Rerun setup after deleting `node_modules` or the tool cache. See
+[Evidence API setup](libs/evidence-api/README.md#setup) for details.
+
+The runner resolves the cache relative to the installed Evidence package even
+when the caller's working directory is elsewhere, then falls back to `oasdiff`
+on `PATH`. `EVIDENCE_OASDIFF_BIN` takes precedence to select an explicitly installed
+matching binary. Missing/incompatible tools fail closed with full diagnostics;
+comparison never downloads a binary.
 
 ## Fixtures and pins
 
