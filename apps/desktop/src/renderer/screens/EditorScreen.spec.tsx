@@ -93,6 +93,40 @@ describe('EditorScreen', () => {
     );
   });
 
+  it.each(['graph', 'split'] as const)(
+    'contains canvas control layers below floating drawers in %s mode',
+    async (mode) => {
+      readyProject();
+      const { container } = render(
+        <EditorScreen rootPath="/models/procurement" />,
+      );
+      await readyCanvas();
+
+      if (mode === 'split') {
+        fireEvent.keyDown(window, { code: 'Digit3', altKey: true });
+        await screen.findByLabelText('副视口');
+      }
+
+      fireEvent.click(screen.getByRole('button', { name: '业务结构' }));
+      const drawer = screen.getByRole('region', { name: '业务结构' });
+      const stage = container.querySelector('[data-region="workspace-stage"]');
+
+      // jsdom cannot paint overlaps; enforce the stacking boundary that keeps
+      // the scope control and other canvas chrome beneath the floating drawer.
+      expect(stage).toHaveClass('isolate');
+      expect(stage).toContainElement(screen.getByLabelText('聚焦范围'));
+      expect(stage).not.toContainElement(drawer);
+      expect(drawer.parentElement).toHaveClass('absolute', 'z-30');
+
+      fireEvent.click(screen.getByRole('button', { name: '关闭面板' }));
+      expect(screen.queryByRole('region', { name: '业务结构' })).toBeNull();
+      fireEvent.change(screen.getByLabelText('聚焦范围'), {
+        target: { value: 'context.catalog' },
+      });
+      expect(screen.getByLabelText('聚焦范围')).toHaveValue('context.catalog');
+    },
+  );
+
   it('hands the canvas back once a drawer picked an object', async () => {
     readyProject();
     render(<EditorScreen rootPath="/models/procurement" />);

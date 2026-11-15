@@ -914,7 +914,11 @@ const EditorWorkspace = ({
             </div>
           )}
 
-          <div className="flex min-h-0 min-w-0 flex-1">
+          {/* Keep canvas control layers below the floating activity drawer. */}
+          <div
+            data-region="workspace-stage"
+            className="isolate flex min-h-0 min-w-0 flex-1"
+          >
             <ResizablePanelGroup
               direction="horizontal"
               autoSaveId="evidence-studio-horizontal-v2"
