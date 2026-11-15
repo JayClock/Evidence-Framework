@@ -25,6 +25,7 @@
     ]
   },
   "dependencies": {
+    "fast-json-stable-stringify": "^2.1.0",
     "tslib": "^2.3.0",
     "zod": "3.25.76"
   }

@@ -1,19 +1,9 @@
-import { hash } from 'fast-sha256';
+import { sha256 } from '@noble/hashes/sha2.js';
+import { bytesToHex } from '@noble/hashes/utils.js';
+import { compactCanonicalJson } from '@evidence-poc/evidence-schema';
 
-const canonicalJson = (value: unknown): string => {
-  if (Array.isArray(value)) return `[${value.map(canonicalJson).join(',')}]`;
-  if (typeof value === 'object' && value !== null) {
-    return `{${Object.entries(value as Record<string, unknown>)
-      .filter(([, item]) => item !== undefined)
-      .sort(([left], [right]) => (left < right ? -1 : left > right ? 1 : 0))
-      .map(([key, item]) => `${JSON.stringify(key)}:${canonicalJson(item)}`)
-      .join(',')}}`;
-  }
-  return JSON.stringify(value) ?? 'null';
-};
-
-/** Browser-safe, stable model hash. Not a legacy instance timeline. */
+/** Browser-safe, synchronous model hash. Keep the historical final newline. */
 export const digestOf = (value: unknown): string => {
-  const bytes = new TextEncoder().encode(`${canonicalJson(value)}\n`);
-  return `sha256:${Array.from(hash(bytes), (byte) => byte.toString(16).padStart(2, '0')).join('')}`;
+  const bytes = new TextEncoder().encode(`${compactCanonicalJson(value)}\n`);
+  return `sha256:${bytesToHex(sha256(bytes))}`;
 };

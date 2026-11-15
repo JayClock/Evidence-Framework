@@ -1,4 +1,9 @@
 export {
+  compactCanonicalJson,
+  prettyCanonicalJson,
+} from './ast/canonicalJson.js';
+
+export {
   JsonPatchItemSchema,
   JsonPatchSchema,
   ModelPatchRequestSchema,
