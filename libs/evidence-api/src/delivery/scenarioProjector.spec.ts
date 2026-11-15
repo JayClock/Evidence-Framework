@@ -39,7 +39,8 @@ describe('direct inline-example acceptance projection', () => {
     const steps = workflow.tests.flow_1.steps;
     expect(yaml).toContain('${{env.host}}');
     expect(steps[2].http.url).toContain('${{captures.');
-    expect(steps[2].http.headers['x-evidence-asof']).toBe(EXAMPLE_AS_OF);
+    expect(steps[2].http.headers['x-evidence-asof']).toBe('${{env.asOf}}');
+    expect(parse(yaml).env.asOf).toBe(EXAMPLE_AS_OF);
     expect(steps[2].http.check.jsonpath['$["total_amount"]']).toBe(500);
     const hurl = renderHurl(projection)['flow-001.hurl']!;
     expect(hurl).toContain('[Captures]');

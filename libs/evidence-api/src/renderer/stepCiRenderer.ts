@@ -20,6 +20,17 @@ export function renderStepCi(projection: AcceptanceProjection): string {
         step.ref,
       );
     }
+  // Preserve distinct per-step clocks; env.asOf overrides the common clock via
+  // the official Runner, while additional clock variables retain timeline cases.
+  const clocks = [
+    ...new Set(
+      projection.flows.flatMap((flow) => flow.steps.map((step) => step.asOf)),
+    ),
+  ];
+  const clockKey = (asOf: string): string => {
+    const index = clocks.indexOf(asOf);
+    return index === 0 ? 'asOf' : `asOf_${index + 1}`;
+  };
   const tests = Object.fromEntries(
     projection.flows.map((flow, index) => [
       `flow_${index + 1}`,
@@ -42,7 +53,7 @@ export function renderStepCi(projection: AcceptanceProjection): string {
               'Content-Type': 'application/json',
               // Test harness protocol only; not production authorization or clock control.
               'x-evidence-role': step.actingRoleRef,
-              'x-evidence-asof': step.asOf,
+              'x-evidence-asof': '${{env.' + clockKey(step.asOf) + '}}',
             },
             json: step.inputs,
             ...(Object.keys(step.captures).length === 0
@@ -75,7 +86,12 @@ export function renderStepCi(projection: AcceptanceProjection): string {
       {
         version: '1.1',
         name: `${projection.modelId} acceptance`,
-        env: { host: 'http://localhost:8080' },
+        env: {
+          host: 'http://localhost:8080',
+          ...Object.fromEntries(
+            clocks.map((clock) => [clockKey(clock), clock]),
+          ),
+        },
         config: { concurrency: 1, continueOnFail: false },
         tests,
       },

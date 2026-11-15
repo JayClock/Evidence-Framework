@@ -1,0 +1,108 @@
+import { createServer } from 'node:http';
+import type { AddressInfo } from 'node:net';
+import { mkdtemp, writeFile, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
+import { stringify, parse } from 'yaml';
+import { describe, it, expect } from 'vitest';
+import { renderStepCi } from '../renderer/stepCiRenderer.js';
+import { projectAcceptanceTests } from '../delivery/scenarioProjector.js';
+import { createAcceptanceModel } from '../../tests/support/acceptance.js';
+import { runAcceptanceSuite, validateAsOf } from './acceptanceRunner.js';
+
+it('parameterizes distinct step clocks without collapsing a scenario timeline', () => {
+  const projection = projectAcceptanceTests(createAcceptanceModel());
+  projection.flows[0]!.steps[1]!.asOf = '2026-04-01T10:00:00Z';
+  const workflow = parse(renderStepCi(projection));
+  expect(workflow.env.asOf).toBe(projection.flows[0]!.steps[0]!.asOf);
+  expect(workflow.env.asOf_2).toBe('2026-04-01T10:00:00Z');
+  expect(workflow.tests.flow_1.steps[1].http.headers['x-evidence-asof']).toBe(
+    '${{env.asOf_2}}',
+  );
+});
+
+it('runs official HTTP assertions, overrides target/clock, and preserves failure differences', async () => {
+  const root = await mkdtemp(path.join(tmpdir(), 'acceptance-runner-'));
+  const seen: unknown[] = [];
+  const server = createServer((request, response) => {
+    seen.push(request.headers['x-evidence-asof']);
+    response.setHeader('content-type', 'application/json');
+    response.end('{"amount":501}');
+  });
+  await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
+  try {
+    const suitePath = path.join(root, 'suite.yml');
+    await writeFile(
+      suitePath,
+      stringify({
+        version: '1.1',
+        name: 'smoke',
+        env: { host: 'http://invalid', asOf: '2026-01-01T00:00:00Z' },
+        tests: {
+          flow: {
+            steps: [
+              {
+                name: 'pay',
+                http: {
+                  url: '${{env.host}}/pay',
+                  method: 'POST',
+                  headers: { 'x-evidence-asof': '${{env.asOf}}' },
+                  check: { status: 200, jsonpath: { '$.amount': 500 } },
+                },
+              },
+            ],
+          },
+        },
+      }),
+    );
+    const targetUrl = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
+    const report = await runAcceptanceSuite({
+      suitePath,
+      targetUrl,
+      asOf: '2026-03-31T10:00:00Z',
+      timeoutMs: 1000,
+    });
+    expect(report.passed).toBe(false);
+    expect(report.steps[0]).toMatchObject({
+      method: 'POST',
+      url: `${targetUrl}/pay`,
+      status: 200,
+      skipped: false,
+    });
+    expect(report.steps[0]!.assertions).toContainEqual({
+      path: 'jsonpath.$.amount',
+      expected: 500,
+      actual: 501,
+      passed: false,
+    });
+    expect(seen).toEqual(['2026-03-31T10:00:00Z']);
+    expect((await runAcceptanceSuite({ suitePath, targetUrl })).passed).toBe(
+      false,
+    );
+    expect(seen[1]).toBe('2026-01-01T00:00:00Z');
+    await writeFile(suitePath, 'version: "1.1"\ntests: {}\n');
+    await expect(runAcceptanceSuite({ suitePath, targetUrl })).rejects.toThrow(
+      'nonempty',
+    );
+    await expect(
+      runAcceptanceSuite({ suitePath, targetUrl, timeoutMs: -1 }),
+    ).rejects.toThrow('timeoutMs');
+  } finally {
+    server.closeAllConnections();
+    await new Promise<void>((resolve) => server.close(() => resolve()));
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+describe('clock validation', () => {
+  it.each(['2026-03-31T10:00:00Z', '2026-03-31T10:00:00.123Z'])(
+    'accepts %s',
+    (value) => expect(validateAsOf(value)).toBe(value),
+  );
+  it.each([
+    '2026-02-30T10:00:00Z',
+    'tomorrow',
+    '2026-03-31',
+    '2026-03-31T10:00:00+08:00',
+  ])('rejects %s', (value) => expect(() => validateAsOf(value)).toThrow());
+});
