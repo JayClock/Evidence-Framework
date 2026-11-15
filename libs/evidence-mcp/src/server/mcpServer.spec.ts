@@ -122,6 +122,43 @@ describe('createEvidenceMcpServer', () => {
     ).toMatchObject({ readOnlyHint: false });
   });
 
+  it('rejects malformed shared operator input over the real MCP transport before loading or patching', async () => {
+    const appClient = client();
+    const server = createEvidenceMcpServer({ appClient });
+    const [clientTransport, serverTransport] =
+      InMemoryTransport.createLinkedPair();
+    await server.connect(serverTransport);
+    const mcp = new Client({ name: 'test', version: '0.0.1' });
+    connected = mcp;
+    await mcp.connect(clientTransport);
+
+    const pair = {
+      contextRef: 'context.procurement',
+      request: {
+        id: 'request.refund',
+        label: 'Refund',
+        responsibleRoleRef: 'role.buyer',
+      },
+      confirmation: {
+        id: 'confirmation.refund',
+        label: 'Refunded',
+        responsibleRoleRef: 'role.seller',
+      },
+    };
+    for (const input of [
+      { ...pair, request: { ...pair.request, id: 'Invalid Id' } },
+      { ...pair, extra: true },
+    ]) {
+      const result = await mcp.callTool({
+        name: TOOL_NAMES.introduceFulfillmentPair,
+        arguments: input,
+      });
+      expect(result.isError).toBe(true);
+    }
+    expect(appClient.getDomainModel).not.toHaveBeenCalled();
+    expect(appClient.applyModelPatch).not.toHaveBeenCalled();
+  });
+
   it('returns a tool error when the desktop call fails', async () => {
     const server = createEvidenceMcpServer({ appClient: client() });
     const [clientTransport, serverTransport] =

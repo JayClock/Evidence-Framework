@@ -1,6 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
+import {
+  FulfillmentPairIntentSchema,
+  type DomainModelDocument,
+} from '@evidence-poc/evidence-schema';
 
 import type { EvidenceMcpAppClient } from '../types.js';
 import {
@@ -108,6 +111,63 @@ const createClient = (
     limitations: [],
   })),
   ...overrides,
+});
+
+describe('shared Zod input contracts', () => {
+  it('uses the schema object directly and rejects malformed input before any model access', async () => {
+    const client = createClient();
+    const tool = createEvidenceTools(client).find(
+      (tool) => tool.name === TOOL_NAMES.introduceFulfillmentPair,
+    );
+    if (tool === undefined) throw new Error('expected pair tool');
+    expect(tool.inputSchema).toBe(FulfillmentPairIntentSchema);
+    const valid = {
+      contextRef: 'context.procurement',
+      request: {
+        id: 'request.refund',
+        label: 'Refund',
+        responsibleRoleRef: 'role.buyer',
+      },
+      confirmation: {
+        id: 'confirmation.refund',
+        label: 'Refunded',
+        responsibleRoleRef: 'role.seller',
+      },
+    };
+    for (const input of [
+      { ...valid, request: { ...valid.request, id: 'Invalid Id' } },
+      {
+        ...valid,
+        confirmation: { ...valid.confirmation, responsibleRoleRef: undefined },
+      },
+      { ...valid, extra: true },
+      {
+        ...valid,
+        proof: { id: 'proof.refund', label: 'Proof', invented: true },
+      },
+    ]) {
+      await expect(tool.run(input)).rejects.toThrow();
+    }
+    expect(client.getDomainModel).not.toHaveBeenCalled();
+    expect(client.applyModelPatch).not.toHaveBeenCalled();
+  });
+
+  it('does not silently substitute a stage-gate target or an empty patch', async () => {
+    const client = createClient();
+    const tools = createEvidenceTools(client);
+    const stageGate = tools.find((tool) => tool.name === TOOL_NAMES.stageGate);
+    const applyPatch = tools.find(
+      (tool) => tool.name === TOOL_NAMES.applyPatch,
+    );
+    if (!stageGate || !applyPatch)
+      throw new Error('expected gate and patch tools');
+    await expect(stageGate.run({ target: 'invalid' })).rejects.toThrow();
+    await expect(
+      applyPatch.run({ rationale: 'x', commands: [] }),
+    ).rejects.toThrow();
+    expect(client.runStageGate).not.toHaveBeenCalled();
+    expect(client.applyModelPatch).not.toHaveBeenCalled();
+  });
 });
 
 const momentTime = (name: string) => ({
