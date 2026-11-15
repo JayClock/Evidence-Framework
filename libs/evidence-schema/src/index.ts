@@ -46,6 +46,7 @@ export {
   CONTEXT_KINDS,
   CONTEXT_KIND_DEFINITIONS,
   CONTEXT_KIND_LABELS,
+  ContextKindSchema,
   DOMAIN_COMPONENT_ROLES,
   DOMAIN_COMPONENT_ROLE_DEFINITIONS,
   DOMAIN_COMPONENT_ROLE_LABELS,
@@ -155,6 +156,7 @@ export {
 export {
   CardinalityASTSchema,
   RelationshipASTSchema,
+  RelationshipKindSchema,
   RELATIONSHIP_KINDS,
   RELATIONSHIP_KIND_DEFINITIONS,
   RELATIONSHIP_KIND_LABELS,
@@ -187,7 +189,22 @@ export {
 } from './ast/rule.js';
 
 export {
+  FulfillmentPairIntentSchema,
+  BreachCompensationIntentSchema,
+  RoleInversionIntentSchema,
+  DomainCalculatorIntentSchema,
+  type FulfillmentPairIntent,
+  type BreachCompensationIntent,
+  type RoleInversionIntent,
+  type DomainCalculatorIntent,
+} from './tools/operatorInputs.js';
+
+export {
   DomainModelDocumentSchema,
+  DomainModelBundleSchema,
+  MODEL_BUNDLE_TYPE,
+  type DomainModelBundle,
+  DomainModelDocumentSyntaxSchema,
   DomainModelManifestSchema,
   EMPTY_MODEL_MANIFEST,
   FM_RULE_LANGUAGE,

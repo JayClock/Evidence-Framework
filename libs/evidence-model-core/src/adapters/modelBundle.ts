@@ -1,5 +1,7 @@
 import {
   FM_SCHEMA_VERSION,
+  MODEL_BUNDLE_TYPE,
+  type DomainModelBundle,
   strictValidateDomainModel,
   type DomainModelDocument,
   type DomainModelManifest,
@@ -18,17 +20,14 @@ import {
   type SerializeOptions,
 } from './modelSourceFiles.js';
 
-export const MODEL_BUNDLE_TYPE = 'fm_bundle';
+export {
+  MODEL_BUNDLE_TYPE,
+  type DomainModelBundle,
+} from '@evidence-poc/evidence-schema';
 export const MODEL_BUNDLE_EXTENSION = '.evidence.json';
 export const DEFAULT_MODEL_BUNDLE_FILE = `model${MODEL_BUNDLE_EXTENSION}`;
 export const MODEL_README_PATH = 'README.md';
 
-/** The model, including inline examples, is the only source of acceptance cases. */
-export interface DomainModelBundle extends DomainModelDocument {
-  type: typeof MODEL_BUNDLE_TYPE;
-  schemaVersion: typeof FM_SCHEMA_VERSION;
-  readme?: string;
-}
 export interface ModelBundleParseResult {
   document: DomainModelBundle;
   issues: ModelSourceIssue[];

@@ -4,7 +4,7 @@ import {
   CelVariableNameSchema,
   DomainIdSchema,
 } from './id.js';
-import { ValueTypeSchema, type ValueType } from './values.js';
+import { BindingCardinalitySchema, ValueTypeSchema } from './values.js';
 import {
   isVocabularyId,
   vocabularyIds,
@@ -41,7 +41,7 @@ export const RuleBindingSchema = z.union([
   z
     .object({
       ref: DomainIdSchema,
-      cardinality: z.enum(['one', 'many']).optional(),
+      cardinality: BindingCardinalitySchema.optional(),
     })
     .strict(),
   z.object({ type: ValueTypeSchema }).strict(),
@@ -87,7 +87,8 @@ export const RuleASTSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['target'],
-        message: 'a derivation Rule must declare the target attribute it writes',
+        message:
+          'a derivation Rule must declare the target attribute it writes',
         params: { validationCode: 'rule.target.required' },
       });
     }
@@ -141,5 +142,3 @@ export function ruleTargetsAttribute(
     rule?.target?.entityRef === entityRef && rule.target.attribute === attribute
   );
 }
-
-export type { ValueType };

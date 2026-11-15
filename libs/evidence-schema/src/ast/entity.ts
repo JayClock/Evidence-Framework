@@ -1,8 +1,6 @@
 import { z } from 'zod';
-import {
-  AttributeNameSchema,
-  DomainIdSchema,
-} from './id.js';
+import { AttributeNameSchema, DomainIdSchema } from './id.js';
+import { JsonObjectSchema } from './json.js';
 import { ExampleTestASTSchema } from './example.js';
 import { ProvenanceSnippetSchema } from './provenance.js';
 import { ValueTypeSchema } from './values.js';
@@ -59,9 +57,7 @@ export const EVIDENCE_KIND_DEFINITIONS = {
 
 export type EvidenceKind = keyof typeof EVIDENCE_KIND_DEFINITIONS;
 export const EVIDENCE_KINDS = vocabularyIds(EVIDENCE_KIND_DEFINITIONS);
-export const EVIDENCE_KIND_LABELS = vocabularyLabels(
-  EVIDENCE_KIND_DEFINITIONS,
-);
+export const EVIDENCE_KIND_LABELS = vocabularyLabels(EVIDENCE_KIND_DEFINITIONS);
 export const EvidenceKindSchema = z.enum(
   EVIDENCE_KINDS as unknown as [EvidenceKind, ...EvidenceKind[]],
 );
@@ -128,9 +124,7 @@ export const CONTEXT_KIND_DEFINITIONS = {
 
 export type ContextKind = keyof typeof CONTEXT_KIND_DEFINITIONS;
 export const CONTEXT_KINDS = vocabularyIds(CONTEXT_KIND_DEFINITIONS);
-export const CONTEXT_KIND_LABELS = vocabularyLabels(
-  CONTEXT_KIND_DEFINITIONS,
-);
+export const CONTEXT_KIND_LABELS = vocabularyLabels(CONTEXT_KIND_DEFINITIONS);
 export const ContextKindSchema = z.enum(
   CONTEXT_KINDS as unknown as [ContextKind, ...ContextKind[]],
 );
@@ -168,7 +162,7 @@ export const ModelExampleASTSchema = z
   .object({
     label: z.string().min(1),
     description: z.string().min(1).optional(),
-    value: z.record(z.unknown()),
+    value: JsonObjectSchema,
     test: ExampleTestASTSchema.optional(),
   })
   .strict();
@@ -189,12 +183,9 @@ const EntityBaseSchema = z.object({
 export const EvidenceEntitySchema = EntityBaseSchema.extend({
   category: z.literal('evidence'),
   kind: EvidenceKindSchema,
-  contextRef: DomainIdSchema.optional(),
+  contextRef: DomainIdSchema,
   responsibleRoleRef: DomainIdSchema.optional(),
   roleRefs: z.array(DomainIdSchema).optional(),
-  parentContextRef: DomainIdSchema.optional(),
-  rootRefs: z.array(DomainIdSchema).optional(),
-  domainRole: DomainComponentRoleSchema.optional(),
 }).strict();
 
 /** Participant parties are global; participant things belong to a domain context. */
@@ -203,32 +194,19 @@ export const ParticipantEntitySchema = EntityBaseSchema.extend({
   kind: ParticipantKindSchema,
   contextRef: DomainIdSchema.optional(),
   domainRole: DomainComponentRoleSchema.optional(),
-  responsibleRoleRef: DomainIdSchema.optional(),
-  roleRefs: z.array(DomainIdSchema).optional(),
-  parentContextRef: DomainIdSchema.optional(),
-  rootRefs: z.array(DomainIdSchema).optional(),
 }).strict();
 
 export const RoleEntitySchema = EntityBaseSchema.extend({
   category: z.literal('role'),
   kind: RoleKindSchema,
-  contextRef: DomainIdSchema.optional(),
-  responsibleRoleRef: DomainIdSchema.optional(),
-  roleRefs: z.array(DomainIdSchema).optional(),
-  domainRole: DomainComponentRoleSchema.optional(),
-  parentContextRef: DomainIdSchema.optional(),
-  rootRefs: z.array(DomainIdSchema).optional(),
+  contextRef: DomainIdSchema,
 }).strict();
 
 export const ContextEntitySchema = EntityBaseSchema.extend({
   category: z.literal('context'),
   kind: ContextKindSchema,
-  contextRef: DomainIdSchema.optional(),
   parentContextRef: DomainIdSchema.optional(),
   rootRefs: z.array(DomainIdSchema).optional(),
-  responsibleRoleRef: DomainIdSchema.optional(),
-  roleRefs: z.array(DomainIdSchema).optional(),
-  domainRole: DomainComponentRoleSchema.optional(),
 }).strict();
 
 /** One discriminated Zod union is the source of every entity AST type. */
@@ -270,7 +248,9 @@ export function isContractEntity(
 export function isFulfillmentRequest(
   entity: EntityAST | undefined,
 ): entity is EvidenceEntityAST {
-  return entity?.category === 'evidence' && entity.kind === 'fulfillment_request';
+  return (
+    entity?.category === 'evidence' && entity.kind === 'fulfillment_request'
+  );
 }
 
 export function isFulfillmentConfirmation(
