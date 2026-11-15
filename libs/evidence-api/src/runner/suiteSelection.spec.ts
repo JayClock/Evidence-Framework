@@ -97,6 +97,7 @@ it('ignores generated capture and clock ordinals, but detects changed clocks', (
         {
           name: 'request',
           http: {
+            method: 'POST',
             url: '${{env.host}}',
             captures: { capture_1: { jsonpath: '$.id' } },
           },
@@ -104,6 +105,7 @@ it('ignores generated capture and clock ordinals, but detects changed clocks', (
         {
           name: 'confirm',
           http: {
+            method: 'POST',
             url: '${{env.host}}/${{captures.capture_1}}',
             headers: { clock: '${{env.asOf}}' },
           },
