@@ -1,3 +1,5 @@
+import { parse } from '@marcbachmann/cel-js';
+
 import {
   ATTRIBUTE_NAME_PATTERN,
   DOMAIN_ID_PATTERN,
@@ -16,7 +18,21 @@ const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const ISO_TIMESTAMP_PATTERN =
   /^\d{4}-\d{2}-\d{2}[Tt]\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:[Zz]|[+-]\d{2}:\d{2})$/;
 
-const DURATION_PATTERN = /^[+-]?(?:\d+(?:\.\d+)?[hms])+$/;
+const durationExpression = parse('duration(value)');
+const INTEGER_TEXT_PATTERN = /^(?:0|-?[1-9][0-9]*)$/;
+
+/** JSON integers use safe numbers or exact decimal strings within CEL's 64 bits. */
+const isIntegerValue = (value: unknown, unsigned: boolean): boolean => {
+  if (typeof value === 'number') {
+    if (!Number.isSafeInteger(value)) return false;
+  } else if (typeof value !== 'string' || !INTEGER_TEXT_PATTERN.test(value)) {
+    return false;
+  }
+  const integer = BigInt(value);
+  return unsigned
+    ? integer >= 0n && integer <= 18446744073709551615n
+    : integer >= -9223372036854775808n && integer <= 9223372036854775807n;
+};
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -41,13 +57,13 @@ export const validateTypedValue = (
     case 'bool':
       return typeof value === 'boolean' ? null : 'must be a boolean';
     case 'int':
-      return typeof value === 'number' && Number.isInteger(value)
+      return isIntegerValue(value, false)
         ? null
-        : 'must be an integer';
+        : 'must be an integer (safe number or exact int64 decimal string)';
     case 'uint':
-      return typeof value === 'number' && Number.isInteger(value) && value >= 0
+      return isIntegerValue(value, true)
         ? null
-        : 'must be a non-negative integer';
+        : 'must be a non-negative integer (safe number or exact uint64 decimal string)';
     case 'double':
     case 'decimal': {
       if (typeof value === 'number') {
@@ -72,9 +88,15 @@ export const validateTypedValue = (
         ? null
         : 'must be an ISO date';
     case 'duration':
-      return typeof value === 'string' && DURATION_PATTERN.test(value)
-        ? null
-        : 'must be a CEL duration string';
+      if (typeof value === 'string') {
+        try {
+          durationExpression({ value });
+          return null;
+        } catch {
+          // CEL is the authority on supported duration units and precision.
+        }
+      }
+      return 'must be a CEL duration string';
     case 'id':
       return typeof value === 'string' && DOMAIN_ID_PATTERN.test(value)
         ? null

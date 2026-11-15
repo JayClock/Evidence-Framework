@@ -118,7 +118,12 @@
                   "x-evidence-caller-input": false
                   "readOnly": true
                 "quantity":
-                  "type": "integer"
+                  "anyOf": &a2
+                    - "type": "integer"
+                      "minimum": -9007199254740991
+                      "maximum": 9007199254740991
+                    - "type": "string"
+                      "pattern": "^(?:0|-?[1-9][0-9]*)$"
                   "description": "quantity"
                   "x-evidence-origin": "caller"
                   "x-evidence-caller-input": true
@@ -298,7 +303,7 @@
                   "x-evidence-caller-input": false
                   "readOnly": true
                 "quantity":
-                  "type": "integer"
+                  "anyOf": *a2
                   "description": "quantity"
                   "x-evidence-origin": "caller"
                   "x-evidence-caller-input": true

@@ -408,8 +408,18 @@
             "x-evidence-origin": "caller"
           },
           "quantity": {
+            "anyOf": [
+              {
+                "maximum": 9007199254740991,
+                "minimum": -9007199254740991,
+                "type": "integer"
+              },
+              {
+                "pattern": "^(?:0|-?[1-9][0-9]*)$",
+                "type": "string"
+              }
+            ],
             "description": "quantity",
-            "type": "integer",
             "x-evidence-caller-input": true,
             "x-evidence-origin": "caller"
           },
@@ -487,8 +497,18 @@
             "x-evidence-origin": "caller"
           },
           "quantity": {
+            "anyOf": [
+              {
+                "maximum": 9007199254740991,
+                "minimum": -9007199254740991,
+                "type": "integer"
+              },
+              {
+                "pattern": "^(?:0|-?[1-9][0-9]*)$",
+                "type": "string"
+              }
+            ],
             "description": "quantity",
-            "type": "integer",
             "x-evidence-caller-input": true,
             "x-evidence-origin": "caller"
           },
@@ -889,8 +909,18 @@
                     "x-evidence-caller-input": true
                   },
                   "quantity": {
+                    "anyOf": [
+                      {
+                        "maximum": 9007199254740991,
+                        "minimum": -9007199254740991,
+                        "type": "integer"
+                      },
+                      {
+                        "pattern": "^(?:0|-?[1-9][0-9]*)$",
+                        "type": "string"
+                      }
+                    ],
                     "description": "quantity",
-                    "type": "integer",
                     "x-evidence-caller-input": true
                   },
                   "unit_price": {
@@ -1209,8 +1239,18 @@
                     "x-evidence-caller-input": true
                   },
                   "quantity": {
+                    "anyOf": [
+                      {
+                        "maximum": 9007199254740991,
+                        "minimum": -9007199254740991,
+                        "type": "integer"
+                      },
+                      {
+                        "pattern": "^(?:0|-?[1-9][0-9]*)$",
+                        "type": "string"
+                      }
+                    ],
                     "description": "quantity",
-                    "type": "integer",
                     "x-evidence-caller-input": true
                   },
                   "unit_price": {

@@ -49,6 +49,69 @@ describe('export-tests CLI', () => {
     );
     expect(readdirSync(fm)).not.toContain('validation');
   });
+  it.each([
+    ['stepci', 'int', '1857392817294827136', '1857392817294827137'],
+    ['hurl', 'int', '1857392817294827136', '1857392817294827137'],
+    ['stepci', 'uint', '18446744073709551614', '18446744073709551615'],
+    ['hurl', 'uint', '18446744073709551614', '18446744073709551615'],
+  ] as const)(
+    'exports exact %s %s derived assertions without bigint or number rounding',
+    async (format, type, quantity, expected) => {
+      const model = createAcceptanceModel();
+      const request = model.entities.find(
+        (entity) => entity.id === 'request.payment',
+      );
+      const confirmation = model.entities.find(
+        (entity) => entity.id === 'confirmation.payment',
+      );
+      const quantityField = request?.attributes?.find(
+        (attribute) => attribute.name === 'quantity',
+      );
+      const amountField = confirmation?.attributes?.find(
+        (attribute) => attribute.name === 'total_amount',
+      );
+      const requestExample = request?.examples?.[0];
+      const confirmationExample = confirmation?.examples?.[0];
+      const rule = model.rules.find((item) => item.id === 'rule.total-amount');
+      if (
+        !quantityField ||
+        !amountField ||
+        !requestExample ||
+        !confirmationExample ||
+        !rule
+      ) {
+        throw new Error('Incomplete acceptance fixture');
+      }
+      quantityField.valueType = type;
+      requestExample.value.quantity = quantity;
+      amountField.valueType = type;
+      confirmationExample.value.total_amount = expected;
+      rule.expression = `request.quantity + ${type === 'uint' ? '1u' : '1'}`;
+      rule.resultType = type;
+      writeFileSync(fm, serializeModelBundle(model));
+
+      const result = await runCli(args(format));
+      expect(result, JSON.stringify(result)).toMatchObject({ exitCode: 0 });
+      if (format === 'stepci') {
+        const workflow = parse(
+          readFileSync(path.join(out, 'acceptance.stepci.yml'), 'utf8'),
+        );
+        expect(workflow.tests.flow_1.steps[1].http.json.quantity).toBe(
+          quantity,
+        );
+        expect(
+          workflow.tests.flow_1.steps[2].http.check.jsonpath[
+            '$["total_amount"]'
+          ],
+        ).toBe(expected);
+      } else {
+        const hurl = readFileSync(path.join(out, 'flow-001.hurl'), 'utf8');
+        expect(hurl).toContain(`"quantity": "${quantity}"`);
+        expect(hurl).toContain(`== "${expected}"`);
+      }
+    },
+  );
+
   it('replaces stale artifacts when switching to Hurl', async () => {
     await runCli(args());
     const result = await runCli(args('hurl'));

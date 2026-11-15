@@ -71,7 +71,11 @@ export const celValueToJson = (value: unknown): unknown => {
       [...value].map(([key, item]) => [String(key), celValueToJson(item)]),
     );
   }
-  if (value instanceof Uint8Array) return Array.from(value);
+  if (value instanceof Uint8Array) {
+    return btoa(
+      Array.from(value, (byte) => String.fromCharCode(byte)).join(''),
+    );
+  }
   if (value !== null && typeof value === 'object') {
     return Object.fromEntries(
       Object.entries(value).map(([key, item]) => [key, celValueToJson(item)]),

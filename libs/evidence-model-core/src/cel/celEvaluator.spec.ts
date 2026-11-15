@@ -237,6 +237,13 @@ describe('celValueToJson', () => {
     expect(celValueToJson(value)).toBe(expected);
   });
 
+  it('serializes native CEL bytes using the JSON base64 representation', () => {
+    expect(celValueToJson(evaluateCelExpression('b"hello"', {}))).toBe(
+      'aGVsbG8=',
+    );
+    expect(celValueToJson(new Uint8Array([0, 1, 255]))).toBe('AAH/');
+  });
+
   it('normalizes uints and nested containers without leaking native classes or bigint', () => {
     expect(
       celValueToJson(evaluateCelExpression('18446744073709551615u', {})),

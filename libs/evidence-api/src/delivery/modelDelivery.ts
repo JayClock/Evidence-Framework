@@ -29,8 +29,23 @@ type JsonObject = Record<string, unknown>;
 
 const SCHEMA_FOR_TYPE: Record<string, JsonObject> = {
   bool: { type: 'boolean' },
-  int: { type: 'integer' },
-  uint: { type: 'integer', minimum: 0 },
+  // Match CEL's JSON boundary: numbers are safe integers, wider values are text.
+  int: {
+    anyOf: [
+      {
+        type: 'integer',
+        minimum: Number.MIN_SAFE_INTEGER,
+        maximum: Number.MAX_SAFE_INTEGER,
+      },
+      { type: 'string', pattern: '^(?:0|-?[1-9][0-9]*)$' },
+    ],
+  },
+  uint: {
+    anyOf: [
+      { type: 'integer', minimum: 0, maximum: Number.MAX_SAFE_INTEGER },
+      { type: 'string', pattern: '^(?:0|[1-9][0-9]*)$' },
+    ],
+  },
   double: { type: 'number' },
   decimal: { type: 'number' },
   money: { type: 'number' },
