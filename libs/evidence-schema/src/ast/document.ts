@@ -8,6 +8,7 @@ import {
 import { EntityASTSchema, type EntityAST } from './entity.js';
 import { RelationshipASTSchema, type RelationshipAST } from './relationship.js';
 import { RuleASTSchema, type RuleAST } from './rule.js';
+import { refineDomainModel } from './documentSemantics.js';
 
 /** FM schema version emitted by this package. */
 export const FM_SCHEMA_VERSION = '5.0' as const;
@@ -33,7 +34,8 @@ export const DomainModelDocumentSchema = z
     relationships: z.array(RelationshipASTSchema),
     rules: z.array(RuleASTSchema),
   })
-  .strict();
+  .strict()
+  .superRefine(refineDomainModel);
 
 export type DomainModelManifest = z.infer<typeof DomainModelManifestSchema>;
 export type DomainModelDocument = z.infer<typeof DomainModelDocumentSchema>;
