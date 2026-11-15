@@ -1,5 +1,5 @@
-# Files
+# 文件
 
-- [MCP server and desktop bridge](mcp-integration.md) - How external IDEs and CLI agents reach the running desktop — the evidence-mcp tool surface, the per-user local socket, the main-process request handler that routes each call to the renderer or to a sensor, delivery, simulation or capture service, and the status the header reports.
-- [The Pi agent harness, its tools and the desktop runtime](pi-harness.md) - How the in-process Pi session behind the Evidence desktop is narrowed behind an injectable port, given code-shipped modeling instructions and an eleven-tool extension, and how its patches, sensor runs and transcripts travel back through the renderer.
-- [Sensors, stage gates and governance](sensor-orchestration.md) - The audit layer above the model — how one read of the sources feeds the native sensors into a single SensorReport shape, how the stage gate decides hand-off from saved evidence, how the governance loop turns drift and replay into a proceed-or-repair decision, and how findings reach the canvas and the problems panel.
+- [MCP 工具与桌面桥](mcp-integration.md) - 外部 IDE 和 CLI Agent 如何经本地 socket 访问桌面实时模型、提交 RFC 6902 补丁，以及读取已保存模型的传感器、交付和生产漂移结果。
+- [Pi 建模 Agent 与受控工具](pi-harness.md) - 桌面内置 Pi 会话的 SDK 适配、代码随包提示词、Zod 工具、实时补丁和传感器反馈，以及会话与窗口的生命周期。
+- [原生传感器与治理闭环](sensor-orchestration.md) - 共享 SensorReport 如何承载 FM 静态检查、关键数据和 API 诊断，以及 version 6 阶段门禁、独立漂移审计与真实 HTTP 验收治理的区别。

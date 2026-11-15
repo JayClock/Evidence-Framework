@@ -1,3 +1,3 @@
-# Files
+# 文件
 
-- [Build, lint and packaging](build-and-package.md) - The operational spine of the workspace — pnpm settings that change how code resolves, the Nx target graph and its inferred targets, the three guards that catch a layering mistake (source condition, module-boundary tags, browser-platform rule), the boundary drill, and the Electron Forge package/make path CI runs.
+- [构建、打包与维护](build-and-package.md) - Node/pnpm/Nx工具链、显式oasdiff准备、source条件与层边界、Electron资源打包，以及CI与OpenWiki可恢复更新的操作合同。

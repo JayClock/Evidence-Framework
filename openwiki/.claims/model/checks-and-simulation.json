@@ -1,176 +1,88 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:4d1be6a307601a430bbc63b208e0c50eeb1fdebf46497ba084fba11d4ceeb127",
+  "pageVersion": "sha256:b876f3e9f3cd5e5582a457e7496d63182f2ad27ef5383d714c39da51defe059e",
   "claims": [
     {
       "id": "claim_4260686904514941808ef785c7ef5562",
-      "statement": "buildFmCheckReport is the single check entry point: it unions source issues, strict validation, traceability, validation-suite and timeline errors, optionally selects a scope and re-validates the narrowed suite, computes completeness and coverage gaps, re-reads the digest, simulates scenarios only when nothing blocks or is owed, and always attaches non-blocking advisories.",
+      "statement": "v6 check只聚合源/strict/lineage、scope completeness、digest和advisories，统计声明testExampleCount，不执行旧suite/replay。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/validation/fmCheck.ts#L172-L305",
-          "version": "repo-lines-v1:sha256:cb973c784b86c81bbdbfd5c435f1104c5b7b7f7661355acb818e3640f85fedae:eyJzZWxlY3RlZExpbmVDb3VudCI6MTM0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIwMGE4YWJjOGM0ZWY5NTg0Y2NkNWQyYmRmZTk2ODYyZTI5MGRjZmU4ZWM2NWIwNmViMzY4YzBkNTEzMmI3M2NiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3YjEzYjUwZmRiYTkxN2Y5NDFjZDlmNmFiZGEyOGM0NTBiZDgwNWVhMWY4NDNjMTI5MDA4MjEwNmY2ZTJkM2Q5IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
-        },
-        {
-          "resource": "repo://libs/evidence-model-core/src/validation/fmCheck.ts#L180-L208",
-          "version": "repo-lines-v1:sha256:c7ae7ea5286df218cc48930350a20168ebfe3b1a58626f54c4c07963fc4be4a8:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2N2NmZDc2YmJmMjczYTUwY2E0YmI2ODc3OWJkN2UyZDhhOWE0NzhkOTY2OTBjYzU2YWY2ZWVmNjdmNzM3ZTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIzODNmMjY4ODc4YmFmYjVkNzUwMGFmMDI3NDI2ZjFhZTQyN2NjYjVhYzEwNmMxYWNjMTcwYTgzNGIyN2Q1OTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1NjZlMWJhNzlhMmI4YTQxMmIyOGYyMTUzNDc2ZjBkZDI1NjEzMjA5Zjc5MDM3YTQ1YTdhOTZiZGNiNmVhYmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEyZmUzZWY4ODgxMjE1NDhiMzY4NjlmMjRmNzE0MzJjMDE2YzhjOTNhODdlY2Y2NmM3YTAyMTg0MTA3ZWIxN2YifQ"
+          "resource": "repo://libs/evidence-model-core/src/validation/fmCheck.ts#L45-L105",
+          "version": "repo-lines-v1:sha256:d6b1cbb14aab0849e487355e9a642678a8c9e73082ddc6a60cef033c193172fa:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAwYThhYmM4YzRlZjk1ODRjY2Q1ZDJiZGZlOTY4NjJlMjkwZGNmZThlYzY1YjA2ZWIzNjhjMGQ1MTMyYjczY2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI0OTk2NTMwYmU3Y2U4NTQ5OTZkMTMzZjE2NDkwZjgyOTY5MjAxNTBkZGZkM2Q1MzRmMWNjOWQxZGI4OGJjOTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
     {
       "id": "claim_a19e3fcc789b41a38a9482a6c3a534a7",
-      "statement": "consistency is true only when the de-duplicated static error list is empty and the model digest did not change during the check; an input change is both reported as an error and reflected in inputChanged.",
+      "statement": "consistent须静态无错且摘要未变，inputChanged附错误。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/validation/fmCheck.ts#L237-L262",
-          "version": "repo-lines-v1:sha256:0b2b95d7f491a5efa034efc9aee15443d9af6ccacf3c30b0140363f67aa02179:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE3ZmNhMWI3YzhkZTUyY2Y3ZmExMGE0NTI1MDk2ZmMwMzVmOWY2ZWQwMjRmYTAzMmRmMjQ2NzEzOTQ1YjQ1NmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk5NTg0YjQ2ZWQxMDM1NGU3YzY3YjExMzgzYmI5YWNlODRmMjliODZiNDE5ZWU2MmY2YTJmMjZjYTc3ZDczYjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY4Y2QxODA5MWYyMTIyMjM4YjA1YzZiN2Q0YTI0YzJmOTg0YjZiNzg2NGI3MWY0NGU3MzFhMGJjOTQzZGYyYjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRhOWQ0MDgxZjk1YTgxNjVjYzc0MGFiYWViOTQzYjA0YzE0NWZmMWZhYjhmOTY1NGEzODM2ODVlZjJjNzMzMGUifQ"
+          "resource": "repo://libs/evidence-model-core/src/validation/fmCheck.ts#L65-L80",
+          "version": "repo-lines-v1:sha256:1a27ac3a17880e98cf2960d425204aea196202d97a067bbd006b2df1f7ff9e48:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxZjk1NjQzMDJjNDYzNDQxMTRmYzk5ZjkxYjQ4YTRmZTZiNDEyNGYzMzlhYjQyMWJhMjQ3MmExMDlmNGIyOGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIyMDkwZjAxMDU1ODRkNzc0MjYyNmYxZTI4YTExMjNkYmYzNjM3NzM2YjM2OTJjNWE4NzBjNTA2NWE2ZGZjZmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJlYTMyYTE5YjdmOTFkMDc2Y2Q3MjZkMjZhMzdhYzEzMzk5ZTRmZjliZjZhZjliYTNhMzYyMzk2MGI2YTdjMDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ5NGUyZWRiY2JiZDIwYWZmNmVkYWViZGJjYzY0ZTUzYTdhZGQyM2FlYzNiNzA3MWNmMzMwMDY0NGY3NWJmZDQifQ"
         }
       ]
     },
     {
       "id": "claim_f4935a9473944cdeaa52601892a3c44d",
-      "statement": "complete is null when no scope was requested and otherwise true only with zero gaps and consistency; valid requires no errors and complete not false, and humanConfirmation is the literal 'not-asserted-by-machine'.",
+      "statement": "complete无scope为null，有scope须无gap且consistent；valid无error且complete非false，机器不批准业务。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/validation/fmCheck.ts#L263-L283",
-          "version": "repo-lines-v1:sha256:8e7d7d166727659515d44449e9558affd9655b3c0c7ca3be77946fcc52c27cfe:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3YzZkMDRjZWJkYjU3Y2FlYTg2MGUwZGUyZTViMjhmY2EyNWJmZjJiMTUwYTg4ZTU0ZTk3NDQ1MDRiN2FmMGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5MDBjMjRiYzk3M2UwNWJjZWUwNTNhMmFiNDdlNmRlNmZhN2I2NjFkZThmNzQ3NzZiYmE1OTM0NDQxMmVhZTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI4ZTg1YzliMmIxMmI4NzMyYjQ1ZTQyZmMyNzE4ODU3NmM4N2Q2ODE3MjZlYzdjZTg5NGQ4NWVjNzEzZDBmYjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRkOWI1ODViNmNmMTNlYWYyMWE1ODZkNjc2NDM3OGEyY2MzYjNlMWM4YjNkYWRjZjc0YmM1MDhkYmUxMjE2MWMifQ"
+          "resource": "repo://libs/evidence-model-core/src/validation/fmCheck.ts#L73-L89",
+          "version": "repo-lines-v1:sha256:1fdc370522081589b1816c67cd643b7aae2924ef1725e33908405cb0cc22b4d6:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3YzZkMDRjZWJkYjU3Y2FlYTg2MGUwZGUyZTViMjhmY2EyNWJmZjJiMTUwYTg4ZTU0ZTk3NDQ1MDRiN2FmMGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdiZDg3YjgxMWUyMGRlYWIwMDhkOTYxYjcxNGJiNDJiMjVhY2NhMDYxZThhNjVlYTg4ZGNmYjA5MTBiZWYwYzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk2MmRjNTgyZTdiM2ZmOWE4ZWMxZDg0YzM0YjY3NTNlMDY4NWMyNjYwMzBjN2NmZDcxYzg4YzA5OGJkMmI3OWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM0ODk5YmM2YmQ5MmI2ODllYWJhNDQwMjA1OTcxYjcyZmIwNGUwZDM1YzA4YjdiZWY0MDM3YWEyY2ZkNDJmMmYifQ"
         }
       ]
     },
     {
       "id": "claim_1dc679ef7a3d42149ae41d1c893a835f",
-      "statement": "A scope must name independent Contexts: a non-Context, a Context with a parentContextRef and a duplicated scope are refused, and the walk keeps whole Contexts, descendants and real dependencies while a shared Participant Party does not pull in an unrelated Contract.",
+      "statement": "scope仅独立Context且不可重复，保留subtree/真实依赖，不因共享Party拖入其他合同。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/validation/scope.ts#L110-L222",
-          "version": "repo-lines-v1:sha256:5ab78a304290c5aa05c56efeb7b1c124a04ba1479e9f3c2d84aa25a9e44f2eba:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJhZGQ1MGUwOGQzZTVlNjAwYWI1NmU1N2ZlM2VhYjBlODUzN2I1OTBjYTY1ZmQxNTA5N2RmYTdiZTMzYjJjYzZlIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyOTIxYzQ1MTM2Nzg3NmE0MzJlZDMwZjE1ZWI3N2RhOWI5MDI5Yzc2MTI2NDY4MGJmOTQ3YTgxOWI5YjdmOTMwIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI2ZTRiN2Y5YWFhOWNkOTZmZjdiNTU3ZjJlNjRiYWQ5MjllYTRhNDJiNjM2MWQ3ZWViODgxZDkzNDNiMTM1YzcyIn0"
-        }
-      ]
-    },
-    {
-      "id": "claim_8d817fd0060e47cab3c8119f18150580",
-      "statement": "scopeSuite narrows validation inputs to scenarios the scoped model can execute and follows basedOn chains transitively so every instance a kept scenario needs is retained.",
-      "evidence": [
-        {
-          "resource": "repo://libs/evidence-model-core/src/validation/scope.ts#L225-L278",
-          "version": "repo-lines-v1:sha256:b49c0fd6b046bb2498713a57810dc7abd90d1feddb55da5647e6690404e3a25d:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI3YjMwMjQ4MjY5YzAyZjUzYjM5MDU4ODk0YTFjMzM5ZWJhOGVjZTkzYzg1NzExNjA3NmQwMzQ4MzgyMjUxOGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI0YTY0M2ViZGU4NTAzZDRjNTQyYjBiMzFiOWU1ZDU2N2NiZTk1NTNjYTQxMTlmOTdmOWU4NzgxYTQ4Y2ZjYWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI4MmI4ZmZiY2VlYjc3YTFlZjkxMjBhYjNiN2Q5Y2YyNzcxNmFjOWM0Nzk5M2I4OTg4MmM5MzJiZjM3M2E4ZjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM2NjAxYjQyYzYwM2Q2OWFkNjVjYWQwZDFkMDhjZWJhN2JkM2FkNzA0NWE1ZjBhOWE3NTAzYmVkZjE5YjZiNDkifQ"
+          "resource": "repo://libs/evidence-model-core/src/validation/scope.ts#L110-L221",
+          "version": "repo-lines-v1:sha256:7b361ce0be7ace89d87c8d0566cc0d4c892aaa2b3fc46f79263d47704edb7119:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIwM2NkNjAxNjJlM2U0YjZiMjcwNTdlY2IxYzdlZDZiM2UxNTJjOWY3ZDc5ZDQ0MDJmOTc1MWNkMDdkODJmYzEyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJiYTg0YzU4Y2FhZDYxNmNkMTA1NjE3OGM4MzdjYjRkMjA0ZDk0ZWQ4MDExMjUyYzJhZTM3NWZjOGI3NWI0ZjA1IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIwMzBjN2VkYzU4NzQ4Njk2ZWE2ODE0YTIyMmM0ODZjZTFkNjAwY2ExZDA1Mzk4MzcwZGVhYWUwYjk0MzIwNDU0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIwNDQwN2UyM2JhYTViMzkxYzE0NWE3OGY2NDQwNTk1MGM4NWM3YTdlMjc2Mjk4MzgzMjJiMjkyMmE4NDVmMDhlIn0"
         }
       ]
     },
     {
       "id": "claim_fd060eff30ab4f45ab2690f19bacb6e4",
-      "statement": "Completeness requires each evidence kind's business-time attributes, valueType and required on every attribute, a confirmation or Evidence Role for every request, a request reference for every confirmation, both contract Parties as right holder of a primary Fulfillment, and a primary request in every Contract Context with requests.",
+      "statement": "完整性检查字段/业务时间/请求确认/primary双方责任，不再要求内存scenario覆盖。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/validation/scope.ts#L402-L475",
-          "version": "repo-lines-v1:sha256:5d17fce28bd0b804f7988af99be3bc3d25fff8f9feee94fe95ad8aed4ce0e91d:eyJzZWxlY3RlZExpbmVDb3VudCI6NzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgwOGRiZmVjM2E0ZTU3ZGFmZDU4MThiZTNkZTc3ZDgzMjEwY2ZjMWI0YmE5Y2U5ZDUxZjQzYjY5NjkyODRmYmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI1N2E5M2Q2OWI2OGMwYmRhMDQ0ODNiZWJlYzM2ZDBhZTViOWUyYTVlZGMzZGE1M2I2NjljYTY0N2QxZWQwZTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY4YmM3ZGZkMzkzODUzODVhZjU0OWQyYzg5MWI5OTRjYjE5NzZlZTU3YmRkNmM3OTQyNDNmNjNkYzlkMzQ4MWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIyMzJjMTIyZGZmOGU5OGRjN2ZmNTlhNDg1MWY1MTM4NDdhYThmZWNhZGQxNWUwYTc4NzQ5NDlhZTYxZjQ4OGIifQ"
-        },
-        {
-          "resource": "repo://libs/evidence-model-core/src/validation/scope.ts#L560-L610",
-          "version": "repo-lines-v1:sha256:7e78564a3f1e6a7ec6beb0e0bcb54d70262a81881229e651a21abab7f77f3697:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVmZGYzNGM5ZjU0ZDNlODNiOWI2N2JjYmFjOGIyMjg0MmRlNzc1OGY0M2FiOTM5YzcyOTdkMjFkYmM0N2ZkMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIyOTA3NDk4ZGJkZTg2MzBlZmNmZWVlNTZjODcwMDVkZmYyNWRkZTExNzU3NmEzYjUxY2M2ZWFmYjNiOTBlN2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhjZmMxYzA2ZTJhYzcwZmEwNGUwNDYwMjkyNWE3YjEwYTgxNTdmODQ4MWY3ZTFmZmJhNjdmYmUwZTI0N2QwNjAifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_ace0be744d694daca1ddd1933d1c4c0d",
-      "statement": "simulationRules executes only rules whose bindings and target are Evidence or Evidence Role entities and reports every other rule as an explicit simulator limitation rather than silently passing it.",
-      "evidence": [
-        {
-          "resource": "repo://libs/evidence-model-core/src/validation/scope.ts#L280-L332",
-          "version": "repo-lines-v1:sha256:9a70a4d5c8ab6a5aafbc3fe1fe2eda60dd1989a9b34d4da3c86f7dcf76d47cd3:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxODgxZjhjZjQ5MDU2MmZjMGYyOGQ1YTk3NzU4NjEzMWY4YjdmNzBkYmRmZWNmYmU5MDI5NTQzNWM3Njc5YTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEwYjU1NzljNTVlMmM3YjE2ZTNlMDNhOWY0MjAyYzAyOWZmNDg3ZDYwY2ViYTNkM2ZlNDkwOTU4ZGVlNDZmY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3YmMxMjA2ZTcxYTVhMzkzNTNkYjU0MTE5MWYzODdjM2M0MjY4NmI2MjEwMmNiMDg1OTg2MWMwZmM5MGFiNTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNlZjVkYjhhNGNlYTYxZWQ4ODEzMTBjZjgwMmRkMGQyYjVlYjZlNTgxZmM4N2UyYjYxMDgzMjlkNjY4NmU4NTcifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_0d24b6df8981476dbb1abe0edf4b76b2",
-      "statement": "Scenarios become required when the scoped model has an applicable rule or any fulfillment request, and coverage gaps are added for no executable scenario, an unevaluated applicable rule, or a request whose status no scenario asserts; simulation runs only when errors and gaps are both empty.",
-      "evidence": [
-        {
-          "resource": "repo://libs/evidence-model-core/src/validation/fmCheck.ts#L120-L158",
-          "version": "repo-lines-v1:sha256:47dc58fb48aa923f8e593d98264e2e816c185e2777f22b16fb4d1d95fa13560b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIzOTFlNjM4YjMzM2NjMGU4MmU3NTQ0Zjg3MzRjYzUyNTM0YzgxOWJiOTk2MjZhODI5MzJjNzYwYWZjYjdkMjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5OTM3ZDU3ZWVlMWUwMDdmNGQ3NjQwYzFmYzgzYWQyYTJkNzI4MzJlNTMxMjI4YTc2ZWQxOWNmOWNlNGViNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJlZDFjYzMzZDI4OGExNmJiNGY4NDY5MWM3YjY5ZGUwMzg4MmU4NGY0ZDEzOThkMzM4ZmQ3MDk3ZmMzYjIwM2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJjNzk1YmI1M2I3MDI0MTcyMWNhN2EwZGJkYTExZGQ5NDMyMGZmZDFlNTBjOTlkMmNjOGE0ODA1YTZlMzgwMjgifQ"
-        },
-        {
-          "resource": "repo://libs/evidence-model-core/src/validation/fmCheck.ts#L225-L255",
-          "version": "repo-lines-v1:sha256:f6ab351e9059b46e2931dfa066998af6b02c6f322b8284a07ba4741417d70a4f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxZmQ3NzBlMDMwZWQwZWMzMTk5NzcwNjNmMWM0ODk3ZDEwMzhmZDNmYzAwMGI2NTZlNDlkNzAxMmI2NjExMzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRlNjUzN2RjOGY5YmY1YjFiZjQ1MDY4NzJlMjI5NWU1MmJmYTk4NzM4YWZkYmRlYTIyNjYxZmVhNjg4ZGE3YmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA3OTY0NzYyN2NhYjhmM2VkZmVjNzM3OGUyMjY5MGI0NzlmMjgzZDcyN2NkZGZiNGRiMTgwYTI1YWNlZmI4NDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdhZWIwYmUxZTM0NGI0ZjVhM2Q1ZjhhODRlNmE5ZDkyOGFkZTk1ZTU1NzI0YTQ3NTcxMjM0Y2MzODgxMWMzNzkifQ"
+          "resource": "repo://libs/evidence-model-core/src/validation/scope.ts",
+          "version": "repo-file-v1:sha256:31aa2a7ffa28beec4f94ad9131444eabe282f941283126772b4199b44814913a"
         }
       ]
     },
     {
       "id": "claim_935c40cda3174925a5402f4d27f149b2",
-      "statement": "Simulation is deterministic: buildActivation binds asOf and now from the scenario clock, JSON values are converted to the CEL type their declared valueType implies, and a derivation fills its target but reports a conflict instead of overwriting an asserted different value.",
+      "statement": "瞬态oracle只用显式typed bindings/asOf运行native CEL并验证result/JSON，无suite/机器时钟，不是HTTP模拟器。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/validation/ruleActivation.ts#L28-L134",
-          "version": "repo-lines-v1:sha256:e0f29370a07a3191a377c3a33bde3945ed0577528fd75db76a9221618be623ab:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJiMDNhZmM0ZDQ1NzJmY2Q0NzI3MGY2OTNkMzQyNTI4NGI2ZTA1Y2YwNTFkMzE2MDEyOTUxYjA0MjA3NjIzMGNmIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0N2U4Y2RlYzUyNWY1YzczOGNiMWQ2YTgzOGUzYzFlZWNmOTY0ODE1YmI4MGIwYmM0NTRlNjg0MmE4NTJkYjNlIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI1NThjN2NmMzBiZjY1NTgyNTQwY2NjZGZiZDY4OGFhZTdkODM1MDA1ZDRiZDAxNDBhNTg3YTA5NjMxNmQxMmNmIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIwZjhmMjcyYmIzYTIwYjJkZjlkODk4MjY1NzY2MGU2NzA0Y2ZkMTNlZWRjMTBmODE1ZWM4NDhjYTQzNmI2ODM5In0"
-        },
-        {
-          "resource": "repo://libs/evidence-model-core/src/validation/simulation.ts#L101-L133",
-          "version": "repo-lines-v1:sha256:29fa00b8cf57216ec46359c1f4b7f5031c5051bcece839d923c830e29e408bd7:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwODIxMTg5YmExOWZjOGYxYzlkODc0MGQxZDQ0Mjc4OTkxY2U5N2ExZjU3OTliM2VkNGE2Yjk2MDkwYWY4MmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjYjA1M2UzMjQ1NmE0MDI2YzdkOTZkNTY3ODlmMjI2OTY5ZDY1YjlhNDBmMjVjMjAyMmEyMzI4NmE0MGYyZGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ0YTk4ZjI3NTc5ODczN2VhNTUzMWJmZDhhNWRiMjRhMGM3NmQ0NmZmYzBhMjU5MzVlMmQ0YjI1ODg3ZDM0NjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA3OTJlYzJiMjRiM2IwNmUzNmU5NzhhZmE2YWVmZmVkZDcyMGQzMTJhMjgzOGRhMDFlM2I2YzUwODllZjlhNDMifQ"
-        },
-        {
-          "resource": "repo://libs/evidence-model-core/src/validation/simulation.ts#L140-L214",
-          "version": "repo-lines-v1:sha256:00a78bfba267ece8c0621ad132277bb8b6f70fa502f770fdf36d18835eb29008:eyJzZWxlY3RlZExpbmVDb3VudCI6NzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNkMzA2OThiNTM4ZjIyNmNiNGJmYjk5MTk3NzRhZDQ0ZGM3MjQzYWQwMDJjZGNlMmQ0NjI3ZDU5Njc4YzRkYTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkZmYyMjUwZGU2MTMzOTFmZDAzYzBkNWYxZWRiNjM5ZjViMzQwYmU4M2UxMDQ2NjFiZjAyYjBhMzNlY2ViZmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQyYmJhZTkxOWJkYzFiMjU5ZDFjYmZmNjUxOTE4M2M2NmJiODQyNTJiMGZmNzU3MjIyYWE2OTViNWZlYThiNTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRiNGVjYWUxYjY4YWUzZmFkYTVkNjdmY2Q2MGI1MzcxMWEyMmEzODI2OTBmMTUyNTQzMGQ2NzVlMTMwNjIyZWUifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_e5f32e03cc6e482eb9a22ce782104040",
-      "statement": "Fulfillment status is derived from the issued graph by one function shared with replay: an unissued or non-request instance is not_requested, a scenario manual completion decision returns completed ahead of any breach, a true breach rule returns breached, a completion rule counts only with a related issued confirmation, and otherwise the status is pending; the simulator additionally requires every required attribute to have a value after derivations.",
-      "evidence": [
-        {
-          "resource": "repo://libs/evidence-model-core/src/validation/fulfillmentState.ts#L88-L195",
-          "version": "repo-lines-v1:sha256:5af42cd1d71d573daea706c50ca540f99cbef3287b554155ff6e917a1cfc19ae:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIwMWJhNDcxOWM4MGI2ZmU5MTFiMDkxYTdjMDUxMjRiNjRlZWVjZTk2NGUwOWMwNThlZjhmOTgwNWRhY2E1NDZiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhYWZlY2ZlNmUyNzMzMTQ0OTQ4ZTRkNzE4NGU0ZDk2ZjNkNzE2YjUwZDVhZTk0NjZkYWU5N2E4ZDdlY2Q4Zjc1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
-        },
-        {
-          "resource": "repo://libs/evidence-model-core/src/validation/simulation.ts#L140-L300",
-          "version": "repo-lines-v1:sha256:8529a34f9a4704b12819e5698d48e5ae633b44cbd9013195ab1c3c4b234d3f8c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIzZDMwNjk4YjUzOGYyMjZjYjRiZmI5OTE5Nzc0YWQ0NGRjNzI0M2FkMDAyY2RjZTJkNDYyN2Q1OTY3OGM0ZGEyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJlNjc3ZDJmMDMxZTk4YjVlOTExYzVhZDRmYjliMjE4NmE5MzI1MjJlOGY0NmVlNDBiYWJmYWUzZGEwMGZjMTIxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJkMmJiYWU5MTliZGMxYjI1OWQxY2JmZjY1MTkxODNjNjZiYjg0MjUyYjBmZjc1NzIyMmFhNjk1YjVmZWE4YjUyIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI2OGUyZjQ3ZTNiMDFkNzFiMzkyYmI1NzQ1OTVlY2UyN2M1YTZkOTMyYTJjZTkzODM5OWY0NjI4NTFkODFlM2YwIn0"
-        }
-      ]
-    },
-    {
-      "id": "claim_8bd776e4c3384f16a39ffa4250409429",
-      "statement": "A validation suite that fails static validation executes no scenario and reports machineValidated false, because running scenarios on an inconsistent suite would prove nothing.",
-      "evidence": [
-        {
-          "resource": "repo://libs/evidence-model-core/src/validation/simulation.ts#L313-L357",
-          "version": "repo-lines-v1:sha256:b94d7e866d6666918b9d4b45dd019b6decdb40fad0e4b405219dd8338a2df48a:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3YTJiOGQ2ZThjZDJjOTAxODdiMDdmYzI0NWVjNDEyZDY2OTE3NzBkYzcxODhlMjUwNmQzMzQ5MjllMzBjOGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMyYWEwNGY4MDY4NmU1YTllNDI3NDIwN2Q2M2IyYThiNDVmZGQ1Y2M3ZDg0MGZkNTU0Y2RhYWZhM2RhNWFlY2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_6d879758beb3467581eb2f5feb02239f",
-      "statement": "Timeline order comes from basedOn, not timestamps; an interval starting after it expires, a basis cycle and a basis formed after its dependent are errors, basis-unordered pairs within one Context lane are reported in unresolvedOrder, and the canonical timeline digest plus counts form timelineSummary.",
-      "evidence": [
-        {
-          "resource": "repo://libs/evidence-model-core/src/validation/timeline.ts#L170-L341",
-          "version": "repo-lines-v1:sha256:712a6c427ac3038ecf590685a9a534827763cada16fa04e920ac98467911cd72:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJiNmEyZTMwMjZmNWNlMWQ1ODUxODI3OTljYjhjMzkwMjE2YTcwZTFjN2RhYmY1OWNhNWUzMjM0MjYwNTEzMDIzIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJkODNiZmVjOWY5NDQxZTgzMGM4MTliM2I0MjkxZjE2MjUwYTdhN2U0MDBiNWYwZDQwOTczODkxMWYyYzBhNDdkIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIwZjgxNWEzZDI2MjIyOTkzYzA2Zjk5MDJiNzdlY2M0ZTRkY2MxMzZiMjdkNWM4ZGViYWRjNzZkNTkwYjM3NzQ3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIzMTk2NjBjZDNmNWFhNGYyYmYwZjA3OWY2MDIzZTdiM2VjZmJjMDdhNWFkMjc5MWQyMWNlZjc3YmM3NWIzNTNlIn0"
-        },
-        {
-          "resource": "repo://libs/evidence-model-core/src/validation/timeline.ts#L355-L362",
-          "version": "repo-lines-v1:sha256:5493f655588ac7476248acbc1b1b22302bfb46486b6832ad98092c4c2184e287:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWRlNzFhM2YzNjhjOGNjNmI2MmRkNGRmMWJmNDkxMjUwN2E0NWQ5MmZmZGE0MGI2YWRlYjZlMDBiODk2MDA0MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjZmNWI0MGIxNTg0NTdkMTc4NjRmMjE3OTA3ODZkZDVhMmVjZGI2NGI2NmE2NTFmNzg4ZDRlMjVjZDMzMDNkMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTM4NGM0NzkyZTkwNTAxMWUzNDExMzQwODIzMWY0NjRjOTQ4ZThmNzE2YWNmMWIyZmQ0N2I1MDI3OGMyZDQ4NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
-        },
-        {
-          "resource": "repo://libs/evidence-model-core/src/validation/timeline.ts#L77-L114",
-          "version": "repo-lines-v1:sha256:94a5afaec2a7847d52a689a544b7d1135f191b02e5fa98587eab01b39ea4143b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIxOTRmZWYzZDlkODRlODk4ODc4MDE1NWFhMGFkZDU5NTViYTcwMWU0NTY4ZmE1MmVjMWVjMzYwNjk2NWFmMzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM3MjhmOWMwNjk4ZmM1YmNlY2M5ZTI4NTgxM2QyMjUwOGIyMzJkYzM3YmY4NjcyZWUyZDIxNDY1ZTY1MzMxYzQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImExZDc3OWJkNmQxYzhjMDUyNDAwZWJlNWI0NzI1OTRlNDMyYjczZWYzMzQ1NmQ5ODEwMDJkMmFiMTcwZTA3NWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVhOTJhMDJjNGI5MDYzMDQzY2VhOGIzYzczMTlhNTFiZDBkMGFlZjUyMWQ3YmQyMmI3MGMyNjIxOTY2MDQ3NTAifQ"
+          "resource": "repo://libs/evidence-model-core/src/cel/transientSandbox.ts",
+          "version": "repo-file-v1:sha256:8a13d8e2dcc397b0b8137f98fb3de4107a5dbb442768331ac89f8473f7012c69"
         }
       ]
     },
     {
       "id": "claim_be8c673062904534a49db3ffdac53083",
-      "statement": "readyScope rebuilds the delivered scope and refuses unless the report is version 5, consistent, complete, valid, error-free, gap-free, inputChanged false, simulation passed or not applicable, and its scopeRefs, contextRefs and scenarioRequirement still match the current source with every required scenario executed.",
+      "statement": "readyScope要求v6有效完整未变及scope/context匹配，不检查已删除的simulation字段。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/validation/scope.ts#L624-L690",
-          "version": "repo-lines-v1:sha256:f9493a116103f4bfb4e13567348f237239ec85da8ce44246192927c7fefc1215:eyJzZWxlY3RlZExpbmVDb3VudCI6NjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1N2ZiMDA0ZWFlZTdkMGRkNjEyOTQ2YzNmZjk5Y2ZkMzdjOGMwNDBjNDAyMzliZmE0YjI4MjhiYzlmOGZlMDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEyZjVmMGUwNTZlNDljMjFiYTE3MmJlNThjYzJiNTg2MjJlNDNiMTI4YzI5Y2Q4OTMwOGMxYzcwM2M3N2M0OGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://libs/evidence-model-core/src/validation/scope.ts",
+          "version": "repo-file-v1:sha256:31aa2a7ffa28beec4f94ad9131444eabe282f941283126772b4199b44814913a"
         }
       ]
     },
     {
       "id": "claim_0a0b129fc4aa43909ac992044409146c",
-      "statement": "evidence-model check runs the same report as the app from the model-io CLI, accepts repeated --scope and --json, prints consistency, scope completeness, scenario counts, the digest, blocking errors, scope gaps and non-blocking advice, exits 1 when the report is not valid, and refuses a bundle with a hint to unpack it first.",
+      "statement": "统一check支持scope/JSON与树/Bundle，复用静态报告；compile/lineage要求checkable。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-io/src/cli.ts#L330-L427",
-          "version": "repo-lines-v1:sha256:0adfa9c606a3875b4631639ea713f6df6fa1f272134516329c71309e5b337601:eyJzZWxlY3RlZExpbmVDb3VudCI6OTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY1MjhhYjJjYTIzMDBjNDkyYTJiZmY5NjIzZTRjYzY3NWJhOGIxNTQ4MjZjOWY1MDY1MTM3OTZlNDY5MjEyYzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdlMjJkOTg1ZWY3NGZlOWU1ZDE1YzZkYjA4YzA5OTU3Y2E0ZjVhMmJkNmUxY2M4YWYzZGU5Zjg0MzE2ZjE1NGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU3YWE2OTIxMjI5ZGRlMTY1NTM1NjA4ODMxYmM1OWM4OGE0MzFlMzRjMzllMzI4MTA1NjkyOTIxNDY1OTQ4YzkifQ"
+          "resource": "repo://apps/cli/src/commands/check.ts",
+          "version": "repo-file-v1:sha256:b27f4a63b2f27fa40ca0c8436a95a153d9f9e816ac6b5305e1617ac758a5849c"
+        },
+        {
+          "resource": "repo://libs/evidence-model-io/src/commands.ts",
+          "version": "repo-file-v1:sha256:55e44306dae7830743c0c013b7034f2ecbc7afcbaddbd95dd5df4e56d5dc7cb4"
         }
       ]
     },
@@ -179,8 +91,8 @@
       "statement": "Lint rules only advise: auditDomainComponentNaming reports a domain component whose label states the work instead of the actor as a ROLE_DOMAIN_NAME_NOT_ANTHROPOMORPHIC advisory with a suggested rename, carried in the report's separate advisories field for the submitted model and never affecting consistent, valid or complete.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/validation/fmCheck.spec.ts#L73-L97",
-          "version": "repo-lines-v1:sha256:ed1f9a568bf3ff8aec4ee63ca746c8b685de1a246212b5c052e9f0b5b47e6fde:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJjZmNhNzVkZmRiYWMwY2U2OTUzMDQyYTQ1ODYwNTU2NjRmZGNkNDZjNDk0ZjNkY2M0ZGRjYjI4ZTk2N2ZlNzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNiMTdkNjQwZGM2ZTExN2ViNDk5YjA4ZWVlMjc5MTAyNjgxYWZiNDc4ZDVjZGM4NDY2ZTZmZWYyZmEyZDlkYTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIxZGI5M2U3NWE5ODBjOTAzY2I3MjdmMjUzZGQyYmZiYTI2ZTg2YTU1NTk1OGI4OTBlODBmN2ZhNjQ5NGMxNmMifQ"
+          "resource": "repo://libs/evidence-model-core/src/validation/fmCheck.spec.ts#L69-L93",
+          "version": "repo-lines-v1:sha256:95b90c63bac01c3a639f14142ca09627a7a470f92e7dd1f2a622ddc78293f231:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJjZmNhNzVkZmRiYWMwY2U2OTUzMDQyYTQ1ODYwNTU2NjRmZGNkNDZjNDk0ZjNkY2M0ZGRjYjI4ZTk2N2ZlNzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNiMTdkNjQwZGM2ZTExN2ViNDk5YjA4ZWVlMjc5MTAyNjgxYWZiNDc4ZDVjZGM4NDY2ZTZmZWYyZmEyZDlkYTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIxZGI5M2U3NWE5ODBjOTAzY2I3MjdmMjUzZGQyYmZiYTI2ZTg2YTU1NTk1OGI4OTBlODBmN2ZhNjQ5NGMxNmMifQ"
         },
         {
           "resource": "repo://libs/evidence-model-core/src/validation/lintRules.ts#L1-L19",
@@ -193,66 +105,16 @@
       ]
     },
     {
-      "id": "claim_c2e589d317af4237b64f5df7af2c9bba",
-      "statement": "replayValidationSuite returns one replay per scenario or only the requested ids and fails the report on an unknown id, and each replay has one frame per declared step in sequence order, decides every evaluation at the first step whose required instances are issued, refuses a scenario that issues an instance twice, replays no steps for a suite that does not validate, and is byte-identical across repeat runs.",
-      "evidence": [
-        {
-          "resource": "repo://libs/evidence-model-core/src/validation/replay.ts#L159-L264",
-          "version": "repo-lines-v1:sha256:3b6f0d5ab8f8f4ace964fc86b022c6d62e4e3610c7d91c9ac1c7fb40917e311f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJjMzRkMDUwNDIwNGU3YTUxZDUxNTZlYWMwMjM2OWY1Y2Q5YjQxZmFhZGMyYzZiZGRhNDkzZTlkYTM4ZTJjYjMyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI2MGNlOGMyMDY0NTRkZmM5MGZhYjgzMmJiOTMyZTJkNzk4MjNjNzEzOTY4ZTg2YzU3YjA0YTQyNmJmYThmZmFhIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyNTg0OGZjNWY1MTEyYjk3NGExZmZjYjczODM4ZjY4NjljMzlmMjk3NjU4MmI4NTc3YzZlNDAzMGZiNGEwMzBlIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIyOTNkOWZmZGI0ZTg1N2Q3ZTdiMDJiMmY3NzAwNDIxY2UxYzUyZjNhZjExMzEzYjRjMGVhNTNkZDIxMTgxOTczIn0"
-        },
-        {
-          "resource": "repo://libs/evidence-model-core/src/validation/replay.ts#L20-L28",
-          "version": "repo-lines-v1:sha256:41537b32cf0016b06c34834e3370644a2767d26b2e8ef8860a0f5c1efaa24906:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDk1Mjk5ZDkwN2Q3ZGZhZjA4NmY2OWU5OTA5ODBjN2E2MWFjZTllMTE1ZjdlZGU4ZDFjNTdjZGRkMzYxYTU1MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmQ0NjVkYTI1YzI4NmQ2N2UzMzcyYTk2YWJlM2MwYmY1ZDA5MGE4MTc0ZGI1ZDMwYjMxYzJjMDlkYTdmZjY3NSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZWI1MTNmOTE5NzBjNmJlNTliNTMwZGZlMzU4Zjk0YjUyZDlkNmNmOWMwMWJkNTEyYjVlOTk1MWQwM2FlZGYxOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWQzMDkxM2U5NWYyYTVlNzg4MmU1MjliYjFkM2VmNmI2MDlkYzQzNjlmZDAxYzkzMGEwODZmMDZlZmJhMTYzNiJ9"
-        },
-        {
-          "resource": "repo://libs/evidence-model-core/src/validation/replay.ts#L402-L453",
-          "version": "repo-lines-v1:sha256:e84e3d40ac728cbcf11667973ecb7a0e3e1ebcff13437380250f462ad4a49518:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgzNTI4NjhlNTU2ODNlNjQ1ODY0ZTM4NWFmNTJmYmU3NGQwNzY1ZGU1ZTE5NjhlMzhjZDcwMDM1MmEzNjUxZGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRhNWM0MTliZWJkY2YzZGQ2MTg2ZGE5ZGM0NGViMThiMmJkOWU0MGI0MDE2OWY1YTVkMmY1NTQxMzNlMDc4MDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ2NzcxZDljYjQ5ZmEzM2U4ZTM3ZjkxOGI4Y2Q0ZDVjNDIxMGQ0ZTllY2Y2NDg5NTE0YmE0N2I0YjVlZmE0MjYifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_6022b768cb52414e978a47e30659ab2f",
-      "statement": "The replay writes a derived value into its target only when the attribute is not already asserted, so a derivation that contradicts an asserted value fails simulation as a conflict while the replay keeps the asserted value and still passes.",
-      "evidence": [
-        {
-          "resource": "repo://libs/evidence-model-core/src/validation/replay.ts#L218-L226",
-          "version": "repo-lines-v1:sha256:994917d39d70887dc27f6ff06f89d369b46d4873f7c1bba91df4ad7bea8fe7da:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDk5NTZhZTQ4OGI0NjJlMzQwZjc5ZWU4NTNmNDJkYzVhNWFmNmUxNWM0NzVkMDAxZmQ0ODU3MWMzNDBjMjhjZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjMwOTUwZjVjNTRkNzdlNWI3ODM5MGQ2YjM0NWRhNjZhNmMxMGJiMDA4MTk5ODFhM2ZlMmE2ODczMzA4NWQ3OCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNmMyYjk5YmJjMTNkNjUwZmY0NjMwNzZkN2U2ODlmZjA5ZjMwYmIzMTkzMWU0ZTAyMDk1OGE2M2E3MDE5MjIyYSJ9"
-        },
-        {
-          "resource": "repo://libs/evidence-model-core/src/validation/simulation.ts#L101-L133",
-          "version": "repo-lines-v1:sha256:29fa00b8cf57216ec46359c1f4b7f5031c5051bcece839d923c830e29e408bd7:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwODIxMTg5YmExOWZjOGYxYzlkODc0MGQxZDQ0Mjc4OTkxY2U5N2ExZjU3OTliM2VkNGE2Yjk2MDkwYWY4MmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjYjA1M2UzMjQ1NmE0MDI2YzdkOTZkNTY3ODlmMjI2OTY5ZDY1YjlhNDBmMjVjMjAyMmEyMzI4NmE0MGYyZGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ0YTk4ZjI3NTc5ODczN2VhNTUzMWJmZDhhNWRiMjRhMGM3NmQ0NmZmYzBhMjU5MzVlMmQ0YjI1ODg3ZDM0NjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA3OTJlYzJiMjRiM2IwNmUzNmU5NzhhZmE2YWVmZmVkZDcyMGQzMTJhMjgzOGRhMDFlM2I2YzUwODllZjlhNDMifQ"
-        }
-      ]
-    },
-    {
       "id": "claim_f0b6035893be4940917a8178aac92e6f",
-      "statement": "The desktop sandbox replay and the drift radar both answer from the saved model root in the main process: createSimulationService loads the sources per call and runNativeDriftAudit reads the model for that call, the renderer has no filesystem, and a trace file is read and parsed in the main process so a non-JSON file fails instead of producing an empty passing audit.",
+      "statement": "drift在main读取saved模型/trace，读取或解析错误明确失败，旧sandbox服务已删除。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/mcpSimulationService.ts#L16-L21",
-          "version": "repo-lines-v1:sha256:49e4bce31622c1c1fc3c2c7fe12f3c42f33d9d53199c5358e449e19d29ade1c9:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWFmMjJjZjA3MzI1OTJjMjQ3MTQxY2JlNjFlZmExMTAxMjYxMmY1YTMxMjJiOWFmOWJiYWY1MmY1NzI0ZDE5NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDU0MDEyYmNjODBjNjAzNjA3YjBjOGNlNTViMWViYjFjYjE0ZjgzMjgyZDQ2ZThiODIzZGYxZWI5NjRmOGUzMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjkyMzM3MjYzMWE5YWI4NGM0NTQ0ZGQ2MGQ4ODY3YjYzMWE3MDRkMTlhMjA0NWQ2MGZmNDFiMGY0ZTYwZDkzYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGZkMWM3NmZjMjY4OWNlZWNmMjM4ZTIyMDI4MjYxYWVkYTYwMjFlNDBkNjM3NWMzZThmYjAxMWM1Zjc2NTM3YiJ9"
+          "resource": "repo://apps/desktop/src/main/driftIpc.ts",
+          "version": "repo-file-v1:sha256:ebca0dc73877f3ec542fba64ea3f056f796157e2e59727f6f3702d262a0a4a3f"
         },
         {
-          "resource": "repo://apps/desktop/src/main/simulationIpc.ts#L12-L38",
-          "version": "repo-lines-v1:sha256:dff34f8f992e2d28f4bb69263db23b2dc17c4dfb303a8f8edf473651be2b1784:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc4Mzg2MWI5NDZlNGZkYmYyMzVkMWNlODVkZTQ1NTJkYTEyZWM3NGU3ZTA3NTMxYzlkMjJhNmFiMjAwMjk0MTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5Y2U4ZjY3NGIzMDI5ZDk0ZGIxYzQzM2ExMGYxZmIyODI5ODMwNWJkMDIwN2QwNjNiZjk4ZjZiZTE5YjMyNDUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRlZjlhNzI2NGE5OGIxYmZmNDkzNzI2OTg1NTIzMjkwYmIzNWNiMDQwN2UwMzk2ODJiNjllMmRmYWMzYmZiMzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJmNDg4NTIzY2Q4YzkzZjgzYTRjNDAyZmZhMzFjMjliY2Q3NDZiZDM3YmJlZGUxNjg4YTlkMDIyYjdhOWU1ZjgifQ"
-        },
-        {
-          "resource": "repo://libs/evidence-agent/src/sensors/native/nativeDriftAudit.ts#L6-L30",
-          "version": "repo-lines-v1:sha256:a277980e83ad6b55580ac8cfefbd3db938b155a1dcff6b84dfe6ba21a61418d8:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5MzliNWQxMTAxYjIzMWQ2ZjE5NDE4ZDE1ZDIwYzEzNmEzMGNiZGEyNWE1NWYwYzE1ZWUzY2ViOWQzNjkwYTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFjNDk0ZTYzM2ZiNDM1NDYwYmI5YTM5OTRhODEzNDg2OTY0Yjc5YTlmMGE2MTExNmM1NTM4YTg4NWJkZDlkNTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_029b6d60134a45d5a776158b2476a539",
-      "statement": "Sandbox playback is a renderer-side cursor over the frames of one replay: stepForward, stepBack, reset and atEnd only move an index, and a request counter drops replies that arrive after the panel closed or after another scenario was requested.",
-      "evidence": [
-        {
-          "resource": "repo://apps/desktop/src/renderer/components/simulation/SimulationSandbox.spec.tsx#L66-L226",
-          "version": "repo-lines-v1:sha256:b87581b37f2ea695cbf7b019ee648ad9a441579d1ab7d4b7208975916220236d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI3NGY4MGVhYTBkMzc1MjdhMDIxZTljYjJlZTliNGM0Mzg3NWIxMjI5N2VlYzRkZjE5MTVmMmE2NDJhMTJhM2IxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmNmY1YjQwYjE1ODQ1N2QxNzg2NGYyMTc5MDc4NmRkNWEyZWNkYjY0YjY2YTY1MWY3ODhkNGUyNWNkMzMwM2QyIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyZjBlNmFmYTkzY2M0ZTg0MTcxZmI1Y2YzNDZjMjMyOWQ2OTI1Mjg5MzA4ZjBkZmJjM2IwZGUyOGFhZWI1ZjcxIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
-        },
-        {
-          "resource": "repo://apps/desktop/src/renderer/state/useSimulation.ts#L10-L127",
-          "version": "repo-lines-v1:sha256:3d4dfa243be0a986d58b7af7b80e248b4a72a14c7ae66f84f98de9051f72841d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI5MzYyODJiZDgxNTVkZmVkNTIyNzdhYzRiMWUwMTQ5NmU0MWExOTRmNTc1M2VlODU1N2IxOTE4ZTllNGExZDUyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJlOGEyZDVlMWY4NjMzZjI1N2ZhM2RmMzYyNjMxNjkwZjY5NDc5MzhhZWI1OTgzMmNlMWQyZGJlMjkwOTQwYmQzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI1N2QxMTVmOGJjZTg5ZWEzZmExNWYwYTc2YzkxZjk3Mjk2Yjg3YzE4YTUwNTcyMGIxZWFjNzE2ODkxYTA2NDMzIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIyODgwZjMwMzAwZWVlYTFlMGI5Yjg2NTg4NDc3Mzk3ODc1MTAxMzJmMmMwZDQ3ZmZkZWIwODNkOWM2NzZiMjBiIn0"
+          "resource": "repo://apps/desktop/src/main/mcpDriftService.ts",
+          "version": "repo-file-v1:sha256:222833a265474f59b08b28da7a1a258d57925bfecf2a10f5293f74b6d8d740ff"
         }
       ]
     },
@@ -275,54 +137,32 @@
       ]
     },
     {
-      "id": "claim_91f79e97c2f2471c9e3d2f19aca434c9",
-      "statement": "The MCP bridge maps run_scenario_replay and audit_production_drift onto the same SimulationService using the active project root, so an agent and the desktop panel read identical frames and drift findings.",
-      "evidence": [
-        {
-          "resource": "repo://apps/desktop/src/main/mcpRequestHandler.ts#L111-L121",
-          "version": "repo-lines-v1:sha256:26f0c6c02dc3b25a89b9d9898826a94ebe9e03da2b17b2b313cb73b454fb4331:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxNWNhY2MxZjgyMTdlNjI3NmUzMGU2MzI3MzQ5NDZhYzYwYTAxMTQ1ZjQ0MTJkYjI3Y2FjZTJiNGM5YmEzYWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBmM2RkYWQyNzdhY2Q3MGNiMTM3Y2Q4MjA1ZmQyNWU0NGU4M2FmZjM2N2Y0ZTk4ZjkwNWM5OWFjMDQ5YTE0ZjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgyNmIyYzBhODE2OTg5OGQyMmNkZGQ5NmVlMzRiNmFhOTAwMGI3MjgyZGJjNTE1YjFlNjkwODcwYWUzZTU3NzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFiZWQ5Yjc4ZmM2MGFkMDM3MzJjY2UwZTAyMmRlNGRlODNjMzY5ZWQwNWQ1OTNjYzZhMDE1MzdkOTI1ZDE2OTMifQ"
-        },
-        {
-          "resource": "repo://apps/desktop/src/main/mcpSimulationService.ts#L103-L155",
-          "version": "repo-lines-v1:sha256:8a126217a1f134302331e0f6509448c54d2f87b678612bfb71b75e5eefbe3777:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQwNmM0NjI4ZmU3YmUxY2QyZDNkODNiZjgwYWJiOTgwMjU0ZTcwNzZlMGZmYWQ5ZGIzNWM4Y2QyNDhlMjdiMTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdlMWEwZGQyNGRlYTQwYTgxZjM1Njg0MTJjZjVjNjhhODRiNTQyNmNlZTkwMjAxZDk3NzI5YTA5NmI0MWY1OTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJkYjExNDQ1YjdkNjA2ZWJhMDFiYzNhYzExZWM5ZTFhYjA1YWQyNGVjZjNlYzU1ZmU1ZTZlZDczYzQ3NWEyNDEifQ"
-        }
-      ]
-    },
-    {
       "id": "claim_8a4a8f65e4e94932bd9ff2a1e53528f6",
-      "statement": "The check report becomes a SensorReport: fmCheckIssues turns errors into block FM_INCONSISTENT, gaps into warn FM_SCOPE_GAP, inputChanged into a warning, zero executed scenarios into info FM_NO_SCENARIO and advisories into warn rows, finalizeSensorReport de-duplicates rows by issueId, and the panel marks results stale when the report's documentRevision no longer matches the canvas revision.",
+      "statement": "errors折block，gap/inputChanged/advisories折warn，已无FM_NO_SCENARIO。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L229-L236",
-          "version": "repo-lines-v1:sha256:5a77223da5e7061b7ddfecce09552dd7f7fbef4662e8b5dc4520d1d5af73d1bd:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2ZhZWQ0YmM3ODkzNjZkYWU1YzUzOWZkZmY1YWJkNzI1N2VkNjIwZTQyOTc4NWM5Y2RhYTBkY2U2NzE4MWNiMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmNlNGY1N2FiZTg3YjFlMGMzOTc2NGNmYmJjNjJmZTRiNjMxZGUzZmNhY2FlMmI1NGY4ZTM2NzI5MjIxZjU2NSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzBkYjZiNjU0MWY4NDJjYWUxYTg2MjhmYjcwNjc4YmJlYWY3YWQ1ZmUyMjU0ODQ5YjZkMjI5Njk0YzU0MjViOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTRmOTM4NjNhMmU1ZGJlNGMzMzk2Nzg4Yzk4MDE1MTYzOWZhYjJmNWU0M2YwMmRlNGI0NWIzNWExNTViMGUzZSJ9"
-        },
-        {
-          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts#L197-L245",
-          "version": "repo-lines-v1:sha256:5642e62c537d4f05af247069b33ae9318d825253d405cc093d32c2e0470e364b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI5N2E2NTZlODliYWY0ODM1MzE5NmYwZmE4NWMxNTgzMWY3MDVlZWRjZWY2N2Y3OTlkYWFjYjU3ODU1NTk3ODEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY5NGZhMTAyNzRhNTFjMjljNDI1MzkyYzI3MTZlMzhhOWUxMzdkNjlmNzE4MmMwMzAwZjJiZTRkMjNkNWQyNDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU5ODI4NzUyZjgwMmVkYWEwNjFjMmFlYWM1YmM0OTMxZmE2NjFmM2EyODUzMzY5ZWFiNDNlM2E5YmE5Nzk4NzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNjMGZlNWRiN2ViYWJjOGRhYTk3Yzk3NGQyYzk1OTM3YTk1ZTEwYWZiMzM3MGJkYWJkNDNjMTVhNThlMTZkM2EifQ"
-        },
-        {
-          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts#L319-L347",
-          "version": "repo-lines-v1:sha256:473ee63473a72aa0bfeed88885b71ca87d8f768a3dcb0750d44f4b6e75f6c347:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY1ZGE4ZDViMzI0MGYzNThiYTNhYjNlYmM4MzQyNDI2NGIyOTYzZTc3OTliZWY2YzAyZTJlYmM0Y2ZkODI5YjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyZjQyNjM4ZjM5ZTE4OTQ3NTljMDBhOTI2M2JjMTQ2NWNkNjY3ZGEwOGViNjJjZTQ4NzA3MDJjZjhmM2ViMWYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA2NDg5OTAxYzc3ZDYxMTEzMzFmOTc4ZDE0MWM5OGE3MDQyYjQ1MWQyOWI0N2JlODI4MTQyNWM1ODllM2M1OTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM0YzFkNDEzYjdjNzgyZjQ1YzEwOTc5ZWQ2ZjExY2FmOWExMTE0NjkzZWIxZjY1MGJjMTVjOTE3ZDliNzhmZGEifQ"
+          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts#L196-L242",
+          "version": "repo-lines-v1:sha256:db25de3278d9f9281b1e28181f6a006d7c084047306778d375501afd88d553f1:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI5N2E2NTZlODliYWY0ODM1MzE5NmYwZmE4NWMxNTgzMWY3MDVlZWRjZWY2N2Y3OTlkYWFjYjU3ODU1NTk3ODEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU5ODI4NzUyZjgwMmVkYWEwNjFjMmFlYWM1YmM0OTMxZmE2NjFmM2EyODUzMzY5ZWFiNDNlM2E5YmE5Nzk4NzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM2Nzg4ODY5ODkxZWU1M2Q1ZmUyM2I2MjhkYjYzMDZkNGQ5OWFjMjQzZDk1YjFlMGEwNDg4NWU0OTQxYzE5NzMifQ"
         }
       ]
     },
     {
       "id": "claim_c9ec0c65c3954f72842c4a7e2b0c41e8",
-      "statement": "Each derived CLI command refuses on its own condition rather than a shared gate: compile and lineage when the model's check report is not valid, timeline on a timeline ordering error, simulate when simulationPassed is false, and role-play when the pack cannot be built or --force is missing for an existing output directory.",
+      "statement": "compile/lineage以静态check拒绝；timeline/simulate/role-play旧流程移除。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-io/src/cli.ts#L472-L560",
-          "version": "repo-lines-v1:sha256:764e472b36cb8528b62cd3fff621c7f974641d59a27a89b60391bef2716f133e:eyJzZWxlY3RlZExpbmVDb3VudCI6ODksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEzZmQ5YzY2OWU5MDEyZGEyZDNhZDhkMmZhNDBmNDkzMzZlOTdhNDkzZTZkZTA4OTMxMzg1YmMwZGQ5YjcwMjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNkMjJiN2IzZmQ2MjA4ZmE1ZTRmZjIyYTY4ODBhZjA5NzA4ZDJhYTIwMDdhNzkzOTkwNmFlNDQxOWRiNDRmZGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUyMjI4Njg2YWE0Y2VkZDJmYjc4N2UzMDRhMTY2OGQ2NmYwNWQwMzU4MjdhNDM2MTQwYzE1NWUyZGMzYzQ4ZWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQwMWYyZjkxNGRiNDM5YTEyMTRlN2E0YTg0Y2ZmN2Y4ODM3YjAyZDhlMmFmYTIxYTYzOWY1MGFmMGNjYTk5MWQifQ"
+          "resource": "repo://libs/evidence-model-io/src/commands.ts",
+          "version": "repo-file-v1:sha256:55e44306dae7830743c0c013b7034f2ecbc7afcbaddbd95dd5df4e56d5dc7cb4"
         },
         {
-          "resource": "repo://libs/evidence-model-io/src/cli.ts#L566-L690",
-          "version": "repo-lines-v1:sha256:621c39a9a4ab60abcff795b5ef2ebd683f5a112bb1b56e8b79838279e92456af:eyJzZWxlY3RlZExpbmVDb3VudCI6MTI1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIwMWJhNDcxOWM4MGI2ZmU5MTFiMDkxYTdjMDUxMjRiNjRlZWVjZTk2NGUwOWMwNThlZjhmOTgwNWRhY2E1NDZiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIzYmZmZTJiNWNkZjIzMzE0ZmRjZmRjMDE0ZTg4NWNmZDY3YTgyMGQyOGJhOTUxZWMwNGI1YTA0MjRiMGI3YjBhIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI1MzJlMzE2MjQ5ZjE1NDQxY2Q0ZTg2ZGVlNmI5MTI4ZDE3NjIwMWQ1ZTU0ODM2NWJkN2ViZTYwNzIzMGFkODJjIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIyZWM2MDZkZmY3NzFhNDIwZjc2MjA3NDQzNzJmYTM2NDJlNzU2NTc5YWRiYWViYWQxOGFlYjUyOThmNDI2OTg1In0"
+          "resource": "repo://libs/evidence-model-io/src/legacyRemoval.spec.ts",
+          "version": "repo-file-v1:sha256:de46689fbfa0c37fd81f1b5e76489ccbbddd991765cab677d3725a99daeaf89f"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-14T20:15:23.211Z"
+    "at": "2026-11-15T14:07:58.904Z"
   }
 }

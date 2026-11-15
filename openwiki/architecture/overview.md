@@ -1,18 +1,16 @@
 ---
 type: architecture
-title: System map and dependency direction
-description: The package map of the Evidence workspace, the direction its dependencies may point, how the @evidence-poc/source condition lets one app consume libraries from src, and the end-to-end paths from a model document to checks, contracts, delivery and the review page.
+title: 系统架构与依赖边界
+description: 两个应用宿主与十二个共享库如何围绕 FM 文档协作，以及 Zod、原生 CEL、Immer、ELK 和 Node I/O 的职责与依赖方向。
 tags: [architecture, workspace, dependencies, nx, data-flow, monorepo]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-14T20:15:23.211Z
+    at: 2026-11-15T14:07:58.904Z
 sources:
   - id: openwiki-source-8037e2358a2c4f9b2c722a11
     resource: repo://AGENTS.md
-  - id: openwiki-source-bd419873501c28f93dc23d21
-    resource: repo://apps/desktop/package.json
-  - id: openwiki-source-de5c5760d707be19e09eb7e3
-    resource: repo://apps/desktop/project.json
+  - id: openwiki-source-5466111549d3bdae4dce66a7
+    resource: repo://apps/cli/package.json
   - id: openwiki-source-55138c775f581f8c989ca7dc
     resource: repo://apps/desktop/src/main/agentRuntime.ts
   - id: openwiki-source-5d33672c45ec58cd29dce507
@@ -37,16 +35,12 @@ sources:
     resource: repo://eslint.config.mjs
   - id: openwiki-source-100de7a731086244071952a9
     resource: repo://libs/evidence-agent/package.json
-  - id: openwiki-source-98a4b672a6affa306901989d
-    resource: repo://libs/evidence-agent/README.md
   - id: openwiki-source-9d54a30ae7fe8603951dd3dd
     resource: repo://libs/evidence-agent/src/browser.ts
   - id: openwiki-source-a51a313ecc5551e788fbf06c
     resource: repo://libs/evidence-agent/src/sensors/native/nativeStageGate.ts
   - id: openwiki-source-ebeef9d445379fe3773732df
     resource: repo://libs/evidence-agent/src/sensors/sensorsEngine.ts
-  - id: openwiki-source-062416ee8e7e3d6d3b09aaad
-    resource: repo://libs/evidence-api/package.json
   - id: openwiki-source-d411e4580a06325c2c5fcf75
     resource: repo://libs/evidence-api/src/adapter/fmAdapter.ts
   - id: openwiki-source-7dad3c227e7d6e118c34b56a
@@ -55,18 +49,16 @@ sources:
     resource: repo://libs/evidence-api/src/types.ts
   - id: openwiki-source-7c4f607b2d42287b8ffedc0c
     resource: repo://libs/evidence-model-core/package.json
-  - id: openwiki-source-852b747ca0a21fd5f6e30960
-    resource: repo://libs/evidence-model-core/README.md
+  - id: openwiki-source-b4abb2821db0f045818014a1
+    resource: repo://libs/evidence-model-core/src/session/createModelSession.ts
   - id: openwiki-source-bcadd1e63a7d140ce717e9ea
     resource: repo://libs/evidence-model-io/package.json
   - id: openwiki-source-4fa503355d9f3a8084bea718
     resource: repo://libs/evidence-model-io/src/adapters/modelRoot.ts
-  - id: openwiki-source-21b499e8212285cd43a44d96
-    resource: repo://libs/evidence-model-io/src/index.ts
   - id: openwiki-source-dd948eb74e58734da3b37ea9
     resource: repo://libs/evidence-schema/package.json
-  - id: openwiki-source-7cec040a39708538d0a3d57b
-    resource: repo://libs/evidence-schema/README.md
+  - id: openwiki-source-52858d6130375e8776a048e7
+    resource: repo://libs/evidence-schema/src/ast/document.ts
   - id: openwiki-source-b4346df05e97fe887faf2dc3
     resource: repo://libs/evidence-visualization/package.json
   - id: openwiki-source-3ae8adf574661c7d35742fbe
@@ -77,333 +69,70 @@ sources:
     resource: repo://package.json
   - id: openwiki-source-40275cb92c3610938f16ade3
     resource: repo://pnpm-workspace.yaml
+  - id: openwiki-source-ad6afd03545cc41ebdb6326a
+    resource: repo://tools/oasdiff/setup.mjs
   - id: openwiki-source-df1e4d0dc0a35c64fd0e652b
     resource: repo://tsconfig.base.json
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "openwiki/0.9.0", at: "2026-11-14T20:15:23.211Z" }
+generated: { by: "pi", at: "2026-11-15T14:07:58.904Z" }
 ---
 
-# System map and dependency direction
+# 系统架构与依赖边界
 
-Evidence is one pnpm workspace holding one runnable application and twelve
-library projects. The shape is deliberate: the language and its static checks sit
-at the bottom, the projection and orchestration packages sit above them, the
-desktop feature libraries sit beside those, and the Electron shell sits on top.
-A library never imports the app, and no ring may reach upward.
+Evidence 的真相源是 `DomainModelDocument`：manifest、entities、relationships、rules。桌面实时编辑与磁盘模型是同一契约的不同时间快照，而不是两套领域语言。当前 workspace 有 **apps/desktop 和 apps/cli 两个应用**，八个 evidence 库和四个 desktop 库；旧说明中的“只有一个应用”已过时。
 
-This page is the index to that shape. Behaviour belongs to the owning pages,
-linked at the end.
+## 责任与依赖方向
 
-## The package map
+| 层 | 所有者及关键机制 |
+| --- | --- |
+| schema/universal | evidence-schema：Zod FM v5 AST、语法与跨对象 refinement、稳定 FM 诊断、工具输入、canonical JSON；依赖 zod、fast-json-stable-stringify、tslib，不依赖工作区上层 |
+| domain/universal | model-core：图、guarded draft mutations、Immer 会话/历史、RFC 6902、原生 cel-js、追溯和静态 FM 检查；同步 SHA-256 使用 noble/hashes |
+| domain/universal | canvas-interaction：headless async ELK 布局、模型/ELK 适配、可序列化布局和作用域，不持有 DOM/React Flow 视口 |
+| io/node | model-io：源树/Bundle 发现、字节摘要、读写、pack/unpack 及共享模型命令 |
+| projection | evidence-api：模型与可选 overlay → 路由、hypermedia、服务、OpenAPI、部署、内联样例验收；oasdiff 负责契约比较 |
+| projection/node | visualization：组合 api、model-io/core、canvas-interaction 和 schema，编译自包含审查 HTML |
+| orchestration/node | agent：Pi session、提示词、Zod 工具、传感器、门禁、治理和 trace reader；browser 子入口提供纯数据合同 |
+| orchestration/node | mcp：外部工具与本地桥，不依赖 agent 或 visualization；二者在桌面宿主相遇 |
+| ui/feature/browser | desktop ui-kit、feature-canvas、feature-inspector；testing 是独立测试支持库 |
+| app | desktop 组合 Electron/React 工作台；cli 组合共享库命令，使用 cac 注册参数，不复制领域规则 |
 
-The map below comes from the manifests, not from prose: `pnpm-workspace.yaml`
-selects `apps/*`, `libs/*` and `libs/desktop/*`
-(`repo://pnpm-workspace.yaml#L1-L3`), and each project's `nx.tags` and
-`dependencies` block is its entry.
+旧 evidence-agent-core/modeling-orchestrator 已合并。库不能反向依赖 app；visualization 可消费 api，api 不可依赖 visualization。
 
-| Project (`nx.name`) | Path | Ring and platform tags | Workspace dependencies |
-| --- | --- | --- | --- |
-| `evidence-schema` | `libs/evidence-schema` | `layer:schema`, `platform:universal`, `scope:shared` | none (`tslib` only) |
-| `evidence-model-core` | `libs/evidence-model-core` | `layer:domain`, `platform:universal`, `scope:model` | schema |
-| `evidence-canvas-interaction` | `libs/evidence-canvas-interaction` | `layer:domain`, `platform:universal`, `scope:model` | model-core, schema |
-| `evidence-model-io` | `libs/evidence-model-io` | `layer:io`, `platform:node`, `scope:model` | model-core, schema |
-| `evidence-api` | `libs/evidence-api` | `layer:projection`, `platform:node`, `surface:browser-safe`, `scope:api` | model-core, model-io, schema |
-| `evidence-visualization` | `libs/evidence-visualization` | `layer:projection`, `platform:node`, `scope:visualization` | api, canvas-interaction, model-core, model-io, schema |
-| `evidence-agent` | `libs/evidence-agent` | `layer:orchestration`, `platform:node`, `surface:browser-safe`, `scope:agent` | api, model-core, model-io, schema |
-| `evidence-mcp` | `libs/evidence-mcp` | `layer:orchestration`, `platform:node`, `scope:mcp` | model-core, schema |
-| `desktop-ui-kit` | `libs/desktop/ui-kit` | `layer:ui`, `platform:browser`, `scope:desktop` | none |
-| `desktop-feature-canvas` | `libs/desktop/feature-canvas` | `layer:feature`, `platform:browser`, `scope:desktop` | agent, api, canvas-interaction, model-core, schema |
-| `desktop-feature-inspector` | `libs/desktop/feature-inspector` | `layer:feature`, `platform:browser`, `scope:desktop` | ui-kit, api, model-core, schema |
-| `desktop-testing` | `libs/desktop/testing` | `layer:testing`, `platform:browser`, `scope:desktop` | schema |
-| `desktop` | `apps/desktop` | `type:app`, `layer:app`, `platform:node`, `scope:desktop` | every evidence library plus ui-kit, feature-canvas, feature-inspector (`desktop-testing` is a dev dependency) |
+## 构建与依赖合同
 
-Two notes on names, both visible only by comparing the manifests with the repo
-docs:
+运行时依赖在实际 importer 的 package.json 声明，工作区边使用 workspace:*；根只放开发工具。pnpm hoisted linker 可能掩盖缺失声明，因此 Nx dependency-checks 与 enforce-module-boundaries 是必要门禁。
 
-- **`evidence-agent-core` and `evidence-modeling-orchestrator` no longer exist.**
-  `libs/evidence-agent` replaced both: it holds the session harness, the sensor
-  engine and stage gate, the governance loop, the tool surface and the telemetry
-  readers (`repo://libs/evidence-agent/package.json#L24-L42`,
-  `repo://libs/evidence-agent/README.md#L1-L33`). `docs/workspace-layout.md` and
-  `ENVIRONMENT.md` still describe the old pair, and the tag vocabulary those
-  pages mention (`scope:evidence`) is not what the manifests carry — the scopes
-  in use are `shared`, `model`, `api`, `visualization`, `agent`, `mcp` and
-  `desktop`.
-- **Only one project is an application.** `evidence-model-io`, `evidence-api`
-  and `evidence-visualization` each declare a `bin` (`evidence-model`,
-  `evidence-api`, `evidence-workbench`) and stay libraries; the modeling CLI is
-  a library entry point, not a second app
-  (`repo://libs/evidence-model-io/package.json#L12-L41`,
-  `repo://libs/evidence-api/package.json#L9-L53`).
+ESLint 同时约束 type、layer、platform、scope：universal 只能引用 universal；browser 只允许 browser/universal 或明确 browser-safe 表面，禁直接引用 Electron、MCP SDK、Pi SDK。schema 不得依赖投影，evidence 不得依赖 desktop/testing。
 
-## The dependency ladder
+库 export 的 `@evidence-poc/source` 条件指向 src，tsconfig customConditions、Vite/Vitest resolve.conditions 必须一致；遗漏会退到 dist，出现未构建模块错误。agent/api 的 browser 子入口、model-core/testing、各命令入口延续此合同。根 tsconfig 引用十二库及 cli；desktop 继续由自己的 Forge/typecheck target 检查。
 
-The rings are not a convention that `tsc` would catch: TypeScript resolves every
-path, so only a lint rule notices a schema importing a projection. The diagram
-shows the edges the tags allow.
+## 从建模到交付
 
-```mermaid
-flowchart TD
-  app["layer:app - apps/desktop"]
-  feature["layer:feature - feature-canvas, feature-inspector"]
-  ui["layer:ui - desktop-ui-kit"]
-  orch["layer:orchestration - evidence-agent, evidence-mcp"]
-  proj["layer:projection - evidence-api, evidence-visualization"]
-  io["layer:io - evidence-model-io"]
-  domain["layer:domain - evidence-model-core, evidence-canvas-interaction"]
-  schema["layer:schema - evidence-schema, tslib only"]
-  testing["layer:testing - desktop-testing"]
-  app --> feature
-  app --> orch
-  app --> proj
-  app --> io
-  app --> domain
-  app --> schema
-  feature --> ui
-  feature --> orch
-  feature --> proj
-  feature --> domain
-  feature --> schema
-  orch --> proj
-  orch --> io
-  orch --> domain
-  orch --> schema
-  proj --> io
-  proj --> domain
-  proj --> schema
-  io --> domain
-  io --> schema
-  domain --> schema
-  ui --> schema
-  testing --> domain
-  testing --> schema
-```
+1. `.evidence/fm/` 源树或 `*.evidence.json` Bundle 经 model-io 加载，core 规范化为同一文档。generated/cache/dot 内容不作为源；旧 validation Scenario/Instance 已撤除。
+2. renderer ModelSession 用 `mutate(recipe)` 或 `applyPatchBatch` 原子变更，维护选择、撤销/重做与惰性图；Agent/MCP 补丁也进同一 renderer 会话。
+3. 静态检查以 Zod strict + semantics、CEL 和 scoped completeness 给出 FM check v6；内联 examples 提供 CEL 编译期 oracle，不代表真实 HTTP 成功。
+4. API 投影生成 draft snapshot，携带 model/design/check-report digest、排序诊断和 limitations。固定 check 报告失效或摘要过期成为显式 gap，不抹掉草稿可见性；正式交付再要求门禁。
+5. Stage gate 消费 v6 报告，要求一致、完整、有效、输入未变化、无 errors/gaps 且覆盖非空 scope；API 目标还重新投影检查和比摘要。
+6. CLI 导出 OpenAPI + Step CI/Hurl，再对真实后端 HTTP 验收；离线 workbench 预计算 ELK，在收集前和发布前检查输入指纹，变化则拒绝写出。
 
-An arrow runs from the depending ring to the ring below it; nothing may point
-back up, and the app is pointed at but never from.
+## 两个宿主与进程边界
 
-Three properties of the ladder matter more than the exact edges:
+桌面 main 注册项目、摄取、review、drift、delivery IPC，创建 Agent runtime 与 MCP bridge。`--mcp-stdio` 是同一可执行文件的无窗口代理模式，转发到已运行桌面，不读取项目存储。preload 暴露 typed EvidenceDesktopApi，renderer 不拿 fs/ipcRenderer。
 
-- **The base has no workspace edges.** `evidence-schema` depends on `tslib` alone
-  and never mutates its input
-  (`repo://libs/evidence-schema/package.json#L9-L29`,
-  `repo://libs/evidence-schema/README.md#L6-L16`). Every other package can take
-  it without dragging a runtime along.
-- **Projection is a one-way pair.** `evidence-visualization` composes
-  `evidence-api`; the API package is forbidden to depend on the visualization
-  package, which is what keeps the contract the source and the review page the
-  compiled artifact (`repo://libs/evidence-visualization/package.json#L38-L44`,
-  `repo://eslint.config.mjs#L146-L193`).
-- **The two orchestration packages stay apart.** `evidence-agent` may use
-  `evidence-api`, but `scope:agent` is forbidden to depend on `scope:mcp` or
-  `scope:visualization`, and neither orchestration manifest lists the other — so
-  the Pi harness and the MCP surface meet only inside the desktop shell
-  (`repo://libs/evidence-mcp/package.json#L22-L38`,
-  `repo://eslint.config.mjs#L146-L193`).
+renderer 拥有实时会话、异步布局与 UI；main 执行 Node 文件操作、传感器、交付、trace 和正式 review 导出。正式导出描述已保存来源；未保存 preview 有明确 notice，不能混淆。
 
-The type system reflects the same shape: the root `tsconfig.json` lists twelve
-project references and no reference to `apps/desktop`, because the app is
-type-checked by its own Forge-owned targets
-(`repo://tsconfig.json#L5-L42`, `repo://apps/desktop/project.json#L4-L6`).
+cli 是唯一推荐终端入口：check、pack/unpack/compile/inspect/lineage、review、export/test/diff 和兼容 api 子命令。旧 evidence-model/api/workbench bin 暂留为 stderr 弃用 shim，执行库内共享逻辑，不反向依赖 cli app。
 
-## How imports resolve: the `@evidence-poc/source` condition
+## 一套工具链，不是一切都在 JS 内
 
-Workspace packages are consumed from `src`, never from a `dist` that has to be
-built first. Four pieces have to agree:
+Node.js 22 + pnpm 是唯一仓库开发工具链；模型引擎、检查、投影和生成器为 TypeScript，无 Python/Go 解释器要求。但契约比较确实执行固定原生 **oasdiff**：`pnpm install` 后另跑 `pnpm api:setup`，无需 Go/Docker。测试后端的多语言示例只是接入参考，不是新增运行时。
 
-1. Every library exports its entry twice, once per condition, with the source
-   condition first:
+## 深入入口
 
-   ```json
-   ".": {
-     "@evidence-poc/source": "./src/index.ts",
-     "types": "./dist/index.d.ts",
-     "import": "./dist/index.js",
-     "default": "./dist/index.js"
-   }
-   ```
-
-2. `tsconfig.base.json` sets `customConditions: ["@evidence-poc/source"]`, so the
-   type checker reads `src` and no `paths` table is needed
-   (`repo://tsconfig.base.json#L2-L20`).
-3. Every bundler and test runner repeats the condition: the desktop's
-   `vite.main.config.mjs` / `vite.preload.config.mjs` /
-   `vite.renderer.config.mjs` and its `vitest.config.mts`, plus each library's
-   own Vitest config
-   (`repo://apps/desktop/vite.main.config.mjs#L10-L20`,
-   `repo://apps/desktop/vitest.config.mts#L13-L24`).
-4. Each consuming `tsconfig.*.json` references only the libraries it imports;
-   the root list exists so `tsc --build` and `typecheck` stay incremental.
-
-The failure mode is worth knowing because it does not look like a resolution
-problem: a config that omits the condition silently falls back to `dist`, so the
-symptom is a missing module in a library that was never built
-(`repo://AGENTS.md#L8-L16`). A second entry per package follows the same rule —
-`./browser` on `evidence-agent` and `evidence-api`, `./cli` on the three
-`bin`-carrying libraries, `./testing` on `evidence-model-core` — so the renderer
-can import pure data contracts without pulling a Node module into the Vite
-browser build (`repo://libs/evidence-agent/package.json#L17-L22`,
-`repo://libs/evidence-agent/README.md#L1-L33`).
-
-## How the rings are enforced
-
-`@nx/enforce-module-boundaries` in `eslint.config.mjs` turns the tags into
-errors (`repo://eslint.config.mjs#L23-L194`). Three families of constraint:
-
-| Constraint | Tags | Effect |
-| --- | --- | --- |
-| Kind | `type:app` → `type:lib`; `type:lib` → `type:lib` | the app composes libraries, a library never reaches into an app |
-| Ring | `layer:schema` depends on nothing; `layer:domain` on schema and domain; `layer:io` on domain and schema; `layer:ui` on ui and schema; `layer:projection` on projection, domain, io and schema; `layer:orchestration` on orchestration and every ring below; `layer:feature` on feature, ui, orchestration, projection, domain, schema and testing; `layer:testing` on domain, ui and schema; `layer:app` on anything | dependency direction follows the layer tags in each `package.json` |
-| Platform | `platform:universal` on universal only; `platform:node` on node, universal and browser; `platform:browser` on browser, universal and any `surface:browser-safe` package | a universal library cannot lean on either runtime, and the renderer reaches a Node package only through its published browser surface |
-
-The browser rule also bans three imports outright — `electron`,
-`@modelcontextprotocol/sdk` and `@earendil-works/pi-coding-agent` — so a
-renderer-side library cannot smuggle a process API in through a dependency
-(`repo://eslint.config.mjs#L113-L144`). The `scope:*` tags then catch the wrong
-edges two libraries in the same layer could otherwise share: `scope:api` may not
-depend on `scope:visualization`, and no evidence package may depend on
-`scope:desktop` or on `layer:testing`.
-
-## One document, two source forms
-
-`DomainModelDocument` from `evidence-schema` is the only model representation.
-The canvas edits it through immutable commands inside a `ModelSession`, and the
-sensors, the projection, the workbench and the CLI all read that same document
-rather than a second copy: there is nothing to keep in sync
-(`repo://libs/evidence-model-core/README.md#L1-L14`).
-
-Two source forms carry it, both first class, and both live in
-`evidence-model-io`:
-
-- `.evidence/fm/` — a Git-friendly tree; `readModelRoot` walks the model sources
-  plus `validation/` and ignores `generated/`, caches and dot directories, and
-  the same read yields the model digest the artifacts record
-  (`repo://libs/evidence-model-io/src/adapters/modelRoot.ts#L18-L45`).
-- `*.evidence.json` — one portable bundle, packed and unpacked by the
-  `evidence-model` command without rewriting files whose objects already match.
-
-`evidence-model-io` is `platform:node`, which is why only the main process, the
-sensors and the CLIs import it while the renderer stays on the in-memory core
-(`repo://libs/evidence-model-io/src/index.ts#L1-L15`).
-
-## End-to-end flow
-
-The two paths below are the ones a change travels: prose and edits in, artifacts
-out; and an agent or MCP client editing the same live session a human does.
-
-```mermaid
-flowchart TD
-  prose["business text or blueprint table"] --> draft["IngestionDraft"]
-  draft --> document["DomainModelDocument"]
-  editor["canvas edits"] --> commands["immutable commands with inverses"]
-  patch["agent or MCP model patch"] --> commands
-  commands --> session["ModelSession - document, selection, undo redo"]
-  session --> document
-  document --> disk["evidence-model-io - source tree or bundle"]
-  disk --> reread["readModelRoot on disk"]
-  reread --> sensors["evidence-agent sensors - FM check, key data, API coverage, drift"]
-  sensors --> report["SensorReport"]
-  report --> gate["stage gate for target api or visualization"]
-  gate --> projection["evidence-api - projection and delivery model"]
-  gate --> workbench["evidence-visualization - collect, render, publish"]
-  projection --> artifacts["routes, topology, OpenAPI, deployment files"]
-  workbench --> page["single self-contained review page"]
-```
-
-Checkpoints that hold the flow together, with the page that owns each detail:
-
-1. **The document is the only source of truth.** Canvas, sensors, projection and
-   workbench read the same `DomainModelDocument`; the CLI reads the same one off
-   disk. See [Source tree and bundle adapters](../model/source-formats.md).
-2. **The gate reads saved evidence.** A scope may only move on to a contract or a
-   page with a saved FM check report that is contract version 5, consistent,
-   complete, valid, unchanged since it was produced, free of errors and gaps, and
-   whose `scopeRefs` cover every requested scope; the API target re-derives a
-   fresh report and additionally fails when a supplied report's model digest no
-   longer matches the model
-   (`repo://libs/evidence-agent/src/sensors/native/nativeStageGate.ts#L1-L120`,
-   `repo://libs/evidence-agent/src/sensors/sensorsEngine.ts#L65-L110`).
-   See [Sensors, stage gate and the dependency frontier](../agents/sensor-orchestration.md).
-3. **A downstream artifact names its inputs.** The API projection carries model,
-   design and check-report digests and turns a mismatched check report into a
-   visible diagnostic; the workbench re-fingerprints before publishing and
-   refuses to write if the inputs moved meanwhile
-   (`repo://libs/evidence-api/src/types.ts#L17-L30`,
-   `repo://libs/evidence-visualization/src/generate/generateWorkbench.ts#L20-L91`).
-4. **Agent edits are human edits.** Both the Pi harness and the MCP bridge pass
-   patches through the renderer's `ModelSession`, so an agent change lands in the
-   same undo history and the same sensor run as a canvas edit
-   (`repo://apps/desktop/src/main/agentRuntime.ts#L145-L200`,
-   `repo://apps/desktop/src/main/mcpRequestHandler.ts#L71-L110`).
-
-## The shell as composition root
-
-`apps/desktop` is where the rings meet and the only place they are wired to a
-process:
-
-- **Main** registers the project, ingestion, review, simulation and delivery IPC
-  handlers, starts the agent runtime and the local MCP bridge, and registers the
-  app with local MCP clients. Invoked as `--mcp-stdio` the same binary runs
-  headless and only forwards tool calls to the running app over the local socket
-  — it opens no window and reads no project store
-  (`repo://apps/desktop/src/main/main.ts#L30-L95`).
-- **Preload** publishes one typed surface, `EvidenceDesktopApi`, over
-  `contextBridge`; the renderer never sees `ipcRenderer`, `fs` or any Node module
-  (`repo://apps/desktop/src/shared/ipc.ts#L68-L156`,
-  `repo://apps/desktop/src/preload/index.ts#L1-L45`).
-- **Renderer** owns the live `ModelSession` and every screen drawn from it. It
-  imports across the bottom rings directly — schema document types, the
-  browser-safe sensor contracts from `evidence-agent/browser`, canvas geometry,
-  the feature libraries — which is what makes `EditorScreen` the integration
-  point rather than a fourth layer of logic
-  (`repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L13-L66`,
-  `repo://apps/desktop/src/renderer/state/useEditorSession.ts#L79-L89`).
-
-Review export is the clearest example of the split: the page is generated in the
-main process from the sources on disk, so a review always describes what was
-saved rather than what the canvas shows
-(`repo://apps/desktop/src/main/reviewIpc.ts#L1-L31`).
-
-## One toolchain
-
-There is no second runtime: the checks, the derived documents, the contract and
-the review page are TypeScript commands in `libs/`, and the app runs the same
-code, so a terminal and a window cannot disagree
-(`repo://AGENTS.md#L1-L6`). The entry points are `evidence-model`,
-`evidence-api`, `evidence-workbench` and the desktop binary, which doubles as the
-MCP stdio server. Root scripts are thin wrappers over `nx run-many`
-(`repo://package.json#L6-L18`).
-
-## Where to go next
-
-- [Quickstart](../quickstart.md) — install, run the desktop, pack and inspect a
-  model.
-- [The Fulfillment Modeling DSL (FM v5)](../language/fm-dsl.md) — the language all
-  of this operates on.
-- [Commands and the model session](../model/commands-and-session.md) — the only
-  sanctioned way to change a document.
-- [Source tree and bundle adapters](../model/source-formats.md) — the two source
-  forms and their round-trip rules.
-- [Checks and simulation](../model/checks-and-simulation.md) — strict validation,
-  scope, CEL and scenario replay.
-- [Desktop app shell and IPC surface](../desktop/app-shell.md) — process layout,
-  channels and windows.
-- [Canvas and inspector](../desktop/canvas-and-inspector.md) — the two feature
-  libraries and the geometry ring under them.
-- [Ingestion and patch review](../desktop/ingestion-and-patch-review.md) — prose
-  and blueprints in, reviewed draft out.
-- [Pi agent harness](../agents/pi-harness.md) — session, prompts, event
-  projection, forks.
-- [Sensors, stage gate and drift](../agents/sensor-orchestration.md) — how one
-  verdict is composed and what opens the gate.
-- [MCP integration](../agents/mcp-integration.md) — tool surface, bridge and the
-  stdio mode.
-- [API projection and delivery contract](../contracts/api-projection.md) — routes,
-  hypermedia, OpenAPI and digests.
-- [Offline workbench](../contracts/offline-workbench.md) — collection,
-  fingerprinting, CSP and atomic publish.
-- [Workspace, build and packaging](../operations/build-and-package.md) — the Nx,
-  pnpm and Forge mechanics behind the map above.
-- [Verification strategy](../testing/verification-strategy.md) — what the tests
-  hold down.
+- [源格式](../model/source-formats.md) · [模型事务](../model/commands-and-session.md)
+- [FM 语言](../language/fm-dsl.md) · [静态与 CEL](../model/checks-and-simulation.md)
+- [桌面会话](../desktop/renderer-state.md) · [画布](../desktop/canvas-and-inspector.md)
+- [传感器](../agents/sensor-orchestration.md) · [MCP](../agents/mcp-integration.md)
+- [API](../contracts/api-projection.md) · [离线审查](../contracts/offline-workbench.md)
+- [CLI 工作流](../workflows/cli-governance.md) · [构建](../operations/build-and-package.md)

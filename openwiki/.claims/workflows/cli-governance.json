@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:abf89bbc3f36342bbcc71219da7d7eb41fa803b855ce0920142eaa0c15a3fe3a",
+  "claims": [
+    {
+      "id": "claim_2e23d63c615949bcbde260388194c88b",
+      "statement": "统一evidence应用以cac注册模型/check/test/export/diff/review/api命令，严格验证重复/未知/多余参数并支持注入cwd/stdout/stderr。",
+      "evidence": [
+        {
+          "resource": "repo://apps/cli/src/router.ts#L159-L230",
+          "version": "repo-lines-v1:sha256:8c86a7610f89e51ba6b7047839ed1ed5b2585e43d8ed45463663a81c81960e2f:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ2Y2IzNmNmZmE2OWJmYTBjNGYwYzczZmRmMWVmOWRjYWQ2Y2U4OWYxMzJkN2VjMzAwOTBiMjk5ZjBiNmYwNmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmZmUyZmY0ZDliYjViZGQ1ZjlmOTJiYjBlZjc5YTdhNjgwYzdlNmYzMGQ3ODhmNmRhOTU3ODYyZWMwYzg3ODIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU0MDZkNjhkNTM2YTIxZDkwYWFmYWNiMTdhMTlkOGJiZTA1N2U2NzRhNjVmYTM3ZTE5NDZiMWIyNDYwODQyNDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZiOWExNWNiZjk2ZTZkYjdiMDcyNzVmOWY1M2MwZTE2ZGViOTE0MDViMDMwODA3ZTliYzNjZDZlODU4MjI5NDYifQ"
+        },
+        {
+          "resource": "repo://apps/cli/src/router.ts#L22-L136",
+          "version": "repo-lines-v1:sha256:01754d4183702da41d97ffb8bbbaca076cb0aed8c38555b9fcf796cbc30f100c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI0N2VmOGM4NGNkZThkOThkZDZhN2E4YTNhYmFkZWFkM2U0NTJmMjRlMWUzYjMxYjFlYTFlYjNkMjYxYzEyNmNiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmN2U3MjU4YjhiNjFmYjk3MDVjNjhmNTE3N2Q5ZTMwOGQxNTM0ZWQ3MGU1MDk5MmZhZDFmYmU2YTUwZjQxNTM0IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI1MTNlZmE4NWEzNTY4M2FjN2FmZWE0N2MyNjQ2YjBjYmNkMGFkYjhkMjhhYmRhYzQ1ZDhlYTQwYjYzODA4OWM0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI3MDE0ZjllMDE0Y2I5MzkzYjA1Yjg1NzU2MzM3NGUzMGUwNDEyYTRlOTIyYmRiYzFkZWRmY2I0ZmRlZTFiYzZmIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_f581e7088738492b8dafbdd5585db989",
+      "statement": "export完整编译契约/验收后才原子替换专用out并拒绝输入/cwd重叠；verify精确比missing/stale/extra且不写，symlink视stale。",
+      "evidence": [
+        {
+          "resource": "repo://apps/cli/src/commands/export.ts#L43-L144",
+          "version": "repo-lines-v1:sha256:9a41671f2f7170f9540f657cfa2a6828b6afb0a4a2254528f693d1c8c70c3011:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2N2NlN2E1ZDNlN2JmNDUyYWFlMGNmZjdiZTlhMTEwMTUyMmExYmIzMmYwODVlYmNkM2EyYjQ0NTI0M2NjZWE5IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJmYzgwMTI3NTEwMWViYjk5ZWEzYjFkMWJjNWZiNWMyNWNiOTY2ODdjYTQzNGFkYWQwNTlmMTIwOGZhYWEyY2UxIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/renderDeliverables.ts",
+          "version": "repo-file-v1:sha256:856c1009dec16293db9e6ee793cf6ac4ddae68baa979b2c7eb8af14b010a0c88"
+        }
+      ]
+    },
+    {
+      "id": "claim_0c31c496b0264958b6bba762706e9d5f",
+      "statement": "test发现Step CI YAML并HEAD探活，调用官方Runner只运行自包含HTTP workflow，拒空或不支持构造；Hurl须外部CLI。",
+      "evidence": [
+        {
+          "resource": "repo://apps/cli/src/commands/test.ts#L20-L66",
+          "version": "repo-lines-v1:sha256:ebd18b011e6d4b693eab23a3a21db1d0584e1e8d518c16e00cdf0beddaf7dc9d:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhNDczZTJiMDk5ZTI2YmUwYTVmZmY0OThkMWNjMWNhNDVhY2NjYzE4MzdmZGVlYWZlZmNkMTdhYjkzZjMwMGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAwM2IwNWVhNDE1MzE4YTAyNzIzODYyZDQzZDBmNDNhYmNmNzgxOGE3NWRkMjE3ZjI5NzFlNmVhYzY2Zjc4YTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQxNDE1NTRhNDgwM2YyYTcwMDdjZGU5ZDU0MWZhYmQ0ZmYzZTU3MDI5YzkyZWNmZDI1NzIyMDZlYWViMGM5NTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU5OTFjYjYxZjM5MzBhYzJmOWIxYTI2Njc0NDAyNjk2MGQ5Yzc5Yjk0ZDUwZjRjOTdiNWMwYTAxN2EzNGY1NGEifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/runner/acceptanceRunner.ts#L171-L294",
+          "version": "repo-lines-v1:sha256:f8e641be31bd052661264e59ce62918a7ef6e3bc18142c136d88e326dffeef11:eyJzZWxlY3RlZExpbmVDb3VudCI6MTI0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxOGUxZjM3ZDJiNTIwY2Y1MWJjNDM0ZDc5MmZkMTdmZWMyNzc5ZGMzMjU0YzNhMDA5YjE4MjcyOWRlYWVlZDc1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyYmQxYjlhYmE0MTk3NDVmMzYzZjM2ZGVjZmEzNGYxNGIxZjBlMGIzNzM3MTVmN2YyMDk0NWFkODg1YTdiMTFiIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJjYzIyMTA4NDhiZDZkMzZkZTRkNTA1NWI3OTJlMWVjMzg0YzFkN2Q0NDc5NTU3ZWI0Nzc2YTk3ZmY1ZjgwNjllIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_68565561aeb9463081c5f044c647732a",
+      "statement": "有baseline时regression执行基线全部flows，DoD执行当前新增/语义变化flow；filter/tag仅选完整flow，通常空选择失败，唯无filter/tag且无增量DoD显式empty成功。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/runner/acceptanceRunner.ts#L197-L211",
+          "version": "repo-lines-v1:sha256:8f20ef710b9de4c6bb38395a7f70a10281404638b6e96cd68a9d74c40cce779b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhNTE5NThiZTI2YTBlMzViMGNhMmMzZGU3YzkwMDczY2NiMjA0OWQxZjVlZDE1OTVkNzMwMDNiZDJjNjRlNzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRhZGI0Mzg0N2Q0MTAyMzI4ODg5N2RkMGYwMTA1ZGUwZTA3ODI3MDc1Njc1NjRiOGJmMDY0OGMyZmVlOGZmYzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ1YjI1MWUwYWExNzQ4NDI0Nzc2Yjk2NWNlZjZlYTAzYmYxZjczZjgwOGEwYjlkOTIwOTMyZTY5OTE2OWU3ZjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNhNDYyZWIxYTZmMGM5NzcxOTk1MzIxZjNlN2Q1MjM5OGE1MjJlNTUyNDRlOGEwMWIwNmE0MDM1NjcyNTU4YTAifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/runner/suiteSelection.ts#L150-L203",
+          "version": "repo-lines-v1:sha256:358570f61450f19eef04f2d90c7618e349253ea0cb327525ab285ccb01f30907:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQzMjIzMjE5M2ZlNmE5ODgyMDE3ZTA2NGI2ZDQ3NGI1YzIwNDYzNDJjZmUyZjBmNmVkYmUyMDdkYjU3NDZkMTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0e618b469ed4421c960bf34fa0627233",
+      "statement": "allow-pending只用于DoD，保留passed=false/pending=true，执行错误和strict drift不可豁免；report-dir从单次执行写JSON/Markdown/JUnit。",
+      "evidence": [
+        {
+          "resource": "repo://apps/cli/src/commands/test.ts#L128-L185",
+          "version": "repo-lines-v1:sha256:c4670214ac9b05d0589c9777d0a9fdd091112e25e580b01dbea1da34dcc645dd:eyJzZWxlY3RlZExpbmVDb3VudCI6NTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEzYzM3YTM3ZDhmNDc4NTdjYjc0YjNjYzBiMGRhYzlhMzA2MWJkZDZlNmJlZTkxODA0YjAxNDNhMjc4NzFmNmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFmNTJkNTI2YzU1YjUzMDQzOGQzNmM4MmMwYjljMDcxYTMzYjkyOWJmZWI0MjE3NmE1ZjU5ZmE5MDcxMzM3MzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/cli/src/commands/test.ts#L69-L84",
+          "version": "repo-lines-v1:sha256:32e537cd004d26a86a5243d71878eebd900467ebacf32b712328c616fd79ccfc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg4MGE4MjAxNzQ5OGRhODVkMmQxODYwZDVmNTlhYmUyZTAzY2Q0M2I0NWMzY2ZlZGRkZWI4YmNmYjEzNjE1YjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyNGJlM2I1Mzc4NTI4NjM4YjVhMGVhYTMxYTI4NjNhYTgxMGUwNzg3M2E4ZDdmMjM0ZTgzYjUxZDNhMTdjYzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY1MjlkMDIwMDViNzVhOWZkYmIzYzAwNzM3N2M0OGQyMzJmNzVkMWY2ZjhjOWFmMzYyOWZmZjdiOTU1MGVhZWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNjYzRmZDk4NjE2YjM0OWVkMTc1YTg0MjNkMDMwZWFlYjRhZTgyZjE4YWIyMDQwZjFlZDRiYTdkMzYxMWE1MmIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_68574727728f47958d25f816d7a81856",
+      "statement": "HTTP响应drift用AJV2020 schema/formats且不改payload或取远端ref，detect为建议、strict计失败，区别于OTLP模型语义审计。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/runner/acceptanceRunner.ts#L222-L249",
+          "version": "repo-lines-v1:sha256:7750f74c8e5448cba228344939a88e8afbb9e746a57eedd95449ac01e54a2c99:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmYzIxZjU5YzljMzMxYWMyNWNhNTM2ZWRmNGIxOTZmZDQ4NDk1YTAwOTJiNzMzZTNlYWNlN2Y2YjQ0ZTUzMjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhjZjgzM2IxYThmY2IyOGZlYzFiNTg5NWRmYWQ1M2U1OTk2MWVhNTc3ZmMyM2Y5YjRlZDAwODBkNjUyYzcwMGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNiNjY5YTlmZGFlNjVlMGY3NGZmNTI4NGM2NzA1OWYxMmI3MDBkMDE5ZmIxYjAxNjJkMGRlNjkzNjRlNGRiOTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIyZmYyOGU1ZjdlMGY4Zjc4MzNmNDZmN2ZkYTc3NTY3MzM3ODE0ZDc2YTJmOGJmNjMyMzBlNTZhYjhmYTU2ZmMifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/runner/driftInspector.ts",
+          "version": "repo-file-v1:sha256:9bf9439ab951662c35f2136456aa7c9d237af58e42d3b49bfbc65161c10d0791"
+        }
+      ]
+    },
+    {
+      "id": "claim_a7c29cac5a0d4549a5aae8a070ff6728",
+      "statement": "Governance CI先check/只读verify/不可变Git baseline/diff，再regression与dod矩阵对隔离v2 SUT跑strict-drift，上传同次报告且无allow-pending。",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/evidence-governance.yml",
+          "version": "repo-file-v1:sha256:62f88737246c7fdb24ee50c5bb8f0fac207cd51af794a89cab7e2fee0f489e0d"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-15T14:07:58.904Z"
+  }
+}

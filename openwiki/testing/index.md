@@ -1,3 +1,3 @@
-# Files
+# 文件
 
-- [Verification strategy and fixtures](verification-strategy.md) - How the repository proves itself — co-located Vitest projects, injected ports instead of live models or terminals, three fixture families, desktop end-to-end loops, and the pinned digests that are part of the report contract.
+- [测试边界与验证策略](verification-strategy.md) - 按Zod契约、Immer事务、native CEL、ELK、Node I/O、桌面IPC与真实HTTP验收选择最窄测试，以及fixture、工具准备和CI双门禁的边界。

@@ -1,162 +1,158 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:ebe99abb4a61f4aa5fa7a378bdafa757b74783d13ab5a4dd6ec98d70690e3aec",
+  "pageVersion": "sha256:11c0bdad4942923b5da0f6b88f66f22f97ffe26e6327beb4699c5809639087e5",
   "claims": [
     {
       "id": "claim_d69b4a3b54db4f69a4cfa0a7b8a8e9d4",
-      "statement": "A model command is a deterministic transition that never mutates its input: it returns the next document, the inverse command, the affected ids and a result, and the session stores the forward/inverse pair as one history entry.",
+      "statement": "模型编辑是Immer recipe产生next/forward/inverse patches，session保存一批历史，不再ModelCommand返回inverse command。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/commands/types.ts#L48-L67",
-          "version": "repo-lines-v1:sha256:0ffd386764928ef34d68a0c48d1451821d0462a12d59c2a9caf3512807edea05:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiYTY0YjZhYTYwMzk2ZjQ2NjhmNDRjNjY4OTUyY2UyY2NjOWE4NWZmMTQ4N2IwY2E1NzhlYmYzZTBjNTA4NjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiNTgwZTk2NGY4M2E0NzNmNDNkNDQzODQ2Mjk0OWQ2OGI1NjAwZmRhNzg3ZjE2Mzc0NWQwMGRlODljYmYzNmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L132-L160",
+          "version": "repo-lines-v1:sha256:6ed75942301b0a469cf65ca4f02daaebb7cfeccdc63d94cd40eca5d8be54099f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlYmRiMzY1YmMwYjU3OWE3NzI2OGE2YTY3YjYwZTQwYzAwYWYxMDM3ODBlYzFlNzU2MjNhMTRlZGYzN2ZmYWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQzYzQ3YTc3YzM3NjNkY2QyM2QzYjg4ZTAyMDA5MDkzN2M2N2EwMzIzM2MwZDQ4NmFkYzUzNjgzOGFlZGYxYjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAyOWQ3ZGU2MjNiYjA2YTk0OGUwNWJlOGIyYjllYTgyYmQyZDFkNzE5YWMzZTY0YTQwODJmOTI5YjhjMTc5Y2EifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/session/types.ts",
+          "version": "repo-file-v1:sha256:41b595c6deec5c1ba8227da7940d6cbf3e077c0ede45d371366975601316cdb4"
         }
       ]
     },
     {
       "id": "claim_3ec9051962c04842b21a69451bdd2527",
-      "statement": "Rejected transitions raise ModelCommandError with a stable code from a closed set (id.invalid, id.duplicate, entity.immutableField, entity.referenced, attribute.time.missing, context.rootMissing, role.notBound, rule.context, derivation.alreadyBound and others), which callers surface as machine-readable diagnostics.",
+      "statement": "领域guard拒绝以ModelMutationError稳定code/details表达，旧ModelCommandError已替换。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/commands/types.ts#L3-L46",
-          "version": "repo-lines-v1:sha256:c362f9cc3ac26bc50ae65bf65f01fa30f16ab620cd4445cfd55abc71bb3e11cd:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVmNTBjZGEwMzU1ZGExNWEwNTU4ZDYxZDk0YWMxNWRlYzc3NjQ4MGQwYzQwN2MyODhlMzg3ZTYwYjY4OTI3MjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEzMmZjOGU3OWM4OGZlNjIyNzQ0MjVjYmI5ZDk1Y2VhNWRiZDhlZTdhMGRhOTZkZGMxNWJhMjk2ZGZmNmUwODgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM1ODM5YjE5ODZhMzc4NjQ2MjlhMTJiOTE5NDcyMjU4ZDhlMDFiZDgxOTA1NGE1MWM1YmE4ODQ0YzIwYTNmOGYifQ"
+          "resource": "repo://libs/evidence-model-core/src/mutations/errors.ts",
+          "version": "repo-file-v1:sha256:90f8df8b872cfe0d6e0ce1ef9311d99bb5fe4d0e4b82e29dea1a13b61305a712"
         }
       ]
     },
     {
       "id": "claim_31fa8b3be48c461a87c6ac22a9fff26f",
-      "statement": "Guards enforce identifier grammar and cross-collection uniqueness, resolve entities/contexts/contracts, require a Contract Context's single root Contract, require Party Roles bound by that Contract, and apply category rules: no contextRef on participant.party, Thing in a domain Context, evidence kind in its phase Context, Contract with two distinct Party Roles, and a responsible Party Role for other evidence.",
+      "statement": "mutator guards执行ID/引用/Context/root/责任与角色红线，但原始JSON Patch不自动调用所有领域mutator。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/commands/guards.ts#L1-L260",
-          "version": "repo-lines-v1:sha256:f3c0f548835a304d67290e783e681abaf6ba9f8c2f248eec4a3d965d3c9072c0:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlODIwMDk2NGE5Nzg2MzU1MjJiMmFiMDkwYzY1MDY1ZDhlZjhlODVjNDczMGJiMmViMDQ2MGQzNGM2NzdkZGJiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhMGU0ZTgxYWVlMDVlOTVlYTk0OWRjNmE1ODNjZDQyZmI4NTUyZjYxNDFkOWIwZDJjNmFmMGQ0ZDRiNjkyZTVlIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MCwicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJjNGEwYjhkM2E5NmU4ZmE1NDUyMmRkMzhkZmI0ODc4ZjdkMWRlNmJkZDI1MmU4YWFlM2Y2ZWY4MTIxODRhNjU5In0"
+          "resource": "repo://libs/evidence-model-core/src/mutations/guards.ts",
+          "version": "repo-file-v1:sha256:8a01df2d80761beca0dc120890c46176436f59324e3716d9a8b56549325bbf59"
         }
       ]
     },
     {
       "id": "claim_490d2adaa2db4e92a0a12d7928c55755",
-      "statement": "assertMandatoryTime refuses to create a fulfillment moment unless its business-time attributes already exist as required keyData timestamps, so a pair cannot be saved in a shape that will fail the later static check.",
+      "statement": "mandatory business time guard在复合履约变更中要求required keyData timestamps，避免缺时刻对象。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/commands/derivationCommands.ts#L85-L112",
-          "version": "repo-lines-v1:sha256:ac2ac9415429377295e6bbf0a6d4ea4d099d7c3c434a89d2dee8c03f4560f6ed:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE3Y2Q5YzE2ZTIyNzI1NmUzYmEzYTM3Y2I3MWFlMGI5MWE4NzZiYTQzZWU0ZDI3YzRlNTU4ODI2NTNiNzk5ZjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJkNzE4YTk3ZGEyYTJmYTNkOWY3MTk0ZjNiODM2MDMzNDEzNDBkMTkxMWFjNmFkOTQ4Njk5ZGNjYzY5ZWJmZGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://libs/evidence-model-core/src/mutations/derivationMutations.ts",
+          "version": "repo-file-v1:sha256:9a6624ae9923647ff89431347731121634807bf95a2454da30e7851be9b16b07"
         }
       ]
     },
     {
       "id": "claim_3190ea62af234f83ab255412b979afc7",
-      "statement": "Saved identity is immutable: an entity refuses changes to id, type and category, a rule keeps id, type, kind, contextRef and target fixed, and an attribute rename is refused while a derivation still writes it because expression text cannot be rewritten reliably.",
+      "statement": "受控update限制实体/rule身份字段，派生目标属性不能盲目rename而不重写规则。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/commands/attributeCommands.ts#L167-L230",
-          "version": "repo-lines-v1:sha256:60bbbaf970787d18a5095a558ae797f5f40accf3b8ef88b52fb92ae807a32e48:eyJzZWxlY3RlZExpbmVDb3VudCI6NjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM5YTNjNzE5ZWVmMWFkNzU0NTYzMTdmNWI0MzM1Y2MwZTQ2MjU0OTRiMGJhMTNjYzM5OWM1NTgyNTVhY2M4NTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkOWUxMjU0NjQyNTU3NmQzZGVhZThjOWI5ZGJmMTI4ZDVkNmRkYWY1ZDdmZTg1NzkzNDkyN2RlZmZhM2I5ZGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgwOTdkNjM1ZDU2MDY3NjAyNzU5ZjM2M2U2M2NkZDNlMDJmMzQ0NDNjNzhmMTU1M2QxMDA1MTIyZTBhM2U5NjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmNzM5YTA2YzFjYmIxMjQ0ZTMzNjNkMzhiY2Y5ZmE1MGNlODRmZWQzOTljMjE5M2EzYzdmMDhkNTk5MThiMmEifQ"
+          "resource": "repo://libs/evidence-model-core/src/mutations/attributeMutations.ts",
+          "version": "repo-file-v1:sha256:a5c174d79d69730bb49a7374feffe729fba509a47dfb372ddadabe805e20e460"
         },
         {
-          "resource": "repo://libs/evidence-model-core/src/commands/entityCommands.ts#L120-L160",
-          "version": "repo-lines-v1:sha256:27e5ce4ca9ed972b56db44ccccc9fc9431f6688eabe86c48018f83c3756f9aa9:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM4OTIyNDcwNzczNmE4Mjc2NWEwMmNkZTNmMzM1OTVhMzFhZjdmN2VkM2NkYzJiYzljOTk5MmVmODU3YzQ4MzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMwZmYyYjQzYzkxNjE5YWU4M2NlYmEzMmMwY2QxZmRiZWM1YjAwOTVmN2E2YTBlNGU2NTg0N2IzODI0NzRhOGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiNTgwZTk2NGY4M2E0NzNmNDNkNDQzODQ2Mjk0OWQ2OGI1NjAwZmRhNzg3ZjE2Mzc0NWQwMGRlODljYmYzNmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU0NTk3YzUwNTBlMDk2MTFlZDUzYTk2NDQ5OGM0MjBmYWM1MTRkOGVhMmJkNDVkNWJjM2QzYjJmN2I5YzI1NjMifQ"
+          "resource": "repo://libs/evidence-model-core/src/mutations/entityMutations.ts",
+          "version": "repo-file-v1:sha256:c28c8ebcb718567e752f3b457cd3d89e5f3f50fb50b6d31a76d20fdc78d1fc83"
         },
         {
-          "resource": "repo://libs/evidence-model-core/src/commands/ruleCommands.ts#L132-L200",
-          "version": "repo-lines-v1:sha256:55d0e3f1af3d0739294c398a478a7ac0bfb6643145d01e3c576680915afe6d9b:eyJzZWxlY3RlZExpbmVDb3VudCI6NjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAzZmUwYjYwZGFmNGJiNTJmNWU2MDczZmFiNDI1ZjkzOGQ1NDc0ZGI5NmY2Y2E0NjZlYjRmODAxN2UyNWQ1MzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVhY2JmODhmYjBmYTgwZjA4N2MwZmU4MjBhNGJjMzFmZWU4MmZiNWYwMjgzY2ZiYzc0ZTFjN2QzYzRhMGNhNjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFkYmZmMjQxMGQ1MmIzMTdlYjQ5MGEzNDYyNDc2NjdkNjY2OWY3N2Q3M2ZkZWExYjAzNTVhOTQzZjcxNGE3MjcifQ"
+          "resource": "repo://libs/evidence-model-core/src/mutations/ruleMutations.ts",
+          "version": "repo-file-v1:sha256:6ac0956e0afe9717d0b372b87eb116f7f8a3a7660fef36329f20a581d5e152e8"
         }
       ]
     },
     {
       "id": "claim_e64c4bcbfb3c4ccb9d554169646a98e1",
-      "statement": "Business edits that need several writes are composed into one command: CreateContract writes the entity and the Context rootRefs, BindDerivedRule writes the rule and the attribute pointer, and CreateFulfillmentPair writes request, confirmation, reference, optional contract reference and completion rule.",
+      "statement": "复合mutators同步写合同root、派生双向或完整履约结构，在一个recipe形成一次历史。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/commands/derivationCommands.ts#L20-L80",
-          "version": "repo-lines-v1:sha256:0e965ac1fbd2c9cd84d9eeeb5d0f42368bad030bdeef302f72028b996fb4f410:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5Y2FlZmE4OTRhMDhmMTc1YWY0ZjFlNjkzOTEwMDcyY2Q4ZmU0Y2QxZTEzZGQ0MzQ0M2JiZGNiYWNhMGYyM2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdkODA1ZmJjZDVjOWQyNzUyZDE0MDM3Mzk1MGI5ODg4YWQxMmE4NDAwOTA5ZGYzOTAyOTAyODE5M2I0YWQ4MTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM3OTI5ZTkxZTBmOTljM2U4MjVkZTY5YjQzNWZiNjQ4NGQxYjBhMWRmMmY0NjU2MWFiZjFhMjlmMDQxODhiODgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMxOTQxMTkwZDUyNjMwMjQ3NDE0ODUwOTc2MzQ3ZTA1ZmZmMjVmZWU5YTc4ZmJmOWIxYWEwMTc1ZjJlODE3YjMifQ"
+          "resource": "repo://libs/evidence-model-core/src/mutations/derivationMutations.ts",
+          "version": "repo-file-v1:sha256:9a6624ae9923647ff89431347731121634807bf95a2454da30e7851be9b16b07"
         },
         {
-          "resource": "repo://libs/evidence-model-core/src/commands/entityCommands.ts#L82-L118",
-          "version": "repo-lines-v1:sha256:315565655bce3d5165104fb1ecd40cad25a0bfcc31fcb17cc98a5a2b3dd903ca:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJjZmMwZWZhNjRjY2M4Y2RjZjU2ODg4ZDVjY2ZhNjVmMmQ2N2U4NTYxOTY0MDI1OGEzYzUyNGU5OWQyMzNhZTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhjNGU4YTNiOWUzZmI1ZjRkM2ExYzAwM2UwOTllMmRjYzQwNDQ4YmRhYWQxMjlkNjc0OGM2NjI5MTc3MzY1ZjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg3YmQwNDE0ZmEyMjk4N2VhNTYzMWI5N2ZkNmU4NzNlM2JkZmQxYzJlODAxNzJlNDk2Y2NkNjZjOGQyMjQyZDIifQ"
+          "resource": "repo://libs/evidence-model-core/src/mutations/entityMutations.ts",
+          "version": "repo-file-v1:sha256:c28c8ebcb718567e752f3b457cd3d89e5f3f50fb50b6d31a76d20fdc78d1fc83"
         },
         {
-          "resource": "repo://libs/evidence-model-core/src/commands/fulfillmentCommands.ts#L65-L178",
-          "version": "repo-lines-v1:sha256:4cc6fe83c841955c6992825cdab4827c9e7d4929e98609d489f1260f929ebd77:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJjNmZhYzY5MTEzOGJlMzVhNjg0NzM5ZWMxMTc3ZmEyNTY4OGZkNzZmN2ZkNTFjM2YyMzZkODU5MDRlY2I1ZTZiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlZGFlZDkwZjhmMDgxNjA2NGRjZmY2MDIxMTMwMGNjMzc0ZDRiYTA0NTA0NTUyM2U1OGUyZDY4MzNkMTM0ZTE4IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+          "resource": "repo://libs/evidence-model-core/src/mutations/fulfillmentMutations.ts",
+          "version": "repo-file-v1:sha256:5a1e8f1254385be7b50c9544a3abfbb1ae9015e5bf7f00820eeb1f7e5707e4af"
         }
       ]
     },
     {
       "id": "claim_e3f0904e962b4b85b02c6701f4c89cc5",
-      "statement": "CommandSequence applies commands in order and builds its inverse by reversing the individual inverses; dispatchAll wraps a sequence in exactly one history entry, and a command failing midway throws before anything is committed or recorded.",
+      "statement": "多mutator在同produceWithPatches中原子提交，抛错不record，无patch不发事件/清redo，取代CommandSequence。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/commands/sequence.ts#L10-L55",
-          "version": "repo-lines-v1:sha256:b4a0d077d8f07de306ecc007ff5910618e403218a912c3a4785c4bdf741f6cbb:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2YWQ4YzcxOWNjYTYzYTE2M2E0NTFhMTkyM2MxMDNhNTNhNjlhNWNlYzM5YmUxZDJiNGUyOGQ1MTE4ZGMxMDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY4NjdmZGRjZmI2ZDcyYzZiZTZmYTdhYzI2N2FkNjU3NTFmNzEzZmZjZjUxYmEyNWEwYmVjMTk0MzRiZTYwNTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVjMGRmZTg2ZjNjNWNmY2Y0N2RlNWJlY2IzNjQwOTY3MTBjMTNmYzk1MTgwNTVjMzEzYmJiNjdjZDgzZjExMWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI1YTVlNmYzZmJhMDZiYTkxY2Q3NjVhMDkwNjNjODFmMDBiZTE2ZjIwNWQ2NzFmMDNlMzhjMzI2YzVjNWFiN2YifQ"
-        },
-        {
-          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L177-L201",
-          "version": "repo-lines-v1:sha256:5c79d016532748f501c0fb1ddb2f2b68d92ed5845a5fbaf6e94d7a5e1e04d1c6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzMDU1ZGVjN2NmMzNmNWVjYzUwZjhlNGZiMTk4MzQxOTY1MjNhZDQ0NDU3MGU1N2M3NTU2ZWE3NzQ1MTdlZmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkwY2RkYjVkMjA1NGU2MzI0OTczYTkwZjI1NDA4ZTIxZTNhNTYxNzE2Njk4NjgzODE3OWEzNGRlMzEzZjA4M2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBkZWVhNjVmZGE0MTM5YzVjOWVjZjIxYmM0YmJjNTEzYzkxMzU2NmQyMzFkNzdiM2VmYzM4MTI5Nzk5NTZkYTYifQ"
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L132-L160",
+          "version": "repo-lines-v1:sha256:6ed75942301b0a469cf65ca4f02daaebb7cfeccdc63d94cd40eca5d8be54099f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlYmRiMzY1YmMwYjU3OWE3NzI2OGE2YTY3YjYwZTQwYzAwYWYxMDM3ODBlYzFlNzU2MjNhMTRlZGYzN2ZmYWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQzYzQ3YTc3YzM3NjNkY2QyM2QzYjg4ZTAyMDA5MDkzN2M2N2EwMzIzM2MwZDQ4NmFkYzUzNjgzOGFlZGYxYjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAyOWQ3ZGU2MjNiYjA2YTk0OGUwNWJlOGIyYjllYTgyYmQyZDFkNzE5YWMzZTY0YTQwODJmOTI5YjhjMTc5Y2EifQ"
         }
       ]
     },
     {
       "id": "claim_be4ca639bdba429d8a2f0284701fda99",
-      "statement": "Deleting an entity enumerates every reference (context refs, parent, role fields, rootRefs, rule context/target/bindings, relationship endpoints) and either refuses with entity.referenced, deletes only removable references under cascade, or replaces the whole document with a ReplaceDocumentCommand as its inverse.",
+      "statement": "删除实体枚举引用，非cascade拒绝，cascade清可移除依赖；inverse由Immer提供而非ReplaceDocumentCommand。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/commands/entityCommands.ts#L186-L350",
-          "version": "repo-lines-v1:sha256:046dd4d591a28a6ca2e5fd5b8ee6eb535c7742bd3754b57417e183125fa9ba84:eyJzZWxlY3RlZExpbmVDb3VudCI6MTY1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI0MzQ2NTdjZDI2MDllZjliOWI4MmQwNGNjZmIxNzhkN2QwYmVkNjc3NWZlMmZmYzMwYTFhZWI1YTgwZWI5ODFlIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwMWJhNDcxOWM4MGI2ZmU5MTFiMDkxYTdjMDUxMjRiNjRlZWVjZTk2NGUwOWMwNThlZjhmOTgwNWRhY2E1NDZiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIxOGJhODVhMzg2OGNlNzhkMzMwZDczOGQ3MDc4ZmM0OTliNDFhMTZmOTNjZmI0ZmQ2ZTlmYWVjY2Y0NmZjZmI4IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJkY2NjNzU1NDIzZjZiZGYxY2MyM2RjOTEwYjQxODRiOWM2MjFmNmY1MmFjMmIzMzIyNzFlOWUzYzYyNGY5YjgwIn0"
+          "resource": "repo://libs/evidence-model-core/src/mutations/entityMutations.ts",
+          "version": "repo-file-v1:sha256:c28c8ebcb718567e752f3b457cd3d89e5f3f50fb50b6d31a76d20fdc78d1fc83"
         }
       ]
     },
     {
       "id": "claim_e05890b1127447868de09824cfe33878",
-      "statement": "Removing a derived attribute either cascades by deleting its rule first or is refused with rule.referenced, so a rule is never left targeting a missing attribute.",
+      "statement": "移除派生属性需cascade处理rule或拒绝，不允许rule悬空写不存在属性。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/commands/attributeCommands.ts#L104-L160",
-          "version": "repo-lines-v1:sha256:a10f605d490975acf73495f47475db20490df0d6d210d0e14682af3ff521f45d:eyJzZWxlY3RlZExpbmVDb3VudCI6NTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkxMjI4NmY5YThlYmFmYTgzYjJjZGY2ZjNmOGI4Zjc3NzAwZDkwODE3NjUwNWU3ZTQwNmEzMjA5Yzc1MjMwMzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVkNDkxMDJlOGE0MjY5NTdkNGMyN2U4Zjk0M2NiYzk3MTRlMTUyMmU4NGQ0MjgwMmJiNmJmZDc0ZGE4MDM1NGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQwMjU0NWJhNTJjMjE0NGI2ZjExYzRlMDVlY2YyMDJlNTBiMjFmNGIxNTE4ZjMwMjY0ZjljMzgxMTU1ZjgxYzQifQ"
+          "resource": "repo://libs/evidence-model-core/src/mutations/attributeMutations.ts",
+          "version": "repo-file-v1:sha256:a5c174d79d69730bb49a7374feffe729fba509a47dfb372ddadabe805e20e460"
         }
       ]
     },
     {
       "id": "claim_cef0a897ce784ff491bf550c35271579",
-      "statement": "Every edit has a plain-JSON patch form with seventeen declared command types; decoding checks only the array/object shape, required fields and known type, reporting patch.notArray, patch.notObject, patch.missingField or patch.unknownType with a command path and leaving identity, reference and red-line checks to the guards and static validator.",
+      "statement": "wire使用标准RFC6902六op和安全RFC6901 pointer，own-path/规范数组索引/move/remove后destination/root reconcile及末端strict syntax检查，失败整批不提交。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/commands/patches.ts#L160-L280",
-          "version": "repo-lines-v1:sha256:39db845e299ded1d97f79188623534ee3a6b45388b8f844c1a36a17acf32670d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIwMTBhNzc3MTA3YmQ3YTE5MTU0MzlkOGRjYWM2NTYyZGMzYWFlYzU2YTdhMTA5NGZkZWU2ZDE3ZDM1OTQwM2JkIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhNTcyZWVhMGQxMDI3NTQ0MDM2NDA2Mjg1NTIwOTZlZWFlNTlkNzEzYmI2MGI0ODcxYzExZWVjOWIyMjMyZmIzIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+          "resource": "repo://libs/evidence-model-core/src/session/jsonPatches.ts",
+          "version": "repo-file-v1:sha256:dab9ea44e0ed35c3e38eb6903256147bea9da369b3baa5aba1184e1f56edb7cb"
         },
         {
-          "resource": "repo://libs/evidence-model-core/src/commands/patches.ts#L55-L155",
-          "version": "repo-lines-v1:sha256:51b36c11e4ba78232231af1af07a9667e88ad47237d76a32c414a0767ec77ab0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlN2VjNzdlZmZhNmM0MTlhMmMyZmRkY2Y2YTU5OTQ2MWMzZWFiYWJkZjBkZTkyMGIyZDczNDM0N2Y1MjZiYmQ4IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI3OTAyYTFlYjU2OGIzMTgwOTQ5Mzg2MGRmMDIyYzMxNzU5OWIxYWNlYThjMzI5ZDA2YmJkY2Q4YTM4Y2Q2YWU4IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI2Njg3Y2E5NjMzODViYzJiZWFiNjEyYjI4ZjI4NTJlYzEzYWRmYzAzNjg3OGY5OWJkYzcyZjJkMzQzOTg3MzI1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI1ZjBiNWZkYmU4NzNhMzhiNzE3YTExMzQ4N2JjOGRjMjI3YTEyYmQwN2ZlYmE5NWJmMzdmNmIzY2NmMDQ5MWMxIn0"
+          "resource": "repo://libs/evidence-schema/src/ast/jsonPatch.ts",
+          "version": "repo-file-v1:sha256:1f050a5dcc853edcfe7f04e3cef740f3d06d6eed149932e5a0af4d9ef7d48ed8"
         }
       ]
     },
     {
       "id": "claim_c2122fa4bf1b49db991ad993366f3097",
-      "statement": "dispatch applies a command, optionally gates the next document on strict validation, then records history and emits document-changed plus history-changed; validateOnDispatch is off by default for progressive modeling, and when on an invalid document throws ModelSessionValidationError with nothing committed.",
+      "statement": "record可选validateOnDispatch严格gate，默认false，失败无提交，成功先历史/文档再同步events。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L133-L176",
-          "version": "repo-lines-v1:sha256:7fa40033aeecd294d82ef181cc43961f140bb1a21adca3a7e60933aeb2150513:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUzY2ZmOTk4MzFmMWM4ZjI4YmQ4ZGRhYzhjZmIwMTgxYjVjMjVjNjA2YjNjMGVmY2QwNWVjOTcyMGFjNDU4MDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUxZTM3MjVkYTAwMmI0NmVkOGI0ZGU4ODAwM2FkOTcxMGRjYWYxOGQ1N2M0NzAxZGMzYmVmZjBiMmM1Y2IxM2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNjZjM5ZWVhNjAxN2Y2OWZmZjgyNDhhYjRlMGVlZTMwNTIyMWU5MzlhZTg5NmIyZWJkMmY0ODQ3NWM3Njg3NjYifQ"
-        },
-        {
-          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L28-L60",
-          "version": "repo-lines-v1:sha256:594045ad55d4b21415410ae98e368a2e03aa205d77ccfd11af7cd8f6a816b064:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMjc5OTA1ZDY0NWJmMzBkYjE5OWYyYTFmYWM0ZmQwNDJiZmNmM2UyYjk5NzUyNDYyNmQwMmNlODU0MTlmZDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgxNTUwNGY0YjQxMjI1MjM2NjU5MDJmZWZhMmQ2MTA0ZGZiZjAwNGE3MDA4NzBkNjZhZDBjYTkwNGE5MDFkNDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJlNTc3OGQ0MzJkMjk1NjI5MjIzZmVhYmUxYjIyYTQwOTM2ZGY1ZGQ1NjIzMTA2N2E5YjkwNzM4NmEwZTBjYTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ4MTk3YjIwMWRiOTQ1ODUzZmNkYThlZmQ0NGUwM2FlZTU0ZGEyYzc0M2QzYTRmMDFkMjA2ZGM1NmI4ZjRmMGEifQ"
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L125-L160",
+          "version": "repo-lines-v1:sha256:61631962f67f3da0f30460e94039e23c351cf57ba93816a44998a187492a794b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlYmRiMzY1YmMwYjU3OWE3NzI2OGE2YTY3YjYwZTQwYzAwYWYxMDM3ODBlYzFlNzU2MjNhMTRlZGYzN2ZmYWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ2ZjZmY2QyY2VlZThlYWIxMjk5ZmI2NmY2ZjE5Y2ZhOTY0YjJmMTkwMjc4YWE5NmE5NWEwYzU1NWVjZTI5YWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAyOWQ3ZGU2MjNiYjA2YTk0OGUwNWJlOGIyYjllYTgyYmQyZDFkNzE5YWMzZTY0YTQwODJmOTI5YjhjMTc5Y2EifQ"
         }
       ]
     },
     {
       "id": "claim_416e70df503341bab0e244df0bb5f8f5",
-      "statement": "History is capped (100 by default), a new dispatch clears redo, undo applies the inverse and pushes to redo, redo re-applies the original, empty stacks return false, and replaceDocument either records an undoable replacement or resets history when resetHistory is true.",
+      "statement": "历史默认100、undo/redo应用已存patch，new edit清redo，replace默认走record/gate，resetHistory直接替换并清历史。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L202-L280",
-          "version": "repo-lines-v1:sha256:1056863516a3795d4008e1237f8faaf608ca81123cc6666435b2e5403c6d6c3d:eyJzZWxlY3RlZExpbmVDb3VudCI6NzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ3OTZkNDRmZTVhMTdlY2E3N2IxYTMxMDhkNDI5YzkzMDMzMmQzMmFjY2ZiMzVmZjFkNTQwNmMyNmVhYTlmNTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5YzMwN2YxZTJiNmE3ZWYwZWZmZTlhNDM1ODhhZWM2OGM5ZGU1ZTM1OGRiZDhhODBlNmVjYWRlZmU4N2VhNWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNiOGZiYThjYzEwZTMxYjA4OGRhNWRmNzJhZWY2OGRkNGZlMGUwNWU3MTk3NTZlMWY4MzUxYWZkN2ZiYjA5NDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU1ZDIyYTg5MjI1OWUxYTEwNGFmOGYwOTRiOGJlZTFjMjQ4YmYxNTBkMmI5OTEyMzUzNjcyNmQzNjAwMGI0MTAifQ"
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L159-L235",
+          "version": "repo-lines-v1:sha256:64b41f38d8e1900ddb5c82461fb6bb89d42f906a4dfb9d5741a554dc7268eccd:eyJzZWxlY3RlZExpbmVDb3VudCI6NzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY3MDlkYjI0NTQxMGRiMGFiYjBlNjZkNGQzMjEwMWU2ZDExMjExNjdjOGRiYWIxYmU0MTkyMmI2MjU5MzUxMmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1N2RhNjFjZDg4YTVlNjVhZDI5Mjg1MTNkOTZhOWFhYzU2ZGYzNjg2NDU5OTZhM2Y4MzM0Njc3MWY5Yzk0ODUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRiNDQ2MmQwNzIyZmRmYzA2YmE3YmZlNWMyMTA5ZThhM2RlZDY0N2U3MGNjYTY4MTU1NzBhOWU4MzE1ZDBkM2IifQ"
         }
       ]
     },
     {
       "id": "claim_4cf159c2dc96403e92ec8d758e9d8640",
-      "statement": "Selection lives in the session; when a change removes the selected node the session clears selection and emits selection-changed, so the inspector cannot keep editing a deleted object.",
+      "statement": "换文档时选中对象消失清selection，仅属性消失清attributeName，Inspector不持过期选择。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L120-L132",
-          "version": "repo-lines-v1:sha256:858f453b6d86618755040d40aecc92a2817e098829925dcdc6643e9d948cbe76:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlMGU5ODY2OWIyZjMwMWM3N2IzMWVmMjNkOWM5ZDQwYTI2OTVhMTAyYjMwZWE4ZjQ3Y2FhMzAwOWJkNWUyNWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFmYzE3MTA0N2E2YWI4YTAyNTY5NjZkMzEwNGE2MWVhNmI5NDk4YzY1MDMyZDhmOWY0N2RmMmUyNzNiMzhiMTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYzZjU3YWZhNmJmZmRmZThiYzE3NmEwZDE2MzllZDBjM2NiM2RlNTFjZmQ5MWM5OWQ3OWM5NGUwN2MyMzMyMmUifQ"
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L110-L123",
+          "version": "repo-lines-v1:sha256:43ed7072304c5ee99ba9608ec37213cbe62ddcb8a73f8a97a9ef48588b7dcced:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJhMGM4OTVlNzYzMjA2YWRmZTI3OTllMzJiZTc0NDQ0ODk1ZGQ0MzNiNzE4MDZjNTI4N2IzZmJkODBmMTkxMjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwNjc3MjY0NWE2OGMxMGI3YmUzMGNhZGM5YWVhOGFjZWY5MWEwNDBiOTAwMTcyNmI5NzhmNTM3ZGI1Nzc5YWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFkZTM0MGZlMGNhY2IzYWE2MDkyNTk3Y2ViMTJjNmM4YzU0OGNlMGE5M2YxZTY5ODY0YTc3YzA5NDJlNjY0NzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM1MWNiNDA3ZWE3ZDc4M2U1ZTRhM2ZhMjRlYzNkMjZiNmRhNTYyNzM4NGZlMzE2YTE2YzU5YzJkZmZkOTU0ZTUifQ"
         }
       ]
     },
@@ -172,95 +168,87 @@
     },
     {
       "id": "claim_edc96125a4ad496eb6480d34cda9ed85",
-      "statement": "A ModelSession owns the mutable editor state in one place — current document, memoised DomainGraph, selection, undo and redo stacks and the listener set — and exposes dispatch, dispatchAll and replaceDocument as its only ways to change the document, with historyLimit defaulting to 100 and clamped to at least 1.",
+      "statement": "ModelSession持文档、惰性图、selection、历史和监听器，写API为mutate/applyPatchBatch/replaceDocument，limit有限值取floor至少1否则100。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L85-L130",
-          "version": "repo-lines-v1:sha256:b012849596853e16f30ad98cb47814e24acf0e6eec016f4c2f7887362fac7e76:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJkMzM0M2IzOGY5ZWRlYzVkNmUyMGNiYjRmMWRjMjM0ZDE4NmE4YjY3YzY4ZjhiOGE0MTM5OTFhNzc0YWI2NzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk0MjJkN2RhNjRmNDc5YTI1NTM3MDk3YzBiYTA2Mzc2ZWQ0Yzg0NDNjZGMzNmI4MmZlNzVlM2RjNDgzMGNiOTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFjMmM5YWFlM2ZkN2VhYmRiOWE4YThiZDM0YzQwZmI3YzQ2MWVlZjUxZjgxYTM2MGVmZGM5YTYxMTE3ODA5N2YifQ"
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L38-L59",
+          "version": "repo-lines-v1:sha256:b68c1c8efcba77cc07f14ad0bd703aaefa822e550e7ddf0c3a230492f2766f6d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5NmE2MGFhNTNmNzRhOTEyZmEwMWFiMGUwODU5MWQwYzQ5MDgyOTU2N2JhZGM0OTc0ZTRkOWYzMjk3MTA2NDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjYzMzZjBkZThiM2Q0YzhjMGMyZGMyNmQ3MWEyZGI3YTNjNWUwYTgyYTIwYjcwNmQ4ZTg5YWNmODQ4ZmI1ZDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiNTgwZTk2NGY4M2E0NzNmNDNkNDQzODQ2Mjk0OWQ2OGI1NjAwZmRhNzg3ZjE2Mzc0NWQwMGRlODljYmYzNmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE2MDIxMmMwYmVlZDU5MzZiNzRiNTAzZWU1ODI3ZTA0NWVhZDc1NzgyYmUyNzNkYzY0MWExMTA1YjUwZTMxZmEifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L88-L105",
+          "version": "repo-lines-v1:sha256:85ece73fbc5da8c0afd564c7b02353de19ad1f05e3cdab63417a914e7ad2cad7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM1YWE5MzdmOWRmNjEyZTA0OGJiODUyZTkzODZkMTg1ZGZhN2FhNGJjMjU3NmQ2MjI4ZTZhZjkxMTYyZjZkYmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxYWMyMjBiMzBhMDQ4YmQ3ZTEwNjk4N2ZkZjk2ZDFkNjVjYjM5ZDY4OWI3YTVmZDBiM2IxNDg2MmZkYmE2MTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE2MWMyZjFmZmFhYTNlYzBhNGMzNDE3ZTkwNWYwMTJjYzA4ZDkxOTJiYjE2YTg3ZTA2YjNkOTFiYzA2M2Y2NjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE4NDQxNTdmZDI2NzJhNGU0ZTlhY2U5YmYwNTM4ZjVjMzAwMzRlNDZkYWJmZTc2MmEwZjE2ZTA4ZDkxZWE1YzMifQ"
         }
       ]
     },
     {
       "id": "claim_964a7495664743bebb52492d1c960405",
-      "statement": "The session emits exactly three event kinds — document-changed (command types plus affectedIds), history-changed (canUndo/canRedo) and selection-changed — after the document and stacks are already committed, always with document-changed before history-changed, and undo, redo and replaceDocument emit document-changed with a prefixed label such as undo:<label>.",
+      "statement": "document/history/selection三事件同步发送，doc先history，commands字段现在为事务label，undo/redo加前缀。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L159-L176",
-          "version": "repo-lines-v1:sha256:26c592cbb222b29a6353aad6e2d78bc85a8e7cb67a4036f92bb40aa6feacbf3a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdkOTUzYjMxNzdkY2U4N2MwNDAwOWZmMDljZWNkZmJkMjJkNzg4YjlmOGQ2YjAwYTBiZDE1MjEwYjNjYjkyOGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNhOTVmZWIzYWM1Yzc1ZWU5MDJkNjhlNDYyYTYyNTg2YTEwZWQ5YjQ2MDI5YTBjODJmMGI3NTJiYTg4ZmJiNjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNjZjM5ZWVhNjAxN2Y2OWZmZjgyNDhhYjRlMGVlZTMwNTIyMWU5MzlhZTg5NmIyZWJkMmY0ODQ3NWM3Njg3NjYifQ"
-        },
-        {
-          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L20-L27",
-          "version": "repo-lines-v1:sha256:83e172da5a72640a667079ea3688dc0e4480b33bad7f7c22c947a48fb862c956:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjJmMDdmNDg5Mjk0MzEyOTA1YzljYzE5MjRjZGI2YmRkMTc1Y2MxMjAwMzYyOGVkZGJhOTljM2RlYjFiNjg5NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGVjNDI5MjQyZDFkYWQyNGMxNzI0NTcxNzYzMDEwODkwNGQ1MTY2YmJhY2YzMTFmZDU4YWZhMDI3ZWEzODRjYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjA2OGU5ODM5NDIwZGFhZTYzNjBmNGU4YmZiYjI1ZDA3YTczN2FkNjM4OGJiZWNiZjQ3OTdiMTZiN2Y4NTg4ZCJ9"
-        },
-        {
-          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L200-L235",
-          "version": "repo-lines-v1:sha256:6659f1f216c41815efd61003afc52eff114c3c0e0cf8df75610ab508aa5dbb08:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVlYTEwZDhiMjA0Yzg1ZGNkNjRlZGNhNDk4MzQzYzU3N2JhYWYzNDIyZTU3OWI4NjhhZGZiZWViZWUxYWY2MDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjNDQ1ZTFmZmVlZDZiODNhNDcxZWJiYjE0ZjlkYTFhOGM4NDAzMTgyODY5YmRhYTUxNjRkNjNlZWZjMjY0ZmQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUyMTQ0NDNhZmQ3ZmM5MGUwZDE2ZWM2MGNiNjY4Yjg1NzlhYjcwNmM4YmM1MDEzZmYwYmZjOTRiYjE2ZDA5NjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ0YTlhYjgzZTNkNDg2YzUzZDdhZWY1NGU3ODRlYjI5NzVjYThkOTY3NmE5OGRkMDRlMTAxNzU2MzI0YTk4ZGQifQ"
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L132-L183",
+          "version": "repo-lines-v1:sha256:e769809cf77caf7a79a340302db0564aa75db4814161151b05de19a3794c6dc2:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmYWM0ZTQzNjMwYWJmNjhjM2E0YTc1NzNmZDRjNDMwMDhiYTc5OGRkNzZjMzc1OWVlZWY1M2U2Y2ZmOGQyZTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQzYzQ3YTc3YzM3NjNkY2QyM2QzYjg4ZTAyMDA5MDkzN2M2N2EwMzIzM2MwZDQ4NmFkYzUzNjgzOGFlZGYxYjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJiNTM4NmQ4Njk3ODcxMTZkY2UwYjJhYThmMTU2ZWY2NzQ1OTUzZTdmZTJlMWI4ZDUwMTNiNjcwOGZkOWJjZDYifQ"
         }
       ]
     },
     {
       "id": "claim_807d5fc4679a4421872e9bd7675fc169",
-      "statement": "Session listeners are held in a Set and called synchronously in registration order after the edit is committed, so a listener that throws leaves the edit applied and the remaining listeners unnotified while the error reaches the dispatcher.",
+      "statement": "listener Set同步顺序调用，抛错时文档已提交，不是回滚，后续listener可能未通知。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L104-L112",
-          "version": "repo-lines-v1:sha256:334112fd57f4230dcd9ea9adefec7aa35d529ecd8ee802d2f4cd723975419409:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjhjZWRkMTgzZGY4NTQyNDA0ODQzZTgyMGIzY2RiZGMzNTBjMDA3Zjg1NDdlODlmOGZmZGQ5MDYxMjc4OGRmNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2Y4NDc5NDNjMDIwZWUyMWRiN2Y1ZTRlZWU1M2MxNzU2MzFjZjFkNGQ3OTZlZjNhNDNjODY5M2UzNDFhNmZjYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOThjNTIyMDdiN2IyZDhmMWYzNTlkZGI4NzI2ZTQ1ZmY2MGI4MzRkZWQ3MTJmNWVmNmU1MmJiMGU3ZGRkMDJkMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDFkZTIzNDVkZDQ1YjU2YWQ2YjM3NjNmOGQ5MmI4MTdkNTk0YjRmZmExZTNhOWRmNmZkZGNjY2MwNzI4YTg0NiJ9"
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L132-L148",
+          "version": "repo-lines-v1:sha256:bd39085faaab1f45917245bf3452cc5746834510a51abe7e69467678d749a780:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjYzYzMjAzMjBlNWY0NGFjNDI4ODgwOWUyM2RiZDMyMWFhZjljZjVlZDA5NjdmOWY4YzYxMTdhNjkzMmMyZDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQzYzQ3YTc3YzM3NjNkY2QyM2QzYjg4ZTAyMDA5MDkzN2M2N2EwMzIzM2MwZDQ4NmFkYzUzNjgzOGFlZGYxYjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNiY2M5YzU4M2JhM2YwMWIzZmJkNjVmMzJlMzVmYmE3MGI2ODU0MWQyOTBhM2Y5ZTQyYzJhMDVjMWJlMDVlMTEifQ"
         },
         {
-          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L159-L176",
-          "version": "repo-lines-v1:sha256:26c592cbb222b29a6353aad6e2d78bc85a8e7cb67a4036f92bb40aa6feacbf3a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdkOTUzYjMxNzdkY2U4N2MwNDAwOWZmMDljZWNkZmJkMjJkNzg4YjlmOGQ2YjAwYTBiZDE1MjEwYjNjYjkyOGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNhOTVmZWIzYWM1Yzc1ZWU5MDJkNjhlNDYyYTYyNTg2YTEwZWQ5YjQ2MDI5YTBjODJmMGI3NTJiYTg4ZmJiNjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNjZjM5ZWVhNjAxN2Y2OWZmZjgyNDhhYjRlMGVlZTMwNTIyMWU5MzlhZTg5NmIyZWJkMmY0ODQ3NWM3Njg3NjYifQ"
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L99-L108",
+          "version": "repo-lines-v1:sha256:f59a94e72aa7117eed2cbe64a7b9bf42dee88616a51e03326f7303df3ff2b0d9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmNjRiYjczNzNmMDdmNjhhZDI2MjIyY2M4ODU0MTUwN2RlNDYxMzQ2YWY4NTdhYTJmMThhNjliMWNmNjg1YTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdiMzc5Y2ZkOGFlMjdmZWM1OTE1NDlmMTRhZDkzNzczMGI4YjhlYmJlMTRhZjEwY2RkZjE4OTU1MTJhNjc4NGYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFmYzYyZWYxMGM4NDc2ZWNiMTEyMTBjNGUxYzBhNjYwNzI5Y2YxMDdhNjJlNjZhOWRiNzcxODUyNWRmYmIyOTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg5MWQ0ZTExN2Y1OWQzZmZmYzU0NjFlOWU5Yjc5YzIwZmNlZjk3NDU2ODhmMTFhMmZlZTdiYmJjMjIyMTQ3ZTgifQ"
         }
       ]
     },
     {
       "id": "claim_08aad0b44f804b2bbbb60b793314243a",
-      "statement": "The selection check after a change looks only at the selected node id, so deleting the selected object clears the selection and emits selection-changed while removing only the selected attribute leaves that attribute selection in place.",
+      "statement": "选择修复同时处理删除实体和仅删除所选属性，后者清attributeName而保留实体。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L121-L135",
-          "version": "repo-lines-v1:sha256:1e4c3c0f2e9a6c0342cad8756b0c07b9aa2c5344c33968b34e0e5f7aa71b064f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIzY2Q2NWIxN2QzZTgwYjMzMGM0ZTMyNjQ5OTVmYTY5MmFhOTEyOTE5NzQ4NWQ4ZTNjYWViZGM0NjRlMDI1NzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRjOWNiYTZlYWM4NWJjYTIxZTZiNjJjY2Y1MDllN2YzNmRlMmJiNzVkMDA2ZTg2Y2M0OGI3YjVhNTAzOTEwYTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE2OGQ1NmRkOTNjZDMxMzZlYzc0NmE3NDI3MzM2NmQ3NjIzNjIxMzZkN2QwMzUwYjRkODQ5NWJjNjdkM2JmZTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdkZTliMThhMDc3YzMzNDM3M2Y0YTBmZjU3NzkyNDM3ZWY2YmYzZjI2OTE5NDNkMjlmZTY4YWQ2NTAyNWIyZTQifQ"
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L110-L123",
+          "version": "repo-lines-v1:sha256:43ed7072304c5ee99ba9608ec37213cbe62ddcb8a73f8a97a9ef48588b7dcced:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJhMGM4OTVlNzYzMjA2YWRmZTI3OTllMzJiZTc0NDQ0ODk1ZGQ0MzNiNzE4MDZjNTI4N2IzZmJkODBmMTkxMjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwNjc3MjY0NWE2OGMxMGI3YmUzMGNhZGM5YWVhOGFjZWY5MWEwNDBiOTAwMTcyNmI5NzhmNTM3ZGI1Nzc5YWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFkZTM0MGZlMGNhY2IzYWE2MDkyNTk3Y2ViMTJjNmM4YzU0OGNlMGE5M2YxZTY5ODY0YTc3YzA5NDJlNjY0NzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM1MWNiNDA3ZWE3ZDc4M2U1ZTRhM2ZhMjRlYzNkMjZiNmRhNTYyNzM4NGZlMzE2YTE2YzU5YzJkZmZkOTU0ZTUifQ"
         }
       ]
     },
     {
       "id": "claim_93e2a06516ae469d86366e8d30effdd3",
-      "statement": "Relationship commands refuse a self-edge with relationship.self and enforce a plays_role direction matrix (party to party or third_party role, thing to domain role, moment evidence to evidence role, context to context role), mirroring the static validator.",
+      "statement": "relationship mutator拒绝self并校验plays_role端点，复用模型红线，不再Command类。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/commands/relationshipCommands.ts#L26-L73",
-          "version": "repo-lines-v1:sha256:fe40d1959472b48036c4181e1d02f9a00670abea3b77ebc44bf958f470f163d0:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwOTVkN2I5Y2FlMWE4YzdmZWNiMmJmY2NjZGExZjI2M2MyMmVmYjQxNzNkM2FlOTg0Njg2ODkwZTdmODU5YTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ2MzllODAzYzQzZDYzNWNiZDk2Njg1NWNjYTQ3NjNjZWExYjJlNDU2OWZjNzY4ZGE3OGQ2YjI3MWIxMWQ4YmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZlMmZhMGQwNGFjNjFkOTljNTQ1N2IwZGFiMTMxYjI0N2RhMWQxYjk2MTAxNzkxNmRhMDI1NDAzZWM2ZjkzNmUifQ"
+          "resource": "repo://libs/evidence-model-core/src/mutations/relationshipMutations.ts",
+          "version": "repo-file-v1:sha256:4d7e75f6e6cc65389b4743137287249836491371eda67122f0e7c9e963845ea4"
         }
       ]
     },
     {
       "id": "claim_bbe4908a1d184e16bb9f250ee7862632",
-      "statement": "The validation gate is never enabled by the desktop: the renderer creates the session with only the initial document, so invalid transitions are allowed to land and are reported afterwards through session.validate() diagnostics, and undo, redo and replaceDocument also bypass the gate.",
+      "statement": "desktop默认不启严格静态gate，允许渐进不完整模型；undo/redo/resetHistory不重验，普通replace走record仍受可选gate。",
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/renderer/state/useEditorSession.ts#L85-L92",
           "version": "repo-lines-v1:sha256:ae8f03bc07dc6c550af567c91a2f7bb273c39ccff6cf93e499c4f830c989bf9d:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWU3ODZmMzNjNmU0YmQyMTNkMmRmYzZmMDQyYWY1ZTg5NWZiYTlkYzZhMDk5MmIzZWJiMDU3NDcyODgzZjJiYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzAwODY2MjVjYzZhOWFmZTUzOWIzZjhkMDI5YWE5MTFmMWVlMTliYTQ0ZWNmMzM2MzI4YjIzNTMxMzc4NThjMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjY2ODdjMTU5NWYzMjgzNzk4NmIzNzg2YzM5ZWQyNjgyOTdiZmYwZTM4NmI3MGMwMTgyMjFkZWI1Yjg3ZjNkOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTk2NWRlZjE0NGRiZDE0ZDIxMmRlMmUxNzRmOGY5NTlkYjlmNzY5NTQyZWEyZTEyNTVmZmUxM2U3YjJjMTA1NyJ9"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useMcpBridge.ts#L300-L330",
-          "version": "repo-lines-v1:sha256:7d456d4fde12fceda5dad973a0629ddb21c5b5d4c05be263e147aa570b65750c:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlZGJmODM4NzUzNjg5NjZmMzEzYWU2Mzk1MzljNDAzNzAwNDViYTUzZTJlMmNlZTkzYmI2N2Q1ZGExN2I5ODAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxZWYxN2ZmYjFmNjA2NGY2NWM0ODUzNmM4ZmMxMTQ1MGQ0MjY5OWQxNTZkYjI2M2RiZGM4YjViYThkYzYzNTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRiZmNjYmQ0MGVjMWY4MzkyOGFkODUwOGRlMDcxMDg5NDc1NjlkM2Q3Njg1OGFhZDZhYWZlMGVhMDkwZDc4MzUifQ"
-        },
-        {
-          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L133-L141",
-          "version": "repo-lines-v1:sha256:9fa7d541193c653f9d6d31716a10aca391b92d603359cc5c1fa928ee7b96981e:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTNjZmY5OTgzMWYxYzhmMjhiZDhkZGFjOGNmYjAxODFiNWMyNWM2MDZiM2MwZWZjZDA1ZWM5NzIwYWM0NTgwNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDJhMmNiMjVhMTIyYjQ0MjIxYTYyMzRlYzY2MGE3YjVmYjdmOWJkZTdiM2I5ZTJiM2M1NTlhMGQ5NmZhYzczOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTFlMzcyNWRhMDAyYjQ2ZWQ4YjRkZTg4MDAzYWQ5NzEwZGNhZjE4ZDU3YzQ3MDFkYzNiZWZmMGIyYzVjYjEzZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjJhMzM5NGM0ZjhhZTg1OWYxN2JiZWY3Mzc5Y2QzNWQwYTE2ZTI0Y2ZhOWQyNWQxYWIzYmU2ZGYwZDM2NzhhYyJ9"
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L125-L148",
+          "version": "repo-lines-v1:sha256:e0c4f7267c31df06c606d2bdc490c1f18c21a5b5957e79469b9154aa58730e2e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjYzYzMjAzMjBlNWY0NGFjNDI4ODgwOWUyM2RiZDMyMWFhZjljZjVlZDA5NjdmOWY4YzYxMTdhNjkzMmMyZDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ2ZjZmY2QyY2VlZThlYWIxMjk5ZmI2NmY2ZjE5Y2ZhOTY0YjJmMTkwMjc4YWE5NmE5NWEwYzU1NWVjZTI5YWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNiY2M5YzU4M2JhM2YwMWIzZmJkNjVmMzJlMzVmYmE3MGI2ODU0MWQyOTBhM2Y5ZTQyYzJhMDVjMWJlMDVlMTEifQ"
         }
       ]
     },
     {
       "id": "claim_e9f207ee1c4a41bebb06c36dac8e7799",
-      "statement": "Both desktop patch entry points decode with decodeModelPatch and apply through dispatchAll with a label — 'mcp-patch' for the MCP bridge and agent:<rationale> for the agent bridge — so external and agent edits share the human guards and undo history, with MCP returning appliedCommands, a revision and post-hoc validate() diagnostics and the agent bridge handing the before and after snapshots to the patch review.",
+      "statement": "Agent/MCP再parse共享Zod并一次applyPatchBatch共享历史，MCP返回op/revision/posthoc诊断，Agent真变更才record review。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useAgentPatchBridge.ts#L30-L60",
-          "version": "repo-lines-v1:sha256:68754f16c01beea813ffc877b1b536f41a990a128a1235fdc1500a620db6abe2:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRiYmU2ODhjYTMxYmUwYTEwNzZlMjVmZGNlNWY4NDY4N2VmMzY4NmRmMDBmOTkwZDA2MGUxNTA5OWFmZmE0ZWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkNmJmZTZjODk2OWU4ODU5OWM3ZDg1MjFjNGMzNGZhOTVkODlhMDIzZjljNmEwOTA2MzRmYmJlOWZiOWQyZGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMzMjk3ZjcyNzU3OWJhZjg3YzViMzZiNzlmNGU2NzEzOGMxMzI2ZjVhMTA1NzhjMDdmNWNiOTI0N2RjN2E1ZGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcyMzNlYTFjMmI1NTZhZjJhMDdiOGUxMDRmMTE4ODQ4YzI4YjU0NDRkOTBkNTExMjgyMDZmODJlMTRiMWQ3MWQifQ"
+          "resource": "repo://apps/desktop/src/renderer/state/useAgentPatchBridge.ts#L35-L61",
+          "version": "repo-lines-v1:sha256:db983914fc2d4063b769cabecbb97f77e3e74432c1a7f8319b778b18e37cc676:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjZTRmNTdhYmU4N2IxZTBjMzk3NjRjZmJiYzYyZmU0YjYzMWRlM2ZjYWNhZTJiNTRmOGUzNjcyOTIyMWY1NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgzYWNjYTJhNDAyNzY3MjQ4ZGJlMjg4OTBiYzcxNzc2ZWQ4MzZmODkzNzg4MjkwMzk5ZTZjMWUzZDNmODcxN2YiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNmNTYwNWViN2Y5ZGE0NDM0ZmZmMmEzMjg4MGI0NWEyYzg0NmFhYmYzYmU0MzVlNjU1YmQ2NGMzMDQ2Mzg5Y2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY5Yzc4ZmIzZGZkMzIwY2Q5YjRiOTViYzNiNzIwMDRlZTNmNDg2MjYwYmQ4Y2Y5MmEyZTJmN2U1MTUzYTRhNzQifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useMcpBridge.ts#L283-L330",
-          "version": "repo-lines-v1:sha256:84c695038cd77c21e3c3061ec79b539705d00dad3dc725e912707b0bbf571e6a:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJiNzcwOTc1YmVlYThkZTcwMDQ1MmZhNjliNjUwMmI3YjcxNDQwZTczODBiM2UxMmM5MDI3NmIxZjAxMTYxNWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlZGJmODM4NzUzNjg5NjZmMzEzYWU2Mzk1MzljNDAzNzAwNDViYTUzZTJlMmNlZTkzYmI2N2Q1ZGExN2I5ODAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU4ZGJjNjJhOTM5YTYzYzc0NWNmZmM1YTRhZmIzNGY1NzM0MWM0YTM4MzhmMjAzY2VjOTc3OTU0ZjgxNGIwZGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRiZmNjYmQ0MGVjMWY4MzkyOGFkODUwOGRlMDcxMDg5NDc1NjlkM2Q3Njg1OGFhZDZhYWZlMGVhMDkwZDc4MzUifQ"
+          "resource": "repo://apps/desktop/src/renderer/state/useMcpBridge.ts#L325-L368",
+          "version": "repo-lines-v1:sha256:c1db51263fa644b730840c48efc851de59c1d171f24235bfa3e47a916adde588:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI4ZWIzMTYyNmI2MjlmYjBjYWVkMzM4YzEyYzZmOTAyZjRhZWNiZGEwZDA0ZWE2Y2RmMmZkOWRjMWNiY2M5ZmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRlNTgzNDRjNWE2NWEzNjNmNmM5Y2Y2YmNhMjM1ZTlhYjI4MWE3NTI4ZmJlNWUxY2JjZTk2YzdlYzU4ZTY0YzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjljYzgxMDk3MmM2ODc1ZjI2Y2ZjOTUxZjU2YjRiYjQ3MWIxZWM0MGM3NWJlNjk1MWEzMTBmMTUwYTQ5M2RhNWYifQ"
         }
       ]
     },
@@ -269,8 +257,8 @@
       "statement": "useLiveModelBridge publishes {rootPath, revision, document, baseDocument} to agent.notifyModelChanged on every document-changed event and once at mount, with its own monotonic revision counter, so undo and redo publish but selection changes do not.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useLiveModelBridge.spec.tsx#L9-L43",
-          "version": "repo-lines-v1:sha256:f17d7fcfda903b2295fba6ac2e9108ecc4cd7f692e4002e723b0384f065a807e:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwNDBjYjE1NDI3MTI3NzgwYmUwMGU0NmI4YjhmYTM0MjQ4MTVhMTk4NjRjZjhmOWM4NGI2YmM5MjcxODIyYmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFiYTkzY2RhZDRlZGI5NDc2OTQ2YzE2YzNhOTdmNDFlYjIzNWFmZjRhNDhjMTBhNzA1MjYxY2E1ZmFmMmU5ZDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImViM2QyNDkwYThiMWQ2MDNhMjQ5MmJkMDllMzQ4OGU1NmY0MTM2Mjg0MjRkOWYwZTM3ZDEzMGUzNjUyZGE0MmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJkMTcyNTdmOGQ4NjViZjE3ZWJiOTlhODcwYzA3MjYyNzU4Mzg0NTIxMmNiMjAzYThjMmJlMTAyZTNmOWVmZjcifQ"
+          "resource": "repo://apps/desktop/src/renderer/state/useLiveModelBridge.spec.tsx#L9-L45",
+          "version": "repo-lines-v1:sha256:4ae56f7a81e36fd922bb5660c9421ec7d1697cfb1e93c041f09e3556d2b1619a:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwNDBjYjE1NDI3MTI3NzgwYmUwMGU0NmI4YjhmYTM0MjQ4MTVhMTk4NjRjZjhmOWM4NGI2YmM5MjcxODIyYmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFiYTkzY2RhZDRlZGI5NDc2OTQ2YzE2YzNhOTdmNDFlYjIzNWFmZjRhNDhjMTBhNzA1MjYxY2E1ZmFmMmU5ZDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImViM2QyNDkwYThiMWQ2MDNhMjQ5MmJkMDllMzQ4OGU1NmY0MTM2Mjg0MjRkOWYwZTM3ZDEzMGUzNjUyZGE0MmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJkMTcyNTdmOGQ4NjViZjE3ZWJiOTlhODcwYzA3MjYyNzU4Mzg0NTIxMmNiMjAzYThjMmJlMTAyZTNmOWVmZjcifQ"
         },
         {
           "resource": "repo://apps/desktop/src/renderer/state/useLiveModelBridge.ts#L1-L45",
@@ -312,15 +300,19 @@
     },
     {
       "id": "claim_79ae6ef7ba6a47b39f4ae5c1126be439",
-      "statement": "OperatorPatch is a plain command batch — a ModelPatchCommand array plus the createdIds — returned by introduceFulfillmentPair, addBreachCompensation and roleifyAndInvertDependency as pure functions of a document snapshot, and the agent tools submit those commands through apply_model_patch so operators are neither a privileged nor a separate write path.",
+      "statement": "四算子为guarded recipes返回OperatorResult，createModelPatch生成标准patch再走同一renderer通道，无特权写路径。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-agent/src/tools/evidenceTools.ts#L378-L410",
-          "version": "repo-lines-v1:sha256:d95f51872a91f9e26d8fdf4abc4088ff81baf489c1daccd17ab977ec54d1f14b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk0NWEwM2JlMWY2YzlmNmZlYWJiM2UzNWNkY2RhNjY4YjFiYzAyNWJjNTIxZWYxMWMwYmZiNDdlNWUxODQ4MTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5Y2FiYTA2ZmIwYTZmYWE5ZWJkZjdjYTJjMjk1MTczN2YzNmMzZGFiMmQxMGNhNWNmN2YxZTJmYzIyZTBiZWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZjZTkwNWQ1YWQyZWU1ZjY4ZjNlYjQ1MTBlZDdlYTFlNjEzNWRlYjY3NTI5YzFlOGRhYjA1MDUxYTU2MzdhYTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ1Zjc0ZDZlMmM2YTE4MzE2NjFhNWNjNjU3YzkyNTI1MGE5ZmQ4MTE5ODFmMDUzOTQxYTExN2NmNjJiM2EyMGYifQ"
+          "resource": "repo://libs/evidence-agent/src/tools/evidenceTools.ts#L373-L404",
+          "version": "repo-lines-v1:sha256:b88ceaae807607d5c6d5d6381ba1e488ff8113d2e5bcdd80f32665298d242c61:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRiZTlmZGRhODJiMDQzMDBlNDE4MmExNjE1YjM3MzMzNWY0OWMwNjYyYWEzMTE4YzIxMjk1NDU0MzU3MTZhMDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyMDgyMzEwYTdiYzNmMjRmNTJlNDA0M2Y0NGU3Y2VkMTAzNDRlM2JiN2VkZGE1NTEyNDBhMjQyZGM4NWVlZmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU3ZWM5Y2NkNzRjY2E4ZTQ1NzAwODkyNzllMDVhYTI4YzY2ZWQwNmU4ZTdhZDc0OWM3MTYwZjdlMjk5ZTRlOWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA5ZGVkYjU2OWE5YjgzOTExMzgyYzcwNzczYWE3MGI3MTMwZjdhN2Y0MzVkZDc0MmYwM2QwZmExZmM4MjhkOTYifQ"
         },
         {
-          "resource": "repo://libs/evidence-model-core/src/commands/operators.ts#L9-L30",
-          "version": "repo-lines-v1:sha256:d9c8f8b1b2c1aec4c89093fad177f28f4b9254ef9610ce776218abe0df6bc5cb:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM1ZDkyNDk1MzMzOWJmZDZhZjg3OGFmNGFlZjcxY2VmNDBhNzZiY2U2ODQwMjBhNjgwOGE5NTQ2OTAwMDc1NjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQyYTc1NDk5MjkyYWIwMGQ3OWRkOTlkNGY2NjY2Y2E5MjE1YTJlMzA1YzRlZTAzMDNiOGZkNTQ4ZGZiNTE5NDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImViZjEwNGI1OTdlYjg5ZWIzMDZhZTM3MDkyMGUzNTM0NzUyYjY3ODMyNTY4OTcxOGM0ZjA4MWIwNjE5ZmNlMjgifQ"
+          "resource": "repo://libs/evidence-model-core/src/mutations/operators.ts",
+          "version": "repo-file-v1:sha256:8ca08862a27a67b9c6b2e797b7162a404f604da3a2a9d0a2482e0b69385a85d6"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/session/jsonPatches.ts#L126-L138",
+          "version": "repo-lines-v1:sha256:ad89e2ab7feef15cc3cd78cb31a603063c1856ac7dc793501f0055753e763756:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMGI3YWYxNjI2ZjNjNThmZjU5NTU5NTZhYmE2ODg3ZWNmYWI1OGNkY2RhOTVlNzIzNDIyNWZiODRjYjg1OGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNhZGNiYWI5YmRlZmVlZGExYjYxMzgzY2I1N2UxYjVhZWJjYzY0YmY4OTQ5MzQ0OTZiZjJlMGRlZDI4OTEzZDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -351,6 +343,6 @@
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-14T20:15:23.211Z"
+    "at": "2026-11-15T14:07:58.904Z"
   }
 }

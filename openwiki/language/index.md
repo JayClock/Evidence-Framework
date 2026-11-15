@@ -1,4 +1,4 @@
-# Files
+# 文件
 
-- [The FM model language (FM v5)](fm-dsl.md) - The AST kinds of Fulfillment Modeling v5 — entity categories, roles, contexts, relationships, lifecycle stages, rules, clause readings and workshop steps — the closed vocabulary registry that names them, and the strict validator that turns authored JSON into an accepted DomainModelDocument.
-- [Key data and provenance](key-data-and-provenance.md) - The shared eight-kind vocabulary that decides whether an amount, deadline or time difference has a named provider, the ledger the inspector edits and the native audit grades, the business-time and lineage rules around it, and the provenance chain from a source sentence to a sensor issue.
+- [FM v5 语言与严格契约](fm-dsl.md) - Zod 定义的 FM v5 AST、跨对象语义约束和稳定诊断，实体/角色/Context/关系/规则红线，以及 examples[].test 的标准验收元数据。
+- [关键数据、派生与来源追溯](key-data-and-provenance.md) - 八类来源分类、关键数据台账与 native CEL 属性依赖链如何协作，以及 sourceSnippet、业务时间、JSON精确整数和审查结论的边界。

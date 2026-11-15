@@ -1,11 +1,11 @@
 ---
 type: contract
-title: API projection and OpenAPI
-description: How libs/evidence-api turns one model plus an optional JSON overlay into a draft projection — routes, hypermedia, journeys, diagnostics and digests — and the OpenAPI 3.1 contract plus files the CLI writes, and what makes it refuse to write.
+title: API 契约与验收投影
+description: 模型与可选 overlay 如何投影 draft API snapshot、OpenAPI 3.1、服务与超媒体，以及内联 examples 如何编译成标准 HTTP 验收。
 tags: [api, projection, openapi, overlay, diagnostics, cli, contract]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-14T20:15:23.211Z
+    at: 2026-11-15T14:55:15.403Z
 sources:
   - id: openwiki-source-feaf4e64c269397a25f93a3d
     resource: repo://libs/evidence-agent/src/sensors/native/nativeApiSensor.ts
@@ -13,8 +13,8 @@ sources:
     resource: repo://libs/evidence-api/src/adapter/fmAdapter.ts
   - id: openwiki-source-5ada2ea19d2cb99c0b704bb8
     resource: repo://libs/evidence-api/src/apiLoader.spec.ts
-  - id: openwiki-source-df757265b9e1070807ea34fe
-    resource: repo://libs/evidence-api/src/cli.ts
+  - id: openwiki-source-a2b00d4266d693ffa57e8b71
+    resource: repo://libs/evidence-api/src/commands.ts
   - id: openwiki-source-32449ef9d6385b1251eee70e
     resource: repo://libs/evidence-api/src/delivery/fieldContract.spec.ts
   - id: openwiki-source-f03cbc6b1d6e72ee81aab365
@@ -23,8 +23,6 @@ sources:
     resource: repo://libs/evidence-api/src/delivery/modelDelivery.ts
   - id: openwiki-source-e7b8e25706f35341e5dd6899
     resource: repo://libs/evidence-api/src/diagnostics.ts
-  - id: openwiki-source-544f25383a86776d3fdf7169
-    resource: repo://libs/evidence-api/src/fmAdapter.spec.ts
   - id: openwiki-source-6f06bbf6d9d8a380c42129bc
     resource: repo://libs/evidence-api/src/http/hateoasWeaver.spec.ts
   - id: openwiki-source-a0e07a861eaab8e52f8f4245
@@ -45,396 +43,73 @@ sources:
     resource: repo://libs/evidence-api/src/renderer/outputRenderer.ts
   - id: openwiki-source-13153af2029f2aa63c0edef3
     resource: repo://libs/evidence-api/src/schemas/apiSchema.ts
-  - id: openwiki-source-d3aaf211f80d2af88a870c87
-    resource: repo://libs/evidence-api/src/types.ts
   - id: openwiki-source-db14273753465a1092e159d0
     resource: repo://libs/evidence-api/tests/support/openapi.ts
-generated: { by: "openwiki/0.9.0", at: "2026-11-14T20:15:23.211Z" }
+generated: { by: "pi", at: "2026-11-15T14:55:15.403Z" }
 ---
 
-# API projection and OpenAPI
+# API 契约与验收投影
 
-`libs/evidence-api` is the first downstream consumer of a model. It reads one
-`DomainModelDocument` — a `.evidence/fm` source tree or a packed
-`*.evidence.json` bundle — plus an optional JSON overlay, and produces one
-`EvidenceApiSnapshot`: the routes the model implies, the hypermedia links
-between them, the service topology and deployment sketch, the journeys, the
-diagnostics, and the OpenAPI 3.1 document built from those routes.
+`evidence-api` 读取 FM 文档或树/Bundle，加可选 JSON overlay，产生 `EvidenceApiSnapshot`：routes、hypermedia、journeys、services、deployment、limitations、诊断及 OpenAPI。snapshot 固定 schemaVersion=5.1、mode=draft；投影是可审查的设计产物，不宣称发布就绪。
 
-The design rule is that nothing is invented and nothing is approved here:
+## 输入、索引与证据
 
-- every path is derived from a modeled object, so there is no endpoint without a
-  business moment behind it;
-- the overlay may rename a path or a summary, never add an interface;
-- the snapshot is `schemaVersion: '5.1'` and always `mode: 'draft'` — "a
-  projection is an authoring artifact, never a claim of release readiness"
-  (`repo://libs/evidence-api/src/types.ts#L17-L31`).
+`loadFm` 在读取前后比较源字节摘要，变化返回 SOURCE_CHANGED、index=null；解析/源问题也明确失败。`loadFmFromDocument` 拒绝旧 validation envelope，structuredClone 固定输入，建立实体/关系/规则和上下文索引。无 check report 表示没提供，不是通过。
 
-Release authorization lives elsewhere: the agent's stage gate consumes a *saved*
-FM check report, while this package records a report as evidence and projects
-anyway. See [Sensors, stage gate and the dependency frontier](../agents/sensor-orchestration.md).
-Route derivation, topology and API diffing have their own page:
-[Routes, topology and delivery diff](./delivery-routes-and-diff.md).
+可选报告需 checkVersion=6、consistent/complete/valid/modelValidated=true、inputChanged=false、errors 为空及字符串 modelDigest。失效报告保留为 FM_CHECK_INVALID gap，摘要不符为 FM_CHECK_STALE gap；这仍允许草稿预览，不是正式门禁通过。磁盘摘要是带 sha256: 前缀的源字节 digest；内存摘要来自 canonical compiled document，不再包含旧 validation suite。overlay/check 摘要是 canonical JSON 的裸 hex。
 
-## Inputs: a model, an optional report, an optional overlay
+`inspect` 是只读库存：模型、roles、真实 participant.party 扮演的 Party Roles、未扮演角色、evidence/participant resource clues、contexts、文件摘要；不会发明路由，也不再列旧 scenarios。
 
-`loadFm` reads the model twice and digests every source file. If the second read
-does not match the first, the result is `SOURCE_CHANGED` and there is no index at
-all, so a half-changed tree can never become a contract
-(`repo://libs/evidence-api/src/adapter/fmAdapter.ts#L211-L245`).
+## Overlay 与投影顺序
 
-A saved check report is optional, and this is the deliberate difference from a
-gate. `checkReportProblem` requires `checkVersion: 5`, `consistent`, `complete`,
-`valid`, `inputChanged: false`, `modelValidated: true`, an empty `errors` array
-and a string `modelDigest`
-(`repo://libs/evidence-api/src/adapter/fmAdapter.ts#L84-L101`). Anything else
-becomes a **gap**, not an error:
+Overlay 是严格 JSON：schemaVersion=5.0、id、routes(id/path/summary)、journeys(id/roleRef/routeId/nextPossibleSteps)。不接受 YAML、重复键（含嵌套/转义）、非 JSON 数值、非对象、重复 section ID 或旧 resources/bindings/capabilities。缺省值只在校验后补齐；programmatic overlay 走同一 loader。嵌入 schema 文本须与随包文件字节一致，manifest 记录 schema digest。
 
-- `FM_CHECK_INVALID` (gap, key `fm.check.invalid`) — the supplied report does
-  not prove a delivered scope; the report is still kept on `index.check` so a
-  reader can see what was supplied;
-- `FM_CHECK_STALE` (gap, key `fm.check.stale`) — the report's `modelDigest`
-  differs from the current one: "FM 已变化，投影使用当前模型；旧检查结果不证明当前模型已通过校验";
-- no report at all — `index.check` is `null`, which means *nothing supplied*,
-  never "passed".
+`buildProjection` 顺序固定：
 
-The overlay is a separate, small document. The CLI reads it from `--api FILE`
-only; nothing is read by default. Programmatic callers pass the same shape, and
-`buildProjection` re-validates it through the same loader, named `overlay.json`,
-so an in-memory overlay cannot skip a check
-(`repo://libs/evidence-api/src/projector.ts#L66-L70`).
+1. 对四部分文档执行 strictValidateDomainModel，失败为 FM_INVALID error，但仍返回可显示的草稿。
+2. buildModelDelivery 生成模型基线，解析 overlay；loader 有诊断时整体放弃 overlay，不做部分接受。
+3. 按 route id 覆盖现有 path/summary；未知 ID、改变参数名、空段/坏括号、method/path pattern 碰撞各有明确 error，不能凭 overlay 新增业务接口。
+4. 校验 journey 的 party role 存在且在 route.allowedPartyRoleRefs 中，nextPossibleSteps 必须解析到既有 step。
+5. 编织 hypermedia，缺自定义 journeys 时从可达关系推导，最后才从最终 routes 建 OpenAPI，保证路径不分叉。
+6. 归一化诊断并按 severity/code/target/message/identity 排序；最终 snapshot 在命令层再用 api-projection.schema.json 校验，错误为 PROJECTION_INVALID。
 
-## The overlay is small on purpose
+## 超媒体不是虚构执行顺序
 
-`schemas/api.schema.json` allows exactly four keys: `schemaVersion` (const
-`5.0`), `id`, `routes` (`id`, optional `path`, optional `summary`) and
-`journeys` (`id`, `roleRef`, `routeId`, optional `nextPossibleSteps`), with
-`additionalProperties: false` on every object
-(`repo://libs/evidence-api/src/schemas/apiSchema.ts#L1-L47`). An obsolete full
-design that still carries `resources`, `bindings` or `capabilities` is refused
-rather than silently ignored — `apiLoader.spec.ts` pins that
-(`repo://libs/evidence-api/src/apiLoader.spec.ts#L79-L92`).
+每条 route 有 itemPath 的 self link。Evidence 间 references 让先决对象 route 指向依赖者 POST，形成 next:<entityRef>；去重排序，模板链接保留 templated。默认 journey 是 POST × allowed party roles 的可能步骤，http-journeys.json 明确 runtimeValidated=false，不把静态导航当验收已执行。
 
-`loadDesign` is stricter than `JSON.parse`:
+## OpenAPI 与字段纪律
 
-| Input | Result |
-| --- | --- |
-| `.yaml` / `.yml` | `DESIGN_INVALID`: "API 设计必须使用 .json 文件，不再接受 YAML" |
-| duplicate key, including escaped or nested | `DESIGN_INVALID`: "设计包含重复 JSON key: …" from a raw-token scan |
-| `NaN`, `Infinity` | `DESIGN_INVALID`: "设计不是合法 JSON" |
-| not a single object | `DESIGN_INVALID`: "设计必须是单个 JSON 对象" |
-| schema violation | `DESIGN_INVALID` per error, located as `$["routes"][0]["id"]` |
-| duplicate id inside `routes` or `journeys` | `DUPLICATE_ID` |
+`buildDeliveryContract` 产生 OpenAPI 3.1.0，manifest → info，route → operation，读写对象 → component schemas，services 与部署拓扑一致。operation 的 x-evidence-* 追溯 entity、context、service、contract、请求/确认、允许角色、exposure、derived/stamped。
 
-Defaults (`schemaVersion: '5.0'`, `id: 'default-api'`, empty arrays) are applied
-only after validation, so malformed supplied fields are reported instead of being
-replaced (`repo://libs/evidence-api/src/loader/apiLoader.ts#L118-L239`).
+- POST 请求体只有 caller 字段，additionalProperties=false；派生字段和 stamped 业务时间不作为客户端输入。
+- 响应中 derived/stamped 标 readOnly，派生字段携带 rule 引用；对象 component 要求 HAL `_links`。
+- 201 Location 的 x-evidence-uri-template 是 itemPath；2xx 实体响应为 application/hal+json 并保留 link templates。
+- path 参数必须对应模板，required string；GET 无 body。无真实 participant.party 扮演责任角色的路由仍保留，但标 internal exposure，不悄悄消失。
 
-The two embedded schema texts are also required to be byte-identical to the
-shipped `schemas/*.json`, because the manifest publishes a digest of the
-contract, not of a parsed copy
-(`repo://libs/evidence-api/src/apiLoader.spec.ts#L25-L46`).
+缺 confirmation 或需要服务端执行派生规则等未完成能力在 limitations 明示；不能从生成契约推断后端已经实现。audit_api 在上层统计 evidence-only coverage 并给缺口 warning，投影本身不伪造覆盖评分。
 
-## Projection order
+## 内联样例到标准验收
 
-`buildProjection` is a fixed pipeline. The baseline is model-derived; the overlay
-is applied afterwards under guards; the OpenAPI document is built last, from the
-final route list, so the contract can never describe a path the snapshot does not
-name (`repo://libs/evidence-api/src/projector.ts#L48-L190`).
+`delivery/scenarioProjector.ts` 的 AcceptanceFlow/Step 是临时编译 IR，**不是新持久化 suite 格式**。只有实体 examples[].test 参与：flow、actingRoleRef、asOf、basedOn/pathParameters、预期状态/inputs/expect/tags。
 
-```mermaid
-flowchart TD
-  fm["model source tree or bundle"] --> load["loadFm - read twice, digest, index"]
-  report["optional saved FM check report"] --> reportCheck["checkReportProblem and digest compare"]
-  reportCheck -->|invalid| gapInvalid["FM_CHECK_INVALID gap"]
-  reportCheck -->|digest differs| gapStale["FM_CHECK_STALE gap"]
-  gapInvalid --> load
-  gapStale --> load
-  load -->|bytes changed mid-read| sourceChanged["SOURCE_CHANGED error, index is null"]
-  load --> strict["strictValidateDomainModel on the four document parts"]
-  strict -->|issues| fmInvalid["FM_INVALID error"]
-  load --> baseline["buildModelDelivery - routes, services, links, deployment"]
-  overlay["overlay JSON - route paths and journey steps"] --> loader["loadDesign - schema, duplicate keys, section ids"]
-  loader -->|refused| designInvalid["DESIGN_INVALID or DUPLICATE_ID error, overlay dropped"]
-  loader -->|accepted| apply["apply route overrides keyed by route id"]
-  baseline --> apply
-  apply --> pathGuard{"parameter names kept, no empty segment, no collision"}
-  pathGuard -->|violated| routeErrors["API_ROUTE_NOT_FOUND, API_PATH_INVALID, API_ROUTE_COLLISION"]
-  pathGuard --> journeys["journey actor checked against the route's party roles"]
-  journeys -->|violated| journeyErrors["API_ROLE_INVALID, API_JOURNEY_STEP_NOT_FOUND"]
-  journeys --> weave["weaveHypermedia, then deriveJourneys when no overlay steps"]
-  weave --> openapi["buildDeliveryContract - OpenAPI 3.1.0 with x-evidence extensions"]
-  openapi --> snapshot["EvidenceApiSnapshot - schemaVersion 5.1, mode draft, digests"]
-  fmInvalid --> snapshot
-  designInvalid --> snapshot
-  routeErrors --> snapshot
-  journeyErrors --> snapshot
-  snapshot --> outputCheck{"validateProjection against api-projection.schema.json"}
-  outputCheck -->|violated| projectionInvalid["PROJECTION_INVALID error"]
-  outputCheck --> gate{"hasErrors"}
-  gate -->|yes| refuse["exit 1, existing output untouched"]
-  gate -->|no| write["renderOutputs - six files, optional limitations.md, manifest.json"]
-```
+每例须唯一映射 POST 且角色获准；依赖按图排序，拒绝环、未知例、跨 flow、依赖拒绝操作、上游时间晚于当前。正向样例先清除 asserted derived 值，再用原生 CEL 对显式 upstream facts 求值；给定期望与推导不符必须失败，不允许 oracle 读取自己的答案。显式负向状态只生成声明的输入/断言，不能臆造非法案例。
 
-The gating diagnostics, in the order the pipeline can raise them:
+路径从上游 response captures 传递，正向结果携带 response schema。导出 Step CI YAML/Hurl，HTTP runner 才检查真实后端。CEL int/uint 在 JSON 边界将安全整数转为 number，较宽的合法 int64/uint64 转为精确十进制 string；输入 unsafe number 或超出 CEL 类型范围的值拒绝，不能静默舍入。
 
-| Code | Severity | Raised by |
-| --- | --- | --- |
-| `FM_CHECK_INVALID` | gap | supplied report fails one of the seven conditions |
-| `FM_CHECK_STALE` | gap | supplied report's digest is not the current model digest |
-| `SOURCE_CHANGED` | error | the tree moved between the two reads; no index |
-| `FM_INVALID` | error | `strictValidateDomainModel` inside `buildProjection` |
-| `DESIGN_INVALID`, `DUPLICATE_ID` | error | the overlay loader |
-| `API_ROUTE_NOT_FOUND` | error | overlay names a route id or journey route that does not exist |
-| `API_PATH_INVALID` | error | override changed the path parameters, left an empty segment or unbalanced braces |
-| `API_ROUTE_COLLISION` | error | two routes now answer the same `method` + path pattern |
-| `API_ROLE_INVALID` | error | overlay journey actor is not a Party Role the route allows |
-| `API_JOURNEY_STEP_NOT_FOUND` | error | overlay journey names a next step that does not exist |
-| `PROJECTION_INVALID` | error | the finished snapshot fails its own schema |
+## 命令、写出与错误
 
-**A projection built on a failing model is not a contract.** `buildProjection`
-re-runs the static FM v5 checks — document shape, identifier grammar,
-category/kind contracts, reference resolution, context ownership, relationship
-endpoints, derivation symmetry — and turns each issue into an `FM_INVALID`
-error, including for in-memory documents that never touched disk
-(`repo://libs/evidence-api/src/projector.ts#L54-L65`). The snapshot is still
-returned so a preview can show the damage, but `hasErrors` then stops both
-writing and any claim of completeness.
+推荐 `evidence export` 和 `evidence api <command>`；旧 evidence-api shim 警告只到 stderr。库 `commands.ts` 共享 inspect/check/project/deliver/diff/export-tests 逻辑。
 
-One subtlety worth knowing when reading the code: if the overlay produces *any*
-diagnostic, the whole overlay is dropped and the projection falls back to the
-model baseline — the errors are reported, not partially applied
-(`repo://libs/evidence-api/src/projector.ts#L66-L70`).
+兼容 api workflow 的 resolved 路径必须 absolute：report/overlay 在 FM root 外，out 在 project 内且与所有输入无包含重叠，使用 realpath 解析已有祖先防 symlink 绕过。统一 app 负责相对 cwd 参数适配，不应把旧 resolved API 约束套成“所有用户命令只收绝对路径”。
 
-Diagnostics are deduplicated by their full JSON identity and sorted by severity,
-code, `targetRef`, message and finally identity, so two runs that found the same
-things print them identically — which is what makes `projection.json` comparable
-between runs (`repo://libs/evidence-api/src/diagnostics.ts#L96-L131`).
+project/deliver 同一投影与 writer：0=无 errors/gaps；1=错误/拒绝，不写；3=只有 gaps，仍写可审查草稿。complete 比 writable 更严格，要求零 findings 且 schema clean。
 
-## Hypermedia and journeys
+输出 openapi.json、topology.json、routes.json、deployment.compose.json、projection.json、http-journeys.json、可选 limitations.md、manifest.json。manifest 记录工具/schema/Node/AJV 和输入/output byte hashes。默认 `.evidence/api/generated`；仅直接文件名，先 sibling temp staging，再 rename/backup，失败恢复旧树，避免半新半旧。
 
-`weaveHypermedia` adds one `self` link per route pointing at its `itemPath`, then
-follows `references` relationships between two Evidence entities: every route of
-the prerequisite gets a `next:<entityRef>` link to every `POST` route of the
-dependent. Links are deduplicated and sorted by source, rel and target, and a
-templated `href` is flagged rather than resolved
-(`repo://libs/evidence-api/src/http/hateoasWeaver.ts#L14-L64`).
+## 验证与消费者
 
-Navigation is a graph of possibilities, never an invented sequence:
+projection specs 保护 overlay/路径/角色、FM_INVALID、stale gap 仍写及 source 变化拒绝；OpenAPI specs 校验 3.1 元模型、refs/operationId/path 参数/GET body 并编译严格消费者类型。outputRenderer specs 保护稳定排序、重排等价、Bundle roundtrip 字节和 manifest；apiLoader specs 保护 schema 字节与重复键；acceptance/projector specs 保护 CEL oracle、依赖/角色、负向与整数边界。
 
-- each operation publishes its outgoing links as `x-evidence-link-templates`
-  inside the HAL response, keyed by relation;
-- if the overlay declares no journeys, `deriveJourneys` builds one step per
-  `POST` route × `allowedPartyRoleRefs` and connects steps through the non-`self`
-  links;
-- `http-journeys.json` is written with `runtimeValidated: false`, because the
-  file describes reachability, not a validated execution order
-  (`repo://libs/evidence-api/src/delivery/files.ts#L28-L45`).
+桌面和 sensors 使用同步 buildDelivery(document)，renderer 使用 browser-safe field-contract 入口避免 fs；workbench 复用相同 snapshot。
 
-An overlay journey is checked before it is accepted: the actor must exist, be a
-`role`/`party` entity and appear in that route's `allowedPartyRoleRefs`
-(`API_ROLE_INVALID`), and every `nextPossibleSteps` entry must resolve
-(`API_JOURNEY_STEP_NOT_FOUND`)
-(`repo://libs/evidence-api/src/projector.ts#L118-L160`).
-
-## The OpenAPI document
-
-`buildDeliveryContract` emits OpenAPI `3.1.0`: `info` from the model manifest,
-`x-evidence-model` for the model id, one `paths[path][method]` entry per route,
-one `components.schemas` entry per object the contract reads or writes, and
-`x-evidence-services` taken from the topology that the deployment file also uses
-so the two cannot disagree
-(`repo://libs/evidence-api/src/delivery/modelDelivery.ts#L254-L310`).
-
-Per operation the document keeps the linkage readable instead of inferrable:
-`operationId`, `summary`, `tags: ['context:<ref>']`, and
-`x-evidence-purpose`, `-context`, `-entity`, `-service`, `-allowed-party-roles`,
-`-exposure`, `-contract`, `-fulfillment-request`, `-fulfillment-confirmation`,
-`-derived` and `-stamped` (`repo://libs/evidence-api/src/delivery/modelDelivery.ts#L165-L250`).
-Those extensions are the answer to "where did this endpoint come from": a
-reviewer walks path → entity → Context → fulfillment pair → rule.
-
-Payload rules follow the model rather than convenience:
-
-| Part | Rule |
-| --- | --- |
-| request body | `POST` only, `application/json`, `additionalProperties: false`, and only fields classified `caller` |
-| component schema | caller fields writable; derived values `readOnly` with `x-evidence-rule` / `x-evidence-derived-by-rule`; a stamped business time `readOnly` |
-| `_links` | required in every component schema, `href` plus optional `templated` / `method` |
-| `201` | carries a `Location` header whose `x-evidence-uri-template` is the route's `itemPath` |
-| any `2xx` with an entity | body is `application/hal+json` referencing the component schema, with the route's link templates |
-| path parameters | one required string parameter per `{name}` in the path |
-
-`tests/support/openapi.ts` restates the constraints the OpenAPI meta-schema
-cannot prove — only local `#/components/schemas/...` references that actually
-resolve, unique `operationId`, path parameters that match the path exactly and
-are required, and no request body on `GET`
-(`repo://libs/evidence-api/tests/support/openapi.ts#L1-L50`).
-
-Two model questions that no contract can answer are printed instead of guessed:
-a fulfillment pair with no confirmation, and a derived attribute that needs a
-server-side rule runtime. Both become entries in `limitations`, which are also
-written to `limitations.md` when non-empty
-(`repo://libs/evidence-api/src/delivery/modelDelivery.ts#L384-L407`).
-
-## Coverage, in both directions
-
-**Model objects without endpoints.** The projection does not grade coverage
-itself: it derives routes for the fulfillment structure and reports the
-diagnostics above. Coverage is measured one level up, by the agent's `audit_api`
-sensor, over every entity of category `evidence`: each uncovered entity is a
-`warn` / `API_COVERAGE_GAP` pointing at the entity, and the summary carries
-`coverageRatio` and `uncoveredEntities`
-(`repo://libs/evidence-agent/src/sensors/native/nativeApiSensor.ts#L23-L52`,
-`repo://libs/evidence-agent/src/sensors/native/nativeApiSensor.ts#L98-L111`).
-Roles, Participants and Things are not automatically public CRUD resources, so
-they are deliberately outside that ratio.
-
-What the CLI gives a reader for this direction is inventory, not a verdict:
-`inspect` prints the model summary, every Role with the Party Roles an actual
-`participant.party` plays, `unplayedPartyRoles`, `resourceClues` (all Evidence and
-Participant entries), Contexts, scenarios and the per-file digests — and never
-proposes a route
-(`repo://libs/evidence-api/src/inspect.ts#L1-L92`). Every verb's summary then adds
-`modelId`, `mode`, `routeCount`, `serviceCount`, `gapCount`, `valid`, `complete`
-and the normalized diagnostics.
-
-**Endpoints without model backing.** This direction is closed structurally rather
-than checked:
-
-- routes are generated from model objects, so the baseline cannot contain a path
-  with no entity behind it;
-- the overlay can only address an existing route id — an unknown id is
-  `API_ROUTE_NOT_FOUND`, and an override cannot add a route;
-- a path override must keep the original parameter names, which is what stops a
-  caller from being handed an address the model does not key on;
-- each operation keeps `x-evidence-entity` / `-context` / `-service`, and the
-  snapshot keeps `requestRef` / `confirmationRef` / `contractRef` per route, so
-  the walk back from a path to the model is mechanical.
-
-The one place a route can exist without a caller is `exposure: 'internal'`: a
-route whose Context binds no Party Role that a Party actually plays keeps its
-place in the snapshot and in the OpenAPI paths, labelled with
-`x-evidence-exposure`, instead of disappearing
-(`repo://libs/evidence-api/src/delivery/addressing.ts#L38-L73`,
-`repo://libs/evidence-api/src/delivery/modelDelivery.ts#L165-L250`).
-
-## What the CLI writes
-
-Verbs: `inspect`, `check`, `project`, `deliver` (and `diff`, which belongs to the
-delivery page). `project` and `deliver` behave identically here: both run the
-same projection, the same guards and the same writer.
-
-Path guards run before anything is read. Every supplied path must be absolute;
-`--fm-check` and `--api` must live outside the FM root; `--out` must be inside
-the project root and must not overlap the model, the report or the overlay —
-including through symlinks, because ancestors are resolved with `realpath`
-(`repo://libs/evidence-api/src/cli.ts#L55-L132`). Refusals are
-`PATH_NOT_ABSOLUTE`, `PROJECT_ROOT_INVALID`, `FM_CHECK_INPUT_CONFLICT`,
-`API_INPUT_CONFLICT`, `OUTPUT_OUTSIDE_PROJECT` and `OUTPUT_INPUT_CONFLICT`.
-
-Exit status is a three-way answer
-(`repo://libs/evidence-api/src/cli.ts#L274-L356`):
-
-| Status | Meaning |
-| --- | --- |
-| `0` | projection produced, no errors, no gaps, snapshot schema clean |
-| `1` | any `error` diagnostic, or a refused invocation — nothing written |
-| `3` | only `gap`s remain — the files are still written, so a draft with open questions stays reviewable |
-
-The write gate is errors only. `hasErrors` returns the summary and stops; gaps
-write the tree and exit 3, which is exactly the behaviour the CLI test pins for a
-stale check report (`repo://libs/evidence-api/src/projection.spec.ts#L292-L325`).
-`complete` in the summary is stricter than "writable": it is true only when the
-snapshot has no findings at all and passes its own schema
-(`repo://libs/evidence-api/src/projector.ts#L201-L204`).
-
-`renderOutputs` serializes one snapshot into these files, in this order
-(`repo://libs/evidence-api/src/delivery/files.ts#L18-L60`):
-
-- `openapi.json` — the contract above;
-- `topology.json` — services, links, limitations;
-- `routes.json`, `deployment.compose.json`;
-- `projection.json` — the whole snapshot;
-- `http-journeys.json` — journeys plus hypermedia, `runtimeValidated: false`;
-- `limitations.md` — only when `limitations` is non-empty;
-- `manifest.json` — tool name and version, digests of both schemas, Node and
-  `ajv` versions, `inputs` = the snapshot digests, and a `{sha256, bytes}` entry
-  per output (`repo://libs/evidence-api/src/renderer/outputRenderer.ts#L31-L92`).
-
-The default output directory is `.evidence/api/generated` under the project root.
-Writing is all-or-nothing: files are staged in a sibling temp directory, the
-previous tree is renamed aside, and a failed final rename restores it — a consumer
-never reads a new `projection.json` next to a stale `openapi.json`
-(`repo://libs/evidence-api/src/renderer/outputRenderer.ts#L112-L170`). Only direct
-file names are allowed, so a generated path cannot escape the directory.
-
-Digest forms matter when comparing artifacts: the model digest is prefixed
-(`sha256:<hex>`) — `modelDigestOf` over the source files for a tree or a bundle,
-or a hash of the canonical JSON of the compiled document plus its validation
-suite for an in-memory document — while the overlay and check-report digests are
-bare hex over their canonical JSON
-(`repo://libs/evidence-api/src/projector.ts#L177-L182`,
-`repo://libs/evidence-api/src/adapter/fmAdapter.ts#L110-L131`).
-
-## Consumers
-
-`buildDelivery(document)` is the synchronous in-memory entry point the desktop and
-the sensors use: it indexes the document with `loadFmFromDocument` and then runs
-the same `buildProjection`, so both entry points yield the same snapshot for the
-same input document (`repo://libs/evidence-api/src/projector.ts#L194-L200`). The renderer
-imports the separate `./delivery` entry, which re-exports only the field origin
-contract so a browser bundle never pulls `node:fs` through the package root
-(`repo://libs/evidence-api/src/delivery.ts#L1-L9`). The review page consumes the
-same snapshot — see [The offline review workbench](./offline-workbench.md).
-
-## Tests that protect this contract
-
-- `projection.spec.ts` proves that an overlay override keeps producing the same
-  route while the model gains six new routes, that a single override changes one
-  route and one OpenAPI operation without touching the model, that dangling ids,
-  altered identity parameters and collisions are refused, that journey overrides
-  are reference-checked, that a duplicated entity yields `FM_INVALID`, and that
-  all four verbs run without an offline report or design
-  (`repo://libs/evidence-api/src/projection.spec.ts#L50-L236`).
-- The CLI block of the same file covers the stale-report gap that still writes,
-  the malformed-overlay refusal that leaves the previous export intact, and the
-  path guards including symlinked outputs
-  (`repo://libs/evidence-api/src/projection.spec.ts#L237-L457`).
-- `openapi/openapi.spec.ts` validates every lifecycle stage and the saved fixture
-  against the OpenAPI 3.1 meta-schema, mutates the document to prove
-  `contractProblems` catches a broken `$ref`, a duplicate `operationId`, an
-  optional path parameter and a `GET` body, then generates consumer types with
-  `openapi-typescript` and compiles them under `strict` with no `any`/`unknown`
-  escape and no way to forge a derived value into a request body
-  (`repo://libs/evidence-api/src/openapi/openapi.spec.ts#L47-L172`).
-- `outputRenderer.spec.ts` re-renders every stage, reverses entity, relationship
-  and rule order, round-trips a serialized bundle, and requires identical bytes
-  and a manifest whose `sha256`/`bytes` entries match — while flagging altered,
-  missing and unmanifested files
-  (`repo://libs/evidence-api/src/renderer/outputRenderer.spec.ts#L38-L112`).
-- `fmAdapter.spec.ts` pins the digest form, the seven-condition matrix, that a
-  stale or invalid report keeps the model with only a gap, that a mid-read change
-  is refused, that only Party Roles an actual Party plays count as callers, and
-  the `inspect` inventory (`repo://libs/evidence-api/src/fmAdapter.spec.ts#L49-L240`).
-- `apiLoader.spec.ts` holds the embedded schema bytes to the shipped files and
-  covers the overlay accept/reject matrix, including nested and escaped duplicate
-  keys and diagnostic ordering (`repo://libs/evidence-api/src/apiLoader.spec.ts#L25-L210`).
-- `delivery/*.spec.ts` and `hateoasWeaver.spec.ts` cover routes, field origin,
-  topology, contract/topology agreement and the "reversing a relationship changes
-  navigation" case (`repo://libs/evidence-api/src/http/hateoasWeaver.spec.ts#L10-L70`).
-
-## Related pages
-
-- [System map and dependency direction](../architecture/overview.md) — where
-  `layer:projection` sits and what it may import.
-- [Checks and simulation](../model/checks-and-simulation.md) — the report this
-  stage records as evidence.
-- [Routes, topology and delivery diff](./delivery-routes-and-diff.md) — how the
-  model becomes routes and services, and what a diff calls breaking.
-- [The offline review workbench](./offline-workbench.md) — the HTML artifact built
-  from the same snapshot.
-- [The Fulfillment Modeling DSL (FM v5)](../language/fm-dsl.md) — the objects being
-  projected.
-- [Verification strategy](../testing/verification-strategy.md) — the fixtures and
-  test layers behind the tables above.
+相关：[路由与差异](./delivery-routes-and-diff.md) · [CLI 双门禁](../workflows/cli-governance.md) · [离线审查](./offline-workbench.md)
