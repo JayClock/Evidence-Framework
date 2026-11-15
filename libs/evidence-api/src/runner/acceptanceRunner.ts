@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { parse, stringify } from 'yaml';
-import type { StepResult, Workflow } from '@stepci/runner';
+import type { Step, StepResult, Workflow } from '@stepci/runner';
 
 export interface AcceptanceRunOptions {
   readonly suitePath: string;
@@ -58,7 +58,8 @@ export function validateAsOf(value: string): string {
   if (
     !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/.test(value) ||
     !Number.isFinite(Date.parse(value)) ||
-    new Date(value).toISOString() !== value.replace(/(?<!\.\d{3})Z$/, '.000Z')
+    new Date(value).toISOString().replace('.000Z', 'Z') !==
+      value.replace('.000Z', 'Z')
   )
     throw new Error(
       '--as-of must be a valid UTC timestamp, e.g. 2026-03-31T10:00:00Z',
@@ -87,23 +88,26 @@ function normalizeStep(
   step: StepResult,
   flow: string,
   index: number,
+  source: Step | undefined,
+  targetUrl: string,
 ): StepExecutionResult {
   const assertions = assertionsOf(step.checks);
   return {
     id: step.id ?? `${step.testId}:${index + 1}`,
     flow,
     name: step.name ?? step.id ?? `step ${index + 1}`,
-    method: String(step.request?.method ?? ''),
-    url: String(step.request?.url ?? ''),
+    method: String(step.request?.method ?? source?.http?.method ?? ''),
+    url: String(
+      step.request?.url ??
+        source?.http?.url?.replace('${{env.host}}', targetUrl) ??
+        '',
+    ),
     ...(typeof step.response?.status === 'number'
       ? { status: step.response.status }
       : {}),
-    ...(step.checks?.status === undefined
+    ...(source?.http?.check?.status === undefined
       ? {}
-      : {
-          expectedStatus: assertions.find((check) => check.path === 'status')
-            ?.expected,
-        }),
+      : { expectedStatus: source.http.check.status }),
     passed: step.passed && !step.errored && !step.skipped,
     skipped: step.skipped,
     durationMs: step.duration,
@@ -121,7 +125,9 @@ export async function runAcceptanceSuite(
     options.asOf === undefined ? undefined : validateAsOf(options.asOf);
   if (
     options.timeoutMs !== undefined &&
-    (!Number.isSafeInteger(options.timeoutMs) || options.timeoutMs <= 0)
+    (!Number.isSafeInteger(options.timeoutMs) ||
+      options.timeoutMs <= 0 ||
+      options.timeoutMs > 2147483647)
   )
     throw new Error('timeoutMs must be a positive integer');
   const suitePath = path.resolve(options.suitePath);
@@ -160,8 +166,10 @@ export async function runAcceptanceSuite(
         );
         step.http.headers['x-evidence-asof'] = asOf;
       }
-      if (options.timeoutMs !== undefined)
-        step.http.timeout = `${options.timeoutMs}ms`;
+      step.http.timeout =
+        options.timeoutMs === undefined
+          ? (step.http.timeout ?? '5s')
+          : `${options.timeoutMs}ms`;
     }
   }
   // Lazy loading keeps the heavy Node-only Runner out of projection/browser consumers.
@@ -175,7 +183,18 @@ export async function runAcceptanceSuite(
   );
   const steps = result.result.tests.flatMap((test) =>
     test.steps.map((step, index) =>
-      normalizeStep(step, test.name ?? test.id, index),
+      normalizeStep(
+        step,
+        test.name ?? test.id,
+        index,
+        (test.id === 'before'
+          ? workflow.before
+          : test.id === 'after'
+            ? workflow.after
+            : workflow.tests[test.id]
+        )?.steps[index],
+        targetUrl,
+      ),
     ),
   );
   return {

@@ -15,8 +15,15 @@ function canonical(file: string): string {
       : path.join(canonical(parent), path.basename(file));
   }
 }
-const inside = (child: string, parent: string) =>
-  child === parent || child.startsWith(`${parent}${path.sep}`);
+const inside = (child: string, parent: string) => {
+  const relative = path.relative(parent, child);
+  return (
+    relative === '' ||
+    (relative !== '..' &&
+      !relative.startsWith(`..${path.sep}`) &&
+      !path.isAbsolute(relative))
+  );
+};
 
 export async function exportCommand(
   argv: readonly string[],

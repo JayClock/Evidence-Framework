@@ -43,6 +43,43 @@ npx evidence-api project --project-root "$PWD" --fm .evidence/fm --fm-check chec
 npx evidence-workbench generate --project-root "$PWD"
 ```
 
+## Unified contracts and acceptance CLI
+
+Build once, then use the same `evidence` entry point for model checks, contract
+export, API evolution and HTTP acceptance (the older library CLIs remain
+available for specialized pack/unpack/review operations):
+
+```bash
+pnpm exec nx build cli
+pnpm evidence --help
+pnpm evidence check .evidence/fm --json
+pnpm evidence export --model examples/acceptance/procurement.evidence.json --out dist/acceptance
+node examples/dogfood-backend/server.mjs --port 8085
+# In another terminal:
+pnpm evidence test --target http://127.0.0.1:8085 --scenarios dist/acceptance --verbose
+pnpm evidence diff api old.evidence.json new.evidence.json --format markdown
+```
+
+`export` validates OpenAPI 3.1 and atomically replaces its dedicated output
+directory. Without `--openapi`/`--tests`, it exports both OpenAPI and standard
+Step CI YAML; `--tests --format hurl` exports Hurl instead. `test` uses the official
+Step CI Runner in-process (no separate runner installation), accepts a YAML file
+or a directory of `*.stepci.yml` suites, and exits 0 only when every step passes.
+`--json` emits a machine-readable report without terminal formatting. Hurl suites
+run through the Hurl CLI, not a private interpreter.
+
+Generated request clocks default to the model examples. `test --as-of <UTC>`
+overrides request clocks, **not the compiled expected values**. Only trusted test
+backends should consume `x-evidence-asof`; production clocks and authorization
+must not trust client headers. See `examples/dogfood-backend/README.md` for
+request-scoped Node/Go/Spring/Python templates and red/green fault demonstrations.
+The Go/Java/Python files are integration references, not repository runtimes.
+
+API diff uses the pinned native `oasdiff` provisioned by `pnpm install`, resolved
+relative to the installed Evidence package even when the caller's working
+directory is elsewhere. `EVIDENCE_OASDIFF_BIN` can select an explicitly installed
+matching binary. Missing/incompatible tools fail closed with full diagnostics.
+
 ## Fixtures and pins
 
 - `libs/evidence-model-core/tests/fixtures/` holds the golden models the checks

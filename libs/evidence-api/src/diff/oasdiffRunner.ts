@@ -4,6 +4,7 @@ import { mkdtemp, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { promisify } from 'node:util';
+import { fileURLToPath } from 'node:url';
 import { canonicalJson } from '../canonicalJson.js';
 
 const execute = promisify(execFile);
@@ -12,7 +13,11 @@ export const OASDIFF_VERSION = '1.38.0';
 const defaultBinary = (): string => {
   if (process.env['EVIDENCE_OASDIFF_BIN'])
     return process.env['EVIDENCE_OASDIFF_BIN'];
-  let directory = process.cwd();
+  // Resolve the installed tool's cache, not the caller's model directory. The
+  // unified CLI must also work when launched from an unrelated working copy.
+  let directory = import.meta.url.startsWith('file:')
+    ? path.dirname(fileURLToPath(import.meta.url))
+    : process.cwd(); // DOM test/bundler URLs are not filesystem locations.
   for (;;) {
     const binary = path.join(
       directory,

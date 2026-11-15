@@ -66,7 +66,7 @@ it('leaves previous output intact if acceptance compilation fails', async () => 
   expect(readFileSync(suite, 'utf8')).toBe(before);
 });
 it('refuses destructive output overlaps including symlink aliases', async () => {
-  for (const out of ['.', model])
+  for (const out of ['.', path.parse(root).root, model])
     expect(
       await dispatch(['export', '--model', model, '--out', out], context()),
     ).toBe(1);

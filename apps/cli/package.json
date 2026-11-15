@@ -20,7 +20,10 @@
         "dependsOn": [
           "^build"
         ],
-        "inputs": ["production", "^production"],
+        "inputs": [
+          "production",
+          "^production"
+        ],
         "outputs": [
           "{projectRoot}/dist"
         ],
@@ -29,6 +32,9 @@
         }
       },
       "test": {
+        "dependsOn": [
+          "build"
+        ],
         "cache": false
       }
     }
