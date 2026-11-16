@@ -5,7 +5,9 @@ import {
   screen,
   waitFor,
 } from '@testing-library/react';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+import type { StoryInvalidatedEvent } from '../../shared/story';
+import { storyFlow, storyResult } from '../test-support/story';
 
 import { EditorScreen } from './EditorScreen';
 import {
@@ -64,6 +66,56 @@ describe('EditorScreen', () => {
     expect(screen.getByLabelText('访谈内容')).toBeInTheDocument();
     expect(screen.getByText('履约连线 1')).toBeInTheDocument();
     expect(screen.getByText('上下文 2')).toBeInTheDocument();
+  });
+
+  it('opens walkthrough beside the canvas, follows steps and silently refreshes clean models', async () => {
+    const api = readyProject();
+    api.story.listFlows = vi.fn(async () => [storyFlow()]);
+    api.story.project = vi.fn(async () => storyResult());
+    let invalidate: (event: StoryInvalidatedEvent) => void = () => undefined;
+    const unsubscribe = vi.fn();
+    api.story.onInvalidated = (listener) => {
+      invalidate = listener;
+      return unsubscribe;
+    };
+    const { container } = render(
+      <EditorScreen rootPath="/models/procurement" />,
+    );
+    await readyCanvas();
+    expect(api.story.project).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: /业务流放映/ }));
+    expect(screen.getByRole('tab', { name: '业务故事' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    expect(await screen.findByText('采购方办理采购协议。')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /下一步/ }));
+    expect(screen.getByText('采购方办理交付请求。')).toBeInTheDocument();
+    const document = createDesktopFixture();
+    document.entities.find(({ id }) => id === 'evidence.contract')!.label =
+      '外部更新采购协议';
+    api.projects.open = vi.fn(async () => ({
+      success: true as const,
+      project: projectSummary(),
+      document,
+      issues: [],
+    }));
+    act(() => invalidate({ rootPath: '/models/procurement' }));
+    await waitFor(() =>
+      expect(
+        container.querySelector('[data-node-id="evidence.contract"]'),
+      ).toHaveTextContent('外部更新采购协议'),
+    );
+    await waitFor(() =>
+      expect(screen.getByText('步骤 2/3：办理交付请求')).toBeInTheDocument(),
+    );
+    expect(api.story.project).toHaveBeenLastCalledWith(
+      expect.objectContaining({ document }),
+    );
+    fireEvent.click(screen.getByRole('button', { name: '退出放映' }));
+    expect(screen.queryByLabelText('业务流放映控制')).toBeNull();
+    expect(screen.queryByLabelText('副视口')).toBeNull();
+    expect(unsubscribe).toHaveBeenCalled();
   });
 
   it('slides the problems panel over the canvas with Alt+X', async () => {

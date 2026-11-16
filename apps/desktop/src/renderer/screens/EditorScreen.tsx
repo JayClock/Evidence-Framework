@@ -32,6 +32,9 @@ import { AgentCopilot } from '../components/agent/AgentCopilot';
 import { InlinePatchCopilot } from '../components/agent/InlinePatchCopilot';
 import { CelRulesPane } from '../components/split/CelRulesPane';
 import { OpenApiSpecViewer } from '../components/split/OpenApiSpecViewer';
+import { StoryPlayerBar } from '../components/story/StoryPlayerBar';
+import { StoryDrawer } from '../components/story/StoryDrawer';
+import { useStoryPlayback } from '../state/useStoryPlayback';
 import { SecondaryStage } from '../components/split/SecondaryStage';
 import { DriftRadar } from '../components/drift/DriftRadar';
 import { DeliveryHub } from '../components/delivery/DeliveryHub';
@@ -180,8 +183,20 @@ const EditorWorkspace = ({
   // projection instead of coordinating four independent booleans.
   const layout = useWorkspaceLayoutState();
   const reviewExport = useReviewExport(project.rootPath);
-  const { state, save, reloadFromDisk, dismissExternalChange } =
-    useEditorSession(project, initialDocument, viewMode);
+  const {
+    state,
+    save,
+    reloadFromDisk,
+    reloadFromDiskIfClean,
+    dismissExternalChange,
+  } = useEditorSession(project, initialDocument, viewMode);
+  const storyActive = split.isSplit && split.activePane === 'story';
+  const story = useStoryPlayback({
+    rootPath: project.rootPath,
+    document: state.document,
+    enabled: storyActive,
+    onInvalidated: reloadFromDiskIfClean,
+  });
   const agent = useAgentSession(project.rootPath);
   const sensors = useSensorsState(project.rootPath);
   const liveModel = useLiveModelBridge(
@@ -742,6 +757,13 @@ const EditorWorkspace = ({
         cel: state.document.rules.length,
       }}
       panes={{
+        story: (
+          <StoryDrawer
+            playback={story}
+            dirty={state.dirty}
+            externalConflict={state.dirty && state.externalChangeAt !== null}
+          />
+        ),
         ledger: ledgerStage,
         openapi: (
           <OpenApiSpecViewer
@@ -822,6 +844,38 @@ const EditorWorkspace = ({
           exportReviewBusy={reviewExport.busy}
           onOpenCommandPalette={() => setPaletteOpen(true)}
         />
+
+        <div
+          data-canvas-control=""
+          data-evidence-capture-hide=""
+          className="flex flex-wrap items-center gap-3 border-b border-evidence-line bg-white px-4 py-2"
+        >
+          <div
+            role="group"
+            aria-label="画布放映模式"
+            className="flex shrink-0 gap-1 text-[11px]"
+          >
+            <button
+              type="button"
+              aria-pressed={!storyActive}
+              onClick={() => workspaceView.setMode('graph')}
+              className="rounded border border-evidence-line px-2 py-1 aria-pressed:bg-evidence-active"
+            >
+              📐 拓扑视图
+            </button>
+            <button
+              type="button"
+              aria-pressed={storyActive}
+              onClick={() => split.openSplit('story')}
+              className="rounded border border-evidence-line px-2 py-1 aria-pressed:bg-evidence-active"
+            >
+              🎬 业务流放映
+            </button>
+          </div>
+          {storyActive ? (
+            <StoryPlayerBar playback={story} onExit={split.closeSplit} />
+          ) : null}
+        </div>
 
         {liveModel.error === null ? null : (
           <p role="alert">实时诊断同步失败：{liveModel.error}</p>

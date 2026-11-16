@@ -17,6 +17,7 @@ const setup = (
       openapi: <p>契约内容</p>,
       cel: <p>规则内容</p>,
       drift: <p>仿真内容</p>,
+      story: <p>剧情内容</p>,
     },
     ...overrides,
   };

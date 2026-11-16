@@ -2,8 +2,14 @@ import { useCallback, useState } from 'react';
 
 import type { WorkspaceViewMode } from '@evidence-poc/desktop-ui-kit';
 
-/** The four ways one model can be read beside the graph. */
-export const SPLIT_PANES = ['ledger', 'openapi', 'cel', 'drift'] as const;
+/** The ways one model can be read beside the graph. */
+export const SPLIT_PANES = [
+  'ledger',
+  'openapi',
+  'cel',
+  'drift',
+  'story',
+] as const;
 
 export type SplitPaneMode = (typeof SPLIT_PANES)[number];
 
@@ -12,6 +18,7 @@ export const SPLIT_PANE_LABELS: Record<SplitPaneMode, string> = {
   openapi: '交付契约',
   cel: '派生规则',
   drift: '生产漂移',
+  story: '业务故事',
 };
 
 export type SplitDirection = 'horizontal' | 'vertical';
