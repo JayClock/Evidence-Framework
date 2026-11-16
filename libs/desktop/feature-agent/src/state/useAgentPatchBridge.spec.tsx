@@ -15,7 +15,7 @@ const BridgeHarness = ({
   session: ReturnType<typeof createModelSession>;
   onApplied?: (patch: AppliedPatch) => void;
 }) => {
-  useAgentPatchBridge(session, onApplied);
+  useAgentPatchBridge(window.evidenceAPI.agent, session, onApplied);
 
   return <p>bridge</p>;
 };

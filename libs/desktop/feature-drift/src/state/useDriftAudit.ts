@@ -1,5 +1,9 @@
+import type { EvidenceDriftApi } from '@evidence-poc/desktop-contracts/drift';
 import { useCallback, useState } from 'react';
-import type { McpDriftAudit, TraceDialogResult } from '@evidence-poc/desktop-contracts/drift';
+import type {
+  McpDriftAudit,
+  TraceDialogResult,
+} from '@evidence-poc/desktop-contracts/drift';
 
 /** Reading one exported trace against the saved model. */
 export interface DriftState {
@@ -23,7 +27,10 @@ const initialDrift: DriftState = {
   error: null,
 };
 
-export const useDriftAudit = (rootPath: string): DriftController => {
+export const useDriftAudit = (
+  api: EvidenceDriftApi,
+  rootPath: string,
+): DriftController => {
   const [state, setState] = useState<DriftState>(initialDrift);
 
   const auditPath = useCallback(
@@ -31,7 +38,7 @@ export const useDriftAudit = (rootPath: string): DriftController => {
       setState((current) => ({ ...current, loading: true, error: null }));
 
       try {
-        const audit = await window.evidenceAPI.drift.drift({
+        const audit = await api.drift({
           rootPath,
           tracePath,
         });
@@ -45,19 +52,18 @@ export const useDriftAudit = (rootPath: string): DriftController => {
         }));
       }
     },
-    [rootPath],
+    [api, rootPath],
   );
 
   const pickAndAudit = useCallback(async () => {
-    const picked: TraceDialogResult =
-      await window.evidenceAPI.drift.pickTrace();
+    const picked: TraceDialogResult = await api.pickTrace();
 
     if (picked.canceled) {
       return;
     }
 
     await auditPath(picked.path);
-  }, [auditPath]);
+  }, [api, auditPath]);
 
   return { ...state, pickAndAudit, auditPath };
 };

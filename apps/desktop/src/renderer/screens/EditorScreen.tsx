@@ -32,8 +32,8 @@ import { ActivityDrawer } from '../components/layout/ActivityDrawer';
 import { ClauseTraceDrawer } from '../components/clauses/ClauseTraceDrawer';
 import { ActivityRail } from '../components/layout/ActivityRail';
 import { TopologyDrawer } from '../components/layout/TopologyDrawer';
-import { AgentCopilot } from '../components/agent/AgentCopilot';
-import { InlinePatchCopilot } from '../components/agent/InlinePatchCopilot';
+import { AgentCopilot } from '@evidence-poc/desktop-feature-agent';
+import { InlinePatchCopilot } from '@evidence-poc/desktop-feature-agent';
 import { CelRulesPane } from '../components/split/CelRulesPane';
 import { OpenApiSpecViewer } from '../components/split/OpenApiSpecViewer';
 import { ScenarioStudioModal } from '../components/scenario/ScenarioStudioModal';
@@ -42,7 +42,7 @@ import { StoryPlayerBar } from '@evidence-poc/desktop-feature-story';
 import { StoryDrawer } from '@evidence-poc/desktop-feature-story';
 import { useStoryPlayback } from '@evidence-poc/desktop-feature-story';
 import { SecondaryStage } from '../components/split/SecondaryStage';
-import { DriftRadar } from '../components/drift/DriftRadar';
+import { DriftRadar } from '@evidence-poc/desktop-feature-drift';
 import { DeliveryHub } from '@evidence-poc/desktop-feature-delivery';
 import { ReviewHubModal } from '../components/review/ReviewHubModal';
 import { TopHeader } from '../components/TopHeader';
@@ -61,19 +61,19 @@ import {
   Toaster,
   toast,
 } from '@evidence-poc/desktop-ui-kit';
-import { useAgentPatchBridge } from '../state/useAgentPatchBridge';
+import { useAgentPatchBridge } from '@evidence-poc/desktop-feature-agent';
 import type {
   CommandCapabilities,
   CommandHandlers,
 } from '../state/commandRegistry';
 import { useCommandRegistry } from '../state/useCommandRegistry';
-import { useAgentSession } from '../state/useAgentSession';
+import { useAgentSession } from '@evidence-poc/desktop-feature-agent';
 import { useDeliveryHub } from '@evidence-poc/desktop-feature-delivery';
 import { useLiveModelBridge } from '../state/useLiveModelBridge';
 import { useEditorSession } from '../state/useEditorSession';
 import { useEditorShortcuts } from '../state/useEditorShortcuts';
 import { useMcpBridge } from '../state/useMcpBridge';
-import { usePatchReview } from '../state/usePatchReview';
+import { usePatchReview } from '@evidence-poc/desktop-feature-agent';
 import { useReviewExport } from '../state/useReviewExport';
 import { useSensorsState } from '../state/useSensorsState';
 import {
@@ -209,7 +209,7 @@ const EditorWorkspace = ({
     refreshSavedSources: state.externalChangeAt !== null,
     onInvalidated: reloadFromDiskIfClean,
   });
-  const agent = useAgentSession(project.rootPath);
+  const agent = useAgentSession(window.evidenceAPI.agent, project.rootPath);
   const sensors = useSensorsState(project.rootPath);
   const liveModel = useLiveModelBridge(
     project.rootPath,
@@ -297,7 +297,11 @@ const EditorWorkspace = ({
 
   const patchReview = usePatchReview(state.session, state.document);
 
-  useAgentPatchBridge(state.session, patchReview.record);
+  useAgentPatchBridge(
+    window.evidenceAPI.agent,
+    state.session,
+    patchReview.record,
+  );
 
   // Monotonic document revision so an external agent can tell whether the model
   // it read is still the model on screen.
@@ -793,6 +797,7 @@ const EditorWorkspace = ({
         cel: <CelRulesPane document={state.document} />,
         drift: (
           <DriftRadar
+            api={window.evidenceAPI.drift}
             embedded
             rootPath={project.rootPath}
             onClose={split.closeSplit}
@@ -985,6 +990,7 @@ const EditorWorkspace = ({
 
                 {layout.activeRailTab === 'drift' ? (
                   <DriftRadar
+                    api={window.evidenceAPI.drift}
                     embedded
                     rootPath={project.rootPath}
                     onClose={() => layout.setActiveRailTab(null)}
@@ -1088,7 +1094,11 @@ const EditorWorkspace = ({
         ) : null}
 
         {layout.activeHub === 'drift' ? (
-          <DriftRadar rootPath={project.rootPath} onClose={layout.closeHub} />
+          <DriftRadar
+            api={window.evidenceAPI.drift}
+            rootPath={project.rootPath}
+            onClose={layout.closeHub}
+          />
         ) : null}
 
         {layout.activeHub === 'review' && reviewInput !== null ? (

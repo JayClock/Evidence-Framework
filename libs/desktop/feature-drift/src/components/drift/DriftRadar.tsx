@@ -1,17 +1,20 @@
+import type { EvidenceDriftApi } from '@evidence-poc/desktop-contracts/drift';
 import { DRIFT_KIND_LABELS } from '@evidence-poc/evidence-agent/browser';
 import { useDriftAudit } from '../../state/useDriftAudit';
 const SEVERITY_LABELS: Record<string, string> = { block: '阻塞', warn: '警告' };
 export interface DriftRadarProps {
+  api: EvidenceDriftApi;
   rootPath: string;
   onClose: () => void;
   embedded?: boolean;
 }
 export const DriftRadar = ({
+  api,
   rootPath,
   onClose,
   embedded = false,
 }: DriftRadarProps) => {
-  const drift = useDriftAudit(rootPath);
+  const drift = useDriftAudit(api, rootPath);
   return (
     <div
       role={embedded ? 'region' : 'dialog'}

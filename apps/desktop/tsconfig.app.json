@@ -22,6 +22,12 @@
   ],
   "references": [
     {
+      "path": "../../libs/desktop/feature-agent/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libs/desktop/feature-drift/tsconfig.lib.json"
+    },
+    {
       "path": "../../libs/desktop/feature-delivery/tsconfig.lib.json"
     },
     {

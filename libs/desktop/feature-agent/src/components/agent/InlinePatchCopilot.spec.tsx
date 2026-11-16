@@ -111,7 +111,9 @@ describe('InlinePatchCopilot', () => {
     setup({ focus: null });
 
     expect(
-      screen.getByText('先在画布上选一个业务对象，问题会带着它的上下文进入模型。'),
+      screen.getByText(
+        '先在画布上选一个业务对象，问题会带着它的上下文进入模型。',
+      ),
     ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '发送' })).toBeDisabled();
   });

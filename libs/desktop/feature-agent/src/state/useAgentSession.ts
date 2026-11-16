@@ -1,6 +1,7 @@
+import type { EvidenceAgentApi } from '@evidence-poc/desktop-contracts/agentIpc';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import type { AgentStreamEvent } from '@evidence-poc/evidence-agent';
+import type { AgentStreamEvent } from '@evidence-poc/evidence-agent/browser';
 
 export interface AgentActivity {
   /** Stable id: the tool call id from the stream. */
@@ -99,7 +100,10 @@ const initialState: AgentSessionState = {
  * calls. The hook therefore works the same whether the model is local or
  * remote, and tests drive it with a scripted event source.
  */
-export const useAgentSession = (rootPath: string): AgentSessionController => {
+export const useAgentSession = (
+  api: Pick<EvidenceAgentApi, 'onEvent' | 'prompt' | 'steer' | 'abort'>,
+  rootPath: string,
+): AgentSessionController => {
   const [state, setState] = useState<AgentSessionState>(initialState);
   const stateRef = useRef(state);
   stateRef.current = state;
@@ -107,12 +111,12 @@ export const useAgentSession = (rootPath: string): AgentSessionController => {
   useEffect(() => {
     setState(initialState);
 
-    const unsubscribe = window.evidenceAPI.agent.onEvent(({ event }) => {
+    const unsubscribe = api.onEvent(({ event }) => {
       setState((current) => reduce(current, event));
     });
 
     return unsubscribe;
-  }, [rootPath]);
+  }, [api, rootPath]);
 
   const submit = useCallback(
     async (text: string) => {
@@ -132,7 +136,7 @@ export const useAgentSession = (rootPath: string): AgentSessionController => {
 
       try {
         if (stateRef.current.running) {
-          const result = await window.evidenceAPI.agent.steer({
+          const result = await api.steer({
             rootPath,
             text: trimmed,
           });
@@ -144,7 +148,7 @@ export const useAgentSession = (rootPath: string): AgentSessionController => {
           return;
         }
 
-        const result = await window.evidenceAPI.agent.prompt({
+        const result = await api.prompt({
           rootPath,
           text: trimmed,
         });
@@ -170,17 +174,17 @@ export const useAgentSession = (rootPath: string): AgentSessionController => {
         }));
       }
     },
-    [rootPath],
+    [api, rootPath],
   );
 
   const stop = useCallback(async () => {
-    await window.evidenceAPI.agent.abort({ rootPath });
+    await api.abort({ rootPath });
     setState((current) => ({
       ...current,
       running: false,
       activeToolName: null,
     }));
-  }, [rootPath]);
+  }, [api, rootPath]);
 
   const dismissError = useCallback(() => {
     setState((current) => ({ ...current, error: null }));

@@ -1,3 +1,4 @@
+import type { EvidenceAgentApi } from '@evidence-poc/desktop-contracts/agentIpc';
 import { useLayoutEffect } from 'react';
 
 import type { ModelSession } from '@evidence-poc/evidence-model-core';
@@ -28,12 +29,13 @@ export interface AppliedPatch {
  * offer one-step revert while the patch is still the newest edit.
  */
 export const useAgentPatchBridge = (
+  api: Pick<EvidenceAgentApi, 'onApplyPatch' | 'respondPatch'>,
   session: ModelSession,
   onApplied?: (patch: AppliedPatch) => void,
 ): void => {
   useLayoutEffect(
     () =>
-      window.evidenceAPI.agent.onApplyPatch(({ requestId, patch }) => {
+      api.onApplyPatch(({ requestId, patch }) => {
         const before = session.getDocument();
 
         try {
@@ -41,7 +43,7 @@ export const useAgentPatchBridge = (
           const commands = parsed.patches.map((operation) => operation.op);
           session.applyPatchBatch(parsed.patches, `agent:${parsed.rationale}`);
 
-          window.evidenceAPI.agent.respondPatch({
+          api.respondPatch({
             requestId,
             result: {
               success: true,
@@ -58,7 +60,7 @@ export const useAgentPatchBridge = (
             });
           }
         } catch (error) {
-          window.evidenceAPI.agent.respondPatch({
+          api.respondPatch({
             requestId,
             result: {
               success: false,
@@ -70,6 +72,6 @@ export const useAgentPatchBridge = (
           });
         }
       }),
-    [session, onApplied],
+    [api, session, onApplied],
   );
 };

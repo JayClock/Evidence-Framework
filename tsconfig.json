@@ -50,6 +50,12 @@
     },
     {
       "path": "./libs/desktop/feature-story"
+    },
+    {
+      "path": "./libs/desktop/feature-agent"
+    },
+    {
+      "path": "./libs/desktop/feature-drift"
     }
   ]
 }

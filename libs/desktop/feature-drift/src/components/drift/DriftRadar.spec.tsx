@@ -29,7 +29,11 @@ describe('DriftRadar', () => {
     });
 
     render(
-      <DriftRadar rootPath="/models/procurement" onClose={() => undefined} />,
+      <DriftRadar
+        api={window.evidenceAPI.drift}
+        rootPath="/models/procurement"
+        onClose={() => undefined}
+      />,
     );
 
     fireEvent.click(
@@ -45,7 +49,11 @@ describe('DriftRadar', () => {
     const api = installDesktopApi({ traceDialogResult: { canceled: true } });
 
     render(
-      <DriftRadar rootPath="/models/procurement" onClose={() => undefined} />,
+      <DriftRadar
+        api={window.evidenceAPI.drift}
+        rootPath="/models/procurement"
+        onClose={() => undefined}
+      />,
     );
 
     fireEvent.click(
@@ -65,6 +73,7 @@ describe('DriftRadar in the console', () => {
 
     render(
       <DriftRadar
+        api={window.evidenceAPI.drift}
         rootPath="/models/procurement"
         onClose={() => undefined}
         embedded

@@ -311,12 +311,18 @@ importers:
       '@evidence-poc/desktop-contracts':
         specifier: workspace:*
         version: link:../../libs/desktop/contracts
+      '@evidence-poc/desktop-feature-agent':
+        specifier: workspace:*
+        version: link:../../libs/desktop/feature-agent
       '@evidence-poc/desktop-feature-canvas':
         specifier: workspace:*
         version: link:../../libs/desktop/feature-canvas
       '@evidence-poc/desktop-feature-delivery':
         specifier: workspace:*
         version: link:../../libs/desktop/feature-delivery
+      '@evidence-poc/desktop-feature-drift':
+        specifier: workspace:*
+        version: link:../../libs/desktop/feature-drift
       '@evidence-poc/desktop-feature-inspector':
         specifier: workspace:*
         version: link:../../libs/desktop/feature-inspector
@@ -439,6 +445,40 @@ importers:
         specifier: ^2.3.0
         version: 2.9.1
 
+  libs/desktop/feature-agent:
+    dependencies:
+      '@evidence-poc/desktop-contracts':
+        specifier: workspace:*
+        version: link:../contracts
+      '@evidence-poc/desktop-feature-canvas':
+        specifier: workspace:*
+        version: link:../feature-canvas
+      '@evidence-poc/desktop-ui-kit':
+        specifier: workspace:*
+        version: link:../ui-kit
+      '@evidence-poc/evidence-agent':
+        specifier: workspace:*
+        version: link:../../evidence-agent
+      '@evidence-poc/evidence-model-core':
+        specifier: workspace:*
+        version: link:../../evidence-model-core
+      '@evidence-poc/evidence-schema':
+        specifier: workspace:*
+        version: link:../../evidence-schema
+      lucide-react:
+        specifier: ^1.72.0
+        version: 1.72.0(@types/react@19.3.0)(react@19.3.1)
+      react:
+        specifier: ^19.2.8
+        version: 19.3.1
+      tslib:
+        specifier: ^2.3.0
+        version: 2.9.1
+    devDependencies:
+      '@evidence-poc/desktop-testing':
+        specifier: workspace:*
+        version: link:../testing
+
   libs/desktop/feature-canvas:
     dependencies:
       '@evidence-poc/evidence-agent':
@@ -480,6 +520,25 @@ importers:
       '@evidence-poc/evidence-schema':
         specifier: workspace:*
         version: link:../../evidence-schema
+      react:
+        specifier: ^19.2.8
+        version: 19.3.1
+      tslib:
+        specifier: ^2.3.0
+        version: 2.9.1
+    devDependencies:
+      '@evidence-poc/desktop-testing':
+        specifier: workspace:*
+        version: link:../testing
+
+  libs/desktop/feature-drift:
+    dependencies:
+      '@evidence-poc/desktop-contracts':
+        specifier: workspace:*
+        version: link:../contracts
+      '@evidence-poc/evidence-agent':
+        specifier: workspace:*
+        version: link:../../evidence-agent
       react:
         specifier: ^19.2.8
         version: 19.3.1

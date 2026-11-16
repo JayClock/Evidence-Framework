@@ -5,7 +5,7 @@ import { installDesktopApi } from '@evidence-poc/desktop-testing/desktopApi';
 import { useAgentSession } from './useAgentSession';
 
 const Harness = ({ rootPath }: { rootPath: string }) => {
-  const agent = useAgentSession(rootPath);
+  const agent = useAgentSession(window.evidenceAPI.agent, rootPath);
 
   return (
     <div>
