@@ -99,21 +99,18 @@ describe('useEditorShortcuts', () => {
     expect(handlers.focusSearch).not.toHaveBeenCalled();
   });
 
-  it('exposes the export and gate chords the palette prints', () => {
+  it('exposes the gate and navigation chords the palette prints', () => {
     const handlers = setup({
-      exportReview: vi.fn(),
       rerunSensors: vi.fn(),
       openDelivery: vi.fn(),
       openSandbox: vi.fn(),
     });
 
-    fireEvent.keyDown(window, { key: 'E', metaKey: true, shiftKey: true });
     fireEvent.keyDown(window, { key: 'R', metaKey: true, shiftKey: true });
     fireEvent.keyDown(window, { code: 'KeyD', altKey: true });
     // The sandbox moved one modifier out: Alt+S now flips the split.
     fireEvent.keyDown(window, { code: 'KeyS', altKey: true, shiftKey: true });
 
-    expect(handlers.exportReview).toHaveBeenCalledTimes(1);
     expect(handlers.rerunSensors).toHaveBeenCalledTimes(1);
     expect(handlers.openDelivery).toHaveBeenCalledTimes(1);
     expect(handlers.openSandbox).toHaveBeenCalledTimes(1);

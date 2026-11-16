@@ -135,8 +135,6 @@ export interface DesktopApiMock extends EvidenceDesktopApi {
     abort: string[];
     triggerSensors: string[];
     modelChanged: string[];
-    exportDiffReview: string[];
-    exportReview: string[];
     deliveryLivePreview: string[];
     deliveryPreview: string[];
     exportDelivery: string[];
@@ -176,7 +174,6 @@ export const installDesktopApi = ({
   },
   templates = defaultTemplates(),
   sensorReport = healthyReport(),
-  exportReviewResult = { status: 'cancelled' } as const,
   deliveryPreviewResult = {
     success: false,
     error: '测试没有配置交付预览。',
@@ -213,9 +210,6 @@ export const installDesktopApi = ({
   createResult?: CreateProjectResult;
   templates?: readonly ProjectTemplateMeta[];
   sensorReport?: SensorReport;
-  exportReviewResult?: Awaited<
-    ReturnType<EvidenceDesktopApi['projects']['exportReview']>
-  >;
   deliveryPreviewResult?: Awaited<
     ReturnType<EvidenceDesktopApi['projects']['deliveryPreview']>
   >;
@@ -239,8 +233,6 @@ export const installDesktopApi = ({
     abort: [],
     triggerSensors: [],
     modelChanged: [],
-    exportDiffReview: [],
-    exportReview: [],
     deliveryLivePreview: [],
     deliveryPreview: [],
     exportDelivery: [],
@@ -358,16 +350,6 @@ export const installDesktopApi = ({
       listRecent: async () => ({ success: true, projects }),
       openEditorWindow: async (rootPath) => {
         calls.openEditorWindow.push(rootPath);
-      },
-      previewReview: async () => ({ success: false, error: '未配置审查预览' }),
-      exportDiffReview: async (rootPath) => {
-        calls.exportDiffReview.push(rootPath);
-        return exportReviewResult;
-      },
-      exportReview: async (rootPath) => {
-        calls.exportReview.push(rootPath);
-
-        return exportReviewResult;
       },
       deliveryLivePreview: async (input) => {
         calls.deliveryLivePreview.push(input.rootPath);

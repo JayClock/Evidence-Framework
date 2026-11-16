@@ -75,7 +75,7 @@ export const createMcpSensorService = ({
       target,
     }: {
       rootPath: string;
-      target: 'api' | 'visualization';
+      target: 'api';
     }): Promise<McpStageGateResult> => {
       try {
         const gate = await engineFor(rootPath).checkStageGate({

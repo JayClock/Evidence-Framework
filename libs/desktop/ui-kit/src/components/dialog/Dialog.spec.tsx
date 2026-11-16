@@ -7,8 +7,8 @@ const Harness = () => (
   <Dialog>
     <DialogTrigger>打开</DialogTrigger>
     <DialogContent>
-      <DialogTitle>导出离线审查页</DialogTitle>
-      <p>正在写入单文件 HTML。</p>
+      <DialogTitle>导出交付契约</DialogTitle>
+      <p>正在写入 OpenAPI 规范。</p>
     </DialogContent>
   </Dialog>
 );
@@ -26,7 +26,7 @@ describe('Dialog', () => {
     fireEvent.click(screen.getByRole('button', { name: '打开' }));
 
     const dialog = await screen.findByRole('dialog', {
-      name: '导出离线审查页',
+      name: '导出交付契约',
     });
 
     expect(dialog).toHaveAttribute('data-slot', 'dialog-content');

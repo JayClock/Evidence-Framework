@@ -3,11 +3,11 @@
 The repository is one pnpm workspace driven by Nx. Two directories carry code;
 each answers a different question.
 
-| Directory       | Holds                                                                                                                       | Listed in `pnpm-workspace.yaml` |
-| --------------- | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
-| `apps/`         | Runnable entry points: `desktop` (Electron Forge) and `cli` (the unified `evidence` command)                                | yes (`apps/*`)                  |
-| `libs/`         | Model/schema/interaction engines, model I/O, shared tools, API projection, acceptance, Agent, MCP and offline visualization | yes (`libs/*`)                  |
-| `libs/desktop/` | Desktop contracts, UI kit, canvas/inspector/story/delivery/drift/agent features and test support                            | yes (`libs/desktop/*`)          |
+| Directory       | Holds                                                                                                | Listed in `pnpm-workspace.yaml` |
+| --------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------- |
+| `apps/`         | Runnable entry points: `desktop` (Electron Forge) and `cli` (the unified `evidence` command)         | yes (`apps/*`)                  |
+| `libs/`         | Model/schema/interaction engines, model I/O, shared tools, API projection, acceptance, Agent and MCP | yes (`libs/*`)                  |
+| `libs/desktop/` | Desktop contracts, UI kit, canvas/inspector/story/delivery/drift/agent features and test support     | yes (`libs/desktop/*`)          |
 
 Nothing is a library in two toolchains: every `libs/*` entry is a TypeScript
 package consumed through pnpm, and no Java or Gradle module lives in this

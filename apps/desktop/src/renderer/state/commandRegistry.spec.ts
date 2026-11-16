@@ -14,8 +14,6 @@ const capabilities = (
 ): CommandCapabilities => ({
   canUndo: true,
   canRedo: false,
-  dirty: false,
-  busy: false,
   viewMode: 'graph',
   hasSelection: false,
   ...overrides,
@@ -30,9 +28,6 @@ const handlers = (): CommandHandlers => ({
   rotateSplit: vi.fn(),
   zoomToSelection: vi.fn(),
   focusSearch: vi.fn(),
-  openReview: vi.fn(),
-  exportReview: vi.fn(),
-  exportDiff: vi.fn(),
   openDelivery: vi.fn(),
   openSandbox: vi.fn(),
   rerunSensors: vi.fn(),
@@ -60,7 +55,7 @@ describe('buildCommands', () => {
     expect(find('model.save')?.shortcut).toBe(CHORDS.save);
     expect(find('view.table')?.shortcut).toBe(CHORDS.table);
     expect(find('view.rail-topology')?.shortcut).toBe(CHORDS.railTopology);
-    expect(find('delivery.export-review')?.shortcut).toBe(CHORDS.exportReview);
+    expect(find('delivery.contract')?.shortcut).toBe(CHORDS.delivery);
   });
 
   it('opens a rail drawer without touching the document', () => {
@@ -75,18 +70,13 @@ describe('buildCommands', () => {
     expect(onRail).toHaveBeenCalledWith('copilot');
   });
 
-  it('refuses to export an unsaved model and says why', () => {
-    const stale = find('delivery.export-review', { dirty: true });
+  it('opens delivery through its registered handler', () => {
+    const spy = handlers();
+    const commands = buildCommands(capabilities(), spy);
 
-    expect(stale?.disabled).toBe(true);
-    expect(stale?.subtitle).toContain('先保存');
-    expect(find('delivery.export-review')?.disabled).toBe(false);
-  });
+    commands.find((command) => command.id === 'delivery.contract')?.perform();
 
-  it('reports an export already in flight before blaming the save', () => {
-    expect(find('delivery.export-diff', { busy: true })?.subtitle).toContain(
-      '正在导出',
-    );
+    expect(spy.openDelivery).toHaveBeenCalledTimes(1);
   });
 
   it('greys out history and view rows that would not change anything', () => {
@@ -108,9 +98,14 @@ describe('buildCommands', () => {
   });
 
   it('keeps disabled rows in the list so the feature reads as present', () => {
-    const commands = buildCommands(capabilities({ dirty: true }), handlers());
+    const commands = buildCommands(
+      capabilities({ canUndo: false }),
+      handlers(),
+    );
 
-    expect(commands.some((command) => command.id === 'model.save')).toBe(true);
+    expect(
+      commands.find((command) => command.id === 'model.undo')?.disabled,
+    ).toBe(true);
   });
 });
 

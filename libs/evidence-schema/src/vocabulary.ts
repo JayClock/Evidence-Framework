@@ -3,7 +3,7 @@
  * written to disk.
  *
  * Every FM value such as `fulfillment_request` travels through the JSON Schema,
- * the validator, the inspector and the review page. Declaring the id, the label
+ * the validator and the inspector. Declaring the id, the label
  * a surface prints for it and the relations a checker derives from it in one
  * object keeps those copies from drifting apart, and lets a type be read off the
  * declaration instead of being written a second time beside it.

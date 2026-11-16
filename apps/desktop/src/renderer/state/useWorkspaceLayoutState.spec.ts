@@ -100,8 +100,8 @@ describe('useWorkspaceLayoutState', () => {
     act(() => result.current.openHub('delivery'));
     expect(result.current.activeHub).toBe('delivery');
 
-    act(() => result.current.openHub('review'));
-    expect(result.current.activeHub).toBe('review');
+    act(() => result.current.openHub('drift'));
+    expect(result.current.activeHub).toBe('drift');
 
     act(() => result.current.closeHub());
     expect(result.current.activeHub).toBeNull();

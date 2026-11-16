@@ -54,8 +54,7 @@ vitest.config.*.timestamp*
 **/__pycache__/
 *.pyc
 
-# Resources scripts/prepare-desktop-resources.mjs builds for the installer:
-# the bundled skill tree. The sensors run in-process, so no interpreter ships.
+# Local desktop build resources.
 apps/desktop/resources/
 
 # Nx scratch state

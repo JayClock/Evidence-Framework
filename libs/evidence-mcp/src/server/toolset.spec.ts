@@ -392,10 +392,10 @@ describe('createEvidenceTools', () => {
   it('passes the stage gate target through', async () => {
     const { client, tool } = toolOf(TOOL_NAMES.stageGate);
 
-    await tool.run({ target: 'visualization' });
+    await tool.run({ target: 'api' });
 
     expect(client.runStageGate).toHaveBeenCalledWith({
-      target: 'visualization',
+      target: 'api',
     });
   });
 

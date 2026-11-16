@@ -41,8 +41,8 @@ export const CATEGORY_COLORS = {
 /**
  * Kind of a node, in the words the model uses.
  *
- * The names come from the schema vocabulary so the canvas, the inspector and the
- * review page cannot label the same kind differently.
+ * The names come from the schema vocabulary so the canvas and the inspector
+ * cannot label the same kind differently.
  */
 export const entityKindLabel = (entity: EntityAST): string => {
   switch (entity.category) {

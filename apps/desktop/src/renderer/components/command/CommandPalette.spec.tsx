@@ -17,9 +17,9 @@ const commands: readonly CommandItem[] = [
     perform: () => undefined,
   },
   {
-    id: 'delivery.export-review',
-    title: '导出离线审查工作台（HTML）',
-    category: 'delivery',
+    id: 'model.redo',
+    title: '重做',
+    category: 'model',
     icon: ShieldCheck,
     disabled: true,
     perform: () => undefined,
@@ -102,7 +102,7 @@ describe('CommandPalette', () => {
 
     render(<Harness onOpenChange={onOpenChange} />);
 
-    fireEvent.click(screen.getByRole('option', { name: /导出离线审查工作台/ }));
+    fireEvent.click(screen.getByRole('option', { name: /重做/ }));
 
     expect(onOpenChange).not.toHaveBeenCalled();
   });

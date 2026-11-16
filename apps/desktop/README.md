@@ -22,7 +22,7 @@ nx make desktop         # installers in apps/desktop/out/make
 
 `electron-forge start` needs a display; the test targets do not.
 
-## Bundled instructions and assets, no interpreter
+## Bundled instructions, no interpreter
 
 The sensors run in-process, so the installer works on a machine with no Python
 and no checkout of this repository. Nothing is discovered from the project
@@ -36,23 +36,13 @@ either: an opened folder only has to hold its `.evidence/` sources.
 - Every sensor — consistency, key data and the stage gate —
   is TypeScript. `@evidence-poc/evidence-agent` reads the model once per run
   and decides from that one read.
-- `build` and `make` first run `scripts/prepare-desktop-resources.mjs`
-  (`prepare-resources` target), which copies the review page assets into the
-  tree Forge ships through `extraResource` — next to `app.asar` rather than
-  inside it, because the page compiler reads them with `node:fs`:
 
-```text
-resources/
-└── assets/            # libs/evidence-visualization/assets copied verbatim
-```
-
-`installAssets.ts` reads `<resources>/assets` when packaged and, in development,
-`apps/desktop/resources/assets` after the copy or the workspace package directly.
 No interpreter variable and no skill directory are published to the agent's
 environment: nothing starts a script and no path is left to guess.
 
-See [ENVIRONMENT.md](../../ENVIRONMENT.md) for the workspace the checks, the API
-projection and the review page all come from.
+See [ENVIRONMENT.md](../../ENVIRONMENT.md) for the workspace the checks and API
+projection come from. The renderer composes native canvas, diagnostics, story and
+delivery views from the feature libraries below.
 
 ## Layout
 
@@ -63,7 +53,6 @@ apps/desktop/
 │   │                  # agentRuntime (Pi session), sensorRuntime (debounce)
 │   ├── preload/       # the only `contextBridge` surface (index.ts)
 │   └── renderer/      # editor shell and remaining screens; composes Feature libs
-├── resources/         # build output: the bundled page assets (gitignored)
 ├── tests/             # integration tests against the product-procurement fixture
 └── forge.config.mjs   # entries: src/main/main.ts, src/preload/index.ts
 ```

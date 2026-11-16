@@ -38,7 +38,7 @@ function invoke(args: string[]) {
   );
 }
 
-it('round trips, compiles, derives lineage and generates an offline review in the caller cwd', async () => {
+it('round trips, compiles and derives lineage in the caller cwd', async () => {
   const unpacked = await invoke([
     'unpack',
     'source.evidence.json',
@@ -50,7 +50,6 @@ it('round trips, compiles, derives lineage and generates an offline review in th
     ['pack', '.evidence/fm', '--out=packed.evidence.json', '--sort-keys'],
     ['compile', '.evidence/fm', '-o', 'derived/compiled.json', '--compact'],
     ['lineage', '.evidence/fm', '--out', 'derived/lineage.json'],
-    ['review', '--skip-ai', '--out', 'review.html'],
   ]) {
     const result = await invoke(args);
     expect(result.code, `${result.stdout}\n${result.stderr}`).toBe(0);
@@ -71,9 +70,6 @@ it('round trips, compiles, derives lineage and generates an offline review in th
   expect(
     JSON.parse(await readFile(path.join(root, 'derived/lineage.json'), 'utf8')),
   ).toBeTruthy();
-  expect(await readFile(path.join(root, 'review.html'), 'utf8')).toContain(
-    '<html',
-  );
   const check = await invoke([
     'check',
     'packed.evidence.json',
@@ -108,7 +104,6 @@ it('rejects invalid and duplicate options and missing or extra arguments without
     ['pack', 'missing', '-o', 'a', '--out', 'b'],
     ['pack', 'missing', '--out', 'a', '-o', 'b'],
     ['compile', '.evidence/fm'],
-    ['review', '--unknown'],
     ['check', 'source.evidence.json', 'extra'],
     ['check', 'source.evidence.json', '--scope'],
     ['diff', 'source.evidence.json'],
@@ -124,7 +119,6 @@ it('rejects invalid and duplicate options and missing or extra arguments without
     'pack',
     'unpack',
     'compile',
-    'review',
     'check',
     'test',
     'diff',

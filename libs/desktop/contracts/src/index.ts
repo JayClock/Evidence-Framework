@@ -5,5 +5,4 @@ export * from './ingestion.js';
 export * from './ipc.js';
 export * from './mcpIpc.js';
 export * from './projects.js';
-export * from './review.js';
 export * from './story.js';

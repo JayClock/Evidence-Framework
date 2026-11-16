@@ -102,7 +102,7 @@ export const filterFmCheckErrors = (
 };
 
 export interface StageGateInput {
-  target: 'api' | 'visualization';
+  target: 'api';
   /** The saved `check_fm` report the gate consumes. */
   fmCheck: unknown;
   scopes: readonly string[];

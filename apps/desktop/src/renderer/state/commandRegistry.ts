@@ -2,10 +2,8 @@ import {
   Activity,
   Bot,
   Columns2,
-  FileDown,
   FlaskConical,
   FolderTree,
-  GitCompareArrows,
   Network,
   Redo2,
   Save,
@@ -63,7 +61,7 @@ export const COMMAND_GROUPS: readonly {
   { id: 'model', label: '核心操作' },
   { id: 'view', label: '视图' },
   { id: 'navigation', label: '导航' },
-  { id: 'delivery', label: '交付与评审' },
+  { id: 'delivery', label: '交付契约' },
   { id: 'drift', label: '生产漂移' },
   { id: 'diagnostics', label: '门禁与诊断' },
   { id: 'agent', label: '智能协同' },
@@ -93,8 +91,6 @@ export const CHORDS = {
   splitContract: '⌥+4',
   rotateSplit: '⌥+S',
   zoomSelection: '⇧+2',
-  review: '⌥+R',
-  exportReview: '⌘+Shift+E',
   delivery: '⌥+D',
   sandbox: '⌥+⇧+S',
   rerunSensors: '⌘+Shift+R',
@@ -104,10 +100,6 @@ export const CHORDS = {
 export interface CommandCapabilities {
   canUndo: boolean;
   canRedo: boolean;
-  /** An unsaved edit makes the export commands read the wrong snapshot. */
-  dirty: boolean;
-  /** A review export is already being written. */
-  busy: boolean;
   viewMode: WorkspaceViewMode;
   /** Whether anything is selected, so "zoom to selection" can be honest. */
   hasSelection: boolean;
@@ -125,9 +117,6 @@ export interface CommandHandlers {
   /** Frames the selected object. */
   zoomToSelection: () => void;
   focusSearch: () => void;
-  openReview: () => void;
-  exportReview: () => void;
-  exportDiff: () => void;
   openDelivery: () => void;
   openSandbox: () => void;
   rerunSensors: () => void;
@@ -139,21 +128,13 @@ export interface CommandHandlers {
 /**
  * Builds the palette contents.
  *
- * Disabled rows stay in the list instead of disappearing: a modeler who looks
- * for "导出审查页" and finds it greyed out with a reason learns why it cannot
- * run, while a missing row only says the feature is gone.
+ * Disabled rows stay visible so unavailable history and view actions explain
+ * the current editor state instead of appearing to be missing features.
  */
 export const buildCommands = (
   capabilities: CommandCapabilities,
   handlers: CommandHandlers,
 ): readonly CommandItem[] => {
-  const exportStale = capabilities.dirty || capabilities.busy;
-  const exportReason = capabilities.busy
-    ? '正在导出，请等待当前导出完成'
-    : capabilities.dirty
-      ? '先保存：正式审查只读取磁盘快照'
-      : undefined;
-
   return [
     {
       id: 'model.save',
@@ -288,37 +269,6 @@ export const buildCommands = (
       icon: Search,
       keywords: ['search', 'find', 'entity'],
       perform: handlers.focusSearch,
-    },
-    {
-      id: 'delivery.review',
-      title: '打开审查预览',
-      subtitle: '审查中心：逐条发现、画布定位与派单',
-      category: 'delivery',
-      shortcut: CHORDS.review,
-      icon: ShieldCheck,
-      keywords: ['review', 'preview', '审查'],
-      perform: handlers.openReview,
-    },
-    {
-      id: 'delivery.export-review',
-      title: '导出离线审查工作台（HTML）',
-      subtitle: exportReason ?? '单文件、内联资源、可签名发布',
-      category: 'delivery',
-      shortcut: CHORDS.exportReview,
-      icon: FileDown,
-      keywords: ['export', 'html', 'offline', '导出'],
-      disabled: exportStale,
-      perform: handlers.exportReview,
-    },
-    {
-      id: 'delivery.export-diff',
-      title: '导出变更审查差异',
-      subtitle: exportReason ?? '与 *.evidence.json 基线比较',
-      category: 'delivery',
-      icon: GitCompareArrows,
-      keywords: ['diff', 'baseline', '差异'],
-      disabled: exportStale,
-      perform: handlers.exportDiff,
     },
     {
       id: 'delivery.contract',

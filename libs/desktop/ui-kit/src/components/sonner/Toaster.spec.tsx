@@ -7,8 +7,8 @@ describe('Toaster', () => {
   it('reports a finished operation where the modeler is looking', async () => {
     render(<Toaster />);
 
-    notify.success('离线审查页已导出');
+    notify.success('交付契约已导出');
 
-    expect(await screen.findByText('离线审查页已导出')).toBeInTheDocument();
+    expect(await screen.findByText('交付契约已导出')).toBeInTheDocument();
   });
 });

@@ -295,9 +295,6 @@ importers:
       '@evidence-poc/evidence-schema':
         specifier: workspace:*
         version: link:../../libs/evidence-schema
-      '@evidence-poc/evidence-visualization':
-        specifier: workspace:*
-        version: link:../../libs/evidence-visualization
       cac:
         specifier: ^6.7.14
         version: 6.7.14
@@ -359,9 +356,6 @@ importers:
       '@evidence-poc/evidence-schema':
         specifier: workspace:*
         version: link:../../libs/evidence-schema
-      '@evidence-poc/evidence-visualization':
-        specifier: workspace:*
-        version: link:../../libs/evidence-visualization
       '@tanstack/react-table':
         specifier: ^8.21.3
         version: 8.21.3(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
@@ -447,9 +441,6 @@ importers:
       '@evidence-poc/evidence-schema':
         specifier: workspace:*
         version: link:../../evidence-schema
-      '@evidence-poc/evidence-visualization':
-        specifier: workspace:*
-        version: link:../../evidence-visualization
       tslib:
         specifier: ^2.3.0
         version: 2.9.1
@@ -890,33 +881,6 @@ importers:
       zod:
         specifier: ^3.25.67
         version: 3.25.76
-
-  libs/evidence-visualization:
-    dependencies:
-      '@evidence-poc/evidence-agent':
-        specifier: workspace:*
-        version: link:../evidence-agent
-      '@evidence-poc/evidence-api':
-        specifier: workspace:*
-        version: link:../evidence-api
-      '@evidence-poc/evidence-canvas-interaction':
-        specifier: workspace:*
-        version: link:../evidence-canvas-interaction
-      '@evidence-poc/evidence-model-core':
-        specifier: workspace:*
-        version: link:../evidence-model-core
-      '@evidence-poc/evidence-model-io':
-        specifier: workspace:*
-        version: link:../evidence-model-io
-      '@evidence-poc/evidence-schema':
-        specifier: workspace:*
-        version: link:../evidence-schema
-      cac:
-        specifier: ^6.7.14
-        version: 6.7.14
-      tslib:
-        specifier: ^2.3.0
-        version: 2.9.1
 
 packages:
 

@@ -24,7 +24,6 @@ import { createModelIngestionReader } from './ingestionModelReader';
 import { registerDeliveryIpc } from './deliveryIpc';
 import { registerProjectIpc } from './projectIpc';
 import { registerStoryIpc } from './storyIpc';
-import { registerReviewIpc } from './reviewIpc';
 import { createProjectStore, RECENT_PROJECTS_FILE } from './projectStore';
 import {
   createDashboardWindow,
@@ -76,7 +75,6 @@ const startApplication = async (): Promise<void> => {
     generate: createModelIngestionReader(),
     openEditorWindow,
   });
-  registerReviewIpc();
   const storyIpc = registerStoryIpc();
   app.once('before-quit', () => storyIpc.dispose());
   registerDriftIpc();

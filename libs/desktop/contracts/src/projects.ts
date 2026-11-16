@@ -72,19 +72,6 @@ export interface SaveProjectInput {
   document: DomainModelDocument;
 }
 
-/** What the review page contained, echoed back so the app can confirm it. */
-export interface ReviewPageCounts {
-  contracts: number;
-  entities: number;
-  rules: number;
-  capabilities: number;
-}
-
-export type ExportReviewResult =
-  | { status: 'saved'; path: string; counts: ReviewPageCounts }
-  | { status: 'cancelled' }
-  | { status: 'failed'; error: string };
-
 /** One route the delivery contract declares. */
 export interface DeliveryPreviewRoute {
   method: string;

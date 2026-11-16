@@ -42,7 +42,7 @@ export interface SensorOutcome {
 export interface StageGateInput {
   /** Optional published contract baseline; never inferred from the latest edit. */
   baseDocument?: DomainModelDocument;
-  target: 'api' | 'visualization';
+  target: 'api';
   /** Absolute path of `.evidence/fm`. */
   modelRoot: string;
   scopeRefs?: readonly string[];
@@ -74,28 +74,22 @@ export const createSensorsEngine = ({
   const checkStageGate = async (
     input: StageGateInput,
   ): Promise<StageGateSummary> => {
-    const fresh =
-      input.target === 'api' || input.fmCheck === undefined
-        ? await runFullSensors({
-            modelRoot: input.modelRoot,
-            apiMode: 'release',
-            ...(input.baseDocument === undefined
-              ? {}
-              : { baseDocument: input.baseDocument }),
-            ...(input.scopeRefs === undefined
-              ? {}
-              : { scopeRefs: input.scopeRefs }),
-            ...(input.signal === undefined ? {} : { signal: input.signal }),
-          })
-        : undefined;
+    const fresh = await runFullSensors({
+      modelRoot: input.modelRoot,
+      apiMode: 'release',
+      ...(input.baseDocument === undefined
+        ? {}
+        : { baseDocument: input.baseDocument }),
+      ...(input.scopeRefs === undefined ? {} : { scopeRefs: input.scopeRefs }),
+      ...(input.signal === undefined ? {} : { signal: input.signal }),
+    });
     const gate = stageGateSummaryOf(
       checkNativeStageGate({
         target: input.target,
-        fmCheck: input.fmCheck ?? fresh?.fmCheck,
+        fmCheck: input.fmCheck ?? fresh.fmCheck,
         scopes: input.scopeRefs ?? [],
       }),
     );
-    if (input.target !== 'api' || fresh === undefined) return gate;
     const apiErrors = fresh.report.issues
       .filter(
         (issue) => issue.source === 'audit_api' && issue.severity !== 'info',

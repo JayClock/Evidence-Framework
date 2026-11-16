@@ -12,7 +12,7 @@ const BACKGROUNDS = {
   unknown: '#fff',
 };
 
-/** Private authoring material: this drawer is intentionally not a review-page projection. */
+/** Private authoring material, kept local to the project's audit drawer. */
 export const ClauseTraceDrawer = ({
   model,
   selectedNodeId,
@@ -49,7 +49,7 @@ export const ClauseTraceDrawer = ({
       <div className="sticky top-0 z-10 space-y-2 bg-white pb-3">
         <h3 className="font-semibold">条款审计</h3>
         <p>
-          来源材料仅供本地审计，不随离线审查页发布。条款分类是阅读建议，不是法律判断。
+          来源材料仅供本地审计，不作为交付物发布。条款分类是阅读建议，不是法律判断。
         </p>
         {trace.fullText === null ? (
           <p role="status">仅保存来源片段，暂无合同全文；未推断条款分类。</p>

@@ -11,7 +11,7 @@ import { MODEL_DIRECTORY } from '@evidence-poc/evidence-model-io';
 export const isBundleProject = (rootPath: string): boolean =>
   isModelBundlePath(rootPath);
 
-/** Directory that owns `.evidence/`, which a review page is written beside. */
+/** Directory that owns the project's `.evidence/` sources and derived outputs. */
 export const projectDirectoryOf = (rootPath: string): string =>
   isBundleProject(rootPath)
     ? path.dirname(path.resolve(rootPath))

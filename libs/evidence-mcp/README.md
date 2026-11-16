@@ -25,7 +25,7 @@
 | `get_key_data_audit`    | 只读  | 关键数据台账（谁提供、是否待决）         |
 | `get_canvas_screenshot` | 只读  | 无编辑器辅助线的 PNG 快照                |
 | `apply_model_patch`     | 写入  | 提交 `ModelCommand` 补丁，用户可撤销     |
-| `run_stage_gate`        | 只读  | 下游 API / 联合审核页门禁                |
+| `run_stage_gate`        | 只读  | 下游 API 契约交付门禁（`target: api`）   |
 
 `apply_model_patch` 是唯一写入工具：补丁先由桌面端在克隆图上做静态检查，破坏红线即整体
 拒绝，因此外部智能体无法绕过履约建模的不可协商约束。

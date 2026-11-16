@@ -45,7 +45,6 @@
     "@evidence-poc/evidence-model-core": "workspace:*",
     "@evidence-poc/evidence-model-io": "workspace:*",
     "@evidence-poc/evidence-schema": "workspace:*",
-    "@evidence-poc/evidence-visualization": "workspace:*",
     "cac": "^6.7.14",
     "tslib": "^2.3.0",
     "@evidence-poc/evidence-acceptance": "workspace:*"

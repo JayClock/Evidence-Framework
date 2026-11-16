@@ -34,7 +34,7 @@ export interface McpSensorService {
   readKeyDataAudit: (rootPath: string) => Promise<McpKeyDataAudit>;
   checkStageGate: (input: {
     rootPath: string;
-    target: 'api' | 'visualization';
+    target: 'api';
   }) => Promise<McpStageGateResult>;
 }
 

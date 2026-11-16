@@ -3,7 +3,6 @@ import type {
   LiveDeliveryResult,
   ExportLiveDeliveryInput,
 } from './delivery.js';
-import type { PreviewReviewInput, PreviewReviewResult } from './review.js';
 import type { EvidenceAgentApi } from './agentIpc.js';
 import type {
   DeliveryPreviewResult,
@@ -24,7 +23,6 @@ import type {
   CreateProjectInput,
   CreateProjectResult,
   EvidenceProjectSummary,
-  ExportReviewResult,
   OpenProjectDialogResult,
   OpenProjectResult,
   ProjectChangedEvent,
@@ -48,9 +46,6 @@ export const EVIDENCE_IPC_CHANNELS = {
   recent: 'evidence:project:recent',
   openEditorWindow: 'evidence:project:open-editor-window',
   changed: 'evidence:project:changed',
-  previewReview: 'evidence:project:preview-review',
-  exportDiffReview: 'evidence:project:export-diff-review',
-  exportReview: 'evidence:project:export-review',
   deliveryLivePreview: 'evidence:project:delivery-live-preview',
   exportLiveDelivery: 'evidence:project:export-live-delivery',
   deliveryPreview: 'evidence:project:delivery-preview',
@@ -88,15 +83,6 @@ export interface EvidenceDesktopApi {
     openEditorWindow: (rootPath: string) => Promise<void>;
     /** Subscribes to external `.evidence/fm` changes; returns an unsubscribe. */
     onChanged: (listener: (event: ProjectChangedEvent) => void) => () => void;
-    /**
-     * Writes the offline review page for one project.
-     *
-     * The page is generated in the main process from the sources on disk, so a
-     * review always describes what was saved, not what the canvas shows.
-     */
-    previewReview: (input: PreviewReviewInput) => Promise<PreviewReviewResult>;
-    exportDiffReview: (rootPath: string) => Promise<ExportReviewResult>;
-    exportReview: (rootPath: string) => Promise<ExportReviewResult>;
     /**
      * What the model becomes when it is deployed.
      *
@@ -170,7 +156,6 @@ export type {
   CreateProjectInput,
   CreateProjectResult,
   EvidenceProjectSummary,
-  ExportReviewResult,
   OpenProjectDialogResult,
   OpenProjectResult,
   ProjectChangedEvent,

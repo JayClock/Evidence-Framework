@@ -4,7 +4,6 @@ import { exportCommand } from './commands/export.js';
 import { checkCommand } from './commands/check.js';
 import { diffCommand } from './commands/diff.js';
 import { modelCommand } from './commands/model.js';
-import { reviewCommand } from './commands/review.js';
 import { apiCommand } from './commands/api.js';
 import { storyCommand } from './commands/story.js';
 import {
@@ -114,20 +113,6 @@ export function createCli(context: CommandContext = defaultContext()): CAC {
     if (command !== 'inspect')
       registered.option('--sort-keys', 'Stable object key order');
   }
-  cli
-    .command('review', 'Build a single-file offline review workbench')
-    .option('--project-root <dir>', 'Project root', { default: '.' })
-    .option('-o, --out <file>', 'HTML output path')
-    .option('--scope <id>', 'Context responsibility scope (repeatable)', {
-      type: [],
-    })
-    .option('--require-api', 'Require a complete API projection')
-    .option(
-      '--skip-ai',
-      'Generate story fact cards without AI or network access',
-    )
-    .option('--assets <dir>', 'Workbench assets directory')
-    .action((options: CommandOptions) => reviewCommand(options, context));
   cli
     .command(
       'api <command>',

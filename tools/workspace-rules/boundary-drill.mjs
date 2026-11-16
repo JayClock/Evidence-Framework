@@ -58,10 +58,10 @@ const CASES = [
     expects: 'A project tagged with "layer:domain" can only depend on libs',
   },
   {
-    name: 'a browser library reaching a Node-only projection',
+    name: 'a browser library reaching a Node-only library',
     project: 'desktop-feature-canvas',
     file: 'libs/desktop/feature-canvas/src/__boundary-drill.ts',
-    body: "export * from '@evidence-poc/evidence-visualization';\n",
+    body: "export * from '@evidence-poc/evidence-mcp';\n",
     expects:
       'A project tagged with "platform:browser" can only depend on libs tagged',
   },

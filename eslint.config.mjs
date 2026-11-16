@@ -35,8 +35,8 @@ export default [
 
             // The architectural rings, outermost last. Each ring may only
             // depend on the rings below it, and on itself: `canvas-interaction`
-            // composes `model-core`, `evidence-visualization` composes
-            // `evidence-api`. Nothing below may reach upward, which is what
+            // composes `model-core`, and acceptance composes API projection.
+            // Nothing below may reach upward, which is what
             // kept failing silently before: `tsc` resolves the path, so only
             // this rule notices a schema importing a projection.
             {
@@ -61,7 +61,7 @@ export default [
               onlyDependOnLibsWithTags: ['layer:ui', 'layer:schema'],
             },
             {
-              // Delivery projections: API contracts and the review page.
+              // Delivery projections: API contracts and topology.
               sourceTag: 'layer:projection',
               onlyDependOnLibsWithTags: [
                 'layer:projection',
@@ -157,8 +157,8 @@ export default [
 
             // The business contexts. The ring rules already drop most wrong
             // edges; these catch the ones two libraries share a layer on:
-            // the API contract is the source the review page compiles, never
-            // the other way around, and a desktop-only fixture library is not
+            // acceptance composes the API contract, never the other way around,
+            // and a desktop-only fixture library is not
             // something a model package may reach for.
             {
               sourceTag: 'scope:shared',
@@ -170,28 +170,13 @@ export default [
             },
             {
               sourceTag: 'scope:api',
-              notDependOnLibsWithTags: [
-                'scope:desktop',
-                'scope:visualization',
-                'layer:testing',
-              ],
+              notDependOnLibsWithTags: ['scope:desktop', 'layer:testing'],
             },
             {
               sourceTag: 'scope:acceptance',
               notDependOnLibsWithTags: [
                 'scope:desktop',
                 'scope:agent',
-                'scope:mcp',
-                'scope:visualization',
-                'layer:testing',
-              ],
-            },
-            {
-              // Workbench generation composes the story agent at build time;
-              // lower projection libraries still cannot reach orchestration.
-              sourceTag: 'scope:visualization',
-              notDependOnLibsWithTags: [
-                'scope:desktop',
                 'scope:mcp',
                 'layer:testing',
               ],
@@ -200,18 +185,13 @@ export default [
               sourceTag: 'scope:agent',
               notDependOnLibsWithTags: [
                 'scope:desktop',
-                'scope:visualization',
                 'scope:mcp',
                 'layer:testing',
               ],
             },
             {
               sourceTag: 'scope:mcp',
-              notDependOnLibsWithTags: [
-                'scope:desktop',
-                'scope:visualization',
-                'layer:testing',
-              ],
+              notDependOnLibsWithTags: ['scope:desktop', 'layer:testing'],
             },
           ],
         },

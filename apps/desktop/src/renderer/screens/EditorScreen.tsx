@@ -54,7 +54,6 @@ import {
   DeliveryHub,
   useDeliveryHub,
 } from '@evidence-poc/desktop-feature-delivery';
-import { ReviewHubModal } from '../components/review/ReviewHubModal';
 import { TopHeader } from '../components/TopHeader';
 import {
   CanvasViewport,
@@ -69,7 +68,6 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
   Toaster,
-  toast,
 } from '@evidence-poc/desktop-ui-kit';
 import type {
   CommandCapabilities,
@@ -80,7 +78,6 @@ import { useLiveModelBridge } from '../state/useLiveModelBridge';
 import { useEditorSession } from '../state/useEditorSession';
 import { useEditorShortcuts } from '../state/useEditorShortcuts';
 import { useMcpBridge } from '../state/useMcpBridge';
-import { useReviewExport } from '../state/useReviewExport';
 import { useSensorsState } from '../state/useSensorsState';
 import {
   type RailTabId,
@@ -198,7 +195,6 @@ const EditorWorkspace = ({
   // Every drawer, sheet and overlay is one object, so the shell renders a
   // projection instead of coordinating four independent booleans.
   const layout = useWorkspaceLayoutState();
-  const reviewExport = useReviewExport(project.rootPath);
   const {
     state,
     save,
@@ -284,22 +280,10 @@ const EditorWorkspace = ({
   useEffect(() => {
     if (state.savedAt !== null) void sensors.refresh();
   }, [state.savedAt, sensors.refresh]);
-  const [reviewRevision, setReviewRevision] = useState(0);
-  const [reviewPrompt, setReviewPrompt] = useState<{
+  const [copilotPrefill, setCopilotPrefill] = useState<{
     token: number;
     text: string;
   } | null>(null);
-  useEffect(() => {
-    setReviewRevision((current) => current + 1);
-  }, [state.document, state.externalChangeAt]);
-  const reviewInput = useMemo(
-    () => ({
-      rootPath: project.rootPath,
-      document: state.document,
-      revision: reviewRevision,
-    }),
-    [project.rootPath, state.document, reviewRevision],
-  );
 
   const patchReview = usePatchReview(state.session, state.document);
 
@@ -516,19 +500,10 @@ const EditorWorkspace = ({
     () => ({
       canUndo: state.canUndo,
       canRedo: state.canRedo,
-      dirty: state.dirty,
-      busy: reviewExport.busy,
       viewMode: workspaceView.mode,
       hasSelection: state.selection.nodeId !== null,
     }),
-    [
-      state.canUndo,
-      state.canRedo,
-      state.dirty,
-      state.selection.nodeId,
-      reviewExport.busy,
-      workspaceView.mode,
-    ],
+    [state.canUndo, state.canRedo, state.selection.nodeId, workspaceView.mode],
   );
 
   const commandHandlers = useMemo<CommandHandlers>(
@@ -545,9 +520,6 @@ const EditorWorkspace = ({
       rotateSplit: split.rotateSplitDirection,
       zoomToSelection: () => requestZoom('selection'),
       focusSearch,
-      openReview: () => layout.openHub('review'),
-      exportReview: () => void reviewExport.exportPage(),
-      exportDiff: () => void reviewExport.exportPage(true),
       openDelivery: () => layout.openHub('delivery'),
       openSandbox: () => layout.openHub('drift'),
       rerunSensors: () => void sensors.refresh(),
@@ -562,7 +534,6 @@ const EditorWorkspace = ({
       focusSearch,
       layout.setActiveRailTab,
       layout.openHub,
-      reviewExport.exportPage,
       save,
       sensors.refresh,
       split.openSplit,
@@ -574,30 +545,10 @@ const EditorWorkspace = ({
 
   const commands = useCommandRegistry(commandCapabilities, commandHandlers);
 
-  /*
-   * Export outcomes arrive here whichever entry point started them — the header,
-   * a chord or a palette row — so the report is bound to the controller's notice
-   * rather than to the control that was pressed. A cancelled save dialog resolves
-   * with no notice and therefore says nothing.
-   */
-  const { notice: exportNotice, dismissNotice } = reviewExport;
-  useEffect(() => {
-    if (exportNotice === null) return;
-
-    if (exportNotice.tone === 'saved') {
-      toast.success(exportNotice.message);
-    } else {
-      toast.error(exportNotice.message);
-    }
-
-    dismissNotice();
-  }, [exportNotice, dismissNotice]);
-
   const { accept: acceptPatch, revert: revertPatch } = patchReview;
 
   const shortcuts = useMemo(
     () => ({
-      openReview: () => layout.openHub('review'),
       undo: () => {
         state.session.undo();
       },
@@ -607,7 +558,6 @@ const EditorWorkspace = ({
       save: () => void save(),
       focusSearch,
       openCommandPalette: () => setPaletteOpen(true),
-      exportReview: () => void reviewExport.exportPage(),
       rerunSensors: () => void sensors.refresh(),
       openDelivery: () => layout.openHub('delivery'),
       openSandbox: () => layout.openHub('drift'),
@@ -645,7 +595,6 @@ const EditorWorkspace = ({
       layout.toggleProblemsPanel,
       layout.toggleRailTab,
       layout.setActiveRailTab,
-      reviewExport.exportPage,
       save,
       sensors.refresh,
       split.openSplit,
@@ -845,20 +794,6 @@ const EditorWorkspace = ({
       </ResizablePanelGroup>
     );
 
-  const canLocateIssue = useCallback(
-    (issue: SensorIssue) => {
-      const id = issue.targetNodeId?.split('#')[0] ?? issue.contextRef;
-
-      return (
-        !!id &&
-        (state.layout.nodeById.has(id) ||
-          state.layout.contextGroups.some((group) => group.contextId === id) ||
-          state.layout.edges.some((edge) => edge.relationshipId === id))
-      );
-    },
-    [state.layout],
-  );
-
   return (
     <LiveApiProvider analysis={delivery.analysis} stale={delivery.stale}>
       <div className="flex h-full flex-col bg-evidence-surface">
@@ -868,8 +803,6 @@ const EditorWorkspace = ({
           graph={state.graph}
           selection={state.selection}
           onSave={() => void save()}
-          onExportReview={() => void reviewExport.exportPage()}
-          exportReviewBusy={reviewExport.busy}
           onOpenCommandPalette={() => setPaletteOpen(true)}
         />
 
@@ -913,7 +846,7 @@ const EditorWorkspace = ({
           The studio is the canvas plus one inspector: outline, diagnostics,
           sandbox and copilot are drawers the 48px activity rail opens, so the
           canvas owns every pixel the modeler is not actively using. Findings
-          and the delivery/review hubs slide over that canvas only while open.
+          and the delivery/drift hubs slide over that canvas only while open.
         */}
         <div className="relative flex min-h-0 flex-1">
           <ActivityRail
@@ -978,7 +911,7 @@ const EditorWorkspace = ({
                     session={state.session}
                     onFocus={focusNode}
                     onReview={(text) => {
-                      setReviewPrompt({ token: Date.now(), text });
+                      setCopilotPrefill({ token: Date.now(), text });
                       layout.setActiveRailTab('copilot');
                     }}
                   />
@@ -1010,8 +943,8 @@ const EditorWorkspace = ({
                     focus={promptFocus}
                     onClearFocus={() => state.session.clearSelection()}
                     focusToken={agentFocusToken}
-                    prefill={reviewPrompt}
-                    onPrefillConsumed={() => setReviewPrompt(null)}
+                    prefill={copilotPrefill}
+                    onPrefillConsumed={() => setCopilotPrefill(null)}
                   />
                 ) : null}
               </ActivityDrawer>
@@ -1104,25 +1037,6 @@ const EditorWorkspace = ({
             api={window.evidenceAPI.drift}
             rootPath={project.rootPath}
             onClose={layout.closeHub}
-          />
-        ) : null}
-
-        {layout.activeHub === 'review' && reviewInput !== null ? (
-          <ReviewHubModal
-            input={reviewInput}
-            onClose={layout.closeHub}
-            canLocate={canLocateIssue}
-            onLocate={focusIssue}
-            onPrompt={(issue) => {
-              layout.closeHub();
-              layout.setActiveRailTab('copilot');
-              focusIssue(issue);
-              tokenRef.current += 1;
-              setReviewPrompt({
-                token: tokenRef.current,
-                text: `请协助分析以下模型审查发现，先说明修改建议，不要假定业务决策：\n[${issue.code}] ${issue.message}\n${issue.targetNodeId ?? issue.contextRef ?? ''}\n${issue.suggestion ?? ''}`,
-              });
-            }}
           />
         ) : null}
 

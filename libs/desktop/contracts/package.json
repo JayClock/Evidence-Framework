@@ -26,12 +26,6 @@
       "import": "./dist/mcpIpc.js",
       "default": "./dist/mcpIpc.js"
     },
-    "./review": {
-      "@evidence-poc/source": "./src/review.ts",
-      "types": "./dist/review.d.ts",
-      "import": "./dist/review.js",
-      "default": "./dist/review.js"
-    },
     "./drift": {
       "@evidence-poc/source": "./src/drift.ts",
       "types": "./dist/drift.d.ts",
@@ -86,7 +80,6 @@
     "@evidence-poc/evidence-mcp": "workspace:*",
     "@evidence-poc/evidence-model-core": "workspace:*",
     "@evidence-poc/evidence-schema": "workspace:*",
-    "@evidence-poc/evidence-visualization": "workspace:*",
     "@evidence-poc/evidence-acceptance": "workspace:*"
   }
 }

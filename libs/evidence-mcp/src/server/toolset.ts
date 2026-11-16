@@ -239,12 +239,10 @@ export const createEvidenceTools = (
     name: TOOL_NAMES.stageGate,
     title: '执行阶段门禁',
     description:
-      '运行阶段门禁判定，说明当前模型是否满足下游 API 契约或联合审核页的交付条件。',
+      '运行 API 阶段门禁判定，说明当前模型是否满足下游 API 契约的交付条件。',
     inputSchema: z
       .object({
-        target: z
-          .enum(['api', 'visualization'])
-          .describe('下游阶段：api 或 visualization。'),
+        target: z.literal('api').describe('下游阶段：api。'),
       })
       .strict(),
     annotations: READ_ONLY,

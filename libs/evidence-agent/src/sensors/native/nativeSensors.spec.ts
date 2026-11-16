@@ -156,7 +156,7 @@ describe('checkNativeStageGate', () => {
     );
 
     const unbounded = checkNativeStageGate({
-      target: 'visualization',
+      target: 'api',
       fmCheck: { ...report, checkVersion: 4 },
       scopes: [],
     });

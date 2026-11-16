@@ -16,9 +16,6 @@
       "path": "../../libs/evidence-acceptance/tsconfig.lib.json"
     },
     {
-      "path": "../../libs/evidence-visualization/tsconfig.lib.json"
-    },
-    {
       "path": "../../libs/evidence-schema/tsconfig.lib.json"
     },
     {

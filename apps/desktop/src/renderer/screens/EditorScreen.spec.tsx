@@ -84,6 +84,28 @@ describe('EditorScreen', () => {
     expect(screen.getByLabelText('选择业务流')).toHaveValue('正常签约案例');
     expect(api.projects.save).not.toHaveBeenCalled();
   });
+  it('prefills the Copilot composer from the workshop without submitting or saving', async () => {
+    const api = readyProject();
+    render(<EditorScreen rootPath="/models/procurement" />);
+    await readyCanvas();
+
+    fireEvent.click(screen.getByRole('button', { name: '共创工作坊' }));
+    fireEvent.click(
+      screen.getByRole('button', { name: /5. 给违约一条补偿路径/ }),
+    );
+    fireEvent.click(
+      screen.getByRole('button', { name: /带着当前问题进入 AI 协同/ }),
+    );
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('访谈内容')).toHaveValue(
+        '给违约一条补偿路径：超时、断供、拒付后如何补偿？继续违约最终由谁处理？',
+      );
+    });
+    expect(api.calls.prompt).toEqual([]);
+    expect(api.calls.save).toEqual([]);
+  });
+
   it('navigates in both directions between persisted clauses and canvas objects', async () => {
     const document = createDesktopFixture();
     document.manifest.sourceDocument = {
@@ -464,35 +486,15 @@ describe('EditorScreen', () => {
     expect(await screen.findByText(/已保存/)).toBeInTheDocument();
   });
 
-  it('reports a finished export as a toast, not as a strip under the header', async () => {
-    const api = installDesktopApi({
-      openResult: {
-        success: true,
-        project: projectSummary({ name: '桌面端夹具（Desktop Fixture）' }),
-        document: createDesktopFixture(),
-        issues: [],
-      },
-      exportReviewResult: {
-        status: 'saved',
-        path: '/models/procurement/review.html',
-        counts: {
-          contracts: 1,
-          entities: 8,
-          rules: 2,
-          capabilities: 0,
-        },
-      },
-    });
-
+  it('opens command navigation from the header', async () => {
+    readyProject();
     render(<EditorScreen rootPath="/models/procurement" />);
     await readyCanvas();
 
-    fireEvent.click(screen.getByRole('button', { name: '导出审查页' }));
-
-    expect(await screen.findByText(/已导出审查页/)).toBeInTheDocument();
-    expect(api.calls.exportReview).toEqual(['/models/procurement']);
-    // The result is transient: it must not occupy a row of the layout.
-    expect(screen.queryByRole('status')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: '打开快速命令' }));
+    expect(
+      await screen.findByRole('dialog', { name: '快速命令' }),
+    ).toBeInTheDocument();
   });
 
   it('opens the delivery hub from its chord', async () => {

@@ -57,17 +57,6 @@ it('keeps all deprecated bins executable with warnings on stderr and valid JSON 
         path.join(root, 'model.evidence.json'),
       ],
     ],
-    [
-      'evidence-visualization',
-      [
-        'generate',
-        '--skip-ai',
-        '--project-root',
-        root,
-        '--out',
-        path.join(root, 'legacy.html'),
-      ],
-    ],
   ] as const;
   for (const [library, args] of calls) {
     const result = await invoke(
@@ -115,7 +104,7 @@ it('detects symlinked legacy bins and keeps programmatic imports silent', async 
   expect(JSON.parse(result.stdout)).toHaveProperty('modelId');
   const imported = await invoke('--input-type=module', [
     '-e',
-    ['evidence-model-io', 'evidence-acceptance', 'evidence-visualization']
+    ['evidence-model-io', 'evidence-acceptance']
       .map(
         (library) =>
           `await import(${JSON.stringify(path.join(repo, `libs/${library}/dist/cli.js`))});`,
