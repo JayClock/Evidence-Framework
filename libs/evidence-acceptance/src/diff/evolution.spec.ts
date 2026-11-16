@@ -1,5 +1,5 @@
-import { procurementEvolution } from '../../tests/support/procurement.js';
-import { buildDelivery } from '../projector.js';
+import { procurementEvolution } from '@evidence-poc/evidence-api/testing';
+import { buildDelivery } from '@evidence-poc/evidence-api';
 import { compareContracts } from './compareContracts.js';
 
 const stages = procurementEvolution();

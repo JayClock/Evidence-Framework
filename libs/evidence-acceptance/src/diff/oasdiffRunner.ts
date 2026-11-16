@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { promisify } from 'node:util';
 import { fileURLToPath } from 'node:url';
-import { canonicalJson } from '../canonicalJson.js';
+import { canonicalJson } from '@evidence-poc/evidence-api';
 
 const execute = promisify(execFile);
 export const OASDIFF_VERSION = '1.38.0';

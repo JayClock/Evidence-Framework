@@ -1,8 +1,8 @@
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
-import { buildDelivery } from './projector.js';
-import { hasErrors } from './diagnostics.js';
-import { assertOpenApiContract } from './openapi/validateContract.js';
-import { canonicalJson } from './canonicalJson.js';
+import { buildDelivery } from '@evidence-poc/evidence-api';
+import { hasErrors } from '@evidence-poc/evidence-api';
+import { assertOpenApiContract } from '@evidence-poc/evidence-api';
+import { canonicalJson } from '@evidence-poc/evidence-api';
 import { projectAcceptanceTests } from './delivery/scenarioProjector.js';
 import { renderStepCi } from './renderer/stepCiRenderer.js';
 import { renderHurl } from './renderer/hurlRenderer.js';

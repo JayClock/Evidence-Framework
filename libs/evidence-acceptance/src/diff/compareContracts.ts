@@ -1,6 +1,6 @@
-import { assertOpenApiContract } from '../openapi/validateContract.js';
-import type { EvidenceApiSnapshot } from '../types.js';
-import { hasErrors } from '../diagnostics.js';
+import { assertOpenApiContract } from '@evidence-poc/evidence-api';
+import type { EvidenceApiSnapshot } from '@evidence-poc/evidence-api';
+import { hasErrors } from '@evidence-poc/evidence-api';
 import { OasdiffRunner, type OasdiffComparison } from './oasdiffRunner.js';
 
 export interface ContractComparison extends OasdiffComparison {

@@ -6,10 +6,13 @@ import {
   type RuleAST,
 } from '@evidence-poc/evidence-schema';
 import { evaluateRuleOnExample } from '@evidence-poc/evidence-model-core';
-import { buildDeliveryRoutes, type DeliveryRoute } from './routes.js';
-import { buildDeliveryContract } from './modelDelivery.js';
-import { componentName } from './schemaName.js';
-import { compareText } from '../order.js';
+import {
+  buildDeliveryRoutes,
+  type DeliveryRoute,
+} from '@evidence-poc/evidence-api/delivery';
+import { buildDeliveryContract } from '@evidence-poc/evidence-api/delivery';
+import { componentName } from '@evidence-poc/evidence-api/delivery';
+import { compareText } from '@evidence-poc/evidence-api/delivery';
 
 /** Ephemeral compiler IR, never a persisted or user-authored suite format. */
 export interface AcceptanceStep {

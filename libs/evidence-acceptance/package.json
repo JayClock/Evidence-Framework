@@ -1,0 +1,105 @@
+{
+  "name": "@evidence-poc/evidence-acceptance",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "@evidence-poc/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./commands": {
+      "@evidence-poc/source": "./src/commands.ts",
+      "types": "./dist/commands.d.ts",
+      "import": "./dist/commands.js",
+      "default": "./dist/commands.js"
+    },
+    "./cli": {
+      "@evidence-poc/source": "./src/cli.ts",
+      "types": "./dist/cli.d.ts",
+      "import": "./dist/cli.js",
+      "default": "./dist/cli.js"
+    },
+    "./runner": {
+      "@evidence-poc/source": "./src/runner/acceptanceRunner.ts",
+      "types": "./dist/runner/acceptanceRunner.d.ts",
+      "import": "./dist/runner/acceptanceRunner.js",
+      "default": "./dist/runner/acceptanceRunner.js"
+    },
+    "./projection": {
+      "@evidence-poc/source": "./src/projection.ts",
+      "types": "./dist/projection.d.ts",
+      "import": "./dist/projection.js",
+      "default": "./dist/projection.js"
+    }
+  },
+  "nx": {
+    "name": "evidence-acceptance",
+    "tags": [
+      "type:lib",
+      "layer:orchestration",
+      "platform:node",
+      "scope:acceptance",
+      "surface:browser-safe"
+    ],
+    "targets": {
+      "export-tests": {
+        "executor": "nx:run-commands",
+        "cache": false,
+        "dependsOn": [
+          {
+            "target": "build",
+            "projects": [
+              "cli"
+            ]
+          }
+        ],
+        "options": {
+          "command": "node apps/cli/dist/cli.js api export-tests",
+          "cwd": "."
+        }
+      },
+      "diff": {
+        "executor": "nx:run-commands",
+        "cache": false,
+        "dependsOn": [
+          {
+            "target": "build",
+            "projects": [
+              "cli"
+            ]
+          }
+        ],
+        "options": {
+          "command": "node apps/cli/dist/cli.js api diff",
+          "cwd": "."
+        }
+      },
+      "test": {
+        "cache": false
+      }
+    }
+  },
+  "dependencies": {
+    "@evidence-poc/evidence-model-core": "workspace:*",
+    "@evidence-poc/evidence-model-io": "workspace:*",
+    "@evidence-poc/evidence-schema": "workspace:*",
+    "@stepci/runner": "2.0.7",
+    "ajv": "^8.20.0",
+    "ajv-formats": "3.0.1",
+    "cac": "^6.7.14",
+    "tslib": "^2.3.0",
+    "yaml": "2.9.1",
+    "@evidence-poc/evidence-api": "workspace:*"
+  },
+  "bin": {
+    "evidence-api": "./dist/cli.js"
+  },
+  "description": "从 API 契约生成验收脚本、执行 HTTP 门禁并检测契约兼容性"
+}

@@ -1,8 +1,8 @@
 import { OasdiffRunner } from './oasdiffRunner.js';
-import { buildDelivery, buildProjection } from '../projector.js';
-import { loadFmFromDocument } from '../adapter/fmAdapter.js';
+import { buildDelivery, buildProjection } from '@evidence-poc/evidence-api';
+import { loadFmFromDocument } from '@evidence-poc/evidence-api';
 import { compareContracts } from './compareContracts.js';
-import { procurementEvolution } from '../../tests/support/procurement.js';
+import { procurementEvolution } from '@evidence-poc/evidence-api/testing';
 
 const spec = () => ({
   openapi: '3.1.0',

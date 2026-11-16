@@ -1,6 +1,6 @@
+import type { ContractComparison } from '@evidence-poc/evidence-acceptance';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 import type {
-  ContractComparison,
   DeliveryContract,
   DeliveryField,
 } from '@evidence-poc/evidence-api';

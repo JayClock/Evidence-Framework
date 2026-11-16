@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { realpathSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
-import { canonicalJson } from './canonicalJson.js';
+import { canonicalJson } from '@evidence-poc/evidence-api';
 import { runCli } from './commands.js';
 
 export { runCli, runDiff, runApiCommand, validatePaths } from './commands.js';

@@ -3,7 +3,7 @@ import {
   parseModelBundleText,
   serializeModelBundle,
 } from '@evidence-poc/evidence-model-core';
-import { procurementEvolution } from '../../tests/support/procurement.js';
+import { procurementEvolution } from '../testing/procurement.js';
 import { canonicalJson } from '../canonicalJson.js';
 import { buildDelivery } from '../projector.js';
 import { validateProjection } from '../loader/apiLoader.js';

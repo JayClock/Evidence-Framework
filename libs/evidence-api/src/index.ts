@@ -1,32 +1,4 @@
 export {
-  createDriftInspector,
-  inspectPayloadDrift,
-} from './runner/driftInspector.js';
-export type { DriftIssue, DriftReport } from './runner/driftInspector.js';
-export { renderDeliverables } from './renderDeliverables.js';
-export {
-  projectAcceptanceTests,
-  type AcceptanceProjection,
-  type AcceptanceFlow,
-  type AcceptanceStep,
-} from './delivery/scenarioProjector.js';
-export { renderStepCi } from './renderer/stepCiRenderer.js';
-export { renderHurl } from './renderer/hurlRenderer.js';
-
-export {
-  compareContracts,
-  type ContractComparison,
-} from './diff/compareContracts.js';
-export {
-  OasdiffRunner,
-  OasdiffError,
-  OASDIFF_VERSION,
-  type OasdiffChange,
-  type OasdiffComparison,
-  type OasdiffOptions,
-} from './diff/oasdiffRunner.js';
-
-export {
   weaveHypermedia,
   halLinksFor,
   deriveJourneys,
@@ -134,15 +106,6 @@ export {
   type DeliveryDeployment,
 } from './delivery/delivery.js';
 
-export {
-  runCli,
-  validatePaths,
-  type CliOptions,
-  type DiffCliOptions,
-  type CliResult,
-  type Command,
-} from './commands.js';
-
 export { compareText, sortedText } from './order.js';
 export type { JsonObject } from './types.js';
 
@@ -151,3 +114,6 @@ export {
   API_PROJECTION_SCHEMA,
   API_PROJECTION_SCHEMA_TEXT,
 } from './schemas/apiProjectionSchema.js';
+
+export { validateDeliveryExamples } from './delivery/modelDelivery.js';
+export { assertOpenApiContract } from './openapi/validateContract.js';

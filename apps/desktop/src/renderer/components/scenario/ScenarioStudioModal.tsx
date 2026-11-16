@@ -1,8 +1,6 @@
+import { projectAcceptanceTests } from '@evidence-poc/evidence-acceptance/projection';
 import { useMemo, useState } from 'react';
-import {
-  buildDeliveryRoutes,
-  projectAcceptanceTests,
-} from '@evidence-poc/evidence-api/delivery';
+import { buildDeliveryRoutes } from '@evidence-poc/evidence-api/delivery';
 import {
   cloneScenarioExamples,
   evaluateScenario,

@@ -15,6 +15,7 @@
 /** Node packages that ship a browser-safe entry and may be imported from one. */
 const NODE_PACKAGES_WITH_BROWSER_ENTRY = [
   '@evidence-poc/evidence-api',
+  '@evidence-poc/evidence-acceptance',
   '@evidence-poc/evidence-agent',
 ];
 
@@ -35,7 +36,7 @@ export default [
           paths: NODE_PACKAGES_WITH_BROWSER_ENTRY.map((name) => ({
             name,
             message:
-              'Import the browser-safe subpath (`…/delivery`, `…/browser`). The package root re-exports Node-only modules.',
+              'Import the browser-safe subpath (`…/delivery`, `…/browser`, `…/projection`). The package root re-exports Node-only modules.',
           })),
         },
       ],

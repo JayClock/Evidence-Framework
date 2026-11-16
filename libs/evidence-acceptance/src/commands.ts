@@ -6,23 +6,27 @@ import {
   exportAcceptanceTests,
   defaultAcceptanceDirectory,
 } from './exportTests.js';
-import { loadFm } from './adapter/fmAdapter.js';
-import { diagnosticToJson, hasErrors, hasGaps } from './diagnostics.js';
-import { inspectSummary } from './inspect.js';
+import { loadFm } from '@evidence-poc/evidence-api';
+import {
+  diagnosticToJson,
+  hasErrors,
+  hasGaps,
+} from '@evidence-poc/evidence-api';
+import { inspectSummary } from '@evidence-poc/evidence-api';
 import {
   loadDesign,
   validateProjection,
   type DesignDocument,
-} from './loader/apiLoader.js';
-import { buildProjection, isComplete } from './projector.js';
+} from '@evidence-poc/evidence-api';
+import { buildProjection, isComplete } from '@evidence-poc/evidence-api';
 import { compareContracts } from './diff/compareContracts.js';
-import { assertOpenApiContract } from './openapi/validateContract.js';
+import { assertOpenApiContract } from '@evidence-poc/evidence-api';
 import { OasdiffError } from './diff/oasdiffRunner.js';
 import {
   defaultOutputDirectory,
   renderOutputs,
   writeOutput,
-} from './renderer/outputRenderer.js';
+} from '@evidence-poc/evidence-api';
 
 export type Command =
   | 'inspect'

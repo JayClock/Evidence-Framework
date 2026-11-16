@@ -22,6 +22,9 @@
   ],
   "references": [
     {
+      "path": "../../libs/evidence-acceptance/tsconfig.lib.json"
+    },
+    {
       "path": "../../libs/desktop/feature-agent/tsconfig.lib.json"
     },
     {

@@ -277,6 +277,9 @@ importers:
 
   apps/cli:
     dependencies:
+      '@evidence-poc/evidence-acceptance':
+        specifier: workspace:*
+        version: link:../../libs/evidence-acceptance
       '@evidence-poc/evidence-agent':
         specifier: workspace:*
         version: link:../../libs/evidence-agent
@@ -332,6 +335,9 @@ importers:
       '@evidence-poc/desktop-ui-kit':
         specifier: workspace:*
         version: link:../../libs/desktop/ui-kit
+      '@evidence-poc/evidence-acceptance':
+        specifier: workspace:*
+        version: link:../../libs/evidence-acceptance
       '@evidence-poc/evidence-agent':
         specifier: workspace:*
         version: link:../../libs/evidence-agent
@@ -423,6 +429,9 @@ importers:
 
   libs/desktop/contracts:
     dependencies:
+      '@evidence-poc/evidence-acceptance':
+        specifier: workspace:*
+        version: link:../../evidence-acceptance
       '@evidence-poc/evidence-agent':
         specifier: workspace:*
         version: link:../../evidence-agent
@@ -692,11 +701,47 @@ importers:
         specifier: ^2.3.0
         version: 2.9.1
 
+  libs/evidence-acceptance:
+    dependencies:
+      '@evidence-poc/evidence-api':
+        specifier: workspace:*
+        version: link:../evidence-api
+      '@evidence-poc/evidence-model-core':
+        specifier: workspace:*
+        version: link:../evidence-model-core
+      '@evidence-poc/evidence-model-io':
+        specifier: workspace:*
+        version: link:../evidence-model-io
+      '@evidence-poc/evidence-schema':
+        specifier: workspace:*
+        version: link:../evidence-schema
+      '@stepci/runner':
+        specifier: 2.0.7
+        version: 2.0.7(supports-color@10.2.2)
+      ajv:
+        specifier: ^8.20.0
+        version: 8.20.0
+      ajv-formats:
+        specifier: 3.0.1
+        version: 3.0.1(ajv@8.20.0)
+      cac:
+        specifier: ^6.7.14
+        version: 6.7.14
+      tslib:
+        specifier: ^2.3.0
+        version: 2.9.1
+      yaml:
+        specifier: 2.9.1
+        version: 2.9.1
+
   libs/evidence-agent:
     dependencies:
       '@earendil-works/pi-coding-agent':
         specifier: ^1.5.2
         version: 1.5.2(@aws-sdk/credential-provider-node@3.972.95)(@modelcontextprotocol/sdk@1.32.2(supports-color@10.2.2)(zod@3.25.76))(@smithy/signature-v4@5.7.5)(supports-color@10.2.2)(ws@8.22.2)(zod@3.25.76)
+      '@evidence-poc/evidence-acceptance':
+        specifier: workspace:*
+        version: link:../evidence-acceptance
       '@evidence-poc/evidence-api':
         specifier: workspace:*
         version: link:../evidence-api
@@ -736,23 +781,11 @@ importers:
       '@seriousme/openapi-schema-validator':
         specifier: 2.11.0
         version: 2.11.0
-      '@stepci/runner':
-        specifier: 2.0.7
-        version: 2.0.7(supports-color@10.2.2)
       ajv:
         specifier: ^8.20.0
         version: 8.20.0
-      ajv-formats:
-        specifier: 3.0.1
-        version: 3.0.1(ajv@8.20.0)
-      cac:
-        specifier: ^6.7.14
-        version: 6.7.14
       tslib:
         specifier: ^2.3.0
-        version: 2.9.1
-      yaml:
-        specifier: 2.9.1
         version: 2.9.1
     devDependencies:
       openapi-typescript:

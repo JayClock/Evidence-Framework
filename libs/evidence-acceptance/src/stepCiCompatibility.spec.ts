@@ -2,7 +2,7 @@ import { createServer } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { runFromYAML } from '@stepci/runner';
 import { expect, it } from 'vitest';
-import { createAcceptanceModel } from '../tests/support/acceptance.js';
+import { createAcceptanceModel } from '@evidence-poc/evidence-api/testing';
 import { projectAcceptanceTests } from './delivery/scenarioProjector.js';
 import { renderStepCi } from './renderer/stepCiRenderer.js';
 

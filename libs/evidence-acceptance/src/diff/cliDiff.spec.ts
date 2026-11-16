@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { serializeModelBundle } from '@evidence-poc/evidence-model-core';
 import { readModelRoot } from '@evidence-poc/evidence-model-io';
-import { API_FIXTURES } from '../../tests/support/fixtures.js';
+import { API_FIXTURES } from '@evidence-poc/evidence-api/testing';
 import { runCli } from '../cli.js';
 
 it('compares directories and bundles as JSON or Markdown without touching inputs', async () => {

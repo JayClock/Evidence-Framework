@@ -12,7 +12,7 @@ import { loadFm, type FmIndex } from '../../src/adapter/fmAdapter.js';
 /** Model fixtures shared by snapshot, adapter and contract tests. */
 
 export const API_FIXTURES = fileURLToPath(
-  new URL('../fixtures/', import.meta.url),
+  new URL('../../tests/fixtures/', import.meta.url),
 );
 
 export const fullLifecycle = (): { modelRoot: string } => ({

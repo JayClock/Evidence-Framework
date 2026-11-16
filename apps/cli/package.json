@@ -47,7 +47,8 @@
     "@evidence-poc/evidence-schema": "workspace:*",
     "@evidence-poc/evidence-visualization": "workspace:*",
     "cac": "^6.7.14",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "@evidence-poc/evidence-acceptance": "workspace:*"
   },
   "devDependencies": {
     "vitest": "~4.1.0"

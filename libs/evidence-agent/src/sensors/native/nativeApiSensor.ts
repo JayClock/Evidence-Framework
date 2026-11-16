@@ -1,8 +1,10 @@
+import {
+  compareContracts,
+  type ContractComparison,
+} from '@evidence-poc/evidence-acceptance';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 import {
   buildDelivery,
-  compareContracts,
-  type ContractComparison,
   type EvidenceApiSnapshot,
 } from '@evidence-poc/evidence-api';
 import type { ApiCoverageSummary, SensorIssue } from '../sensorReport.js';

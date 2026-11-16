@@ -7,9 +7,6 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "bin": {
-    "evidence-api": "./dist/cli.js"
-  },
   "exports": {
     "./package.json": "./package.json",
     ".": {
@@ -18,29 +15,17 @@
       "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
-    "./commands": {
-      "@evidence-poc/source": "./src/commands.ts",
-      "types": "./dist/commands.d.ts",
-      "import": "./dist/commands.js",
-      "default": "./dist/commands.js"
-    },
-    "./cli": {
-      "@evidence-poc/source": "./src/cli.ts",
-      "types": "./dist/cli.d.ts",
-      "import": "./dist/cli.js",
-      "default": "./dist/cli.js"
-    },
-    "./runner": {
-      "@evidence-poc/source": "./src/runner/acceptanceRunner.ts",
-      "types": "./dist/runner/acceptanceRunner.d.ts",
-      "import": "./dist/runner/acceptanceRunner.js",
-      "default": "./dist/runner/acceptanceRunner.js"
-    },
     "./delivery": {
       "@evidence-poc/source": "./src/delivery.ts",
       "types": "./dist/delivery.d.ts",
       "import": "./dist/delivery.js",
       "default": "./dist/delivery.js"
+    },
+    "./testing": {
+      "@evidence-poc/source": "./src/testing/index.ts",
+      "types": "./dist/testing/index.d.ts",
+      "import": "./dist/testing/index.js",
+      "default": "./dist/testing/index.js"
     }
   },
   "nx": {
@@ -68,41 +53,6 @@
           "command": "node apps/cli/dist/cli.js api deliver",
           "cwd": "."
         }
-      },
-      "export-tests": {
-        "executor": "nx:run-commands",
-        "cache": false,
-        "dependsOn": [
-          {
-            "target": "build",
-            "projects": [
-              "cli"
-            ]
-          }
-        ],
-        "options": {
-          "command": "node apps/cli/dist/cli.js api export-tests",
-          "cwd": "."
-        }
-      },
-      "diff": {
-        "executor": "nx:run-commands",
-        "cache": false,
-        "dependsOn": [
-          {
-            "target": "build",
-            "projects": [
-              "cli"
-            ]
-          }
-        ],
-        "options": {
-          "command": "node apps/cli/dist/cli.js api diff",
-          "cwd": "."
-        }
-      },
-      "test": {
-        "cache": false
       }
     }
   },
@@ -111,12 +61,8 @@
     "@evidence-poc/evidence-model-io": "workspace:*",
     "@evidence-poc/evidence-schema": "workspace:*",
     "@seriousme/openapi-schema-validator": "2.11.0",
-    "@stepci/runner": "2.0.7",
     "ajv": "^8.20.0",
-    "ajv-formats": "3.0.1",
-    "cac": "^6.7.14",
-    "tslib": "^2.3.0",
-    "yaml": "2.9.1"
+    "tslib": "^2.3.0"
   },
   "devDependencies": {
     "openapi-typescript": "7.13.0",

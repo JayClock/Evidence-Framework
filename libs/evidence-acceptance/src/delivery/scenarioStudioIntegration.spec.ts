@@ -5,7 +5,7 @@ import {
   evaluateScenario,
   collectFlowScenarios,
 } from '@evidence-poc/evidence-model-core';
-import { createAcceptanceModel } from '../../tests/support/acceptance.js';
+import { createAcceptanceModel } from '@evidence-poc/evidence-api/testing';
 import { projectAcceptanceTests } from './scenarioProjector.js';
 import { renderStepCi } from '../renderer/stepCiRenderer.js';
 import { renderHurl } from '../renderer/hurlRenderer.js';

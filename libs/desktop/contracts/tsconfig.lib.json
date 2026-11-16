@@ -13,22 +13,25 @@
   "include": ["src/**/*.ts"],
   "references": [
     {
-      "path": "../../evidence-agent/tsconfig.lib.json"
+      "path": "../../evidence-acceptance/tsconfig.lib.json"
     },
     {
-      "path": "../../evidence-api/tsconfig.lib.json"
-    },
-    {
-      "path": "../../evidence-mcp/tsconfig.lib.json"
-    },
-    {
-      "path": "../../evidence-model-core/tsconfig.lib.json"
+      "path": "../../evidence-visualization/tsconfig.lib.json"
     },
     {
       "path": "../../evidence-schema/tsconfig.lib.json"
     },
     {
-      "path": "../../evidence-visualization/tsconfig.lib.json"
+      "path": "../../evidence-model-core/tsconfig.lib.json"
+    },
+    {
+      "path": "../../evidence-mcp/tsconfig.lib.json"
+    },
+    {
+      "path": "../../evidence-api/tsconfig.lib.json"
+    },
+    {
+      "path": "../../evidence-agent/tsconfig.lib.json"
     }
   ]
 }

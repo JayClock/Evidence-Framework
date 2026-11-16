@@ -1,10 +1,10 @@
 import { readModelRoot } from '@evidence-poc/evidence-model-io';
-import { API_FIXTURES } from '../../tests/support/fixtures.js';
+import { API_FIXTURES } from '../testing/fixtures.js';
 import { buildDelivery, buildProjection } from '../projector.js';
 import { loadFmFromDocument } from '../adapter/fmAdapter.js';
 import { halLinksFor } from './hateoasWeaver.js';
-import { procurementEvolution } from '../../tests/support/procurement.js';
-import { operationFor } from '../../tests/support/contract.js';
+import { procurementEvolution } from '../testing/procurement.js';
+import { operationFor } from '../testing/contract.js';
 
 it('keeps branch links, HAL responses and journeys consistent without imposing a sequence', () => {
   const document = procurementEvolution()[3]!;

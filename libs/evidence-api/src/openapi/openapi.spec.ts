@@ -2,15 +2,15 @@ import { Validator } from '@seriousme/openapi-schema-validator';
 import openapiTS, { astToString } from 'openapi-typescript';
 import ts from 'typescript';
 
-import { procurementEvolution } from '../../tests/support/procurement.js';
-import { contractProblems } from '../../tests/support/openapi.js';
+import { procurementEvolution } from '../testing/procurement.js';
+import { contractProblems } from '../testing/openapi.js';
 import {
   operationFor,
   resolveSchema,
   type Operation,
-} from '../../tests/support/contract.js';
+} from '../testing/contract.js';
 import { readModelRoot } from '@evidence-poc/evidence-model-io';
-import { fullLifecycle } from '../../tests/support/fixtures.js';
+import { fullLifecycle } from '../testing/fixtures.js';
 import { buildDelivery } from '../projector.js';
 
 const compileTypes = (source: string): readonly ts.Diagnostic[] => {

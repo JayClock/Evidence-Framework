@@ -8,13 +8,13 @@ import { readModelRoot } from '@evidence-poc/evidence-model-io';
 import {
   buildDeliveryContract,
   validateDeliveryExamples,
-} from './delivery/modelDelivery.js';
-import { buildDeliveryRoutes } from './delivery/routes.js';
+} from '@evidence-poc/evidence-api';
+import { buildDeliveryRoutes } from '@evidence-poc/evidence-api';
 import { projectAcceptanceTests } from './delivery/scenarioProjector.js';
-import { assertOpenApiContract } from './openapi/validateContract.js';
+import { assertOpenApiContract } from '@evidence-poc/evidence-api';
 import { renderStepCi } from './renderer/stepCiRenderer.js';
 import { renderHurl } from './renderer/hurlRenderer.js';
-import { writeOutput } from './renderer/outputRenderer.js';
+import { writeOutput } from '@evidence-poc/evidence-api';
 
 export const defaultAcceptanceDirectory = (root: string): string =>
   path.join(root, '.evidence', 'api', 'acceptance');

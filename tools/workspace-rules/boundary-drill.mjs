@@ -17,13 +17,37 @@ import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+const ROOT = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '../..',
+);
 
 /**
  * `project` owns `file`; `imports` is the whole body of the probe; `expects`
  * is a fragment of the message that must appear in the failed lint output.
  */
 const CASES = [
+  {
+    name: 'API projection reaching the acceptance runtime',
+    project: 'evidence-api',
+    file: 'libs/evidence-api/src/__boundary-drill.ts',
+    body: "export * from '@evidence-poc/evidence-acceptance';\n",
+    expects: 'Circular dependency between "evidence-api" and "evidence-acceptance"',
+  },
+  {
+    name: 'a browser feature importing the acceptance runtime entry',
+    project: 'desktop-feature-story',
+    file: 'libs/desktop/feature-story/src/__boundary-drill.ts',
+    body: "export * from '@evidence-poc/evidence-acceptance';\n",
+    expects: "'@evidence-poc/evidence-acceptance' import is restricted",
+  },
+  {
+    name: 'shared tools reaching an SDK orchestration adapter',
+    project: 'evidence-tools',
+    file: 'libs/evidence-tools/src/__boundary-drill.ts',
+    body: "export * from '@evidence-poc/evidence-agent';\n",
+    expects: 'Circular dependency between "evidence-tools" and "evidence-agent"',
+  },
   {
     name: 'a domain library reaching a projection',
     project: 'evidence-canvas-interaction',
@@ -95,7 +119,7 @@ for (const drillCase of CASES) {
   if (!result.output.includes(drillCase.expects)) {
     failures += 1;
     log(`FAIL  ${drillCase.name}: lint failed, but not for the reason given`);
-    log(result.output.trim().split('\n').slice(-20).join('\n'));
+    log(result.output.trim());
     continue;
   }
   log(`ok    ${drillCase.name}`);

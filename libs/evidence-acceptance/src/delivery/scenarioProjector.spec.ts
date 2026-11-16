@@ -6,7 +6,7 @@ import { renderHurl } from '../renderer/hurlRenderer.js';
 import {
   createAcceptanceModel,
   EXAMPLE_AS_OF,
-} from '../../tests/support/acceptance.js';
+} from '@evidence-poc/evidence-api/testing';
 
 const getExample = (
   model: ReturnType<typeof createAcceptanceModel>,

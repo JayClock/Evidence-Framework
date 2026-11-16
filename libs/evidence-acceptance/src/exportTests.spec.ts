@@ -13,7 +13,7 @@ import { serializeModelBundle } from '@evidence-poc/evidence-model-core';
 import { writeModelDirectory } from '@evidence-poc/evidence-model-io';
 import { parse } from 'yaml';
 import { runCli } from './cli.js';
-import { createAcceptanceModel } from '../tests/support/acceptance.js';
+import { createAcceptanceModel } from '@evidence-poc/evidence-api/testing';
 
 let root: string, fm: string, out: string;
 const args = (format = 'stepci') => [

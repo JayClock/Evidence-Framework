@@ -7,7 +7,7 @@ import { stringify, parse } from 'yaml';
 import { describe, it, expect } from 'vitest';
 import { renderStepCi } from '../renderer/stepCiRenderer.js';
 import { projectAcceptanceTests } from '../delivery/scenarioProjector.js';
-import { createAcceptanceModel } from '../../tests/support/acceptance.js';
+import { createAcceptanceModel } from '@evidence-poc/evidence-api/testing';
 import { runAcceptanceSuite, validateAsOf } from './acceptanceRunner.js';
 
 it('reports drift as advisory or strict without replacing other official assertions', async () => {
