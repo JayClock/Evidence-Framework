@@ -28,6 +28,9 @@ const SYMBOLS: Record<string, string> = {
   '<': '小于',
   '>=': '大于等于',
   '<=': '小于等于',
+  double: '转为小数',
+  int: '转为整数',
+  string: '转为文本',
 };
 const BINARY = new Set([
   '+',
@@ -98,6 +101,12 @@ export const translateBusinessFormula = (
       });
       return true;
     }
+    if (
+      node.op === 'call' &&
+      ['double', 'int', 'string'].includes(node.args[0]) &&
+      node.args[1].length === 1
+    )
+      return visit(node.args[1][0]);
     if (node.op === '!_' || node.op === '-_') return visit(node.args);
     if (BINARY.has(node.op) && Array.isArray(node.args))
       return (node.args as ASTNode[]).every(visit);
@@ -108,10 +117,15 @@ export const translateBusinessFormula = (
     if (!visit(ast)) return unsupported;
     const tokens: BusinessFormulaToken[] = [];
     let offset = 0;
-    const syntax = (end: number): void => {
+    const syntax = (end: number): boolean => {
       const gap = expression.slice(offset, end);
-      const pattern = /\s+|&&|\|\||==|!=|>=|<=|./gu;
-      for (const match of gap.matchAll(pattern)) {
+      // Comments are source prose, not division operators or business rules.
+      if (/\/[/\*]/u.test(gap)) return false;
+      const pattern =
+        /\s+|double\b|int\b|string\b|&&|\|\||==|!=|>=|<=|[()+\-*/%<>!?:]/gu;
+      const matches = [...gap.matchAll(pattern)];
+      if (matches.map((match) => match[0]).join('') !== gap) return false;
+      for (const match of matches) {
         const text = match[0];
         tokens.push({
           kind: 'syntax',
@@ -122,13 +136,14 @@ export const translateBusinessFormula = (
         });
       }
       offset = end;
+      return true;
     };
     for (const leaf of leaves.sort((a, b) => a.offset - b.offset)) {
-      syntax(leaf.offset);
+      if (!syntax(leaf.offset)) return unsupported;
       tokens.push(leaf);
       offset = leaf.offset + leaf.length;
     }
-    syntax(expression.length);
+    if (!syntax(expression.length)) return unsupported;
     if (ast.op === '?:')
       tokens.unshift({
         kind: 'syntax',

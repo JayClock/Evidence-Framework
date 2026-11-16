@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import {
   replaceBusinessFormulaToken,
+  translateBusinessFormula,
   type BusinessFormulaToken,
   type CelCandidate,
 } from '@evidence-poc/evidence-model-core';
@@ -17,6 +18,19 @@ export const BusinessFormulaView = ({
   onCommit: (expression: string) => void;
 }) => {
   const [error, setError] = useState('');
+  const [operand, setOperand] = useState('');
+  const [operation, setOperation] = useState('+');
+  const attributes = candidates
+    .filter(
+      (candidate) =>
+        candidate.ref !== undefined && candidate.cardinality !== 'many',
+    )
+    .flatMap((candidate) =>
+      candidate.attributes.map((attribute) => ({
+        value: `${candidate.alias}.${attribute.name}`,
+        label: `${candidate.label}.${attribute.label}`,
+      })),
+    );
   const operatorChoices: Record<string, readonly [string, string][]> = {
     '+': [
       ['+', '加'],
@@ -71,22 +85,14 @@ export const BusinessFormulaView = ({
               onChange={(event) => commit(token, event.target.value)}
               className="max-w-64 rounded bg-[#eef2f7] p-1"
             >
-              {candidates
-                .filter(
-                  (candidate) =>
-                    candidate.ref !== undefined &&
-                    candidate.cardinality !== 'many',
-                )
-                .flatMap((candidate) =>
-                  candidate.attributes.map((attribute) => (
-                    <option
-                      key={`${candidate.alias}.${attribute.name}`}
-                      value={`${candidate.alias}.${attribute.name}`}
-                    >
-                      {candidate.label}.{attribute.label}
-                    </option>
-                  )),
-                )}
+              <option value={token.text}>{token.label}</option>
+              {attributes
+                .filter((attribute) => attribute.value !== token.text)
+                .map((attribute) => (
+                  <option key={attribute.value} value={attribute.value}>
+                    {attribute.label}
+                  </option>
+                ))}
             </select>
           ) : token.kind === 'literal' ? (
             <input
@@ -115,6 +121,43 @@ export const BusinessFormulaView = ({
             </span>
           ),
         )}
+      </div>
+      <div className="mt-1 flex flex-wrap gap-1 text-[11px]">
+        <select
+          aria-label="追加运算符"
+          value={operation}
+          onChange={(event) => setOperation(event.target.value)}
+        >
+          {operatorChoices['+'].map(([value, label]) => (
+            <option key={value} value={value}>
+              {label}
+            </option>
+          ))}
+        </select>
+        <select
+          aria-label="插入属性"
+          value={operand}
+          onChange={(event) => setOperand(event.target.value)}
+        >
+          <option value="">选择已有属性</option>
+          {attributes.map((attribute) => (
+            <option key={attribute.value} value={attribute.value}>
+              {attribute.label}
+            </option>
+          ))}
+        </select>
+        <button
+          type="button"
+          disabled={operand === ''}
+          onClick={() => {
+            const next = `(${expression}) ${operation} ${operand}`;
+            if (translateBusinessFormula(next, candidates).supported)
+              onCommit(next);
+            else setError('无法插入计算，请切换 CEL 源码。');
+          }}
+        >
+          插入计算
+        </button>
       </div>
       {error ? (
         <p role="alert" className="text-[11px] text-[#b42318]">

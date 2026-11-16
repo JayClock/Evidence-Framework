@@ -20,6 +20,9 @@ const candidates: CelCandidate[] = [
 describe('business formula projection', () => {
   it.each([
     'contract.price * contract.qty',
+    'double(contract.qty) * contract.price',
+    'string(int(2.1)) == "2"',
+    'contract . price * 2',
     ' contract.price > 0 ? (contract.price + 2) : 0 ',
     '!true || -contract.price < 1.5',
     '"a * b" == "a * b"',
@@ -64,6 +67,7 @@ describe('business formula projection', () => {
     'size([1, 2])',
     '[1].map(x, x * 2)',
     'contract["price"]',
+    'contract.price // memo\n+ 2',
     'true ? 0 : size([])',
   ])('falls back without throwing: %s', (source) => {
     expect(translateBusinessFormula(source, candidates).supported).toBe(false);
