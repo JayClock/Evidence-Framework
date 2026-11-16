@@ -1,3 +1,4 @@
+import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { createModelSession } from '@evidence-poc/evidence-model-core';
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
