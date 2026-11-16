@@ -1,6 +1,6 @@
 # B2B 担保采购与里程碑履约
 
-> 阶段二：独立 Fastify 后端已接入真实 HTTP 验收与治理双门禁。尚无本案例的浏览器 UI / E2E；其他语言实现不在本阶段范围内。
+> 阶段三：四个独立框架实现（Gin / Spring Boot / FastAPI / Fastify）已落地。尚无本案例的浏览器 UI / E2E；完整跨语言故障演练与 CI 矩阵留给后续阶段。
 
 本案例用三个独立参与方、四份双边合同，描述「锁定商业条款 → 全额资金托管 → 交付与买方验收 → 托管方终态分账」。重点不是增加 CRUD，而是明确每项事实的形成方、跨合同凭证依据、金额计算和时间边界。
 
@@ -17,7 +17,7 @@ generated/                    # evidence export 生成；禁止手改，提交 G
 
 两个 Bundle 是可编辑源；`generated/` 只对应当前 v2。v1 的验收套件在后续 regression 门禁中由基线模型重新编译，不复制成另一份手工维护的 YAML。Tree 与 Bundle 都是框架支持的源格式，本案例选择 Bundle 以便独立分发；这不是移除 Tree 格式支持。
 
-四个目标实现（Gin、Spring Boot、FastAPI、Fastify）必须各自自包含、互不知道对方存在，不共享运行时代码、数据库、拦截器或构建配置。实现不得读取本模型的 examples 或导出的断言值来伪造响应。Fastify 工程有自己的清单、锁文件和原生测试，不属于框架 pnpm workspace；可单独复制安装、构建、启动和测试。
+四个实现（Gin、Spring Boot、FastAPI、Fastify）各自自包含、互不知道对方存在，不共享运行时代码、数据库、拦截器或构建配置。实现不得读取本模型的 examples 或导出的断言值来伪造响应。每个工程都有自己的依赖清单与原生测试，可单独复制安装、构建、启动和测试；都不属于框架 pnpm workspace。外部验收只使用统一契约和目标 HTTP 地址，不要求四种服务同时启动，也不要求单个开发者安装全部语言环境。
 
 ## 四份双边合同与三方角色
 
@@ -143,5 +143,45 @@ v1 regression 为两个原有流程、46 步；DoD 为三个新增里程碑流�
 
 - 旧 `dogfood-backend/`、转发 shim 和旧治理产物已移除，不保留兼容启动入口。
 - 采购/定金小模型移至 `libs/evidence-model-core/tests/fixtures/acceptance/`，仅供叙事、哈希和导出等框架回归使用；真实 HTTP 验收及 CI 使用本案例。
-- GitHub/GitLab 门禁已切换本契约与 Fastify 服务；每个 gate 独立进程。Go/Java/Python、自定义浏览器客户端及浏览器 E2E 留给后续阶段。
+- GitHub/GitLab 门禁目前使用本契约与 Fastify 服务；每个 gate 独立进程。新增语言尚未纳入 CI 矩阵，自定义浏览器客户端及浏览器 E2E 留给后续阶段。
 - 后端契约通过只证明已执行用例，不代表前端 E2E 失败一定是前端问题；排障仍需结合浏览器、网络、测试数据和服务日志。
+
+## 阶段三：独立多语言工程
+
+框架自身仍只需要 Node / pnpm。以下语言环境是可选的示例工具链，不进入根 workspace、根安装或框架常规测试；只安装准备运行的那一种即可。
+
+| 工程                                                       | 环境与依赖管理                                   | 原生测试 / 构建（在工程内执行）                                |
+| ---------------------------------------------------------- | ------------------------------------------------ | -------------------------------------------------------------- |
+| [golang-gin](implementations/golang-gin/README.md)         | Go 1.22+；`go.mod` + `go.sum`                    | `go test -race ./...` / `go build -o bin/escrow ./cmd/server`  |
+| [java-spring](implementations/java-spring/README.md)       | JDK 21；固定 Spring Boot 3.3.13 与 Maven Wrapper | `./mvnw -B verify`                                             |
+| [python-fastapi](implementations/python-fastapi/README.md) | Python 3.12+ / uv；`uv.lock`                     | `uv sync --frozen --python 3.12` / `uv run --frozen pytest -q` |
+| [ts-fastify](implementations/ts-fastify/README.md)         | Node / pnpm；独立锁文件                          | `pnpm install --frozen-lockfile && pnpm test`                  |
+
+### 任意选择一个服务启动
+
+以下命令均从仓库根目录执行，分别在独立终端运行，不需要互相调用或同时启动：
+
+```sh
+(cd examples/b2b-escrow/implementations/golang-gin && \
+  go run ./cmd/server --test-mode --port 8081)
+
+(cd examples/b2b-escrow/implementations/java-spring && \
+  ./mvnw -B verify && java -jar target/escrow-0.1.0.jar --test-mode --port 8082)
+
+(cd examples/b2b-escrow/implementations/python-fastapi && \
+  uv sync --frozen --python 3.12 && \
+  uv run --frozen python -m app.main --test-mode --port 8083)
+```
+
+在另一个终端，从仓库根目录使用同一套验收，仅修改目标地址（8081 / 8082 / 8083 / 8085）：
+
+```sh
+pnpm evidence test --target http://127.0.0.1:8081 \
+  --scenarios examples/b2b-escrow/generated --strict-drift --verbose
+```
+
+三个新增实现提供 `--test-mode`、`--port`（包括 0）和 `--mode v1|v2`，启动报告目标 URL，且都只绑定回环。`--fault` 目前只接受 `none`；尚未落地的故障值会直接拒绝，不以忽略参数冒充已实现。完整跨语言红绿故障演练属于阶段四，CI 矩阵属于阶段五。
+
+本阶段金额以各语言原生的任意精度整数实现（Go `math/big.Int`、Java `BigInteger`、Python `int`），而不是照搬早期方案里的浮点 / Decimal 金额；这遵守本案例已经冻结的整数分契约。三个工程的原生测试各自构造业务事实，覆盖严格输入、角色边界、精确金额、时钟隔离、跨订单关联、请求过期及并发放款唯一性。服务不读取模型或验收期望，也没有跨实现依赖。
+
+各工程可复制出仓库单独构建、运行和测试。只有做外部 HTTP 验收时才需要另外接收 `generated/` 中的标准契约与 Evidence CLI。状态依然是内存账本；每次全量运行或 gate 重启服务，不能重复使用已放款订单。持久化、生产身份与浏览器 UI / E2E 不在阶段三范围内。
