@@ -1,10 +1,13 @@
-export * from './components/agent/InlinePatchCard';
-export * from './components/agent/AgentCopilot';
-export * from './components/agent/InlinePatchCopilot';
-export * from './components/agent/thinkingParser';
-export * from './components/agent/WorkshopStepSelector';
-export * from './components/agent/ToolActivityItem';
-export * from './components/agent/ThinkingBlock';
+export {
+  AgentCopilot,
+  type AgentCopilotProps,
+  type PromptFocus,
+} from './components/agent/AgentCopilot';
+export {
+  InlinePatchCopilot,
+  type InlinePatchCopilotProps,
+  type InlineFocus,
+} from './components/agent/InlinePatchCopilot';
 export * from './state/useAgentPatchBridge';
 export * from './state/useAgentSession';
 export * from './state/usePatchReview';

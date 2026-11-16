@@ -32,18 +32,28 @@ import { ActivityDrawer } from '../components/layout/ActivityDrawer';
 import { ClauseTraceDrawer } from '../components/clauses/ClauseTraceDrawer';
 import { ActivityRail } from '../components/layout/ActivityRail';
 import { TopologyDrawer } from '../components/layout/TopologyDrawer';
-import { AgentCopilot } from '@evidence-poc/desktop-feature-agent';
-import { InlinePatchCopilot } from '@evidence-poc/desktop-feature-agent';
+import {
+  AgentCopilot,
+  InlinePatchCopilot,
+  useAgentPatchBridge,
+  useAgentSession,
+  usePatchReview,
+} from '@evidence-poc/desktop-feature-agent';
 import { CelRulesPane } from '../components/split/CelRulesPane';
 import { OpenApiSpecViewer } from '../components/split/OpenApiSpecViewer';
 import { ScenarioStudioModal } from '../components/scenario/ScenarioStudioModal';
 import { WorkshopWizardDrawer } from '../components/wizard/WorkshopWizardDrawer';
-import { StoryPlayerBar } from '@evidence-poc/desktop-feature-story';
-import { StoryDrawer } from '@evidence-poc/desktop-feature-story';
-import { useStoryPlayback } from '@evidence-poc/desktop-feature-story';
+import {
+  StoryPlayerBar,
+  StoryDrawer,
+  useStoryPlayback,
+} from '@evidence-poc/desktop-feature-story';
 import { SecondaryStage } from '../components/split/SecondaryStage';
 import { DriftRadar } from '@evidence-poc/desktop-feature-drift';
-import { DeliveryHub } from '@evidence-poc/desktop-feature-delivery';
+import {
+  DeliveryHub,
+  useDeliveryHub,
+} from '@evidence-poc/desktop-feature-delivery';
 import { ReviewHubModal } from '../components/review/ReviewHubModal';
 import { TopHeader } from '../components/TopHeader';
 import {
@@ -61,19 +71,15 @@ import {
   Toaster,
   toast,
 } from '@evidence-poc/desktop-ui-kit';
-import { useAgentPatchBridge } from '@evidence-poc/desktop-feature-agent';
 import type {
   CommandCapabilities,
   CommandHandlers,
 } from '../state/commandRegistry';
 import { useCommandRegistry } from '../state/useCommandRegistry';
-import { useAgentSession } from '@evidence-poc/desktop-feature-agent';
-import { useDeliveryHub } from '@evidence-poc/desktop-feature-delivery';
 import { useLiveModelBridge } from '../state/useLiveModelBridge';
 import { useEditorSession } from '../state/useEditorSession';
 import { useEditorShortcuts } from '../state/useEditorShortcuts';
 import { useMcpBridge } from '../state/useMcpBridge';
-import { usePatchReview } from '@evidence-poc/desktop-feature-agent';
 import { useReviewExport } from '../state/useReviewExport';
 import { useSensorsState } from '../state/useSensorsState';
 import {

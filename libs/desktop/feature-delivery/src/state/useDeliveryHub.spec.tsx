@@ -26,7 +26,7 @@ const setup = () => {
   );
   api.projects.deliveryLivePreview = request;
   const hook = renderHook(() =>
-    useDeliveryHub(window.evidenceAPI.projects, '/models/test', session, base),
+    useDeliveryHub(api.projects, '/models/test', session, base),
   );
   const edit = (label: string) =>
     session.mutate(
@@ -43,6 +43,15 @@ const tick = async () => {
 afterEach(() => vi.useRealTimers());
 
 describe('live delivery subscription', () => {
+  it('uses the injected transport without a desktop global', async () => {
+    const { request, hook } = setup();
+    Reflect.deleteProperty(window, 'evidenceAPI');
+    await tick();
+    expect(request).toHaveBeenCalledOnce();
+    expect(hook.result.current.analysis).not.toBeNull();
+    hook.unmount();
+  });
+
   it('debounces document changes, ignores selection and retains the opening baseline on undo/redo', async () => {
     const { session, base, request, edit, hook } = setup();
     act(() => {

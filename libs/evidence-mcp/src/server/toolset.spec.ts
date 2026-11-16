@@ -1,3 +1,4 @@
+import { createModelTools } from '@evidence-poc/evidence-tools';
 import { describe, expect, it, vi } from 'vitest';
 
 import {
@@ -244,6 +245,24 @@ const toolOf = (name: string) => {
 };
 
 describe('createEvidenceTools', () => {
+  it('adapts every shared model tool without replacing its schema or safety annotations', () => {
+    const client = createClient();
+    const registry = createModelTools({
+      loadDocument: async () =>
+        (await client.getDomainModel({ includeRules: true })).document,
+      applyModelPatch: async () => {
+        throw new Error('not invoked');
+      },
+    });
+    const exposed = createEvidenceTools(client);
+    for (const definition of registry) {
+      const tool = exposed.find(({ name }) => name === definition.name);
+      expect(tool?.inputSchema).toBe(definition.parameters);
+      expect(tool?.annotations).toEqual(definition.annotations);
+      expect(tool?.description).toBe(definition.description);
+    }
+  });
+
   it('registers the read, patch and operator tools', () => {
     expect(evidenceToolNames).toEqual([
       TOOL_NAMES.appState,

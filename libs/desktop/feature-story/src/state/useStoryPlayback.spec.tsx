@@ -42,7 +42,7 @@ const setup = (enabled = true) => {
       refreshSavedSources?: boolean;
     }) =>
       useStoryPlayback({
-        api: window.evidenceAPI.story,
+        api: api.story,
         rootPath: '/models/test',
         onInvalidated,
         ...props,
@@ -77,6 +77,15 @@ const tick = async (ms = STORY_REFRESH_DELAY) => {
 afterEach(() => vi.useRealTimers());
 
 describe('story playback', () => {
+  it('uses the injected transport without a desktop global', async () => {
+    const { project, hook } = setup();
+    Reflect.deleteProperty(window, 'evidenceAPI');
+    await tick();
+    expect(project).toHaveBeenCalledOnce();
+    expect(hook.result.current.ready).toBe(true);
+    hook.unmount();
+  });
+
   it('does no work outside walkthrough mode, debounces snapshots and guards step boundaries', async () => {
     const { hook, listFlows, project } = setup(false);
     await tick();
