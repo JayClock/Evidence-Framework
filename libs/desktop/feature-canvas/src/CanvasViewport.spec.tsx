@@ -91,6 +91,29 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllGlobals());
 
 describe('CanvasViewport', () => {
+  it('keeps breach markers visible without hover and alongside diagnostics', () => {
+    const marked = {
+      ...layout,
+      edges: layout.edges.map((edge) => ({
+        ...edge,
+        flowKind: 'breach_compensation' as const,
+      })),
+    };
+    const { container } = setup({ layout: marked });
+    const edge = container.querySelector(
+      '[data-edge-id="relation.confirmation-references-request"]',
+    )!;
+    expect(edge).toHaveAttribute('data-flow-kind', 'breach_compensation');
+    expect(edge.textContent).toContain('违约补偿');
+    expect(edge.querySelector('[data-edge-line]')).toHaveAttribute(
+      'stroke',
+      '#d97706',
+    );
+    expect(edge.querySelector('[data-edge-line]')).toHaveAttribute(
+      'stroke-dasharray',
+      '6 4',
+    );
+  });
   it('draws the placed objects, their Contexts and the routed relationships', () => {
     const { container } = setup();
 

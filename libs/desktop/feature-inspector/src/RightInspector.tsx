@@ -14,6 +14,7 @@ import {
   type ModelSession,
 } from '@evidence-poc/evidence-model-core';
 
+import { RelationshipFlowSection } from './inspector/RelationshipFlowSection';
 import { AttributeDataGrid } from './inspector/AttributeDataGrid';
 import { FulfillmentPairSection } from './inspector/FulfillmentPairSection';
 import { KeyDataLedgerSheet } from './inspector/KeyDataLedgerSheet';
@@ -197,6 +198,11 @@ const InspectorBody = ({
 
   return (
     <div className="space-y-4">
+      <RelationshipFlowSection
+        entityId={entity.id}
+        graph={graph}
+        session={session}
+      />
       {entity.category === 'evidence' &&
       entity.kind === 'fulfillment_request' ? (
         <FulfillmentPairSection

@@ -1,3 +1,4 @@
+import { breachFlowGaps } from './breachFlow.js';
 import {
   REQUIRED_EVIDENCE_TIME_ATTRIBUTES,
   type DomainModelDocument,
@@ -485,7 +486,7 @@ export const completenessGaps = (
     }
   }
 
-  gaps.push(...pairingGaps(model));
+  gaps.push(...pairingGaps(model), ...breachFlowGaps(model));
 
   return gaps;
 };

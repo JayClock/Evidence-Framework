@@ -14,6 +14,9 @@
     "kind": {
       "enum": ["plays_role", "references"]
     },
+    "flowKind": {
+      "enum": ["primary", "breach_compensation", "escalation"]
+    },
     "sourceRef": {
       "$ref": "#/$defs/id"
     },

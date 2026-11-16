@@ -168,6 +168,11 @@ export {
 export {
   CardinalityASTSchema,
   RelationshipASTSchema,
+  RELATIONSHIP_FLOW_DEFINITIONS,
+  RELATIONSHIP_FLOW_KINDS,
+  RELATIONSHIP_FLOW_LABELS,
+  RelationshipFlowKindSchema,
+  type RelationshipFlowKind,
   RelationshipKindSchema,
   RELATIONSHIP_KINDS,
   RELATIONSHIP_KIND_DEFINITIONS,

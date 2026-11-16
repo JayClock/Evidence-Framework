@@ -40,6 +40,7 @@ export type LayoutEdgeKind = 'plays_role' | 'references';
 export interface LayoutEdge {
   relationshipId: string;
   kind: LayoutEdgeKind;
+  flowKind?: import('@evidence-poc/evidence-schema').RelationshipFlowKind;
   sourceRef: string;
   targetRef: string;
   /** Absolute orthogonal route, including the endpoints. */

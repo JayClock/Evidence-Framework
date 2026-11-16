@@ -2,6 +2,8 @@ import {
   type DomainModelDocument,
   type EntityAST,
   type RelationshipAST,
+  type RelationshipFlowKind,
+  RelationshipFlowKindSchema,
   entitySignature,
   isContextEntity,
   isEvidenceEntity,
@@ -83,6 +85,24 @@ export const createRelationshipMutator = (
   assertEndpoints(draft, relationship);
   draft.relationships.splice(Math.max(0, index), 0, relationship);
   return relationship;
+};
+
+export const setRelationshipFlowMutator = (
+  draft: DomainModelDocument,
+  relationshipId: string,
+  flowKind: RelationshipFlowKind,
+): void => {
+  const edge = draft.relationships.find((item) => item.id === relationshipId);
+  if (edge === undefined)
+    fail('relationship.notFound', `unknown relationship '${relationshipId}'.`);
+  if (
+    !RelationshipFlowKindSchema.safeParse(flowKind).success ||
+    (edge.kind !== 'references' && flowKind !== 'primary')
+  ) {
+    fail('relationship.flowKind', 'Only references can declare a breach flow.');
+  }
+  if (flowKind === 'primary') delete edge.flowKind;
+  else edge.flowKind = flowKind;
 };
 
 export const deleteRelationshipMutator = (
