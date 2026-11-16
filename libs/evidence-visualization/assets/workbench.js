@@ -10,6 +10,10 @@ function readData() {
   }
 }
 const DATA = readData();
+const stories = DATA.stories || [];
+let activePanel = 'structure';
+let selectedStoryIndex = 0;
+const storySteps = new Map();
 const nodes = new Map(DATA.nodes.map((node) => [node.id, node]));
 const $ = (id) => document.getElementById(id);
 const groups = {
@@ -329,6 +333,7 @@ function renderDiffChange(change, target) {
 globalThis.selectWorkbenchDiff = (id) => {
   const change = DATA.diff?.changes.find((item) => item.id === id);
   if (!change) return;
+  setPanelState('structure');
   $('detail').replaceChildren();
   renderDiffChange(change, $('detail'));
   $('detail').append(action('返回变更概览', () => select('')));
@@ -424,9 +429,12 @@ function overview() {
     for (const message of messages) checks.append(el('p', message, 'muted'));
   }
   if (DATA.unresolved.length) list(DATA.unresolved, '', checks);
+  renderDelivery(detail);
+}
+function renderDelivery(target) {
   const delivery = DATA.delivery;
   if (delivery) {
-    const section = card('交付边界');
+    const section = card('交付边界', target);
     section.append(
       el(
         'p',
@@ -813,6 +821,7 @@ function renderReferences(
 }
 function select(id, remember = true) {
   if (id && !nodes.has(id)) return;
+  setPanelState('structure');
   const requestTarget = requestRuleTarget(nodes.get(id));
   const requestRuleId = requestTarget ? id : '';
   if (requestTarget) id = requestTarget.id;
@@ -873,6 +882,173 @@ function select(id, remember = true) {
     rule?.scrollIntoView({ block: 'center', inline: 'nearest' });
   }
 }
+function setPanelState(panel) {
+  activePanel = panel;
+  document.body.dataset.panel = panel;
+  for (const name of ['structure', 'delivery', 'stories'])
+    $(`view-${name}`).setAttribute('aria-pressed', String(name === panel));
+  document.querySelector('.layout > aside').hidden = panel !== 'structure';
+  $('back').hidden = panel !== 'structure';
+  $('copy').hidden = panel !== 'structure' || !current;
+}
+function showPanel(panel) {
+  setPanelState(panel);
+  if (panel === 'structure') {
+    select(focusedRequestRule || current, false);
+    return;
+  }
+  $('breadcrumbs').replaceChildren(
+    action('模型', () => select('')),
+    el('span', '/'),
+    el('span', panel === 'stories' ? '业务故事放映' : '交付路由'),
+  );
+  $('detail').replaceChildren();
+  if (panel === 'stories') renderStories();
+  else {
+    $('detail').append(el('h1', '交付路由'));
+    if (DATA.delivery) renderDelivery($('detail'));
+    else $('detail').append(el('p', '尚无交付投影，请重新生成评审页。', 'muted'));
+  }
+  $('main').scrollTop = 0;
+}
+function renderStories() {
+  const detail = $('detail');
+  detail.append(
+    el('p', 'BUSINESS STORY / OFFLINE', 'eyebrow'),
+    el('h1', '业务故事放映'),
+    el('p', '离线只读 · 所有分镜均在导出时预生成；不会调用 AI、执行规则或修改模型。', 'intro'),
+  );
+  if (!stories.length) {
+    const empty = card('尚无业务故事', detail);
+    empty.append(el('p', '请在模型样例中声明业务流后重新导出。结构拓扑与交付路由仍可查看。', 'muted'));
+    return;
+  }
+  const player = el('div', '', 'story-player');
+  const directory = el('nav', '', 'story-directory');
+  directory.setAttribute('aria-label', '业务流目录');
+  directory.append(el('h2', '业务流目录'));
+  stories.forEach((story, index) => {
+    const button = action('', () => {
+      selectedStoryIndex = index;
+      markStorySelected();
+      renderStoryScene();
+    }, 'story-flow');
+    button.dataset.storyFlow = story.flowId;
+    button.append(el('strong', story.storyTitle), el('small', `${story.scenes.length} 个环节`));
+    directory.append(button);
+  });
+  const stage = el('section', '', 'story-stage');
+  stage.id = 'story-stage';
+  stage.setAttribute('aria-label', '业务故事播放器');
+  player.append(directory, stage);
+  detail.append(player);
+  markStorySelected();
+  renderStoryScene();
+}
+function markStorySelected() {
+  const story = stories[selectedStoryIndex];
+  document.querySelectorAll('[data-story-flow]').forEach((button) => {
+    const selected = button.dataset.storyFlow === story.flowId;
+    if (selected) button.setAttribute('aria-current', 'true');
+    else button.removeAttribute('aria-current');
+  });
+}
+function renderStoryScene() {
+  const story = stories[selectedStoryIndex];
+  const stage = $('story-stage');
+  const previousFocus = stage.contains(document.activeElement)
+    ? document.activeElement.id
+    : '';
+  const index = storySteps.get(story.flowId) || 0;
+  stage.replaceChildren();
+  stage.append(el('h2', story.storyTitle), el('p', story.businessGoal), el('p', story.storySummary, 'muted'));
+  const controls = el('div', '', 'story-controls');
+  const previous = action('← 上一步', () => moveStoryStep(-1));
+  previous.id = 'story-previous';
+  previous.disabled = index === 0 || !story.scenes.length;
+  const progress = el('p', `Step ${story.scenes.length ? index + 1 : 0}/${story.scenes.length}`);
+  progress.id = 'story-step';
+  progress.tabIndex = -1;
+  progress.setAttribute('role', 'status');
+  const next = action('下一步 →', () => moveStoryStep(1));
+  next.id = 'story-next';
+  next.disabled = index >= story.scenes.length - 1;
+  controls.append(previous, progress, next);
+  stage.append(controls, el('p', '可使用键盘 ← / → 逐步走查', 'muted'));
+  if (!story.scenes.length) {
+    stage.append(el('p', '该业务流尚无已声明的业务步骤。', 'muted'));
+    return;
+  }
+  const timeline = el('ol', '', 'story-timeline');
+  timeline.setAttribute('aria-label', '故事分镜时间线');
+  story.scenes.forEach((scene, position) => {
+    const item = el('li');
+    const button = action(`${position + 1}. ${scene.phaseTitle}`, () => {
+      storySteps.set(story.flowId, position);
+      renderStoryScene();
+    });
+    button.id = `story-scene-${position}`;
+    button.dataset.storyStep = String(position);
+    if (position === index) button.setAttribute('aria-current', 'step');
+    item.append(button);
+    timeline.append(item);
+  });
+  stage.append(timeline);
+  const scene = story.scenes[index];
+  const documentCard = el('section', '', 'story-document');
+  documentCard.setAttribute('aria-label', '业务单据');
+  documentCard.append(
+    el('p', scene.phaseTitle, 'eyebrow'),
+    el('h3', scene.documentCard.title),
+    el('p', `经办角色：${scene.actingRoleLabel}`),
+    el('p', `业务对象：${scene.targetEntityLabel}`, 'muted'),
+  );
+  if (scene.documentCard.fields.length) {
+    const fields = table(['数据项', '声明值', '关键数据'], scene.documentCard.fields.map((field) => [
+      field.keyData ? el('strong', field.label) : field.label,
+      field.value,
+      field.keyData ? '是' : '—',
+    ]));
+    fields.querySelectorAll('tbody tr').forEach((row, position) => {
+      row.dataset.keyData = String(scene.documentCard.fields[position].keyData);
+    });
+    documentCard.append(fields);
+  } else documentCard.append(el('p', '该环节尚无声明的数据项。', 'muted'));
+  documentCard.append(el('h4', '上游依据'), el('p', scene.documentCard.basisNotes || '未声明上游依据', 'story-basis'));
+  stage.append(documentCard);
+  const narrative = card('剧情旁白', stage);
+  narrative.append(el('p', scene.narrative));
+  const closure = card('规则与闭环说明', stage);
+  closure.append(el('p', '此页仅展示声明事实与预生成说明，未执行验收或规则判定，不代表业务批准或履约完成。', 'muted'));
+  for (const rule of scene.ruleEvaluations)
+    closure.append(el('h3', rule.ruleName), el('p', rule.explanation));
+  if (scene.stateTransitionNotice) closure.append(el('p', scene.stateTransitionNotice));
+  if (scene.pendingSuspense) closure.append(el('p', scene.pendingSuspense, 'story-suspense'));
+  if (previousFocus) {
+    const replacement = $(previousFocus);
+    (replacement && !replacement.disabled ? replacement : progress).focus({ preventScroll: true });
+  }
+}
+function moveStoryStep(delta) {
+  const story = stories[selectedStoryIndex];
+  if (!story?.scenes.length) return;
+  const index = storySteps.get(story.flowId) || 0;
+  const next = Math.max(0, Math.min(story.scenes.length - 1, index + delta));
+  if (index === next) return;
+  storySteps.set(story.flowId, next);
+  renderStoryScene();
+}
+for (const panel of ['structure', 'delivery', 'stories'])
+  $(`view-${panel}`).addEventListener('click', () => showPanel(panel));
+document.addEventListener('keydown', (event) => {
+  if (activePanel !== 'stories' || event.defaultPrevented ||
+      event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ||
+      event.target.closest?.('input, textarea, select, [contenteditable]:not([contenteditable="false"])')) return;
+  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+    event.preventDefault();
+    moveStoryStep(event.key === 'ArrowRight' ? 1 : -1);
+  }
+});
 $('search').addEventListener('input', buildTree);
 $('reset').addEventListener('click', () => {
   $('search').value = '';
@@ -903,6 +1079,7 @@ $('copy').addEventListener('click', async () => {
 document.addEventListener('keydown', (event) => {
   if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
     event.preventDefault();
+    if (activePanel !== 'structure') showPanel('structure');
     $('search').focus();
   }
   if (event.key === 'Escape') {
