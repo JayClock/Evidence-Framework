@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { ReviewHubModal } from './ReviewHubModal';
 import { installDesktopApi } from '../../test-support/desktopApi';
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
-import type { PreviewReviewResult } from '../../../shared/review';
+import type { PreviewReviewResult } from '@evidence-poc/desktop-contracts/review';
 
 const input = {
   rootPath: '/model',

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type {
   PreviewReviewInput,
   PreviewReviewResult,
-} from '../../../shared/review';
+} from '@evidence-poc/desktop-contracts/review';
 import type { SensorIssue } from '@evidence-poc/evidence-agent/browser';
 
 export const ReviewHubModal = ({

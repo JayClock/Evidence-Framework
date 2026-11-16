@@ -7,24 +7,24 @@ import type {
   CanvasContextRegistration,
   SensorReport,
   SensorReportPayload,
-} from '../../shared/agentIpc';
+} from '@evidence-poc/desktop-contracts/agentIpc';
 import type {
   CompileDraftInput,
   CompileDraftOutcome,
   IngestDraftInput,
   IngestDraftResult,
-} from '../../shared/ingestion';
-import type { EvidenceDesktopApi } from '../../shared/ipc';
+} from '@evidence-poc/desktop-contracts/ingestion';
+import type { EvidenceDesktopApi } from '@evidence-poc/desktop-contracts/ipc';
 import type {
   McpRendererRequest,
   McpRendererResponse,
   McpStatus,
-} from '../../shared/mcpIpc';
+} from '@evidence-poc/desktop-contracts/mcpIpc';
 import type {
   DriftRequest,
   McpDriftAudit,
   TraceDialogResult,
-} from '../../shared/drift';
+} from '@evidence-poc/desktop-contracts/drift';
 import type {
   CreateProjectDialogInput,
   CreateProjectDialogResult,
@@ -33,7 +33,7 @@ import type {
   EvidenceProjectSummary,
   OpenProjectResult,
   ProjectTemplateMeta,
-} from '../../shared/projects';
+} from '@evidence-poc/desktop-contracts/projects';
 
 export const projectSummary = (
   overrides: Partial<EvidenceProjectSummary> = {},

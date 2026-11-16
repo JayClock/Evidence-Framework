@@ -13,11 +13,11 @@ import {
   resolveAssetsDirectory,
 } from '@evidence-poc/evidence-visualization';
 
-import { EVIDENCE_IPC_CHANNELS } from '../shared/ipc';
-import type { ExportReviewResult } from '../shared/projects';
+import { EVIDENCE_IPC_CHANNELS } from '@evidence-poc/desktop-contracts/ipc';
+import type { ExportReviewResult } from '@evidence-poc/desktop-contracts/projects';
 
 import { previewReview } from './reviewPreview';
-import type { PreviewReviewInput, PreviewReviewResult } from '../shared/review';
+import type { PreviewReviewInput, PreviewReviewResult } from '@evidence-poc/desktop-contracts/review';
 import { resolveReviewAssetsDirectory } from './installAssets';
 import { modelSourceOf, projectDirectoryOf } from './modelSource';
 

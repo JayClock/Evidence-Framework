@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 
-import type { ExportReviewResult } from '../../shared/projects';
+import type { ExportReviewResult } from '@evidence-poc/desktop-contracts/projects';
 
 /** What the header shows after an export attempt. */
 export interface ReviewExportNotice {

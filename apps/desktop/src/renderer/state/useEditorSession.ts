@@ -18,7 +18,7 @@ import {
 } from '@evidence-poc/evidence-canvas-interaction';
 
 import { useGraphLayout } from './useGraphLayout';
-import type { EvidenceProjectSummary } from '../../shared/projects';
+import type { EvidenceProjectSummary } from '@evidence-poc/desktop-contracts/projects';
 
 export interface EditorSessionState {
   project: EvidenceProjectSummary;

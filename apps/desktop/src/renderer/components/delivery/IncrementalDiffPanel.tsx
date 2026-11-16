@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { LiveDeliveryPreview } from '../../../shared/delivery';
+import type { LiveDeliveryPreview } from '@evidence-poc/desktop-contracts/delivery';
 
 export const IncrementalDiffPanel = ({
   analysis,

@@ -8,7 +8,7 @@ import type {
   ApiCoverageSummary,
   SensorIssue,
 } from '@evidence-poc/evidence-agent/browser';
-import type { DeliveryPreview } from './projects';
+import type { DeliveryPreview } from './projects.js';
 
 /** The baseline is the document at editor open; save does not silently accept changes. */
 export interface LiveDeliveryInput {

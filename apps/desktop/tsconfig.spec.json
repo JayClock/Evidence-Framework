@@ -15,5 +15,10 @@
     "tests/**/*.spec.ts",
     "forge.env.d.ts",
     "vitest.config.mts"
+  ],
+  "references": [
+    {
+      "path": "../../libs/desktop/contracts/tsconfig.lib.json"
+    }
   ]
 }

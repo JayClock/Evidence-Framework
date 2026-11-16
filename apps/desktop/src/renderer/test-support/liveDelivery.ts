@@ -1,5 +1,5 @@
-import type { LiveDeliveryPreview } from '../../shared/delivery';
-import type { DeliveryPreview } from '../../shared/projects';
+import type { LiveDeliveryPreview } from '@evidence-poc/desktop-contracts/delivery';
+import type { DeliveryPreview } from '@evidence-poc/desktop-contracts/projects';
 
 export const liveDeliveryPreview = (
   revision = 1,

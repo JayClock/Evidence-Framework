@@ -9,13 +9,13 @@ import type {
 import type {
   CompileDraftInput,
   IngestionReader,
-} from '../../../shared/ingestion';
+} from '@evidence-poc/desktop-contracts/ingestion';
 
 import { ClauseSplit } from './ClauseSplit';
 import type {
   EvidenceProjectSummary,
   ProjectStorageKind,
-} from '../../../shared/projects';
+} from '@evidence-poc/desktop-contracts/projects';
 
 /** Evidence kinds the panel offers, with the name the method uses for each. */
 const KIND_CHOICES: readonly { kind: DraftEvidence['kind']; label: string }[] = [

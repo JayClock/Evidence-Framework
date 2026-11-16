@@ -7,14 +7,14 @@ import {
   type WebContents,
 } from 'electron';
 
-import { STORY_IPC_CHANNELS } from '../shared/story';
-import { EVIDENCE_IPC_CHANNELS } from '../shared/ipc';
+import { STORY_IPC_CHANNELS } from '@evidence-poc/desktop-contracts/story';
+import { EVIDENCE_IPC_CHANNELS } from '@evidence-poc/desktop-contracts/ipc';
 import type {
   CreateProjectDialogInput,
   CreateProjectDialogResult,
   CreateProjectInput,
   SaveProjectInput,
-} from '../shared/projects';
+} from '@evidence-poc/desktop-contracts/projects';
 
 import { watchModelSource, type ModelWatcher } from './modelWatcher';
 import { modelSourceOf } from './modelSource';

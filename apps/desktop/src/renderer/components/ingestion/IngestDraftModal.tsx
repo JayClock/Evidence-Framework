@@ -9,8 +9,8 @@ import type {
   IngestDraftInput,
   IngestionInputKind,
   IngestionReader,
-} from '../../../shared/ingestion';
-import type { EvidenceProjectSummary } from '../../../shared/projects';
+} from '@evidence-poc/desktop-contracts/ingestion';
+import type { EvidenceProjectSummary } from '@evidence-poc/desktop-contracts/projects';
 
 import { DraftReviewPanel } from './DraftReviewPanel';
 

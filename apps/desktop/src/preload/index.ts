@@ -12,23 +12,23 @@ import {
   type CanvasContextRegistration,
   type SensorReportPayload,
   type SensorTriggerInput,
-} from '../shared/agentIpc';
+} from '@evidence-poc/desktop-contracts/agentIpc';
 import {
   EVIDENCE_INGESTION_IPC_CHANNELS,
   EVIDENCE_IPC_CHANNELS,
   type EvidenceDesktopApi,
-} from '../shared/ipc';
-import { STORY_IPC_CHANNELS } from '../shared/story';
+} from '@evidence-poc/desktop-contracts/ipc';
+import { STORY_IPC_CHANNELS } from '@evidence-poc/desktop-contracts/story';
 import {
   EVIDENCE_DRIFT_IPC_CHANNELS,
   type DriftRequest,
-} from '../shared/drift';
+} from '@evidence-poc/desktop-contracts/drift';
 import {
   EVIDENCE_MCP_IPC_CHANNELS,
   type McpRendererRequest,
   type McpRendererResponse,
   type McpStatus,
-} from '../shared/mcpIpc';
+} from '@evidence-poc/desktop-contracts/mcpIpc';
 
 /**
  * Minimal, typed bridge: the renderer never sees `ipcRenderer`, `fs` or any

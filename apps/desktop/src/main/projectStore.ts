@@ -22,7 +22,7 @@ import type {
   EvidenceProjectSummary,
   OpenProjectResult,
   SaveProjectResult,
-} from '../shared/projects';
+} from '@evidence-poc/desktop-contracts/projects';
 import {
   createStarterDocument,
   deriveModelId,

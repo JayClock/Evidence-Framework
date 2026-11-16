@@ -18,7 +18,7 @@ import {
   workbenchLayoutOf,
   type CompiledModel,
 } from '@evidence-poc/evidence-visualization';
-import type { PreviewReviewInput, PreviewReviewResult } from '../shared/review';
+import type { PreviewReviewInput, PreviewReviewResult } from '@evidence-poc/desktop-contracts/review';
 import {
   isBundleProject,
   modelSourceOf,

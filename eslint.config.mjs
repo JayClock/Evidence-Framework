@@ -82,10 +82,21 @@ export default [
               ],
             },
             {
+              // Desktop transport DTOs; no Electron or view implementation.
+              sourceTag: 'layer:contract',
+              onlyDependOnLibsWithTags: [
+                'layer:schema',
+                'layer:domain',
+                'layer:projection',
+                'layer:orchestration',
+              ],
+            },
+            {
               // Feature libraries assemble the rings below them for one screen.
               sourceTag: 'layer:feature',
               onlyDependOnLibsWithTags: [
                 'layer:feature',
+                'layer:contract',
                 'layer:ui',
                 'layer:orchestration',
                 'layer:projection',
@@ -100,6 +111,7 @@ export default [
               sourceTag: 'layer:testing',
               onlyDependOnLibsWithTags: [
                 'layer:domain',
+                'layer:contract',
                 'layer:ui',
                 'layer:schema',
               ],

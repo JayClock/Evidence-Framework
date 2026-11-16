@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { createEvidenceMcpBridgeClient } from '@evidence-poc/evidence-mcp';
 import { describe, expect, it, vi } from 'vitest';
 
-import type { McpStatus } from '../shared/mcpIpc';
+import type { McpStatus } from '@evidence-poc/desktop-contracts/mcpIpc';
 import { startMcpBridgeRuntime } from './mcpBridgeRuntime';
 import { createMcpRequestHandler } from './mcpRequestHandler';
 

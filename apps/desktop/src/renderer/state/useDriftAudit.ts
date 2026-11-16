@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import type { McpDriftAudit, TraceDialogResult } from '../../shared/drift';
+import type { McpDriftAudit, TraceDialogResult } from '@evidence-poc/desktop-contracts/drift';
 
 /** Reading one exported trace against the saved model. */
 export interface DriftState {

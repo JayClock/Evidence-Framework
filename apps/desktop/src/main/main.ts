@@ -6,7 +6,7 @@ import {
   runEvidenceMcpStdio,
 } from '@evidence-poc/evidence-mcp';
 
-import { EVIDENCE_MCP_IPC_CHANNELS } from '../shared/mcpIpc';
+import { EVIDENCE_MCP_IPC_CHANNELS } from '@evidence-poc/desktop-contracts/mcpIpc';
 import { registerAgentIpc } from './agentIpcHandlers';
 import { startMcpBridgeRuntime } from './mcpBridgeRuntime';
 import { registerMcpIpc } from './mcpIpcHandlers';

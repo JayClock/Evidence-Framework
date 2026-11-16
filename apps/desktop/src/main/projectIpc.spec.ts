@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
-import { EVIDENCE_IPC_CHANNELS } from '../shared/ipc';
-import { STORY_IPC_CHANNELS } from '../shared/story';
+import { EVIDENCE_IPC_CHANNELS } from '@evidence-poc/desktop-contracts/ipc';
+import { STORY_IPC_CHANNELS } from '@evidence-poc/desktop-contracts/story';
 import { registerProjectIpc } from './projectIpc';
 import type { ProjectStore } from './projectStore';
 

@@ -5,7 +5,7 @@ import type {
 } from '@evidence-poc/evidence-model-core';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 import type { WhatIfResult } from '@evidence-poc/evidence-agent';
-import type { StoryProjectResult } from '../../shared/story';
+import type { StoryProjectResult } from '@evidence-poc/desktop-contracts/story';
 
 export const STORY_REFRESH_DELAY = 180;
 export const STORY_STEP_DURATION = 4500;

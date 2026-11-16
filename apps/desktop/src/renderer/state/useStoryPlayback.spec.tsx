@@ -5,7 +5,7 @@ import type {
   StoryInvalidatedEvent,
   StoryProjectInput,
   StoryProjectResult,
-} from '../../shared/story';
+} from '@evidence-poc/desktop-contracts/story';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 import type { WhatIfResult } from '@evidence-poc/evidence-agent';
 import { installDesktopApi } from '../test-support/desktopApi';

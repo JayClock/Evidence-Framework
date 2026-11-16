@@ -4,11 +4,11 @@ import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 import type {
   LiveDeliveryInput,
   LiveDeliveryPreview,
-} from '../../shared/delivery';
+} from '@evidence-poc/desktop-contracts/delivery';
 import type {
   DeliveryPreview,
   ExportDeliveryResult,
-} from '../../shared/projects';
+} from '@evidence-poc/desktop-contracts/projects';
 
 export interface DeliveryNotice {
   tone: 'saved' | 'failed';

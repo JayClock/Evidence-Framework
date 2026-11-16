@@ -2,7 +2,7 @@ import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 import { updateEntityMutator } from '@evidence-poc/evidence-model-core';
-import type { OpenProjectResult } from '../../shared/projects';
+import type { OpenProjectResult } from '@evidence-poc/desktop-contracts/projects';
 import { installDesktopApi, projectSummary } from '../test-support/desktopApi';
 import { useEditorSession } from './useEditorSession';
 

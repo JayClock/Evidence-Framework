@@ -1,4 +1,4 @@
-import type { LiveDeliveryInput } from './delivery';
+import type { LiveDeliveryInput } from './delivery.js';
 import type {
   AgentStreamEvent,
   CanvasContext,

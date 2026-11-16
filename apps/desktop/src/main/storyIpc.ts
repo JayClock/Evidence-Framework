@@ -27,7 +27,7 @@ import {
   type StoryProjectInput,
   type StoryProjectResult,
   type StoryWhatIfInput,
-} from '../shared/story';
+} from '@evidence-poc/desktop-contracts/story';
 import {
   isBundleProject,
   modelSourceOf,

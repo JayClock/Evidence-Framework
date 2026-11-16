@@ -4,10 +4,7 @@ import type {
   IngestionDraft,
 } from '@evidence-poc/evidence-schema';
 
-import type {
-  EvidenceProjectSummary,
-  ProjectStorageKind,
-} from './projects';
+import type { EvidenceProjectSummary, ProjectStorageKind } from './projects.js';
 
 /**
  * Which reader produced a draft.

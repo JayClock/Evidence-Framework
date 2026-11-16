@@ -2,19 +2,22 @@ import type {
   LiveDeliveryInput,
   LiveDeliveryResult,
   ExportLiveDeliveryInput,
-} from './delivery';
-import type { PreviewReviewInput, PreviewReviewResult } from './review';
-import type { EvidenceAgentApi } from './agentIpc';
-import type { DeliveryPreviewResult, ExportDeliveryResult } from './projects';
+} from './delivery.js';
+import type { PreviewReviewInput, PreviewReviewResult } from './review.js';
+import type { EvidenceAgentApi } from './agentIpc.js';
+import type {
+  DeliveryPreviewResult,
+  ExportDeliveryResult,
+} from './projects.js';
 import type {
   CompileDraftInput,
   CompileDraftOutcome,
   IngestDraftInput,
   IngestDraftResult,
-} from './ingestion';
-import type { EvidenceMcpApi } from './mcpIpc';
-import type { EvidenceStoryApi } from './story';
-import type { EvidenceDriftApi } from './drift';
+} from './ingestion.js';
+import type { EvidenceMcpApi } from './mcpIpc.js';
+import type { EvidenceStoryApi } from './story.js';
+import type { EvidenceDriftApi } from './drift.js';
 import type {
   CreateProjectDialogInput,
   CreateProjectDialogResult,
@@ -32,7 +35,7 @@ import type {
   RecentProjectsResult,
   SaveProjectInput,
   SaveProjectResult,
-} from './projects';
+} from './projects.js';
 
 /** IPC channels shared by the main process and the preload bridge. */
 export const EVIDENCE_IPC_CHANNELS = {
@@ -149,9 +152,9 @@ export type {
   IngestDraftResult,
   IngestionInputKind,
   IngestionReader,
-} from './ingestion';
+} from './ingestion.js';
 
-export type { DriftRequest, TraceDialogResult } from './drift';
+export type { DriftRequest, TraceDialogResult } from './drift.js';
 
 export type {
   DeliveryPreview,
@@ -160,7 +163,7 @@ export type {
   DeliveryPreviewRoute,
   DeliveryPreviewService,
   ExportDeliveryResult,
-} from './projects';
+} from './projects.js';
 
 export type {
   CreateProjectDialogResult,

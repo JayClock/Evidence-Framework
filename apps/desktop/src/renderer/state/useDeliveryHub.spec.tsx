@@ -7,7 +7,7 @@ import {
 import type {
   LiveDeliveryInput,
   LiveDeliveryResult,
-} from '../../shared/delivery';
+} from '@evidence-poc/desktop-contracts/delivery';
 import { installDesktopApi } from '../test-support/desktopApi';
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 import { liveDeliveryPreview } from '../test-support/liveDelivery';

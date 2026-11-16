@@ -6,7 +6,7 @@ import {
   waitFor,
 } from '@testing-library/react';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
-import type { StoryInvalidatedEvent } from '../../shared/story';
+import type { StoryInvalidatedEvent } from '@evidence-poc/desktop-contracts/story';
 import { storyFlow, storyResult } from '../test-support/story';
 
 import { collectFlowScenarios } from '@evidence-poc/evidence-model-core';

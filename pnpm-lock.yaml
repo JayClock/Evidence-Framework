@@ -308,6 +308,9 @@ importers:
 
   apps/desktop:
     dependencies:
+      '@evidence-poc/desktop-contracts':
+        specifier: workspace:*
+        version: link:../../libs/desktop/contracts
       '@evidence-poc/desktop-feature-canvas':
         specifier: workspace:*
         version: link:../../libs/desktop/feature-canvas
@@ -406,6 +409,30 @@ importers:
         specifier: ^4.1.16
         version: 4.3.5
 
+  libs/desktop/contracts:
+    dependencies:
+      '@evidence-poc/evidence-agent':
+        specifier: workspace:*
+        version: link:../../evidence-agent
+      '@evidence-poc/evidence-api':
+        specifier: workspace:*
+        version: link:../../evidence-api
+      '@evidence-poc/evidence-mcp':
+        specifier: workspace:*
+        version: link:../../evidence-mcp
+      '@evidence-poc/evidence-model-core':
+        specifier: workspace:*
+        version: link:../../evidence-model-core
+      '@evidence-poc/evidence-schema':
+        specifier: workspace:*
+        version: link:../../evidence-schema
+      '@evidence-poc/evidence-visualization':
+        specifier: workspace:*
+        version: link:../../evidence-visualization
+      tslib:
+        specifier: ^2.3.0
+        version: 2.9.1
+
   libs/desktop/feature-canvas:
     dependencies:
       '@evidence-poc/evidence-agent':
@@ -425,7 +452,7 @@ importers:
         version: link:../../evidence-schema
       '@xyflow/react':
         specifier: ^12.12.1
-        version: 12.12.1(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+        version: 12.12.1(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(immer@11.2.10)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       lucide-react:
         specifier: ^1.72.0
         version: 1.72.0(@types/react@19.3.0)(react@19.3.1)
@@ -596,7 +623,7 @@ importers:
         version: 8.20.0
       ajv-formats:
         specifier: 3.0.1
-        version: 3.0.1
+        version: 3.0.1(ajv@8.20.0)
       cac:
         specifier: ^6.7.14
         version: 6.7.14
@@ -10989,13 +11016,13 @@ snapshots:
 
   '@xtuc/long@4.2.2': {}
 
-  '@xyflow/react@12.12.1(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
+  '@xyflow/react@12.12.1(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(immer@11.2.10)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
     dependencies:
       '@xyflow/system': 0.0.84
       classcat: 5.0.5
       react: 19.3.1
       react-dom: 19.3.1(react@19.3.1)
-      zustand: 4.5.7(@types/react@19.3.0)(react@19.3.1)
+      zustand: 4.5.7(@types/react@19.3.0)(immer@11.2.10)(react@19.3.1)
     optionalDependencies:
       '@types/react': 19.3.0
       '@types/react-dom': 19.3.0(@types/react@19.3.0)
@@ -11066,10 +11093,6 @@ snapshots:
 
   ajv-formats@2.1.1(ajv@8.20.0):
     optionalDependencies:
-      ajv: 8.20.0
-
-  ajv-formats@3.0.1:
-    dependencies:
       ajv: 8.20.0
 
   ajv-formats@3.0.1(ajv@8.20.0):
@@ -15888,9 +15911,10 @@ snapshots:
 
   zod@3.25.76: {}
 
-  zustand@4.5.7(@types/react@19.3.0)(react@19.3.1):
+  zustand@4.5.7(@types/react@19.3.0)(immer@11.2.10)(react@19.3.1):
     dependencies:
       use-sync-external-store: 1.7.0(react@19.3.1)
     optionalDependencies:
       '@types/react': 19.3.0
+      immer: 11.2.10
       react: 19.3.1

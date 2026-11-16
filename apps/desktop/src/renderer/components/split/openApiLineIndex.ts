@@ -1,4 +1,4 @@
-import type { LiveRouteBinding } from '../../../shared/delivery';
+import type { LiveRouteBinding } from '@evidence-poc/desktop-contracts/delivery';
 
 /**
  * Where one entity lives in the serialized contract.

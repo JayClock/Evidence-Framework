@@ -1,5 +1,5 @@
 import type { FlowScenarioTrace } from '@evidence-poc/evidence-model-core';
-import type { StoryProjectResult } from '../../shared/story';
+import type { StoryProjectResult } from '@evidence-poc/desktop-contracts/story';
 
 export const storyFlow = (flowId = '采购履约流'): FlowScenarioTrace => ({
   flowId,

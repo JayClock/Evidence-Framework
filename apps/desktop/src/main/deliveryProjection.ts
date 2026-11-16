@@ -2,7 +2,7 @@ import { checkNativeApiSensor } from '@evidence-poc/evidence-agent';
 import type {
   LiveDeliveryInput,
   LiveDeliveryPreview,
-} from '../shared/delivery';
+} from '@evidence-poc/desktop-contracts/delivery';
 import path from 'node:path';
 
 import {

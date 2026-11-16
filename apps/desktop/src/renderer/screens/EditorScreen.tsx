@@ -19,7 +19,7 @@ import {
   type DomainModelDocument,
 } from '@evidence-poc/evidence-schema';
 
-import type { EvidenceProjectSummary } from '../../shared/projects';
+import type { EvidenceProjectSummary } from '@evidence-poc/desktop-contracts/projects';
 import { BottomStatusBar } from '../components/BottomStatusBar';
 import { ProblemsPanel } from '../components/console/ProblemsPanel';
 import {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import type { McpStatus } from '../../shared/mcpIpc';
+import type { McpStatus } from '@evidence-poc/desktop-contracts/mcpIpc';
 
 const statusLabel = (status: McpStatus | null): string => {
   if (status === null) {
