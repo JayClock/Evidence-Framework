@@ -9,6 +9,7 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import type { StoryInvalidatedEvent } from '../../shared/story';
 import { storyFlow, storyResult } from '../test-support/story';
 
+import { collectFlowScenarios } from '@evidence-poc/evidence-model-core';
 import { EditorScreen } from './EditorScreen';
 import {
   healthyReport,
@@ -36,6 +37,53 @@ const readyCanvas = async () => {
 };
 
 describe('EditorScreen', () => {
+  it('opens swimlanes and the workshop, then saves a scenario into the existing story pipeline', async () => {
+    const api = readyProject();
+    api.projects.save = vi.fn(api.projects.save);
+    api.story.listFlows = vi.fn(async ({ document }) =>
+      collectFlowScenarios(document!),
+    );
+    api.story.project = vi.fn(async ({ document, flowId }) => ({
+      ...storyResult(),
+      flow: collectFlowScenarios(document!).find((f) => f.flowId === flowId)!,
+    }));
+    const { container } = render(
+      <EditorScreen rootPath="/models/procurement" />,
+    );
+    await readyCanvas();
+    fireEvent.click(screen.getByRole('button', { name: '权责泳道' }));
+    await waitFor(() =>
+      expect(
+        container.querySelector('[data-swimlane-kind="lane"]'),
+      ).not.toBeNull(),
+    );
+    fireEvent.click(screen.getByRole('button', { name: '共创工作坊' }));
+    expect(screen.getByLabelText('工作坊步骤')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: '业务场景推演' }));
+    fireEvent.change(screen.getByLabelText('新场景名称'), {
+      target: { value: '正常签约案例' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: '创建空白场景' }));
+    fireEvent.change(screen.getByLabelText('添加业务操作'), {
+      target: { value: 'evidence.contract' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: '添加步骤' }));
+    fireEvent.change(screen.getByLabelText('业务时刻'), {
+      target: { value: '2026-01-01T00:00:00Z' },
+    });
+    fireEvent.change(screen.getByLabelText('签署时间'), {
+      target: { value: '2026-01-01T00:00:00Z' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: '保存并放映' }));
+    await waitFor(() =>
+      expect(api.story.project).toHaveBeenCalledWith(
+        expect.objectContaining({ flowId: '正常签约案例', skipAi: true }),
+      ),
+    );
+    expect(screen.queryByRole('dialog', { name: '业务场景推演' })).toBeNull();
+    expect(screen.getByLabelText('选择业务流')).toHaveValue('正常签约案例');
+    expect(api.projects.save).not.toHaveBeenCalled();
+  });
   it('navigates in both directions between persisted clauses and canvas objects', async () => {
     const document = createDesktopFixture();
     document.manifest.sourceDocument = {

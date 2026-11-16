@@ -40,6 +40,7 @@ export interface CanvasFloatingHudProps extends CanvasHudControls {
   onDensityChange: (mode: CanvasViewMode) => void;
   layoutMode?: CanvasLayoutMode;
   onLayoutModeChange?: (mode: CanvasLayoutMode) => void;
+  onOpenScenarios?: () => void;
   /** True while an object is selected, so "pointer" can mean "deselect". */
   hasSelection: boolean;
   onClearSelection: () => void;
@@ -84,6 +85,7 @@ export const CanvasFloatingHud = ({
   onDensityChange,
   layoutMode = 'topology',
   onLayoutModeChange,
+  onOpenScenarios,
   hasSelection,
   onClearSelection,
   zoom,
@@ -155,6 +157,15 @@ export const CanvasFloatingHud = ({
         }
       >
         {layoutMode === 'swimlane' ? '权责泳道' : '拓扑布局'}
+      </button>
+    ) : null}
+    {onOpenScenarios ? (
+      <button
+        type="button"
+        className="rounded border border-evidence-line px-2 py-1 text-[10px]"
+        onClick={onOpenScenarios}
+      >
+        业务场景推演
       </button>
     ) : null}
     <ViewModeSegmentedControl mode={viewMode} onChange={onViewModeChange} />

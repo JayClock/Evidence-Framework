@@ -36,6 +36,7 @@ import { AgentCopilot } from '../components/agent/AgentCopilot';
 import { InlinePatchCopilot } from '../components/agent/InlinePatchCopilot';
 import { CelRulesPane } from '../components/split/CelRulesPane';
 import { OpenApiSpecViewer } from '../components/split/OpenApiSpecViewer';
+import { ScenarioStudioModal } from '../components/scenario/ScenarioStudioModal';
 import { WorkshopWizardDrawer } from '../components/wizard/WorkshopWizardDrawer';
 import { StoryPlayerBar } from '../components/story/StoryPlayerBar';
 import { StoryDrawer } from '../components/story/StoryDrawer';
@@ -178,6 +179,7 @@ const EditorWorkspace = ({
   project,
   initialDocument,
 }: EditorWorkspaceProps) => {
+  const [scenarioOpen, setScenarioOpen] = useState(false);
   const [layoutMode, setLayoutMode] = useState<CanvasLayoutMode>('topology');
   const [viewMode, setViewMode] = useState<CanvasViewMode>('simplified');
   const workspaceView = useWorkspaceViewMode();
@@ -725,6 +727,7 @@ const EditorWorkspace = ({
             density={viewMode}
             layoutMode={layoutMode}
             onLayoutModeChange={setLayoutMode}
+            onOpenScenarios={() => setScenarioOpen(true)}
             onDensityChange={setViewMode}
             hasSelection={state.selection.nodeId !== null}
             onClearSelection={() => state.session.clearSelection()}
@@ -1130,6 +1133,18 @@ const EditorWorkspace = ({
           targets={commandTargets}
           onFocusTarget={focusNode}
         />
+        {scenarioOpen ? (
+          <ScenarioStudioModal
+            session={state.session}
+            onClose={() => setScenarioOpen(false)}
+            onPlay={(flow) => {
+              story.selectFlow(flow);
+              story.setSkipAi(true);
+              split.openSplit('story');
+              setScenarioOpen(false);
+            }}
+          />
+        ) : null}
         <Toaster />
       </div>
     </LiveApiProvider>

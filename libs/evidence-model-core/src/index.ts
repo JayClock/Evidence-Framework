@@ -6,6 +6,14 @@ export {
   anchorWorkshopContract,
   addWorkshopFulfillment,
 } from './workshop/workshopMutators.js';
+export {
+  scenarioExamples,
+  cloneScenarioExamples,
+  replaceScenarioExamples,
+  evaluateScenario,
+  type ScenarioExample,
+  type ScenarioEvaluation,
+} from './scenario/scenarioStudio.js';
 export * from './ingestion/index.js';
 export {
   translateBusinessFormula,
