@@ -56,6 +56,9 @@
     },
     {
       "path": "./libs/desktop/feature-drift"
+    },
+    {
+      "path": "./libs/evidence-tools"
     }
   ]
 }

@@ -256,11 +256,12 @@ describe('createEvidenceTools', () => {
       TOOL_NAMES.introduceFulfillmentPair,
       TOOL_NAMES.addBreachCompensation,
       TOOL_NAMES.roleifyAndInvertDependency,
+      TOOL_NAMES.isolateDomainCalculator,
       TOOL_NAMES.deliveryTopology,
       TOOL_NAMES.openApiContract,
       TOOL_NAMES.productionDrift,
     ]);
-    expect(createEvidenceTools(createClient())).toHaveLength(13);
+    expect(createEvidenceTools(createClient())).toHaveLength(14);
   });
 
   it('hands an outside agent the delivery boundaries and the contract', async () => {
@@ -290,6 +291,7 @@ describe('createEvidenceTools', () => {
       TOOL_NAMES.introduceFulfillmentPair,
       TOOL_NAMES.addBreachCompensation,
       TOOL_NAMES.roleifyAndInvertDependency,
+      TOOL_NAMES.isolateDomainCalculator,
     ]);
   });
 

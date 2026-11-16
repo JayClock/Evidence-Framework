@@ -13,10 +13,10 @@
   "include": ["src/**/*.ts"],
   "references": [
     {
-      "path": "../evidence-schema/tsconfig.lib.json"
+      "path": "../evidence-tools/tsconfig.lib.json"
     },
     {
-      "path": "../evidence-model-core/tsconfig.lib.json"
+      "path": "../evidence-schema/tsconfig.lib.json"
     }
   ],
   "exclude": [

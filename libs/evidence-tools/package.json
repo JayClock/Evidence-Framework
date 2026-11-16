@@ -1,0 +1,33 @@
+{
+  "name": "@evidence-poc/evidence-tools",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "@evidence-poc/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "nx": {
+    "name": "evidence-tools",
+    "tags": [
+      "type:lib",
+      "layer:domain",
+      "platform:universal",
+      "scope:model"
+    ]
+  },
+  "dependencies": {
+    "tslib": "^2.3.0",
+    "@evidence-poc/evidence-schema": "workspace:*",
+    "@evidence-poc/evidence-model-core": "workspace:*",
+    "zod": "^3.25.67"
+  }
+}
