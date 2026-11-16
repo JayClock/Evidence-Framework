@@ -91,6 +91,45 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllGlobals());
 
 describe('CanvasViewport', () => {
+  it('refits and draws responsibility regions when layout mode changes at the same density', async () => {
+    const swimlane = await computeGraphLayout(graph, {
+      viewMode: 'standard',
+      layoutMode: 'swimlane',
+    });
+    const Harness = () => {
+      const [lanes, setLanes] = useState(false);
+      return (
+        <>
+          <button type="button" onClick={() => setLanes(true)}>
+            切换泳道布局
+          </button>
+          <CanvasViewport
+            document={document}
+            graph={graph}
+            layout={lanes ? swimlane : layout}
+            viewMode="standard"
+            selection={{ nodeId: null, attributeName: null }}
+            focusRequest={null}
+            zoomCommand={null}
+            onSelect={vi.fn()}
+            onClearSelection={vi.fn()}
+          />
+        </>
+      );
+    };
+    const { container } = render(<Harness />);
+    await waitFor(() =>
+      expect(viewportTransform(container)).not.toBe(
+        'translate(0px,0px) scale(1)',
+      ),
+    );
+    const before = viewportTransform(container);
+    fireEvent.click(screen.getByRole('button', { name: '切换泳道布局' }));
+    await waitFor(() => expect(viewportTransform(container)).not.toBe(before));
+    expect(
+      container.querySelector('[data-swimlane-kind="phase"]'),
+    ).not.toBeNull();
+  });
   it('keeps breach markers visible without hover and alongside diagnostics', () => {
     const marked = {
       ...layout,

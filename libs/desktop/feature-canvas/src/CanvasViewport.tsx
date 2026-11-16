@@ -295,7 +295,7 @@ const CanvasSurface = ({
       (layout.nodes.length === 0 && layout.contextGroups.length === 0)
     )
       return;
-    const key = `${scope?.contextId ?? ''}:${viewMode}`;
+    const key = `${scope?.contextId ?? ''}:${viewMode}:${layout.swimlaneRegions ? 'swimlane' : 'topology'}`;
     if (previousFitKey.current === key) return;
     previousFitKey.current = key;
     fitToContent();

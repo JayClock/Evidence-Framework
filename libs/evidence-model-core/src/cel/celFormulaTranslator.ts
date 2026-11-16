@@ -120,7 +120,7 @@ export const translateBusinessFormula = (
     const syntax = (end: number): boolean => {
       const gap = expression.slice(offset, end);
       // Comments are source prose, not division operators or business rules.
-      if (/\/[/\*]/u.test(gap)) return false;
+      if (gap.includes('//') || gap.includes('/*')) return false;
       const pattern =
         /\s+|double\b|int\b|string\b|&&|\|\||==|!=|>=|<=|[()+\-*/%<>!?:]/gu;
       const matches = [...gap.matchAll(pattern)];

@@ -61,6 +61,7 @@ it('keeps all deprecated bins executable with warnings on stderr and valid JSON 
       'evidence-visualization',
       [
         'generate',
+        '--skip-ai',
         '--project-root',
         root,
         '--out',
