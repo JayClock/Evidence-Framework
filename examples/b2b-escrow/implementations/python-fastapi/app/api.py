@@ -9,12 +9,21 @@ from .domain import wire
 from .ledger import BusinessError
 from .service import ACTIONS, CONTRACTS, EscrowService
 
+FAULTS = ("none", "accept-derived", "extra-field", "clock", "precision")
 
-def create_app(test_mode=False, mode="v2", clock=None):
+
+def create_app(test_mode=False, mode="v2", clock=None, fault="none"):
     if mode not in {"v1", "v2"}:
         raise ValueError("Invalid mode")
+    if fault not in FAULTS:
+        raise ValueError("Invalid fault")
     app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
-    app.add_middleware(RequestContextMiddleware, test_mode=test_mode, clock=clock)
+    app.add_middleware(
+        RequestContextMiddleware,
+        test_mode=test_mode,
+        clock=clock,
+        ignore_clock=fault == "clock",
+    )
     service = EscrowService()
 
     @app.exception_handler(BusinessError)
@@ -48,8 +57,17 @@ def create_app(test_mode=False, mode="v2", clock=None):
         return now
 
     def response(fact, status=201):
+        data = {**fact.data, "_links": {"self": {"href": fact.href}}}
+        if fault == "extra-field":
+            data["unmodeled"] = True
+        if fault == "precision":
+            # Test-only bug: round-trip exact integers through a binary float.
+            data = {
+                key: int(float(value)) if type(value) is int else value
+                for key, value in data.items()
+            }
         return JSONResponse(
-            wire({**fact.data, "_links": {"self": {"href": fact.href}}}),
+            wire(data),
             status,
             headers={"Location": fact.href} if status == 201 else None,
             media_type="application/hal+json",
@@ -85,10 +103,16 @@ def create_app(test_mode=False, mode="v2", clock=None):
     def confirm_handler(lane, action, role):
         async def confirm(contractId: str, requestId: str, request: Request):
             now = authorize(lane, [role])
+            data = await read(request)
+            if (
+                fault == "accept-derived"
+                and action in {"release", "milestone-release"}
+                and "payout_minor" in data
+            ):
+                # Test-only bug: echo caller data, without committing ledger state.
+                return JSONResponse(data, 201)
             return response(
-                service.confirm(
-                    lane, action, contractId, requestId, await read(request), now
-                )
+                service.confirm(lane, action, contractId, requestId, data, now)
             )
 
         return confirm

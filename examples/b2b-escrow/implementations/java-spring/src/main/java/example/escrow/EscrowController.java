@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.Instant;
 import java.util.*;
 import org.springframework.core.env.Environment;
@@ -20,6 +22,8 @@ public class EscrowController {
     this.service = service;
     this.json = json;
     this.env = env;
+    if (!Application.FAULTS.contains(env.getProperty("escrow.fault", "none")))
+      throw new IllegalArgumentException("Unknown fault");
   }
 
   private EscrowService.Definition definition(String lane, String name, String action) {
@@ -55,6 +59,12 @@ public class EscrowController {
 
   private ResponseEntity<Object> response(EscrowService.Fact fact, int status) {
     Map<String, Object> d = new LinkedHashMap<>(fact.data());
+    if (env.getProperty("escrow.fault", "none").equals("extra-field"))
+      d.put("unmodeled", true);
+    if (env.getProperty("escrow.fault", "none").equals("precision"))
+      // Test-only bug: lose exact integer precision at the serialization boundary.
+      d.replaceAll((key, value) -> value instanceof BigInteger n
+          ? new BigDecimal(n.doubleValue()).toBigInteger() : value);
     d.put("_links", Map.of("self", Map.of("href", fact.href())));
     var builder = ResponseEntity.status(status).header("Content-Type", "application/hal+json");
     if (status == 201) builder.header("Location", fact.href());
@@ -113,7 +123,13 @@ public class EscrowController {
       throws IOException {
     var d = definition(lane, name, action);
     Instant now = authorize(lane, List.of(d.actions().get(action).get(1)));
-    return response(service.confirm(lane, action, contractId, requestId, body(request), now), 201);
+    Map<String, Object> input = body(request);
+    if (env.getProperty("escrow.fault", "none").equals("accept-derived")
+        && Set.of("release", "milestone-release").contains(action)
+        && input.containsKey("payout_minor"))
+      // Test-only bug: trust caller data, without committing a confirmation.
+      return ResponseEntity.status(201).body(input);
+    return response(service.confirm(lane, action, contractId, requestId, input, now), 201);
   }
 
   @ExceptionHandler(BusinessError.class)

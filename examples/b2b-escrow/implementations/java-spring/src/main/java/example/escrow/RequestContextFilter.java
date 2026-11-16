@@ -50,6 +50,8 @@ public class RequestContextFilter extends OncePerRequestFilter {
       List<String> roles = Collections.list(request.getHeaders("x-evidence-role"));
       if (roles.size() != 1 || roles.getFirst().isEmpty())
         throw new BusinessError(401, "UNAUTHENTICATED", "Missing test identity");
+      if (env.getProperty("escrow.fault", "none").equals("clock"))
+        now = Instant.now().truncatedTo(ChronoUnit.SECONDS); // Test-only clock leak.
       CURRENT.set(new Context(now, roles.getFirst()));
       chain.doFilter(request, response);
     } catch (BusinessError e) {

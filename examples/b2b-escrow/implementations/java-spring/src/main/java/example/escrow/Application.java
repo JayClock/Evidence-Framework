@@ -10,6 +10,9 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class Application {
+  static final Set<String> FAULTS =
+      Set.of("none", "accept-derived", "extra-field", "clock", "precision");
+
   @Bean
   Jackson2ObjectMapperBuilderCustomizer strictJson() {
     return builder ->
@@ -43,9 +46,9 @@ public class Application {
           || port < 0
           || port > 65535
           || !Set.of("v1", "v2").contains(options.get("mode"))
-          || !options.get("fault").equals("none"))
+          || !FAULTS.contains(options.get("fault")))
         throw new IllegalArgumentException(
-            "Requires --test-mode, valid --port, --mode v1|v2, --fault none");
+            "Requires --test-mode, valid --port, --mode v1|v2 and a supported --fault");
       SpringApplication app = new SpringApplication(Application.class);
       app.setDefaultProperties(
           Map.of(
@@ -57,6 +60,8 @@ public class Application {
               true,
               "escrow.mode",
               options.get("mode"),
+              "escrow.fault",
+              options.get("fault"),
               "spring.main.banner-mode",
               "off",
               "logging.level.root",

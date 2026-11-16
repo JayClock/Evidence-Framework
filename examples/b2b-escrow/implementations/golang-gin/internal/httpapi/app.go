@@ -2,6 +2,7 @@ package httpapi
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -14,10 +15,22 @@ import (
 type Options struct {
 	TestMode bool
 	Mode     string
+	Fault    string
 	Clock    func() time.Time
 }
 
+func ValidFault(fault string) bool {
+	switch fault {
+	case "", "none", "accept-derived", "extra-field", "clock", "precision":
+		return true
+	}
+	return false
+}
+
 func New(options Options) *gin.Engine {
+	if !ValidFault(options.Fault) {
+		panic("Unknown fault")
+	}
 	gin.SetMode(gin.ReleaseMode)
 	app := gin.New()
 	ledger := domain.NewLedger()
@@ -51,6 +64,9 @@ func New(options Options) *gin.Engine {
 				return
 			}
 			now = parsed
+		}
+		if options.Fault == "clock" {
+			now = clock() // Test-only bug: discard the valid request-scoped clock.
 		}
 		roles := c.Request.Header.Values("X-Evidence-Role")
 		if len(roles) != 1 || roles[0] == "" {
@@ -88,7 +104,24 @@ func New(options Options) *gin.Engine {
 			c.Header("Location", f.Href)
 		}
 		c.Header("Content-Type", "application/hal+json")
-		c.JSON(status, domain.Representation(f))
+		data := domain.Representation(f)
+		if options.Fault == "extra-field" {
+			data["unmodeled"] = true
+		}
+		if options.Fault == "precision" {
+			// Deliberately simulate a lossy JSON/float64 boundary, not a new oracle.
+			for key, value := range f.Data {
+				if n, ok := value.(int64); ok {
+					rounded := int64(float64(n))
+					if rounded > domain.MaxSafe || rounded < -domain.MaxSafe {
+						data[key] = fmt.Sprint(rounded)
+					} else {
+						data[key] = rounded
+					}
+				}
+			}
+		}
+		c.JSON(status, data)
 	}
 	for lane, def := range domain.Definitions {
 		lane, def := lane, def
@@ -118,7 +151,13 @@ func New(options Options) *gin.Engine {
 			})
 			app.POST(base+"/request/:requestId/confirmation", func(c *gin.Context) {
 				authorize(c, lane, []string{roles[1]})
-				send(c, 201, ledger.Confirm(lane, action, c.Param("contractId"), c.Param("requestId"), read(c), c.MustGet("now").(time.Time)))
+				input := read(c)
+				if _, supplied := input["payout_minor"]; options.Fault == "accept-derived" && supplied && (action == "release" || action == "milestone-release") {
+					// Test-only bug: trust caller data without committing a confirmation.
+					c.JSON(201, input)
+					return
+				}
+				send(c, 201, ledger.Confirm(lane, action, c.Param("contractId"), c.Param("requestId"), input, c.MustGet("now").(time.Time)))
 			})
 		}
 	}

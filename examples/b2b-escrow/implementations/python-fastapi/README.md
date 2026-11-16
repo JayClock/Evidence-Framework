@@ -17,7 +17,7 @@ uv run --frozen python -m app.main --test-mode --port 8083
 - `--port 0` 分配空闲端口并输出一行 JSON `{"host":"http://127.0.0.1:<port>"}`。
 - `--mode v1|v2` 默认 v2；v1 不开放里程碑路由。
 - 必须显式 `--test-mode`，只绑定回环地址。`x-evidence-role` / `x-evidence-asof` 仅用于隔离测试，不是生产鉴权或可信的外部时钟。非法整秒 UTC 时间返回 400，缺少身份返回 401，越权返回 403；未传时间时使用当前 UTC。
-- `--fault none` 是本阶段唯一模式；拒绝尚未实现的故障值。完整红绿故障演练留给后续阶段。
+- `--fault none|accept-derived|extra-field|clock|precision`：默认 `none`，未知值启动失败。仅在测试模式下模拟接受 caller 派生值、泄漏字段、忽略合法注入时钟或经 float 丢失整数精度；不改变正常账本算法，保留身份与时钟格式校验。
 - Uvicorn 接收 SIGINT / SIGTERM 退出。每次全量验收和每个 gate 均需干净进程；账本重启即清空。
 
 ## 结构与语义
@@ -31,6 +31,8 @@ uv run --frozen python -m app.main --test-mode --port 8083
 金额为 **CNY 整数分**，费率为基点；Python 任意精度整数用于中间计算，检查 signed int64 结果，half-up 舍入。超过 2^53−1 的 JSON 整数以精确十进制字符串传入和返回，不能先转 float。此契约不是 Decimal JSON 字符串金额模型。
 
 原生测试独立构造业务数据，覆盖整数边界、精度与封顶守恒、截止时间、身份/字段校验、时钟并发隔离、跨订单凭证、过期请求、GET 以及并发放款（一个 201、一个 409）。不读取外部测试断言来生成响应。
+
+`tests/test_faults.py` 也验证四种故障可观察、默认无故障、未知故障失败关闭以及测试模式保护。float 转换只用于刻意损坏响应的测试分支，不用于正常金额算法。
 
 ## 外部验收
 

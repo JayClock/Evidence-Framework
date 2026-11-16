@@ -33,6 +33,8 @@ export interface Options {
 }
 
 export function createApp(options: Options = {}) {
+  const fault = options.fault ?? 'none';
+  if (!faults.includes(fault)) throw new Error('Unknown fault');
   const app = Fastify({
     logger: false,
     bodyLimit: 65536,
@@ -40,7 +42,6 @@ export function createApp(options: Options = {}) {
     onConstructorPoisoning: 'error',
   });
   const service = new EscrowService();
-  const fault = options.fault ?? 'none';
   const clock =
     options.clock ?? (() => new Date(Math.floor(Date.now() / 1000) * 1000));
   app.addHook('onRequest', (request, _reply, done) => {

@@ -1,6 +1,6 @@
 # B2B 担保采购与里程碑履约
 
-> 阶段三：四个独立框架实现（Gin / Spring Boot / FastAPI / Fastify）已落地。尚无本案例的浏览器 UI / E2E；完整跨语言故障演练与 CI 矩阵留给后续阶段。
+> 阶段四：四个独立框架实现（Gin / Spring Boot / FastAPI / Fastify）支持故障注入、真实 HTTP 红绿验证与 v1/v2 双门禁演练。尚无本案例的浏览器 UI / E2E；多语言 CI 矩阵留给阶段五。
 
 本案例用三个独立参与方、四份双边合同，描述「锁定商业条款 → 全额资金托管 → 交付与买方验收 → 托管方终态分账」。重点不是增加 CRUD，而是明确每项事实的形成方、跨合同凭证依据、金额计算和时间边界。
 
@@ -152,7 +152,7 @@ v1 regression 为两个原有流程、46 步；DoD 为三个新增里程碑流�
 
 | 工程                                                       | 环境与依赖管理                                   | 原生测试 / 构建（在工程内执行）                                |
 | ---------------------------------------------------------- | ------------------------------------------------ | -------------------------------------------------------------- |
-| [golang-gin](implementations/golang-gin/README.md)         | Go 1.22+；`go.mod` + `go.sum`                    | `go test -race ./...` / `go build -o bin/escrow ./cmd/server`  |
+| [golang-gin](implementations/golang-gin/README.md)         | Go 1.22+；`go.mod` + `go.sum`                    | `go test -race ./...` / `go build -o build/escrow ./cmd/server`  |
 | [java-spring](implementations/java-spring/README.md)       | JDK 21；固定 Spring Boot 3.3.13 与 Maven Wrapper | `./mvnw -B verify`                                             |
 | [python-fastapi](implementations/python-fastapi/README.md) | Python 3.12+ / uv；`uv.lock`                     | `uv sync --frozen --python 3.12` / `uv run --frozen pytest -q` |
 | [ts-fastify](implementations/ts-fastify/README.md)         | Node / pnpm；独立锁文件                          | `pnpm install --frozen-lockfile && pnpm test`                  |
@@ -180,8 +180,55 @@ pnpm evidence test --target http://127.0.0.1:8081 \
   --scenarios examples/b2b-escrow/generated --strict-drift --verbose
 ```
 
-三个新增实现提供 `--test-mode`、`--port`（包括 0）和 `--mode v1|v2`，启动报告目标 URL，且都只绑定回环。`--fault` 目前只接受 `none`；尚未落地的故障值会直接拒绝，不以忽略参数冒充已实现。完整跨语言红绿故障演练属于阶段四，CI 矩阵属于阶段五。
+三个新增实现提供 `--test-mode`、`--port`（包括 0）和 `--mode v1|v2`，启动报告目标 URL，且都只绑定回环。阶段四已补齐 `accept-derived`、`extra-field`、`clock`、`precision` 四种显式故障模式，未知故障仍会直接拒绝，不以忽略参数冒充已实现。
 
 本阶段金额以各语言原生的任意精度整数实现（Go `math/big.Int`、Java `BigInteger`、Python `int`），而不是照搬早期方案里的浮点 / Decimal 金额；这遵守本案例已经冻结的整数分契约。三个工程的原生测试各自构造业务事实，覆盖严格输入、角色边界、精确金额、时钟隔离、跨订单关联、请求过期及并发放款唯一性。服务不读取模型或验收期望，也没有跨实现依赖。
 
 各工程可复制出仓库单独构建、运行和测试。只有做外部 HTTP 验收时才需要另外接收 `generated/` 中的标准契约与 Evidence CLI。状态依然是内存账本；每次全量运行或 gate 重启服务，不能重复使用已放款订单。持久化、生产身份与浏览器 UI / E2E 不在阶段三范围内。
+
+## 阶段四：故障注入与双门禁红绿演练
+
+每个工程独立实现故障分支，不共享中间件，也不读取模型/预期值。`--fault none` 保持精确整数分算法；四种故障仅在显式 `--test-mode` 下可用，不绕过身份、角色或时钟格式检查。
+
+| 故障 | 故意损坏的行为 | 外部验收必须观察到的失败证据 |
+| --- | --- | --- |
+| `accept-derived` | 结算确认直接接受 caller 提交的 `payout_minor` 并回显，不提交账本 | 原应返回 422 的确认实际返回 201 |
+| `extra-field` | HAL 响应额外返回 `unmodeled: true` | strict drift 的 `extraneous_field`，路径 `/unmodeled` |
+| `clock` | 校验时钟头后丢弃其值，错误使用当前 UTC | 201 响应中的 `signed_at` 与声明预期不符 |
+| `precision` | 响应整数经过 binary64 后再编码，丢失大整数低位 | `milestone-precision` 的 `tier1_unit_price_minor` 精确值不符 |
+
+精度故障模拟的是序列化边界损坏，不把正常金额算法改成浮点，也不再用 `0.1 + 0.2` 演示已经冻结的整数分契约。strict drift 只检查已观察到的响应，开放 map 仍按契约保持开放；不宣称检查了所有路由或所有状态。
+
+### 自动验证（外部观察者，不是工程依赖）
+
+先按上面的各工程说明完成原生测试与构建。构建 CLI：`pnpm exec nx build cli`。然后从仓库根目录选一种实现运行；只需要这一种语言的环境：
+
+```sh
+# 验证器本身的判定逻辑测试（不启动服务）
+node --test examples/b2b-escrow/verification/expectations.test.mjs
+
+# 每个场景自动启动新进程，使用空闲端口，执行后关闭
+node examples/b2b-escrow/verification/run.mjs --implementation ts-fastify
+# 也可选择 golang-gin / java-spring / python-fastapi
+
+# 已安装并构建四种环境时才执行 all；这不是根 pnpm test 的先决条件
+node examples/b2b-escrow/verification/run.mjs --implementation all
+```
+
+验证器使用构建好的 `golang-gin/build/escrow`、`java-spring/target/escrow-0.1.0.jar`、`python-fastapi/.venv/bin/python` 与 `ts-fastify/dist/server.js`（Windows 对应 `.exe` / `Scripts/python.exe`）。Java 使用 `JAVA_HOME/bin/java`，未设置时使用 PATH。它不安装依赖、不替实现构建、不生成或修改契约；先通过 `export --verify` 确认生成物新鲜。
+
+每种实现执行 **11 个独立场景**：
+
+| 场景 | CLI 退出码 | 必须验证的结果 |
+| --- | --- | --- |
+| v2 全量、无故障、strict drift | 0 | 5 flows / 121 步全部真实通过 |
+| v1 regression、strict drift | 0 | 2 flows / 46 步基线通过 |
+| v1 DoD | 1 | 3 flows / 75 步；新里程碑路由 404，后续依赖跳过 |
+| v1 DoD、显式 `--allow-pending` | 0 | 仍然 `passed=false`、`pending=true`，不得称为验收已通过 |
+| v2 regression / DoD、strict drift（各一次） | 0 | 分别 46 / 75 步全部通过 |
+| 四种故障、v2 全量、strict drift（各一次） | 1 | 各自出现上表指定失败证据，不能只看非零退出码 |
+| 字段漂移 + DoD + strict drift + allow-pending | 1 | strict drift 不可被 pending 豁免，`pending=false` |
+
+每轮默认在临时目录保存报告，并打印绝对路径；可用 `--report-dir <全新目录>` 指定位置（拒绝覆盖旧目录）。每个场景保留同一次执行的 CLI JSON / Markdown / JUnit、完整 stdout/stderr 与后端日志，顶层 `summary.json` 记录 `expectationMet`。**汇总验证成功表示预期红绿都得到证实，不是把故障服务报告成 passed**。启动失败、超时、空执行、非预期 500 或错误的失败原因都判本轮失败；服务与 CLI 均有超时清理，验证被中断时也不会继续运行后续场景。
+
+这套验证器只作为仓库外部观察者了解各启动命令；四个实现本身仍互不感知，可单独提取。框架常规测试不新增 Go / Java / Python 工具链要求，多语言 CI 自动构建矩阵和统一编排仍属于阶段五。

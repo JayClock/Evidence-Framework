@@ -27,7 +27,11 @@ Optional arguments:
   delivery and settlement. v2 supports both workflows.
 - `--fault none|amount|clock|extra-field|missing-derived|accept-derived|precision`
   (default none): deliberately broken responses/behavior for external acceptance
-  tests. Do not enable faults for normal validation.
+  tests. Do not enable faults for normal validation. Unknown faults fail closed.
+  `accept-derived` echoes an illicit payout with 201 instead of rejecting it;
+  `extra-field` leaks `unmodeled`; `clock` discards a valid request clock;
+  `precision` round-trips exact integers through Number at the response boundary.
+  Faults still require test mode, a valid identity and valid clock syntax.
 - `--test-mode` is **required**. Test identity and UTC clock come from
   `x-evidence-role` / `x-evidence-asof`. Missing identity is 401; forbidden role
   is 403; invalid clock is 400. A missing clock uses the real current UTC second.
@@ -61,7 +65,9 @@ Optional arguments:
 Memory is per process and is lost on restart. Start a **new process for each
 acceptance run/gate**; re-running state-changing examples against the same ledger
 correctly conflicts. Native tests cover permission, time, precision, cross-order
-references and atomic release behavior. External HTTP contract suites are supplied
+references and atomic release behavior. `test/faults.test.mjs` independently
+checks the four deliberate faults, no-fault default and fail-closed guards.
+External HTTP contract suites are supplied
 by the consumer; this package does not require them to install/build/run/test.
 Durable persistence, real bank transfers, production identity, browser UI/E2E,
 refunds and arbitrary multi-stage settlement are not implemented here.

@@ -9,8 +9,9 @@ business_context: ContextVar[tuple[datetime, str]] = ContextVar("business_contex
 class RequestContextMiddleware:
     """Pure ASGI middleware: context is reset even on failed/async requests."""
 
-    def __init__(self, app, test_mode=False, clock=None):
+    def __init__(self, app, test_mode=False, clock=None, ignore_clock=False):
         self.app, self.test_mode = app, test_mode
+        self.ignore_clock = ignore_clock
         self.clock = clock or (
             lambda: datetime.now(timezone.utc).replace(microsecond=0)
         )
@@ -39,6 +40,8 @@ class RequestContextMiddleware:
             return await JSONResponse({"error": "UNAUTHENTICATED"}, 401)(
                 scope, receive, send
             )
+        if self.ignore_clock:
+            now = self.clock()  # Test-only bug: discard a valid injected clock.
         token = business_context.set((now, roles[0]))
         try:
             await self.app(scope, receive, send)

@@ -15,7 +15,7 @@ java -jar target/escrow-0.1.0.jar --test-mode --port 8082
 - `--port 0` 选择空闲端口，启动后 stdout 输出 JSON `{"host":"http://127.0.0.1:<port>"}`。
 - `--mode v1|v2` 默认 v2；v1 不开放里程碑操作。
 - 必须显式 `--test-mode`，仅监听 `127.0.0.1`。`x-evidence-role` 是测试身份；`x-evidence-asof` 是整秒 UTC 测试时钟。身份缺失返回 401，越权 403，非法时钟 400。没有时钟头时使用当前 UTC。
-- `--fault none` 为本阶段唯一模式，其他值明确失败，不伪造尚未实现的故障注入能力。
+- `--fault none|accept-derived|extra-field|clock|precision`：默认 `none`，未知值启动失败。仅在测试模式下模拟接受 caller 派生值、泄漏字段、忽略合法注入时钟或经 double 丢失整数精度；不改变正常账本算法，保留身份与时钟格式校验。
 - SIGINT / SIGTERM 关闭 Spring 上下文。每次全量 HTTP 验收、每个 gate 使用新进程，内存账本不会自动复位。
 
 ## 结构与边界
@@ -35,6 +35,8 @@ evidence test --target http://127.0.0.1:8082 --scenarios "$CONTRACTS" --strict-d
 ```
 
 `CONTRACTS` 是外部提供的标准 suite 目录，不参与本工程构建。通过只说明已执行的用例符合契约，不证明生产身份、所有状态或浏览器交互。
+
+原生 `FaultTest` 单独覆盖四种故障、默认无故障、未知故障失败关闭和测试模式保护。double 转换只存在于刻意损坏响应的测试分支，不用于正常金额算法。
 
 ## Wrapper 来源
 
