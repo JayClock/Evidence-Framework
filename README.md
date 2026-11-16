@@ -94,17 +94,24 @@
 │   └── desktop/                         # 桌面可视化工作台宿主 (Electron Forge)
 ├── libs/
 │   ├── desktop/                         # 桌面端下沉的 UI 与功能库
+│   │   ├── contracts/                   # Desktop IPC 通道与强类型契约，供壳与 Feature 共享
 │   │   ├── ui-kit/                      # 基础呈现组件库 (Button, Panel, Modal 等)
 │   │   ├── feature-canvas/              # 画布视图、节点渲染与连线交互
 │   │   ├── feature-inspector/           # 属性审查面板、CEL 代码高亮与自动补全
+│   │   ├── feature-story/               # 故事回放、事实卡片与 What-If 交互
+│   │   ├── feature-delivery/            # 交付中心、增量预览与导出状态
+│   │   ├── feature-drift/               # 生产漂移雷达与 trace 选择
+│   │   ├── feature-agent/               # Copilot 会话、补丁桥接与审查
 │   │   └── testing/                     # 桌面端渲染测试夹具与 Mock 容器
 │   ├── evidence-schema/                 # 领域模型 AST 定义与严格语法校验基石
 │   ├── evidence-model-core/             # 纯内存图引擎、命令总线 (Undo/Redo)、CEL 仿真执行器 (Universal)
 │   ├── evidence-model-io/               # 领域模型文件与便携 Bundle 序列化适配 (Node.js I/O)
 │   ├── evidence-canvas-interaction/     # 纯数学画布交互计算（视口变换、泳道布局、框选）
+│   ├── evidence-tools/                  # Universal 模型工具注册表：统一 Pi/MCP 算子与受控补丁入口
 │   ├── evidence-agent/                  # AI Agent 运行时：会话、提示词、治理闭环、原生传感器与 Tool 扩展
 │   ├── evidence-mcp/                    # Model Context Protocol (MCP) 工具与桥接协议
-│   ├── evidence-api/                    # API 契约投影与 OpenAPI 3.1 规格导出
+│   ├── evidence-api/                    # API 契约投影与 OpenAPI 3.1 规格导出（不执行验收）
+│   ├── evidence-acceptance/             # Step CI/Hurl 生成、HTTP 验收、漂移与 oasdiff 兼容性门禁
 │   └── evidence-visualization/          # 离线单文件 Review 工作台构建与 CSP 签名发布
 └── docs/                                # 架构设计 RFC 与工作区规范
 ```

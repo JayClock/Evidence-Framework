@@ -15,23 +15,25 @@ npx nx start desktop
 
 ## What runs where
 
-| Concern                                                        | Lives in                                          | Runs in      |
-| -------------------------------------------------------------- | ------------------------------------------------- | ------------ |
-| model parsing, CEL example oracle, scope, static FM report       | `libs/evidence-model-core/src/validation/`         | process      |
-| lineage projection (model I/O CLI owns `check` / `compile`) | `libs/evidence-model-core/src/derive/`             | process      |
-| agent session, sensors, stage gate, agent tools                 | `libs/evidence-agent`                             | process      |
-| API contract projection, OpenAPI, HTTP journeys                 | `libs/evidence-api` (`evidence-api` command)       | process      |
-| offline review page                                             | `libs/evidence-visualization` (`evidence-workbench` command) | process |
-| interview and modeling prompts                                  | `libs/evidence-agent/src/prompts/`                 | prompt layer |
+| Concern                                                      | Lives in                                                     | Runs in                                 |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | --------------------------------------- |
+| model parsing, CEL example oracle, scope, static FM report   | `libs/evidence-model-core/src/validation/`                   | process                                 |
+| lineage projection (model I/O CLI owns `check` / `compile`)  | `libs/evidence-model-core/src/derive/`                       | process                                 |
+| agent session, sensors, stage gate, agent tools              | `libs/evidence-agent`                                        | process                                 |
+| shared guarded model mutations for Pi / MCP                  | `libs/evidence-tools`                                        | universal                               |
+| API contract projection, OpenAPI, HTTP journeys              | `libs/evidence-api`                                          | process + browser-safe delivery entry   |
+| acceptance generation, HTTP gates, native compatibility diff | `libs/evidence-acceptance` (legacy `evidence-api` binary)    | process + browser-safe projection entry |
+| offline review page                                          | `libs/evidence-visualization` (`evidence-workbench` command) | process                                 |
+| interview and modeling prompts                               | `libs/evidence-agent/src/prompts/`                           | prompt layer                            |
 
 There is no skill tree. The agent's instructions are code, and the data they
 used to point at belongs to the library that consumes it:
 
-| What the agent or a generator needs | Where it lives |
-| ----------------------------------- | -------------- |
-| the prompt the session starts with   | `libs/evidence-agent/src/prompts/` |
-| the FM and API JSON Schemas          | `libs/evidence-schema/schemas/`, `libs/evidence-api/schemas/` |
-| the page templates the generator inlines | `libs/evidence-visualization/assets/` |
+| What the agent or a generator needs      | Where it lives                                                |
+| ---------------------------------------- | ------------------------------------------------------------- |
+| the prompt the session starts with       | `libs/evidence-agent/src/prompts/`                            |
+| the FM and API JSON Schemas              | `libs/evidence-schema/schemas/`, `libs/evidence-api/schemas/` |
+| the page templates the generator inlines | `libs/evidence-visualization/assets/`                         |
 
 The agent session asks Pi for `noSkills: true`, so a working copy is never
 scanned for instructions: opening a project reads its model, nothing else.
@@ -83,7 +85,7 @@ API diff uses the pinned native `oasdiff` provisioned explicitly by
 `pnpm api:setup`, not by `pnpm install`. Setup downloads the official release and
 verifies its archive checksum and executable version; a matching cached binary
 is reused. Rerun setup after deleting `node_modules` or the tool cache. See
-[Evidence API setup](libs/evidence-api/README.md#setup) for details.
+[Acceptance setup](libs/evidence-acceptance/README.md#setup) for details.
 
 The runner resolves the cache relative to the installed Evidence package even
 when the caller's working directory is elsewhere, then falls back to `oasdiff`
@@ -95,8 +97,9 @@ comparison never downloads a binary.
 
 - `libs/evidence-model-core/tests/fixtures/` holds the golden models the checks
   are tested against; `libs/evidence-api/tests/fixtures/` holds the API designs.
-  Suites in other libraries read them by relative path rather than keeping a
-  copy, so there is one place to refresh a fixture.
+  Shared API fixture builders are exported by `evidence-api/testing`; acceptance
+  tests consume that surface rather than private source paths or copies. Other
+  fixture trees remain shared by relative path.
 - `libs/evidence-schema/tests/fixtures/product-procurement/` is a snapshot of a
   real model tree, copied so schema tests stay stable when the API fixture moves.
 - Digests printed by the checks (`modelDigest`, `timelineSummary.sha256`) are

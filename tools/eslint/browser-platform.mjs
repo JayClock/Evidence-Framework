@@ -6,10 +6,10 @@
  * neither: `node:fs` is not an external node, so a renderer import of it
  * passed every rule. This block closes that gap.
  *
- * It also keeps the two Node packages a browser library may consume on their
+ * It also keeps Node packages a browser library may consume on their
  * browser-safe entries. A project-level rule cannot see a subpath, so the
- * package root stays restricted here: `…/delivery` and `…/browser` are the
- * entries whose module graph never reaches disk.
+ * package root stays restricted here: `…/delivery`, `…/browser` and
+ * `…/projection` have module graphs that never reach disk.
  */
 
 /** Node packages that ship a browser-safe entry and may be imported from one. */

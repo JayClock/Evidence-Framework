@@ -62,32 +62,37 @@ apps/desktop/
 │   ├── main/          # main process: windows, IPC, ProjectStore, watcher,
 │   │                  # agentRuntime (Pi session), sensorRuntime (debounce)
 │   ├── preload/       # the only `contextBridge` surface (index.ts)
-│   ├── renderer/      # React 19 UI: canvas, inspector, outline, agent copilot,
-│   │                  # docked console and status bar
-│   └── shared/        # IPC channel names and payload contracts (project, agent)
+│   └── renderer/      # editor shell and remaining screens; composes Feature libs
 ├── resources/         # build output: the bundled page assets (gitignored)
 ├── tests/             # integration tests against the product-procurement fixture
 └── forge.config.mjs   # entries: src/main/main.ts, src/preload/index.ts
 ```
 
 The folder per process mirrors Electron's runtime boundaries: `main/` may import
-`node:*`, `preload/` only talks to `electron` + `shared/`, `renderer/` is plain
-DOM and reaches the main process exclusively through `window.evidenceAPI`.
+`node:*`, `preload/` talks to `electron` and `desktop-contracts`, and `renderer/`
+is plain DOM. Only the application shell reads `window.evidenceAPI`; feature hooks
+receive narrow, typed API ports explicitly.
 Forge names the preload bundle after its entry, so `vite.preload.config.mjs`
 pins `preload.js` — the name `windows.ts` loads.
 
-Renderer modules map onto the four packages built earlier:
+Renderer behavior is shared through Nx libraries:
 
-| Renderer concern                       | Source of truth                                |
-| -------------------------------------- | ---------------------------------------------- |
-| documents, undo, commands              | `@evidence-poc/evidence-model-core/browser`    |
-| inspector groups and fields            | `@evidence-poc/evidence-schema`                |
-| layout, viewport, rulers, highlighting | `@evidence-poc/evidence-canvas-interaction`    |
-| agent session, prompts, sensor mode    | `@evidence-poc/evidence-agent`                 |
-| sensors, tools, drift audits           | `@evidence-poc/evidence-agent`                 |
+| Renderer concern                         | Source of truth                                                                                       |
+| ---------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| documents, undo, commands                | `@evidence-poc/evidence-model-core` (universal)                                                       |
+| IPC DTOs and channel constants           | `@evidence-poc/desktop-contracts`                                                                     |
+| layout, viewport, rulers                 | `@evidence-poc/evidence-canvas-interaction`                                                           |
+| canvas and inspector UI                  | `@evidence-poc/desktop-feature-canvas`, `desktop-feature-inspector`                                   |
+| story, delivery, drift, Copilot UI/hooks | `desktop-feature-story`, `desktop-feature-delivery`, `desktop-feature-drift`, `desktop-feature-agent` |
+| browser sensor/event DTOs and labels     | `@evidence-poc/evidence-agent/browser`                                                                |
+| inline acceptance compilation            | `@evidence-poc/evidence-acceptance/projection`                                                        |
+| shared scripted API/renderer fixtures    | `@evidence-poc/desktop-testing` (tests only)                                                          |
 
-`/browser` is the model-core entry that excludes `node:fs`, so the renderer
-bundle never pulls a Node built-in.
+The feature libraries own their colocated tests. `EditorScreen` still coordinates
+selection, layout and cross-feature behavior; project services, window lifecycle
+and IPC registration remain in the Electron main process. No library imports
+application files. Node agent/acceptance implementations are never imported as
+runtime code by a browser feature.
 
 ## Module resolution
 

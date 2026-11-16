@@ -32,7 +32,8 @@ const CASES = [
     project: 'evidence-api',
     file: 'libs/evidence-api/src/__boundary-drill.ts',
     body: "export * from '@evidence-poc/evidence-acceptance';\n",
-    expects: 'Circular dependency between "evidence-api" and "evidence-acceptance"',
+    expects:
+      'Circular dependency between "evidence-api" and "evidence-acceptance"',
   },
   {
     name: 'a browser feature importing the acceptance runtime entry',
@@ -46,7 +47,8 @@ const CASES = [
     project: 'evidence-tools',
     file: 'libs/evidence-tools/src/__boundary-drill.ts',
     body: "export * from '@evidence-poc/evidence-agent';\n",
-    expects: 'Circular dependency between "evidence-tools" and "evidence-agent"',
+    expects:
+      'Circular dependency between "evidence-tools" and "evidence-agent"',
   },
   {
     name: 'a domain library reaching a projection',
