@@ -1,5 +1,11 @@
 export * from './ingestion/index.js';
 export {
+  translateBusinessFormula,
+  replaceBusinessFormulaToken,
+  type BusinessFormula,
+  type BusinessFormulaToken,
+} from './cel/celFormulaTranslator.js';
+export {
   evaluateRuleOnExample,
   type ExampleRuleInputs,
 } from './cel/transientSandbox.js';

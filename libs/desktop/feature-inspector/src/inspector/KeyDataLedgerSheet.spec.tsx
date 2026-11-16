@@ -102,6 +102,7 @@ describe('KeyDataLedgerSheet', () => {
 
   it('edits the selected rule from the formula bar', () => {
     const { session } = setup('evidence.contract', 'total_amount');
+    fireEvent.click(screen.getByRole('button', { name: 'CEL 源码' }));
 
     expect(readExpression('total_amount 公式栏')).toBe(
       'contract.quantity * 100',
