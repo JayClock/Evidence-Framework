@@ -37,6 +37,7 @@ const result = (): Extract<PreviewReviewResult, { success: true }> => ({
       runtime: false,
     },
     delivery: null,
+    stories: [],
     layout: {
       bounds: { x: 0, y: 0, width: 0, height: 0 },
       nodes: [],

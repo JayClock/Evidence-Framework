@@ -817,10 +817,11 @@ pre {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 28px;
+  padding: 5px 28px;
   background: #fff;
   border-bottom: 1px solid var(--line);
   overflow-x: auto;
+  overflow-y: hidden;
 }
 .workbench-views button {
   flex-shrink: 0;
@@ -946,7 +947,7 @@ body[data-panel='delivery'] .layout {
 }
 @media (max-width: 600px) {
   .workbench-views {
-    padding: 6px 14px;
+    padding: 5px 14px;
   }
   .story-player {
     grid-template-columns: minmax(0, 1fr);

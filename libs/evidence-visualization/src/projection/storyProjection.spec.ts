@@ -1,4 +1,4 @@
-import { mkdtemp, rm } from 'node:fs/promises';
+import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -12,6 +12,12 @@ import { collectFlowScenarios } from '@evidence-poc/evidence-model-core';
 import { collectWorkbench } from '../generate/collectWorkbench.js';
 import { collectWorkbenchStories } from '../generate/collectWorkbenchStories.js';
 import { readWorkbenchModel } from '../generate/readWorkbenchModel.js';
+import { generateWorkbench } from '../generate/generateWorkbench.js';
+import {
+  builtinAssetsDirectory,
+  loadWorkbenchAssets,
+} from '../render/workbenchAssets.js';
+import { renderWorkbenchHtml } from '../render/workbenchRenderer.js';
 import { projectWorkbenchStories } from './storyProjection.js';
 import { projectWorkbenchData } from './workbenchProjection.js';
 
@@ -205,6 +211,83 @@ describe('workbench story collection', () => {
         }),
       ).rejects.toThrow('输入在生成期间变化');
       expect(generate).toHaveBeenCalled();
+    });
+  });
+});
+
+describe('single-file story export', () => {
+  it('publishes all payment scenes in the JSON island with no external resources', async () => {
+    await withRoot(async (root) => {
+      const { output, data } = await generateWorkbench({
+        projectRoot: root,
+        modelRoot: PROCUREMENT,
+        output: path.join(root, 'workbench.html'),
+        storyOptions: { skipAi: true },
+      });
+      const html = await readFile(output, 'utf8');
+      const island = /id="workbench-data">(.*?)<\/script>/s.exec(html);
+      expect(island).not.toBeNull();
+      expect(JSON.parse(island![1]!).stories).toEqual(data.stories);
+      expect(data.stories[0]!.flowId).toBe('payment');
+      expect(data.stories[0]!.scenes.length).toBeGreaterThan(0);
+      expect(html).toContain('id="view-stories"');
+      expect(html).toContain("connect-src 'none'");
+      expect(html).toContain("default-src 'none'");
+      expect(html).toMatch(/script-src 'sha256-[^']+'/);
+      expect(html.match(/<script\b/g)).toHaveLength(2);
+      expect(html).not.toMatch(
+        /<(?:script|link|img|iframe|source)\b[^>]*\b(?:src|href)\s*=/i,
+      );
+      expect(html).not.toMatch(/@@(?:DATA|APP|STYLE|CSP)@@/);
+      expect(JSON.parse(island![1]!)).not.toHaveProperty('storyOptions');
+    });
+  });
+
+  it('escapes script terminators in stories while preserving the displayed facts', async () => {
+    await withRoot(async (root) => {
+      const { data } = await collectWorkbench({
+        projectRoot: root,
+        modelRoot: PROCUREMENT,
+        storyOptions: { skipAi: true },
+      });
+      const hostile =
+        '</script><script src="https://private.invalid/leak">&\u2028\u2029';
+      const original = data.stories[0]!;
+      const scene = original.scenes[0]!;
+      const input = {
+        ...data,
+        stories: [
+          {
+            ...original,
+            storyTitle: hostile,
+            scenes: [
+              {
+                ...scene,
+                narrative: hostile,
+                documentCard: {
+                  ...scene.documentCard,
+                  fields: [
+                    {
+                      name: 'amount',
+                      label: hostile,
+                      value: hostile,
+                      keyData: true,
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        ],
+      };
+      const html = renderWorkbenchHtml(
+        input,
+        loadWorkbenchAssets(builtinAssetsDirectory()!),
+      );
+      expect(html).not.toContain(hostile);
+      expect(html.match(/<script\b/g)).toHaveLength(2);
+      const island = /id="workbench-data">(.*?)<\/script>/s.exec(html)![1]!;
+      expect(JSON.parse(island).stories).toEqual(input.stories);
     });
   });
 });
