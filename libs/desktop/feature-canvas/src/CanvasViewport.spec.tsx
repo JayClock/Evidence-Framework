@@ -162,6 +162,61 @@ describe('CanvasViewport', () => {
     expect(onClearSelection).not.toHaveBeenCalled();
   });
 
+  it('centres story documents at 1.15 zoom, overrides hover dimming and restores normal rendering on exit', async () => {
+    vi.stubGlobal('matchMedia', () => ({ matches: true }));
+    const props = {
+      document,
+      graph,
+      layout,
+      viewMode: 'standard' as const,
+      selection: { nodeId: null, attributeName: null },
+      focusRequest: null,
+      zoomCommand: null,
+      onSelect: vi.fn(),
+      onClearSelection: vi.fn(),
+    };
+    const focus = {
+      activeEntityId: 'evidence.confirmation',
+      dependencyEntityIds: ['evidence.request'],
+      focusKey: 'flow:confirmation',
+    };
+    const { container, rerender } = render(
+      <CanvasViewport {...props} storyFocus={focus} />,
+    );
+    const wrapper = container.querySelector(
+      '[data-id="evidence.confirmation"]',
+    );
+    expect(wrapper).toHaveClass('evidence-story-active');
+    expect(container.querySelector('[data-id="role.inventory"]')).toHaveStyle({
+      opacity: '0.35',
+    });
+    expect(container.querySelectorAll('[data-story-edge]')).toHaveLength(2);
+    await waitFor(() =>
+      expect(viewportTransform(container)).toContain('scale(1.15)'),
+    );
+    const before = viewportTransform(container);
+    rerender(
+      <CanvasViewport
+        {...props}
+        storyFocus={{
+          activeEntityId: 'evidence.request',
+          dependencyEntityIds: [],
+          focusKey: 'flow:request',
+        }}
+      />,
+    );
+    await waitFor(() => expect(viewportTransform(container)).not.toBe(before));
+    expect(container.querySelector('[data-id="evidence.request"]')).toHaveClass(
+      'evidence-story-active',
+    );
+    rerender(<CanvasViewport {...props} storyFocus={null} />);
+    expect(container.querySelector('.evidence-story-active')).toBeNull();
+    expect(container.querySelector('[data-story-edge]')).toBeNull();
+    expect(
+      container.querySelector('[data-id="role.inventory"]'),
+    ).not.toHaveStyle({ opacity: '0.35' });
+  });
+
   it('reveals a target the sidebar or a finding asked for', async () => {
     const props = {
       document,

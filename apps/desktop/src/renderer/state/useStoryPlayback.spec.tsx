@@ -82,6 +82,35 @@ describe('story playback', () => {
     expect(hook.result.current.canNext).toBe(false);
   });
 
+  it('resolves canonical and alias-based document dependencies for canvas focus', async () => {
+    const { hook, flow, project } = setup();
+    const steps = flow.steps.map((step, index) => ({
+      ...step,
+      actingRoleRef: 'role.buyer',
+      values:
+        index === 1
+          ? {
+              ...step.values,
+              id: 'request-alias',
+              ref: 'evidence.contract#example-0',
+            }
+          : step.values,
+      basedOn:
+        index === 2
+          ? ['request-alias', 'evidence.contract#example-0']
+          : step.basedOn,
+    }));
+    project.mockResolvedValue(storyResult({ ...flow, steps }));
+    await tick();
+    act(() => hook.result.current.next());
+    act(() => hook.result.current.next());
+    expect(hook.result.current.canvasFocus).toMatchObject({
+      activeEntityId: 'evidence.confirmation',
+      dependencyEntityIds: ['evidence.request', 'evidence.contract'],
+      relatedEntityIds: ['role.buyer'],
+    });
+  });
+
   it('automatically advances, stops at the end and cleans up timers on exit', async () => {
     const { hook } = setup();
     await tick();

@@ -86,6 +86,28 @@ export const useStoryPlayback = ({
   );
   const ready = enabled && !loading && !error && !stale && step !== undefined;
 
+  const canvasFocus = useMemo(() => {
+    if (!enabled || !flow || !step) return null;
+    const dependencyEntityIds = step.basedOn.flatMap((ref) => {
+      // Canonical example refs take precedence over declared id/ref aliases.
+      const dependency =
+        flow.steps.find((candidate) => stepRef(candidate) === ref) ??
+        flow.steps.find(
+          (candidate) =>
+            candidate.values.id === ref || candidate.values.ref === ref,
+        );
+      return dependency ? [dependency.entityId] : [];
+    });
+    return {
+      activeEntityId: step.entityId,
+      dependencyEntityIds: [...new Set(dependencyEntityIds)],
+      relatedEntityIds: [step.actingRoleRef, step.responsibleRoleRef].filter(
+        (id): id is string => id !== undefined,
+      ),
+      focusKey: `${flow.flowId}:${stepRef(step)}:${step.sequence}:${step.stepHash}`,
+    };
+  }, [enabled, flow, step]);
+
   const projectedFlowId = useRef<string | undefined>(undefined);
   useEffect(() => {
     if (!enabled || invalidating) return;
@@ -263,6 +285,7 @@ export const useStoryPlayback = ({
     currentStepSequence: step?.sequence ?? 0,
     step,
     scene,
+    canvasFocus,
     projection,
     loading,
     error,

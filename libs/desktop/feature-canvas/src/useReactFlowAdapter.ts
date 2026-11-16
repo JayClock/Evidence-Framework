@@ -37,8 +37,15 @@ export interface ContextNodeData extends Record<string, unknown> {
   outOfScope: boolean;
 }
 
+export interface StoryEdgeAnimation {
+  storyActive?: boolean;
+  storyReversed?: boolean;
+}
+
 /** One routed relationship, drawn as the polyline the layout computed. */
-export interface FulfillmentEdgeData extends Record<string, unknown> {
+export interface FulfillmentEdgeData
+  extends Record<string, unknown>,
+    StoryEdgeAnimation {
   edge: LayoutEdge;
   label: string;
   cardinality: {
@@ -55,7 +62,10 @@ export interface FulfillmentEdgeData extends Record<string, unknown> {
 }
 
 /** The dashed link that states one request is discharged by one result. */
-export interface PairLinkEdgeData extends Record<string, unknown> {
+export interface PairLinkEdgeData
+  extends Record<string, unknown>,
+    StoryEdgeAnimation {
+  storyDimmed?: boolean;
   points: string;
   outOfScope: boolean;
 }

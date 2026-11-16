@@ -72,8 +72,11 @@ export const FulfillmentEdge = ({ data }: EdgeProps<FulfillmentFlowEdge>) => {
         fill="none"
         stroke={stroke}
         strokeWidth={strokeWidth}
-        strokeDasharray={strokeDasharray}
+        strokeDasharray={data.storyActive ? '8 5' : strokeDasharray}
+        className={data.storyActive ? 'evidence-story-flow' : undefined}
+        data-story-edge={data.storyActive ? '' : undefined}
         style={{
+          animationDirection: data.storyReversed ? 'reverse' : 'normal',
           pointerEvents: interactive ? 'stroke' : 'none',
           strokeLinecap: 'round',
           strokeLinejoin: 'round',
@@ -193,10 +196,15 @@ export const PairLinkEdge = ({ data }: EdgeProps<PairLinkFlowEdge>) => {
       data-pair-link=""
       fill="none"
       stroke={PAIR_LINK_COLOR}
-      strokeWidth={1}
-      strokeDasharray="3 3"
-      opacity={data.outOfScope ? 0.15 : 1}
-      style={{ pointerEvents: 'none' }}
+      strokeWidth={data.storyActive ? 2 : 1}
+      strokeDasharray={data.storyActive ? '8 5' : '3 3'}
+      className={data.storyActive ? 'evidence-story-flow' : undefined}
+      data-story-edge={data.storyActive ? '' : undefined}
+      opacity={data.outOfScope ? 0.15 : data.storyDimmed ? 0.16 : 1}
+      style={{
+        pointerEvents: 'none',
+        animationDirection: data.storyReversed ? 'reverse' : 'normal',
+      }}
     />
   );
 };

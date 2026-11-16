@@ -1,6 +1,7 @@
 // The engine ships its structural styles beside its JavaScript; the layer must
 // travel with the component, not with the app that happens to host it.
 import '@xyflow/react/dist/style.css';
+import './storyPlayback.css';
 
 import { Radar } from 'lucide-react';
 
@@ -48,6 +49,7 @@ import {
   CanvasInteractionProvider,
   type CanvasInteraction,
 } from './CanvasInteractionContext';
+import { applyStoryFocus, type CanvasStoryFocus } from './storyFocus';
 import { BusinessLegend } from './BusinessLegend';
 import { ContextGroupNode, EntityNode } from './EntityNode';
 import { FulfillmentEdge, PairLinkEdge } from './FulfillmentEdge';
@@ -90,6 +92,8 @@ interface CanvasViewportProps {
    * the viewport only hands it the zoom maths it owns.
    */
   hud?: (controls: CanvasHudControls) => ReactNode;
+  /** A declared story step takes precedence over hover and selection focus. */
+  storyFocus?: CanvasStoryFocus | null;
   /** Rings the objects a pending agent patch touches. */
   overlay?: ModelOverlay | null;
   diagnostics?: DiagnosticIndex;
@@ -185,6 +189,7 @@ const CanvasSurface = ({
   focusRequest = null,
   zoomCommand = null,
   hud,
+  storyFocus = null,
   overlay = null,
   diagnostics,
   onOpenIssues,
@@ -238,21 +243,24 @@ const CanvasSurface = ({
 
   const { nodes, edges } = useMemo(
     () =>
-      convertLayoutToReactFlow({
-        layout,
-        document,
-        selection,
-        highlightedNodeIds: selectedHighlight.nodeIds,
-        highlightedEdgeIds: selectedHighlight.edgeIds,
-        highlightedContextIds: selectedHighlight.contextIds,
-        dimmed: selectedHighlight.dimmed,
-        scope,
-        overlay,
-        summaries,
-        hoveredEdgeId,
-        viewMode,
-        ...(diagnostics === undefined ? {} : { diagnostics }),
-      }),
+      applyStoryFocus(
+        convertLayoutToReactFlow({
+          layout,
+          document,
+          selection,
+          highlightedNodeIds: selectedHighlight.nodeIds,
+          highlightedEdgeIds: selectedHighlight.edgeIds,
+          highlightedContextIds: selectedHighlight.contextIds,
+          dimmed: selectedHighlight.dimmed,
+          scope,
+          overlay,
+          summaries,
+          hoveredEdgeId,
+          viewMode,
+          ...(diagnostics === undefined ? {} : { diagnostics }),
+        }),
+        storyFocus,
+      ),
     [
       layout,
       document,
@@ -264,6 +272,7 @@ const CanvasSurface = ({
       hoveredEdgeId,
       viewMode,
       diagnostics,
+      storyFocus,
     ],
   );
 
@@ -347,6 +356,7 @@ const CanvasSurface = ({
   useEffect(() => {
     if (
       !viewportInitialized ||
+      storyFocus !== null ||
       focusRequest === null ||
       lastFocusToken.current === focusRequest.token
     ) {
@@ -374,7 +384,33 @@ const CanvasSurface = ({
       zoom: getZoom(),
       duration: reducedMotion() ? 0 : 250,
     });
-  }, [focusRequest, layout, setCenter, getZoom, viewportInitialized]);
+  }, [
+    focusRequest,
+    layout,
+    setCenter,
+    getZoom,
+    viewportInitialized,
+    storyFocus,
+  ]);
+
+  const lastStoryFocus = useRef<string | null>(null);
+  useEffect(() => {
+    if (storyFocus === null) {
+      lastStoryFocus.current = null;
+      return;
+    }
+    if (!viewportInitialized || !viewportSized) return;
+    const box = layout.nodeById.get(storyFocus.activeEntityId)?.worldBox;
+    if (!box) return;
+    // Re-layout can move the current entity without changing its business facts.
+    const key = `${storyFocus.focusKey}:${box.x}:${box.y}:${box.width}:${box.height}`;
+    if (lastStoryFocus.current === key) return;
+    lastStoryFocus.current = key;
+    void setCenter(box.x + box.width / 2, box.y + box.height / 2, {
+      zoom: 1.15,
+      duration: reducedMotion() ? 0 : 600,
+    });
+  }, [storyFocus, layout, setCenter, viewportInitialized, viewportSized]);
 
   const interaction = useMemo<CanvasInteraction>(
     () => ({

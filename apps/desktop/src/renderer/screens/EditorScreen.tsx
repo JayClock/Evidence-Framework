@@ -707,6 +707,7 @@ const EditorWorkspace = ({
         selection={state.selection}
         focusRequest={focusRequest}
         zoomCommand={zoomCommand}
+        storyFocus={story.canvasFocus}
         hud={(controls) => (
           <CanvasFloatingHud
             {...controls}
@@ -729,8 +730,8 @@ const EditorWorkspace = ({
           focusIssue(issues[0]);
         }}
         overlay={patchReview.review?.overlay ?? null}
-        scope={scope}
-        onScopeChange={changeScope}
+        scope={storyActive ? null : scope}
+        onScopeChange={storyActive ? undefined : changeScope}
         onSelect={(nodeId) => state.session.select(nodeId)}
         onClearSelection={() => state.session.clearSelection()}
       />

@@ -83,6 +83,9 @@ describe('EditorScreen', () => {
     );
     await readyCanvas();
     expect(api.story.project).not.toHaveBeenCalled();
+    fireEvent.change(screen.getByLabelText('聚焦范围'), {
+      target: { value: 'context.catalog' },
+    });
     fireEvent.click(screen.getByRole('button', { name: /业务流放映/ }));
     expect(screen.getByRole('tab', { name: '业务故事' })).toHaveAttribute(
       'aria-selected',
@@ -91,6 +94,12 @@ describe('EditorScreen', () => {
     expect(await screen.findByText('采购方办理采购协议。')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: /下一步/ }));
     expect(screen.getByText('采购方办理交付请求。')).toBeInTheDocument();
+    expect(container.querySelector('[data-id="evidence.request"]')).toHaveClass(
+      'evidence-story-active',
+    );
+    expect(
+      container.querySelector('[data-node-id="evidence.request"]'),
+    ).not.toHaveAttribute('aria-disabled');
     const document = createDesktopFixture();
     document.entities.find(({ id }) => id === 'evidence.contract')!.label =
       '外部更新采购协议';
@@ -116,6 +125,8 @@ describe('EditorScreen', () => {
     expect(screen.queryByLabelText('业务流放映控制')).toBeNull();
     expect(screen.queryByLabelText('副视口')).toBeNull();
     expect(unsubscribe).toHaveBeenCalled();
+    expect(container.querySelector('.evidence-story-active')).toBeNull();
+    expect(screen.getByLabelText('聚焦范围')).toHaveValue('context.catalog');
   });
 
   it('slides the problems panel over the canvas with Alt+X', async () => {
