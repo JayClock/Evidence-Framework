@@ -129,6 +129,41 @@ describe('EditorScreen', () => {
     expect(screen.getByLabelText('聚焦范围')).toHaveValue('context.catalog');
   });
 
+  it('reads pending disk changes before starting a walkthrough from topology mode', async () => {
+    const api = readyProject();
+    let changed: Parameters<typeof api.projects.onChanged>[0] = () => undefined;
+    api.projects.onChanged = (listener) => {
+      changed = listener;
+      return () => undefined;
+    };
+    api.story.listFlows = vi.fn(async () => [storyFlow()]);
+    api.story.project = vi.fn(async () => storyResult());
+    render(<EditorScreen rootPath="/models/procurement" />);
+    await readyCanvas();
+    const document = createDesktopFixture();
+    document.entities.find(({ id }) => id === 'evidence.contract')!.label =
+      '进入前的外部修改';
+    api.projects.open = vi.fn(async () => ({
+      success: true as const,
+      project: projectSummary(),
+      document,
+      issues: [],
+    }));
+    act(() =>
+      changed({
+        rootPath: '/models/procurement',
+        paths: ['entities/contract.json'],
+        changedAt: '2026-11-11T09:00:00Z',
+      }),
+    );
+    fireEvent.click(screen.getByRole('button', { name: /业务流放映/ }));
+    await screen.findByText('采购方办理采购协议。');
+    expect(api.story.project).toHaveBeenCalledOnce();
+    expect(api.story.project).toHaveBeenCalledWith(
+      expect.objectContaining({ document }),
+    );
+  });
+
   it('slides the problems panel over the canvas with Alt+X', async () => {
     readyProject();
 

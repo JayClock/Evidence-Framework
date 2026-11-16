@@ -6,6 +6,7 @@ import type {
   StoryProjectInput,
   StoryProjectResult,
 } from '../../shared/story';
+import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 import type { WhatIfResult } from '@evidence-poc/evidence-agent';
 import { installDesktopApi } from '../test-support/desktopApi';
 import { storyFlow, storyResult } from '../test-support/story';
@@ -35,10 +36,18 @@ const setup = (enabled = true) => {
   };
   const onInvalidated = vi.fn(async () => undefined);
   const hook = renderHook(
-    (props) =>
+    (props: {
+      document: DomainModelDocument;
+      enabled: boolean;
+      refreshSavedSources?: boolean;
+    }) =>
       useStoryPlayback({ rootPath: '/models/test', onInvalidated, ...props }),
     {
-      initialProps: { document: createDesktopFixture(), enabled },
+      initialProps: { document: createDesktopFixture(), enabled } as {
+        document: DomainModelDocument;
+        enabled: boolean;
+        refreshSavedSources?: boolean;
+      },
     },
   );
   return {
@@ -126,6 +135,26 @@ describe('story playback', () => {
     await tick(STORY_STEP_DURATION * 3);
     expect(hook.result.current.currentStepSequence).toBe(1);
     expect(hook.result.current.isPlaying).toBe(false);
+  });
+
+  it('refreshes a notice received before entering playback and retries failed source reads', async () => {
+    const { hook, onInvalidated, project } = setup(false);
+    onInvalidated.mockRejectedValueOnce(new Error('磁盘模型暂不可读'));
+    hook.rerender({
+      document: createDesktopFixture(),
+      enabled: true,
+      refreshSavedSources: true,
+    });
+    await tick();
+    expect(hook.result.current.error).toBe('磁盘模型暂不可读');
+    expect(hook.result.current.loading).toBe(false);
+    expect(project).not.toHaveBeenCalled();
+    act(() => hook.result.current.retry());
+    await tick();
+    await tick();
+    expect(onInvalidated).toHaveBeenCalledTimes(2);
+    expect(project).toHaveBeenCalledOnce();
+    expect(hook.result.current.ready).toBe(true);
   });
 
   it('coalesces scoped invalidations, preserves the current example and unsubscribes', async () => {

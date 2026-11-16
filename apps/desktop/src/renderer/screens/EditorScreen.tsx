@@ -195,6 +195,7 @@ const EditorWorkspace = ({
     rootPath: project.rootPath,
     document: state.document,
     enabled: storyActive,
+    refreshSavedSources: state.externalChangeAt !== null,
     onInvalidated: reloadFromDiskIfClean,
   });
   const agent = useAgentSession(project.rootPath);

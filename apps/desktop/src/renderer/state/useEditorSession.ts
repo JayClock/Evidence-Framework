@@ -6,9 +6,10 @@ import {
   type ModelSession,
   createModelSession,
 } from '@evidence-poc/evidence-model-core';
-import type {
-  DomainModelDocument,
-  ValidationResult,
+import {
+  compactCanonicalJson,
+  type DomainModelDocument,
+  type ValidationResult,
 } from '@evidence-poc/evidence-schema';
 import {
   type CanvasViewMode,
@@ -176,7 +177,9 @@ export const useEditorSession = (
     // The inspector may have changed the model while the filesystem was read.
     if (dirtyRef.current || session.getDocument() !== before) return;
     if (!result.success) throw new Error(result.error);
-    session.replaceDocument(result.document, { resetHistory: true });
+    // A save also notifies the watcher: equal content must retain undo history.
+    if (compactCanonicalJson(result.document) !== compactCanonicalJson(before))
+      session.replaceDocument(result.document, { resetHistory: true });
     dirtyRef.current = false;
     setDirty(false);
     setExternalChangeAt(null);

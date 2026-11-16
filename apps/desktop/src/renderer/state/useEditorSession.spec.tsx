@@ -81,6 +81,32 @@ describe('safe walkthrough reload', () => {
     expect(open).toHaveBeenCalledOnce();
   });
 
+  it('preserves undo history for the watcher notification caused by its own save', async () => {
+    const { api, hook, edit, project } = setup();
+    edit();
+    await act(async () => hook.result.current.save());
+    const document = structuredClone(hook.result.current.state.document);
+    api.projects.open = vi.fn(
+      async (): Promise<OpenProjectResult> => ({
+        success: true,
+        project,
+        document,
+        issues: [],
+      }),
+    );
+    expect(hook.result.current.state.canUndo).toBe(true);
+    await act(async () => hook.result.current.reloadFromDiskIfClean());
+    expect(hook.result.current.state.canUndo).toBe(true);
+    act(() => {
+      hook.result.current.state.session.undo();
+    });
+    expect(
+      hook.result.current.state.document.entities.find(
+        ({ id }) => id === 'evidence.contract',
+      )?.label,
+    ).not.toBe('未保存修改');
+  });
+
   it('keeps edits made while saving dirty', async () => {
     const { api, hook, edit } = setup();
     let resolve: (

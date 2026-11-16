@@ -14,6 +14,8 @@ interface StoryPlaybackOptions {
   rootPath: string;
   document: DomainModelDocument;
   enabled: boolean;
+  /** A watcher notice received before playback was opened still needs a read. */
+  refreshSavedSources?: boolean;
   /** Reload the canvas only when doing so cannot discard local edits. */
   onInvalidated?: () => Promise<void>;
 }
@@ -28,12 +30,14 @@ export const useStoryPlayback = ({
   rootPath,
   document,
   enabled,
+  refreshSavedSources = false,
   onInvalidated,
 }: StoryPlaybackOptions) => {
   const [flows, setFlows] = useState<readonly FlowScenarioTrace[]>([]);
   const [preferredFlowId, setPreferredFlowId] = useState<string>();
   const [skipAi, setSkipAi] = useState(false);
   const [refresh, setRefresh] = useState(0);
+  const [sourceRefresh, setSourceRefresh] = useState(0);
   const [invalidating, setInvalidating] = useState(false);
   const [invalidationError, setInvalidationError] = useState<string>();
   const requestKey = useMemo(
@@ -65,7 +69,9 @@ export const useStoryPlayback = ({
     flows.find(({ flowId }) => flowId === preferredFlowId)?.flowId ??
     flows[0]?.flowId;
   const loading =
-    enabled && (invalidating || status?.key !== requestKey || status.loading);
+    enabled &&
+    !invalidationError &&
+    (invalidating || status?.key !== requestKey || status.loading);
   const error =
     invalidationError ??
     (status?.key === requestKey ? status.error : undefined);
@@ -110,7 +116,7 @@ export const useStoryPlayback = ({
 
   const projectedFlowId = useRef<string | undefined>(undefined);
   useEffect(() => {
-    if (!enabled || invalidating) return;
+    if (!enabled || invalidating || invalidationError) return;
     let active = true;
     setIsPlaying(false);
     setStatus({ key: requestKey, loading: true });
@@ -163,6 +169,7 @@ export const useStoryPlayback = ({
     preferredFlowId,
     skipAi,
     invalidating,
+    invalidationError,
   ]);
 
   useEffect(() => {
@@ -170,8 +177,7 @@ export const useStoryPlayback = ({
     let active = true;
     let version = 0;
     let timer: ReturnType<typeof setTimeout> | undefined;
-    const unsubscribe = window.evidenceAPI.story.onInvalidated((event) => {
-      if (event.rootPath !== rootPath) return;
+    const invalidate = () => {
       const sent = ++version;
       setIsPlaying(false);
       setInvalidating(true);
@@ -190,14 +196,18 @@ export const useStoryPlayback = ({
           }
         })();
       }, STORY_REFRESH_DELAY);
+    };
+    const unsubscribe = window.evidenceAPI.story.onInvalidated((event) => {
+      if (event.rootPath === rootPath) invalidate();
     });
+    if (refreshSavedSources || sourceRefresh > 0) invalidate();
     return () => {
       active = false;
       clearTimeout(timer);
       unsubscribe();
       setInvalidating(false);
     };
-  }, [enabled, rootPath, onInvalidated]);
+  }, [enabled, rootPath, onInvalidated, refreshSavedSources, sourceRefresh]);
 
   const moveTo = useCallback(
     (nextIndex: number) => {
@@ -324,8 +334,8 @@ export const useStoryPlayback = ({
       setSkipAi(value);
     },
     retry: () => {
-      setInvalidationError(undefined);
-      setRefresh((value) => value + 1);
+      if (invalidationError) setSourceRefresh((value) => value + 1);
+      else setRefresh((value) => value + 1);
     },
     askWhatIf,
     sandbox: sandbox?.key === sandboxKey ? sandbox : undefined,
