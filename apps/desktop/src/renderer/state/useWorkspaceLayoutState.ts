@@ -7,6 +7,7 @@ export const RAIL_TABS = [
   'drift',
   'copilot',
   'clauses',
+  'workshop',
 ] as const;
 
 export type RailTabId = (typeof RAIL_TABS)[number];
@@ -55,6 +56,7 @@ export const RAIL_TAB_CHORDS: Record<RailTabId, string> = {
   drift: '⌘+3',
   copilot: '⌘+4',
   clauses: '⌘+5',
+  workshop: '⌘+6',
 };
 
 const isEditable = (target: EventTarget | null): boolean => {

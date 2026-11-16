@@ -36,6 +36,7 @@ import { AgentCopilot } from '../components/agent/AgentCopilot';
 import { InlinePatchCopilot } from '../components/agent/InlinePatchCopilot';
 import { CelRulesPane } from '../components/split/CelRulesPane';
 import { OpenApiSpecViewer } from '../components/split/OpenApiSpecViewer';
+import { WorkshopWizardDrawer } from '../components/wizard/WorkshopWizardDrawer';
 import { StoryPlayerBar } from '../components/story/StoryPlayerBar';
 import { StoryDrawer } from '../components/story/StoryDrawer';
 import { useStoryPlayback } from '../state/useStoryPlayback';
@@ -170,6 +171,7 @@ const RAIL_TITLES: Record<RailTabId, string> = {
   drift: '生产漂移',
   copilot: 'AI 协同',
   clauses: '条款审计',
+  workshop: '共创工作坊',
 };
 
 const EditorWorkspace = ({
@@ -955,6 +957,16 @@ const EditorWorkspace = ({
                   />
                 ) : null}
 
+                {layout.activeRailTab === 'workshop' ? (
+                  <WorkshopWizardDrawer
+                    session={state.session}
+                    onFocus={focusNode}
+                    onReview={(text) => {
+                      setReviewPrompt({ token: Date.now(), text });
+                      layout.setActiveRailTab('copilot');
+                    }}
+                  />
+                ) : null}
                 {layout.activeRailTab === 'clauses' ? (
                   <ClauseTraceDrawer
                     model={state.document}
