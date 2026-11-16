@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { installDesktopApi } from '../../test-support/desktopApi';
+import { installDesktopApi } from '@evidence-poc/desktop-testing/desktopApi';
 import { DriftRadar } from './DriftRadar';
 
 describe('DriftRadar', () => {

@@ -4,13 +4,15 @@ import type {
   FlowStepTrace,
 } from '@evidence-poc/evidence-model-core';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
-import type { WhatIfResult } from '@evidence-poc/evidence-agent';
+import type { WhatIfResult } from '@evidence-poc/evidence-agent/browser';
+import type { EvidenceStoryApi } from '@evidence-poc/desktop-contracts/story';
 import type { StoryProjectResult } from '@evidence-poc/desktop-contracts/story';
 
 export const STORY_REFRESH_DELAY = 180;
 export const STORY_STEP_DURATION = 4500;
 
-interface StoryPlaybackOptions {
+export interface StoryPlaybackOptions {
+  api: EvidenceStoryApi;
   rootPath: string;
   document: DomainModelDocument;
   enabled: boolean;
@@ -27,6 +29,7 @@ const messageOf = (error: unknown) =>
 
 /** One snapshot for narration, camera focus and sandbox; late replies never win. */
 export const useStoryPlayback = ({
+  api,
   rootPath,
   document,
   enabled,
@@ -43,6 +46,7 @@ export const useStoryPlayback = ({
   const requestKey = useMemo(
     () => ({}),
     [
+      api,
       rootPath,
       document,
       enabled,
@@ -124,7 +128,7 @@ export const useStoryPlayback = ({
       void (async () => {
         try {
           const input = { rootPath, document };
-          const nextFlows = await window.evidenceAPI.story.listFlows(input);
+          const nextFlows = await api.listFlows(input);
           if (!active) return;
           setFlows(nextFlows);
           const chosen =
@@ -135,7 +139,7 @@ export const useStoryPlayback = ({
             setStatus({ key: requestKey, loading: false });
             return;
           }
-          const result = await window.evidenceAPI.story.project({
+          const result = await api.project({
             ...input,
             flowId: chosen.flowId,
             skipAi,
@@ -162,6 +166,7 @@ export const useStoryPlayback = ({
       clearTimeout(timer);
     };
   }, [
+    api,
     requestKey,
     rootPath,
     document,
@@ -197,7 +202,7 @@ export const useStoryPlayback = ({
         })();
       }, STORY_REFRESH_DELAY);
     };
-    const unsubscribe = window.evidenceAPI.story.onInvalidated((event) => {
+    const unsubscribe = api.onInvalidated((event) => {
       if (event.rootPath === rootPath) invalidate();
     });
     if (refreshSavedSources || sourceRefresh > 0) invalidate();
@@ -207,7 +212,14 @@ export const useStoryPlayback = ({
       unsubscribe();
       setInvalidating(false);
     };
-  }, [enabled, rootPath, onInvalidated, refreshSavedSources, sourceRefresh]);
+  }, [
+    api,
+    enabled,
+    rootPath,
+    onInvalidated,
+    refreshSavedSources,
+    sourceRefresh,
+  ]);
 
   const moveTo = useCallback(
     (nextIndex: number) => {
@@ -258,7 +270,7 @@ export const useStoryPlayback = ({
       setIsPlaying(false);
       setSandbox({ key: sandboxKey, loading: true });
       try {
-        const result = await window.evidenceAPI.story.whatIf({
+        const result = await api.whatIf({
           rootPath,
           document,
           flowId: flow.flowId,
@@ -280,7 +292,7 @@ export const useStoryPlayback = ({
           pendingSandbox.current = null;
       }
     },
-    [ready, flow, step, sandboxKey, rootPath, document],
+    [api, ready, flow, step, sandboxKey, rootPath, document],
   );
   useEffect(
     () => () => {

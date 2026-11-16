@@ -9,7 +9,7 @@ import {
   healthyReport,
   installDesktopApi,
   projectSummary,
-} from '../test-support/desktopApi';
+} from '@evidence-poc/desktop-testing/desktopApi';
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 
 const BridgeHarness = ({

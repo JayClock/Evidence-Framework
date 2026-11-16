@@ -44,6 +44,12 @@
     },
     {
       "path": "./libs/desktop/contracts"
+    },
+    {
+      "path": "./libs/desktop/feature-delivery"
+    },
+    {
+      "path": "./libs/desktop/feature-story"
     }
   ]
 }

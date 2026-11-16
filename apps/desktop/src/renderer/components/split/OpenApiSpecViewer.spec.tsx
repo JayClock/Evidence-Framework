@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { liveDeliveryPreview } from '../../test-support/liveDelivery';
+import { liveDeliveryPreview } from '@evidence-poc/desktop-testing/liveDelivery';
 import { OpenApiSpecViewer } from './OpenApiSpecViewer';
 
 const analysis = () => {

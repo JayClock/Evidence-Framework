@@ -13,6 +13,24 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "default": "./dist/index.js"
+    },
+    "./desktopApi": {
+      "@evidence-poc/source": "./src/desktopApi.ts",
+      "types": "./dist/desktopApi.d.ts",
+      "import": "./dist/desktopApi.js",
+      "default": "./dist/desktopApi.js"
+    },
+    "./story": {
+      "@evidence-poc/source": "./src/story.ts",
+      "types": "./dist/story.d.ts",
+      "import": "./dist/story.js",
+      "default": "./dist/story.js"
+    },
+    "./liveDelivery": {
+      "@evidence-poc/source": "./src/liveDelivery.ts",
+      "types": "./dist/liveDelivery.d.ts",
+      "import": "./dist/liveDelivery.js",
+      "default": "./dist/liveDelivery.js"
     }
   },
   "nx": {
@@ -26,6 +44,8 @@
   },
   "dependencies": {
     "@evidence-poc/evidence-schema": "workspace:*",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "@evidence-poc/desktop-contracts": "workspace:*",
+    "@evidence-poc/evidence-model-core": "workspace:*"
   }
 }

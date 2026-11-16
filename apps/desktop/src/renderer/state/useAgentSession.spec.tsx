@@ -1,7 +1,7 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { installDesktopApi } from '../test-support/desktopApi';
+import { installDesktopApi } from '@evidence-poc/desktop-testing/desktopApi';
 import { useAgentSession } from './useAgentSession';
 
 const Harness = ({ rootPath }: { rootPath: string }) => {

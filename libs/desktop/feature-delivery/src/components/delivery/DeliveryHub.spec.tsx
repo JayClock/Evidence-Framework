@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import type { DeliveryHubController } from '../../state/useDeliveryHub';
-import { liveDeliveryPreview } from '../../test-support/liveDelivery';
+import { liveDeliveryPreview } from '@evidence-poc/desktop-testing/liveDelivery';
 import { DeliveryHub } from './DeliveryHub';
 
 const controller = (

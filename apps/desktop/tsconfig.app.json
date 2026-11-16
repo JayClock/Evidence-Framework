@@ -22,6 +22,15 @@
   ],
   "references": [
     {
+      "path": "../../libs/desktop/feature-delivery/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libs/desktop/feature-story/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libs/desktop/contracts/tsconfig.lib.json"
+    },
+    {
       "path": "../../libs/evidence-visualization/tsconfig.lib.json"
     },
     {
@@ -56,9 +65,6 @@
     },
     {
       "path": "../../libs/desktop/testing/tsconfig.lib.json"
-    },
-    {
-      "path": "../../libs/desktop/contracts/tsconfig.lib.json"
     }
   ]
 }

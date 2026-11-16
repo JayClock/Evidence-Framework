@@ -5,10 +5,17 @@
     "types": ["node"],
     "rootDir": "src",
     "jsx": "react-jsx",
+    "lib": ["dom", "dom.iterable", "es2023"],
     "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo"
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "references": [
+    {
+      "path": "../../evidence-model-core/tsconfig.lib.json"
+    },
+    {
+      "path": "../contracts/tsconfig.lib.json"
+    },
     {
       "path": "../../evidence-schema/tsconfig.lib.json"
     }

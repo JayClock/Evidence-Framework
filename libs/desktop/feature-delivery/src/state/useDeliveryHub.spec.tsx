@@ -8,9 +8,9 @@ import type {
   LiveDeliveryInput,
   LiveDeliveryResult,
 } from '@evidence-poc/desktop-contracts/delivery';
-import { installDesktopApi } from '../test-support/desktopApi';
+import { installDesktopApi } from '@evidence-poc/desktop-testing/desktopApi';
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
-import { liveDeliveryPreview } from '../test-support/liveDelivery';
+import { liveDeliveryPreview } from '@evidence-poc/desktop-testing/liveDelivery';
 import { useDeliveryHub } from './useDeliveryHub';
 
 const setup = () => {
@@ -25,7 +25,9 @@ const setup = () => {
     }),
   );
   api.projects.deliveryLivePreview = request;
-  const hook = renderHook(() => useDeliveryHub('/models/test', session, base));
+  const hook = renderHook(() =>
+    useDeliveryHub(window.evidenceAPI.projects, '/models/test', session, base),
+  );
   const edit = (label: string) =>
     session.mutate(
       (draft) => updateEntityMutator(draft, 'evidence.contract', { label }),

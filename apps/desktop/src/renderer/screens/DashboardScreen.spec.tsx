@@ -12,7 +12,7 @@ import {
   defaultTemplates,
   installDesktopApi,
   projectSummary,
-} from '../test-support/desktopApi';
+} from '@evidence-poc/desktop-testing/desktopApi';
 
 describe('DashboardScreen', () => {
   it('explains the empty state and where models live', async () => {

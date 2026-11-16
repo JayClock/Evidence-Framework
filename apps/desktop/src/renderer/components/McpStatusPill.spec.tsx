@@ -2,7 +2,7 @@ import { act, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import { McpStatusPill } from './McpStatusPill';
-import { installDesktopApi } from '../test-support/desktopApi';
+import { installDesktopApi } from '@evidence-poc/desktop-testing/desktopApi';
 
 const status = (overrides: Partial<Parameters<ReturnType<typeof installDesktopApi>['mcpMock']['emitStatus']>[0]> = {}) => ({
   listening: true,

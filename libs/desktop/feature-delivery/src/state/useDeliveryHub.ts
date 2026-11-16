@@ -1,3 +1,4 @@
+import type { EvidenceDesktopApi } from '@evidence-poc/desktop-contracts/ipc';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ModelSession } from '@evidence-poc/evidence-model-core';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
@@ -43,6 +44,10 @@ const noticeOf = (result: ExportDeliveryResult): DeliveryNotice | null => {
 
 /** One subscription for the editor lifetime, not the modal lifetime. */
 export const useDeliveryHub = (
+  api: Pick<
+    EvidenceDesktopApi['projects'],
+    'deliveryLivePreview' | 'exportLiveDelivery'
+  >,
   rootPath: string,
   session: ModelSession,
   baseDocument: DomainModelDocument,
@@ -80,7 +85,7 @@ export const useDeliveryHub = (
           document: session.getDocument(),
           baseDocument,
         };
-        void window.evidenceAPI.projects
+        void api
           .deliveryLivePreview(input)
           .then((result) => {
             if (!active || revision !== generation.current) return;
@@ -112,7 +117,7 @@ export const useDeliveryHub = (
       clearTimeout(timer);
       unsubscribe();
     };
-  }, [rootPath, session, baseDocument, enabled]);
+  }, [api, rootPath, session, baseDocument, enabled]);
 
   const exportDelivery = useCallback(async () => {
     const current = accepted.current;
@@ -122,7 +127,7 @@ export const useDeliveryHub = (
     try {
       setNotice(
         noticeOf(
-          await window.evidenceAPI.projects.exportLiveDelivery({
+          await api.exportLiveDelivery({
             ...current.input,
             expectedModelDigest: current.analysis.modelDigest,
           }),
@@ -136,7 +141,7 @@ export const useDeliveryHub = (
     } finally {
       setBusy(false);
     }
-  }, [busy]);
+  }, [api, busy]);
 
   return {
     loading,

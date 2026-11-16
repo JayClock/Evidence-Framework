@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import type { StoryScene } from '@evidence-poc/evidence-agent';
+import type { StoryScene } from '@evidence-poc/evidence-agent/browser';
 import type { StoryPlaybackController } from '../../state/useStoryPlayback';
 
 interface StoryDrawerProps {

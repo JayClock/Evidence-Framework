@@ -508,3 +508,9 @@ export const installDesktopApi = ({
 
   return api;
 };
+
+declare global {
+  interface Window {
+    evidenceAPI: EvidenceDesktopApi;
+  }
+}

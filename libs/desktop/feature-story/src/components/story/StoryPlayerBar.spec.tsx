@@ -1,8 +1,8 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
-import { installDesktopApi } from '../../test-support/desktopApi';
-import { storyFlow, storyResult } from '../../test-support/story';
+import { installDesktopApi } from '@evidence-poc/desktop-testing/desktopApi';
+import { storyFlow, storyResult } from '@evidence-poc/desktop-testing/story';
 import {
   STORY_REFRESH_DELAY,
   useStoryPlayback,
@@ -21,6 +21,7 @@ const setup = async () => {
   const exit = vi.fn();
   const Harness = () => {
     const playback = useStoryPlayback({
+      api: window.evidenceAPI.story,
       rootPath: '/models/test',
       document,
       enabled: true,

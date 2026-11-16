@@ -39,3 +39,6 @@ export {
  * session harness behind it stays in the process entry (`.`).
  */
 export type { AgentStreamEvent } from './session/streamEvents.js';
+
+// Story DTOs are safe to consume without loading the Node agent runtime.
+export type { StoryScene, WhatIfResult } from './story/types.js';

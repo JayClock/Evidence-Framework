@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
-import { liveDeliveryPreview } from '../../test-support/liveDelivery';
+import { liveDeliveryPreview } from '@evidence-poc/desktop-testing/liveDelivery';
 import { IncrementalDiffPanel } from './IncrementalDiffPanel';
 
 const analysis = () => {

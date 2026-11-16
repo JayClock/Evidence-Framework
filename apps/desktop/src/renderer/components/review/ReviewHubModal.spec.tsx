@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { ReviewHubModal } from './ReviewHubModal';
-import { installDesktopApi } from '../../test-support/desktopApi';
+import { installDesktopApi } from '@evidence-poc/desktop-testing/desktopApi';
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 import type { PreviewReviewResult } from '@evidence-poc/desktop-contracts/review';
 

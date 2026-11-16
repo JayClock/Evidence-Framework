@@ -7,9 +7,9 @@ import type {
   StoryProjectResult,
 } from '@evidence-poc/desktop-contracts/story';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
-import type { WhatIfResult } from '@evidence-poc/evidence-agent';
-import { installDesktopApi } from '../test-support/desktopApi';
-import { storyFlow, storyResult } from '../test-support/story';
+import type { WhatIfResult } from '@evidence-poc/evidence-agent/browser';
+import { installDesktopApi } from '@evidence-poc/desktop-testing/desktopApi';
+import { storyFlow, storyResult } from '@evidence-poc/desktop-testing/story';
 import {
   STORY_REFRESH_DELAY,
   STORY_STEP_DURATION,
@@ -41,7 +41,12 @@ const setup = (enabled = true) => {
       enabled: boolean;
       refreshSavedSources?: boolean;
     }) =>
-      useStoryPlayback({ rootPath: '/models/test', onInvalidated, ...props }),
+      useStoryPlayback({
+        api: window.evidenceAPI.story,
+        rootPath: '/models/test',
+        onInvalidated,
+        ...props,
+      }),
     {
       initialProps: { document: createDesktopFixture(), enabled } as {
         document: DomainModelDocument;

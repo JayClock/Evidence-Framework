@@ -18,7 +18,7 @@ import { EditorScreen } from '../src/renderer/screens/EditorScreen';
 import {
   installDesktopApi,
   projectSummary,
-} from '../src/renderer/test-support/desktopApi';
+} from '@evidence-poc/desktop-testing/desktopApi';
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 
 describe('phase 4 review-authoring loop', () => {

@@ -4,7 +4,7 @@ import {
   createModelSession,
   updateEntityMutator,
 } from '@evidence-poc/evidence-model-core';
-import { installDesktopApi } from '../test-support/desktopApi';
+import { installDesktopApi } from '@evidence-poc/desktop-testing/desktopApi';
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 import { useLiveModelBridge } from './useLiveModelBridge';
 

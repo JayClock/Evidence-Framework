@@ -7,7 +7,7 @@ import {
 } from '@testing-library/react';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import type { StoryInvalidatedEvent } from '@evidence-poc/desktop-contracts/story';
-import { storyFlow, storyResult } from '../test-support/story';
+import { storyFlow, storyResult } from '@evidence-poc/desktop-testing/story';
 
 import { collectFlowScenarios } from '@evidence-poc/evidence-model-core';
 import { EditorScreen } from './EditorScreen';
@@ -15,7 +15,7 @@ import {
   healthyReport,
   installDesktopApi,
   projectSummary,
-} from '../test-support/desktopApi';
+} from '@evidence-poc/desktop-testing/desktopApi';
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 
 const readyProject = () =>

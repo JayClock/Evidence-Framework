@@ -9,7 +9,7 @@ import {
 import type { EntityAST } from '@evidence-poc/evidence-schema';
 
 import { usePatchReview, type PatchReviewController } from './usePatchReview';
-import { installDesktopApi } from '../test-support/desktopApi';
+import { installDesktopApi } from '@evidence-poc/desktop-testing/desktopApi';
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 
 const participant = (id: string, label: string): EntityAST => ({

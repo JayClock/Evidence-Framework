@@ -38,12 +38,12 @@ import { CelRulesPane } from '../components/split/CelRulesPane';
 import { OpenApiSpecViewer } from '../components/split/OpenApiSpecViewer';
 import { ScenarioStudioModal } from '../components/scenario/ScenarioStudioModal';
 import { WorkshopWizardDrawer } from '../components/wizard/WorkshopWizardDrawer';
-import { StoryPlayerBar } from '../components/story/StoryPlayerBar';
-import { StoryDrawer } from '../components/story/StoryDrawer';
-import { useStoryPlayback } from '../state/useStoryPlayback';
+import { StoryPlayerBar } from '@evidence-poc/desktop-feature-story';
+import { StoryDrawer } from '@evidence-poc/desktop-feature-story';
+import { useStoryPlayback } from '@evidence-poc/desktop-feature-story';
 import { SecondaryStage } from '../components/split/SecondaryStage';
 import { DriftRadar } from '../components/drift/DriftRadar';
-import { DeliveryHub } from '../components/delivery/DeliveryHub';
+import { DeliveryHub } from '@evidence-poc/desktop-feature-delivery';
 import { ReviewHubModal } from '../components/review/ReviewHubModal';
 import { TopHeader } from '../components/TopHeader';
 import {
@@ -68,7 +68,7 @@ import type {
 } from '../state/commandRegistry';
 import { useCommandRegistry } from '../state/useCommandRegistry';
 import { useAgentSession } from '../state/useAgentSession';
-import { useDeliveryHub } from '../state/useDeliveryHub';
+import { useDeliveryHub } from '@evidence-poc/desktop-feature-delivery';
 import { useLiveModelBridge } from '../state/useLiveModelBridge';
 import { useEditorSession } from '../state/useEditorSession';
 import { useEditorShortcuts } from '../state/useEditorShortcuts';
@@ -202,6 +202,7 @@ const EditorWorkspace = ({
   } = useEditorSession(project, initialDocument, viewMode, layoutMode);
   const storyActive = split.isSplit && split.activePane === 'story';
   const story = useStoryPlayback({
+    api: window.evidenceAPI.story,
     rootPath: project.rootPath,
     document: state.document,
     enabled: storyActive,
@@ -216,6 +217,7 @@ const EditorWorkspace = ({
     initialDocument,
   );
   const delivery = useDeliveryHub(
+    window.evidenceAPI.projects,
     project.rootPath,
     state.session,
     initialDocument,

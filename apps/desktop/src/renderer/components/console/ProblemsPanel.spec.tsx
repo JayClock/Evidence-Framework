@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import type { SensorIssue } from '@evidence-poc/evidence-agent/browser';
 
 import { ProblemsPanel } from './ProblemsPanel';
-import { healthyReport } from '../../test-support/desktopApi';
+import { healthyReport } from '@evidence-poc/desktop-testing/desktopApi';
 
 const issue = (
   overrides: Partial<SensorIssue> & Pick<SensorIssue, 'issueId'>,
