@@ -2,6 +2,7 @@ import { createServer } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { runFromYAML } from '@stepci/runner';
 import { expect, it } from 'vitest';
+import { parse } from 'yaml';
 import { createAcceptanceModel } from '@evidence-poc/evidence-api/testing';
 import { projectAcceptanceTests } from './delivery/scenarioProjector.js';
 import { renderStepCi } from './renderer/stepCiRenderer.js';
@@ -51,4 +52,23 @@ it('official Step CI Runner consumes emitted YAML and resolves chained captures'
       server.close((error) => (error ? reject(error) : resolve())),
     );
   }
+});
+
+it('keeps large suites readable under the default YAML alias-expansion limit', () => {
+  const projection = projectAcceptanceTests(createAcceptanceModel());
+  const flow = projection.flows[0]!;
+  // Sharing a response-schema object is normal in the projector. The renderer
+  // must not turn that sharing into nested anchors that the runner cannot read.
+  projection.flows = Array.from({ length: 120 }, (_, index) => ({
+    ...flow,
+    id: `wire-smoke-${index}`,
+  }));
+  const yaml = renderStepCi(projection);
+  const workflow = parse(yaml, { version: '1.1' });
+  expect(Object.keys(workflow.tests)).toHaveLength(120);
+  expect(workflow.tests.flow_120.steps).toHaveLength(3);
+  expect(workflow.tests.flow_120.steps[2].http.check.schema).toEqual(
+    flow.steps[2]!.responseSchema,
+  );
+  expect(yaml).not.toMatch(/(?:^|\s)[&*]a\d+\b/m);
 });

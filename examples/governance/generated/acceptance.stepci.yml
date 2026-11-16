@@ -30,7 +30,7 @@
               "jsonpath": "$.id"
           "check":
             "status": 201
-            "schema": &a1
+            "schema":
               "type": "object"
               "description": "签署Agreement，双方权责自此成立"
               "properties":
@@ -118,7 +118,7 @@
                   "x-evidence-caller-input": false
                   "readOnly": true
                 "quantity":
-                  "anyOf": &a2
+                  "anyOf":
                     - "type": "integer"
                       "minimum": -9007199254740991
                       "maximum": 9007199254740991
@@ -255,7 +255,47 @@
               "jsonpath": "$.id"
           "check":
             "status": 201
-            "schema": *a1
+            "schema":
+              "type": "object"
+              "description": "签署Agreement，双方权责自此成立"
+              "properties":
+                "id":
+                  "type": "string"
+                  "description": "id"
+                  "x-evidence-origin": "caller"
+                  "x-evidence-caller-input": true
+                "signed_at":
+                  "type": "string"
+                  "format": "date-time"
+                  "description": "signed_at"
+                  "x-evidence-origin": "service-time"
+                  "x-evidence-caller-input": false
+                  "readOnly": true
+                "_links":
+                  "type": "object"
+                  "additionalProperties":
+                    "type": "object"
+                    "required":
+                      - "href"
+                    "properties":
+                      "href":
+                        "type": "string"
+                      "templated":
+                        "type": "boolean"
+                      "method":
+                        "type": "string"
+              "required":
+                - "id"
+                - "signed_at"
+                - "_links"
+              "examples":
+                - "id": "agreement-001"
+                  "signed_at": "2026-03-31T10:00:00Z"
+                  "_links": {}
+                - "id": "agreement-deposit-001"
+                  "signed_at": "2026-03-31T10:00:00Z"
+                  "_links": {}
+              "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "agreement-001"
               "$[\"signed_at\"]": "2026-03-31T10:00:00Z"
@@ -303,7 +343,12 @@
                   "x-evidence-caller-input": false
                   "readOnly": true
                 "quantity":
-                  "anyOf": *a2
+                  "anyOf":
+                    - "type": "integer"
+                      "minimum": -9007199254740991
+                      "maximum": 9007199254740991
+                    - "type": "string"
+                      "pattern": "^(?:0|-?[1-9][0-9]*)$"
                   "description": "quantity"
                   "x-evidence-origin": "caller"
                   "x-evidence-caller-input": true

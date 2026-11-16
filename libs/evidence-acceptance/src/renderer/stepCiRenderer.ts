@@ -104,7 +104,9 @@ export function renderStepCi(projection: AcceptanceProjection): string {
       },
       // The Runner uses YAML 1.1: unquoted ISO timestamps become Date objects,
       // which its template walker reconstructs using wall time. Quote literals.
-      { defaultStringType: 'QUOTE_DOUBLE' },
+      // Repeated response schemas must stay self-contained: nested YAML aliases
+      // can exceed the runner/parser's default expansion limit on larger suites.
+      { defaultStringType: 'QUOTE_DOUBLE', aliasDuplicateObjects: false },
     )
   );
 }

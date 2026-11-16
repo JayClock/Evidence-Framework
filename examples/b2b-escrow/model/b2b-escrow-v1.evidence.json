@@ -1,0 +1,3271 @@
+{
+  "type": "fm_bundle",
+  "schemaVersion": "5.0",
+  "manifest": {
+    "type": "fm_model",
+    "schemaVersion": "5.0",
+    "id": "b2b-escrow",
+    "name": "B2B escrow procurement and milestone settlement",
+    "version": "1.0.0",
+    "ruleLanguage": "CEL",
+    "description": "Three independent participants in four bilateral contexts. CNY minor units, basis points, half-up rounding, request-scoped UTC clocks, immutable evidence and capped final payouts. v2 adds optional two-milestone fulfillment without changing v1 single-delivery contracts.",
+    "entryContextRefs": [
+      "context.procurement",
+      "context.escrow",
+      "context.fulfillment",
+      "context.settlement"
+    ]
+  },
+  "entities": [
+    {
+      "type": "entity",
+      "id": "party.buyer",
+      "category": "participant",
+      "kind": "party",
+      "label": "buyer"
+    },
+    {
+      "type": "entity",
+      "id": "party.seller",
+      "category": "participant",
+      "kind": "party",
+      "label": "seller"
+    },
+    {
+      "type": "entity",
+      "id": "party.escrow",
+      "category": "participant",
+      "kind": "party",
+      "label": "escrow"
+    },
+    {
+      "type": "entity",
+      "id": "context.procurement",
+      "category": "context",
+      "kind": "contract",
+      "label": "procurement",
+      "rootRefs": [
+        "contract.agreement"
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "role.procurement-buyer",
+      "category": "role",
+      "kind": "party",
+      "contextRef": "context.procurement",
+      "label": "buyer"
+    },
+    {
+      "type": "entity",
+      "id": "role.procurement-seller",
+      "category": "role",
+      "kind": "party",
+      "contextRef": "context.procurement",
+      "label": "seller"
+    },
+    {
+      "type": "entity",
+      "id": "contract.agreement",
+      "category": "evidence",
+      "kind": "contract",
+      "contextRef": "context.procurement",
+      "label": "agreement",
+      "notes": "Bilateral procurement agreement. The third party participates through its own contract, not a third signatory on this contract.",
+      "roleRefs": [
+        "role.procurement-buyer",
+        "role.procurement-seller"
+      ],
+      "attributes": [
+        {
+          "name": "id",
+          "label": "id",
+          "meaning": "Unique immutable business evidence identifier.",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "signed_at",
+          "label": "signed_at",
+          "meaning": "Server-recorded UTC business time; caller may not supply this field.",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "quantity",
+          "label": "quantity",
+          "meaning": "Buyer-agreed total quantity, positive and fully deliverable.",
+          "valueType": "int",
+          "required": true
+        },
+        {
+          "name": "tier_threshold",
+          "label": "tier_threshold",
+          "meaning": "Quantity at or above which tier two applies to the entire order.",
+          "valueType": "int",
+          "required": true
+        },
+        {
+          "name": "tier1_unit_price_minor",
+          "label": "tier1_unit_price_minor",
+          "meaning": "Seller-agreed unit price below the tier threshold. In CNY minor units (fen), never a floating-point yuan amount.",
+          "valueType": "int",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "tier2_unit_price_minor",
+          "label": "tier2_unit_price_minor",
+          "meaning": "Seller-agreed unit price at or above the tier threshold. In CNY minor units (fen), never a floating-point yuan amount.",
+          "valueType": "int",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "tax_bps",
+          "label": "tax_bps",
+          "meaning": "Contractual tax in basis points, inclusive range 0..10000.",
+          "valueType": "int",
+          "required": true
+        },
+        {
+          "name": "retention_bps",
+          "label": "retention_bps",
+          "meaning": "Contractual retained warranty share, inclusive range 0..10000.",
+          "valueType": "int",
+          "required": true
+        },
+        {
+          "name": "daily_penalty_bps",
+          "label": "daily_penalty_bps",
+          "meaning": "Penalty basis points per started 24-hour period, inclusive range 0..10000.",
+          "valueType": "int",
+          "required": true
+        },
+        {
+          "name": "delivery_deadline",
+          "label": "delivery_deadline",
+          "meaning": "Agreed delivery acceptance deadline in UTC; a contract term, not a server stamp.",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        }
+      ],
+      "examples": [
+        {
+          "label": "single-on-time",
+          "value": {
+            "id": "single-on-time-contract-agreement",
+            "signed_at": "2026-06-01T00:00:00Z",
+            "quantity": 999,
+            "tier_threshold": 1000,
+            "tier1_unit_price_minor": 1299,
+            "tier2_unit_price_minor": 1199,
+            "tax_bps": 1300,
+            "retention_bps": 500,
+            "daily_penalty_bps": 100,
+            "delivery_deadline": "2026-06-15T00:00:00Z"
+          },
+          "test": {
+            "flow": "single-on-time",
+            "tags": [
+              "regression",
+              "single",
+              "on-time"
+            ],
+            "actingRoleRef": "role.procurement-buyer",
+            "asOf": "2026-06-01T00:00:00Z"
+          }
+        },
+        {
+          "label": "single-late",
+          "value": {
+            "id": "single-late-contract-agreement",
+            "signed_at": "2026-06-01T00:00:00Z",
+            "quantity": 1000,
+            "tier_threshold": 1000,
+            "tier1_unit_price_minor": 1299,
+            "tier2_unit_price_minor": 1199,
+            "tax_bps": 1300,
+            "retention_bps": 500,
+            "daily_penalty_bps": 100,
+            "delivery_deadline": "2026-06-15T00:00:00Z"
+          },
+          "test": {
+            "flow": "single-late",
+            "tags": [
+              "regression",
+              "single",
+              "late"
+            ],
+            "actingRoleRef": "role.procurement-buyer",
+            "asOf": "2026-06-01T00:00:00Z"
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "context.escrow",
+      "category": "context",
+      "kind": "contract",
+      "label": "escrow",
+      "rootRefs": [
+        "contract.escrow"
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "role.escrow-buyer",
+      "category": "role",
+      "kind": "party",
+      "contextRef": "context.escrow",
+      "label": "buyer"
+    },
+    {
+      "type": "entity",
+      "id": "role.escrow-escrow",
+      "category": "role",
+      "kind": "party",
+      "contextRef": "context.escrow",
+      "label": "escrow"
+    },
+    {
+      "type": "entity",
+      "id": "contract.escrow",
+      "category": "evidence",
+      "kind": "contract",
+      "contextRef": "context.escrow",
+      "label": "escrow",
+      "notes": "Bilateral escrow agreement. The third party participates through its own contract, not a third signatory on this contract.",
+      "roleRefs": [
+        "role.escrow-buyer",
+        "role.escrow-escrow"
+      ],
+      "attributes": [
+        {
+          "name": "id",
+          "label": "id",
+          "meaning": "Unique immutable business evidence identifier.",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "signed_at",
+          "label": "signed_at",
+          "meaning": "Server-recorded UTC business time; caller may not supply this field.",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "order_confirmation_id",
+          "label": "order_confirmation_id",
+          "meaning": "Existing seller order confirmation selected for this contract; backend must resolve and authorize it.",
+          "valueType": "id",
+          "required": true
+        }
+      ],
+      "examples": [
+        {
+          "label": "single-on-time",
+          "value": {
+            "id": "single-on-time-contract-escrow",
+            "signed_at": "2026-06-02T00:00:00Z",
+            "order_confirmation_id": "single-on-time-confirmation-order"
+          },
+          "test": {
+            "flow": "single-on-time",
+            "tags": [
+              "regression",
+              "single",
+              "on-time"
+            ],
+            "actingRoleRef": "role.escrow-buyer",
+            "asOf": "2026-06-02T00:00:00Z",
+            "basedOn": [
+              "confirmation.commitment#single-on-time"
+            ]
+          }
+        },
+        {
+          "label": "single-late",
+          "value": {
+            "id": "single-late-contract-escrow",
+            "signed_at": "2026-06-02T00:00:00Z",
+            "order_confirmation_id": "single-late-confirmation-order"
+          },
+          "test": {
+            "flow": "single-late",
+            "tags": [
+              "regression",
+              "single",
+              "late"
+            ],
+            "actingRoleRef": "role.escrow-buyer",
+            "asOf": "2026-06-02T00:00:00Z",
+            "basedOn": [
+              "confirmation.commitment#single-late"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "context.fulfillment",
+      "category": "context",
+      "kind": "contract",
+      "label": "fulfillment",
+      "rootRefs": [
+        "contract.fulfillment"
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "role.fulfillment-buyer",
+      "category": "role",
+      "kind": "party",
+      "contextRef": "context.fulfillment",
+      "label": "buyer"
+    },
+    {
+      "type": "entity",
+      "id": "role.fulfillment-seller",
+      "category": "role",
+      "kind": "party",
+      "contextRef": "context.fulfillment",
+      "label": "seller"
+    },
+    {
+      "type": "entity",
+      "id": "contract.fulfillment",
+      "category": "evidence",
+      "kind": "contract",
+      "contextRef": "context.fulfillment",
+      "label": "fulfillment",
+      "notes": "Bilateral fulfillment agreement. The third party participates through its own contract, not a third signatory on this contract.",
+      "roleRefs": [
+        "role.fulfillment-buyer",
+        "role.fulfillment-seller"
+      ],
+      "attributes": [
+        {
+          "name": "id",
+          "label": "id",
+          "meaning": "Unique immutable business evidence identifier.",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "signed_at",
+          "label": "signed_at",
+          "meaning": "Server-recorded UTC business time; caller may not supply this field.",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "order_confirmation_id",
+          "label": "order_confirmation_id",
+          "meaning": "Existing seller order confirmation selected for this contract; backend must resolve and authorize it.",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "deposit_confirmation_id",
+          "label": "deposit_confirmation_id",
+          "meaning": "Existing custodian deposit-lock confirmation for the same order.",
+          "valueType": "id",
+          "required": true
+        }
+      ],
+      "examples": [
+        {
+          "label": "single-on-time",
+          "value": {
+            "id": "single-on-time-contract-fulfillment",
+            "signed_at": "2026-06-03T00:00:00Z",
+            "order_confirmation_id": "single-on-time-confirmation-order",
+            "deposit_confirmation_id": "single-on-time-confirmation-deposit-lock"
+          },
+          "test": {
+            "flow": "single-on-time",
+            "tags": [
+              "regression",
+              "single",
+              "on-time"
+            ],
+            "actingRoleRef": "role.fulfillment-buyer",
+            "asOf": "2026-06-03T00:00:00Z",
+            "basedOn": [
+              "confirmation.custody-statement#single-on-time"
+            ]
+          }
+        },
+        {
+          "label": "single-late",
+          "value": {
+            "id": "single-late-contract-fulfillment",
+            "signed_at": "2026-06-03T00:00:00Z",
+            "order_confirmation_id": "single-late-confirmation-order",
+            "deposit_confirmation_id": "single-late-confirmation-deposit-lock"
+          },
+          "test": {
+            "flow": "single-late",
+            "tags": [
+              "regression",
+              "single",
+              "late"
+            ],
+            "actingRoleRef": "role.fulfillment-buyer",
+            "asOf": "2026-06-03T00:00:00Z",
+            "basedOn": [
+              "confirmation.custody-statement#single-late"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "context.settlement",
+      "category": "context",
+      "kind": "contract",
+      "label": "settlement",
+      "rootRefs": [
+        "contract.settlement"
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "role.settlement-seller",
+      "category": "role",
+      "kind": "party",
+      "contextRef": "context.settlement",
+      "label": "seller"
+    },
+    {
+      "type": "entity",
+      "id": "role.settlement-escrow",
+      "category": "role",
+      "kind": "party",
+      "contextRef": "context.settlement",
+      "label": "escrow"
+    },
+    {
+      "type": "entity",
+      "id": "contract.settlement",
+      "category": "evidence",
+      "kind": "contract",
+      "contextRef": "context.settlement",
+      "label": "settlement",
+      "notes": "Bilateral settlement agreement. The third party participates through its own contract, not a third signatory on this contract.",
+      "roleRefs": [
+        "role.settlement-seller",
+        "role.settlement-escrow"
+      ],
+      "attributes": [
+        {
+          "name": "id",
+          "label": "id",
+          "meaning": "Unique immutable business evidence identifier.",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "signed_at",
+          "label": "signed_at",
+          "meaning": "Server-recorded UTC business time; caller may not supply this field.",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "order_confirmation_id",
+          "label": "order_confirmation_id",
+          "meaning": "Existing seller order confirmation selected for this contract; backend must resolve and authorize it.",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "deposit_confirmation_id",
+          "label": "deposit_confirmation_id",
+          "meaning": "Existing custodian deposit-lock confirmation for the same order.",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "acceptance_confirmation_id",
+          "label": "acceptance_confirmation_id",
+          "meaning": "Existing buyer final acceptance (single delivery or optional milestones) for the same order.",
+          "valueType": "id",
+          "required": true
+        }
+      ],
+      "examples": [
+        {
+          "label": "single-on-time",
+          "value": {
+            "id": "single-on-time-contract-settlement",
+            "signed_at": "2026-06-15T00:00:00Z",
+            "order_confirmation_id": "single-on-time-confirmation-order",
+            "deposit_confirmation_id": "single-on-time-confirmation-deposit-lock",
+            "acceptance_confirmation_id": "single-on-time-confirmation-acceptance"
+          },
+          "test": {
+            "flow": "single-on-time",
+            "tags": [
+              "regression",
+              "single",
+              "on-time"
+            ],
+            "actingRoleRef": "role.settlement-seller",
+            "asOf": "2026-06-15T00:00:00Z",
+            "basedOn": [
+              "confirmation.acceptance#single-on-time"
+            ]
+          }
+        },
+        {
+          "label": "single-late",
+          "value": {
+            "id": "single-late-contract-settlement",
+            "signed_at": "2026-06-30T00:00:00Z",
+            "order_confirmation_id": "single-late-confirmation-order",
+            "deposit_confirmation_id": "single-late-confirmation-deposit-lock",
+            "acceptance_confirmation_id": "single-late-confirmation-acceptance"
+          },
+          "test": {
+            "flow": "single-late",
+            "tags": [
+              "regression",
+              "single",
+              "late"
+            ],
+            "actingRoleRef": "role.settlement-seller",
+            "asOf": "2026-06-30T00:00:00Z",
+            "basedOn": [
+              "confirmation.acceptance#single-late"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "request.order",
+      "category": "evidence",
+      "kind": "fulfillment_request",
+      "contextRef": "context.procurement",
+      "label": "order",
+      "notes": "buyer's claim on seller; expires 48 hours after its server-recorded start.",
+      "responsibleRoleRef": "role.procurement-buyer",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "id",
+          "meaning": "Unique immutable business evidence identifier.",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "started_at",
+          "label": "started_at",
+          "meaning": "Server-recorded UTC business time; caller may not supply this field.",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "expired_at",
+          "label": "expired_at",
+          "meaning": "Server-recorded UTC business time; caller may not supply this field.",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true,
+          "derivedByRuleRef": "rule.order-expiry"
+        }
+      ],
+      "examples": [
+        {
+          "label": "single-on-time",
+          "value": {
+            "id": "single-on-time-request-order",
+            "started_at": "2026-06-01T00:01:00Z",
+            "expired_at": "2026-06-03T00:01:00Z"
+          },
+          "test": {
+            "flow": "single-on-time",
+            "tags": [
+              "regression",
+              "single",
+              "on-time"
+            ],
+            "actingRoleRef": "role.procurement-buyer",
+            "asOf": "2026-06-01T00:01:00Z",
+            "basedOn": [
+              "contract.agreement#single-on-time"
+            ]
+          }
+        },
+        {
+          "label": "single-late",
+          "value": {
+            "id": "single-late-request-order",
+            "started_at": "2026-06-01T00:01:00Z",
+            "expired_at": "2026-06-03T00:01:00Z"
+          },
+          "test": {
+            "flow": "single-late",
+            "tags": [
+              "regression",
+              "single",
+              "late"
+            ],
+            "actingRoleRef": "role.procurement-buyer",
+            "asOf": "2026-06-01T00:01:00Z",
+            "basedOn": [
+              "contract.agreement#single-late"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "confirmation.order",
+      "category": "evidence",
+      "kind": "fulfillment_confirmation",
+      "contextRef": "context.procurement",
+      "label": "order",
+      "notes": "seller's immutable answer to request.order.",
+      "responsibleRoleRef": "role.procurement-seller",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "id",
+          "meaning": "Unique immutable business evidence identifier.",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "confirmed_at",
+          "label": "confirmed_at",
+          "meaning": "Server-recorded UTC business time; caller may not supply this field.",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "subtotal_minor",
+          "label": "subtotal_minor",
+          "meaning": "Tier unit price multiplied by the agreed quantity, before tax. In CNY minor units (fen), never a floating-point yuan amount.",
+          "valueType": "int",
+          "required": true,
+          "keyData": true,
+          "derivedByRuleRef": "rule.subtotal"
+        },
+        {
+          "name": "gross_amount_minor",
+          "label": "gross_amount_minor",
+          "meaning": "Tax-inclusive order value, rounded half up once to a minor unit. In CNY minor units (fen), never a floating-point yuan amount.",
+          "valueType": "int",
+          "required": true,
+          "keyData": true,
+          "derivedByRuleRef": "rule.gross"
+        },
+        {
+          "name": "quantity",
+          "label": "quantity",
+          "meaning": "Buyer-agreed total quantity, positive and fully deliverable.",
+          "valueType": "int",
+          "required": true,
+          "derivedByRuleRef": "rule.order-quantity"
+        },
+        {
+          "name": "retention_bps",
+          "label": "retention_bps",
+          "meaning": "Contractual retained warranty share, inclusive range 0..10000.",
+          "valueType": "int",
+          "required": true,
+          "derivedByRuleRef": "rule.order-retention-bps"
+        },
+        {
+          "name": "daily_penalty_bps",
+          "label": "daily_penalty_bps",
+          "meaning": "Penalty basis points per started 24-hour period, inclusive range 0..10000.",
+          "valueType": "int",
+          "required": true,
+          "derivedByRuleRef": "rule.order-daily-penalty-bps"
+        },
+        {
+          "name": "delivery_deadline",
+          "label": "delivery_deadline",
+          "meaning": "Agreed delivery acceptance deadline in UTC; a contract term, not a server stamp.",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true,
+          "derivedByRuleRef": "rule.order-delivery-deadline"
+        }
+      ],
+      "examples": [
+        {
+          "label": "single-on-time",
+          "value": {
+            "id": "single-on-time-confirmation-order",
+            "confirmed_at": "2026-06-01T00:01:00Z",
+            "subtotal_minor": 1297701,
+            "gross_amount_minor": 1466402,
+            "quantity": 999,
+            "retention_bps": 500,
+            "daily_penalty_bps": 100,
+            "delivery_deadline": "2026-06-15T00:00:00Z"
+          },
+          "test": {
+            "flow": "single-on-time",
+            "tags": [
+              "regression",
+              "single",
+              "on-time"
+            ],
+            "actingRoleRef": "role.procurement-seller",
+            "asOf": "2026-06-01T00:01:00Z",
+            "basedOn": [
+              "request.order#single-on-time"
+            ]
+          }
+        },
+        {
+          "label": "single-late",
+          "value": {
+            "id": "single-late-confirmation-order",
+            "confirmed_at": "2026-06-01T00:01:00Z",
+            "subtotal_minor": 1199000,
+            "gross_amount_minor": 1354870,
+            "quantity": 1000,
+            "retention_bps": 500,
+            "daily_penalty_bps": 100,
+            "delivery_deadline": "2026-06-15T00:00:00Z"
+          },
+          "test": {
+            "flow": "single-late",
+            "tags": [
+              "regression",
+              "single",
+              "late"
+            ],
+            "actingRoleRef": "role.procurement-seller",
+            "asOf": "2026-06-01T00:01:00Z",
+            "basedOn": [
+              "request.order#single-late"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "request.commitment",
+      "category": "evidence",
+      "kind": "fulfillment_request",
+      "contextRef": "context.procurement",
+      "label": "commitment",
+      "notes": "seller's claim on buyer; expires 48 hours after its server-recorded start.",
+      "responsibleRoleRef": "role.procurement-seller",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "id",
+          "meaning": "Unique immutable business evidence identifier.",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "started_at",
+          "label": "started_at",
+          "meaning": "Server-recorded UTC business time; caller may not supply this field.",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "expired_at",
+          "label": "expired_at",
+          "meaning": "Server-recorded UTC business time; caller may not supply this field.",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true,
+          "derivedByRuleRef": "rule.commitment-expiry"
+        }
+      ],
+      "examples": [
+        {
+          "label": "single-on-time",
+          "value": {
+            "id": "single-on-time-request-commitment",
+            "started_at": "2026-06-01T00:02:00Z",
+            "expired_at": "2026-06-03T00:02:00Z"
+          },
+          "test": {
+            "flow": "single-on-time",
+            "tags": [
+              "regression",
+              "single",
+              "on-time"
+            ],
+            "actingRoleRef": "role.procurement-seller",
+            "asOf": "2026-06-01T00:02:00Z",
+            "basedOn": [
+              "confirmation.order#single-on-time"
+            ]
+          }
+        },
+        {
+          "label": "single-late",
+          "value": {
+            "id": "single-late-request-commitment",
+            "started_at": "2026-06-01T00:02:00Z",
+            "expired_at": "2026-06-03T00:02:00Z"
+          },
+          "test": {
+            "flow": "single-late",
+            "tags": [
+              "regression",
+              "single",
+              "late"
+            ],
+            "actingRoleRef": "role.procurement-seller",
+            "asOf": "2026-06-01T00:02:00Z",
+            "basedOn": [
+              "confirmation.order#single-late"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "confirmation.commitment",
+      "category": "evidence",
+      "kind": "fulfillment_confirmation",
+      "contextRef": "context.procurement",
+      "label": "commitment",
+      "notes": "buyer's immutable answer to request.commitment.",
+      "responsibleRoleRef": "role.procurement-buyer",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "id",
+          "meaning": "Unique immutable business evidence identifier.",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "confirmed_at",
+          "label": "confirmed_at",
+          "meaning": "Server-recorded UTC business time; caller may not supply this field.",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "acknowledged",
+          "label": "acknowledged",
+          "meaning": "Buyer records acknowledgment of the seller order terms.",
+          "valueType": "bool",
+          "required": true
+        }
+      ],
+      "examples": [
+        {
+          "label": "single-on-time",
+          "value": {
+            "id": "single-on-time-confirmation-commitment",
+            "confirmed_at": "2026-06-01T00:02:00Z",
+            "acknowledged": true
+          },
+          "test": {
+            "flow": "single-on-time",
+            "tags": [
+              "regression",
+              "single",
+              "on-time"
+            ],
+            "actingRoleRef": "role.procurement-buyer",
+            "asOf": "2026-06-01T00:02:00Z",
+            "basedOn": [
+              "request.commitment#single-on-time"
+            ]
+          }
+        },
+        {
+          "label": "single-late",
+          "value": {
+            "id": "single-late-confirmation-commitment",
+            "confirmed_at": "2026-06-01T00:02:00Z",
+            "acknowledged": true
+          },
+          "test": {
+            "flow": "single-late",
+            "tags": [
+              "regression",
+              "single",
+              "late"
+            ],
+            "actingRoleRef": "role.procurement-buyer",
+            "asOf": "2026-06-01T00:02:00Z",
+            "basedOn": [
+              "request.commitment#single-late"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "request.deposit-lock",
+      "category": "evidence",
+      "kind": "fulfillment_request",
+      "contextRef": "context.escrow",
+      "label": "deposit-lock",
+      "notes": "buyer's claim on escrow; expires 48 hours after its server-recorded start.",
+      "responsibleRoleRef": "role.escrow-buyer",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "id",
+          "meaning": "Unique immutable business evidence identifier.",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "started_at",
+          "label": "started_at",
+          "meaning": "Server-recorded UTC business time; caller may not supply this field.",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "expired_at",
+          "label": "expired_at",
+          "meaning": "Server-recorded UTC business time; caller may not supply this field.",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true,
+          "derivedByRuleRef": "rule.deposit-lock-expiry"
+        }
+      ],
+      "examples": [
+        {
+          "label": "single-on-time",
+          "value": {
+            "id": "single-on-time-request-deposit-lock",
+            "started_at": "2026-06-02T00:01:00Z",
+            "expired_at": "2026-06-04T00:01:00Z"
+          },
+          "test": {
+            "flow": "single-on-time",
+            "tags": [
+              "regression",
+              "single",
+              "on-time"
+            ],
+            "actingRoleRef": "role.escrow-buyer",
+            "asOf": "2026-06-02T00:01:00Z",
+            "basedOn": [
+              "contract.escrow#single-on-time"
+            ]
+          }
+        },
+        {
+          "label": "single-late",
+          "value": {
+            "id": "single-late-request-deposit-lock",
+            "started_at": "2026-06-02T00:01:00Z",
+            "expired_at": "2026-06-04T00:01:00Z"
+          },
+          "test": {
+            "flow": "single-late",
+            "tags": [
+              "regression",
+              "single",
+              "late"
+            ],
+            "actingRoleRef": "role.escrow-buyer",
+            "asOf": "2026-06-02T00:01:00Z",
+            "basedOn": [
+              "contract.escrow#single-late"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "confirmation.deposit-lock",
+      "category": "evidence",
+      "kind": "fulfillment_confirmation",
+      "contextRef": "context.escrow",
+      "label": "deposit-lock",
+      "notes": "escrow's immutable answer to request.deposit-lock.",
+      "responsibleRoleRef": "role.escrow-escrow",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "id",
+          "meaning": "Unique immutable business evidence identifier.",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "confirmed_at",
+          "label": "confirmed_at",
+          "meaning": "Server-recorded UTC business time; caller may not supply this field.",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "locked_amount_minor",
+          "label": "locked_amount_minor",
+          "meaning": "Full gross order value locked by the escrow custodian, not a client supplied balance. In CNY minor units (fen), never a floating-point yuan amount.",
+          "valueType": "int",
+          "required": true,
+          "keyData": true,
+          "derivedByRuleRef": "rule.locked-amount"
+        }
+      ],
+      "examples": [
+        {
+          "label": "single-on-time",
+          "value": {
+            "id": "single-on-time-confirmation-deposit-lock",
+            "confirmed_at": "2026-06-02T00:01:00Z",
+            "locked_amount_minor": 1466402
+          },
+          "test": {
+            "flow": "single-on-time",
+            "tags": [
+              "regression",
+              "single",
+              "on-time"
+            ],
+            "actingRoleRef": "role.escrow-escrow",
+            "asOf": "2026-06-02T00:01:00Z",
+            "basedOn": [
+              "request.deposit-lock#single-on-time"
+            ]
+          }
+        },
+        {
+          "label": "single-late",
+          "value": {
+            "id": "single-late-confirmation-deposit-lock",
+            "confirmed_at": "2026-06-02T00:01:00Z",
+            "locked_amount_minor": 1354870
+          },
+          "test": {
+            "flow": "single-late",
+            "tags": [
+              "regression",
+              "single",
+              "late"
+            ],
+            "actingRoleRef": "role.escrow-escrow",
+            "asOf": "2026-06-02T00:01:00Z",
+            "basedOn": [
+              "request.deposit-lock#single-late"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "request.custody-statement",
+      "category": "evidence",
+      "kind": "fulfillment_request",
+      "contextRef": "context.escrow",
+      "label": "custody-statement",
+      "notes": "escrow's claim on buyer; expires 48 hours after its server-recorded start.",
+      "responsibleRoleRef": "role.escrow-escrow",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "id",
+          "meaning": "Unique immutable business evidence identifier.",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "started_at",
+          "label": "started_at",
+          "meaning": "Server-recorded UTC business time; caller may not supply this field.",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "expired_at",
+          "label": "expired_at",
+          "meaning": "Server-recorded UTC business time; caller may not supply this field.",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true,
+          "derivedByRuleRef": "rule.custody-statement-expiry"
+        }
+      ],
+      "examples": [
+        {
+          "label": "single-on-time",
+          "value": {
+            "id": "single-on-time-request-custody-statement",
+            "started_at": "2026-06-02T00:02:00Z",
+            "expired_at": "2026-06-04T00:02:00Z"
+          },
+          "test": {
+            "flow": "single-on-time",
+            "tags": [
+              "regression",
+              "single",
+              "on-time"
+            ],
+            "actingRoleRef": "role.escrow-escrow",
+            "asOf": "2026-06-02T00:02:00Z",
+            "basedOn": [
+              "confirmation.deposit-lock#single-on-time"
+            ]
+          }
+        },
+        {
+          "label": "single-late",
+          "value": {
+            "id": "single-late-request-custody-statement",
+            "started_at": "2026-06-02T00:02:00Z",
+            "expired_at": "2026-06-04T00:02:00Z"
+          },
+          "test": {
+            "flow": "single-late",
+            "tags": [
+              "regression",
+              "single",
+              "late"
+            ],
+            "actingRoleRef": "role.escrow-escrow",
+            "asOf": "2026-06-02T00:02:00Z",
+            "basedOn": [
+              "confirmation.deposit-lock#single-late"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "confirmation.custody-statement",
+      "category": "evidence",
+      "kind": "fulfillment_confirmation",
+      "contextRef": "context.escrow",
+      "label": "custody-statement",
+      "notes": "buyer's immutable answer to request.custody-statement.",
+      "responsibleRoleRef": "role.escrow-buyer",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "id",
+          "meaning": "Unique immutable business evidence identifier.",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "confirmed_at",
+          "label": "confirmed_at",
+          "meaning": "Server-recorded UTC business time; caller may not supply this field.",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "acknowledged",
+          "label": "acknowledged",
+          "meaning": "Buyer acknowledges the escrow custody statement.",
+          "valueType": "bool",
+          "required": true
+        }
+      ],
+      "examples": [
+        {
+          "label": "single-on-time",
+          "value": {
+            "id": "single-on-time-confirmation-custody-statement",
+            "confirmed_at": "2026-06-02T00:02:00Z",
+            "acknowledged": true
+          },
+          "test": {
+            "flow": "single-on-time",
+            "tags": [
+              "regression",
+              "single",
+              "on-time"
+            ],
+            "actingRoleRef": "role.escrow-buyer",
+            "asOf": "2026-06-02T00:02:00Z",
+            "basedOn": [
+              "request.custody-statement#single-on-time"
+            ]
+          }
+        },
+        {
+          "label": "single-late",
+          "value": {
+            "id": "single-late-confirmation-custody-statement",
+            "confirmed_at": "2026-06-02T00:02:00Z",
+            "acknowledged": true
+          },
+          "test": {
+            "flow": "single-late",
+            "tags": [
+              "regression",
+              "single",
+              "late"
+            ],
+            "actingRoleRef": "role.escrow-buyer",
+            "asOf": "2026-06-02T00:02:00Z",
+            "basedOn": [
+              "request.custody-statement#single-late"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "request.delivery",
+      "category": "evidence",
+      "kind": "fulfillment_request",
+      "contextRef": "context.fulfillment",
+      "label": "delivery",
+      "notes": "buyer's claim on seller; expires 48 hours after its server-recorded start.",
+      "responsibleRoleRef": "role.fulfillment-buyer",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "id",
+          "meaning": "Unique immutable business evidence identifier.",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "started_at",
+          "label": "started_at",
+          "meaning": "Server-recorded UTC business time; caller may not supply this field.",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "expired_at",
+          "label": "expired_at",
+          "meaning": "Server-recorded UTC business time; caller may not supply this field.",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true,
+          "derivedByRuleRef": "rule.delivery-expiry"
+        }
+      ],
+      "examples": [
+        {
+          "label": "single-on-time",
+          "value": {
+            "id": "single-on-time-request-delivery",
+            "started_at": "2026-06-15T00:00:00Z",
+            "expired_at": "2026-06-17T00:00:00Z"
+          },
+          "test": {
+            "flow": "single-on-time",
+            "tags": [
+              "regression",
+              "single",
+              "on-time"
+            ],
+            "actingRoleRef": "role.fulfillment-buyer",
+            "asOf": "2026-06-15T00:00:00Z",
+            "basedOn": [
+              "contract.fulfillment#single-on-time"
+            ]
+          }
+        },
+        {
+          "label": "single-late",
+          "value": {
+            "id": "single-late-request-delivery",
+            "started_at": "2026-06-30T00:00:00Z",
+            "expired_at": "2026-07-02T00:00:00Z"
+          },
+          "test": {
+            "flow": "single-late",
+            "tags": [
+              "regression",
+              "single",
+              "late"
+            ],
+            "actingRoleRef": "role.fulfillment-buyer",
+            "asOf": "2026-06-30T00:00:00Z",
+            "basedOn": [
+              "contract.fulfillment#single-late"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "confirmation.delivery",
+      "category": "evidence",
+      "kind": "fulfillment_confirmation",
+      "contextRef": "context.fulfillment",
+      "label": "delivery",
+      "notes": "seller's immutable answer to request.delivery.",
+      "responsibleRoleRef": "role.fulfillment-seller",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "id",
+          "meaning": "Unique immutable business evidence identifier.",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "confirmed_at",
+          "label": "confirmed_at",
+          "meaning": "Server-recorded UTC business time; caller may not supply this field.",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "delivered_quantity",
+          "label": "delivered_quantity",
+          "meaning": "Actual delivered quantity, recorded by the seller and checked against the agreed order.",
+          "valueType": "int",
+          "required": true
+        }
+      ],
+      "examples": [
+        {
+          "label": "single-on-time",
+          "value": {
+            "id": "single-on-time-confirmation-delivery",
+            "confirmed_at": "2026-06-15T00:00:00Z",
+            "delivered_quantity": 999
+          },
+          "test": {
+            "flow": "single-on-time",
+            "tags": [
+              "regression",
+              "single",
+              "on-time"
+            ],
+            "actingRoleRef": "role.fulfillment-seller",
+            "asOf": "2026-06-15T00:00:00Z",
+            "basedOn": [
+              "request.delivery#single-on-time"
+            ]
+          }
+        },
+        {
+          "label": "single-late",
+          "value": {
+            "id": "single-late-confirmation-delivery",
+            "confirmed_at": "2026-06-30T00:00:00Z",
+            "delivered_quantity": 1000
+          },
+          "test": {
+            "flow": "single-late",
+            "tags": [
+              "regression",
+              "single",
+              "late"
+            ],
+            "actingRoleRef": "role.fulfillment-seller",
+            "asOf": "2026-06-30T00:00:00Z",
+            "basedOn": [
+              "request.delivery#single-late"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "request.acceptance",
+      "category": "evidence",
+      "kind": "fulfillment_request",
+      "contextRef": "context.fulfillment",
+      "label": "acceptance",
+      "notes": "seller's claim on buyer; expires 48 hours after its server-recorded start.",
+      "responsibleRoleRef": "role.fulfillment-seller",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "id",
+          "meaning": "Unique immutable business evidence identifier.",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "started_at",
+          "label": "started_at",
+          "meaning": "Server-recorded UTC business time; caller may not supply this field.",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "expired_at",
+          "label": "expired_at",
+          "meaning": "Server-recorded UTC business time; caller may not supply this field.",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true,
+          "derivedByRuleRef": "rule.acceptance-expiry"
+        }
+      ],
+      "examples": [
+        {
+          "label": "single-on-time",
+          "value": {
+            "id": "single-on-time-request-acceptance",
+            "started_at": "2026-06-15T00:00:00Z",
+            "expired_at": "2026-06-17T00:00:00Z"
+          },
+          "test": {
+            "flow": "single-on-time",
+            "tags": [
+              "regression",
+              "single",
+              "on-time"
+            ],
+            "actingRoleRef": "role.fulfillment-seller",
+            "asOf": "2026-06-15T00:00:00Z",
+            "basedOn": [
+              "confirmation.delivery#single-on-time"
+            ]
+          }
+        },
+        {
+          "label": "single-late",
+          "value": {
+            "id": "single-late-request-acceptance",
+            "started_at": "2026-06-30T00:00:00Z",
+            "expired_at": "2026-07-02T00:00:00Z"
+          },
+          "test": {
+            "flow": "single-late",
+            "tags": [
+              "regression",
+              "single",
+              "late"
+            ],
+            "actingRoleRef": "role.fulfillment-seller",
+            "asOf": "2026-06-30T00:00:00Z",
+            "basedOn": [
+              "confirmation.delivery#single-late"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "confirmation.acceptance",
+      "category": "evidence",
+      "kind": "fulfillment_confirmation",
+      "contextRef": "context.fulfillment",
+      "label": "acceptance",
+      "notes": "buyer's immutable answer to request.acceptance.",
+      "responsibleRoleRef": "role.fulfillment-buyer",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "id",
+          "meaning": "Unique immutable business evidence identifier.",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "confirmed_at",
+          "label": "confirmed_at",
+          "meaning": "Server-recorded UTC business time; caller may not supply this field.",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "accepted",
+          "label": "accepted",
+          "meaning": "Buyer records final acceptance of the physical delivery.",
+          "valueType": "bool",
+          "required": true
+        },
+        {
+          "name": "accepted_quantity",
+          "label": "accepted_quantity",
+          "meaning": "Quantity taken from the seller delivery evidence.",
+          "valueType": "int",
+          "required": true,
+          "derivedByRuleRef": "rule.acceptance-quantity"
+        },
+        {
+          "name": "late_days",
+          "label": "late_days",
+          "meaning": "Started 24-hour periods after the acceptance deadline; zero at or before the deadline.",
+          "valueType": "int",
+          "required": true,
+          "derivedByRuleRef": "rule.acceptance-late-days"
+        }
+      ],
+      "examples": [
+        {
+          "label": "single-on-time",
+          "value": {
+            "id": "single-on-time-confirmation-acceptance",
+            "confirmed_at": "2026-06-15T00:00:00Z",
+            "accepted": true,
+            "accepted_quantity": 999,
+            "late_days": 0
+          },
+          "test": {
+            "flow": "single-on-time",
+            "tags": [
+              "regression",
+              "single",
+              "on-time"
+            ],
+            "actingRoleRef": "role.fulfillment-buyer",
+            "asOf": "2026-06-15T00:00:00Z",
+            "basedOn": [
+              "request.acceptance#single-on-time"
+            ]
+          }
+        },
+        {
+          "label": "single-late",
+          "value": {
+            "id": "single-late-confirmation-acceptance",
+            "confirmed_at": "2026-06-30T00:00:00Z",
+            "accepted": true,
+            "accepted_quantity": 1000,
+            "late_days": 15
+          },
+          "test": {
+            "flow": "single-late",
+            "tags": [
+              "regression",
+              "single",
+              "late"
+            ],
+            "actingRoleRef": "role.fulfillment-buyer",
+            "asOf": "2026-06-30T00:00:00Z",
+            "basedOn": [
+              "request.acceptance#single-late"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "request.release",
+      "category": "evidence",
+      "kind": "fulfillment_request",
+      "contextRef": "context.settlement",
+      "label": "release",
+      "notes": "seller's claim on escrow; expires 48 hours after its server-recorded start.",
+      "responsibleRoleRef": "role.settlement-seller",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "id",
+          "meaning": "Unique immutable business evidence identifier.",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "started_at",
+          "label": "started_at",
+          "meaning": "Server-recorded UTC business time; caller may not supply this field.",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "expired_at",
+          "label": "expired_at",
+          "meaning": "Server-recorded UTC business time; caller may not supply this field.",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true,
+          "derivedByRuleRef": "rule.release-expiry"
+        }
+      ],
+      "examples": [
+        {
+          "label": "single-on-time",
+          "value": {
+            "id": "single-on-time-request-release",
+            "started_at": "2026-06-15T00:00:00Z",
+            "expired_at": "2026-06-17T00:00:00Z"
+          },
+          "test": {
+            "flow": "single-on-time",
+            "tags": [
+              "regression",
+              "single",
+              "on-time"
+            ],
+            "actingRoleRef": "role.settlement-seller",
+            "asOf": "2026-06-15T00:00:00Z",
+            "basedOn": [
+              "contract.settlement#single-on-time"
+            ]
+          }
+        },
+        {
+          "label": "single-late",
+          "value": {
+            "id": "single-late-request-release",
+            "started_at": "2026-06-30T00:00:00Z",
+            "expired_at": "2026-07-02T00:00:00Z"
+          },
+          "test": {
+            "flow": "single-late",
+            "tags": [
+              "regression",
+              "single",
+              "late"
+            ],
+            "actingRoleRef": "role.settlement-seller",
+            "asOf": "2026-06-30T00:00:00Z",
+            "basedOn": [
+              "contract.settlement#single-late"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "confirmation.release",
+      "category": "evidence",
+      "kind": "fulfillment_confirmation",
+      "contextRef": "context.settlement",
+      "label": "release",
+      "notes": "escrow's immutable answer to request.release.",
+      "responsibleRoleRef": "role.settlement-escrow",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "id",
+          "meaning": "Unique immutable business evidence identifier.",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "confirmed_at",
+          "label": "confirmed_at",
+          "meaning": "Server-recorded UTC business time; caller may not supply this field.",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "gross_amount_minor",
+          "label": "gross_amount_minor",
+          "meaning": "Gross order value from the seller order evidence. In CNY minor units (fen), never a floating-point yuan amount.",
+          "valueType": "int",
+          "required": true,
+          "keyData": true,
+          "derivedByRuleRef": "rule.release-gross"
+        },
+        {
+          "name": "retention_minor",
+          "label": "retention_minor",
+          "meaning": "Warranty reserve; half-up rounding of gross multiplied by retention basis points. In CNY minor units (fen), never a floating-point yuan amount.",
+          "valueType": "int",
+          "required": true,
+          "keyData": true,
+          "derivedByRuleRef": "rule.release-retention"
+        },
+        {
+          "name": "late_penalty_minor",
+          "label": "late_penalty_minor",
+          "meaning": "Half-up late penalty capped to gross minus warranty reserve, so payout cannot be negative. In CNY minor units (fen), never a floating-point yuan amount.",
+          "valueType": "int",
+          "required": true,
+          "keyData": true,
+          "derivedByRuleRef": "rule.release-penalty"
+        },
+        {
+          "name": "payout_minor",
+          "label": "payout_minor",
+          "meaning": "Final immutable seller payout, gross minus reserve minus capped penalty. In CNY minor units (fen), never a floating-point yuan amount.",
+          "valueType": "int",
+          "required": true,
+          "keyData": true,
+          "derivedByRuleRef": "rule.release-payout"
+        }
+      ],
+      "examples": [
+        {
+          "label": "single-on-time-00-tamper",
+          "value": {
+            "id": "single-on-time-confirmation-release-00-tamper",
+            "confirmed_at": "2026-06-15T00:00:00Z",
+            "gross_amount_minor": 1466402,
+            "retention_minor": 73320,
+            "late_penalty_minor": 0,
+            "payout_minor": 1393082
+          },
+          "test": {
+            "flow": "single-on-time",
+            "tags": [
+              "regression",
+              "single",
+              "on-time"
+            ],
+            "actingRoleRef": "role.settlement-escrow",
+            "asOf": "2026-06-15T00:00:00Z",
+            "basedOn": [
+              "request.release#single-on-time"
+            ],
+            "expectedStatus": 422,
+            "inputs": {
+              "id": "single-on-time-forged",
+              "payout_minor": 999999
+            },
+            "expect": {
+              "$.error": "INVALID_INPUT"
+            }
+          }
+        },
+        {
+          "label": "single-on-time-01-time-tamper",
+          "value": {
+            "id": "single-on-time-confirmation-release-01-time-tamper",
+            "confirmed_at": "2026-06-15T00:00:00Z",
+            "gross_amount_minor": 1466402,
+            "retention_minor": 73320,
+            "late_penalty_minor": 0,
+            "payout_minor": 1393082
+          },
+          "test": {
+            "flow": "single-on-time",
+            "tags": [
+              "regression",
+              "single",
+              "on-time"
+            ],
+            "actingRoleRef": "role.settlement-escrow",
+            "asOf": "2026-06-15T00:00:00Z",
+            "basedOn": [
+              "request.release#single-on-time"
+            ],
+            "expectedStatus": 422,
+            "inputs": {
+              "id": "single-on-time-backdated",
+              "confirmed_at": "2000-01-01T00:00:00Z"
+            },
+            "expect": {
+              "$.error": "INVALID_INPUT"
+            }
+          }
+        },
+        {
+          "label": "single-on-time-10-confirmed",
+          "value": {
+            "id": "single-on-time-confirmation-release-10-confirmed",
+            "confirmed_at": "2026-06-15T00:00:00Z",
+            "gross_amount_minor": 1466402,
+            "retention_minor": 73320,
+            "late_penalty_minor": 0,
+            "payout_minor": 1393082
+          },
+          "test": {
+            "flow": "single-on-time",
+            "tags": [
+              "regression",
+              "single",
+              "on-time"
+            ],
+            "actingRoleRef": "role.settlement-escrow",
+            "asOf": "2026-06-15T00:00:00Z",
+            "basedOn": [
+              "request.release#single-on-time"
+            ]
+          }
+        },
+        {
+          "label": "single-on-time-20-duplicate",
+          "value": {
+            "id": "single-on-time-confirmation-release-20-duplicate",
+            "confirmed_at": "2026-06-15T00:00:00Z",
+            "gross_amount_minor": 1466402,
+            "retention_minor": 73320,
+            "late_penalty_minor": 0,
+            "payout_minor": 1393082
+          },
+          "test": {
+            "flow": "single-on-time",
+            "tags": [
+              "regression",
+              "single",
+              "on-time"
+            ],
+            "actingRoleRef": "role.settlement-escrow",
+            "asOf": "2026-06-15T00:00:00Z",
+            "basedOn": [
+              "confirmation.release#single-on-time-10-confirmed"
+            ],
+            "expectedStatus": 409,
+            "inputs": {
+              "id": "single-on-time-duplicate"
+            },
+            "expect": {
+              "$.error": "ALREADY_CONFIRMED"
+            }
+          }
+        },
+        {
+          "label": "single-late-00-tamper",
+          "value": {
+            "id": "single-late-confirmation-release-00-tamper",
+            "confirmed_at": "2026-06-30T00:00:00Z",
+            "gross_amount_minor": 1354870,
+            "retention_minor": 67744,
+            "late_penalty_minor": 203231,
+            "payout_minor": 1083895
+          },
+          "test": {
+            "flow": "single-late",
+            "tags": [
+              "regression",
+              "single",
+              "late"
+            ],
+            "actingRoleRef": "role.settlement-escrow",
+            "asOf": "2026-06-30T00:00:00Z",
+            "basedOn": [
+              "request.release#single-late"
+            ],
+            "expectedStatus": 422,
+            "inputs": {
+              "id": "single-late-forged",
+              "payout_minor": 999999
+            },
+            "expect": {
+              "$.error": "INVALID_INPUT"
+            }
+          }
+        },
+        {
+          "label": "single-late-01-time-tamper",
+          "value": {
+            "id": "single-late-confirmation-release-01-time-tamper",
+            "confirmed_at": "2026-06-30T00:00:00Z",
+            "gross_amount_minor": 1354870,
+            "retention_minor": 67744,
+            "late_penalty_minor": 203231,
+            "payout_minor": 1083895
+          },
+          "test": {
+            "flow": "single-late",
+            "tags": [
+              "regression",
+              "single",
+              "late"
+            ],
+            "actingRoleRef": "role.settlement-escrow",
+            "asOf": "2026-06-30T00:00:00Z",
+            "basedOn": [
+              "request.release#single-late"
+            ],
+            "expectedStatus": 422,
+            "inputs": {
+              "id": "single-late-backdated",
+              "confirmed_at": "2000-01-01T00:00:00Z"
+            },
+            "expect": {
+              "$.error": "INVALID_INPUT"
+            }
+          }
+        },
+        {
+          "label": "single-late-10-confirmed",
+          "value": {
+            "id": "single-late-confirmation-release-10-confirmed",
+            "confirmed_at": "2026-06-30T00:00:00Z",
+            "gross_amount_minor": 1354870,
+            "retention_minor": 67744,
+            "late_penalty_minor": 203231,
+            "payout_minor": 1083895
+          },
+          "test": {
+            "flow": "single-late",
+            "tags": [
+              "regression",
+              "single",
+              "late"
+            ],
+            "actingRoleRef": "role.settlement-escrow",
+            "asOf": "2026-06-30T00:00:00Z",
+            "basedOn": [
+              "request.release#single-late"
+            ]
+          }
+        },
+        {
+          "label": "single-late-20-duplicate",
+          "value": {
+            "id": "single-late-confirmation-release-20-duplicate",
+            "confirmed_at": "2026-06-30T00:00:00Z",
+            "gross_amount_minor": 1354870,
+            "retention_minor": 67744,
+            "late_penalty_minor": 203231,
+            "payout_minor": 1083895
+          },
+          "test": {
+            "flow": "single-late",
+            "tags": [
+              "regression",
+              "single",
+              "late"
+            ],
+            "actingRoleRef": "role.settlement-escrow",
+            "asOf": "2026-06-30T00:00:00Z",
+            "basedOn": [
+              "confirmation.release#single-late-10-confirmed"
+            ],
+            "expectedStatus": 409,
+            "inputs": {
+              "id": "single-late-duplicate"
+            },
+            "expect": {
+              "$.error": "ALREADY_CONFIRMED"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "request.settlement-receipt",
+      "category": "evidence",
+      "kind": "fulfillment_request",
+      "contextRef": "context.settlement",
+      "label": "settlement-receipt",
+      "notes": "escrow's claim on seller; expires 48 hours after its server-recorded start.",
+      "responsibleRoleRef": "role.settlement-escrow",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "id",
+          "meaning": "Unique immutable business evidence identifier.",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "started_at",
+          "label": "started_at",
+          "meaning": "Server-recorded UTC business time; caller may not supply this field.",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "expired_at",
+          "label": "expired_at",
+          "meaning": "Server-recorded UTC business time; caller may not supply this field.",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true,
+          "derivedByRuleRef": "rule.settlement-receipt-expiry"
+        }
+      ],
+      "examples": [
+        {
+          "label": "single-on-time",
+          "value": {
+            "id": "single-on-time-request-settlement-receipt",
+            "started_at": "2026-06-15T00:00:00Z",
+            "expired_at": "2026-06-17T00:00:00Z"
+          },
+          "test": {
+            "flow": "single-on-time",
+            "tags": [
+              "regression",
+              "single",
+              "on-time"
+            ],
+            "actingRoleRef": "role.settlement-escrow",
+            "asOf": "2026-06-15T00:00:00Z",
+            "basedOn": [
+              "confirmation.release#single-on-time-10-confirmed"
+            ]
+          }
+        },
+        {
+          "label": "single-late",
+          "value": {
+            "id": "single-late-request-settlement-receipt",
+            "started_at": "2026-06-30T00:00:00Z",
+            "expired_at": "2026-07-02T00:00:00Z"
+          },
+          "test": {
+            "flow": "single-late",
+            "tags": [
+              "regression",
+              "single",
+              "late"
+            ],
+            "actingRoleRef": "role.settlement-escrow",
+            "asOf": "2026-06-30T00:00:00Z",
+            "basedOn": [
+              "confirmation.release#single-late-10-confirmed"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "confirmation.settlement-receipt",
+      "category": "evidence",
+      "kind": "fulfillment_confirmation",
+      "contextRef": "context.settlement",
+      "label": "settlement-receipt",
+      "notes": "seller's immutable answer to request.settlement-receipt.",
+      "responsibleRoleRef": "role.settlement-seller",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "id",
+          "meaning": "Unique immutable business evidence identifier.",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "confirmed_at",
+          "label": "confirmed_at",
+          "meaning": "Server-recorded UTC business time; caller may not supply this field.",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "acknowledged",
+          "label": "acknowledged",
+          "meaning": "Seller acknowledges the custodian settlement ledger statement.",
+          "valueType": "bool",
+          "required": true
+        }
+      ],
+      "examples": [
+        {
+          "label": "single-on-time",
+          "value": {
+            "id": "single-on-time-confirmation-settlement-receipt",
+            "confirmed_at": "2026-06-15T00:00:00Z",
+            "acknowledged": true
+          },
+          "test": {
+            "flow": "single-on-time",
+            "tags": [
+              "regression",
+              "single",
+              "on-time"
+            ],
+            "actingRoleRef": "role.settlement-seller",
+            "asOf": "2026-06-15T00:00:00Z",
+            "basedOn": [
+              "request.settlement-receipt#single-on-time"
+            ]
+          }
+        },
+        {
+          "label": "single-late",
+          "value": {
+            "id": "single-late-confirmation-settlement-receipt",
+            "confirmed_at": "2026-06-30T00:00:00Z",
+            "acknowledged": true
+          },
+          "test": {
+            "flow": "single-late",
+            "tags": [
+              "regression",
+              "single",
+              "late"
+            ],
+            "actingRoleRef": "role.settlement-seller",
+            "asOf": "2026-06-30T00:00:00Z",
+            "basedOn": [
+              "request.settlement-receipt#single-late"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "type": "relationship",
+      "id": "relation.party.buyer-role.procurement-buyer",
+      "kind": "plays_role",
+      "sourceRef": "party.buyer",
+      "targetRef": "role.procurement-buyer",
+      "label": "plays_role",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.party.seller-role.procurement-seller",
+      "kind": "plays_role",
+      "sourceRef": "party.seller",
+      "targetRef": "role.procurement-seller",
+      "label": "plays_role",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.party.buyer-role.escrow-buyer",
+      "kind": "plays_role",
+      "sourceRef": "party.buyer",
+      "targetRef": "role.escrow-buyer",
+      "label": "plays_role",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.party.escrow-role.escrow-escrow",
+      "kind": "plays_role",
+      "sourceRef": "party.escrow",
+      "targetRef": "role.escrow-escrow",
+      "label": "plays_role",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.party.buyer-role.fulfillment-buyer",
+      "kind": "plays_role",
+      "sourceRef": "party.buyer",
+      "targetRef": "role.fulfillment-buyer",
+      "label": "plays_role",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.party.seller-role.fulfillment-seller",
+      "kind": "plays_role",
+      "sourceRef": "party.seller",
+      "targetRef": "role.fulfillment-seller",
+      "label": "plays_role",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.party.seller-role.settlement-seller",
+      "kind": "plays_role",
+      "sourceRef": "party.seller",
+      "targetRef": "role.settlement-seller",
+      "label": "plays_role",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.party.escrow-role.settlement-escrow",
+      "kind": "plays_role",
+      "sourceRef": "party.escrow",
+      "targetRef": "role.settlement-escrow",
+      "label": "plays_role",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.contract.escrow-confirmation.order",
+      "kind": "references",
+      "sourceRef": "contract.escrow",
+      "targetRef": "confirmation.order",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.contract.fulfillment-confirmation.order",
+      "kind": "references",
+      "sourceRef": "contract.fulfillment",
+      "targetRef": "confirmation.order",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.contract.settlement-confirmation.order",
+      "kind": "references",
+      "sourceRef": "contract.settlement",
+      "targetRef": "confirmation.order",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.contract.fulfillment-confirmation.deposit-lock",
+      "kind": "references",
+      "sourceRef": "contract.fulfillment",
+      "targetRef": "confirmation.deposit-lock",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.contract.settlement-confirmation.deposit-lock",
+      "kind": "references",
+      "sourceRef": "contract.settlement",
+      "targetRef": "confirmation.deposit-lock",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.contract.settlement-confirmation.acceptance",
+      "kind": "references",
+      "sourceRef": "contract.settlement",
+      "targetRef": "confirmation.acceptance",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.request.order-contract.agreement",
+      "kind": "references",
+      "sourceRef": "request.order",
+      "targetRef": "contract.agreement",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.confirmation.order-request.order",
+      "kind": "references",
+      "sourceRef": "confirmation.order",
+      "targetRef": "request.order",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.request.commitment-contract.agreement",
+      "kind": "references",
+      "sourceRef": "request.commitment",
+      "targetRef": "contract.agreement",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.confirmation.commitment-request.commitment",
+      "kind": "references",
+      "sourceRef": "confirmation.commitment",
+      "targetRef": "request.commitment",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.request.commitment-confirmation.order",
+      "kind": "references",
+      "sourceRef": "request.commitment",
+      "targetRef": "confirmation.order",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.request.deposit-lock-contract.escrow",
+      "kind": "references",
+      "sourceRef": "request.deposit-lock",
+      "targetRef": "contract.escrow",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.confirmation.deposit-lock-request.deposit-lock",
+      "kind": "references",
+      "sourceRef": "confirmation.deposit-lock",
+      "targetRef": "request.deposit-lock",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.request.deposit-lock-confirmation.order",
+      "kind": "references",
+      "sourceRef": "request.deposit-lock",
+      "targetRef": "confirmation.order",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.request.custody-statement-contract.escrow",
+      "kind": "references",
+      "sourceRef": "request.custody-statement",
+      "targetRef": "contract.escrow",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.confirmation.custody-statement-request.custody-statement",
+      "kind": "references",
+      "sourceRef": "confirmation.custody-statement",
+      "targetRef": "request.custody-statement",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.request.custody-statement-confirmation.deposit-lock",
+      "kind": "references",
+      "sourceRef": "request.custody-statement",
+      "targetRef": "confirmation.deposit-lock",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.request.delivery-contract.fulfillment",
+      "kind": "references",
+      "sourceRef": "request.delivery",
+      "targetRef": "contract.fulfillment",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.confirmation.delivery-request.delivery",
+      "kind": "references",
+      "sourceRef": "confirmation.delivery",
+      "targetRef": "request.delivery",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.request.delivery-confirmation.order",
+      "kind": "references",
+      "sourceRef": "request.delivery",
+      "targetRef": "confirmation.order",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.request.delivery-confirmation.deposit-lock",
+      "kind": "references",
+      "sourceRef": "request.delivery",
+      "targetRef": "confirmation.deposit-lock",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.request.acceptance-contract.fulfillment",
+      "kind": "references",
+      "sourceRef": "request.acceptance",
+      "targetRef": "contract.fulfillment",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.confirmation.acceptance-request.acceptance",
+      "kind": "references",
+      "sourceRef": "confirmation.acceptance",
+      "targetRef": "request.acceptance",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.request.acceptance-confirmation.delivery",
+      "kind": "references",
+      "sourceRef": "request.acceptance",
+      "targetRef": "confirmation.delivery",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.request.acceptance-confirmation.order",
+      "kind": "references",
+      "sourceRef": "request.acceptance",
+      "targetRef": "confirmation.order",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.request.release-contract.settlement",
+      "kind": "references",
+      "sourceRef": "request.release",
+      "targetRef": "contract.settlement",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.confirmation.release-request.release",
+      "kind": "references",
+      "sourceRef": "confirmation.release",
+      "targetRef": "request.release",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.request.release-confirmation.order",
+      "kind": "references",
+      "sourceRef": "request.release",
+      "targetRef": "confirmation.order",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.request.release-confirmation.deposit-lock",
+      "kind": "references",
+      "sourceRef": "request.release",
+      "targetRef": "confirmation.deposit-lock",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.request.release-confirmation.acceptance",
+      "kind": "references",
+      "sourceRef": "request.release",
+      "targetRef": "confirmation.acceptance",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.request.settlement-receipt-contract.settlement",
+      "kind": "references",
+      "sourceRef": "request.settlement-receipt",
+      "targetRef": "contract.settlement",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.confirmation.settlement-receipt-request.settlement-receipt",
+      "kind": "references",
+      "sourceRef": "confirmation.settlement-receipt",
+      "targetRef": "request.settlement-receipt",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.request.settlement-receipt-confirmation.release",
+      "kind": "references",
+      "sourceRef": "request.settlement-receipt",
+      "targetRef": "confirmation.release",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    }
+  ],
+  "rules": [
+    {
+      "type": "rule",
+      "id": "rule.order-expiry",
+      "kind": "derivation",
+      "label": "order request expiry",
+      "description": "Each request is valid for 48 hours from its server-recorded start; callers cannot choose or backdate the expiration.",
+      "contextRef": "context.procurement",
+      "bindings": {
+        "request": {
+          "ref": "request.order"
+        }
+      },
+      "expression": "request.started_at + duration(\"48h\")",
+      "resultType": "timestamp",
+      "target": {
+        "entityRef": "request.order",
+        "attribute": "expired_at"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule.commitment-expiry",
+      "kind": "derivation",
+      "label": "commitment request expiry",
+      "description": "Each request is valid for 48 hours from its server-recorded start; callers cannot choose or backdate the expiration.",
+      "contextRef": "context.procurement",
+      "bindings": {
+        "request": {
+          "ref": "request.commitment"
+        }
+      },
+      "expression": "request.started_at + duration(\"48h\")",
+      "resultType": "timestamp",
+      "target": {
+        "entityRef": "request.commitment",
+        "attribute": "expired_at"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule.deposit-lock-expiry",
+      "kind": "derivation",
+      "label": "deposit-lock request expiry",
+      "description": "Each request is valid for 48 hours from its server-recorded start; callers cannot choose or backdate the expiration.",
+      "contextRef": "context.escrow",
+      "bindings": {
+        "request": {
+          "ref": "request.deposit-lock"
+        }
+      },
+      "expression": "request.started_at + duration(\"48h\")",
+      "resultType": "timestamp",
+      "target": {
+        "entityRef": "request.deposit-lock",
+        "attribute": "expired_at"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule.custody-statement-expiry",
+      "kind": "derivation",
+      "label": "custody-statement request expiry",
+      "description": "Each request is valid for 48 hours from its server-recorded start; callers cannot choose or backdate the expiration.",
+      "contextRef": "context.escrow",
+      "bindings": {
+        "request": {
+          "ref": "request.custody-statement"
+        }
+      },
+      "expression": "request.started_at + duration(\"48h\")",
+      "resultType": "timestamp",
+      "target": {
+        "entityRef": "request.custody-statement",
+        "attribute": "expired_at"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule.delivery-expiry",
+      "kind": "derivation",
+      "label": "delivery request expiry",
+      "description": "Each request is valid for 48 hours from its server-recorded start; callers cannot choose or backdate the expiration.",
+      "contextRef": "context.fulfillment",
+      "bindings": {
+        "request": {
+          "ref": "request.delivery"
+        }
+      },
+      "expression": "request.started_at + duration(\"48h\")",
+      "resultType": "timestamp",
+      "target": {
+        "entityRef": "request.delivery",
+        "attribute": "expired_at"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule.acceptance-expiry",
+      "kind": "derivation",
+      "label": "acceptance request expiry",
+      "description": "Each request is valid for 48 hours from its server-recorded start; callers cannot choose or backdate the expiration.",
+      "contextRef": "context.fulfillment",
+      "bindings": {
+        "request": {
+          "ref": "request.acceptance"
+        }
+      },
+      "expression": "request.started_at + duration(\"48h\")",
+      "resultType": "timestamp",
+      "target": {
+        "entityRef": "request.acceptance",
+        "attribute": "expired_at"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule.release-expiry",
+      "kind": "derivation",
+      "label": "release request expiry",
+      "description": "Each request is valid for 48 hours from its server-recorded start; callers cannot choose or backdate the expiration.",
+      "contextRef": "context.settlement",
+      "bindings": {
+        "request": {
+          "ref": "request.release"
+        }
+      },
+      "expression": "request.started_at + duration(\"48h\")",
+      "resultType": "timestamp",
+      "target": {
+        "entityRef": "request.release",
+        "attribute": "expired_at"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule.settlement-receipt-expiry",
+      "kind": "derivation",
+      "label": "settlement-receipt request expiry",
+      "description": "Each request is valid for 48 hours from its server-recorded start; callers cannot choose or backdate the expiration.",
+      "contextRef": "context.settlement",
+      "bindings": {
+        "request": {
+          "ref": "request.settlement-receipt"
+        }
+      },
+      "expression": "request.started_at + duration(\"48h\")",
+      "resultType": "timestamp",
+      "target": {
+        "entityRef": "request.settlement-receipt",
+        "attribute": "expired_at"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule.subtotal",
+      "kind": "derivation",
+      "label": "subtotal",
+      "description": "Tier two applies to all units when the contractual threshold is met. Integer minor units only.",
+      "contextRef": "context.procurement",
+      "bindings": {
+        "agreement": {
+          "ref": "contract.agreement"
+        }
+      },
+      "expression": "agreement.quantity * (agreement.quantity >= agreement.tier_threshold ? agreement.tier2_unit_price_minor : agreement.tier1_unit_price_minor)",
+      "resultType": "int",
+      "target": {
+        "entityRef": "confirmation.order",
+        "attribute": "subtotal_minor"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule.gross",
+      "kind": "derivation",
+      "label": "gross",
+      "description": "Half-up tax-inclusive amount; quotient/remainder avoids overflowing the intermediate base * basis_points.",
+      "contextRef": "context.procurement",
+      "bindings": {
+        "agreement": {
+          "ref": "contract.agreement"
+        },
+        "order": {
+          "ref": "confirmation.order"
+        }
+      },
+      "expression": "((order.subtotal_minor / 10000) * (10000 + agreement.tax_bps) + ((order.subtotal_minor % 10000) * (10000 + agreement.tax_bps) + 5000) / 10000)",
+      "resultType": "int",
+      "target": {
+        "entityRef": "confirmation.order",
+        "attribute": "gross_amount_minor"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule.order-quantity",
+      "kind": "derivation",
+      "label": "order-quantity",
+      "description": "Seller order evidence preserves the agreed term for cross-context consumers.",
+      "contextRef": "context.procurement",
+      "bindings": {
+        "agreement": {
+          "ref": "contract.agreement"
+        }
+      },
+      "expression": "agreement.quantity",
+      "resultType": "int",
+      "target": {
+        "entityRef": "confirmation.order",
+        "attribute": "quantity"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule.order-retention-bps",
+      "kind": "derivation",
+      "label": "order-retention-bps",
+      "description": "Seller order evidence preserves the agreed term for cross-context consumers.",
+      "contextRef": "context.procurement",
+      "bindings": {
+        "agreement": {
+          "ref": "contract.agreement"
+        }
+      },
+      "expression": "agreement.retention_bps",
+      "resultType": "int",
+      "target": {
+        "entityRef": "confirmation.order",
+        "attribute": "retention_bps"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule.order-daily-penalty-bps",
+      "kind": "derivation",
+      "label": "order-daily-penalty-bps",
+      "description": "Seller order evidence preserves the agreed term for cross-context consumers.",
+      "contextRef": "context.procurement",
+      "bindings": {
+        "agreement": {
+          "ref": "contract.agreement"
+        }
+      },
+      "expression": "agreement.daily_penalty_bps",
+      "resultType": "int",
+      "target": {
+        "entityRef": "confirmation.order",
+        "attribute": "daily_penalty_bps"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule.order-delivery-deadline",
+      "kind": "derivation",
+      "label": "order-delivery-deadline",
+      "description": "Seller order evidence preserves the agreed term for cross-context consumers.",
+      "contextRef": "context.procurement",
+      "bindings": {
+        "agreement": {
+          "ref": "contract.agreement"
+        }
+      },
+      "expression": "agreement.delivery_deadline",
+      "resultType": "timestamp",
+      "target": {
+        "entityRef": "confirmation.order",
+        "attribute": "delivery_deadline"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule.locked-amount",
+      "kind": "derivation",
+      "label": "locked-amount",
+      "description": "Custodian locks full funds before delivery. The reference case does not simulate a real banking transfer.",
+      "contextRef": "context.escrow",
+      "bindings": {
+        "order": {
+          "ref": "confirmation.order"
+        }
+      },
+      "expression": "order.gross_amount_minor",
+      "resultType": "int",
+      "target": {
+        "entityRef": "confirmation.deposit-lock",
+        "attribute": "locked_amount_minor"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule.acceptance-quantity",
+      "kind": "derivation",
+      "label": "acceptance-quantity",
+      "description": "Buyer final acceptance quantity comes only from seller-formed delivery facts.",
+      "contextRef": "context.fulfillment",
+      "bindings": {
+        "delivery": {
+          "ref": "confirmation.delivery"
+        }
+      },
+      "expression": "delivery.delivered_quantity",
+      "resultType": "int",
+      "target": {
+        "entityRef": "confirmation.acceptance",
+        "attribute": "accepted_quantity"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule.acceptance-late-days",
+      "kind": "derivation",
+      "label": "acceptance-late-days",
+      "description": "Penalty uses the buyer acceptance instant, not machine-local time. Positive partial days round up; exact deadline has no penalty.",
+      "contextRef": "context.fulfillment",
+      "bindings": {
+        "order": {
+          "ref": "confirmation.order"
+        },
+        "asOf": {
+          "type": "timestamp"
+        }
+      },
+      "expression": "asOf <= order.delivery_deadline ? 0 : ((asOf - order.delivery_deadline).getMilliseconds() + 86399999) / 86400000",
+      "resultType": "int",
+      "target": {
+        "entityRef": "confirmation.acceptance",
+        "attribute": "late_days"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule.release-gross",
+      "kind": "derivation",
+      "label": "release-gross",
+      "description": "Settlement consumes immutable order evidence, never caller-supplied financial results.",
+      "contextRef": "context.settlement",
+      "bindings": {
+        "order": {
+          "ref": "confirmation.order"
+        }
+      },
+      "expression": "order.gross_amount_minor",
+      "resultType": "int",
+      "target": {
+        "entityRef": "confirmation.release",
+        "attribute": "gross_amount_minor"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule.release-retention",
+      "kind": "derivation",
+      "label": "release-retention",
+      "description": "Half-up warranty reserve in minor units.",
+      "contextRef": "context.settlement",
+      "bindings": {
+        "settlement": {
+          "ref": "confirmation.release"
+        },
+        "order": {
+          "ref": "confirmation.order"
+        }
+      },
+      "expression": "((settlement.gross_amount_minor / 10000) * (order.retention_bps) + ((settlement.gross_amount_minor % 10000) * (order.retention_bps) + 5000) / 10000)",
+      "resultType": "int",
+      "target": {
+        "entityRef": "confirmation.release",
+        "attribute": "retention_minor"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule.release-penalty",
+      "kind": "derivation",
+      "label": "release-penalty",
+      "description": "Late penalty cannot consume the warranty reserve or make payout negative. Cap before multiplying high rates.",
+      "contextRef": "context.settlement",
+      "bindings": {
+        "settlement": {
+          "ref": "confirmation.release"
+        },
+        "order": {
+          "ref": "confirmation.order"
+        },
+        "acceptance": {
+          "ref": "confirmation.acceptance"
+        }
+      },
+      "expression": "(acceptance.late_days * order.daily_penalty_bps) >= 10000 ? (settlement.gross_amount_minor - settlement.retention_minor) : (((settlement.gross_amount_minor / 10000) * ((acceptance.late_days * order.daily_penalty_bps)) + ((settlement.gross_amount_minor % 10000) * ((acceptance.late_days * order.daily_penalty_bps)) + 5000) / 10000) > (settlement.gross_amount_minor - settlement.retention_minor) ? (settlement.gross_amount_minor - settlement.retention_minor) : ((settlement.gross_amount_minor / 10000) * ((acceptance.late_days * order.daily_penalty_bps)) + ((settlement.gross_amount_minor % 10000) * ((acceptance.late_days * order.daily_penalty_bps)) + 5000) / 10000))",
+      "resultType": "int",
+      "target": {
+        "entityRef": "confirmation.release",
+        "attribute": "late_penalty_minor"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule.release-payout",
+      "kind": "derivation",
+      "label": "release-payout",
+      "description": "Final ledger identity: gross = reserve + penalty + seller payout.",
+      "contextRef": "context.settlement",
+      "bindings": {
+        "settlement": {
+          "ref": "confirmation.release"
+        }
+      },
+      "expression": "settlement.gross_amount_minor - settlement.retention_minor - settlement.late_penalty_minor",
+      "resultType": "int",
+      "target": {
+        "entityRef": "confirmation.release",
+        "attribute": "payout_minor"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule.valid-terms",
+      "kind": "precondition",
+      "label": "valid-terms",
+      "description": "Implementations must reject invalid commercial terms before committing an agreement; monetary results must fit signed int64.",
+      "contextRef": "context.procurement",
+      "bindings": {
+        "agreement": {
+          "ref": "contract.agreement"
+        }
+      },
+      "expression": "agreement.quantity > 0 && agreement.tier_threshold > 0 && agreement.tier1_unit_price_minor > 0 && agreement.tier2_unit_price_minor > 0 && agreement.tax_bps >= 0 && agreement.tax_bps <= 10000 && agreement.retention_bps >= 0 && agreement.retention_bps <= 10000 && agreement.daily_penalty_bps >= 0 && agreement.daily_penalty_bps <= 10000",
+      "resultType": "bool"
+    },
+    {
+      "type": "rule",
+      "id": "rule.funded-delivery",
+      "kind": "precondition",
+      "label": "funded-delivery",
+      "description": "Physical delivery is allowed only after full custody funds exist.",
+      "contextRef": "context.fulfillment",
+      "bindings": {
+        "order": {
+          "ref": "confirmation.order"
+        },
+        "deposit": {
+          "ref": "confirmation.deposit-lock"
+        }
+      },
+      "expression": "deposit.locked_amount_minor == order.gross_amount_minor",
+      "resultType": "bool"
+    },
+    {
+      "type": "rule",
+      "id": "rule.complete-delivery",
+      "kind": "completion",
+      "label": "complete-delivery",
+      "description": "Buyer final acceptance closes only a complete single delivery.",
+      "contextRef": "context.fulfillment",
+      "bindings": {
+        "order": {
+          "ref": "confirmation.order"
+        },
+        "delivery": {
+          "ref": "confirmation.delivery"
+        },
+        "acceptance": {
+          "ref": "confirmation.acceptance"
+        }
+      },
+      "expression": "acceptance.accepted && delivery.delivered_quantity == order.quantity && acceptance.accepted_quantity == order.quantity",
+      "resultType": "bool"
+    },
+    {
+      "type": "rule",
+      "id": "rule.funded-release",
+      "kind": "precondition",
+      "label": "funded-release",
+      "description": "The custodian releases only funded and fully accepted delivery, exactly once per request.",
+      "contextRef": "context.settlement",
+      "bindings": {
+        "order": {
+          "ref": "confirmation.order"
+        },
+        "deposit": {
+          "ref": "confirmation.deposit-lock"
+        },
+        "acceptance": {
+          "ref": "confirmation.acceptance"
+        }
+      },
+      "expression": "deposit.locked_amount_minor == order.gross_amount_minor && acceptance.accepted && acceptance.accepted_quantity == order.quantity",
+      "resultType": "bool"
+    }
+  ]
+}
