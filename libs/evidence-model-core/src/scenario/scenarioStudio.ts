@@ -186,6 +186,7 @@ export const evaluateScenario = (
         if (problem) result.gaps.push(`【${attribute.label}】：${problem}`);
       }
     }
+    const inputIncomplete = result.gaps.length > 0;
     const evaluate = (rule: DomainModelDocument['rules'][number]) => {
       const bindings: Record<string, unknown> = {};
       for (const [alias, binding] of Object.entries(rule.bindings)) {
@@ -262,7 +263,11 @@ export const evaluateScenario = (
           });
         }
       }
-      facts.set(ref, { entityRef: entity.id, values });
+      const derivationFailed = result.rules.some(
+        (r) => r.error && derived.some((d) => d.id === r.ruleRef),
+      );
+      if (!inputIncomplete && !derivationFailed)
+        facts.set(ref, { entityRef: entity.id, values });
     } else
       result.gaps.push(
         '负向请求不会形成后续凭证；HTTP 拒绝结果需运行后端验收。',

@@ -6,6 +6,7 @@ import {
   measureNodeSize,
 } from '../adapter/domainToElk.js';
 import { extractElkResultToLayout } from '../adapter/elkToLayout.js';
+import type { Point, Rect } from '../geometry.js';
 import type {
   CanvasViewMode,
   DomainGraphLayout,
@@ -29,6 +30,45 @@ const phaseOf = (entity: EntityAST): number =>
           ? 2
           : 3;
 
+/** Causal order within a phase; cycles remain visible rather than disappearing. */
+const causalRanks = (graph: DomainGraph): Map<string, number> => {
+  const ids = graph
+    .entities()
+    .filter((e) => e.category !== 'context')
+    .map((e) => e.id)
+    .sort();
+  const dependencies = new Map(ids.map((id) => [id, new Set<string>()]));
+  for (const edge of graph.relationships())
+    if (
+      edge.kind === 'references' &&
+      dependencies.has(edge.sourceRef) &&
+      dependencies.has(edge.targetRef)
+    )
+      dependencies.get(edge.sourceRef)?.add(edge.targetRef);
+  const ranks = new Map<string, number>();
+  while (ranks.size < ids.length) {
+    const ready = ids.filter(
+      (id) =>
+        !ranks.has(id) &&
+        [...(dependencies.get(id) ?? [])].every((ref) => ranks.has(ref)),
+    );
+    if (!ready.length) break;
+    ready.forEach((id) => ranks.set(id, ranks.size));
+  }
+  for (const id of ids) if (!ranks.has(id)) ranks.set(id, ranks.size);
+  return ranks;
+};
+const crossesCard = (a: Point, b: Point, box: Rect) =>
+  a.x === b.x
+    ? a.x > box.x &&
+      a.x < box.x + box.width &&
+      Math.max(a.y, b.y) > box.y &&
+      Math.min(a.y, b.y) < box.y + box.height
+    : a.y > box.y &&
+      a.y < box.y + box.height &&
+      Math.max(a.x, b.x) > box.x &&
+      Math.min(a.x, b.x) < box.x + box.width;
+
 /** A presentation only layout. Every Context keeps its own roles and boundary. */
 export const computeSwimlaneLayout = (
   graph: DomainGraph,
@@ -36,16 +76,20 @@ export const computeSwimlaneLayout = (
 ): DomainGraphLayout => {
   // Reuse ownership/cycle/dangling-reference handling and the canonical adapter.
   const root = transformDomainGraphToElk(graph, viewMode);
+  const ranks = causalRanks(graph);
   const size = measureNodeSize(viewMode);
   const pitch = size.width + 48;
   const rowHeight = size.height + 72;
   const regions: (SwimlaneRegion & { owner: string })[] = [];
   const laneOf = (entity: EntityAST): string =>
-    entity.category === 'evidence' && entity.responsibleRoleRef !== undefined
-      ? entity.responsibleRoleRef
-      : entity.category === 'role' && entity.kind === 'party'
-        ? entity.id
-        : '__support__';
+    entity.category === 'evidence' && entity.kind === 'contract'
+      ? '__agreement__'
+      : entity.category === 'evidence' &&
+          entity.responsibleRoleRef !== undefined
+        ? entity.responsibleRoleRef
+        : entity.category === 'role' && entity.kind === 'party'
+          ? entity.id
+          : '__support__';
   // Shared stage widths keep corresponding phases aligned across Contexts.
   const counts = new Map<string, number>();
   const widths = [pitch, pitch, pitch, pitch];
@@ -77,11 +121,13 @@ export const computeSwimlaneLayout = (
     }
     for (const card of cards) {
       const lane = laneOf(graph.getEntity(card.id)!);
-      if (lane !== '__support__') roles.add(lane);
+      if (lane !== '__support__' && lane !== '__agreement__') roles.add(lane);
     }
-    const lanes = [...roles].sort().concat('__support__');
+    const lanes = [...roles].sort().concat('__agreement__', '__support__');
     const slots = new Map<string, number>();
-    for (const card of [...cards].sort((a, b) => a.id.localeCompare(b.id))) {
+    for (const card of [...cards].sort(
+      (a, b) => (ranks.get(a.id) ?? 0) - (ranks.get(b.id) ?? 0),
+    )) {
       const entity = graph.getEntity(card.id)!;
       const phase = phaseOf(entity);
       const lane = laneOf(entity);
@@ -107,9 +153,11 @@ export const computeSwimlaneLayout = (
           owner: container.id,
           kind: 'lane',
           label:
-            role === '__support__'
-              ? '标的物与能力支撑'
-              : (graph.getEntity(role)?.label ?? `待核对角色：${role}`),
+            role === '__agreement__'
+              ? '共同约定'
+              : role === '__support__'
+                ? '标的物与能力支撑'
+                : (graph.getEntity(role)?.label ?? `待核对角色：${role}`),
           box: {
             x: 24,
             y: 100 + i * rowHeight,
@@ -158,17 +206,43 @@ export const computeSwimlaneLayout = (
     const start = { x: from.x + from.width, y: from.y + from.height / 2 };
     const end = { x: to.x + to.width, y: to.y + to.height / 2 };
     const corridor = Math.max(from.y + from.height, to.y + to.height) + 16;
+    let bends = [
+      { x: start.x + 16, y: start.y },
+      { x: start.x + 16, y: corridor },
+      { x: end.x + 16, y: corridor },
+      { x: end.x + 16, y: end.y },
+    ];
+    const points = [start, ...bends, end];
+    const obstacles = [...boxes]
+      .filter(
+        ([id]) => graph.getEntity(id)?.category !== 'context' && id !== root.id,
+      )
+      .map(([, box]) => box);
+    if (
+      points.some(
+        (point, i) =>
+          i > 0 &&
+          obstacles.some((box) => crossesCard(points[i - 1]!, point, box)),
+      )
+    ) {
+      // Nested Contexts shift their gutters. Route outside all cards, using
+      // each row's free bottom corridor, instead of piercing another Context.
+      const trunk = (root.width ?? 0) - 12;
+      bends = [
+        { x: start.x + 16, y: start.y },
+        { x: start.x + 16, y: from.y + from.height + 16 },
+        { x: trunk, y: from.y + from.height + 16 },
+        { x: trunk, y: to.y + to.height + 16 },
+        { x: end.x + 16, y: to.y + to.height + 16 },
+        { x: end.x + 16, y: end.y },
+      ];
+    }
     edge.sections = [
       {
         id: `${edge.id}:route`,
         startPoint: start,
         endPoint: end,
-        bendPoints: [
-          { x: start.x + 16, y: start.y },
-          { x: start.x + 16, y: corridor },
-          { x: end.x + 16, y: corridor },
-          { x: end.x + 16, y: end.y },
-        ],
+        bendPoints: bends,
       },
     ];
   }
