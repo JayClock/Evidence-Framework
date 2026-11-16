@@ -9,7 +9,10 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 const repo = fileURLToPath(new URL('../../../', import.meta.url));
 const cli = path.join(repo, 'apps/cli/dist/cli.js');
-const backend = path.join(repo, 'examples/dogfood-backend/server.mjs');
+const backend = path.join(
+  repo,
+  'examples/b2b-escrow/implementations/ts-fastify/dist/server.js',
+);
 let root: string, model: string;
 beforeEach(() => {
   root = mkdtempSync(path.join(tmpdir(), 'evidence-cli-e2e-'));
@@ -17,7 +20,7 @@ beforeEach(() => {
   writeFileSync(
     model,
     readFileSync(
-      path.join(repo, 'examples/acceptance/procurement.evidence.json'),
+      path.join(repo, 'examples/b2b-escrow/model/b2b-escrow.evidence.json'),
     ),
   );
 });
@@ -50,7 +53,7 @@ async function withBackend(
 ) {
   const child = spawn(
     process.execPath,
-    [backend, '--port', '0', '--fault', fault],
+    [backend, '--test-mode', '--port', '0', '--fault', fault],
     { stdio: ['ignore', 'pipe', 'pipe'] },
   );
   let stdout = '',
@@ -108,14 +111,14 @@ describe('built evidence binary full lifecycle', () => {
     expect(JSON.parse(check.stdout).valid).toBe(true);
     const exported = await invoke(['export']);
     expect(exported.code, exported.stderr).toBe(0);
-    expect(exported.stdout).toContain('4 steps');
+    expect(exported.stdout).toContain('121 steps');
     await withBackend('none', async (target) => {
       const run = await invoke(['test', '--target', target, '--json']);
       expect(run.code, `${run.stdout}\n${run.stderr}`).toBe(0);
       expect(run.stderr).toBe('');
       const report = JSON.parse(run.stdout);
       expect(report.passed).toBe(true);
-      expect(report.suites[0].steps).toHaveLength(4);
+      expect(report.suites[0].steps).toHaveLength(121);
       expect(
         report.suites[0].steps.every(
           (step: { passed: boolean }) => step.passed,
@@ -148,8 +151,8 @@ describe('built evidence binary full lifecycle', () => {
         expect(run.stdout).toContain('FAILED (Red)');
         expect(run.stdout).not.toContain('\u001b');
         if (fault === 'amount') {
-          expect(run.stdout).toContain('Expected: 500');
-          expect(run.stdout).toContain('Received: 501');
+          expect(run.stdout).toContain('Expected: 1356225');
+          expect(run.stdout).toContain('Received: 1356226');
         } else if (fault === 'clock') expect(run.stdout).toContain('signed_at');
         else expect(run.stdout).toContain('schema');
       });
@@ -163,11 +166,15 @@ describe('built evidence binary full lifecycle', () => {
     expect(JSON.parse(same.stdout).hasBreakingChanges).toBe(false);
     const current = JSON.parse(readFileSync(model, 'utf8'));
     const confirmation = current.entities.find(
-      (entity: { id: string }) => entity.id === 'confirmation.payment',
+      (entity: { id: string }) => entity.id === 'confirmation.order',
     );
-    confirmation.attributes.find(
-      (attribute: { name: string }) => attribute.name === 'note',
-    ).required = true;
+    confirmation.attributes.push({
+      name: 'note',
+      label: 'Note',
+      meaning: 'Required caller note',
+      valueType: 'string',
+      required: true,
+    });
     for (const example of confirmation.examples)
       example.value.note = 'required now';
     const target = path.join(root, 'new.evidence.json');
@@ -208,17 +215,17 @@ describe('built evidence binary full lifecycle', () => {
     }
   });
 
-  it('executes the Node clock isolation tests without a second runtime', async () => {
+  it('executes the standalone Fastify tests without another language runtime', async () => {
     await new Promise<void>((resolve, reject) =>
       execFile(
         process.execPath,
-        [
-          '--test',
-          path.join(
+        ['--test', 'test/app.test.mjs'],
+        {
+          cwd: path.join(
             repo,
-            'examples/dogfood-backend/interceptors/node.test.mjs',
+            'examples/b2b-escrow/implementations/ts-fastify',
           ),
-        ],
+        },
         (error, stdout, stderr) =>
           error ? reject(new Error(`${stdout}\n${stderr}`)) : resolve(),
       ),

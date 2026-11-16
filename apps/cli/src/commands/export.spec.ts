@@ -16,7 +16,7 @@ import { dispatch } from '../router.js';
 
 const source = fileURLToPath(
   new URL(
-    '../../../../examples/acceptance/procurement.evidence.json',
+    '../../../../libs/evidence-model-core/tests/fixtures/acceptance/procurement.evidence.json',
     import.meta.url,
   ),
 );

@@ -16,6 +16,8 @@
     "model:pack": "node apps/cli/dist/cli.js pack",
     "model:unpack": "node apps/cli/dist/cli.js unpack",
     "model:inspect": "node apps/cli/dist/cli.js inspect",
+    "example:setup": "pnpm --dir examples/b2b-escrow/implementations/ts-fastify install --frozen-lockfile && pnpm --dir examples/b2b-escrow/implementations/ts-fastify build",
+    "example:test": "pnpm --dir examples/b2b-escrow/implementations/ts-fastify test",
     "api:setup": "node tools/oasdiff/setup.mjs",
     "api:export": "node apps/cli/dist/cli.js api deliver",
     "api:diff": "node apps/cli/dist/cli.js api diff"

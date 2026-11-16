@@ -14,13 +14,15 @@ build the actual CLI, and run three independent policy checks:
 ## Adapt to another backend
 
 - Change `MODEL`, `GENERATED`, and the backend startup/readiness commands. The
-  default paths demonstrate procurement + an additive deposit flow. Do not use a
+  default paths demonstrate B2B escrow v1 plus optional v2 milestone flows. Run
+  `pnpm example:setup` to independently install/build the reference Fastify SUT.
+  Replace that preparation step when selecting another backend. Do not use a
   build-cache directory as a committed artifact source. Export to a dedicated
   generated directory and commit it together with the model.
 - Keep `fetch-depth: 0` / `GIT_DEPTH: 0`. Pull requests use the event's base SHA;
   GitLab MRs use `CI_MERGE_REQUEST_DIFF_BASE_SHA`. Pushes use the previous SHA.
-  Manual/first builds explicitly use `BOOTSTRAP_MODEL` (the original procurement
-  fixture). For the PR that first introduces `MODEL`, an existing base commit
+  Manual/first builds explicitly use `BOOTSTRAP_MODEL` (the B2B escrow v1
+  baseline). For the PR that first introduces `MODEL`, an existing base commit
   without that path also uses the explicitly configured bootstrap path **from
   that commit**, not head. Replace it with your reviewed bootstrap in a new
   project. Bad commits or failed extraction are fatal; no comparison of head
@@ -44,18 +46,19 @@ build the actual CLI, and run three independent policy checks:
 
 ```sh
 pnpm nx build cli
-pnpm evidence check examples/acceptance/procurement-deposit.evidence.json
-pnpm evidence diff api examples/acceptance/procurement.evidence.json \
-  examples/acceptance/procurement-deposit.evidence.json --format markdown
-pnpm evidence export --model examples/acceptance/procurement-deposit.evidence.json \
-  --out examples/governance/generated
-pnpm evidence export --model examples/acceptance/procurement-deposit.evidence.json \
-  --out examples/governance/generated --verify
+pnpm example:setup
+pnpm evidence check examples/b2b-escrow/model/b2b-escrow.evidence.json
+pnpm evidence diff api examples/b2b-escrow/model/b2b-escrow-v1.evidence.json \
+  examples/b2b-escrow/model/b2b-escrow.evidence.json --format markdown
+pnpm evidence export --model examples/b2b-escrow/model/b2b-escrow.evidence.json \
+  --out examples/b2b-escrow/generated
+pnpm evidence export --model examples/b2b-escrow/model/b2b-escrow.evidence.json \
+  --out examples/b2b-escrow/generated --verify
 ```
 
 Run `evidence test` against your independently implemented service. Use the
-`examples/dogfood-backend/README.md` v1/v2 exercise to reproduce unchanged
-regression green / new deposit red / implementation complete green. A business
+`examples/b2b-escrow/README.md` v1/v2 exercise to reproduce unchanged
+regression green / new milestones red / implementation complete green. A business
 rule change without an OpenAPI structural change still needs acceptance review;
 OpenAPI compatibility alone does not prove business equivalence or dictate SemVer.
 

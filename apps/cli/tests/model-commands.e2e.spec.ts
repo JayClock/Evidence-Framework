@@ -13,7 +13,7 @@ beforeEach(async () => {
   await writeFile(
     path.join(root, 'source.evidence.json'),
     await readFile(
-      path.join(repo, 'examples/acceptance/procurement.evidence.json'),
+      path.join(repo, 'examples/b2b-escrow/model/b2b-escrow.evidence.json'),
     ),
   );
 });
@@ -58,7 +58,7 @@ it('round trips, compiles and derives lineage in the caller cwd', async () => {
   const inspect = await invoke(['inspect', 'packed.evidence.json', '--json']);
   expect(inspect.code, inspect.stderr).toBe(0);
   expect(JSON.parse(inspect.stdout)).toMatchObject({
-    modelId: 'procurement-evolution',
+    modelId: 'b2b-escrow',
     issues: [],
   });
   const compiled = await readFile(

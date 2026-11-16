@@ -1,6 +1,6 @@
 ## Environment
 
-One toolchain: Node.js and pnpm. `pnpm install` installs workspace dependencies; run `pnpm api:setup` separately to provision the pinned native `oasdiff` for API compatibility checks and their tests. No Go toolchain or Docker is required.
+One toolchain: Node.js and pnpm. `pnpm install` installs workspace dependencies; run `pnpm api:setup` separately to provision the pinned native `oasdiff` for API compatibility checks and their tests. `pnpm example:setup` installs/builds the standalone Fastify SUT (its own frozen lockfile) before real HTTP acceptance/CLI tests; `pnpm example:test` runs its native tests. No Go toolchain or Docker is required.
 
 - The checks, the derived documents and the API projection are TypeScript commands in `libs/`; nothing runs an interpreter, so there is no second runtime to pin. See [ENVIRONMENT.md](ENVIRONMENT.md).
 - There is no skill tree. The modeling instructions and the JSON Schemas ship inside the libraries that read them, so a project only holds its `.evidence/` sources and the desktop discovers no instructions from a working copy.

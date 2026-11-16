@@ -16,7 +16,7 @@
 | 合格完成         | [完成规则](rules/rule--content-payment-completed.json)                                                                                              | 结合匹配与时间判断，纯图直连请求与确认          |
 | 访问要求与结果   | [访问请求](entities/evidence-fulfillment-request--content-access.json)、[访问确认](entities/evidence-fulfillment-confirmation--content-access.json) | 订阅者主张，平台方记录结果                      |
 
-引用按消费凭证指向依据：付款请求 → 合同，付款确认 → 请求和补充回执。类型引用不是运行时凭证已形成的证明。此目录仅验证静态模型；可执行的内联样例与独立后端见 examples/acceptance。
+引用按消费凭证指向依据：付款请求 → 合同，付款确认 → 请求和补充回执。类型引用不是运行时凭证已形成的证明。此目录仅验证静态模型；可执行的内联样例与独立后端见 examples/b2b-escrow/
 
 ## 运行与反馈
 

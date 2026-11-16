@@ -5,7 +5,7 @@
 full lifecycle): `model.json` plus the `entities/`, `relationships/` and
 `rules/` trees. These fixtures cover the model source only. Legacy validation
 files have been removed; executable acceptance examples live in
-`examples/acceptance/`.
+`examples/b2b-escrow/`.
 
 The tree is copied instead of referenced so that schema and model-core tests
 stay stable when the API fixture evolves.

@@ -20,7 +20,7 @@ vi.mock('@evidence-poc/evidence-agent', () => ({
 
 const model = fileURLToPath(
   new URL(
-    '../../../../examples/acceptance/procurement.evidence.json',
+    '../../../../libs/evidence-model-core/tests/fixtures/acceptance/procurement.evidence.json',
     import.meta.url,
   ),
 );

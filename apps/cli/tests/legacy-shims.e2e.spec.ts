@@ -12,7 +12,7 @@ beforeEach(async () => {
   await writeFile(
     path.join(root, 'model.evidence.json'),
     await readFile(
-      path.join(repo, 'examples/acceptance/procurement.evidence.json'),
+      path.join(repo, 'examples/b2b-escrow/model/b2b-escrow.evidence.json'),
     ),
   );
 });
@@ -75,7 +75,7 @@ it('keeps all deprecated bins executable with warnings on stderr and valid JSON 
   ]);
   expect([0, 3], projection.stderr).toContain(projection.code);
   expect(JSON.parse(projection.stdout)).toMatchObject({
-    modelId: 'procurement-evolution',
+    modelId: 'b2b-escrow',
   });
   expect(projection.stderr).toBe('');
   const diff = await unified([

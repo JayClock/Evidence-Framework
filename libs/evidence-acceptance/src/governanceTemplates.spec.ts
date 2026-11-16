@@ -27,6 +27,9 @@ it('ships a strict runnable GitHub dual-gate workflow with immutable baseline an
   expect(text).toContain('github.event.pull_request.base.sha');
   expect(text).toContain('--strict-drift --report-dir reports');
   expect(text).toContain('if: always()');
+  expect(text).toContain('pnpm example:setup');
+  expect(text).toContain('ts-fastify/dist/server.js --test-mode');
+  expect(text).not.toContain('dogfood-backend');
   expect(text).not.toMatch(
     /pull_request_target|continue-on-error|--allow-pending/,
   );
@@ -39,5 +42,26 @@ it('ships a GitLab template with the same strict policy and native JUnit artifac
   expect(text).toContain('CI_MERGE_REQUEST_DIFF_BASE_SHA');
   expect(text).toContain('--verify');
   expect(text).toContain('--strict-drift --report-dir reports');
+  expect(text).toContain('pnpm example:setup');
+  expect(text).toContain('ts-fastify/dist/server.js --test-mode');
+  expect(text).not.toContain('dogfood-backend');
   expect(text).not.toMatch(/allow_failure|--allow-pending/);
+});
+
+it('prepares the standalone SUT explicitly without inferring it as a workspace project', () => {
+  const { data } = load('.github/workflows/ci.yml');
+  expect(data.jobs.verify.steps).toContainEqual(
+    expect.objectContaining({ run: 'pnpm example:setup' }),
+  );
+  expect(data.jobs.verify.steps).toContainEqual(
+    expect.objectContaining({ run: 'pnpm example:test' }),
+  );
+  const workspace = readFileSync(
+    path.join(root, 'pnpm-workspace.yaml'),
+    'utf8',
+  );
+  expect(parseDocument(workspace).toJS().packages).not.toContain('examples/**');
+  const nx = JSON.parse(readFileSync(path.join(root, 'nx.json'), 'utf8'));
+  for (const plugin of nx.plugins)
+    expect(plugin.exclude).toContain('examples/**');
 });

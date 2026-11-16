@@ -1,6 +1,6 @@
 # B2B 担保采购与里程碑履约
 
-> 阶段一：模型与契约基线。**尚无本案例的真实后端实现，也尚未完成 HTTP / 浏览器 E2E 验收。**
+> 阶段二：独立 Fastify 后端已接入真实 HTTP 验收与治理双门禁。尚无本案例的浏览器 UI / E2E；其他语言实现不在本阶段范围内。
 
 本案例用三个独立参与方、四份双边合同，描述「锁定商业条款 → 全额资金托管 → 交付与买方验收 → 托管方终态分账」。重点不是增加 CRUD，而是明确每项事实的形成方、跨合同凭证依据、金额计算和时间边界。
 
@@ -17,18 +17,18 @@ generated/                    # evidence export 生成；禁止手改，提交 G
 
 两个 Bundle 是可编辑源；`generated/` 只对应当前 v2。v1 的验收套件在后续 regression 门禁中由基线模型重新编译，不复制成另一份手工维护的 YAML。Tree 与 Bundle 都是框架支持的源格式，本案例选择 Bundle 以便独立分发；这不是移除 Tree 格式支持。
 
-四个后续实现（Gin、Spring Boot、FastAPI、Fastify）必须各自自包含、互不知道对方存在，不共享运行时代码、数据库、拦截器或构建配置。实现可以只收到契约交付物；不得读取本模型的 examples 或导出的断言值来伪造响应。阶段一没有新增任何语言运行时要求。
+四个目标实现（Gin、Spring Boot、FastAPI、Fastify）必须各自自包含、互不知道对方存在，不共享运行时代码、数据库、拦截器或构建配置。实现不得读取本模型的 examples 或导出的断言值来伪造响应。Fastify 工程有自己的清单、锁文件和原生测试，不属于框架 pnpm workspace；可单独复制安装、构建、启动和测试。
 
 ## 四份双边合同与三方角色
 
 FM 的一份合同恰有两个 contextual Party Roles，不能把三个签约角色硬塞进同一份合同：
 
-| Context | 合同双方 | 双向主要履约（权利方请求 → 责任方确认） |
-| --- | --- | --- |
-| `context.procurement` | 买方 / 卖方 | 买方请求订单确认，卖方形成条款凭证；卖方请求买方确认采购承诺 |
-| `context.escrow` | 买方 / 托管方 | 买方请求锁款，托管方确认全额托管；托管方请求买方确认托管对账单 |
-| `context.fulfillment` | 买方 / 卖方 | 买方请求交付，卖方记录交付数量；卖方请求验收，买方形成最终验收凭证 |
-| `context.settlement` | 卖方 / 托管方 | 卖方请求放款，托管方形成分账凭证；托管方请求卖方确认分账对账单 |
+| Context               | 合同双方      | 双向主要履约（权利方请求 → 责任方确认）                            |
+| --------------------- | ------------- | ------------------------------------------------------------------ |
+| `context.procurement` | 买方 / 卖方   | 买方请求订单确认，卖方形成条款凭证；卖方请求买方确认采购承诺       |
+| `context.escrow`      | 买方 / 托管方 | 买方请求锁款，托管方确认全额托管；托管方请求买方确认托管对账单     |
+| `context.fulfillment` | 买方 / 卖方   | 买方请求交付，卖方记录交付数量；卖方请求验收，买方形成最终验收凭证 |
+| `context.settlement`  | 卖方 / 托管方 | 卖方请求放款，托管方形成分账凭证；托管方请求卖方确认分账对账单     |
 
 `party.buyer`、`party.seller`、`party.escrow` 是真实参与方，同一参与方可在多份合同中扮演不同的 contextual Role。订单确认、托管确认、交付确认和验收确认通过 `references` 跨 Context 传递，不直接跨合同引用另一张根合同。
 
@@ -66,17 +66,17 @@ FM 的一份合同恰有两个 contextual Party Roles，不能把三个签约角
 
 v1 已覆盖四份合同的完整单次交付与一次性结算。v2 **只新增可选履约**：卖方分别形成首期和末期两份交付事实，买方对总数量作最终验收，再由托管方一次性分账。固定两期是本案例的明确范围，不冒充任意多期分账引擎。原有 v1 条款、路由、规则、验收流程保持不变，不能把所有旧订单强制改成分期才能通过。
 
-| Flow | 集合 | 主要边界 | gross / retention / penalty / payout（分） |
-| --- | --- | --- | --- |
-| `single-on-time` | regression | 999 件，低于阶梯阈值；恰好到期；零罚金 | 1466402 / 73320 / 0 / 1393082 |
-| `single-late` | regression | 1000 件，达到阶梯阈值；逾期 15 天；半分向上舍入 | 1354870 / 67744 / 203231 / 1083895 |
-| `milestone-on-time` | DoD | 500 + 500 件；最终验收恰好到期 | 1354870 / 67744 / 0 / 1287126 |
-| `milestone-precision` | DoD | 1 + 1 件；大于 2^53 的精确金额；晚 1 秒计一天 | 22600000000000002 / 1130000000000000 / 226000000000000 / 21244000000000002 |
-| `milestone-capped` | DoD | 500 + 501 件；罚金封顶；必填 payout 显式为 0 | 1356225 / 67811 / 1288414 / 0 |
+| Flow                  | 集合       | 主要边界                                        | gross / retention / penalty / payout（分）                                 |
+| --------------------- | ---------- | ----------------------------------------------- | -------------------------------------------------------------------------- |
+| `single-on-time`      | regression | 999 件，低于阶梯阈值；恰好到期；零罚金          | 1466402 / 73320 / 0 / 1393082                                              |
+| `single-late`         | regression | 1000 件，达到阶梯阈值；逾期 15 天；半分向上舍入 | 1354870 / 67744 / 203231 / 1083895                                         |
+| `milestone-on-time`   | DoD        | 500 + 500 件；最终验收恰好到期                  | 1354870 / 67744 / 0 / 1287126                                              |
+| `milestone-precision` | DoD        | 1 + 1 件；大于 2^53 的精确金额；晚 1 秒计一天   | 22600000000000002 / 1130000000000000 / 226000000000000 / 21244000000000002 |
+| `milestone-capped`    | DoD        | 500 + 501 件；罚金封顶；必填 payout 显式为 0    | 1356225 / 67811 / 1288414 / 0                                              |
 
-当前导出 **47 个 HTTP endpoints、5 个 flows、121 个 steps**。每个 flow 独立创建业务记录，没有跨 flow 依赖；两个单次交付流程保留在 v1 和 v2。每个 flow 独立测试派生金额篡改、服务时间回填、成功放款、重复确认。数字是**声明/编译数量，不是已执行通过数量**。
+当前导出 **47 个 HTTP endpoints、5 个 flows、121 个 steps**。每个 flow 独立创建业务记录，没有跨 flow 依赖；两个单次交付流程保留在 v1 和 v2。每个 flow 独立测试派生金额篡改、服务时间回填、成功放款、重复确认。阶段二的真实进程验收执行这些步骤；这不是对未覆盖状态、所有 GET 路由或浏览器交互的完整性证明。
 
-约束规则还表达了正数数量、合法费率、足额锁款、完整交付等前置与完成条件。它们是实现的业务要求；现有 HTTP suite **不会自动把所有 bool 规则变成探测流量**。当前投影器要求样例 acting role 属于 route 允许的角色，而且通用响应模板未声明 403，因此本阶段**没有伪造已导出的越权 403 测试**。后续实现需有原生权限/事务/并发/持久化测试；如需统一导出越权、缺凭证和其他负向样例，应先显式扩展契约与投影能力。
+约束规则还表达了正数数量、合法费率、足额锁款、完整交付等前置与完成条件。它们是实现的业务要求；现有 HTTP suite **不会自动把所有 bool 规则变成探测流量**。当前投影器要求样例 acting role 属于 route 允许的角色，而且通用响应模板未声明 403，因此本阶段**没有伪造已导出的越权 403 测试**。本阶段通过 Fastify 原生测试覆盖权限、请求时钟隔离、跨订单凭证关联、范围校验和并发放款。持久化尚未实现；如需统一导出越权、缺凭证和其他负向样例，应先显式扩展契约与投影能力。
 
 ## 阶段一复现
 
@@ -107,4 +107,41 @@ pnpm evidence diff examples/b2b-escrow/model/b2b-escrow-v1.evidence.json \
   examples/b2b-escrow/model/b2b-escrow.evidence.json --format markdown
 ```
 
-后续实现就绪后，才可针对真实 `--target` 执行 `evidence test --strict-drift`。本阶段保留现有 `examples/acceptance/`、`examples/dogfood-backend/` 和治理产物，避免在阶段二替换并迁移测试之前使现有 CI 失效；仅移除无引用的 `procurement-breach.evidence.json`。历史 `examples/.evidence/` 在本阶段开始时已不存在，无需删除，也不应为清理而重建。
+## 阶段二：独立工程与真实 HTTP 验收
+
+框架仓库根目录执行：
+
+```sh
+pnpm example:setup  # 安装独立冻结锁文件并构建，不改变框架 workspace
+pnpm example:test   # Fastify 工程自身的原生测试
+pnpm exec nx build cli
+node examples/b2b-escrow/implementations/ts-fastify/dist/server.js --test-mode --port 8085
+# 另一个终端：
+pnpm evidence test --target http://127.0.0.1:8085 \
+  --scenarios examples/b2b-escrow/generated --strict-drift --verbose
+```
+
+原生工程说明见 [ts-fastify/README.md](implementations/ts-fastify/README.md)。服务只监听回环地址，必须显式启用 `--test-mode`；不将测试头冒充生产安全机制。状态暂存内存，**每次全量验收、每个 gate 都启动新进程**，不能重复使用已放款账本。
+
+### v1 / v2 双门禁
+
+将启动参数改为 `--mode v1`，分别启动干净进程执行：
+
+```sh
+pnpm evidence test --target http://127.0.0.1:8085 \
+  --scenarios examples/b2b-escrow/generated --gate regression \
+  --baseline-model examples/b2b-escrow/model/b2b-escrow-v1.evidence.json --strict-drift
+# 重启后再运行；v1 对里程碑步骤返回 404，DoD 应失败。
+pnpm evidence test --target http://127.0.0.1:8085 \
+  --scenarios examples/b2b-escrow/generated --gate dod \
+  --baseline-model examples/b2b-escrow/model/b2b-escrow-v1.evidence.json
+```
+
+v1 regression 为两个原有流程、46 步；DoD 为三个新增里程碑流程、75 步。改为 `--mode v2` 后分别重启运行，两套 gate 均应通过。`--allow-pending` 仅用于显式开发探索，报告仍保留失败；CI 不使用它。支持 `--fault amount|clock|extra-field|missing-derived|accept-derived|precision` 做负向演练，不要求不同语言拥有相同内部代码或诊断文案。
+
+### 存量迁移与范围
+
+- 旧 `dogfood-backend/`、转发 shim 和旧治理产物已移除，不保留兼容启动入口。
+- 采购/定金小模型移至 `libs/evidence-model-core/tests/fixtures/acceptance/`，仅供叙事、哈希和导出等框架回归使用；真实 HTTP 验收及 CI 使用本案例。
+- GitHub/GitLab 门禁已切换本契约与 Fastify 服务；每个 gate 独立进程。Go/Java/Python、自定义浏览器客户端及浏览器 E2E 留给后续阶段。
+- 后端契约通过只证明已执行用例，不代表前端 E2E 失败一定是前端问题；排障仍需结合浏览器、网络、测试数据和服务日志。

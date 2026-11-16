@@ -15,7 +15,7 @@ const acceptanceModel = (name: string) =>
     JSON.parse(
       readFileSync(
         new URL(
-          `../../../../examples/acceptance/${name}.evidence.json`,
+          `../../../evidence-model-core/tests/fixtures/acceptance/${name}.evidence.json`,
           import.meta.url,
         ),
         'utf8',

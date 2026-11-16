@@ -9,6 +9,7 @@ needs neither a Go toolchain nor Docker.
 ```bash
 pnpm install
 pnpm api:setup
+pnpm example:setup  # independently install/build the Fastify SUT for HTTP tests
 npx nx run-many -t test typecheck lint
 npx nx start desktop
 ```
@@ -56,8 +57,9 @@ remain available as deprecated adapters):
 pnpm exec nx build cli
 pnpm evidence --help
 pnpm evidence check .evidence/fm --json
-pnpm evidence export --model examples/acceptance/procurement.evidence.json --out dist/acceptance
-node examples/dogfood-backend/server.mjs --port 8085
+pnpm example:setup
+pnpm evidence export --model examples/b2b-escrow/model/b2b-escrow.evidence.json --out dist/acceptance
+node examples/b2b-escrow/implementations/ts-fastify/dist/server.js --test-mode --port 8085
 # In another terminal:
 pnpm evidence test --target http://127.0.0.1:8085 --scenarios dist/acceptance --verbose
 pnpm evidence diff api old.evidence.json new.evidence.json --format markdown
@@ -74,9 +76,12 @@ run through the Hurl CLI, not a private interpreter.
 Generated request clocks default to the model examples. `test --as-of <UTC>`
 overrides request clocks, **not the compiled expected values**. Only trusted test
 backends should consume `x-evidence-asof`; production clocks and authorization
-must not trust client headers. See `examples/dogfood-backend/README.md` for
-request-scoped Node/Go/Spring/Python templates and red/green fault demonstrations.
-The Go/Java/Python files are integration references, not repository runtimes.
+must not trust client headers. See `examples/b2b-escrow/README.md` for the
+engineering example and `implementations/ts-fastify/README.md` inside it for the
+standalone service. `pnpm example:setup` installs its **separate frozen lockfile**
+and builds it; `pnpm example:test` runs its native tests. It uses only Node/pnpm,
+not workspace packages or sibling implementations. Repeat setup after deleting
+its local `node_modules`. Root workspace installation does not install examples.
 
 API diff uses the pinned native `oasdiff` provisioned explicitly by
 `pnpm api:setup`, not by `pnpm install`. Setup downloads the official release and

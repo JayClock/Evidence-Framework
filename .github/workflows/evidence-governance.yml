@@ -15,9 +15,9 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  MODEL: examples/acceptance/procurement-deposit.evidence.json
-  GENERATED: examples/governance/generated
-  BOOTSTRAP_MODEL: examples/acceptance/procurement.evidence.json
+  MODEL: examples/b2b-escrow/model/b2b-escrow.evidence.json
+  GENERATED: examples/b2b-escrow/generated
+  BOOTSTRAP_MODEL: examples/b2b-escrow/model/b2b-escrow-v1.evidence.json
   NX_DAEMON: 'false'
 
 jobs:
@@ -85,6 +85,7 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: pnpm example:setup
       - run: pnpm nx build cli
       - uses: actions/download-artifact@v4
         with:
@@ -96,7 +97,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          node examples/dogfood-backend/server.mjs --port 8085 --mode v2 > reports/backend.log 2>&1 &
+          node examples/b2b-escrow/implementations/ts-fastify/dist/server.js --test-mode --port 8085 --mode v2 > reports/backend.log 2>&1 &
           SUT_PID=$!
           trap 'kill "$SUT_PID" 2>/dev/null || true' EXIT
           node --input-type=module -e '

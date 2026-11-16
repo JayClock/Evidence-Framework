@@ -380,7 +380,7 @@ const acceptanceModel = (name = 'procurement'): DomainModelDocument =>
     JSON.parse(
       readFileSync(
         new URL(
-          `../../../../examples/acceptance/${name}.evidence.json`,
+          `../../tests/fixtures/acceptance/${name}.evidence.json`,
           import.meta.url,
         ),
         'utf8',

@@ -1,0 +1,3 @@
+# Intentionally separate from the framework workspace; extractable as-is.
+packages:
+  - '.'

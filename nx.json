@@ -17,6 +17,7 @@
   "plugins": [
     {
       "plugin": "@nx/js/typescript",
+      "exclude": ["examples/**"],
       "options": {
         "typecheck": {
           "targetName": "typecheck"
@@ -31,12 +32,14 @@
     },
     {
       "plugin": "@nx/eslint/plugin",
+      "exclude": ["examples/**"],
       "options": {
         "targetName": "lint"
       }
     },
     {
       "plugin": "@nx/vite/plugin",
+      "exclude": ["examples/**"],
       "options": {
         "buildTargetName": "build",
         "serveTargetName": "serve",
@@ -50,6 +53,7 @@
     },
     {
       "plugin": "@nx/vitest",
+      "exclude": ["examples/**"],
       "options": {
         "testTargetName": "test",
         "ciTargetName": "test-ci",

@@ -15,7 +15,10 @@ import {
 } from '@evidence-poc/evidence-model-io';
 import { DomainModelDocumentSchema } from '@evidence-poc/evidence-schema';
 
-import { STORY_IPC_CHANNELS, type StoryProjectResult } from '@evidence-poc/desktop-contracts/story';
+import {
+  STORY_IPC_CHANNELS,
+  type StoryProjectResult,
+} from '@evidence-poc/desktop-contracts/story';
 import { registerStoryIpc, type StoryIpcOptions } from './storyIpc';
 
 const electron = vi.hoisted(() => ({
@@ -37,7 +40,7 @@ const model = () =>
       readFileSync(
         path.resolve(
           import.meta.dirname,
-          '../../../../examples/acceptance/procurement.evidence.json',
+          '../../../../libs/evidence-model-core/tests/fixtures/acceptance/procurement.evidence.json',
         ),
         'utf8',
       ),

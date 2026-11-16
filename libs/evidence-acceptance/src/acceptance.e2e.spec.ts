@@ -10,11 +10,14 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { runCli } from './cli.js';
 
 const backend = fileURLToPath(
-  new URL('../../../examples/acceptance/backend.mjs', import.meta.url),
+  new URL(
+    '../../../examples/b2b-escrow/implementations/ts-fastify/dist/server.js',
+    import.meta.url,
+  ),
 );
 const model = fileURLToPath(
   new URL(
-    '../../../examples/acceptance/procurement.evidence.json',
+    '../../../examples/b2b-escrow/model/b2b-escrow.evidence.json',
     import.meta.url,
   ),
 );
@@ -39,7 +42,7 @@ afterEach(() => rmSync(root, { recursive: true, force: true }));
 async function execute(fault = 'none') {
   const child = spawn(
     process.execPath,
-    [backend, '--port', '0', '--fault', fault],
+    [backend, '--test-mode', '--port', '0', '--fault', fault],
     { stdio: ['ignore', 'pipe', 'pipe'] },
   );
   let stdout = '',
@@ -92,26 +95,29 @@ describe('generated acceptance against an independent backend process', () => {
       report.result.passed,
       JSON.stringify(report.result.tests, null, 2),
     ).toBe(true);
-    const steps = report.result.tests[0]!.steps;
-    expect(steps).toHaveLength(4);
+    const steps = report.result.tests.flatMap((flow) => flow.steps);
+    expect(report.result.tests).toHaveLength(5);
+    expect(steps).toHaveLength(121);
     expect(steps.every((step) => !step.errored && !step.skipped)).toBe(true);
     expect(
-      steps.find((step) => step.name?.endsWith('#bad-input'))?.response?.status,
-    ).toBe(422);
+      steps
+        .filter((step) => step.name?.endsWith('-00-tamper'))
+        .every((step) => step.response?.status === 422),
+    ).toBe(true);
   });
   it('goes red for an incorrect derived amount, and green again after fixing it', async () => {
     const broken = await execute('amount');
     expect(broken.result.passed).toBe(false);
-    const step = broken.result.tests[0]!.steps.find((step) =>
-      step.name?.endsWith('#confirmed'),
-    )!;
+    const step = broken.result.tests
+      .flatMap((flow) => flow.steps)
+      .find((step) => step.name === 'confirmation.order#single-on-time')!;
     const checks = step.checks?.jsonpath as Record<
       string,
       { given: unknown; expected: unknown; passed: boolean }
     >;
-    expect(checks['$["total_amount"]']).toMatchObject({
-      given: 501,
-      expected: 500,
+    expect(checks['$["gross_amount_minor"]']).toMatchObject({
+      given: 1466403,
+      expected: 1466402,
       passed: false,
     });
     expect((await execute()).result.passed).toBe(true);
@@ -120,7 +126,7 @@ describe('generated acceptance against an independent backend process', () => {
     const broken = await execute('accept-derived');
     expect(broken.result.passed).toBe(false);
     const step = broken.result.tests[0]!.steps.find((step) =>
-      step.name?.endsWith('#bad-input'),
+      step.name?.endsWith('-00-tamper'),
     )!;
     expect(step.checks?.status).toMatchObject({
       given: 201,
@@ -159,7 +165,7 @@ describe('generated acceptance against an independent backend process', () => {
       expect(validate(entity), JSON.stringify(validate.errors)).toBe(true);
     const invalid = structuredClone(
       bundle.entities.find(
-        (entity: { id: string }) => entity.id === 'confirmation.payment',
+        (entity: { id: string }) => entity.id === 'confirmation.order',
       ),
     );
     invalid.examples[0].test.inputs = {};

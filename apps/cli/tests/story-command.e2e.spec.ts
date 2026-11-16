@@ -19,7 +19,10 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 const repo = fileURLToPath(new URL('../../../', import.meta.url));
 const cli = path.join(repo, 'apps/cli/dist/cli.js');
 const fixture = (name: string) =>
-  path.join(repo, `examples/acceptance/${name}.evidence.json`);
+  path.join(
+    repo,
+    `libs/evidence-model-core/tests/fixtures/acceptance/${name}.evidence.json`,
+  );
 let root: string;
 const model = 'model.evidence.json';
 beforeEach(() => {

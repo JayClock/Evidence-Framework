@@ -6,7 +6,7 @@ selector, the simulator or the FM report shows up here first.
 
 | Fixture                                                                     | Why it exists                                                  |
 | --------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| [`models/valid-traceable-subscription/`](models/valid-traceable-subscription) | Static responsibility model with two derivation chains and one key data decision still owed. Executable acceptance examples live in `examples/acceptance/`. |
+| [`models/valid-traceable-subscription/`](models/valid-traceable-subscription) | Static responsibility model with two derivation chains and one key data decision still owed. Executable acceptance examples live in `examples/b2b-escrow/`. |
 | [`invalid-missing-confirmation/`](invalid-missing-confirmation)              | A model that is consistent but incomplete: a Fulfillment Request with no confirmation and a Contract Party holding no request. |
 
 These trees live in the workspace instead of inside a skill install, so the

@@ -44,7 +44,11 @@ describe('unified CLI dispatch', () => {
     const { context, output } = captureContext();
     expect(
       await dispatch(
-        ['check', 'examples/acceptance/procurement.evidence.json', '--json'],
+        [
+          'check',
+          'libs/evidence-model-core/tests/fixtures/acceptance/procurement.evidence.json',
+          '--json',
+        ],
         context,
       ),
     ).toBe(0);

@@ -35,6 +35,12 @@ jobs:
       - name: Install pinned OpenAPI comparison tool
         run: pnpm api:setup
 
+      - name: Prepare independent Fastify SUT
+        run: pnpm example:setup
+
+      - name: Test independent Fastify project
+        run: pnpm example:test
+
       - name: Verify module boundaries
         # The only check that notices a deleted constraint: it writes the imports
         # the rules must refuse and fails if a project's lint accepts one.
