@@ -18,6 +18,7 @@ import {
   EVIDENCE_IPC_CHANNELS,
   type EvidenceDesktopApi,
 } from '../shared/ipc';
+import { STORY_IPC_CHANNELS } from '../shared/story';
 import {
   EVIDENCE_DRIFT_IPC_CHANNELS,
   type DriftRequest,
@@ -72,6 +73,21 @@ const api: EvidenceDesktopApi = {
       return () => {
         ipcRenderer.removeListener(EVIDENCE_IPC_CHANNELS.changed, handler);
       };
+    },
+  },
+  story: {
+    listFlows: (input) =>
+      ipcRenderer.invoke(STORY_IPC_CHANNELS.LIST_FLOWS, input),
+    project: (input) => ipcRenderer.invoke(STORY_IPC_CHANNELS.PROJECT, input),
+    whatIf: (input) => ipcRenderer.invoke(STORY_IPC_CHANNELS.WHAT_IF, input),
+    onInvalidated: (listener) => {
+      const handler = (
+        _event: Electron.IpcRendererEvent,
+        payload: Parameters<typeof listener>[0],
+      ) => listener(payload);
+      ipcRenderer.on(STORY_IPC_CHANNELS.INVALIDATED, handler);
+      return () =>
+        ipcRenderer.removeListener(STORY_IPC_CHANNELS.INVALIDATED, handler);
     },
   },
   agent: {

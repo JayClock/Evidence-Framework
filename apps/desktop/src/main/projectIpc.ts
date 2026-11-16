@@ -7,6 +7,7 @@ import {
   type WebContents,
 } from 'electron';
 
+import { STORY_IPC_CHANNELS } from '../shared/story';
 import { EVIDENCE_IPC_CHANNELS } from '../shared/ipc';
 import type {
   CreateProjectDialogInput,
@@ -55,6 +56,7 @@ export const registerProjectIpc = ({
         return;
       }
 
+      sender.send(STORY_IPC_CHANNELS.INVALIDATED, { rootPath });
       sender.send(EVIDENCE_IPC_CHANNELS.changed, {
         rootPath,
         changedAt: new Date().toISOString(),

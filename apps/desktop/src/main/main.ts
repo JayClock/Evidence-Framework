@@ -23,6 +23,7 @@ import { registerIngestionIpc } from './ingestionIpc';
 import { createModelIngestionReader } from './ingestionModelReader';
 import { registerDeliveryIpc } from './deliveryIpc';
 import { registerProjectIpc } from './projectIpc';
+import { registerStoryIpc } from './storyIpc';
 import { registerReviewIpc } from './reviewIpc';
 import { createProjectStore, RECENT_PROJECTS_FILE } from './projectStore';
 import {
@@ -76,6 +77,8 @@ const startApplication = async (): Promise<void> => {
     openEditorWindow,
   });
   registerReviewIpc();
+  const storyIpc = registerStoryIpc();
+  app.once('before-quit', () => storyIpc.dispose());
   registerDriftIpc();
   registerDeliveryIpc();
   app.once('before-quit', () => agentIpc.dispose());

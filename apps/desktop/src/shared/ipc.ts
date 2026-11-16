@@ -13,6 +13,7 @@ import type {
   IngestDraftResult,
 } from './ingestion';
 import type { EvidenceMcpApi } from './mcpIpc';
+import type { EvidenceStoryApi } from './story';
 import type { EvidenceDriftApi } from './drift';
 import type {
   CreateProjectDialogInput,
@@ -109,6 +110,8 @@ export interface EvidenceDesktopApi {
     /** Writes the contract, topology, routes and deployment sketch to a folder. */
     exportDelivery: (rootPath: string) => Promise<ExportDeliveryResult>;
   };
+  /** Incremental business walkthrough and isolated What-If sandbox. */
+  story: EvidenceStoryApi;
   /** Pi agent, sensors and patch application (phase 3). */
   agent: EvidenceAgentApi;
   /** MCP bridge status and the renderer side of external tool calls. */

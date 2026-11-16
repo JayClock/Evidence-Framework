@@ -467,6 +467,16 @@ export const installDesktopApi = ({
         return () => mcpCaptureListeners.delete(listener);
       },
     },
+    story: {
+      listFlows: async () => [],
+      project: async () => {
+        throw new Error('测试没有配置业务故事。');
+      },
+      whatIf: async () => {
+        throw new Error('测试没有配置沙盘。');
+      },
+      onInvalidated: () => () => undefined,
+    },
     drift: {
       drift: async (input) => {
         calls.drift.push(input);
