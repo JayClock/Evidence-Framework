@@ -51,23 +51,15 @@ contract-and-hygiene:
   script:
     - |
       set -eu
-      pnpm example:setup
-      node examples/b2b-escrow/implementations/ts-fastify/dist/server.js --test-mode --port 8085 --mode v2 > reports/backend.log 2>&1 &
-      SUT_PID=$!
-      trap 'kill "$SUT_PID" 2>/dev/null || true' EXIT
-      node --input-type=module -e '
-        for (let attempt = 0; ; attempt++) {
-          try { await fetch("http://127.0.0.1:8085", { method: "HEAD", signal: AbortSignal.timeout(500) }); break; }
-          catch (error) { if (attempt === 49) throw error; await new Promise(r => setTimeout(r, 100)); }
-        }'
-      pnpm evidence test --target http://127.0.0.1:8085 --scenarios "$GENERATED" \
-        --gate "$GATE" --baseline-model reports/baseline.evidence.json \
-        --strict-drift --report-dir reports
+      make -C examples/b2b-escrow prepare IMPLEMENTATION=ts-fastify
+      make -C examples/b2b-escrow gate IMPLEMENTATION=ts-fastify GATE="$GATE" \
+        BASELINE="$CI_PROJECT_DIR/reports/baseline.evidence.json" \
+        REPORT_DIR="$CI_PROJECT_DIR/reports/$GATE"
   artifacts:
     when: always
     paths: [reports/]
     reports:
-      junit: reports/*.xml
+      junit: reports/*/ts-fastify/*/*.xml
 
 regression-gate:
   extends: .evidence-gate

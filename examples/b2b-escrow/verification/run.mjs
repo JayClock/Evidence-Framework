@@ -5,12 +5,13 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
-import { cases, verifyResult } from './expectations.mjs';
+import { verifyResult } from './expectations.mjs';
+import { selectScenarios, verifyGateResult } from './policy.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const repo = fileURLToPath(new URL('../../../', import.meta.url));
 const cli = path.join(repo, 'apps/cli/dist/cli.js');
-const baseline = path.join(root, 'model/b2b-escrow-v1.evidence.json');
+const defaultBaseline = path.join(root, 'model/b2b-escrow-v1.evidence.json');
 const current = path.join(root, 'model/b2b-escrow.evidence.json');
 const generated = path.join(root, 'generated');
 const implementations = [
@@ -156,12 +157,14 @@ async function main() {
     options: {
       implementation: { type: 'string' },
       'report-dir': { type: 'string' },
+      gate: { type: 'string' },
+      'baseline-model': { type: 'string' },
       help: { type: 'boolean' },
     },
   });
   if (values.help) {
     console.log(
-      'node examples/b2b-escrow/verification/run.mjs --implementation golang-gin|java-spring|python-fastapi|ts-fastify|all [--report-dir NEW_DIRECTORY]',
+      'node examples/b2b-escrow/verification/run.mjs --implementation golang-gin|java-spring|python-fastapi|ts-fastify|all [--report-dir NEW_DIRECTORY] [--gate regression|dod --baseline-model FILE]',
     );
     return;
   }
@@ -170,6 +173,13 @@ async function main() {
     values.implementation !== 'all'
   )
     throw new Error('Select --implementation (or --help)');
+  const scenarios = selectScenarios({
+    gate: values.gate,
+    baselineModel: values['baseline-model'],
+  });
+  const baseline = values['baseline-model']
+    ? path.resolve(values['baseline-model'])
+    : defaultBaseline;
   // A new directory avoids erasing evidence from an earlier run or arbitrary files.
   const output = values['report-dir']
     ? path.resolve(values['report-dir'])
@@ -200,7 +210,7 @@ async function main() {
         `Build CLI and refresh generated artifacts first; see ${preflight}`,
       );
     for (const implementation of selected) {
-      for (const scenario of cases) {
+      for (const scenario of scenarios) {
         if (interrupted) throw new Error('Interrupted');
         const directory = path.join(output, implementation, scenario.name);
         await mkdir(directory, { recursive: true });
@@ -245,7 +255,8 @@ async function main() {
           const run = await invoke(args, directory, active);
           result.cliExitCode = run.code;
           const report = JSON.parse(run.stdout);
-          verifyResult(scenario, run.code, report);
+          if (values.gate) verifyGateResult(values.gate, run.code, report);
+          else verifyResult(scenario, run.code, report);
           result.expectationMet = true;
           result.passed = report.passed;
           result.pending = report.pending === true;
@@ -282,9 +293,13 @@ async function main() {
       path.join(output, 'summary.json'),
       JSON.stringify(
         {
+          kind: values.gate
+            ? 'strict-policy-gate'
+            : 'expected-red-green-demonstration',
+          baseline,
           passed:
             !interrupted &&
-            results.length === selected.length * cases.length &&
+            results.length === selected.length * scenarios.length &&
             results.every((result) => result.expectationMet),
           results,
         },

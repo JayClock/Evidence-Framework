@@ -35,8 +35,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm api:setup
       - run: pnpm nx build cli
-      - run: pnpm evidence check "$MODEL"
-      - run: pnpm evidence export --model "$MODEL" --out "$GENERATED" --verify
+      - run: make -C examples/b2b-escrow check tools-test
       - name: Materialize immutable baseline (never fall back after a failed git show)
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
@@ -70,13 +69,16 @@ jobs:
           path: reports/
 
   acceptance:
-    name: ${{ matrix.gate }} gate
+    name: ${{ matrix.implementation }} native + conformance + strict gates
     needs: contract-and-hygiene
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     strategy:
       fail-fast: false
       matrix:
-        gate: [regression, dod]
+        implementation: [golang-gin, java-spring, python-fastapi, ts-fastify]
+    env:
+      IMPLEMENTATION: ${{ matrix.implementation }}
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -84,37 +86,66 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
+      - uses: actions/setup-go@v5
+        if: matrix.implementation == 'golang-gin'
+        with:
+          go-version: '1.22.12'
+          cache-dependency-path: examples/b2b-escrow/implementations/golang-gin/go.sum
+      - uses: actions/setup-java@v4
+        if: matrix.implementation == 'java-spring'
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: examples/b2b-escrow/implementations/java-spring/pom.xml
+      - uses: astral-sh/setup-uv@v6
+        if: matrix.implementation == 'python-fastapi'
+        with:
+          version: '0.9.11'
+          enable-cache: true
+          cache-dependency-glob: examples/b2b-escrow/implementations/python-fastapi/uv.lock
+      - uses: actions/setup-python@v5
+        if: matrix.implementation == 'python-fastapi'
+        with:
+          python-version: '3.12'
       - run: pnpm install --frozen-lockfile
-      - run: pnpm example:setup
       - run: pnpm nx build cli
       - uses: actions/download-artifact@v4
         with:
           name: evidence-contract
           path: reports
-      - name: Start isolated SUT and run strict gate
-        env:
-          GATE: ${{ matrix.gate }}
+      - name: Install, test and build only the selected independent project
+        id: build
         shell: bash
         run: |
           set -euo pipefail
-          node examples/b2b-escrow/implementations/ts-fastify/dist/server.js --test-mode --port 8085 --mode v2 > reports/backend.log 2>&1 &
-          SUT_PID=$!
-          trap 'kill "$SUT_PID" 2>/dev/null || true' EXIT
-          node --input-type=module -e '
-            for (let attempt = 0; ; attempt++) {
-              try { await fetch("http://127.0.0.1:8085", { method: "HEAD", signal: AbortSignal.timeout(500) }); break; }
-              catch (error) { if (attempt === 49) throw error; await new Promise(r => setTimeout(r, 100)); }
-            }'
-          pnpm evidence test --target http://127.0.0.1:8085 --scenarios "$GENERATED" \
-            --gate "$GATE" --baseline-model reports/baseline.evidence.json \
-            --strict-drift --report-dir reports
-      - name: Publish gate summary
+          make -C examples/b2b-escrow prepare 2>&1 | tee reports/native.log
+      - name: Prove expected red AND green cases (not a release gate)
+        run: make -C examples/b2b-escrow verify REPORT_DIR="$GITHUB_WORKSPACE/reports/conformance"
+      - name: Strict regression against immutable Git baseline
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: >-
+          make -C examples/b2b-escrow gate GATE=regression
+          BASELINE="$GITHUB_WORKSPACE/reports/baseline.evidence.json"
+          REPORT_DIR="$GITHUB_WORKSPACE/reports/regression"
+      - name: Strict DoD against immutable Git baseline
+        # Run even if regression failed, but never use a failed/missing native build.
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: >-
+          make -C examples/b2b-escrow gate GATE=dod
+          BASELINE="$GITHUB_WORKSPACE/reports/baseline.evidence.json"
+          REPORT_DIR="$GITHUB_WORKSPACE/reports/dod"
+      - name: Publish strict gate summaries
         if: always()
-        env:
-          GATE: ${{ matrix.gate }}
-        run: test ! -f "reports/$GATE.md" || cat "reports/$GATE.md" >> "$GITHUB_STEP_SUMMARY"
+        shell: bash
+        run: |
+          for gate in regression dod; do
+            report="reports/$gate/$IMPLEMENTATION/$gate/$gate.md"
+            if [[ -f "$report" ]]; then cat "$report" >> "$GITHUB_STEP_SUMMARY"; fi
+          done
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: evidence-${{ matrix.gate }}
+          name: evidence-${{ matrix.implementation }}
           path: reports/
+          if-no-files-found: error

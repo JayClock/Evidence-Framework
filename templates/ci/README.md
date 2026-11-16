@@ -1,8 +1,13 @@
 # Evidence governance CI integration
 
 The checked-in GitHub workflow (`../../.github/workflows/evidence-governance.yml`)
-is a runnable reference, not pseudocode. The adjacent GitLab template can be
-included in `.gitlab-ci.yml`. Both use Node 22 + the repository-pinned pnpm,
+is a runnable four-language reference, not pseudocode. Each matrix job installs
+only its selected language environment, runs native tests/build, proves the fixed
+red/green demonstrations, then independently executes strict regression and DoD
+against the downloaded Git baseline. `fail-fast: false` keeps the other jobs'
+evidence when one implementation fails. The adjacent GitLab template remains a
+Node/Fastify-only reference that can be included in `.gitlab-ci.yml`; it does not
+provision four language images. Both use Node 22 + the repository-pinned pnpm,
 build the actual CLI, and run three independent policy checks:
 
 1. Model validity and **read-only, byte-exact** generated artifact verification.
@@ -13,12 +18,21 @@ build the actual CLI, and run three independent policy checks:
 
 ## Adapt to another backend
 
-- Change `MODEL`, `GENERATED`, and the backend startup/readiness commands. The
-  default paths demonstrate B2B escrow v1 plus optional v2 milestone flows. Run
-  `pnpm example:setup` to independently install/build the reference Fastify SUT.
-  Replace that preparation step when selecting another backend. Do not use a
-  build-cache directory as a committed artifact source. Export to a dedicated
-  generated directory and commit it together with the model.
+- The B2B orchestrator (`make -C examples/b2b-escrow ...`) is an external observer,
+  never an implementation dependency. `prepare IMPLEMENTATION=...` installs,
+  tests and builds only that project; `verify` proves the fixed 11 red/green cases;
+  `gate GATE=... BASELINE=/absolute/model.evidence.json` starts a fresh v2/no-fault process
+  for one strict gate. `REPORT_DIR` must be a new directory. On GitLab, a custom
+  language matrix needs runners/images containing Node/pnpm/Make plus the selected
+  language; call those same targets in each row. The supplied GitLab jobs only
+  require the Node image and run Fastify native tests before each strict gate.
+- For a different application, change `MODEL`, `GENERATED`, and the backend
+  preparation/startup/readiness commands. The Makefile and Node verifier are
+  specifically for B2B escrow: replace those calls (including GitHub's scoped
+  `check`) rather than assuming changing environment variables retargets them.
+  Default paths demonstrate B2B escrow v1 plus optional v2 milestone flows.
+  Do not use a build-cache directory as a committed artifact source. Export to a
+  dedicated generated directory and commit it together with the model.
 - Keep `fetch-depth: 0` / `GIT_DEPTH: 0`. Pull requests use the event's base SHA;
   GitLab MRs use `CI_MERGE_REQUEST_DIFF_BASE_SHA`. Pushes use the previous SHA.
   Manual/first builds explicitly use `BOOTSTRAP_MODEL` (the B2B escrow v1
@@ -65,8 +79,10 @@ OpenAPI compatibility alone does not prove business equivalence or dictate SemVe
 For feature work only, `--gate dod --allow-pending` explicitly allows incomplete
 business steps to exit zero. Reports **retain `passed: false`** and PENDING; JUnit
 still contains failures. Runner infrastructure errors and strict drift remain
-fatal. CI never derives policy from branch names and these templates never use
-`--allow-pending`, `continue-on-error`, or `allow_failure` for quality gates.
+fatal. CI never derives policy from branch names. **Strict quality gates** never
+use `--allow-pending`, `continue-on-error`, or `allow_failure`. The separate
+fixed red/green demonstration intentionally invokes pending and fault cases to
+check their semantics; its `expectationMet` summary is not a release verdict.
 
 ## Reports and security
 
@@ -74,7 +90,13 @@ fatal. CI never derives policy from branch names and these templates never use
 **single execution**, even if assertions fail. Do not rerun state-changing suites
 just to render another report. Use a dedicated report directory. GitHub publishes
 Markdown to `$GITHUB_STEP_SUMMARY`; GitLab exposes artifacts and native JUnit MR
-results. Markdown checklists list failed/pending steps. No broad write token or
+results. For the B2B orchestrator, reports are nested under
+`REPORT_DIR/<implementation>/<scenario>/<gate>.{json,md,xml}`; the GitLab JUnit
+pattern includes only strict gate reports. GitHub also uploads the red/green
+demonstration reports, whose intentional failures **must not** be counted as
+release failures or successes: evaluate their `summary.json` expectation checks
+separately. Each implementation has a distinct artifact name and retains native
+build/test output as well as per-process logs. No broad write token or
 `pull_request_target` is needed; publishing an actual PR/MR comment can be layered
 on in a separately trusted job consuming the Markdown artifact. Code Quality
 reports are intentionally not fabricated: runtime response drift has no reliable
