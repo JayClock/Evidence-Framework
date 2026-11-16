@@ -3,6 +3,7 @@ import { DomainIdSchema, ModelVersionSchema } from './id.js';
 import { EntityASTSchema } from './entity.js';
 import { RelationshipASTSchema } from './relationship.js';
 import { RuleASTSchema } from './rule.js';
+import { ContractSourceDocumentSchema } from './provenance.js';
 import { refineDomainModel } from './documentSemantics.js';
 
 /** FM schema version emitted by this package. */
@@ -20,6 +21,8 @@ export const DomainModelManifestSchema = z
     ruleLanguage: z.literal(FM_RULE_LANGUAGE),
     entryContextRefs: z.array(DomainIdSchema).min(1),
     description: z.string().min(1).optional(),
+    // Private authoring material; deliberately excluded from published projections.
+    sourceDocument: ContractSourceDocumentSchema.optional(),
   })
   .strict();
 

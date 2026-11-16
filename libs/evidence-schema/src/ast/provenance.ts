@@ -1,3 +1,4 @@
+import { CLAUSE_CATEGORIES } from './clause.js';
 import { z } from 'zod';
 import {
   isVocabularyId,
@@ -49,7 +50,70 @@ export const ProvenanceSnippetSchema = z
     text: z.string().min(1),
     locator: z.string().min(1).optional(),
     source: IngestionSourceKindSchema.optional(),
+    clauseIndex: z.number().int().positive().optional(),
+    charStart: z.number().int().nonnegative().optional(),
+    charEnd: z.number().int().positive().optional(),
   })
-  .strict();
+  .strict()
+  .superRefine((snippet, context) => {
+    if (
+      (snippet.charStart === undefined) !== (snippet.charEnd === undefined) ||
+      (snippet.charStart !== undefined &&
+        snippet.charEnd !== undefined &&
+        (snippet.charEnd <= snippet.charStart ||
+          snippet.charEnd - snippet.charStart !== snippet.text.length))
+    ) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          'Source span must be a complete UTF-16 range matching the snippet length',
+      });
+    }
+  });
+
+export const ContractSourceDocumentSchema = z
+  .object({
+    text: z.string().min(1),
+    clauses: z.array(
+      z
+        .object({
+          index: z.number().int().positive(),
+          text: z.string().min(1),
+          category: z.enum(
+            CLAUSE_CATEGORIES as unknown as [
+              (typeof CLAUSE_CATEGORIES)[number],
+              ...(typeof CLAUSE_CATEGORIES)[number][],
+            ],
+          ),
+          reason: z.string(),
+          charStart: z.number().int().nonnegative(),
+          charEnd: z.number().int().positive(),
+        })
+        .strict(),
+    ),
+  })
+  .strict()
+  .superRefine((document, context) => {
+    let end = 0;
+    document.clauses.forEach((clause, index) => {
+      if (
+        clause.index !== index + 1 ||
+        clause.charStart < end ||
+        clause.charEnd <= clause.charStart ||
+        document.text.slice(clause.charStart, clause.charEnd) !== clause.text
+      ) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['clauses', index],
+          message:
+            'Clause span must exactly match the original source text in source order',
+        });
+      }
+      end = clause.charEnd;
+    });
+  });
+export type ContractSourceDocument = z.infer<
+  typeof ContractSourceDocumentSchema
+>;
 
 export type ProvenanceSnippet = z.infer<typeof ProvenanceSnippetSchema>;

@@ -36,6 +36,63 @@ const readyCanvas = async () => {
 };
 
 describe('EditorScreen', () => {
+  it('navigates in both directions between persisted clauses and canvas objects', async () => {
+    const document = createDesktopFixture();
+    document.manifest.sourceDocument = {
+      text: '交货条款。',
+      clauses: [
+        {
+          index: 1,
+          text: '交货条款',
+          category: 'business',
+          reason: '约定交货',
+          charStart: 0,
+          charEnd: 4,
+        },
+      ],
+    };
+    document.entities.find(
+      (entity) => entity.id === 'evidence.request',
+    )!.sourceSnippet = {
+      text: '交货条款',
+      source: 'contract',
+      clauseIndex: 1,
+      charStart: 0,
+      charEnd: 4,
+    };
+    installDesktopApi({
+      openResult: {
+        success: true,
+        project: projectSummary({ name: '桌面端夹具（Desktop Fixture）' }),
+        document,
+        issues: [],
+      },
+    });
+    const { container } = render(
+      <EditorScreen rootPath="/models/procurement" />,
+    );
+    await readyCanvas();
+    fireEvent.click(screen.getByRole('button', { name: '条款审计' }));
+    fireEvent.click(screen.getByRole('button', { name: /定位 交付请求/ }));
+    await waitFor(() =>
+      expect(
+        container.querySelector('[data-clause-id="clause-1"]'),
+      ).toHaveAttribute('data-clause-selected', 'true'),
+    );
+    expect(screen.getByLabelText('依据条款原文')).toHaveTextContent('交货条款');
+    fireEvent.click(
+      container.querySelector('[data-node-id="evidence.contract"]')!,
+    );
+    expect(
+      container.querySelector('[data-clause-id="clause-1"]'),
+    ).toHaveAttribute('data-clause-selected', 'false');
+    fireEvent.click(
+      container.querySelector('[data-node-id="evidence.request"]')!,
+    );
+    expect(
+      container.querySelector('[data-clause-id="clause-1"]'),
+    ).toHaveAttribute('data-clause-selected', 'true');
+  });
   it('explains a missing project path instead of rendering an empty canvas', async () => {
     installDesktopApi();
 

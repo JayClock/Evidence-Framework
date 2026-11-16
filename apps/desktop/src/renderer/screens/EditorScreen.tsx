@@ -26,6 +26,7 @@ import {
 import { DomainLedgerTable } from '../components/ledger/DomainLedgerTable';
 import { CanvasFloatingHud } from '../components/canvas/CanvasFloatingHud';
 import { ActivityDrawer } from '../components/layout/ActivityDrawer';
+import { ClauseTraceDrawer } from '../components/clauses/ClauseTraceDrawer';
 import { ActivityRail } from '../components/layout/ActivityRail';
 import { TopologyDrawer } from '../components/layout/TopologyDrawer';
 import { AgentCopilot } from '../components/agent/AgentCopilot';
@@ -165,6 +166,7 @@ const RAIL_TITLES: Record<RailTabId, string> = {
   diagnostics: '门禁与诊断',
   drift: '生产漂移',
   copilot: 'AI 协同',
+  clauses: '条款审计',
 };
 
 const EditorWorkspace = ({
@@ -947,6 +949,17 @@ const EditorWorkspace = ({
                   />
                 ) : null}
 
+                {layout.activeRailTab === 'clauses' ? (
+                  <ClauseTraceDrawer
+                    model={state.document}
+                    selectedNodeId={state.selection.nodeId}
+                    onFocusEntity={(id) => {
+                      workspaceView.setMode('graph');
+                      focusNode(id);
+                    }}
+                  />
+                ) : null}
+
                 {layout.activeRailTab === 'drift' ? (
                   <DriftRadar
                     embedded
@@ -999,6 +1012,7 @@ const EditorWorkspace = ({
                   graph={state.graph}
                   session={state.session}
                   selection={state.selection}
+                  onOpenSource={() => layout.setActiveRailTab('clauses')}
                 />
               </ResizablePanel>
             </ResizablePanelGroup>

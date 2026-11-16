@@ -52,6 +52,26 @@ describe('baseline review generation', () => {
       const baseline = (await readModelRoot(source)).bundle;
       const current = structuredClone(baseline);
       current.entities[0]!.label += '（修订）';
+      current.manifest.sourceDocument = {
+        text: 'PRIVATE-CONTRACT-TEXT',
+        clauses: [
+          {
+            index: 1,
+            text: 'PRIVATE-CONTRACT-TEXT',
+            category: 'business',
+            reason: '私人材料',
+            charStart: 0,
+            charEnd: 21,
+          },
+        ],
+      };
+      current.entities[0]!.sourceSnippet = {
+        text: 'PRIVATE-CONTRACT-TEXT',
+        source: 'contract',
+        clauseIndex: 1,
+        charStart: 0,
+        charEnd: 21,
+      };
       const bundlePath = path.join(root, 'current.evidence.json');
       await writeFile(bundlePath, serializeModelBundle(current));
       const output = path.join(root, 'diff-review.html');
@@ -64,6 +84,9 @@ describe('baseline review generation', () => {
       expect(generated.data.diff?.counts.modified).toBe(1);
       const html = await readFile(output, 'utf8');
       expect(html).toContain('baselineFingerprint');
+      expect(html).not.toContain('PRIVATE-CONTRACT-TEXT');
+      expect(JSON.stringify(generated.data)).not.toContain('sourceDocument');
+      expect(JSON.stringify(generated.data)).not.toContain('sourceSnippet');
       await expect(
         generateWorkbench({
           projectRoot: root,

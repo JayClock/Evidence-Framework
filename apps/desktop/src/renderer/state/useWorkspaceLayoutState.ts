@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 
-/** The four things the activity rail can put beside the canvas. */
+/** The surfaces the activity rail can put beside the canvas. */
 export const RAIL_TABS = [
   'topology',
   'diagnostics',
   'drift',
   'copilot',
+  'clauses',
 ] as const;
 
 export type RailTabId = (typeof RAIL_TABS)[number];
@@ -53,6 +54,7 @@ export const RAIL_TAB_CHORDS: Record<RailTabId, string> = {
   diagnostics: '⌘+2',
   drift: '⌘+3',
   copilot: '⌘+4',
+  clauses: '⌘+5',
 };
 
 const isEditable = (target: EventTarget | null): boolean => {

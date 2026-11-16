@@ -239,6 +239,8 @@ export {
   INGESTION_SOURCE_KIND_LABELS,
   IngestionSourceKindSchema,
   ProvenanceSnippetSchema,
+  ContractSourceDocumentSchema,
+  type ContractSourceDocument,
   isIngestionSourceKind,
   type IngestionSourceKind,
   type ProvenanceSnippet,

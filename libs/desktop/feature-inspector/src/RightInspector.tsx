@@ -23,6 +23,7 @@ interface RightInspectorProps {
   graph: DomainGraph;
   session: ModelSession;
   selection: ModelSelection;
+  onOpenSource?: () => void;
 }
 
 const fieldValue = (entity: EntityAST, field: string): unknown =>
@@ -70,6 +71,7 @@ export const RightInspector = ({
   graph,
   session,
   selection,
+  onOpenSource,
 }: RightInspectorProps) => {
   const entity =
     selection.nodeId === null ? undefined : graph.getEntity(selection.nodeId);
@@ -129,6 +131,27 @@ export const RightInspector = ({
           )
         }
       >
+        {entity.sourceSnippet === undefined ? null : (
+          <section
+            aria-label="依据条款原文"
+            className="mb-3 rounded border border-evidence-line bg-[#fbfcfe] p-2"
+          >
+            <h3 className="font-semibold">依据条款原文</h3>
+            <p className="whitespace-pre-wrap">{entity.sourceSnippet.text}</p>
+            <p className="text-evidence-muted">
+              {entity.sourceSnippet.locator ?? '未记录定位信息'}
+            </p>
+            {onOpenSource === undefined ? null : (
+              <button
+                type="button"
+                className="mt-1 text-evidence-accent"
+                onClick={onOpenSource}
+              >
+                查看条款审计
+              </button>
+            )}
+          </section>
+        )}
         <InspectorBody
           key={entity.id}
           graph={graph}

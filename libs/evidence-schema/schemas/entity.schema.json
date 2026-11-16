@@ -286,6 +286,9 @@
       "properties": {
         "text": { "type": "string", "minLength": 1 },
         "locator": { "type": "string", "minLength": 1 },
+        "clauseIndex": { "type": "integer", "minimum": 1 },
+        "charStart": { "type": "integer", "minimum": 0 },
+        "charEnd": { "type": "integer", "minimum": 1 },
         "source": {
           "enum": ["contract", "prd", "interview", "blueprint", "unknown"]
         }
