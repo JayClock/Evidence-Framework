@@ -71,6 +71,7 @@ export const anchorWorkshopContract = (
     roleRefs,
     attributes: [time('signed_at', '签署时间')],
   });
+  draft.manifest.entryContextRefs.push(contextRef);
   return { contextRef, contractRef: id };
 };
 

@@ -1,3 +1,4 @@
+import { createFulfillmentPairMutator } from '../mutations/fulfillmentMutations.js';
 import { createProcurementModel } from '../testing/modelFixture.js';
 import { createModelSession } from '../session/createModelSession.js';
 import {
@@ -50,6 +51,79 @@ const examples = (flow = '正常订阅'): ScenarioExample[] => [
 ];
 
 describe('scenario authoring and local oracle', () => {
+  it('only replays compensation when the refund obligation and facts are explicitly modeled', () => {
+    const model = createProcurementModel();
+    const time = (name: string) => ({
+      name,
+      label: name,
+      meaning: '合同约定的业务时间',
+      valueType: 'timestamp' as const,
+      required: true,
+      keyData: true,
+    });
+    createFulfillmentPairMutator(model, {
+      contextRef: 'context.procurement',
+      request: {
+        id: 'request.refund',
+        label: '断供退款请求',
+        responsibleRoleRef: 'role.buyer',
+        attributes: [time('started_at'), time('expired_at')],
+      },
+      confirmation: {
+        id: 'confirmation.refund',
+        label: '退款确认',
+        responsibleRoleRef: 'role.seller',
+        attributes: [time('confirmed_at')],
+      },
+      contractReferenceId: 'relation.refund-contract',
+    });
+    const flow = '断供退款';
+    const cases = examples(flow).slice(0, 1);
+    cases.push({
+      entityRef: 'request.refund',
+      example: {
+        label: '申请退款',
+        value: {
+          started_at: '2026-01-02T00:00:00Z',
+          expired_at: '2026-01-03T00:00:00Z',
+        },
+        test: {
+          flow,
+          actingRoleRef: 'role.buyer',
+          asOf: '2026-01-02T00:00:00Z',
+          basedOn: ['contract.procurement#订阅约定'],
+          tags: ['breach_compensation'],
+        },
+      },
+    });
+    cases.push({
+      entityRef: 'confirmation.refund',
+      example: {
+        label: '退款到账',
+        value: { confirmed_at: '2026-01-02T01:00:00Z' },
+        test: {
+          flow,
+          actingRoleRef: 'role.seller',
+          asOf: '2026-01-02T01:00:00Z',
+          basedOn: ['request.refund#申请退款'],
+          tags: ['breach_compensation'],
+        },
+      },
+    });
+    replaceScenarioExamples(model, flow, cases);
+    const results = evaluateScenario(model, flow);
+    expect(
+      results[2].rules.find(
+        (r) => r.ruleRef === 'rule.request.refund-completed',
+      )?.value,
+    ).toBe(true);
+    expect(results.map((r) => r.ref)).toEqual([
+      'contract.procurement#订阅约定',
+      'request.refund#申请退款',
+      'confirmation.refund#退款到账',
+    ]);
+    expect(scenarioExamples(model, 'unmodeled-refund')).toEqual([]);
+  });
   it('runs normal, late and absent confirmation cases without inferring a refund workflow', () => {
     const model = createProcurementModel();
     replaceScenarioExamples(model, '正常订阅', examples());

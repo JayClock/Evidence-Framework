@@ -1,3 +1,4 @@
+import { createEmptyDomainModel } from '@evidence-poc/evidence-schema';
 import { createModelSession } from '../session/createModelSession.js';
 import { createProcurementModel } from '../testing/modelFixture.js';
 import {
@@ -7,6 +8,23 @@ import {
 import { inspectWorkshop } from './workshopProgress.js';
 
 describe('guided workshop', () => {
+  it('can anchor the first contract in a blank workspace without leaving manifest roots empty', () => {
+    const session = createModelSession({ document: createEmptyDomainModel() });
+    const anchor = session.mutate((d) =>
+      anchorWorkshopContract(d, {
+        label: '订阅协议',
+        partyA: '读者',
+        partyB: '平台',
+      }),
+    );
+    expect(session.getDocument().manifest.entryContextRefs).toContain(
+      anchor.contextRef,
+    );
+    expect(session.validate().valid).toBe(true);
+    session.undo();
+    expect(session.getDocument().entities).toHaveLength(0);
+    expect(session.getDocument().manifest.entryContextRefs).toHaveLength(0);
+  });
   it('anchors and pairs atomically with undo/redo and no invented facts', () => {
     const model = createProcurementModel();
     const session = createModelSession({ document: model });

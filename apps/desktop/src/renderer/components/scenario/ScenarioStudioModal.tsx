@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import {
   buildDeliveryRoutes,
   projectAcceptanceTests,
-} from '@evidence-poc/evidence-api';
+} from '@evidence-poc/evidence-api/delivery';
 import {
   cloneScenarioExamples,
   evaluateScenario,
