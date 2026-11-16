@@ -27,12 +27,18 @@ it('adapts legacy generate syntax to the shared review operation', async () => {
     'generate',
     '--project-root',
     root,
+    '--skip-ai',
     '-o',
     output,
   ]);
   expect(result.exitCode, result.error).toBe(0);
   expect(result.output).toMatchObject({ output });
-  expect(await readFile(output, 'utf8')).toContain('<html');
+  const html = await readFile(output, 'utf8');
+  expect(html).toContain('<html');
+  const data = JSON.parse(
+    /id="workbench-data">(.*?)<\/script>/s.exec(html)![1]!,
+  );
+  expect(data.stories[0].flowId).toBe('payment');
 });
 
 it('provides help and rejects missing, unknown, duplicate and malformed options', async () => {

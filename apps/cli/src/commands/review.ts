@@ -28,6 +28,7 @@ export async function reviewCommand(
     ),
     ...(scopeRefs ? { scopeRefs } : {}),
     requireApi: options.requireApi === true,
+    skipAi: options.skipAi === true,
     ...(assets ? { assetsDirectory: path.resolve(context.cwd, assets) } : {}),
   });
   if (result.error) throw new Error(result.error);

@@ -50,7 +50,7 @@ it('round trips, compiles, derives lineage and generates an offline review in th
     ['pack', '.evidence/fm', '--out=packed.evidence.json', '--sort-keys'],
     ['compile', '.evidence/fm', '-o', 'derived/compiled.json', '--compact'],
     ['lineage', '.evidence/fm', '--out', 'derived/lineage.json'],
-    ['review', '--out', 'review.html'],
+    ['review', '--skip-ai', '--out', 'review.html'],
   ]) {
     const result = await invoke(args);
     expect(result.code, `${result.stdout}\n${result.stderr}`).toBe(0);

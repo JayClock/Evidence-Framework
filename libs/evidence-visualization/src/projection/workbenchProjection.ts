@@ -3,6 +3,12 @@ import {
   type SerializableGraphLayout,
 } from '@evidence-poc/evidence-canvas-interaction';
 
+import type { BusinessStoryProjection } from '@evidence-poc/evidence-agent';
+import {
+  projectWorkbenchStories,
+  type WorkbenchStory,
+} from './storyProjection.js';
+
 /**
  * The projection the offline workbench renders.
  *
@@ -102,6 +108,8 @@ export interface WorkbenchData {
   validation: WorkbenchValidation;
   /** Null when the page was generated without a delivery projection. */
   delivery: WorkbenchDelivery | null;
+  /** Precomputed business scenes; playback never calls an agent or a server. */
+  readonly stories: readonly WorkbenchStory[];
   /**
    * Where the canvas places every business object and relationship.
    *
@@ -157,6 +165,7 @@ export interface WorkbenchProjectionInput {
   layout?: SerializableGraphLayout;
   api?: WorkbenchApiInput | null;
   delivery?: WorkbenchDelivery | null;
+  stories?: readonly BusinessStoryProjection[];
   check: WorkbenchCheckInput;
   /** False only for explicitly labelled authoring previews. */
   checked?: boolean;
@@ -216,6 +225,7 @@ export const projectWorkbenchData = ({
   layout = EMPTY_GRAPH_LAYOUT,
   api = null,
   delivery = null,
+  stories = [],
   check,
   generatedAt,
   checked = true,
@@ -565,6 +575,7 @@ export const projectWorkbenchData = ({
       runtime: false,
     },
     delivery,
+    stories: projectWorkbenchStories(stories),
     layout,
     generatedAt: generatedAt ?? new Date().toISOString(),
   };

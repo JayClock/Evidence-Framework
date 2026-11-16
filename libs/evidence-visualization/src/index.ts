@@ -1,4 +1,5 @@
 export { readWorkbenchModel } from './generate/readWorkbenchModel.js';
+export { projectWorkbenchStories, type WorkbenchStory, type WorkbenchStoryScene } from './projection/storyProjection.js';
 export { projectWorkbenchDiff, type WorkbenchDiffSummary, type WorkbenchEntityDiff } from './projection/workbenchDiff.js';
 export { deliveryViewOf } from './projection/deliveryView.js';
 

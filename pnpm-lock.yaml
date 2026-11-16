@@ -697,6 +697,9 @@ importers:
 
   libs/evidence-visualization:
     dependencies:
+      '@evidence-poc/evidence-agent':
+        specifier: workspace:*
+        version: link:../evidence-agent
       '@evidence-poc/evidence-api':
         specifier: workspace:*
         version: link:../evidence-api

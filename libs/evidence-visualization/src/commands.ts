@@ -16,6 +16,7 @@ export interface ReviewOptions {
   out?: string;
   scopeRefs?: readonly string[];
   requireApi?: boolean;
+  skipAi?: boolean;
   assetsDirectory?: string;
 }
 
@@ -31,6 +32,7 @@ export async function runReviewCommand(
         ? {}
         : { scopeRefs: options.scopeRefs }),
       requireApi: options.requireApi === true,
+      storyOptions: { skipAi: options.skipAi === true },
       ...(options.assetsDirectory === undefined
         ? {}
         : { assetsDirectory: options.assetsDirectory }),
@@ -53,7 +55,7 @@ export async function runReviewCommand(
 }
 
 const USAGE =
-  'usage: evidence-workbench generate --project-root DIR [--out FILE] [--scope CONTEXT]... [--require-api] [--assets DIR]';
+  'usage: evidence-workbench generate --project-root DIR [--out FILE] [--scope CONTEXT]... [--require-api] [--skip-ai] [--assets DIR]';
 
 /** Compatibility syntax adapter; no hand-written argv scanner. */
 export async function runCli(argv: readonly string[]): Promise<CliResult> {
@@ -64,6 +66,10 @@ export async function runCli(argv: readonly string[]): Promise<CliResult> {
     .option('-o, --out <file>', 'HTML output path')
     .option('--scope <id>', 'Context scope (repeatable)', { type: [] })
     .option('--require-api', 'Require complete API projection')
+    .option(
+      '--skip-ai',
+      'Generate story fact cards without AI or network access',
+    )
     .option('--assets <dir>', 'Workbench assets')
     .action((options: Record<string, unknown>) => {
       if (
@@ -78,6 +84,7 @@ export async function runCli(argv: readonly string[]): Promise<CliResult> {
           ? {}
           : { scopeRefs: options.scope as string[] }),
         requireApi: options.requireApi === true,
+        skipAi: options.skipAi === true,
         ...(options.assets === undefined
           ? {}
           : { assetsDirectory: path.resolve(String(options.assets)) }),

@@ -165,10 +165,11 @@ export default [
               ],
             },
             {
+              // Workbench generation composes the story agent at build time;
+              // lower projection libraries still cannot reach orchestration.
               sourceTag: 'scope:visualization',
               notDependOnLibsWithTags: [
                 'scope:desktop',
-                'scope:agent',
                 'scope:mcp',
                 'layer:testing',
               ],

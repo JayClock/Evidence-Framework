@@ -122,6 +122,10 @@ export function createCli(context: CommandContext = defaultContext()): CAC {
       type: [],
     })
     .option('--require-api', 'Require a complete API projection')
+    .option(
+      '--skip-ai',
+      'Generate story fact cards without AI or network access',
+    )
     .option('--assets <dir>', 'Workbench assets directory')
     .action((options: CommandOptions) => reviewCommand(options, context));
   cli

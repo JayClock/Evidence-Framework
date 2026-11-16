@@ -21,7 +21,9 @@ import {
   readModelRootBytes,
 } from '@evidence-poc/evidence-model-io';
 
+import type { FlowStoryProjectorOptions } from '@evidence-poc/evidence-agent';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
+import { collectWorkbenchStories } from './collectWorkbenchStories.js';
 import { projectWorkbenchDiff } from '../projection/workbenchDiff.js';
 import { readWorkbenchModel } from './readWorkbenchModel.js';
 import { deliveryViewOf } from '../projection/deliveryView.js';
@@ -208,6 +210,8 @@ export interface CollectWorkbenchInput {
   requireApi?: boolean;
   /** ISO timestamp the page prints; defaults to the moment of generation. */
   generatedAt?: string;
+  /** Generation-time AI options; skipAi produces deterministic fact cards. */
+  storyOptions?: FlowStoryProjectorOptions;
   /** Injected by a test that must observe the change detection. */
   fingerprint?: (projectRoot: string) => Promise<string>;
 }
@@ -233,6 +237,7 @@ export const collectWorkbench = async ({
   scopeRefs,
   requireApi = false,
   generatedAt,
+  storyOptions,
   fingerprint = (root) => workbenchFingerprint(root, modelRoot),
 }: CollectWorkbenchInput): Promise<CollectedWorkbench> => {
   const root = path.resolve(projectRoot);
@@ -355,9 +360,10 @@ export const collectWorkbench = async ({
     };
   }
 
-  if ((await fingerprint(root)) !== before) {
-    throw new WorkbenchInputError('输入在生成期间变化，保留已有视图');
-  }
+  const stories = await collectWorkbenchStories(bundle, check, {
+    ...storyOptions,
+    projectRoot: root,
+  });
 
   const data = projectWorkbenchData({
     model: compiledDocument(bundle) as unknown as CompiledModel,
@@ -366,6 +372,7 @@ export const collectWorkbench = async ({
     layout: await workbenchLayoutOf(bundle),
     api,
     delivery: deliveryViewOf(projection ?? buildDelivery(bundle)),
+    stories,
     check: {
       consistent: check.consistent,
       complete: check.complete,
@@ -377,6 +384,10 @@ export const collectWorkbench = async ({
   });
   if (baselineDocument !== undefined) {
     data.diff = await projectWorkbenchDiff(baselineDocument, bundle, data);
+  }
+  // Story generation and layout are asynchronous parts of the same snapshot.
+  if ((await fingerprint(root)) !== before) {
+    throw new WorkbenchInputError('输入在生成期间变化，保留已有视图');
   }
   return {
     data,
