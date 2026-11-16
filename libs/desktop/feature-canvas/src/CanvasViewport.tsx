@@ -50,6 +50,7 @@ import {
   type CanvasInteraction,
 } from './CanvasInteractionContext';
 import { applyStoryFocus, type CanvasStoryFocus } from './storyFocus';
+import { SwimlaneOverlay } from './SwimlaneOverlay';
 import { BusinessLegend } from './BusinessLegend';
 import { ContextGroupNode, EntityNode } from './EntityNode';
 import { FulfillmentEdge, PairLinkEdge } from './FulfillmentEdge';
@@ -504,6 +505,9 @@ const CanvasSurface = ({
               className="pointer-events-none absolute"
               style={{ zIndex: 0, left: 0, top: 0 }}
             >
+              {layout.swimlaneRegions ? (
+                <SwimlaneOverlay regions={layout.swimlaneRegions} />
+              ) : null}
               <div
                 data-region="canvas-stage"
                 className="pointer-events-none absolute"

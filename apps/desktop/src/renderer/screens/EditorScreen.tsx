@@ -9,7 +9,10 @@ import {
 
 import type { ImperativePanelHandle } from 'react-resizable-panels';
 
-import { computeContextScope } from '@evidence-poc/evidence-canvas-interaction';
+import {
+  computeContextScope,
+  type CanvasLayoutMode,
+} from '@evidence-poc/evidence-canvas-interaction';
 import type { SensorIssue } from '@evidence-poc/evidence-agent/browser';
 import {
   ENTITY_CATEGORY_LABELS,
@@ -173,6 +176,7 @@ const EditorWorkspace = ({
   project,
   initialDocument,
 }: EditorWorkspaceProps) => {
+  const [layoutMode, setLayoutMode] = useState<CanvasLayoutMode>('topology');
   const [viewMode, setViewMode] = useState<CanvasViewMode>('simplified');
   const workspaceView = useWorkspaceViewMode();
   // The split stage shares the view mode: "分屏" is one more mode, not a second
@@ -191,7 +195,7 @@ const EditorWorkspace = ({
     reloadFromDisk,
     reloadFromDiskIfClean,
     dismissExternalChange,
-  } = useEditorSession(project, initialDocument, viewMode);
+  } = useEditorSession(project, initialDocument, viewMode, layoutMode);
   const storyActive = split.isSplit && split.activePane === 'story';
   const story = useStoryPlayback({
     rootPath: project.rootPath,
@@ -717,6 +721,8 @@ const EditorWorkspace = ({
             viewMode={workspaceView.mode}
             onViewModeChange={workspaceView.setMode}
             density={viewMode}
+            layoutMode={layoutMode}
+            onLayoutModeChange={setLayoutMode}
             onDensityChange={setViewMode}
             hasSelection={state.selection.nodeId !== null}
             onClearSelection={() => state.session.clearSelection()}
