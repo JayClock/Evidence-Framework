@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:ec52164fc106825a8dcebf6adb869b0c22e12d0bd3046f560075b3adb84945da",
+  "pageVersion": "sha256:4855d0bd7b7cfe4d885ccc5a2d69da9c8c1fa5b4df6996d99b2526ff18ac6a32",
   "claims": [
     {
       "id": "claim_567a05d269c14d5e97a102d43a9b3bcf",
@@ -73,42 +73,32 @@
       "statement": "@nx/enforce-module-boundaries allows type:app to depend only on type:lib and type:lib only on type:lib, which is what stops a library from importing the Electron main process after the hoisted linker made undeclared imports resolvable.",
       "evidence": [
         {
-          "resource": "repo://eslint.config.mjs#L18-L196",
-          "version": "repo-lines-v1:sha256:1d15acf06c5dd4e5e97573200a32c993fbd56f206b1781c30b866ada0101f195:eyJzZWxlY3RlZExpbmVDb3VudCI6MTc5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxZDkzNTc5MjE0NWUyZGJkMzgwYmJmYjYzMWI5MzJjYTg5MjUxZDVhODNjZmE1MjE2MDY3NzMxMmE5ZTY4MGZmIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIxZjBjZGI5NzJhN2JmYjdlZDI0NmY5ZmY2NzIzODVlNTVmNDk2OGZjMTEwNDNkYzViNjg0ZDUxZGZhMzFkYmNiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJmZWIyOTYxMmUxODM1NjY2ZjMzZDZmMmE3Y2QxNTljMmQ1M2I2ZGEwZGZlNmFjOGQ1NjM2NDc5MDhjZThkYTQ2IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJmMTY3ZGI3MDIyNGFiMTY5ODUxODZiMmIwYWVhNzU1NjNhODEwYjAwNjE2NjI5NjdmNDNiMjRkNGJmYjE0OGNmIn0"
+          "resource": "repo://eslint.config.mjs#L18-L199",
+          "version": "repo-lines-v1:sha256:ef09383a1e72bfc250149d31ec1f759ed64e191a5d7fdd6fd6fd87dad72982dc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxZDkzNTc5MjE0NWUyZGJkMzgwYmJmYjYzMWI5MzJjYTg5MjUxZDVhODNjZmE1MjE2MDY3NzMxMmE5ZTY4MGZmIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIxZjBjZGI5NzJhN2JmYjdlZDI0NmY5ZmY2NzIzODVlNTVmNDk2OGZjMTEwNDNkYzViNjg0ZDUxZGZhMzFkYmNiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJmZWIyOTYxMmUxODM1NjY2ZjMzZDZmMmE3Y2QxNTljMmQ1M2I2ZGEwZGZlNmFjOGQ1NjM2NDc5MDhjZThkYTQ2IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJmMTY3ZGI3MDIyNGFiMTY5ODUxODZiMmIwYWVhNzU1NjNhODEwYjAwNjE2NjI5NjdmNDNiMjRkNGJmYjE0OGNmIn0"
         }
       ]
     },
     {
       "id": "claim_336f26abf8494289ae4f9195ad46f878",
-      "statement": "The desktop target graph runs prepare-resources before build (electron-forge package), provides package as an nx:noop alias, makes make depend on build, and declares start and a two-pass typecheck explicitly instead of relying on inferred targets.",
+      "statement": "desktop 的手写目标图是：build 直接跑 electron-forge package（缓存，输入 production/^production，输出 .vite 与 out），package 是 dependsOn build 的 nx:noop 别名，make 依赖 build 并把产物写到 out/make，start 跑 electron-forge start，typecheck 依次跑 tsconfig.app.json 与 tsconfig.spec.json 两遍 tsc 并依赖 ^build；lint 与 test 仍由插件推断，另在 apps/desktop/package.json 把推断出的 test 标为 cache: false。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/project.json#L8-L75",
-          "version": "repo-lines-v1:sha256:140e10f111311f15536aa9191bf75f87358c086b6f2660ca64749188ad1928b5:eyJzZWxlY3RlZExpbmVDb3VudCI6NjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg4YzE1NTk1YTkxZjM1NTgzNGVmYjEwYWQ4MGQwNzRiMTlhZTdkN2NlNTZmZjE0MmUyNTIzMTFlNTk3NWVkM2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVlYWM3ZjFlZGRjMzJhNzFlODhkYTY1ODRjZTc1YzZkYmMzOWZjZmUzZGY3NWQzMjRlNmE0NWU1MTU2MzQyZjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_d8a61de5ce334642bf6c8b925408a413",
-      "statement": "prepare-resources copies exactly workbench.html, workbench.css, workbench.js and business-graph.js from evidence-visualization/assets into apps/desktop/resources/assets after clearing the destination, and Forge ships that directory as extraResource outside app.asar for node:fs reads.",
-      "evidence": [
-        {
-          "resource": "repo://apps/desktop/forge.config.mjs#L9-L70",
-          "version": "repo-lines-v1:sha256:8aa72428d867655cd4437cc90a6d6f99a167199e0b1d68a5a3467b3df32f7383:eyJzZWxlY3RlZExpbmVDb3VudCI6NjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM4NWZjNDZlMDhhYzI4MTVmZGJjNDI0M2ZlY2RlNGNmMGRmZWExZjliYWQyY2IyMjQzZGRkN2QxOGJjZDkwNDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNiZjkzZmZhNDg4NmE5N2YyZmI1MDkzMTkyNGNhZDY1NTI2ZGRjM2FjMDA4NmM5ODRkN2E0MWZkMGUwZDI1M2EifQ"
+          "resource": "repo://apps/desktop/package.json#L44-L55",
+          "version": "repo-lines-v1:sha256:f60a71fe9815faccee650f0c055fe4b6c1b5a2dacd2eb5451f246b44efe097e0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE1MjVkZWFlNGNkZmM5M2ZjYThhOWFhNGYxMjY1OTdkMWZlOTM5NTFhZDA3NmZhOWU3NTAwMzYwY2EwZmIwZTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZjOWQzNGMxYTIzOWY2NDZiODM2MDE1YTM3YzUzODBkODRiNGJmNTM0MDNmZGIwZjE1MGE4YTAwMTkyNjkxOTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
         },
         {
-          "resource": "repo://scripts/prepare-desktop-resources.mjs#L20-L46",
-          "version": "repo-lines-v1:sha256:4b2320d6c400fe45d34c4a5fd1f31ce699c4824ea9dd71aa2a6340f7af110df8:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2MzdjYWE3NDUwMzRhNjU1YWViYTM4ODI4NDBkZDAzYjhjY2QxNDVhNDJhYmJlZDA5NzA3NjZhOThhNzE4YjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5M2IxMTMzNzZlNDM4ZmJiODJjNWVkMDQxZjg2OWM5ZDJiMzY4NzQ0MTYwNDkyZWIzY2Q2NThmYTYxMzUzZGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM4MTJjNDZkN2EwNzcyM2Y1MmNlZTkzNjYyYzQzZWU2Njg4OWM0MTFhM2IyM2IxODE2MzM2MGI1ZjlmOTI4NzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://apps/desktop/project.json#L1-L59",
+          "version": "repo-lines-v1:sha256:bf1f2f80021837d3b21e8af8072f606610d0f56054e903bf0ef7d71ef02bdfa7:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZmIwOGZkYTFhY2I5NTdiNjExNmJkMzc4MTFhMWZlNDFhMDE2MTFjMDYzMWVkYmY3ODZkNjg4OWEyN2E1NWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
     {
       "id": "claim_66e690a6fe8143baaf7529a4b3aea689",
-      "statement": "Forge packages with asar enabled, Vite entries for main, preload and the main_window renderer, Squirrel/ZIP/RPM/DEB makers, and macOS signing/notarization only when APPLE_ID is set.",
+      "statement": "Forge 以 asar=true 打包，产品名 Evidence Modeling、appBundleId dev.evidence.modeling；Vite 插件声明 src/main/main.ts、src/preload/index.ts 两个 build 入口与 main_window renderer；makers 为 Squirrel、仅 darwin 的 ZIP、RPM 与 DEB；只有 APPLE_ID 存在时才启用 macOS 签名与公证。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/forge.config.mjs#L24-L46",
-          "version": "repo-lines-v1:sha256:0a7730efb274aa1770a2be32608349fa86492a355b8283e4a2f8971357b166a4:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5MmQ0OWJkZTA3YTIzMWZlZGEzMmQwMTQ3ZjU1ZTUyZjAwNTQ0OTdiNjM5MDdjMGI5MDhlNjI1NjI5ZGYyZDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk2NGQ4YzA3MzQyOTg5MzEwMTU3NmQ4OGQ5OTEyN2U4OWQ2ODkxZDNiMTdlODlkZjAyZWM5YWU3MDcwNWQ4YmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ5Y2NhNzk3N2YxZmQ1MTk5MmY1MGU1OWI4ZDcyMzA4MWVlNjgyNzhiYzVlZDcwMzBiMDA2YWIxOGVkOTVjMTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRhZDBkOGVlOWNjNzExMDY5YjUwZGY0OTYyYTg4NzRmOWU2MTY5MTQ4Njc4OWE0YWJiZDk0NzY5NTlmODdjYWUifQ"
+          "resource": "repo://apps/desktop/forge.config.mjs#L1-L55",
+          "version": "repo-lines-v1:sha256:22ad6e80c996e85632f1fa7af254169aa99b2be1745c89880009709adfc62e11:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMzMzc5ZTBhOGE1ZDdlZDM0M2QzYTI3OWIxMDU4NWEwNmY3M2Y4OTYxMDkyODZhMmMwNzkwMWUyMjMxMmM0N2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNiZjkzZmZhNDg4NmE5N2YyZmI1MDkzMTkyNGNhZDY1NTI2ZGRjM2FjMDA4NmM5ODRkN2E0MWZkMGUwZDI1M2EiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -161,38 +151,20 @@
       ]
     },
     {
-      "id": "claim_23734e02d4c44c2db069d75a2ad103bb",
-      "statement": "旧workspace说明仍有已合并agent包和only desktop陈述，实际还有cli app及scope:cli，以manifest为准。",
-      "evidence": [
-        {
-          "resource": "repo://apps/cli/package.json",
-          "version": "repo-file-v1:sha256:856b2fbaffd0d39dc137f947c0f545dd69e554725ccd42d13c7ae0c1f286187a"
-        },
-        {
-          "resource": "repo://docs/workspace-layout.md#L1-L15",
-          "version": "repo-lines-v1:sha256:9527a07fd98a2cd8c897f09afdbe1e512aa6b602ade4c14571ee9c32b10a0154:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkYzAyNDUyMDMzNDJlNzhiNTc1N2RmZGM4ZjUyN2NiYjE0YjgzZTljNGFlODY0OGVkZmMyNjFkNTA2NDQ5Y2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ0YTA4YThkYTcxZjFmZmViMmE4OTlmYmI3M2ExNTExMmNjMDFmMmYwMmJhZTdkOWQ0MjQwMjlhZmY0ZTY5MDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJmNjViZjM4ZTc3OTFlYzcwZjM4ZDM5MTBlZTBiYzAyYzE4NjMyMTgxZWNlN2Q1MDU1MWFhMjA4MTIxMzlkMmQifQ"
-        },
-        {
-          "resource": "repo://libs/evidence-agent/package.json",
-          "version": "repo-file-v1:sha256:61d62b9d56ef1da68cd5f52eb70bc34fefb477fedeb8af0b1831e016cb864757"
-        }
-      ]
-    },
-    {
       "id": "claim_b471ed6e05f746beabf877475ac56ad5",
       "statement": "边界由type/layer/platform/surface/scope tags决定，包含cli scope/app，browser-safe子入口仍是特例而非Node root许可。",
       "evidence": [
         {
           "resource": "repo://apps/cli/package.json",
-          "version": "repo-file-v1:sha256:856b2fbaffd0d39dc137f947c0f545dd69e554725ccd42d13c7ae0c1f286187a"
+          "version": "repo-file-v1:sha256:d2ca0caf923736c9567219fb3ade2e92c22afe1983df6b171b147a8e3646f20e"
         },
         {
-          "resource": "repo://eslint.config.mjs#L18-L194",
-          "version": "repo-lines-v1:sha256:4b406f3f7e363909a801943958ff8e233f69291c357781fd0feae1d375e2d0e9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTc3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxZDkzNTc5MjE0NWUyZGJkMzgwYmJmYjYzMWI5MzJjYTg5MjUxZDVhODNjZmE1MjE2MDY3NzMxMmE5ZTY4MGZmIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIxZTY3M2FiZDQ1N2E5N2VlYTE3YTYwMDYyZWIwZmFlYTZiZGYwOTQ4NjhjYzZiOGY4YzBlYmRhMmY2MWVkNDJmIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJmZWIyOTYxMmUxODM1NjY2ZjMzZDZmMmE3Y2QxNTljMmQ1M2I2ZGEwZGZlNmFjOGQ1NjM2NDc5MDhjZThkYTQ2IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI5ZmEzNmQ1YWQ3MTRmY2E5ZDU3OTM3M2FiMDJhNDYyNGY4N2QwYjA4NjE0ZWU0YWZkMDM5NTdkZjBlNWJkMmVmIn0"
+          "resource": "repo://eslint.config.mjs#L18-L197",
+          "version": "repo-lines-v1:sha256:4b36e1e267cd3bb950dae26b146385288a102a301f7923663577059f5a2faa96:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxZDkzNTc5MjE0NWUyZGJkMzgwYmJmYjYzMWI5MzJjYTg5MjUxZDVhODNjZmE1MjE2MDY3NzMxMmE5ZTY4MGZmIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIxZTY3M2FiZDQ1N2E5N2VlYTE3YTYwMDYyZWIwZmFlYTZiZGYwOTQ4NjhjYzZiOGY4YzBlYmRhMmY2MWVkNDJmIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJmZWIyOTYxMmUxODM1NjY2ZjMzZDZmMmE3Y2QxNTljMmQ1M2I2ZGEwZGZlNmFjOGQ1NjM2NDc5MDhjZThkYTQ2IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI5ZmEzNmQ1YWQ3MTRmY2E5ZDU3OTM3M2FiMDJhNDYyNGY4N2QwYjA4NjE0ZWU0YWZkMDM5NTdkZjBlNWJkMmVmIn0"
         },
         {
           "resource": "repo://libs/evidence-agent/package.json",
-          "version": "repo-file-v1:sha256:61d62b9d56ef1da68cd5f52eb70bc34fefb477fedeb8af0b1831e016cb864757"
+          "version": "repo-file-v1:sha256:0d4c144c9da8c389f1b3c3f9f998ae722c30a43006a98c6cda21d62891171872"
         }
       ]
     },
@@ -201,7 +173,7 @@
       "statement": "Because the hoisted linker lets an undeclared import resolve, the @nx/dependency-checks rule configured in each project's eslint.config.mjs (together with the workspace:* protocol) is the guard against missing or unused dependency declarations.",
       "evidence": [
         {
-          "resource": "repo://docs/workspace-layout.md#L51-L52",
+          "resource": "repo://docs/workspace-layout.md#L53-L54",
           "version": "repo-lines-v1:sha256:db6553e035f6e2127a0f1a15ef6a56f6557df41bce8a4e5e77e04debfc0d5586:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTQ0YmM3Njg0MGRlMjk1YmFjZWI0ZWYwMzE1YWQzNmU4NmJkZDNkZWY4YTRkZjY2NDRiZWMxNzExMDBjNDY0ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGZiN2IxZmQ1NjBmZWRjNTIwMjExNDkxZDNhOGFlZGRiMmM2ZGQ0YmQ4MTY0ODNhNTU1NzRiMDljNDEwNTQ3NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDY1M2Y1ZjE4NGYwOGQ3NzVkMDljM2FiNmNjYzg1YWYwNmEwOTAyOGY1OWJiZmEzYzg0ZTNiMDVmYWNjZTJhZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzE5MGY4OGJlZThkYWRjZjVlODZhZDUwNWIyN2MxYmFjYzg3NzI4YjdjZWQ5YTAzMzk2ODBjYWI3MmU4MzMxNSJ9"
         },
         {
@@ -222,39 +194,15 @@
     },
     {
       "id": "claim_dc97bb5e0738443d89ea04a6dfe4db95",
-      "statement": "The desktop build target depends only on prepare-resources and runs electron-forge package, deliberately not waiting for library builds because everything it imports resolves from src through the source condition; make depends on build and writes out/make, while package is an nx:noop alias of build kept for the documented nx package desktop workflow.",
+      "statement": "desktop 的 build 只跑 electron-forge package，不依赖任何库的 build，因为全部 workspace 依赖经 source 条件从 src 解析，^production 只出现在 inputs 中用于让依赖变化作废缓存；make 依赖 build 并写 out/make，package 是 nx:noop 的 build 别名，保留文档中的 nx package desktop 工作流。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/project.json#L24-L45",
-          "version": "repo-lines-v1:sha256:23da6325e2d7b1ca579da634448414b00aa42a2c2084c4b834af842a3b2da725:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllY2VlOTlmN2ExZTVlMGNkYzllODNiYTZlNWE4MGUwM2FiNDQ3ZWZiNjRkYmQ4ZTk0YWIwYTk0OTg5YTAyYTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNlYjEyODE5OGVlMjE2MmE3MDc0MWY5NDk5NzdjNTBjNDZmNzUzMzAzNzU3YTc0NDA1MGQwY2U5ODY4Y2E4NGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg0Y2FiMTkyNThkMDRmZTA1ZjBhYWZkODM3MDY3NDhhN2M1MWZjODM1ZTNjNGQxODA0Y2M4ZjIzMDdjMTAwYzUifQ"
+          "resource": "repo://apps/desktop/project.json#L1-L45",
+          "version": "repo-lines-v1:sha256:bdb1b3c5bd2ebc18262ad1009c253c7c9f5f017c9f346745c3d06e995eedc03b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZmIwOGZkYTFhY2I5NTdiNjExNmJkMzc4MTFhMWZlNDFhMDE2MTFjMDYzMWVkYmY3ODZkNjg4OWEyN2E1NWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliNjJmNjBkODU5MGE1NzljZjQ2ZjhkNjczNzhjNGM1NzJiOTYyY2VjY2RiOTBjN2E1ZjdiNDJiOTYwNzgyYTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBlMDc1NTg5MmM2OGY4ZjBmMGE1NjU3MjE5ZTk0ZDNjZTYyNTA0ZGMwMDJlZGMyYTA4OTYwMjY4NTlmOGNlYzkifQ"
         },
         {
-          "resource": "repo://apps/desktop/project.json#L46-L56",
-          "version": "repo-lines-v1:sha256:f7fde60d4459426362984fc062bb44531720246c3e574af1d7b8e4695184a742:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMyNGM5ODZlMzZjOGYyZGZkNWU5ODA1YzdiMjkzNGVlNTRhOTNlZjJmMWExZWRiYWZjMGRmMWRjZTU5OTIxNjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjljNTJjODEwZWU3ZDM4M2I0NmI5MWIwMjU1MWE0NGM3NDIxMDY0NGNlZjRhZDRkMDcwNGJiZTYzY2EwMjM4YTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZhOGQyNzYwNGUyMTFiNzVlMWE1ZmQxY2FjNmFlMjdjMDJmYTc1YWQ2NDExN2Q0YzVlZTA5MDZmOWFmNjEzMDcifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_c1b307d2e82247828e223737903bff8d",
-      "statement": "prepare-resources runs scripts/prepare-desktop-resources.mjs, is cached on libs/evidence-visualization/assets plus the script, and clears the destination before copying exactly four files (workbench.html, workbench.css, workbench.js, business-graph.js) into apps/desktop/resources/assets, keeping the browser test harnesses out of the installer.",
-      "evidence": [
-        {
-          "resource": "repo://apps/desktop/project.json#L8-L23",
-          "version": "repo-lines-v1:sha256:1f76880b42bbcb5fa6abef3258eff8363c9028c74aa4b790a66e78197875f372:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg4YzE1NTk1YTkxZjM1NTgzNGVmYjEwYWQ4MGQwNzRiMTlhZTdkN2NlNTZmZjE0MmUyNTIzMTFlNTk3NWVkM2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc5MTU2OThlODdlMmMxOTk3ZTU4MjlhODIxOTIyMTUwNTRjOGI0NTdlM2IyZjczMzYyYzZlMGQ4NGZiN2RkOTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIxOTdlM2Y5NDY2OGNlNGRiOTQ2ODVhNTJhYjBmZWE3ODMxZWExMzQ0NTY4ZTAzMWIxZGViYjZlZjk4NGVkMmEifQ"
-        },
-        {
-          "resource": "repo://scripts/prepare-desktop-resources.mjs#L22-L41",
-          "version": "repo-lines-v1:sha256:83107a993cecd8d1c45c441211325cec9c23326dffabd12d380eef76fcb6e32e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjYWFlYzJlNDdiZGUzYzZmNmEwMmZhYzE5MWVkMmI0MzZhYTMxMGNlN2VjOTMxOWFjMjYxZjE2OTc2MTk3YmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJiMWE3YjA2NjFiY2IwYTNkNjRjN2UyMGMwMzc1NzZhMjYwNGFmM2JhOGZmOWUwMjAwMzIyN2FhMzM0ZDY3YzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3MThkN2E1MGMxNGU1MDFmMDJlZDMxY2U2ZjdhNWRhOGM3YThkODMwZjlhMWQ2Y2MxOWMwYTk1ODY5NjcyYzYifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_7fe3832f553e4c3e92c53a1d0bb10889",
-      "statement": "Electron Forge packages with asar enabled and the prepared assets as extraResource beside app.asar, Vite plugin entries for src/main/main.ts, src/preload/index.ts and the main_window renderer, signing/notarization only when APPLE_ID is present, and Squirrel, ZIP (darwin), RPM and DEB makers.",
-      "evidence": [
-        {
-          "resource": "repo://apps/desktop/forge.config.mjs#L24-L71",
-          "version": "repo-lines-v1:sha256:47bca7d2a1a44b5b2a3f56fa8b0e722f7408d84286a2a55d2372fe19046f6aeb:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5MmQ0OWJkZTA3YTIzMWZlZGEzMmQwMTQ3ZjU1ZTUyZjAwNTQ0OTdiNjM5MDdjMGI5MDhlNjI1NjI5ZGYyZDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNiZjkzZmZhNDg4NmE5N2YyZmI1MDkzMTkyNGNhZDY1NTI2ZGRjM2FjMDA4NmM5ODRkN2E0MWZkMGUwZDI1M2EiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ5Y2NhNzk3N2YxZmQ1MTk5MmY1MGU1OWI4ZDcyMzA4MWVlNjgyNzhiYzVlZDcwMzBiMDA2YWIxOGVkOTVjMTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://tsconfig.base.json#L1-L21",
+          "version": "repo-lines-v1:sha256:331491f84340ca023402ea4d278950a4bd865f76b6c584496092cabe1d205cc2:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZmIwOGZkYTFhY2I5NTdiNjExNmJkMzc4MTFhMWZlNDFhMDE2MTFjMDYzMWVkYmY3ODZkNjg4OWEyN2E1NWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -278,7 +226,7 @@
       "evidence": [
         {
           "resource": "repo://apps/cli/package.json",
-          "version": "repo-file-v1:sha256:856b2fbaffd0d39dc137f947c0f545dd69e554725ccd42d13c7ae0c1f286187a"
+          "version": "repo-file-v1:sha256:d2ca0caf923736c9567219fb3ade2e92c22afe1983df6b171b147a8e3646f20e"
         },
         {
           "resource": "repo://package.json#L5-L23",
@@ -306,15 +254,15 @@
     },
     {
       "id": "claim_3479e8540a544e0297effd395dfb9028",
-      "statement": "tools/eslint/browser-platform.mjs closes the gap the tag rules cannot see (node builtins are not project-graph nodes) by banning node:* and fs/path/child_process/os/stream plus the package roots of evidence-api and evidence-agent, whose browser-safe subpaths must be imported instead; the rule is opt-in, so each of the four platform:browser libraries imports it in its own eslint.config.mjs and tagging a new browser project without the import leaves builtins unguarded.",
+      "statement": "tools/eslint/browser-platform.mjs 补上 tag 规则看不见的洞（Node 内建模块不是项目图节点）：禁 node:* 与 fs/path/child_process/os/stream，并禁 @evidence-poc/evidence-api、evidence-acceptance、evidence-agent 的包 root 以强制使用其 browser-safe 子入口；规则 opt-in，八个 platform:browser 项目各自在 eslint.config.mjs 导入它，新浏览器项目只打 tag 而不导入就少了这层保护。",
       "evidence": [
         {
-          "resource": "repo://libs/desktop/feature-canvas/eslint.config.mjs#L1-L10",
-          "version": "repo-lines-v1:sha256:73eecef680af39dd3c887c43f8696eecd898745e5092939ddf09ae1bd66cb3d9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJkYmY0YWEzOTcwYmE1NjczNTIwNzY5NTUzMWE2MjIwMDY3MDk1NzFiM2Y1YTdlZjg1MzYzN2U2ZDdhODY1NzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2Yzk2YWM0ZjgxYzE2ZDljMjc1YzEzY2E1ZjZiYzNiYTA1ODAwNmQ3MWJhMWY3Yjg4MDU2NTUyNmRmMWU4MWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYwNTM2ZWZhZDcyOTc3Njc4M2UxZDU0MzU5NjlkZTgwYTYyNmVlNTM2YzVjMGJmMjM2M2FmMzAzZGQ2ZjY3MzYifQ"
+          "resource": "repo://libs/desktop/feature-canvas/eslint.config.mjs#L1-L8",
+          "version": "repo-lines-v1:sha256:a408ff3034932a67cb05daff14be8bd7ff25a0edecd1f1be3ce03825c3cd5b2c:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmRiZjRhYTM5NzBiYTU2NzM1MjA3Njk1NTMxYTYyMjAwNjcwOTU3MWIzZjVhN2VmODUzNjM3ZTZkN2E4NjU3MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGJiNjJlMWQzZGQ2OTAxODY2NDRjMjI0OTZlZmNlZGU0YmUxNDJlYmEyMTRmMmQ0MjVjZDk5MDgwMmZlZWYzYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZThmODYxODFiOGFlNmZlZGQ3ZDQ4MmRmN2UzMTA5NGU1NTQ1ZGVjMmQzNjI4ZTM5MzlkNTZjMDYwMTIzZTdlMyJ9"
         },
         {
-          "resource": "repo://tools/eslint/browser-platform.mjs#L1-L44",
-          "version": "repo-lines-v1:sha256:999d87b657b62465bbdec8a67147ff4632b0394e881490cbd2603fcc00bb216a:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwMmQyYzBkNmRjNWU3NGQ5MmZhMTRiOTFkYmVhMjY0MDkwYmViMzVmZGI5MTg4ZDliMzQxMTgxZGNlOWY0Y2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://tools/eslint/browser-platform.mjs#L1-L45",
+          "version": "repo-lines-v1:sha256:f2ce737e9dd0594973cec41dbf6b11aa4ae827a6b401708e71214ef17294266d:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwMmQyYzBkNmRjNWU3NGQ5MmZhMTRiOTFkYmVhMjY0MDkwYmViMzVmZGI5MTg4ZDliMzQxMTgxZGNlOWY0Y2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -330,19 +278,11 @@
     },
     {
       "id": "claim_3a7bc94101324d1b902dcdd7db624d7e",
-      "statement": "`pnpm boundaries:drill` writes one probe import per documented violation into the owning project, lints it with nx lint <project> --skip-nx-cache, requires a specific message fragment, removes the probe in a finally block, and exits non-zero if any rule no longer refuses; its cases cover a domain library reaching a projection, a browser library reaching a Node-only projection, a browser library importing node:fs, and one scope reading another.",
+      "statement": "pnpm boundaries:drill 把每个用例的探针 import 写进所属项目源码、用 pnpm nx lint <project> --skip-nx-cache 跑 lint、要求输出含指定消息片段、在 finally 删除探针，任一条不再被拒就以非零码退出；七个用例覆盖 API 反向依赖 acceptance、浏览器 feature 触 acceptance 根入口、tools 触 agent、domain 触 projection、browser 触 Node 库、browser import node:fs 以及 scope:agent 触 scope:mcp。",
       "evidence": [
         {
-          "resource": "repo://tools/workspace-rules/boundary-drill.mjs#L17-L45",
-          "version": "repo-lines-v1:sha256:7a31382447746b0f84f405d1a47871f540da450b6a92dc1e942128e5a1ce7f92:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkMGNiYzM0OTk3ODNmMjJiM2Q5YmI5YTBkZDljNjAzZTczY2Y4MDkxZmRiNzVhMjgzZDllZWY4YzAxNzkyMGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllZDhiZjI3ZGM3MzQ5MDA0ZTY0MDg1ZWJiZjI1ZGI2MDhhYjY1NDQyYmNkZjYyODcxMzNlOGE4ZWVkZjQ0YjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYwNTUxMTY0MjY2ZjliOTZlMGQ2NjI4OWI2ZTVhODVhYmM1MDMzYzAzNWE1NTY3MDc5ZWI2MjM5NWIxMzJiZGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ3OTZmMDU2NWY5ZjNkODFiNzUzOGI4OWVhNDIxMDc4ZWFhYWZhZmM4YmRkMTEyMzM0ZjM2ODhkZDlhYzNkYzEifQ"
-        },
-        {
-          "resource": "repo://tools/workspace-rules/boundary-drill.mjs#L60-L72",
-          "version": "repo-lines-v1:sha256:d4e5081765fc157f2cefa952df12f2171b5e0647cbb059f13bf5263cf109748e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ1ZDFlYjMzNWI3YzBmZDgwYzIyMzQyZTk2OTU3YjYzYWE2ZDVhZmM1MWU5ZWU4NjU0ZDJiZDg5MWFjNWNiMDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkOWUxMjU0NjQyNTU3NmQzZGVhZThjOWI5ZGJmMTI4ZDVkNmRkYWY1ZDdmZTg1NzkzNDkyN2RlZmZhM2I5ZGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI2NmMxMThjYjA4YzExYWI0NWRjZDk5YjdmODMwNTFiMTM2NzBjODJmNmE2M2M0MGZlMmQxYmMzNDQ3YzVkNjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcyMTI5YzI3MzUyYjQ5NTU0OGIwNzFhZTM0YWI5MDgxMTcyODczNDI4ZjZmODdmNTRiNTgwZTUxNTNjOWFhMDIifQ"
-        },
-        {
-          "resource": "repo://tools/workspace-rules/boundary-drill.mjs#L84-L109",
-          "version": "repo-lines-v1:sha256:f675d23bcdca31a43ef2c2cce487006180446922aebaedbe5187236945517ef9:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA2NTk1ZjRlZTVmZjYzZDUwOTUwNDE5ZGMzNDQxNDUxMzg1MWRjOTczNmZkMTdhNGY3YmZhOTMwYjI2MWI2ZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlOTYzNTI3MjA5ODZlZTQwNzc2NjFjZDRmZGNiNDA5YTkwODBmN2Q5NDBlMmZkNDc5YzIyYmMzNmUyNGVlOTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFiNmJjMmU4MzZjZGExZmQ1YTUwYTUyOTA5YmYyYjg3MWZlYmUwM2Q5ZWJkZTg2NzQ0MGY4NDE1ODU1OGM5NDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://tools/workspace-rules/boundary-drill.mjs#L25-L116",
+          "version": "repo-lines-v1:sha256:d0cc81ac0cfcebafb64999d5410059bce9791b661846b2e127459c018a57521d:eyJzZWxlY3RlZExpbmVDb3VudCI6OTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYxNWRhNWMyMDQ0MDU3MGQ2Yjc3MjU4MTA1ZTQ3NTdkMzBjODJkOTg0Zjg0OGZhYTVlOGE1MjIyNzNmYWZlZTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQyZDgwM2M0YzgyM2QzZjNlMDcyZmEyY2FiOTIzNjgyMTJmMDljOGMzYWFjNWU0ZTZkMjE1Y2IzNDFiNjA3NDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAxMjIzMzI2NmQ2YzcyNTRlMWUwNWQyYWVlM2FlYTZiNTk0MzE3ZDY0NGUyNDU0MTViN2IzNzYyNGI1NDFmY2UifQ"
         }
       ]
     },
@@ -365,10 +305,100 @@
           "version": "repo-lines-v1:sha256:d642723f27a2bd061bf68443fb691ffeb2402effdcadc663ca9328657dfdd1c4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTI2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlMjkyNzNkNDJmOTdlNjg5YzgyYWE3NWZiNTI5OWRkZDM5OGRhYjZlOGJlZGFhNzQ2YmJlNjZiMTcxMDI1ZDdjIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0ODY4NTJmNzJlNTE0M2QzNTlhNTgzNWM0MjZjNDk1YjczOTU2MzMxOGUyYzRkYWQxZWJkYmEyMzMwOTUyMDEyIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MCwicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
         }
       ]
+    },
+    {
+      "id": "claim_ba02b821c827405a823b2cf5fe068286",
+      "statement": "根 tsconfig.json 是 files 为空的 solution 文件，references 只列 apps/cli 与 18 个库、不含 apps/desktop，所以 solution 级 tsc --build 不覆盖桌面应用；desktop 只由自己的 typecheck target（两遍 tsc）与 Forge build 检查，CI 末尾另跑 nx build desktop 作为打包 smoke。",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/ci.yml#L46-L64",
+          "version": "repo-lines-v1:sha256:6796cb58b5d97b4882623b742dbbe1cbb12298ee3aeb2327503c9410a9e70c36:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1MTZhMTM3Y2ExYTgyMjk3MDcyNWI1NmJhYTljMzJiMzM2ZGIwNjAxNDcxMDJiZTk2NzIyZDcwMjI0MDBlZGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3ZTUxMDNjYmFkZWJhYWM5YTMyOTQ1NDE4YThjMDIzMGE3YmMwNjcyODFiNjQ0MTUyYjQ5MzA5ZDcwYzlkZDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/project.json#L45-L58",
+          "version": "repo-lines-v1:sha256:703459c2982f92adde880a215d65198f689b5b4da89756a90386ce7a97688448:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliNjJmNjBkODU5MGE1NzljZjQ2ZjhkNjczNzhjNGM1NzJiOTYyY2VjY2RiOTBjN2E1ZjdiNDJiOTYwNzgyYTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRiNDQ4ZmJiNzczYTE1NmI5MjIwMjgzYmE5Yjc2YThlZDYzM2VjZjBiZTlhMWJjNjY3MTAyYTRhMDhiOTJkMTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://tsconfig.json#L1-L64",
+          "version": "repo-lines-v1:sha256:b598c5d19f8e91fbfac3bab736fb0c5eaa80e2768eeda50bf28fb23496fff842:eyJzZWxlY3RlZExpbmVDb3VudCI6NjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZmIwOGZkYTFhY2I5NTdiNjExNmJkMzc4MTFhMWZlNDFhMDE2MTFjMDYzMWVkYmY3ODZkNjg4OWEyN2E1NWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1ef9d6a6a01445c29d053395fd5e1804",
+      "statement": "apps/desktop 没有资源准备 target、没有复制脚本，Forge 配置也没有 extraResource/installAssets，因此打包不会复制 workbench 资源、提示词或资产树：.vite 与 out 里的 Vite 产物加 Electron 运行时就是全部内容。",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/forge.config.mjs#L1-L55",
+          "version": "repo-lines-v1:sha256:22ad6e80c996e85632f1fa7af254169aa99b2be1745c89880009709adfc62e11:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMzMzc5ZTBhOGE1ZDdlZDM0M2QzYTI3OWIxMDU4NWEwNmY3M2Y4OTYxMDkyODZhMmMwNzkwMWUyMjMxMmM0N2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNiZjkzZmZhNDg4NmE5N2YyZmI1MDkzMTkyNGNhZDY1NTI2ZGRjM2FjMDA4NmM5ODRkN2E0MWZkMGUwZDI1M2EiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/project.json#L1-L59",
+          "version": "repo-lines-v1:sha256:bf1f2f80021837d3b21e8af8072f606610d0f56054e903bf0ef7d71ef02bdfa7:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZmIwOGZkYTFhY2I5NTdiNjExNmJkMzc4MTFhMWZlNDFhMDE2MTFjMDYzMWVkYmY3ODZkNjg4OWEyN2E1NWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d36f385f2ee245c3a9dad4e29998c8c8",
+      "statement": "tools/oasdiff/setup.mjs 固定 oasdiff 1.38.0：按 process.platform-process.arch 选官方 tar.gz 并校验固定 sha256、只解出二进制与 LICENSE、chmod 0755、核对 --version 输出完全匹配，随后删除旧目录并把临时目录 rename 到 node_modules/.cache/evidence/oasdiff/<version>/<platform>，finally 清临时目录；缓存匹配即复用，设置 GITHUB_PATH 时追加该目录，没有 postinstall 下载。",
+      "evidence": [
+        {
+          "resource": "repo://tools/oasdiff/setup.mjs#L1-L92",
+          "version": "repo-lines-v1:sha256:5f10a2323e653b1660b8018657e7e3680d0b382a27160df2b979fa794f96d96b:eyJzZWxlY3RlZExpbmVDb3VudCI6OTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ5MDU4MzRhMGYxNTdhNDJjNDUzYmZmNWZkNWJkNDE5YTE1YjhiMWViYmExYjlmMmI2M2FiNzkzYTI0MDM3YmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwZTc2ZTkyYmZiNmQ4ZmUyNjgzMDQ2N2M4YTllOGRlODE1MTViMzIwNmVkZWJkZjlhYmFjMjVlYTk0YzVlYWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d6b21d11392a4d19b30bdaf25357c889",
+      "statement": "oasdiff 的运行时解析与 setup 解耦：先接受显式二进制或 EVIDENCE_OASDIFF_BIN，否则从已安装包的位置上溯缓存目录，最后才回落到 PATH；比较阶段从不下载，缺工具或版本不符时带完整 stdout/stderr 失败闭合。",
+      "evidence": [
+        {
+          "resource": "repo://ENVIRONMENT.md#L81-L95",
+          "version": "repo-lines-v1:sha256:d78fdf98ce664d87a690a1fab38694f9680f503c9646a926789dd8dddd2d6f81:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgyYmZjN2JhNTI5MzQyOTdhMzExNmVjMzY5ODlkY2Y4YzgxYTM1NmQzZDUwNGE1YmFjNjVlMDNhZDhlNjU0ZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3NTU3NzM5Zjg3MGNmM2MxOWVmNGJmZmZiNGYzYzM5ODAyYTZmNTRmNmJiZmE1NTA2NzNhNzlhM2RlY2M2ZTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc3NmY3MDJjZGM1OTMyYzhlZTY5M2JjNTNkM2M0MjMxYjZhYmEyMzllMzc0ZGE0NmExYThmMWNmOGY0NTlhOWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEyMGY5MTYyMWQ4NzkzNDIyZjA1YzNhYTRiY2NmNjRiMWVlNzY0OTkyODQwNTQ3ZjY0MThiM2VjN2Q1MWZhMzAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_69f3e23049ed49bbb4e76a305dd01286",
+      "statement": "新增 workspace 库必须同时更新 nx.tags（type/layer/platform/scope，浏览器库加 platform:browser）、package.json exports 的 @evidence-poc/source 条件、每个消费者 manifest 的 workspace:* 声明，并跑 nx sync 与 nx sync:check 维护项目引用；React 库还要导入 browser-platform 规则，缺任何一项都会让 lint 或 drill 在别处失败或静默放行。",
+      "evidence": [
+        {
+          "resource": "repo://docs/workspace-layout.md#L155-L184",
+          "version": "repo-lines-v1:sha256:004523219efb132ca961098fbdabb0796c6a99bfaf1e22bc4b483962ee353d72:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE1MDNhZTVjMWU2MjVkZmMyZDhhOGVkMjM4YzNkYmM4NGRkZDRmZGZkZDc3ZmYwYjFjZGE1ZmJjMDI1YzhkYTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5MTFiYmJmMTI5NmMwZTcyYWMxMjAwNjMyMTEzMTk3OWNlNWNmNWJjOTE4NzYzZWRmY2JkNDEyYWRkMDQ4ZmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMwYmU1ODY1NTIwMWQ4YTQ3ZGNkNmZmY2QxMjZkYTQ0MzJiZTVjMGZiMTExMWZiYWM0ZDNkNjI5YmMzYWYxOTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-canvas/eslint.config.mjs#L1-L8",
+          "version": "repo-lines-v1:sha256:a408ff3034932a67cb05daff14be8bd7ff25a0edecd1f1be3ce03825c3cd5b2c:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmRiZjRhYTM5NzBiYTU2NzM1MjA3Njk1NTMxYTYyMjAwNjcwOTU3MWIzZjVhN2VmODUzNjM3ZTZkN2E4NjU3MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGJiNjJlMWQzZGQ2OTAxODY2NDRjMjI0OTZlZmNlZGU0YmUxNDJlYmEyMTRmMmQ0MjVjZDk5MDgwMmZlZWYzYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZThmODYxODFiOGFlNmZlZGQ3ZDQ4MmRmN2UzMTA5NGU1NTQ1ZGVjMmQzNjI4ZTM5MzlkNTZjMDYwMTIzZTdlMyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_321445c1bdba4d2d9b33c5ed60463fc3",
+      "statement": "apps/cli 手写 build（tsc -b apps/cli/tsconfig.app.json，依赖 ^build，输出 dist）与 test（依赖 build 且不缓存），因为 CLI 测试和根脚本都执行真实的 dist/cli.js。",
+      "evidence": [
+        {
+          "resource": "repo://apps/cli/package.json#L9-L40",
+          "version": "repo-lines-v1:sha256:801abd5abce08373010b12c27ca3d3b842ed365f35d204872604b8a42264fba2:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRjYWJmMTk0ZjIxZjMyZjI0ZDEzZGZlYjJkM2Q3OTQxYTEwZDBhZTkwM2UwYjM4ZmE2NGRlZjQzZWFhYjlkYTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVhYWIyNjJjM2Q0Zjk4MDczNGQ3NGU3YzFkYzY2ZDVlZDViMGY3ZmJhZTIzMmI5NmQ4NTQ0NzcxMTk0MjRjZjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJmZThkNTM0MTRkNjg2MjU2NzQyMjUwMTQ5MmQ4OWZjZDEzMzRmZDJkODZmZmQ1MjkyYjg1NGIwMjczY2QwMjEifQ"
+        },
+        {
+          "resource": "repo://package.json#L5-L23",
+          "version": "repo-lines-v1:sha256:a4e51b89108349ee2de247734a889a8cc2c9d157a95ff7824509060110c1be9e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0ODMzZDU5NDljMDNhNDBjYTk1MjQ5MTYxMGE2NjU5NjQ0YjNhYTQ2NjM2MmY3OTkwMjBkYmYxOTgxNTQ3ZGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAwZmE2YjdjN2FkYzExY2UwOThhNGE5Y2Y3NTJlYmQ4NWRkM2U1OGFjMGY4ZTgwNGQ5MzI5Y2FmOWI0YWJmZTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE0M2QyZDJhMTBiYzQyZTk5MmQzNjBiYjM3MDFhOTk0YzNhMjYyMTJmNGU3NDg1OGQyZTBjZTNkOGNiMDdmOGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEyNTY5ZTYyYTY3YTFmNmQxNTE5MjRhMWE0YmNiYTg3OGU1NTgwMjhkZTA5ZTlmNTk4MjUzMWNjMGU5NDI2NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_195343e335d144a09ca32a28e3261089",
+      "statement": "openwiki-update.yml 每日 UTC 16:00 与手动触发，checkout 全历史供 base diff，用 npm 全局安装 openwiki@0.9.0（含 mermaid 与 jsdom）而不是作为 pnpm 依赖，经 openai-compatible 端点用 deepseek-flash 跑 openwiki code --update --print；生成步骤 continue-on-error，随后删除 openwiki/.run.json 并只提交 openwiki/、AGENTS.md、该 workflow 与存在的 CLAUDE.md，最后在生成失败时退出非零，使已完成的页面先成为下次基线。",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/openwiki-update.yml#L1-L98",
+          "version": "repo-lines-v1:sha256:494a8b67a0dd136c594618845276ab6d1b24f6de52bb931171629cd1ffb09695:eyJzZWxlY3RlZExpbmVDb3VudCI6OTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA2MDI3ODdhZjZkY2MwODM0ZGUxMjFjYmIxY2I5NWY5NDU5YjcyMWVhYjAzNDlmMTA1MDFiOTk2YzFjNzdmZmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM2NzE4ZjA2N2I1ZTVjMWYwOTkxYTZlNzQ3MjZmZTJhMjNkMjY0MzQ1ZTA4ZTRlYWQwNGZhZjczYzI3ZWQ0NDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-15T14:07:58.904Z"
+    "at": "2026-11-16T23:54:38.352Z"
   }
 }

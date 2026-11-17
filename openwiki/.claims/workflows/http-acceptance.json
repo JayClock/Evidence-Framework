@@ -1,0 +1,412 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:3f18a9c053f3287149a27f7d8f773b49b50c4be30ef12a1c336fbc4d81dfec2c",
+  "claims": [
+    {
+      "id": "claim_e3aaf20a504843eab73468a4f7eb94f8",
+      "statement": "`@evidence-poc/evidence-acceptance` 拥有内联 `examples[].test` 到原生 Step CI/Hurl 的编译、组合导出、官方 Step CI HTTP 执行、flow 选择与 regression/DoD gate、响应漂移检查与原生 oasdiff 契约比较，并按根、`/runner`、`/commands`、`/cli`、`/projection` 五个入口划分消费者；`evidence-api` 不反向依赖它。",
+      "evidence": [
+        {
+          "resource": "repo://docs/workspace-layout.md",
+          "version": "repo-file-v1:sha256:3292607c9d458079b8905506378541895c5167cabc8fb21e08074a9614c8fc5b"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/README.md",
+          "version": "repo-file-v1:sha256:7d8624f2ef72092b89b9193954cce55d3ffa79cc1d42152cd68de606b04e4ff3"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/package.json",
+          "version": "repo-file-v1:sha256:00cb2e2ffa5a6482b44dce61803bd891306effb169db4e4a113df6b931b4bb5a"
+        },
+        {
+          "resource": "repo://tools/workspace-rules/boundary-drill.mjs",
+          "version": "repo-file-v1:sha256:ba5e79dcdcb03ef2b8bd00a9c24d761f81769cd7d3de6a1320f9aee1bc77291a"
+        }
+      ]
+    },
+    {
+      "id": "claim_03b3547c02bd480ba7c30ecfb6109c13",
+      "statement": "`projectAcceptanceTests` 只为带 `test` 元数据的 example 生成步骤，并要求实体恰好一条已建模 POST 路由、`actingRoleRef` 被该路由允许、期望状态码已在 `route.responses` 声明、example 值只含该路由输出字段、正向用例的必需 caller 输入齐全；未知/歧义/跨 flow/循环依赖、依赖被拒绝操作或依赖时钟晚于本步一律以 `ACCEPTANCE_INVALID` 失败，绝不跳过。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-acceptance/src/delivery/scenarioProjector.spec.ts",
+          "version": "repo-file-v1:sha256:1907fa7d57f5c4c59640ad45fcd52b6883e17f504b9f8db23cd4b2cfe4be56f3"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/delivery/scenarioProjector.ts#L65-L328",
+          "version": "repo-lines-v1:sha256:9f71ed30cae8744e851e7e99ad47b6cc4e79b1f1528b4469f3d51bf8e38c8496:eyJzZWxlY3RlZExpbmVDb3VudCI6MjY0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJkNzA1ZDNlZWI1ODI3ZGVhMjBmNmRkMzk0YWU5NjVlZTM1Nzc0NWU1MTRhZDhiMjNkYjQ0Y2E0ZDI3YTliMzc1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0ZDBiYzdjYzE0NDczOWNkMTM3NGI0MWM5MmMyZmUwOGQ5ZTEyZDhmMTkwY2UwMGYzNjEzMGE3ZGM4Yjg3OWM0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/exportTests.spec.ts",
+          "version": "repo-file-v1:sha256:a8a9cab4b6c7ef8d9516c21ea860fb7b13b68a3aae8fb147dbb95bccd3e8656f"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/example.ts",
+          "version": "repo-file-v1:sha256:0bcd9d8d7919d3d0463ca66ffef63c2f89e6f8d844a51d5efff4bf88e25d767b"
+        }
+      ]
+    },
+    {
+      "id": "claim_2c151956c98e4c0eb40d4eea6d2f2529",
+      "statement": "投影在生成正向用例期望值前先删除 example 中已断言的派生字段，再用 `evaluateRuleOnExample` 以该步 `asOf` 和按绑定实体解析的上游值重算派生规则（单值绑定必须恰好命中一个候选），计算结果与手写值不符即报 `disagrees`；请求体只由 caller 字段组成，派生值与业务时间永远不作为客户端输入。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-acceptance/src/delivery/scenarioProjector.spec.ts",
+          "version": "repo-file-v1:sha256:1907fa7d57f5c4c59640ad45fcd52b6883e17f504b9f8db23cd4b2cfe4be56f3"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/delivery/scenarioProjector.ts#L65-L328",
+          "version": "repo-lines-v1:sha256:9f71ed30cae8744e851e7e99ad47b6cc4e79b1f1528b4469f3d51bf8e38c8496:eyJzZWxlY3RlZExpbmVDb3VudCI6MjY0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJkNzA1ZDNlZWI1ODI3ZGVhMjBmNmRkMzk0YWU5NjVlZTM1Nzc0NWU1MTRhZDhiMjNkYjQ0Y2E0ZDI3YTliMzc1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0ZDBiYzdjYzE0NDczOWNkMTM3NGI0MWM5MmMyZmUwOGQ5ZTEyZDhmMTkwY2UwMGYzNjEzMGE3ZGM4Yjg3OWM0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/cel/transientSandbox.ts",
+          "version": "repo-file-v1:sha256:8a13d8e2dcc397b0b8137f98fb3de4107a5dbb442768331ac89f8473f7012c69"
+        }
+      ]
+    },
+    {
+      "id": "claim_6098b5df9caa479185a3d638ea995f91",
+      "statement": "路径模板参数由显式 `pathParameters` 或按 `contractId`/`requestId` 回退到唯一上游 example 的 `$.id` 解析，捕获写到生产者步骤并以 `capture_<steps.size>_<n>` 命名；捕获源必须是更早的步骤，否则投影失败。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-acceptance/src/delivery/scenarioProjector.spec.ts",
+          "version": "repo-file-v1:sha256:1907fa7d57f5c4c59640ad45fcd52b6883e17f504b9f8db23cd4b2cfe4be56f3"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/delivery/scenarioProjector.ts#L65-L328",
+          "version": "repo-lines-v1:sha256:9f71ed30cae8744e851e7e99ad47b6cc4e79b1f1528b4469f3d51bf8e38c8496:eyJzZWxlY3RlZExpbmVDb3VudCI6MjY0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJkNzA1ZDNlZWI1ODI3ZGVhMjBmNmRkMzk0YWU5NjVlZTM1Nzc0NWU1MTRhZDhiMjNkYjQ0Y2E0ZDI3YTliMzc1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0ZDBiYzdjYzE0NDczOWNkMTM3NGI0MWM5MmMyZmUwOGQ5ZTEyZDhmMTkwY2UwMGYzNjEzMGE3ZGM4Yjg3OWM0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_0ecb79d9adcb4ef98c75ae30b56296c3",
+      "statement": "投影按 `ref` 排序后对依赖做 DFS 拓扑排序，再按 `test.flow` 分组、把各步 tags 并集排序、按 id 排序 flows，因此同一模型重复投影结果一致且不修改输入模型；`AcceptanceProjection` 只是临时编译器 IR，不是落盘套件格式。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-acceptance/src/delivery/scenarioProjector.spec.ts",
+          "version": "repo-file-v1:sha256:1907fa7d57f5c4c59640ad45fcd52b6883e17f504b9f8db23cd4b2cfe4be56f3"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/delivery/scenarioProjector.ts#L65-L328",
+          "version": "repo-lines-v1:sha256:9f71ed30cae8744e851e7e99ad47b6cc4e79b1f1528b4469f3d51bf8e38c8496:eyJzZWxlY3RlZExpbmVDb3VudCI6MjY0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJkNzA1ZDNlZWI1ODI3ZGVhMjBmNmRkMzk0YWU5NjVlZTM1Nzc0NWU1MTRhZDhiMjNkYjQ0Y2E0ZDI3YTliMzc1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0ZDBiYzdjYzE0NDczOWNkMTM3NGI0MWM5MmMyZmUwOGQ5ZTEyZDhmMTkwY2UwMGYzNjEzMGE3ZGM4Yjg3OWM0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/delivery/scenarioStudioIntegration.spec.ts",
+          "version": "repo-file-v1:sha256:b62b470617e2a14df79221e561332dc0dab2d426fd49d6078e49bf394327b78a"
+        }
+      ]
+    },
+    {
+      "id": "claim_d5820d12f01a4abfa2a49fecf5b315e8",
+      "statement": "派生值在 CEL 边界上以 BigInt/UnsignedInt 求值，落到 JSON 是精确十进制字符串，因此 Step CI/Hurl 断言不经过 `Number` 舍入。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-acceptance/src/exportTests.spec.ts",
+          "version": "repo-file-v1:sha256:a8a9cab4b6c7ef8d9516c21ea860fb7b13b68a3aae8fb147dbb95bccd3e8656f"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/cel/transientSandbox.ts",
+          "version": "repo-file-v1:sha256:8a13d8e2dcc397b0b8137f98fb3de4107a5dbb442768331ac89f8473f7012c69"
+        }
+      ]
+    },
+    {
+      "id": "claim_dd38473175bd410493ad6036eea06cf9",
+      "statement": "`renderStepCi` 输出单个 version 1.1 workflow：`env.host` 与按不同 `asOf` 拆成 `asOf`/`asOf_N` 的时钟作为环境变量，`tests.flow_N` 的 `name` 是 flow id、`env.evidenceTags` 是 `[\"flow:<id>\", …tags]` JSON，`config` 固定 `concurrency: 1` 与 `continueOnFail: false`，步骤使用 `${{env.host}}`+`${{captures.*}}` URL、`x-evidence-role`/`x-evidence-asof` 头、`timeout: '5s'`、`followRedirects: false` 与 status/schema/jsonpath 检查，并以 `QUOTE_DOUBLE` 序列化 YAML 以免 Step CI 的 YAML 1.1 解析把 ISO 时间戳变成 Date。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-acceptance/src/delivery/scenarioProjector.spec.ts",
+          "version": "repo-file-v1:sha256:1907fa7d57f5c4c59640ad45fcd52b6883e17f504b9f8db23cd4b2cfe4be56f3"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/renderer/stepCiRenderer.ts#L6-L110",
+          "version": "repo-lines-v1:sha256:bd84f9aa54feba9c02925720544feb34806af89e7410fa52b705acee1dbc72ca:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIzZmZmNjQ4YmI5ZGYxZTVjYzk0M2YyYWI1MWIyMTM5NWViNDVhYmQ2NTk0NzVkOTE3OTA3ZmE5OWMyZTM0MWMyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIzOGI2ZGQ0MjZhOTVjYzYyY2FkNjY4OTY5ZDgyN2U0ZDdiMGEwZTgzYjFiNzFhZTExNzg2ZWIwMjFkOTU2Y2UyIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/runner/acceptanceRunner.spec.ts",
+          "version": "repo-file-v1:sha256:4ae4c1e4d2b33782636130a2088b4fa8783dacea079b0b7ef18267912276e3c4"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/stepCiCompatibility.spec.ts",
+          "version": "repo-file-v1:sha256:ecbc91c0036289283b06ed492d0720ff98304ae097172cb1654a44b1d081f1a8"
+        }
+      ]
+    },
+    {
+      "id": "claim_5a8d3b06ccd047129dca580a8b4723da",
+      "statement": "`renderHurl` 为每个 flow 生成独立文档 `flow-00N.hurl`（含 `[Captures]` 与标量 `[Asserts]`），对象/数组等值报 `HURL_UNSUPPORTED`；Hurl 脚本由外部 Hurl CLI 执行，本库与 `evidence test` 都不解释 `.hurl`。",
+      "evidence": [
+        {
+          "resource": "repo://apps/cli/src/commands/test.ts",
+          "version": "repo-file-v1:sha256:bf34403041ffc51240f851d302a36b4f1336a3289b192dfff678b0a19ee9dcbb"
+        },
+        {
+          "resource": "repo://examples/dogfood-backend/README.md",
+          "version": "repo-file-v1:sha256:0cef599a7bc0feca7192ced61943d0e284dd1794f1f48197f3460bba2046eb29"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/README.md",
+          "version": "repo-file-v1:sha256:7d8624f2ef72092b89b9193954cce55d3ffa79cc1d42152cd68de606b04e4ff3"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/renderer/hurlRenderer.ts#L5-L62",
+          "version": "repo-lines-v1:sha256:13a9bd9913191633603f5f25faccbfa35d1fa3565d58e443dd77e4cc6097b9ab:eyJzZWxlY3RlZExpbmVDb3VudCI6NTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjczMzJjYTJjYzk1NDE4YzMwMGZlNTA3ZDE1NWY0ZmVmZGU0N2FmYmIzN2JjMGU3YTEyYTRkODBhZmU3Njk4NWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI2YWFiOTc4OTRmNWE1YmQxMGJjNDZjNjExYTk0ZDA2MGQ4ZTVmM2E4YmMyYjljNjRkYWVlMDMxNDI3ZWI5NzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_56208beca45c400e891d7b68e5549bdd",
+      "statement": "两个渲染器在写入前都检查 example 数据是否包含各自的模板分隔符（Step CI 的 `${{`、Hurl 的 `{{`），命中即 `TEST_TEMPLATE_UNSUPPORTED`，保证模板表达式只由编译器生成。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-acceptance/src/delivery/scenarioProjector.spec.ts",
+          "version": "repo-file-v1:sha256:1907fa7d57f5c4c59640ad45fcd52b6883e17f504b9f8db23cd4b2cfe4be56f3"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/renderer/hurlRenderer.ts#L5-L62",
+          "version": "repo-lines-v1:sha256:13a9bd9913191633603f5f25faccbfa35d1fa3565d58e443dd77e4cc6097b9ab:eyJzZWxlY3RlZExpbmVDb3VudCI6NTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjczMzJjYTJjYzk1NDE4YzMwMGZlNTA3ZDE1NWY0ZmVmZGU0N2FmYmIzN2JjMGU3YTEyYTRkODBhZmU3Njk4NWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI2YWFiOTc4OTRmNWE1YmQxMGJjNDZjNjExYTk0ZDA2MGQ4ZTVmM2E4YmMyYjljNjRkYWVlMDMxNDI3ZWI5NzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/renderer/stepCiRenderer.ts#L6-L110",
+          "version": "repo-lines-v1:sha256:bd84f9aa54feba9c02925720544feb34806af89e7410fa52b705acee1dbc72ca:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIzZmZmNjQ4YmI5ZGYxZTVjYzk0M2YyYWI1MWIyMTM5NWViNDVhYmQ2NTk0NzVkOTE3OTA3ZmE5OWMyZTM0MWMyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIzOGI2ZGQ0MjZhOTVjYzYyY2FkNjY4OTY5ZDgyN2U0ZDdiMGEwZTgzYjFiNzFhZTExNzg2ZWIwMjFkOTU2Y2UyIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/renderer/testLiterals.ts#L1-L12",
+          "version": "repo-lines-v1:sha256:3540b9a920a43b94e6d2841ab3e8b8bdda88edf60b5dc46447056f1a184d9d04:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YTZkOTAxMDViOTlkZDU0ZDg3Njc5ZDg1MTczMTJmMWIxNWMwMThkY2FmNzY4NTYzNTU2ZmRmYjBjNmEyZTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a4f31a6eae094d63bd447ee027a2f1cd",
+      "statement": "`renderDeliverables` 先跑 `buildDelivery`（有 error diagnostics 即拒）与 `assertOpenApiContract` 再投影渲染且不写盘；`exportAcceptanceTests` 额外用 `validateDeliveryExamples` 拒绝非法示例后才 `writeOutput` 原子替换默认目录 `.evidence/api/acceptance`，因此编译失败时旧套件字节不变。",
+      "evidence": [
+        {
+          "resource": "repo://apps/cli/src/commands/export.ts",
+          "version": "repo-file-v1:sha256:ee00be9420888fdb4fdefa07edda1fa5edd52ad72324988f47f913833a3d59ef"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/exportTests.spec.ts",
+          "version": "repo-file-v1:sha256:a8a9cab4b6c7ef8d9516c21ea860fb7b13b68a3aae8fb147dbb95bccd3e8656f"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/exportTests.ts#L22-L63",
+          "version": "repo-lines-v1:sha256:7cd0de04e94e2067c352a98e1c3be995cef9b71be869e6fe26d0b01318293884:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM5OTY0NzIwN2EwY2EzMzQ4NzgxOGMwYTgwNzAzMzhhMzQ3OGVjMzdiNWU3MmE3YTA3OGYxZmViZjNkNThmMjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI2YWQzNGI0NTI0MWY4NzhjMDIzNmJkNjFiY2E0MDVjOWUyYTg2ODU1MjczZDk0ODJmMzgwYjY1Yjc2MTdiZTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/renderDeliverables.ts#L10-L47",
+          "version": "repo-lines-v1:sha256:b651776db8df813843ef962e9623ca2649f085abb4fac81dca63473767c213d4:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk5ZjFhZDVkYTg5YTJlNTI3ZmE3MjZmZjAzZGZjOTRiNWZlODRhZTlmMDBiZmM4OTBmZDA4NTAwMmIyZWQ4ZDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM3ZGJiYTU5Nzk5MTY4Y2EwN2Q1MWQ0ZmFiY2MyNWY2OGY4OTg1ZGJiZTM2N2UwNjY5ZTQ0ODAwZDIxNTY3MGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_df15fabf7448441eabd14bc7106a99fe",
+      "statement": "`runAcceptanceSuite` 是库内唯一的 HTTP 用例执行路径（`evidence test` 是唯一调用方），它只校验 target/asOf/timeout 与套件形态（version 1.1、非空 tests、拒绝 include/loadTest、HTTP-only）、改写时钟头/超时/schema 检查，然后惰性 `import('@stepci/runner')` 调 `runFromYAML` 执行；HTTP 与断言引擎不在此实现。",
+      "evidence": [
+        {
+          "resource": "repo://apps/cli/src/commands/test.ts",
+          "version": "repo-file-v1:sha256:bf34403041ffc51240f851d302a36b4f1336a3289b192dfff678b0a19ee9dcbb"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/runner/acceptanceFailures.spec.ts",
+          "version": "repo-file-v1:sha256:8b5ed09de11cdbc3dde5a8fc7e50f22339d1c5162bfd024a37398c39e698d879"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/runner/acceptanceRunner.spec.ts",
+          "version": "repo-file-v1:sha256:4ae4c1e4d2b33782636130a2088b4fa8783dacea079b0b7ef18267912276e3c4"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/runner/acceptanceRunner.ts#L171-L329",
+          "version": "repo-lines-v1:sha256:03bd55853488305d69f290216d3c1ec66a80bc1056c9ccf07f153749da829368:eyJzZWxlY3RlZExpbmVDb3VudCI6MTU5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxOGUxZjM3ZDJiNTIwY2Y1MWJjNDM0ZDc5MmZkMTdmZWMyNzc5ZGMzMjU0YzNhMDA5YjE4MjcyOWRlYWVlZDc1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyYmQxYjlhYmE0MTk3NDVmMzYzZjM2ZGVjZmEzNGYxNGIxZjBlMGIzNzM3MTVmN2YyMDk0NWFkODg1YTdiMTFiIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_e5019062339b4fcba3a403147c7e2d2c",
+      "statement": "`--as-of` 只替换请求头 `x-evidence-asof`（先删除套件里已有的同名头），不重编编译期业务期望值，因此可以故意制造时间漂移失败；该 header 只供可信测试后端使用，不能当作生产授权或时钟控制。",
+      "evidence": [
+        {
+          "resource": "repo://ENVIRONMENT.md",
+          "version": "repo-file-v1:sha256:57140f0fc3390f4421a24b9e1ab14d9844baf496caa9623bd9d2d9b0e548b506"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/runner/acceptanceRunner.spec.ts",
+          "version": "repo-file-v1:sha256:4ae4c1e4d2b33782636130a2088b4fa8783dacea079b0b7ef18267912276e3c4"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/runner/acceptanceRunner.ts#L171-L329",
+          "version": "repo-lines-v1:sha256:03bd55853488305d69f290216d3c1ec66a80bc1056c9ccf07f153749da829368:eyJzZWxlY3RlZExpbmVDb3VudCI6MTU5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxOGUxZjM3ZDJiNTIwY2Y1MWJjNDM0ZDc5MmZkMTdmZWMyNzc5ZGMzMjU0YzNhMDA5YjE4MjcyOWRlYWVlZDc1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyYmQxYjlhYmE0MTk3NDVmMzYzZjM2ZGVjZmEzNGYxNGIxZjBlMGIzNzM3MTVmN2YyMDk0NWFkODg1YTdiMTFiIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_c254fd2dabda4299b22fa606ffd8ae57",
+      "statement": "每步被归一化为 id/flow/name/method/url/status/expectedStatus/passed/skipped/errored/durationMs/assertions/failureDetails/driftIssues，断言路径形如 `jsonpath.$.amount`；套件通过要求官方结果通过、步骤数非空且每步 passed，skipped/errored 或 strict 漂移都会让结果变红，超时步骤保留 `failureDetails`、后继步骤标 skipped。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-acceptance/src/runner/acceptanceFailures.spec.ts",
+          "version": "repo-file-v1:sha256:8b5ed09de11cdbc3dde5a8fc7e50f22339d1c5162bfd024a37398c39e698d879"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/runner/acceptanceRunner.spec.ts",
+          "version": "repo-file-v1:sha256:4ae4c1e4d2b33782636130a2088b4fa8783dacea079b0b7ef18267912276e3c4"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/runner/acceptanceRunner.ts#L171-L329",
+          "version": "repo-lines-v1:sha256:03bd55853488305d69f290216d3c1ec66a80bc1056c9ccf07f153749da829368:eyJzZWxlY3RlZExpbmVDb3VudCI6MTU5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxOGUxZjM3ZDJiNTIwY2Y1MWJjNDM0ZDc5MmZkMTdmZWMyNzc5ZGMzMjU0YzNhMDA5YjE4MjcyOWRlYWVlZDc1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyYmQxYjlhYmE0MTk3NDVmMzYzZjM2ZGVjZmEzNGYxNGIxZjBlMGIzNzM3MTVmN2YyMDk0NWFkODg1YTdiMTFiIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_8cf0a42e86414d3ab7157aeab3c9b67c",
+      "statement": "当 `gate: dod` + baseline 且没有 filter/tag 而选中 0 个 flow 时，runner 返回 `selectedFlowCount: 0`、`steps: []` 与 `emptyReason` 表示没有增量，不能统计成已执行通过；其他任何空选择都抛错。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-acceptance/src/runner/acceptanceRunner.spec.ts",
+          "version": "repo-file-v1:sha256:4ae4c1e4d2b33782636130a2088b4fa8783dacea079b0b7ef18267912276e3c4"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/runner/acceptanceRunner.ts#L171-L329",
+          "version": "repo-lines-v1:sha256:03bd55853488305d69f290216d3c1ec66a80bc1056c9ccf07f153749da829368:eyJzZWxlY3RlZExpbmVDb3VudCI6MTU5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxOGUxZjM3ZDJiNTIwY2Y1MWJjNDM0ZDc5MmZkMTdmZWMyNzc5ZGMzMjU0YzNhMDA5YjE4MjcyOWRlYWVlZDc1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyYmQxYjlhYmE0MTk3NDVmMzYzZjM2ZGVjZmEzNGYxNGIxZjBlMGIzNzM3MTVmN2YyMDk0NWFkODg1YTdiMTFiIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/runner/suiteSelection.spec.ts",
+          "version": "repo-file-v1:sha256:26bb929f713cf15645ad10c4e9acef83b08045233786e44537f03c86729c8a12"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/runner/suiteSelection.ts#L152-L203",
+          "version": "repo-lines-v1:sha256:9d8816e68d6325ba645d1f71b3f97c1cac73bb67b5722c209d0657fa2cc3c4ca:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc3NjkwNDFiYTFmMDQ0NDFkMjU5ZTVlODNlM2U4NDA4M2RjYzMzODRhYjFjNGZmYmRiMmUxOTk3OWJiMTczYjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEyOWQwNzMyNmRmZmM3NWEzYjk3YWZiNmZkMGVjMDE0NjVhMTRlZjljZjA4NzliZjZkYzhmYzM0NzI1YjJlY2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_68bc3396f7f74044b73324f5fff57018",
+      "statement": "`createDriftInspector` 用 Ajv2020 + ajv-formats 按 JSON Schema 2020-12 语义编译响应 schema，本地 `$ref` 由 AJV 解析、远端引用从不抓取、payload 不被修改、开放 map 保持开放，并把错误映射成 extraneous_field/missing_required/type_mismatch/schema_mismatch 四类带 RFC 6901 pointer 的 `DriftIssue`。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-acceptance/src/runner/driftInspector.spec.ts",
+          "version": "repo-file-v1:sha256:934d374a0c6e749643790a8c663cb19cda7051754b231a1f0265229c01f5e4a3"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/runner/driftInspector.ts#L44-L66",
+          "version": "repo-lines-v1:sha256:7d4d6d44154ad1b2d647264bdc4c170928acb5945d2e2b5f67c4460cece3e3d8:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwMTM2N2RiNmQyZmQ2NDhiMzMxMGY2ODI0NmYyYzQ3ODVmMjhjOWE0YzVjNWJiZGU4NDcwOWQwN2M5OWE1NjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI4YmVlMzk4ZDdlNjA0MDM1MDMxNGQ3N2M3NGEwNTY3MDNmYjVlYzI4ZjgyNDdiYWNmZjQ2MjljNmFjMWQwNjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b8f29cff789b4eb5a348bae4bbc7a117",
+      "statement": "启用漂移检查时 `http.check.schema` 会从官方 check 中取出交给专用 inspector；advisory 只记录 `driftIssues` 不影响 `passed`，`strictDrift` 只把该步 `passed` 置 false，两种模式都不替换或覆盖状态码与 JSONPath 断言结果，非 JSON 响应被记为 `keyword: 'parse'` 的漂移而不中断执行。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-acceptance/README.md",
+          "version": "repo-file-v1:sha256:7d8624f2ef72092b89b9193954cce55d3ffa79cc1d42152cd68de606b04e4ff3"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/runner/acceptanceRunner.spec.ts",
+          "version": "repo-file-v1:sha256:4ae4c1e4d2b33782636130a2088b4fa8783dacea079b0b7ef18267912276e3c4"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/runner/acceptanceRunner.ts#L171-L329",
+          "version": "repo-lines-v1:sha256:03bd55853488305d69f290216d3c1ec66a80bc1056c9ccf07f153749da829368:eyJzZWxlY3RlZExpbmVDb3VudCI6MTU5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxOGUxZjM3ZDJiNTIwY2Y1MWJjNDM0ZDc5MmZkMTdmZWMyNzc5ZGMzMjU0YzNhMDA5YjE4MjcyOWRlYWVlZDc1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyYmQxYjlhYmE0MTk3NDVmMzYzZjM2ZGVjZmEzNGYxNGIxZjBlMGIzNzM3MTVmN2YyMDk0NWFkODg1YTdiMTFiIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_d70f17e354e04260916afa322cfc96f0",
+      "statement": "`selectAcceptanceFlows` 在 regression+baseline 时执行 baseline 的全部 flows，在 DoD+baseline 时只选当前新增或可执行语义指纹不同的 flows（按 flow name 对齐、重名即报错），无 baseline 时只能按 `env.evidenceTags` 里显式的 regression/dod 标签选；filter/tag 始终选完整 flow，指纹规范化 capture 变量与环境值并只剥 schema 节点上的文档注解。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-acceptance/src/runner/suiteSelection.spec.ts",
+          "version": "repo-file-v1:sha256:26bb929f713cf15645ad10c4e9acef83b08045233786e44537f03c86729c8a12"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/runner/suiteSelection.ts#L152-L203",
+          "version": "repo-lines-v1:sha256:9d8816e68d6325ba645d1f71b3f97c1cac73bb67b5722c209d0657fa2cc3c4ca:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc3NjkwNDFiYTFmMDQ0NDFkMjU5ZTVlODNlM2U4NDA4M2RjYzMzODRhYjFjNGZmYmRiMmUxOTk3OWJiMTczYjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEyOWQwNzMyNmRmZmM3NWEzYjk3YWZiNmZkMGVjMDE0NjVhMTRlZjljZjA4NzliZjZkYzhmYzM0NzI1YjJlY2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f468b1ecfd62453e8f6b17e7f2196e62",
+      "statement": "`/projection` 只导出 `projectAcceptanceTests` 与三个投影类型，允许依赖 `evidence-api/delivery` 与 universal 模型引擎，但不得引用 Node 包根、HTTP runner 或 native diff；该边界由浏览器 lint 规则（禁 `node:*` 与受限包根）、`pnpm boundaries:drill` 探针和 runner 的惰性 import 共同保障。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-acceptance/src/projection.ts#L1-L7",
+          "version": "repo-lines-v1:sha256:7dd20792002560e11f405e05eaa699dc896357dbe6efd4281e5f7e85dc468788:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmM2Y2MwNTViZTQzYjkyZTE4NWE2OTk0MzQ3NGNkYTYwZjZiNDY4ZWUyYjBhNjQ1ZmE1ZjY3NmMyMDg3ZGNhZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2NkMmQ1OGE4NTU2Y2Q5ZmE3YzQ1N2MxODBjMDRjYzkzYTQ2YTI1MWIyNmE3NjE5MDZmYjg3ZGMyODIwNTU2ZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/runner/acceptanceRunner.ts#L171-L329",
+          "version": "repo-lines-v1:sha256:03bd55853488305d69f290216d3c1ec66a80bc1056c9ccf07f153749da829368:eyJzZWxlY3RlZExpbmVDb3VudCI6MTU5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxOGUxZjM3ZDJiNTIwY2Y1MWJjNDM0ZDc5MmZkMTdmZWMyNzc5ZGMzMjU0YzNhMDA5YjE4MjcyOWRlYWVlZDc1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyYmQxYjlhYmE0MTk3NDVmMzYzZjM2ZGVjZmEzNGYxNGIxZjBlMGIzNzM3MTVmN2YyMDk0NWFkODg1YTdiMTFiIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        },
+        {
+          "resource": "repo://tools/eslint/browser-platform.mjs",
+          "version": "repo-file-v1:sha256:f2ce737e9dd0594973cec41dbf6b11aa4ae827a6b401708e71214ef17294266d"
+        },
+        {
+          "resource": "repo://tools/workspace-rules/boundary-drill.mjs",
+          "version": "repo-file-v1:sha256:ba5e79dcdcb03ef2b8bd00a9c24d761f81769cd7d3de6a1320f9aee1bc77291a"
+        }
+      ]
+    },
+    {
+      "id": "claim_1a298d7dc34e43b09c8f978fa68811b4",
+      "statement": "桌面 `ScenarioStudioModal` 通过 `/projection` 只做编译预览，报告可生成的步数并提示“尚未运行后端”，不执行 HTTP、不写文件，导出与执行留到交付中心与 CLI。",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/README.md",
+          "version": "repo-file-v1:sha256:058ffe387856bef9d1099ec52732f67b31307d6b17d291630ac9e971d4ed8391"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/scenario/ScenarioStudioModal.tsx",
+          "version": "repo-file-v1:sha256:58bf838146ae887c4d960c665ef91550df4db0c708319be4330743ff3f1233f2"
+        }
+      ]
+    },
+    {
+      "id": "claim_4eeedcd13de34a8a88ae1a5d0b0f738a",
+      "statement": "`--allow-pending` 只在 `--gate dod` 下生效，且不会授予存在 step execution error 或 strict 漂移的运行；它只让 CLI 退出码为 0，报告仍为 `passed: false`，严格 CI 模板禁止该参数，因此 pending DoD 永远不算通过。",
+      "evidence": [
+        {
+          "resource": "repo://apps/cli/src/commands/test.ts",
+          "version": "repo-file-v1:sha256:bf34403041ffc51240f851d302a36b4f1336a3289b192dfff678b0a19ee9dcbb"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/README.md",
+          "version": "repo-file-v1:sha256:7d8624f2ef72092b89b9193954cce55d3ffa79cc1d42152cd68de606b04e4ff3"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/governanceTemplates.spec.ts",
+          "version": "repo-file-v1:sha256:b64546ef87abb10c3bbe5bcf692554b3a9dcd33c38125900cab0ff2738c2db59"
+        }
+      ]
+    },
+    {
+      "id": "claim_c9f00cb2dd034fbc879e0256f096c010",
+      "statement": "验收链路的测试用真实 HTTP server、独立后端进程与官方 runner 覆盖生成套件逐字节稳定、捕获解链、advisory/strict 漂移、超时/跳过与 gate 语义，并通过 `evidence-api/testing` 的 `createAcceptanceModel`/`EXAMPLE_AS_OF` 共享同一批 fixture。",
+      "evidence": [
+        {
+          "resource": "repo://examples/dogfood-backend/README.md",
+          "version": "repo-file-v1:sha256:0cef599a7bc0feca7192ced61943d0e284dd1794f1f48197f3460bba2046eb29"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/acceptance.e2e.spec.ts",
+          "version": "repo-file-v1:sha256:fd42cea9ef1574919e6f3f7d78baa75064ad8ed4822a354d0ed64059dec00530"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/stepCiCompatibility.spec.ts",
+          "version": "repo-file-v1:sha256:ecbc91c0036289283b06ed492d0720ff98304ae097172cb1654a44b1d081f1a8"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/testing/acceptance.ts",
+          "version": "repo-file-v1:sha256:70db5c9bf7e713e535be8ca5df233c6833a44216907cdbbf8132a9e42af6a4e3"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/testing/index.ts",
+          "version": "repo-file-v1:sha256:3539bc3ee31ff89d9c76d236afdfc300670fa6689d2790ce1176f97af592fe28"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-16T23:54:38.352Z"
+  }
+}

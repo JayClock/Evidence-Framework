@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:334250f9a5af248a7918162696ec54c49df5c55493453b86206aa66192780873",
+  "pageVersion": "sha256:e06c2184907ad15b56a526a898cfaf6c627fa520e6dbaa721bc50481ae26dcfc",
   "claims": [
     {
       "id": "claim_93b8ecf8664543a185353872854bd036",
       "statement": "The desktop executable becomes a headless MCP stdio server when started with --mcp-stdio: that mode opens no window, reads no project store and performs no client registration, and only forwards tool calls to a running desktop over the local socket.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/main.ts#L137-L138",
+          "resource": "repo://apps/desktop/src/main/main.ts#L138-L139",
           "version": "repo-lines-v1:sha256:03a42be7aad9cf31e7126f6d67707fcf7150cecd596e9d7ec533b587ac8bf701:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTdmM2UxNDM5MDU4MTg1ZDRjOGNkZTQxMWJiOWI3NTgwZDhhN2QxMzA3ODlkODI3N2YxNGM4NGY2ZjI5MDY1YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmE3N2M4OTA3OTY5NDNkNTYyNDdmMGY1ZTRiZTljYTRkNjI4MGQ5ZTVhNDZhNWQyYTc1NDhkM2UwNzEyNTI0ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjAwNzE0Zjg5NWFlYjYzMDllNjI3MjE4YjAwOGZhYTc0YmRkZDM0YTQzNTU2YjAxYmIwMzg4ZDNiZDk5OTUyMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2JjNmI4OTRkODhkNDMyYjQ5NjliY2UzYmExNjNkYTc5ZGYzMmFhNmUzNzYzOTEyZmE2ZDY0N2I4ZjgxYjViNCJ9"
         },
         {
@@ -50,25 +50,45 @@
     },
     {
       "id": "claim_2ab514563f724d02a28a6c905d1a3bab",
-      "statement": "MCP 注册 13 个工具：9 个只读和 4 个写工具；scenario replay 已移除。",
+      "statement": "MCP 注册 14 个工具：9 个只读，5 个可写——apply_model_patch 加 4 个领域算子（introduce_fulfillment_pair、add_breach_compensation、roleify_and_invert_dependency、isolate_domain_calculator）；写工具的 name 与注解来自 evidence-tools 的 MODEL_TOOL_NAMES 与 MODEL_WRITE_ANNOTATIONS（readOnlyHint false、destructiveHint true、idempotentHint false），scenario replay 已移除。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-mcp/src/server/toolset.ts#L137-L350",
-          "version": "repo-lines-v1:sha256:d7fd4327e34350ffb73993476e7886608045560f3e6641332bf5a53eb11bf4d8:eyJzZWxlY3RlZExpbmVDb3VudCI6MjE0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIwMTc3NWI4ZTA4M2Y1ZjNiM2QyZmQzZTU3MmJhOWU1OTkzYTFiYjQ0ODRhZmMyMGYxYWQ3NjA1Mzk2NDdiMTkxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJiMDJkMmMwZDZkYzVlNzRkOTJmYTE0YjkxZGJlYTI2NDA5MGJlYjM1ZmRiOTE4OGQ5YjM0MTE4MWRjZTlmNGNlIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJjYjFmNDJmNmM4NzZlMjY5MDNjYWM1ZjdlZDJlYjI2YjE2ZmE3OTFhZTEwZWJiMmE3Y2MwMTgxYTJhYjM5MmEyIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI2NzUyNDJkMTA3MThjOWQ5ZmE1MGNmZmRlYjM4N2M3N2MyYmQyNzdkMDhjODJkZWExNThiYWE5MGM3MGJlYzJjIn0"
+          "resource": "repo://libs/evidence-mcp/src/server/mcpServer.spec.ts#L107-L122",
+          "version": "repo-lines-v1:sha256:28c657f2bb4a67aea991fdc80520b9cb2b561f84e076c2d409dec455f4c95903:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5ZmVhN2Y1ODRkYWU0YzhlMDE3YWUyZWMzM2NlMDMyMWE1YThlMDFiMGJiYmQzZTYwZjNhN2NlNDcyYzljMmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg2ZDk5ZDBjMDE3ZTcxODEzZGU3OTRhYzEyNzIwMzdlMjBlMDgyNjAyNzhhZTcyNTc0NmNiMTg5ZDljODU1N2EiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjViZWQ4ZGZlYjkzYjhkNjFkZmIwMWIwYjJlMGZiNTE3NGM3YzdiNmRkMTA3MDU0MzM3ZTJhYTYzNDlkNjMwYTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg1YmZmMDhjNmIwZmMyNTMzOWViYTk3MzQ0OWVmYTBiNDI3MDY5N2JhN2Q0Y2ZkOTM3ZDJjMzAxZjI2YWMzYjMifQ"
         },
         {
-          "resource": "repo://libs/evidence-mcp/src/server/toolset.ts#L65-L79",
-          "version": "repo-lines-v1:sha256:c6363e8c62b83fa223eab28f62d4a8c4630d29f9c87998cf9024fc09a1ecdb5a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmMTcyNzNlNGU2M2I0ZGE4Nzk1N2YwZDJkMDk4ODcwNzE2NjZjMjQyN2Q4YTBkNmVmMDA2MjY4Y2YxMDgxZmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE3NGVlOGE4ZDFhYTg0NTM5MWJjNjc5ZWI3MGNlN2Y0NmEzY2Q2ZmIyZDE2ZmNjYTY3ZmExNzhmNGY4YzFlMGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1M2NiODRjM2Q4MmMxM2U3ZjVjNGUzYTFiOTRhOTQxYjBhNTI0MWEzZDBlMWY4YTM0YTQ0YzEwYzc5YWVhMWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM1ZTBhNzk2NTdlNTQwYTIzMWJjMjU1NmM2YWJlNWE2MTdhZjcwZDIxMzJmNTZlMDRkYTcxMDQxNzdiZWVhMTYifQ"
+          "resource": "repo://libs/evidence-mcp/src/server/toolset.spec.ts#L301-L313",
+          "version": "repo-lines-v1:sha256:a92ea3b03f65228e7f170e89c531121f31b2f521cac9a87f7004d08e9a68acd3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2MGExMDQ2ZDgxMjQ2YjFiM2U3OTE0YTM1OWU0ZWY1OTZhNDU4NGFkYjU1NWYwZWFlZDgyNzNmMjExMzg5MmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ4ZGYyZjZiNDBkNmRlMWExMGZlNTEwYmQzZjUwYzkxNjAxYmI4Y2NiZjNjOWM0YjE5MzAwZDkyZGZlNjJkM2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJiZGJmMmE1NDcxNDIzNWI1N2ViNjg2YjI4NDhjYTk0MjU0YjhmZmE1ZjhkZDIzMjUwZTcyYzIxOTc0ZjE3ZjAifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-mcp/src/server/toolset.ts#L172-L192",
+          "version": "repo-lines-v1:sha256:519e58e2e4902275272f124ac0fff03a7bc06e3f66e317d3266619024a294d9c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUwZDY1Njk1NDU2M2RhZDUzYWIzYmM4ZmYxOGE2MWM0ODU5ZTlhMWM0NDMzNTNjMWJlZjQ5ZWZjYmY3NjZkYWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVmYjA5MDE2YjNiMDdmMzk5Nzg1OTg1NmMxZDkxMzMwYTRkNDFmNTI1ZWExNmZlNzEwNjA3OGU5YzI4YWVhYWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRkZjExMzJiZThjNWM2MGZkMTkzMGI3YTA1NmRhOWUyMmFiOGQ3MDM4Nzg5YTUyZDgxMjgzZjkxOTBmMGFiZTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMzZjFjYTRmNTc5MTY5YzJkYWU3YmFlYjdmYWYwMmNjYTJlNmUwNWMyY2JjMGI2MGRlNTg1OTdjNTQzODhmZDAifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-mcp/src/server/toolset.ts#L49-L64",
+          "version": "repo-lines-v1:sha256:c96e7df7996d1d1fef0a45c870a6985a7a02609c4d6d125872bf75eee502079e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmMTcyNzNlNGU2M2I0ZGE4Nzk1N2YwZDJkMDk4ODcwNzE2NjZjMjQyN2Q4YTBkNmVmMDA2MjY4Y2YxMDgxZmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE3NGVlOGE4ZDFhYTg0NTM5MWJjNjc5ZWI3MGNlN2Y0NmEzY2Q2ZmIyZDE2ZmNjYTY3ZmExNzhmNGY4YzFlMGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1M2NiODRjM2Q4MmMxM2U3ZjVjNGUzYTFiOTRhOTQxYjBhNTI0MWEzZDBlMWY4YTM0YTQ0YzEwYzc5YWVhMWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM1ZTBhNzk2NTdlNTQwYTIzMWJjMjU1NmM2YWJlNWE2MTdhZjcwZDIxMzJmNTZlMDRkYTcxMDQxNzdiZWVhMTYifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-tools/src/index.ts#L20-L38",
+          "version": "repo-lines-v1:sha256:2c387be09b4b97c3ce478e31160111ea881f0185932ff7231f9436e91ad92e9e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI2NzEwYTcwMmQ4YmUyYTg0NjI5NTU5ZjQ1N2Q4NzA3NTM5MzkxMDYwYzkyYzgxMjg2ZWUzZjM5MjNlNGY2NzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc1OWQzNjJmYWZkNTlkMjY5NzZjNWVkNTBhN2U1OTgxNjkyNzVhMThhN2RkOTMzNWMzNWFmMmU3Zjc4M2FkNzgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQyMjQ1YjMyOTg0NDAwZWEyMDNjMzRmOGNkNTUyYWQ4MGI3OWJmYzBkYTc3MWFmMmI5YjBkNjI4Njk0MGZhNWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBkNjgxZDVmYWZmNzU5YmQ0OGQ3Yzk4Y2NiMTM0MTk0M2E5ZjVhNzM3MDlkZGFmMzYyYjU4NjQwMjFjMTBkZTUifQ"
         }
       ]
     },
     {
       "id": "claim_fdd8551ba6d84affaabfc575ddc71886",
-      "statement": "三个 MCP 算子读取实时文档，以 createModelPatch 执行 guarded mutator，再通过 applyModelPatch 提交标准 JSON Patch；构造失败不写入。",
+      "statement": "四个领域算子每次都重读实时文档（includeRules 为 true），用 createModelPatch 执行 guarded mutator，再把生成的标准 JSON Patch 交给 applyModelPatch；构造失败只返回“算子未执行”并不发送任何写入。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-mcp/src/server/toolset.ts#L91-L127",
-          "version": "repo-lines-v1:sha256:31e8cd50e079abe77015a18d390a50f427c23a6d244604d02093a658b7bae64f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU4M2MzYTdmY2U0OWI5ZGI2NzdlZDkwZmM1MGJjOWFjMjgyOGRiZTk1NDgyNjdjODc4ZWJmNzM2ZDQzZWE0MjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlMzNkYzczMWU3ZDA3YjFmMGMwNWNmZWJkN2UxOTIyMDIzZTYwNzdiYzBhZTdiYTMwMTQ4ZjUwODMzYTI1YTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc4Y2U1NGEzZTNmOTk0YmZkZjFlOGY3NjU0N2U5NjY5NjJlMTEwYTdkOGFiNDdhOTI5NDk5MzkxODllMGZmOTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVlZWNhOWFmY2U1ZjIwMzVkOTdjYjgwNGEwNjI4MmE0YTEyMjM5ZWM1YTI0YWJiNmFlZmVlNzAzZTQ4YjhjODIifQ"
+          "resource": "repo://libs/evidence-mcp/src/server/toolset.spec.ts",
+          "version": "repo-file-v1:sha256:4d685d3c6a7baccc6c9f93b625006757058fe70b585b2f3ff770faee36883be8"
+        },
+        {
+          "resource": "repo://libs/evidence-mcp/src/server/toolset.ts#L172-L192",
+          "version": "repo-lines-v1:sha256:519e58e2e4902275272f124ac0fff03a7bc06e3f66e317d3266619024a294d9c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUwZDY1Njk1NDU2M2RhZDUzYWIzYmM4ZmYxOGE2MWM0ODU5ZTlhMWM0NDMzNTNjMWJlZjQ5ZWZjYmY3NjZkYWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVmYjA5MDE2YjNiMDdmMzk5Nzg1OTg1NmMxZDkxMzMwYTRkNDFmNTI1ZWExNmZlNzEwNjA3OGU5YzI4YWVhYWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRkZjExMzJiZThjNWM2MGZkMTkzMGI3YTA1NmRhOWUyMmFiOGQ3MDM4Nzg5YTUyZDgxMjgzZjkxOTBmMGFiZTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMzZjFjYTRmNTc5MTY5YzJkYWU3YmFlYjdmYWYwMmNjYTJlNmUwNWMyY2JjMGI2MGRlNTg1OTdjNTQzODhmZDAifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-tools/src/index.ts#L84-L115",
+          "version": "repo-lines-v1:sha256:d117091bf3875dfac68ac2eb23b4ecbee310473426798fffe398e317c197ebd7:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZGY4N2E0NzMxNmM3MDhjNTUwMjA5OGU5YWY2YzQ0NTM0ZWI4MGJlYWRjZjYwNjMwMjhlZmNhODU5MzdhYmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE2NGUzYzIwM2EwNjM2ZWQ5OTUwYTE3YjhhYzU2YmUwM2IxYWRhZmIxYjQ5NTY5MjhkMjQ2ZTNmMzY2MjRmM2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxNTg2MWZkYTRkMGM5MzFmY2IxMTQyMWQwY2E3ZjQyNzZjODEyZTgzZjM4OGE0ODMyNzIzMmJmOGRmY2MyMWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlhMGFmMDViNjkyOGIzNjk5N2Y1MWE2MDM3ZDI1MmE2YmI0ZTcxMWIyYmFjZmViZDZiOWM0YmRkZmY2NjBmYmEifQ"
         }
       ]
     },
@@ -124,7 +144,7 @@
         },
         {
           "resource": "repo://apps/desktop/src/main/mcpSensorService.ts#L62-L103",
-          "version": "repo-lines-v1:sha256:62c509e564af9578d45e9349fe098ee5d05973d954e535e71ddd8232d53a401f:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJhM2FkNTFmMTQyZGU0NTQ5ZDFlMmFkODU3NzI4OGZiOGIwMDA4OWU1YWZjOTcyYWQ3OTQ4NzhjYjFmM2M0YTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliNjJmNjBkODU5MGE1NzljZjQ2ZjhkNjczNzhjNGM1NzJiOTYyY2VjY2RiOTBjN2E1ZjdiNDJiOTYwNzgyYTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVlMTMyNzQ1ZTNlN2IyZGU2NTI1NTM5NTc1Y2NlNDE3ZmQwZjJhNTVkMjRkZDA1ODNlZjczYjE1NDA3ZDAyOTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBlOGYyNTQxZGQzNGJmMzI4MmVmMDY3Y2UxNjFjMDcyZjRlZmM0YjE3OWViZTllYTkwNmMwNTQ5MzEzMzFkNzUifQ"
+          "version": "repo-lines-v1:sha256:8be2e6b6b05e7ae2f832ad0946161226dbcf87ccc41ca8898a18556b23c9878b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJhM2FkNTFmMTQyZGU0NTQ5ZDFlMmFkODU3NzI4OGZiOGIwMDA4OWU1YWZjOTcyYWQ3OTQ4NzhjYjFmM2M0YTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliNjJmNjBkODU5MGE1NzljZjQ2ZjhkNjczNzhjNGM1NzJiOTYyY2VjY2RiOTBjN2E1ZjdiNDJiOTYwNzgyYTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVlMTMyNzQ1ZTNlN2IyZGU2NTI1NTM5NTc1Y2NlNDE3ZmQwZjJhNTVkMjRkZDA1ODNlZjczYjE1NDA3ZDAyOTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBlOGYyNTQxZGQzNGJmMzI4MmVmMDY3Y2UxNjFjMDcyZjRlZmM0YjE3OWViZTllYTkwNmMwNTQ5MzEzMzFkNzUifQ"
         }
       ]
     },
@@ -189,7 +209,7 @@
       "statement": "Renderer-bound MCP calls go to the first editor window returned by listEditorWindows, which yields Map insertion order rather than focus order; because the capture rectangle and the model reads share that one WebContents, a screenshot cannot depict a different project than the model the agent just read.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/main.ts#L93-L99",
+          "resource": "repo://apps/desktop/src/main/main.ts#L94-L100",
           "version": "repo-lines-v1:sha256:3099c121ff2c17975de531f1e5e88f8768391e6d2a12fa445f53995323a3ec5c:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmY3ZDRjOTg4MjUzZTdjMzJlZTc4MmQ4Y2ZmNWM0MjA5MWFkODQ2NTdmOWFlNWM4MDE3NDhkNTVlYjE3ZTk4MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWYwY2RiOTcyYTdiZmI3ZWQyNDZmOWZmNjcyMzg1ZTU1ZjQ5NjhmYzExMDQzZGM1YjY4NGQ1MWRmYTMxZGJjYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjAyMGQ3NjUwM2UzZjkzOTE4NDNiMWJkYzkyOTJjYTg2MjdmODZmZGU5YWI0ZWVkY2I5MmI1YWMxOWRhYjUxYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWMxYTFlYjBiZjMyYmFjY2NlMDc1MDJhYjYzZThlYTQ3M2Y0MmRlNWQ1NmJjN2VmMjY1YjMyN2RhZTA0ZGM3NyJ9"
         },
         {
@@ -235,16 +255,16 @@
       "statement": "The MCP status surface is McpStatus (listening, endpoint, connections, calls, registeredClients, error), republished on every connection change and served call, pushed to every live window and also pullable on request; the header pill renders it as not started, standby, or connected with the registered client names, and its tooltip shows the socket path and call count.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/main.ts#L108-L117",
-          "version": "repo-lines-v1:sha256:9b282c90db421d37d6f2c5dafc9292e14223edd512a9005834e4856bb1fd779c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2NzdkMmYwMzFlOThiNWU5MTFjNWFkNGZiOWIyMTg2YTkzMjUyMmU4ZjQ2ZWU0MGJhYmZhZTNkYTAwZmMxMjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk0NWE4YjkxY2Y0NDczZGE1ZTM3NGI1ZTA1YWU2OTNiOGI0NTdhOTU2NGRjMjA0YWEwZDAzZjM1ZTFjZmZjMzQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE3ZjY1M2UyZGM1MmRhMmFjOWY3Y2EzN2Q0MjIzZDEzYWEzMmQ0ZTAwOWM0NzI5ZmRmZTllZTUwMmU5ZGI0YjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI1MTcwMTE4NzAxNTgzYmJhOWVhMjBmYTBlODk3Y2YxZDEwZTYwOTMwYmY3NDQ3ZjViMzEyNzdiMzQ1ZDc0YzMifQ"
+          "resource": "repo://apps/desktop/src/main/main.ts#L104-L118",
+          "version": "repo-lines-v1:sha256:9da83009cd3d2137eedd774ef2387ba4124ed02f8f1f858f8797dfdcf3c30bc2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA4ZDJmYzVhMzFjYjFjNWZhZDk2YzNlNTgzNGYwNDFjMzNhMGE0MjY1MjBlZjZhMjE1MTBlOTNhZGUwMTllZDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk0NWE4YjkxY2Y0NDczZGE1ZTM3NGI1ZTA1YWU2OTNiOGI0NTdhOTU2NGRjMjA0YWEwZDAzZjM1ZTFjZmZjMzQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFjMWExZWIwYmYzMmJhY2NjZTA3NTAyYWI2M2U4ZWE0NzNmNDJkZTVkNTZiYzdlZjI2NWIzMjdkYWUwNGRjNzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI1MTcwMTE4NzAxNTgzYmJhOWVhMjBmYTBlODk3Y2YxZDEwZTYwOTMwYmY3NDQ3ZjViMzEyNzdiMzQ1ZDc0YzMifQ"
         },
         {
           "resource": "repo://apps/desktop/src/main/mcpBridgeRuntime.ts#L157-L175",
           "version": "repo-lines-v1:sha256:32f256a5136fb1df5755984ceb986734671c1d053e952397a30fd72a313be9a3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZjZGNmZWEyMTJlZDQ1MjdjNmEzZGM0MmUwZmIwM2ZiYjlkZWZkNTRmMThkMmU0MmRhMGU5MjBjM2M3NzMzMGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5YmJiZDUwZTA1YWQwYWZkOGFiY2QxNDI4MDg0NGQ3MTUxMDNkM2Y1N2RmMWZkOTdhNTEzNDY0MmMxYzMwMDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMwOTljMTQ0NjcwOTgyYWJlMzc5Yjg1YjBmNzU2NTU1MjZhNzhiNWFkY2MxMzk4MGY5NjUwMWU0MTMzNTcxZGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEyZWI3YTFmMDcyZjg4ZjVjYmUwMmU5ZjgwYmNlY2MxNjEzZjAyMTc3NjQxYWRmZWU1MGQ3MGMyNjI2ODAwZjQifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/main/mcpIpcHandlers.ts#L20-L40",
-          "version": "repo-lines-v1:sha256:50fe11ab5c2347c3ca07cc7dd15c9b1053084584945d7bb11207efe444513f35:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQyNGY3NmY1OTRhOWU3MTgzNWNmNDAwMGU1ZjI2Zjc2MWJjOTZkZDljZWY2OWM5M2M0ZDYyY2YzNTc4YTgzMGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRjMzg0OGI2OWJkMDYwZTRhOTliNDFiZWYzMzFkZWEzZDMyODcyMmIyZWRlZjQ2YzkyNjZhNjhiM2ZlNWMzM2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAifQ"
+          "resource": "repo://apps/desktop/src/main/mcpIpcHandlers.ts#L17-L40",
+          "version": "repo-lines-v1:sha256:c04ae59a9deb5eee82f46c94cafa2813fbabee440d046d81142929714b714bcf:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI0MmFkODU5ZTAxM2I0N2Y4YWMyMjJmODgwY2IwNDA0YjYzM2ExYjBkYTFlMTc2NDNhYzIxNDk5OGQ0NWM5YjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEzYzQ5YzlmY2UwOTQ0NWFkNmNhMTcwZjdmZGY3YmRlNGM5YWRjYzVlYzVkOTkwYjExY2E2NWMxMzQ4NDQ3YmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAifQ"
         },
         {
           "resource": "repo://apps/desktop/src/renderer/components/McpStatusPill.spec.tsx#L18-L56",
@@ -252,11 +272,11 @@
         },
         {
           "resource": "repo://apps/desktop/src/renderer/components/McpStatusPill.tsx#L5-L68",
-          "version": "repo-lines-v1:sha256:8afda2cd2a5cdc6f0dfe399c69f2b8c24000ed7fd4fe8bc6d0bdeda6ee881f5b:eyJzZWxlY3RlZExpbmVDb3VudCI6NjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImViMjM3N2YyOGIzMWI5MDY2MzdjYjBmYjE2MmM4OGMyOTYxZDNjOGM0YTA2MTA0MWFmMTc1YTkzMGZlYTVkNzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg1ZjM4YzI1NmU1NWY0MjAzYzhiNjBmZjFmODc1MjRmMTYwYTY0YzJkZDZlMzNkNjc4OWJjMDc1N2YxOGJkNDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAifQ"
+          "version": "repo-lines-v1:sha256:8afda2cd2a5cdc6f0dfe399c69f2b8c24000ed7fd4fe8bc6d0bdeda6ee881f5b:eyJzZWxlY3RlZExpbmVDb3VudCI6NjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImViMjM3N2YyOGIzMWI5MDY2MzdjYjBmYjE2MmM4OGMyOTYxZDNjOGM0YTA2MTA0MWFmMTc1YTkzMGZlYTVkNzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ4MjJhNWFhYjY3ZWFjZTZmOTAyYTVhNjkyNTFmYTE3NjU2ODFjOTZhODBhYjYzZWYzOGYzZGZmMWE1NjliMzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/shared/mcpIpc.ts#L41-L56",
-          "version": "repo-lines-v1:sha256:c6f6afc13c86848efbd7f6a2e5ee5dbc411c6d15c41005c673dd235d6edf58c1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg4Mjc0MDU3ZTk3M2I0NGFhYTA4MTg1Mjc4NDliZTFhZTIwOTI5ZDE2YTBmNmQ0NjdiMWVhYzc1OGFjZjA5MzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBmMzMxZDMzOTMxZGMzOTNjODE0YjQxMzY2MzkxZmQ4NjNiMzc2MGU2MmVlZDg1ZDYzNGI5Nzc1ZGZkYmU1ZTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNiOTQ0NjMyMDM4N2JhOTMzN2M0YjM3MGQ3MjZjNzZhMGI1NjBjMjgzYTQ0ODY1YTM4MWY5ZDNmODY5ZDFlN2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkxMDYzZDk4ODFmMGE3NTU1YmNkYjEzM2NjOGU1M2YzODQxODQzODA3Mjc2ZDdiZjBhZTkwYTQ1NTA5MTNlZjEifQ"
+          "resource": "repo://libs/desktop/contracts/src/mcpIpc.ts#L40-L52",
+          "version": "repo-lines-v1:sha256:c66289a974479d1f51a170f44a3b9b4a8d8fbe64ba825c903b6f3a30a940d7ae:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4ODkzNWNjNzY1M2EzZGIyNmVlMjhiM2QxMmNlMTExOGZmNmRlOGI2MDc2ZTFlNmU2ZTUyNWYxMTBhMDYzYWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ0MjdjNDNkMzdkZjc3ODZlMTQwZTRiNmM5MWU1OTllOTIzMWFhY2I3YzZkNDE0NTk0Mjg5NDdlYjEwNDY1MGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUxNGNiNDZiMTQ4ZThjOTVjZTEyMDQ1MGU5OTA5ZWY1NDA3YjllNjMzMDhhY2QzNzY4OWQxNjg3ZDM0NzgxOGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU4NWMzNDA0NTA4ODk0MmYzNmVhZmI1ZDQwNzA2Mzc2Yzk3MTg2OTMwYzhlNmU5OTQ2MWQ1MDI5MDFjYmYxNTUifQ"
         }
       ]
     },
@@ -265,7 +285,7 @@
       "statement": "The bridge's connections counter is non-zero only while a call is in flight, because the stdio client opens one socket per request and destroys it once the answer arrives; registeredClients lists only the clients whose config sync succeeded.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/main.ts#L117-L123",
+          "resource": "repo://apps/desktop/src/main/main.ts#L118-L124",
           "version": "repo-lines-v1:sha256:5342e3e53fd0bdaecf7093f66f7a8a20a327d042865c46eb79b6fce81cc2dfa6:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTQ1YThiOTFjZjQ0NzNkYTVlMzc0YjVlMDVhZTY5M2I4YjQ1N2E5NTY0ZGMyMDRhYTBkMDNmMzVlMWNmZmMzNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2EzZTQ2Zjk0Mjc2YjZmNmY0ZWQxZjAyYWY3OGJlZjZhMmVlMWM0MzlkZDU1ODRiOTczOTQ4MzEzMjE0ZDJiNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTRjYTI5NThiOWY1MGZmOTlhMDlkYTFmYTQyNjg0NjdkOGZmOTI0ZmQyMTg0ZTM0NjZmYjZiNDY5YjAzY2U5YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWQ3YTdmMjBkNmFlYjFjMmEwNzQzYmMyY2FjZTkyMGYzYWM3NWNlZTg2ODBlZjVhYjE4N2RlZTFkMzllMjkzOCJ9"
         },
         {
@@ -336,7 +356,7 @@
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/main/mcpBridgeRuntime.spec.ts",
-          "version": "repo-file-v1:sha256:7d4a02cbac1ef81a19e11a60392be37be8c4427e595cd14b2a546a6fd6832be9"
+          "version": "repo-file-v1:sha256:97a2a58f370819c1e85115710c15d35b9b79423fa646944bba8e46c442d48b8b"
         },
         {
           "resource": "repo://apps/desktop/src/main/mcpRequestHandler.spec.ts",
@@ -349,14 +369,118 @@
       "statement": "服务端指令要求先读模型、优先算子、其他变更走 RFC 6902 并 test 防过期，禁止直接写源文件，验收使用导出 Step CI/Hurl 而不是回放。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-mcp/src/server/toolset.ts#L354-L355",
+          "resource": "repo://libs/evidence-mcp/src/server/toolset.ts#L259-L260",
           "version": "repo-lines-v1:sha256:b17778a1f9de1a547a408a31f71905a30f1245e2646f9fb132b9001f4112033c:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjExNWVkOWY2NDJjYTkyMjQwMGY4MzkxYWQ0MGQ1YjU1YzQwY2UwZDQ1OWM0YWU5Y2RkNmJkNjI0NWM5MTM0MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDk5NzNmMTQ2NzBmZDgyZDQyYjdmNjI5ZDQyZjFjOGEzNzVhMmJiODZiYWQ2MjYxZjljN2RjNjhhZjZlNTM4OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjc1MjQyZDEwNzE4YzlkOWZhNTBjZmZkZWIzODdjNzdjMmJkMjc3ZDA4YzgyZGVhMTU4YmFhOTBjNzBiZWMyYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_a24835e0dc234e6dba422562d61bda42",
+      "statement": "@evidence-poc/evidence-mcp 只依赖 evidence-schema、evidence-tools 与 MCP SDK，不含建模 Agent 运行时或可视化层；传感器/门禁引擎和漂移审计由桌面宿主在装配 createMcpRequestHandler 时注入，两侧只在主进程相遇。",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/main.ts#L99-L108",
+          "version": "repo-lines-v1:sha256:a9b8ffdc91a3a095b3a9e5128a6840cf774d91416975456de547c05cdb99170b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5ZjY0MGJlOGZhMjE5ZGFkZDYxZjM4NGE1YzlkNTU3YTE0YTNhMjU1ZjljNDZmZTM3ZDQzOWFmYzg5ZjYwZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxODVjMmQ0Y2Y1MzJhZjRiMjBjYjAzNDkyOTA4MDRhOGY2MTRmZGZiYjA4YzQ1ZmJkZmYyOGY5ZTQ5YzFiMzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEwZTY4ZmZiMTJhZmY5NDczMWNlNmUyZmYxOGRkZDIzNThlMjU1NDIzODhhODk0OTFiODI5MzU5NTQ1MTFmNDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg0MjdiZDEwMmY1MTgyOTAzNmM0YzQ5MTQ3YzY1MmJmYzg0ZWQ5OTgzMWE5Zjk4NjllNTZmYWE0ZTAxZWVlYzUifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/mcpRequestHandler.ts#L36-L53",
+          "version": "repo-lines-v1:sha256:966daffcd638c95f4ae4a2a0d00cc21d1ff9c80080a814e957bbb9baba026f38:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJkYmZhYmEwNmE4YWM0NjU1ODY4NmUzNjkwMTFlMDU0MzUwNmJhMWU3ZDA3Yzc1NzdhZjdhYTdjNmFhNzExMjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5ZGFmOTE0Yjg3MmE2ZDM1ODBhMDRhNjA4OTU1MTJiMzE1Y2UyNGNlZTBjMmIzZDRkZmYxNzY1MThlOGYyNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUwNzg0NWUwYjJjZGFmYjZlMjJmODIxY2JlNzQ5YWE2ZTE5N2Q5ZDNhNDViODEzNTA3YWRjMTJkYjg3MjU3OTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU2ZTE0ZjNlNzY5ZWY5MjlmOWRkYThmNjEzMzQxYjlmYTM2NWQ3MTIwY2U4MWI0Y2NlMDI0NjI2Yzc3OWRmMmQifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-mcp/package.json#L31-L37",
+          "version": "repo-lines-v1:sha256:b009ddd90d1d38e5330fc081ac2469a133ede1eb52c19be51e45d33d54a4da4f:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWRkMjQ0NTgyYjZmYjAzZDIzYjg0MTVhYmVjZDM0NmIwYzlmNDY2YjZmNzUyYjA2ODE4OWNlN2U5YTJkYzM1MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjEyNWEwMjYwYTcxNmRmY2JjZDQwYjVmNWE4MDUxMDRlMjcwODA2NTYzYmI3ZmEyYmZkMTBiNmNiZGNjMzM5MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzUzZjMwZmVkOTczNWRlNmIzMTNlYjRmOGYzZWU3ZWRkNDYxMzg3MDFjNDU5NDY0MTUxMTJkMjNiNTE5ZTUyYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjEzNzBhMDBhNzVmMThiMWIwYjRlOWZiOGEyZDU2YzhmMjU5ZmJkMDdkZWUxNjliNTA2YWJjYTEzY2Q1ODU4NyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_ad240adc9ad04c21b20a4e1eac5f3bcc",
+      "statement": "每个 MCP 工具在执行前都用实际 Zod schema 解析输入（defineTool 或 evidence-tools 的 define），非算子 schema 为 strict，因此畸形字段、未知键、空 patches 与非法 target 在到达任何模型访问之前就被拒绝。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-mcp/src/server/mcpServer.spec.ts#L124-L158",
+          "version": "repo-lines-v1:sha256:e3d1bf43e2d14d6c4a57bae1abb2c7001efa4ee6e80491907ca1ef526d73e305:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkZWRhZmZmOTJiY2Y4YzViODA3MWYwMGZjZDg0M2Q3NDk3ODJmZGUxZGYxM2M0Yzk5ODBlNzlhMDkwZjU0ZmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVjMzU4MjQ0ODE1YWFhZDQxYTg4ODFmZmM4MzQ3NmFkYjFmOGM3MmNmOWMyZjM4ZDg3ODY5ZDFiMmE0YjQ4NzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJmYTNiYWMxZjA5M2RmN2ZkMzVjMGU2YWZiYWNjNDVmOTVmZTliMjE1NWNkOWNhYzE3YzI5MDAzNzIzZWI0OTMifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-mcp/src/server/toolset.spec.ts#L108-L167",
+          "version": "repo-lines-v1:sha256:77c74ea45c175ccb4b2e711a782efaf6727bd49c756d84e65d88b05f4090d052:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQzZDczMmY0MTNlZmEwZTI5OTM5YjU3MzFlNWE2ZDM1MWM0MDA2ZDk4ZjZiMjA4MGVmZTNiNjc5NjdmZjM2NWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEyZDlmMTRhMTNiMDQ5YjhjZjcwN2FhZWZmNGJmZTEzYzJmNjBmMzI3ZGZjNmUxNjJmMTY1NGMyODg5YTA1OTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMyZjAzNjQ3ZDBhY2Y2MmYzNDYxYzUyYTBhYzQwYTc2MGQ1N2JiYTQ4N2VjZjM4YjE4OGMzMjA0ZDQwM2JkMTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM4MDA4NjlhOGQxMDUzOTZmZTRlYTZkMTUwZGQ1ZWRkZWVhYjE2MTQwODNmZjc3OWRmM2U4YTc1Y2FlYzBhNmYifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-mcp/src/server/toolset.ts#L37-L47",
+          "version": "repo-lines-v1:sha256:68f5f3a25f49ab3d6884f8639662d567e440bebe30291f832375642e6f310dac:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNhYWVjNzEwMDkxY2E0YTQyNTA1N2FmZjUyM2ZmZmM2ZTVmMmEwYTk2Y2E3MmEyNzk2NTFiM2RiNzIyMzRmM2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYzODhjNmY3NmUxNDhhYzliOTg1ZDhhM2E2MGZkOTdlNGZiZjhmNTBkOTVjMWJjMWE0ODU4MDZmMzZlOGZlODEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e2107a25b49a425d8793aa09cc130809",
+      "statement": "createEvidenceMcpServer 只做协议装配：逐个 registerTool 并包一层 try/catch，把工具异常转成 isError 的 CallToolResult（content 为 { error: { message } }），因此单个工具失败不会中断 MCP 会话。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-mcp/src/server/mcpServer.ts#L30-L76",
+          "version": "repo-lines-v1:sha256:547c36068c0a5020a24795ee928a0e0a985dc485d4c2d7748fda4135ff6713ad:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJhODJlZTU4ZjEyMjVmMmFmNzIyZDc4NjQ4ZDA4ZWI0ZjQ5MTQzZjFhM2JkNWI4MGViYTViN2Q5NWE0YWUwNTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZiMjEwMjgzOWE4ODdiMzU1NDM3YTg0Mjg4ZDE2NmFlYjIxYWZkNTBiOGQyOWE4YzllNjZiNWI4YTRiNDhhOTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e9dec41f6c664e8792efd82cbacbfb73",
+      "statement": "主进程与 renderer 之间只用四个 IPC 通道（request、response、capture-mode、status，定义在 libs/desktop/contracts/src/mcpIpc.ts）；renderer 可回答的方法被收窄为 get_app_state、get_domain_model、get_selected_entity、apply_model_patch 和只提供几何的 get_capture_rect，收到未知方法时 useMcpBridge 返回 INTERNAL_ERROR。",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/mcpIpcHandlers.ts#L17-L40",
+          "version": "repo-lines-v1:sha256:c04ae59a9deb5eee82f46c94cafa2813fbabee440d046d81142929714b714bcf:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI0MmFkODU5ZTAxM2I0N2Y4YWMyMjJmODgwY2IwNDA0YjYzM2ExYjBkYTFlMTc2NDNhYzIxNDk5OGQ0NWM5YjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEzYzQ5YzlmY2UwOTQ0NWFkNmNhMTcwZjdmZGY3YmRlNGM5YWRjYzVlYzVkOTkwYjExY2E2NWMxMzQ4NDQ3YmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/state/useMcpBridge.ts#L221-L300",
+          "version": "repo-lines-v1:sha256:01d25569954fb00301958b999e9f4bb6bff696f656cbed0e7ed7c80b4e329dd9:eyJzZWxlY3RlZExpbmVDb3VudCI6ODAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM2ODlkMDRkYmU5OTIyMjE1MDZiMzdhNzkxNjc5ZTAyYWJhZDI3NGRiYzUzOWEzMjAxM2ZjMWQ1Nzk0ODI3ZGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZmMWE3M2VkYTI1OWYzYTdjMDU2MzBlNWNlYzE4MWVkNzcwYmU3ZTkzNmU3YzlkYThhYjhiZTI5ZGUyNWViOWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEzZjhiZjVkMzhhMDM0ODdjZjU2MzA2ZjZmYmE3YWM4MjIxZjljMWMyN2FlYmM2YzBmODVlZjVhZTA5ZGI5YmQifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/contracts/src/mcpIpc.ts#L1-L36",
+          "version": "repo-lines-v1:sha256:b0f2c38f809462a93a96cdc21199b799115f660ef5f372b3ef3021eccf7de09e:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmNTQxM2M3YmQ4MWU4YjQ3MTVlZmRlNWMwY2RiNWI2ODExYjIzMjllYzZlZGMxOWY0N2RiYTJkNjVlZmVmNzYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUxNGNiNDZiMTQ4ZThjOTVjZTEyMDQ1MGU5OTA5ZWY1NDA3YjllNjMzMDhhY2QzNzY4OWQxNjg3ZDM0NzgxOGQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_19c051ca9d524e7f9985cfc0959b5204",
+      "statement": "`--mcp-stdio` 启动时优先使用环境变量 EVIDENCE_MCP_ENDPOINT，缺失时用同一 userData 推导端点；stdio 服务启动失败写 stderr 后 exit(1)，否则运行到 stdin 结束才关闭 server。",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/main.ts#L35-L60",
+          "version": "repo-lines-v1:sha256:53d3e19492fa526c1610f5cd7fa49879a2ee7224d110ae761ad9a1c026323941:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiOGY4NTU1YWNhZWRlZWIxMDk4NDc4ZWI2NjBmYjNmNGIyZDc0YzdmMzYyMWZlZGI0MWU1MGY1OGQ0ZjEzYTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY1M2YxNTUwMzQ1ZGNhMGM1YjY2ZDE0NWFkNTk0NDBlNjJjNWJmYzg5NGIwMDY3YTZhYjc2YzMyNjFiZGFjODQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMyOTYyY2MzYmUzODkyNTE4MTkxMzZlYzNhZGIxZmNhMzg5ZDhjZWM1YmYxODYxZTQ1NmQ0NDgzY2NiODNhZTMifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-mcp/src/cli.ts#L8-L27",
+          "version": "repo-lines-v1:sha256:bbc4554b9e1e90232819bd1812e9ff9d349eb41f708366c352f9e91c9ed31d23:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM4ZTQ1NDdkOWJkZGNmOTFlZmUzNmM0ZDg1ODBiYTE0MmM0Yjg4N2IwNjk5MmFjMzQ3ZDRmNTYwOGUxNTEyOTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNiMDUwOTc5ZTIwNTNjYjI1ZGRlM2I1ODQ4NGQyMDI0ZjQwMTE0NGU0YzY2NzNiZDgyZjdiNWI2ZTFiMWNhOWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE1MjhkMTZmYWZmNjQxM2RmZDljMDMzNDFjMzVlYzllNGI4ZWY1YjllN2E0Y2RjMzg4NTY0Y2VhYzIyYjZhZjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a3aaaa6ebc44474c9c93f584ddc88caf",
+      "statement": "三个审计后端的模型路径入参不一致：传感器与漂移直接传 modelSourceOf(projectRoot)，bundle 项目因此把 *.evidence.json 文件交给原生传感器，而后者拒绝以 .evidence.json 结尾的 root，结果是台账 unavailable、门禁失败；交付服务先 projectDirectoryOf 再拼 .evidence/fm，因此能读到 bundle 旁边的目录。",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/mcpDeliveryService.ts#L60-L75",
+          "version": "repo-lines-v1:sha256:cb5bb7f8727941b239fba4ccb6faebd16e3434385c55c2c694f0fc9e6ade6818:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzODJmMmUyOWY0OTk5NTc1NGIwNzczMmY4NDAxYmI0Y2JhMzdhMDEzNDMzZGJhMzI5ODZhZDczZTAzMTllOGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/mcpDriftService.ts#L40-L50",
+          "version": "repo-lines-v1:sha256:788966d81926054542d1f26467a8e9b6a4bc14a7680964f02f84e59d16719a7f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYyZGM4YTU1YTkxZmExMTIwNjliMjE1YjU5MDJkMWM4N2FlZmUzMDMxZTBiNGE0ZjZmZDgwZTIxZGI1YTQyM2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlmMWFkYjY5OGM3MzhjNDNhZGIyNDhiNjY3NTkwZTUyMDBhZGI4YjhiMTQ0YmM4MmE3OGZhZjMzZWU0MTNhYTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUyM2NkM2ExNTM2YTdlZTU1MWU4NDRiZjYxNWQyMDNmMjc4YjMyM2YzOTI5YTdlOWU0NmMyYTJkM2JjYWI5ZGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMxNTI0ODUyM2U2MDI1NzE4NTEyYWMzNWY4NWFlMDExYmVmOTk4NzE0OGVjMmJkZDI0ZmI4ZjBjNDI2NjRhYzIifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/mcpSensorService.ts#L63-L79",
+          "version": "repo-lines-v1:sha256:99d904dc897552278a3517c84656838325538e5cd75fe6476df300322cd131e7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5YTdlNjUwNDc0YWVmNGU5Zjg1MDI0MGY5MzgzMzkwNzNiMWRjOTQxNTg2OTI0NmM5YWM5NmQ3ODdkZDY0ZDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVlMjkxZWEyZTJhZWUwYjI1M2U2YmM3ZDE3NjVjN2FmNzk5N2FlYmZkZGM5OTE1ZDY2YjE4NTlkMjM3NGQwYjQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIyNGQ1OTcyZjcxYTc4OGQ0NmIxNzZhMzZjNDhjYjk3ODRlNjU5MGMxYWNmMTUwM2Q2NDMyNzFmMWMxOGQ5MmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEyMGU1Y2Y1OTkwYzQ0YzdjMThhZmU5N2JjYjhmN2U3YTAzZmM1MzhlNjVkZjdmZGJmMDIxNWIxMDYwNWNjZjQifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/modelSource.ts#L11-L24",
+          "version": "repo-lines-v1:sha256:9518c798ea4a1e2814d1b9b837b5e133265128150cc702dfaf337eab68de0cfb:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZkYzE4YjFjYTBlYThkMjA1NDdmNjllMmU3OWVlYzE1NGQ1ZTlkNDk0ZTgzZjVkZDNkM2RiYTY3M2NiODVlMGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxMzk4MjgwNmE4OGI1ZWMyZWI4YjY0YWI1ZDNjY2ZjZTk1MGE2YzMyNzIxODk1MDI5OThlNWM0Mjc0YTQ5NGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhmYjQ0ODUyNTlmNGUyNTExNjhjODY1OGQ2NzYxOWZkYjg0ODUwN2EzNTg3NTk0MmQzMzkzZGU3OTcyNzI5NTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent/src/sensors/native/modelSources.ts#L36-L44",
+          "version": "repo-lines-v1:sha256:be9eafa0b8e5fa2cde6b0a038e54559e51c388d0291e56feb1fc34a2639aabc2:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODRlNDIwOGNkNmZmYjhjNGEzNTQ3YjJmNTRhZGExOTk3OGMzZjM2NWU3OGY5NTAyZWY1MTQ1Y2RkMmFhODU0MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjc1NTYxYTYxZDZjY2JiMGY4ZDZhZWU4OGMxZDAxODhjODNlZjJjMDMzNGIxN2IzYTBlMDc4ZTAxZGM5OWY1ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiY2YzNDRlYzUwNWRjM2E0ZTQ2MjY5ZmVjOWQ3NTdlYWJmYmE0ZWZlZDlhZTA4NmFmNTkwZDAyYmM1N2NlZTc5ZCJ9"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-15T14:07:58.904Z"
+    "at": "2026-11-16T23:54:38.352Z"
   }
 }

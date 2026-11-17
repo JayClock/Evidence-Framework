@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:eb2c79611b34977c23c58af7d1eafb8741dfa9aa4d7d2b9eb39dbf0a0b8b3747",
+  "pageVersion": "sha256:746128ccd02127aa6fdba1f137ee3a6185312ccd2c09d61c4f1be8421dd7f6f1",
   "claims": [
     {
       "id": "claim_5a482b78f8f34865acfedfb1f251ddba",
@@ -158,25 +158,33 @@
     },
     {
       "id": "claim_60b53ec8358e4fe082471f7c8ab39c96",
-      "statement": "模型契约比较对最终 OpenAPI 使用异步原生 oasdiff，拒绝 modelId 不同或错误投影，返回双摘要、changes/changelog/details，以 level>=2 为 breaking。",
+      "statement": "`compareContracts` 对最终 OpenAPI 使用异步原生 oasdiff，拒绝 modelId 不同、error diagnostics 或非法契约，返回双模型摘要以及 changes/changelog/details，以 level>=2 为 breaking，details 保留含文档与扩展改动的完整 diff。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-api/src/diff/compareContracts.ts",
-          "version": "repo-file-v1:sha256:f569533ee15f04059daebea44da923eadb5e6cc0b6528a0d9579a4d5fb51c48b"
+          "resource": "repo://libs/evidence-acceptance/src/diff/compareContracts.ts#L8-L31",
+          "version": "repo-lines-v1:sha256:e83c8d1404ca6dee4aba4c97e41b52c75e8e9110e0eb6bb96c67058e8828adb6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ0ZDVhNDM1MzZjMDgwMTMyMzJhNmE3MWYxMzcxN2E0YWI0NTg1NDE3ZGViODg1MWEzYjY1N2UwOWQ2MGY1ZjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY5MjhjMWZiMzEzYTEwMzc1YzI3MWNkM2Q5ZDViYWQyZDUzNDA5OTdlOTMxYmQ0MWEyMmU4ZWYzYmU5Y2U5YTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         },
         {
-          "resource": "repo://libs/evidence-api/src/diff/oasdiffRunner.ts#L122-L168",
-          "version": "repo-lines-v1:sha256:a54ab5ae824182bd7e3c95f6d65bc1178c38841724ffe54346e3dd87471e5455:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJjNzk1YmI1M2I3MDI0MTcyMWNhN2EwZGJkYTExZGQ5NDMyMGZmZDFlNTBjOTlkMmNjOGE0ODA1YTZlMzgwMjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+          "resource": "repo://libs/evidence-acceptance/src/diff/oasdiffRunner.ts#L123-L168",
+          "version": "repo-lines-v1:sha256:e62147ac4226c388e73868d47270b38ee3554c845e22472286ddb44c4f043de7:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5NjdkOWVjNTIxY2IwYjkxMzMyOTgzMTc0Mjk5MGY0MmJhN2Y4YTQzY2RmOTQ3ZjdiMmM1OThhMDY0NzA0YmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3ZDg2MzJlNTRlOTI5OGFiYjk1ODcyN2UyZDUxNDA4YWJhZjEzNjYwMzUzNzkxMDE0MGFiZjY1YjMwYWI2MTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
         }
       ]
     },
     {
       "id": "claim_fede28319cd2440593e2301f785af7b1",
-      "statement": "diff 输出原生 JSON/Markdown，0 无 breaking、1 breaking、2 输入/工具失败，比较不写输出目录。",
+      "statement": "`evidence diff` / 库层 `runDiff` 输出原生 Markdown 或 JSON，退出码 0 无 breaking、1 breaking、2 输入或工具失败；比较只读、拒绝 `--out`；一等 `evidence diff` 命令把非 0 收敛为 1。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-api/src/commands.ts#L230-L295",
-          "version": "repo-lines-v1:sha256:0fa882925348d12b6f4cde4d33b556f070567799075f76ddc549bb9cd7cc2e40:eyJzZWxlY3RlZExpbmVDb3VudCI6NjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI1YTFjYTg5ZjFiNzk4YmU0MTg3YzNmMjlhZjI1OTNkYzdlNGU0NmZlMTZkZGU4YmU4MWYzNzFlMjI3OWZhMzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5NjJlNTg2NGIwZWFkMTE2NGYyMGEyMjA3ZGJkNjk5ODc0ZTFmN2NjMDEyNDdkZDFlNWRlNGQzNGJhNWFkZDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRlMjU3MGM4MWZiY2E2YmY0MGQ3ZDdlYjU2ODFlZjgzOTcwYmVkMDZhY2YxMjI1ZjIwMWM5MDc2MmM4NjlkZTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY5NThkMjg4OTE1ZDJhOGQxNzA2MjlhYjUyYzI5NTNkNzJiMGI0Y2E3NjkyMjk0Y2FmNGVjNDA0YjIxZjFlMjAifQ"
+          "resource": "repo://apps/cli/src/commands/diff.ts#L9-L31",
+          "version": "repo-lines-v1:sha256:1fe23024f82a3e35843038384c7dc45d53cd576d2b66e8ddfd2a47c96b237689:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY5NjFmZjMwM2RlZTMwOGVlZDkyYWRmNmJhYmZhYmQ3ODgyZjYyNDczN2E3OTc4MDc2ZGI2NzBlNzJkMmEyY2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUyYmJmMjgwZDQ2ZjcyMDUzMDI1YTEyOGFiNGRmMWQxYjI5OTU2MWU4ODJmZmE0NmI4YmVhNzEzNzAwMGM0MTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/commands.ts#L234-L302",
+          "version": "repo-lines-v1:sha256:2de60e87fd198db6bf2fec6af24035c0e1484f65fe19620fc29d4bdfc3d1c5b9:eyJzZWxlY3RlZExpbmVDb3VudCI6NjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI1YTFjYTg5ZjFiNzk4YmU0MTg3YzNmMjlhZjI1OTNkYzdlNGU0NmZlMTZkZGU4YmU4MWYzNzFlMjI3OWZhMzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRlMjU3MGM4MWZiY2E2YmY0MGQ3ZDdlYjU2ODFlZjgzOTcwYmVkMDZhY2YxMjI1ZjIwMWM5MDc2MmM4NjlkZTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMwNjZkNDYzMDc3ODIxZTI5MjhlNWVkZDQ1MjgxZWQ0NzVkYWRhMDBlNGYzYTEwZmU3OWQxNDVjZmQwMThmZGMifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/diff/cliDiff.spec.ts#L9-L71",
+          "version": "repo-lines-v1:sha256:72600a6f6bce504e3cdda4fe4e75fcd6ea126ac478e22d5db645e359caa1a24d:eyJzZWxlY3RlZExpbmVDb3VudCI6NjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhNWUwZjcyMGFhYmI3Yjg4NzVlZmQyZDJlNTZlODI4MzE3MjI2ODM4YTk3NmFlZTI0OWJmODMxNDBlNDk2ZmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJmODZlM2U4MWNlNWU2NDdmMGNmMjc1YzkxMGQwODU1MTRiNDk0ZDA1YzAyNTZjODEwZTY3MmY2ZTc0NjlmZDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE5OGUwZWJlYTY2OWZmZTU2MDBmZWE3MzI3NGEwYTQ1ODJlMWUyZmMzZmQ5ZWJkOTBlMDA1YzlhNzI4ZmM1NzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhYTYzYTgzZTgxZGRkOGM5ZmMwNjE2YTc4MzY4NWJjZjRiMmUzNzRkODM5MmMxMTRmM2RhZjQ0NDY0YzFlNjUifQ"
         }
       ]
     },
@@ -219,26 +227,26 @@
       "statement": "One `useDeliveryHub` subscription debounces document changes by 150 ms, drops replies from superseded revisions, keeps the editor-open document as the baseline across undo, redo and save, marks the preview stale and blocks export while recomputing, and exports only the accepted preview together with its model digest.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useDeliveryHub.spec.tsx#L42-L103",
-          "version": "repo-lines-v1:sha256:dfa0d6d137b021b2d2178a60d8c19024e82b7a080ff18d8c64ce93c85586e5d1:eyJzZWxlY3RlZExpbmVDb3VudCI6NjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxMTRiMGE5NmY5MzNmNTZmODk5ZDkzNjEyZmY5YjQ3M2Q1OWZiODlkYWJiOTI3YmY5YjAzNmQwNTZjZGUzODUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgxNWZlMDM3M2EwNzdiZDkyNDJhMjNhNTIyYjM2MThlZTczMmZkNmNmZmFiN2U3NjMyYjJiOWYzNjc1MzRkYmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUwYWJmMWUzOTFlZDlhNWVhNzM1MGY4YzE1MGFkNGZlM2YwNzI5OTA2MWRjZjc3MDZjOGRmNzFkZWY2MGM3YjcifQ"
+          "resource": "repo://libs/desktop/feature-delivery/src/state/useDeliveryHub.spec.tsx#L42-L103",
+          "version": "repo-lines-v1:sha256:494c319d017a743651842156c59e3e5df741b126be983c9b872509db34d12d3c:eyJzZWxlY3RlZExpbmVDb3VudCI6NjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI5Njk3N2VkNjUxZGJjNjMwNmFhY2EwMDBhZThlMDkzNWYzZTdlZTA0ZTdkOWQ3MTc0YWIyYTA5NmU2NjJmZGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI0YzFlMWQ5NzQ0ODNiOGIwZWQ3N2MyOTViMWU3MzZiYWMzZTM3NjhkYzMwOGNiZDUxMmM5Y2I1MzNkNzc4YjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM0NDBkMDliY2ZjZTAwZGQ4YjQwNTE1NTUxODg1ZjVjNmE4NzZiMmMxNTdlZmQxMDQzNGFhYjkyZmZkZWQzMjYifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useDeliveryHub.ts#L45-L152",
-          "version": "repo-lines-v1:sha256:b19a9ea817ab3c18c31cf114eddf789530e4e76467f47ed6c760820204767643:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJiYmZkNmY2ODZmOThiMzQ4Mzc3MGE5ZTEzZWNmNWRiZTM2ZWU5NDBjMGY0YTBkMDU1OTcwYmYwZmYyYWEzN2ZlIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI5MTc4ODgxYTUwNGEwYTM0NzJiYjVlMGIxMjg3ZjkxYjc2MGQ1OTkxNWY0NmE2Yjg3MjNjNjQ2YTE3MWIxNjY2IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+          "resource": "repo://libs/desktop/feature-delivery/src/state/useDeliveryHub.ts#L45-L152",
+          "version": "repo-lines-v1:sha256:893cfbcb3a57be52a041758494ed0017b401cdb876975e3f4509092412e08677:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI3NzNkMjgwZmEyNmM0OWU4NTJkMzQyNzYyMzg2MzE2NGE1NTlmNDliYzcxNGFmMjQyMTc0OTA4OWUwMWYwOTY2IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJiNmYwMmRmNjRhMWEyYTBlMjU4ZDhiYjY2ZmRlNjkzOTFhMDg3NWM1OTAxMjUxOWRhZTg4NmEyOWI1MTc4ZDFmIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3MjEyOWMyNzM1MmI0OTU1NDhiMDcxYWUzNGFiOTA4MTE3Mjg3MzQyOGY2Zjg3ZjU0YjU4MGU1MTUzYzlhYTAyIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJjMDRiYTIzZjZiYjYxZWE4MGU5NTcxODIxMmVjZThmMzc0MDExODdmNDc2NmUwNDQ4YTFiMTQyZTFjZDlkMjkwIn0"
         }
       ]
     },
     {
       "id": "claim_1e68d04deabb4989950b04aff1c17cf3",
-      "statement": "DeliveryHub 分全览与增量页面，展示边界/路由和原生 oasdiff changes/changelog、双摘要、coverage 与警告，不使用旧字段 shifted taxonomy。",
+      "statement": "DeliveryHub 分契约全览与本次增量变更 tab，展示服务/链接/路由和原生 oasdiff changes/changelog、双摘要、coverage、定位与未授权发布警告，不展示旧字段 shifted taxonomy。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/components/delivery/DeliveryHub.tsx",
-          "version": "repo-file-v1:sha256:d0dea046cd0817846ec11584eabff19cdc54825d8386a64d8350053977933362"
+          "resource": "repo://libs/desktop/feature-delivery/src/components/delivery/DeliveryHub.tsx#L30-L283",
+          "version": "repo-lines-v1:sha256:086059ab69c71b968ce97e5d280548d5d78783953abe0668dd62a40239797578:eyJzZWxlY3RlZExpbmVDb3VudCI6MjU0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxOGFjY2JkNzNjYTllN2Q1M2JiOTJhZjk1MjY4YmFkNWZiOTU3ZTQzNjBjMTMyNmY1ZmU4MzlkNjA1MjVkNDJhIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJmN2ZhNGRkNjdiMDhlZTI1MTk2YmU1OWRmMjA5ZWZlYmVjOGJmMzVkZjdlZjgzZWM4YWUyNGU5ODBkYWNkOGU0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/components/delivery/IncrementalDiffPanel.tsx",
-          "version": "repo-file-v1:sha256:f24c517db10fef99a22cacce0fc0f8142b9e37e799e052c962f631af9b33f46e"
+          "resource": "repo://libs/desktop/feature-delivery/src/components/delivery/IncrementalDiffPanel.tsx#L1-L116",
+          "version": "repo-lines-v1:sha256:e58d1cfbb8b9a53cf6b4c91c0a6a80b3a9a0b179f79bb16c2048a30a22854afe:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI3ZDBmOWEzNzQ4YjkzMTRiODFiZWUxMzlhODI4ZDUwMGNlZTBlNGMzYjMzNzkxNDUwYmYxNzAzZmY3OTJmZTZlIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MCwicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
         }
       ]
     },
@@ -247,32 +255,118 @@
       "statement": "API error diagnostics 为 block，breaking 在 draft 为 warn、release 为 block，草稿可审查不等于可发布。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-agent/src/sensors/native/nativeApiSensor.ts#L63-L78",
+          "resource": "repo://libs/evidence-agent/src/sensors/native/nativeApiSensor.ts#L65-L80",
           "version": "repo-lines-v1:sha256:f47d2ebb75d65e1ef97937e26eaa47d00fd20345aed23337ec24072c92716d98:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlMzhkNjJiYjViZjg0YWM4MDQxM2VjMjU0NzQ5MzExYjY2NTc2MGEzZmVjZTJhZDUzZWMxZDRjYmQzODIyMzUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkzZDk4NWM4YTBjMDdiMDExZWRkYmMzZWM0YWJkZTExNjI0NmNmNjBlMGMxYTlhYzY5MDJjMzVkNWJhNjg2YmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAyODUyYjg2YWM2ZTMwN2E1OGZmOTRjMzM2YzU3YmYzNTUwZGJjMDIxNjg4M2VlYTQ4ODg0NWExNDkxNWM5YTYifQ"
         }
       ]
     },
     {
       "id": "claim_1bee82d9bee44b17b1bc8045d8b107b3",
-      "statement": "live bindings 经 provider 供画布，MCP topology/OpenAPI 则从 saved readDelivery 读取相同领域边界。",
+      "statement": "live bindings 经 LiveApiProvider 供画布，inspector 用浏览器安全 `fieldFor` 显示字段来源；MCP 的 topology/OpenAPI 工具从 saved `readDelivery` 读取相同边界且只读。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/mcpDeliveryService.ts",
-          "version": "repo-file-v1:sha256:c53b75aa7c65bf507e6e9292bbdcf7c304c4c51345f94d4abaeabf9a3f085c8d"
+          "resource": "repo://apps/desktop/src/main/mcpDeliveryService.ts#L6-L75",
+          "version": "repo-lines-v1:sha256:640ac2bafc9fdb7f769a95d974120ea0d46432db6b70e1b39f0befd4244d60d1:eyJzZWxlY3RlZExpbmVDb3VudCI6NzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE5YTg2YzgxNTg5ZTdjN2JhNTY0YjM1Y2U5YjRhZjc1YTVjZmUzMmI2ZDk1MGMxMTU1MzU3ZjAzNTk0ODU3YjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         },
         {
-          "resource": "repo://libs/desktop/feature-canvas/src/LiveApiContext.tsx",
-          "version": "repo-file-v1:sha256:2de6bb448970d7d41005581ac7e0cecf6e20f82183522227b9a66d40f0b0c31e"
+          "resource": "repo://libs/desktop/feature-canvas/src/LiveApiContext.tsx#L38-L58",
+          "version": "repo-lines-v1:sha256:da0942d315ca8fee9906688744cd5db9d0e36fe19e3e4915329ee39eb9257693:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyMWZjNzkwYzM2Y2RmYTJmYWIwNTFhZGRlZjUzMjQ0NDU2MWFjZDkyMGUxMmY4ODFjZTk0NWU2YzQ1MTJhNjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3OGE4M2RhZjRjOWI2N2RhMTViOWIzNjNmYjdjOTVhOGU5YzNlYjgzNmVmZDZmMjE4MDc2MzFjN2IyMmIzYjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIzMTczZWJlZGExYjU4NGZhYmE5YjE4MGQ0NzQ5NzBiOGM2OTI4MzI3MjZiZjM5ODY5ZDRjYzVhM2YwYmRhMTAifQ"
         },
         {
-          "resource": "repo://libs/evidence-mcp/src/server/toolset.ts#L297-L314",
-          "version": "repo-lines-v1:sha256:ad0fe53bc5b709bb96043e5e0229bd17f1f36fac7365ac3c2e9bef3fd3cabbc6:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYwMDQ0OTEzMDc1OTdiNTE1ZmM2NTM5NTJkOGRkOTkzYWJjZmYwNjcxNGI2MmFmODNkNTI4ZTViNGZlMWYwODMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQyZTZmY2RkNGQ3Mjc0ODdlOGI4ZDdhNDM3N2YwNjJjZDFiY2U1OTQ0NGQ2ZDczYWE4OGNhNTg0OGY5NGI0ZTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE0Zjg1NzkxZjEzZjc3ZWYyMWUzYmU5YzhiMTQxOTk5MzNmOTQ0ZmE0OGY2ZDUzNmUxYWQ2MjZiMWE0YWJmNTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY0MTY3YTA3NjQ1NjY1MzAxZGIxYzk2MDU5N2Q0M2VhOTU2MGU1YjI4N2M0NTNjNDMyYzAzZTA4NzQyZGZmMGUifQ"
+          "resource": "repo://libs/desktop/feature-delivery/src/components/delivery/DeliveryHub.tsx#L1-L30",
+          "version": "repo-lines-v1:sha256:686741bacea3ecd8c4f70e10742118be0bae152e5703d0dd85b1194a708100de:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdkMGY5YTM3NDhiOTMxNGI4MWJlZTEzOWE4MjhkNTAwY2VlMGU0YzNiMzM3OTE0NTBiZjE3MDNmZjc5MmZlNmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE4YWNjYmQ3M2NhOWU3ZDUzYmI5MmFmOTUyNjhiYWQ1ZmI5NTdlNDM2MGMxMzI2ZjVmZTgzOWQ2MDUyNWQ0MmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI1OTJkZTA3YjU2NDdmNjY3YTQ1MzllNjNmZjcyMjEyYzIyZTFjYTJiMjZlOTgxZjhiYmE5MDNkMzkwZWU1MmUifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-inspector/src/inspector/ApiFieldBadge.tsx#L1-L41",
+          "version": "repo-lines-v1:sha256:4c146d380b66c5205d083f3d3641fc7b9c30448b0f8f20f2a05b392ce4838ca3:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAwYWU3YmY5OTUwZTQ3MjM3YjA3MDg1NDRiOTZkYTQ1NmYyNWE0NGQwZjlhNTY3MWQ1YWY4MjY3NGQ0NjUxMTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-mcp/src/server/toolset.ts#L203-L224",
+          "version": "repo-lines-v1:sha256:2dcb5fe100bf2ed7e1406de2df2fbfdf04047fc0866a2b076c7ddad3706540ad:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwMTk5NWYyYTNlNGEzYTcwZjJlYzZlZWVjZjdiODE2YmQ2OTI3OGQ0ZTNhNjc2YTlmZjQ5MTk0NDBiYWM3MmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEzYTA3MDJhYWFkZDYwN2E4OWQ0YTFiYzY5YzhkYzBjYzM5NmQ1ZjZiNjk4NzIyMGUxYTlmYWM1MmFhMzgzYTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk4MTJiMWIxMDg4M2U2ZmI0MjI4YWM1MTBhODEwMGM3NzUzMjBhOTk4MTVkNjlhMzQ0MDkyOTc5MmFiOGExZTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU0ZTJjMGVmNTRlNmRlMDg4ZDg3Y2NlZDg1ZmYyMjM3ODAzNjJjYjIyMWRmODVmNzYyNWE3ZDNkOWQ1NjJhN2IifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ac40826ecdcb4e45a1dcf04b68ff4d68",
+      "statement": "OasdiffRunner 固定 oasdiff 1.38.0，binary 依次取显式 options、EVIDENCE_OASDIFF_BIN、模块位置上溯的 node_modules cache 与 PATH；compare 在临时目录用 canonical 合约与无 shell execFile 顺序执行 version、changelog JSON/Markdown、diff JSON，禁用 external refs，默认 30 秒超时与 16 MiB buffer，finally 清理，任何版本/输出/进程错误都抛 OasdiffError 并保留 stdout/stderr。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-acceptance/src/diff/oasdiffRunner.ts#L123-L168",
+          "version": "repo-lines-v1:sha256:e62147ac4226c388e73868d47270b38ee3554c845e22472286ddb44c4f043de7:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5NjdkOWVjNTIxY2IwYjkxMzMyOTgzMTc0Mjk5MGY0MmJhN2Y4YTQzY2RmOTQ3ZjdiMmM1OThhMDY0NzA0YmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3ZDg2MzJlNTRlOTI5OGFiYjk1ODcyN2UyZDUxNDA4YWJhZjEzNjYwMzUzNzkxMDE0MGFiZjY1YjMwYWI2MTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/diff/oasdiffRunner.ts#L13-L44",
+          "version": "repo-lines-v1:sha256:c7d4b6e3f187e6601682c308f0321fc30a48e1f28292322f4dd8e77ab95682de:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjOWM5MjhlOWRmYWI5MzNjOWQxNmJiYWEwMTAyNmE0YWVlZmZlN2JlMWU0NjNkMThiN2NhMDExNzEyNjlmMDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE5MDRiZGMwZTM0ZjU2MzlkMTYyNDMwZTAxYmNkMDk1NzU5MWE4MjFkODZhNzkwM2NmNTQ2YjQxNzBkMjlhOWYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg0NTRlYjAwMDliMTcwMjBlYzAwYzE4ODIzOTYzNjk1YTg2YjNjYmRkODM5ZGM4NWUwYmVhODEzNzdjZGMxNDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU2MDliMGRkNTZkYTE5ZGYyNzFlY2QwYzE3ZGQxNTk4YTM4ZDRmMDMwMjkzOTA2Y2RjYWZjNjQ4MzYzMWJkZTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/diff/oasdiffRunner.ts#L99-L118",
+          "version": "repo-lines-v1:sha256:11465578aff59f4e2116780c916ed0be886816e254b27eabf4045b90e5e0fbdd:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIzOWFlMjY1MGY4ZjljNzZlOWNlZmQ5MzliYTc2OTE1ZmRhNTE3MGZhZWRhZGU2OGNiNjEyOTI3ZDllNTdkODMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMzNDVjYWRiNjBmZTY1NjVjYTVlYzZlMGYwZTRlZTUzZmY0NTE0NDMwMzc3NzQwM2JlZmZhNzk4MjRjNjkxYWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg0YjgxMjhmZjMwNmQ1NzFlMjY0MWVlYmQ5OGJmZjljNjdhMzg0NmE0Y2VhMGQxOGEyODIwYWNjM2M4NWQ4YjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJjNzk1YmI1M2I3MDI0MTcyMWNhN2EwZGJkYTExZGQ5NDMyMGZmZDFlNTBjOTlkMmNjOGE0ODA1YTZlMzgwMjgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c79e4977f10145d9a8d08e5f86f39d61",
+      "statement": "`pnpm api:setup` 执行 `tools/oasdiff/setup.mjs`：按平台选择归档并校验内置 sha256，解出二进制后验证 `oasdiff version 1.38.0`，未知平台、下载失败、校验和不符或版本不符都失败关闭；compare 不联网下载。",
+      "evidence": [
+        {
+          "resource": "repo://package.json#L19-L19",
+          "version": "repo-lines-v1:sha256:73a9682961ccbb4c39e4e99b0b5a3ad028f3863675815a1183c72128b9b53642:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzNhOTY4Mjk2MWNjYmI0YzM5ZTRlOTliMGI1YTNhZDAyOGYzODYzNjc1ODE1YTExODNjNzIxMjhiOWI1MzY0MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzNhOTY4Mjk2MWNjYmI0YzM5ZTRlOTliMGI1YTNhZDAyOGYzODYzNjc1ODE1YTExODNjNzIxMjhiOWI1MzY0MiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDcwOGM4YjI4MjdmOTQ2NDE4NTYwOTk2MzdkMTM3YTIxNzkwMjY3ZDljZDA4OWFhYjFlMjQwZDZkMTllZWNjNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzM1MmJiZDRmMTA5MTY5YTBjMWUzYTE0N2VhNGQ2YWRiZGIwOGU0MzkzMGQ1MDM0MTM2MzEzOTk0YzE5OGEyMiJ9"
+        },
+        {
+          "resource": "repo://tools/oasdiff/setup.mjs#L15-L92",
+          "version": "repo-lines-v1:sha256:c963ede464e357a81f4167ccb1fb98cc067379efa1b22b4648f3e51ae08c0637:eyJzZWxlY3RlZExpbmVDb3VudCI6NzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwZTc2ZTkyYmZiNmQ4ZmUyNjgzMDQ2N2M4YTllOGRlODE1MTViMzIwNmVkZWJkZjlhYmFjMjVlYTk0YzVlYWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYWViMmFhODFiNTFjZGMxNTM2MDNkMWJmMjA0NjNjNTc3M2UyYmNiMDkzNGViMTkyNjcxOWJjZDA2ZWZiOTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_92234803409e4878a286025b703aa96a",
+      "statement": "原生 oasdiff 覆盖端点删除、required input 新增、输入类型变更、输入/输出移除与输出可选等 breaking 场景；但只改 CEL 表达式可产生空 changes 且双摘要不同，因此 OpenAPI 兼容不能替代业务语义验收。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-acceptance/src/diff/breakingScenarios.spec.ts#L45-L150",
+          "version": "repo-lines-v1:sha256:9721b1d607b966e85aac3e951d06ec736c0c9e1c92c61d5545a46543511874eb:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIzMTFlMWVkODBkMmEyNTQ2ZDA4OWE2NmIyNjQxNWQwYTJjNWU5Y2JiOTA4NjZmZWVmYTMyZDVjZmU5YzY1NzkwIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwMWJhNDcxOWM4MGI2ZmU5MTFiMDkxYTdjMDUxMjRiNjRlZWVjZTk2NGUwOWMwNThlZjhmOTgwNWRhY2E1NDZiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI2NGJkNzBiNWFkYjdjNTRmMjIzM2Q2M2I2M2QxNTNjYTA2NGIxZDM1ZTFkYzMzNjZiNGNkMjQ1ZjNhMTc5YTAwIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJjYzQ1MzhiZGEzNmY4M2YwMDhjNDU5MDEyYmNlYTA4NWQ1ZDBjNzdkYTM2YmY0Njg4NzEyOTNlM2Y2YjU3YmRhIn0"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/diff/evolution.spec.ts#L1-L51",
+          "version": "repo-lines-v1:sha256:f5433cadc0abf5d46cf4cac720ca22c3b548ef280d8021312549a3871b04f5f7:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk2ZWE0ZGE4MzVlY2ZkMTM2N2IwODY5MTc3MWM2NjNkM2ZkYTViNGJiOGRkZTEwYmE0OTllMTdkMDgyOWFmOTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_db3558caf47f4dc890a62578179f74f1",
+      "statement": "桌面 live 草稿导出在 `deliveryFilesOf` 之后追加 `api-changes.md` 与 `draft-status.json`（mode=draft、releaseAuthorized=false、双摘要、issues）；正式 export 才由 `renderOutputs`/`writeOutput` 增加 `manifest.json` 并原子写树，两者都不是发布授权。",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/deliveryIpc.ts#L113-L167",
+          "version": "repo-lines-v1:sha256:ed9158fcc6e8f1a44b022bf00fdee06d75f7258cb98a8d20000294e2ec44f9b5:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1ZGZkMDMxMGU3MjQzNTU3MjI0NTM5MjY4YWY1YWI5YzcxNjU3Yzk0MTE1ZGY2YmUyNmM3MDc2MzAyNTQ3NjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEzMGM1OGE5MTcwNWFhODYzZTdmZDIzOTJkZGE0ZGNhYzM0YjQwODQ0ZjQ2NzgxZGNjOWI2M2VlYTM3ZmRjMmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMjBiOTc1MzI5ZmQzNDg2NGE5MzA0YmFjNDFiMWE4OGU3Mzc0ZDA1ODk1ZTYwZTA4YTdmYmM3OTQ0ZjBiNTMifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/delivery/files.ts#L18-L60",
+          "version": "repo-lines-v1:sha256:69db24c5ca44723fe20482296ea72b315bcd4b272ce7d65fd84916b19dde460d:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3OWUwODRlOTQ2ZGNkYmUwYjdmOWNiYzBiNmQ2Yzc2NjAzYjJmMWNkM2JmMDViOTNmOTIxMDc4NDBhY2E0NDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRhMWYxOTBmMTBmNmY0ZDVkNjM1ZTBhZGRjYTY0OTFhMjdmNzNlMzJkZWQ2YTcxMDA1NDcwZGU4NzhkYzMyOWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAzNzA3NDhlYmI4YWY2MmZjNWRjNGQ0ZGY1NGVjMzMzM2MyNzE2NWI4YjQ0MDQwNGY0NDJhNTcyNjljZGI2NGMifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/renderer/outputRenderer.ts#L41-L79",
+          "version": "repo-lines-v1:sha256:a29cde0a18613f0bdbb4c6ec65ceb2d7a242eef8187484ecdb01725b98e82787:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImViNGM0ZjliZDc0NjJlNDIyZmRiZDA0NjI2ZWY1NDc2YTAxMzdhZTg3ZWMyNzQ1MjA0NDhhZDdhMjgyY2RlZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg4NjEyNWIzN2YwODNjYWExYWI0NTVjNzY2NTdhOTVkNjM5NTAxNWNjYjAzNDIyNTE1NGNjYTBhMDNjNTE1OWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMzZmNlYWU1MGU0ZDc2ZTE1MTJiZjcwMmJmMzdhMTRiM2RmMjE0MzQ4YjU3Y2FiZTE4ODc0MjUyZDg0YzNjNWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJmNzBjY2ExZWQ0NTVkNzVmMzZkODhjMWJjNzU4NDJkMjRjN2U4MWUwZTQzMTMyMDEyZTg3ZTZmYzgxYzM4NzYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4cec1b74eaf74988a0cc8c4471534948",
+      "statement": "live 导出的 `projection.json` 中 `digests.model` 等于预览返回的 `modelDigest`；过期 digest 或非法模型在选择目录和写盘之前即失败，目录对话框期间修改文档不改变已冻结的输出。",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/deliveryIpc.ts#L113-L167",
+          "version": "repo-lines-v1:sha256:ed9158fcc6e8f1a44b022bf00fdee06d75f7258cb98a8d20000294e2ec44f9b5:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1ZGZkMDMxMGU3MjQzNTU3MjI0NTM5MjY4YWY1YWI5YzcxNjU3Yzk0MTE1ZGY2YmUyNmM3MDc2MzAyNTQ3NjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEzMGM1OGE5MTcwNWFhODYzZTdmZDIzOTJkZGE0ZGNhYzM0YjQwODQ0ZjQ2NzgxZGNjOWI2M2VlYTM3ZmRjMmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMjBiOTc1MzI5ZmQzNDg2NGE5MzA0YmFjNDFiMWE4OGU3Mzc0ZDA1ODk1ZTYwZTA4YTdmYmM3OTQ0ZjBiNTMifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/liveDeliveryIpc.spec.ts#L74-L121",
+          "version": "repo-lines-v1:sha256:d3db475e2f0b6ba0ea84c3e570ed5fb06bba18c240de2dfd8eb9ab94f572b8c2:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2NzdkMmYwMzFlOThiNWU5MTFjNWFkNGZiOWIyMTg2YTkzMjUyMmU4ZjQ2ZWU0MGJhYmZhZTNkYTAwZmMxMjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI5NjM1M2MwNzMxYTExZGEyOTM2YzhhZDUxM2EwMjFmYzllMTQ1ZDY3MmI2MjE4ZDBhODA1M2IyMDljNDFmNGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-15T14:07:58.904Z"
+    "at": "2026-11-16T23:54:38.352Z"
   }
 }

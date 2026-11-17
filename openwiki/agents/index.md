@@ -1,5 +1,5 @@
 # 文件
 
-- [MCP 工具与桌面桥](mcp-integration.md) - 外部 IDE 和 CLI Agent 如何经本地 socket 访问桌面实时模型、提交 RFC 6902 补丁，以及读取已保存模型的传感器、交付和生产漂移结果。
-- [Pi 建模 Agent 与受控工具](pi-harness.md) - 桌面内置 Pi 会话的 SDK 适配、代码随包提示词、Zod 工具、实时补丁和传感器反馈，以及会话与窗口的生命周期。
-- [原生传感器与治理闭环](sensor-orchestration.md) - 共享 SensorReport 如何承载 FM 静态检查、关键数据和 API 诊断，以及 version 6 阶段门禁、独立漂移审计与真实 HTTP 验收治理的区别。
+- [MCP 外部工具与桌面桥](mcp-integration.md) - 外部 IDE 和 CLI Agent 如何经 per-user 本地 socket 驱动已打开的桌面模型：14 个工具（9 个只读、5 个可写）、64 MiB 消息上限与双端超时、--mcp-stdio 无窗口代理、客户端注册同步，以及主进程如何把调用转成 renderer 事务和只读审计。
+- [内置 Pi Agent 与工具扩展](pi-harness.md) - 桌面内置建模 Agent 的端到端说明：随包提示词与 noSkills、会话生命周期与五种事件投影、11 个工具与共享算子库、main 的 runtime transport 与传感器调度，以及 renderer 如何只读事件并把补丁交回模型事务。
+- [传感器、门禁与生产漂移](sensor-orchestration.md) - 进程内传感器引擎如何一次读取模型树产出带 severity 与 source 的结构化报告、version 6 阶段门禁为何不能被草稿或旧报告打开、live revision 与 debounce 如何挡住过期结论，以及生产漂移与治理决策的只读边界。

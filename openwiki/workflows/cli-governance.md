@@ -1,34 +1,62 @@
 ---
 type: workflow
-title: 统一 CLI 与双门禁验收工作流
-description: evidence统一命令如何将FM模型编译为OpenAPI/标准HTTP验收，执行只读产物核验、oasdiff兼容gate与regression/DoD分区，并诚实报告pending和响应漂移。
-tags: [cli, acceptance, governance, stepci, hurl, oasdiff, drift, ci]
+title: 统一 CLI 与治理门禁
+description: evidence 单一入口如何注册并路由 check/story/test/export/diff 与模型、旧 api 子命令，如何严格校验参数与退出码并保持 JSON stdout 干净，以及只读 verify、oasdiff 契约 gate 与 regression/DoD 验收各自把关的边界。
+tags: [cli, acceptance, governance, story, stepci, hurl, oasdiff, drift, ci]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-15T14:07:58.904Z
+    at: 2026-11-16T23:54:38.352Z
 sources:
   - id: openwiki-source-17a7254439d5e92a919764bb
     resource: repo://.github/workflows/evidence-governance.yml
+  - id: openwiki-source-4c0b31aad45d3c1bd1d286ce
+    resource: repo://apps/cli/src/commands/api.ts
+  - id: openwiki-source-19442573d926816973f7a35a
+    resource: repo://apps/cli/src/commands/diff.ts
   - id: openwiki-source-0665c978968bd863d445c79a
     resource: repo://apps/cli/src/commands/export.ts
+  - id: openwiki-source-64a2b18876b184e07c424672
+    resource: repo://apps/cli/src/commands/model.ts
+  - id: openwiki-source-fbc96cb4b0e8dd1af286891a
+    resource: repo://apps/cli/src/commands/story.ts
   - id: openwiki-source-97029bfc63aaa8f0d97e713c
     resource: repo://apps/cli/src/commands/test.ts
   - id: openwiki-source-69d58f985d20203ea0c2f899
     resource: repo://apps/cli/src/router.ts
-  - id: openwiki-source-0739c894c3d7de4d72985eac
-    resource: repo://libs/evidence-api/src/renderDeliverables.ts
-  - id: openwiki-source-fb0ff09bfb1c85fa271a6b49
-    resource: repo://libs/evidence-api/src/runner/acceptanceRunner.ts
-  - id: openwiki-source-201e0d7cf12304d6fb8e347d
-    resource: repo://libs/evidence-api/src/runner/driftInspector.ts
-  - id: openwiki-source-1a4e1329e6cba15c461cd3b7
-    resource: repo://libs/evidence-api/src/runner/suiteSelection.ts
-generated: { by: "pi", at: "2026-11-15T14:07:58.904Z" }
+  - id: openwiki-source-112eefcf34192b55c93b0e8b
+    resource: repo://apps/cli/src/ui/storyReporter.ts
+  - id: openwiki-source-48e1cbed9e363f4f1d6317f6
+    resource: repo://libs/evidence-acceptance/src/cli.ts
+  - id: openwiki-source-00036286abae2d8c898e2cef
+    resource: repo://libs/evidence-acceptance/src/commands.ts
+  - id: openwiki-source-4f4956186309f29a9271894d
+    resource: repo://libs/evidence-acceptance/src/renderDeliverables.ts
+  - id: openwiki-source-cfb863e81258afec257b30c8
+    resource: repo://libs/evidence-acceptance/src/runner/acceptanceRunner.ts
+  - id: openwiki-source-706dba0858eef2721b63a216
+    resource: repo://libs/evidence-acceptance/src/runner/driftInspector.ts
+  - id: openwiki-source-a2d80ddb56c0c51c2eb2ba47
+    resource: repo://libs/evidence-acceptance/src/runner/suiteSelection.ts
+  - id: openwiki-source-ece7f3389ee03e6d65881863
+    resource: repo://libs/evidence-agent/src/story/flowStoryProjector.ts
+  - id: openwiki-source-65cec3fa94938b2f2b5d4a29
+    resource: repo://libs/evidence-api/src/renderer/outputRenderer.ts
+  - id: openwiki-source-39aee7c17098a6b50b3614f9
+    resource: repo://libs/evidence-model-core/src/trace/flowAggregator.ts
+  - id: openwiki-source-914d5b3315f23fe1a97b421d
+    resource: repo://libs/evidence-model-io/src/cliDerived.spec.ts
+  - id: openwiki-source-88a3cc6d22f70a1b93ada22f
+    resource: repo://libs/evidence-model-io/src/commands.ts
+  - id: openwiki-source-7e8a4154b74359d73d641f4c
+    resource: repo://libs/evidence-model-io/src/modelCli.ts
+generated: { by: "openwiki/0.9.0", at: "2026-11-16T23:54:38.352Z" }
 ---
 
-# 统一 CLI 与双门禁验收工作流
+# 统一 CLI 与治理门禁
 
-apps/cli是cac应用，库拥有执行逻辑。静态check、契约兼容和真实HTTP验收是三件不同事；任何一层通过不能替另外一层背书。开发先安装并build：
+`apps/cli` 是唯一面向人的可执行入口（cac 应用），执行逻辑全部在库里：验收执行、契约 diff 与 `renderDeliverables` 来自 `@evidence-poc/evidence-acceptance`；`pack/unpack/compile/inspect/lineage` 来自 `@evidence-poc/evidence-model-io`；解析与静态检查来自 `@evidence-poc/evidence-model-core`；业务故事投影来自 `@evidence-poc/evidence-agent`。依赖方向是 app → 库，库的命令层不反向 import app，因此同一套语义既能被统一 CLI 复用，也能被旧 library bin 作为适配器调用。
+
+静态 `check`、契约兼容和真实 HTTP 验收是三件独立的事：任何一层通过都不替另外两层背书，`renderDeliverables` 成功也只说明产物编译出来了。开发先安装并构建：
 
 ```bash
 pnpm install
@@ -37,15 +65,36 @@ pnpm exec nx build cli
 pnpm evidence --help
 ```
 
-## 一入口与共享执行层
+## 一个入口与四条库边界
 
-router注册check/test/export/diff、pack/unpack/compile/inspect/lineage、review及兼容api <command>。context注入cwd/stdout/stderr/color；路径按调用方cwd解析，不写死repository root。重复非repeatable参数、混用alias、未知flag、多余positionals/--尾参数明确usage失败。scope/tag可重复，help/version不执行业务；JSON模式错误保持机器可读，非JSON错误stderr。
+`createCli` 用 cac 注册 `check`、`story`、`test`、`export`、`diff <base> <target>`，用循环注册 `pack/unpack/compile/inspect/lineage <target>`，以及兼容用的 `api <command>`。所有命令只做参数翻译与调用库，不实现第二套解析器或断言引擎。`CommandContext` 注入 `cwd/stdout/stderr/color`，路径按调用方 `cwd` 解析，不写死 repository root；`--help`/`--version` 的输出也改写到注入的 `stdout`（替换 `cli.outputHelp`/`cli.outputVersion`），使 dispatch 可嵌入且不污染 JSON。
 
-旧evidence-model/api/workbench可执行入口暂保，弃用提示仅stderr、不污染JSON stdout；它们与统一app引用库commands，不反向import app。根model:*和api:*脚本已走apps/cli。旧timeline/simulate/role-play和Scenario/Instance格式移除，不能用兼容shim复活。
+已没有 `review` 命令，也没有离线 workbench 相关参数。旧 `timeline`/`simulate`/`role-play` 与 Scenario/Instance 格式不能靠兼容 shim 复活：旧 `evidence-model` 适配器对这三个命令直接回“未知命令”并退出 2，含 `validation/scenarios` 遗留文件的源树会得到 `model.legacy-validation` issue 并拒绝 `pack` 写出。
 
-## 从模型到产物
+## dispatch：兼容重写、严格校验与退出码纪律
 
-loadModel按树或Bundle加载，parse issues导致FM_INVALID，不修补源。`check [model] --scope ... --json`输出静态FM v6（testExampleCount只是声明数）；compile/lineage有checkable约束，pack/unpack/inspect见[源格式](../model/source-formats.md)。review生成单文件离线HTML，不运行后端。
+```mermaid
+flowchart TD
+  A["argv"] --> B["dispatch: diff api 兼容重写"]
+  B --> C["cac parse, run false"]
+  C --> D{"help 或 version"}
+  D -->|是| E["注入 stdout, 返回 0"]
+  D -->|否| F["validateInvocation 严格校验"]
+  F --> G["runMatchedCommand"]
+  G --> H["apps/cli 命令薄适配"]
+  H --> I["库执行: acceptance / model-io / model-core / agent"]
+  F -->|抛出| J["argv 含 --json 写 stdout 错误 JSON, 否则写 stderr"]
+  J --> K["返回 1"]
+```
+
+上图是一次 `evidence` 调用的派发路径：兼容重写、cac 解析、严格校验、库执行与统一错误通道。
+
+- 兼容重写只发生在 `diff`：`evidence diff api <base> <target>` 先删掉 `api` 这个 token，若未显式给 `--format` 再补 `--format json`（旧默认），而直接写法 `evidence diff <base> <target>` 默认 `markdown`。空 argv 与 `help` 被改写为 `--help`；`--help`/`--version` 只渲染注册元数据并返回 0，不触达业务。
+- `validateInvocation` 在真正执行前拦截：未知命令；带多别名或带否定形式的选项被重复书写（`-o` 与 `--out`、`--fm` 与 `--model`、`--ai` 与 `--no-ai`）；只有声明 `type: []` 的选项（`--scope`、`--tag`）才允许成数组，其余重复值算 `Duplicate option`；数组里混进布尔（如 `--tag` 缺值）算空值错误；空串/纯空白值的选项经 `stringOption` 直接报错；超出命令声明的 positionals 与 `--` 之后的尾参数都按 usage 失败。
+- 命令抛出的错误由 dispatch 统一收口：`argv` 里出现 `--json` 时向 **stdout** 输出 `{"passed":false,"error":...}`（e2e 断言此时 `stderr` 为空），否则向 `stderr` 写 `Error: ...`，两种都返回 1。这条纪律让 CI 与脚本永远能拿到可解析的失败信号。
+- 退出码按“谁拥有判断”划分：`check` 0/1（静态有效性）、`export` 0/1（同步或写入成功/失败）、`test` 0（`passed` 或显式 `pending`）/1，`diff` 统一把非 0 折成 1。库层更细的码只在特定入口透出：`evidence api inspect/deliver` 保留库的 3（只有 gap 仍写出可审查草稿），`evidence compile <dir>` 缺 `--out` 时库返回 2，`evidence api diff` 原样返回 `runDiff` 的 2（输入或 oasdiff 工具失败），而 `evidence diff` 会把它归一成 1。
+
+## check 与产物导出
 
 ```bash
 pnpm evidence check examples/acceptance/procurement.evidence.json --json
@@ -53,11 +102,32 @@ pnpm evidence export --model examples/acceptance/procurement.evidence.json --out
 pnpm evidence export --model examples/acceptance/procurement.evidence.json --out dist/acceptance --verify
 ```
 
-export默认同时OpenAPI3.1+Step CI，--openapi/--tests可选子集，--format stepci|hurl决定suite格式。renderDeliverables先buildDelivery、拒error、校验OpenAPI，再把examples[].test编成标准suite；全部成功之前**不写任何文件**。out必须专用目录：realpath既有祖先，拒与model双向包含或替换cwd；writer sibling temp/backup rename整树原子替换，旧额外文件会删除，勿放手写文件。
+`loadModel` 按目录树或 `.evidence.json` bundle 加载，解析 issues 直接抛 `FM_INVALID`，绝不修补源。`check [model] --scope <id> --json` 默认模型 `.evidence/fm`，输出 FM 静态报告（`valid`、`errors`、`gaps`、`advisories`、`testExampleCount`、`modelDigest`）；`testExampleCount` 只是声明数，报告同时明确“未被 HTTP 验收执行”。退出码取 `report.valid`。
 
---verify走同一内存编译，但只比现有树**精确bytes**，不写/不创建目录、不跟内部symlink。缺失MISSING、改动MODIFIED、额外EXTRA分列，symlink按stale处理，失败退出1并给重新export建议；生成+commit应是开发动作，CI只verify，避免CI替模型作者悄修产物。
+`export` 默认同时产出 OpenAPI 3.1 与 Step CI，`--openapi`/`--tests` 选择子集，`--format stepci|hurl` 决定 suite 格式。`renderDeliverables` 先 `buildDelivery`、遇 error diagnostics 即拒、再 `assertOpenApiContract`，然后把 `examples[].test` 投影成标准 suite；**全部成功之前不写任何文件**，所以验收编译失败时旧产物保持原样。
 
-## 对真实后端执行标准HTTP
+输出目录必须专用：realpath 解析既有祖先，拒绝 `out` 与 model 双向包含，也拒绝 `out` 覆盖调用方 `cwd`（`.`、文件系统根、以及指向 cwd 的 symlink 别名都会被 `export.spec` 覆盖）。落盘由 `writeOutput` 完成：先在**同父目录**的 sibling stage 里逐个写文件（`wx` 打开，避免崩溃留下半截内容），再把旧目录 rename 成 backup，把 stage rename 成 `out`；rename 失败会回滚旧树。结果是整树替换——旧的额外文件会被删除，因此不要在那个目录里放手写文件。
+
+`--verify` 走同一内存编译，但只做**精确 bytes 比较**：不写文件、不建目录、不进入内部 symlink。缺失记 `MISSING`、内容不符或 symlink 记 `MODIFIED`、目标树里的孤儿记 `EXTRA`，分列打印到 stderr 并返回 1，同时给出应重跑的 `export` 命令行；同步则打印说明并返回 0。生成 + commit 是开发动作，CI 只跑 `--verify`，避免流水线替模型作者悄悄修产物。
+
+## story：把声明场景投影成业务故事
+
+```bash
+pnpm evidence story --no-ai
+pnpm evidence story examples/acceptance/procurement.evidence.json --format json --compact
+pnpm evidence story --flow payment --export docs/payment-story.md
+```
+
+`story [model]` 复用两层既有能力，不新增语义：
+
+- **flowAggregator**：`collectFlowScenarios(model, report)` 把带 `examples[].test.flow` 的样例聚合成 `FlowScenarioTrace`（flow 按 id 排序、step 按 `asOf`/依赖拓扑排序，重复样例引用、未知/歧义/跨流/循环依赖分别抛 `FlowScenarioError`），并把 `check` 报告里的 gaps 挂到对应 step。于是遗漏字段会变成故事里的“待决悬念”，而非法依赖图直接失败，不会被讲成一个看似合理的故事。
+- **flowStoryProjector**：`createFlowStoryProjector({skipAi, projectRoot})` 逐 flow 生成 `BusinessStoryProjection`。`--no-ai` 走确定性事实卡（不初始化也不调用 LLM、不读写 AI 缓存，同一模型输出逐字节可复现）；默认模式调用 story agent 做叙述扩写。
+
+参数面：默认模型 `.evidence/fm`、默认 `--format markdown`（另有 `text`、`json`），`--flow <id>` 只按**精确 flow ID** 过滤且找不到即 stderr 报错退出 1，`--export <file>` 按 cwd 解析路径，`--compact` 压缩输出（JSON 变单行；markdown/text 省略摘要与叙述，但保留单据字段）。cac 把 `--no-ai` 解析成 `{ai: false}`，只有这一种否定写法算离线；`--ai` 与 `--no-ai` 混用、重复 `--format`、非法格式都会在投影前失败。
+
+渲染分工在 `apps/cli/src/ui/`：markdown 输出带字段表（字段、值、关键数据、来源）和固定免责声明“仅投影模型声明的业务事实，不代表已执行验收或规则判定”；`text` 才可能有 ANSI 颜色，且仅当写到 stdout 时启用；`json` 用 canonical 序列化。导出时先让**所有** flow 投影成功，才 `mkdir` 父目录并写文件——agent 失败或写入失败都不会留下半成品、也不会覆盖已有故事文件，成功后只向 stdout 打印导出路径。模型里没有任何 flow 声明时，JSON 返回空数组、人读格式给出解释，均退出 0：故事是草稿视图，不是验收结论。
+
+## 对真实后端执行标准 HTTP
 
 ```bash
 node examples/dogfood-backend/server.mjs --port 8085 --mode v2
@@ -65,13 +135,13 @@ node examples/dogfood-backend/server.mjs --port 8085 --mode v2
 pnpm evidence test --target http://127.0.0.1:8085 --scenarios dist/acceptance --verbose
 ```
 
-test接受单YAML或目录递归*.stepci.yml/yaml，排序、不跟目录symlink；无suite失败。只运行官方@stepci/runner的self-contained version1.1 HTTP workflow，拒include/loadTest/非HTTP或空steps，不实现私有assertion interpreter。Hurl导出需外部Hurl CLI执行，evidence test拒.hurl并提示。
+`test` 接受单个 YAML 或目录递归 `*.stepci.yml|yaml`（按文件名排序，不跟随目标树里的 symlink），默认 `--scenarios dist`；找不到 suite 直接失败。它只运行官方 `@stepci/runner` 的 self-contained version 1.1 HTTP workflow：要求 `tests` 非空、每个 flow 至少一个 step、每个 step 都有 `http.url`，拒绝 `include`/`config.loadTest`/非 HTTP 构造，不实现私有 assertion 解释器。`.hurl` 文件被明确拒绝并提示用外部 Hurl CLI 执行。Runner 用 lazy import 引入，避免 Node-only 依赖进入 projection/browser 消费者。
 
-先HEAD探活（任意HTTP含404/405即reachable，不跟redirect，不要求私有health endpoint，也不POST改变状态）。target必须合法HTTP(S)，timeout是正整数≤2147483647ms。Runner lazy导入以免Node依赖进入browser投影；结果归一化每步status/断言/error/duration，非空实际执行且全部通过才passed。
+执行前先 `HEAD` 探活：任意 HTTP 响应（含 404/405）即视为 reachable，不跟随 redirect、不要求私有 health endpoint、不用 POST 改变状态。`--target` 必须是 HTTP(S) 且不含凭据、query、fragment；`--timeout` 必须是正整数且 ≤ 2147483647ms（注入成每步 `http.timeout`）；`--as-of` 必须是严格 UTC RFC3339（拒绝 2 月 30 日这类归一化日期）。结果归一化每步的 status、断言、error、duration，非空实际执行且全部通过才算 passed。
 
-模型examples里的asOf编译出请求clock和派生期望。test --as-of必须UTC，**只改请求x-evidence-asof，不重编期望值**，可能故意制造时间漂移失败。此header只供可信测试backend，生产授权/时钟不得信客户端。内联oracle的int/uint大值保存精确decimal string，Step CI/Hurl断言不得Number舍入。
+模型 `examples` 里的 `asOf` 会编译出请求 clock 和派生期望值。`test --as-of` **只替换请求头 `x-evidence-asof`，不重编期望值**，因此可以故意制造时间漂移失败；这个 header 只供可信测试 backend 使用，生产授权与时钟不得信客户端。内联 oracle 的 int/uint 大值保存为精确 decimal string，Step CI/Hurl 断言不得经 `Number` 舍入。
 
-## Regression与DoD是两套验收集合
+## Regression 与 DoD 是两套验收集合
 
 ```bash
 pnpm evidence diff baseline.evidence.json current.evidence.json --format markdown
@@ -81,35 +151,39 @@ pnpm evidence test --target http://127.0.0.1:8085 --scenarios dist/acceptance \
   --gate dod --baseline-model baseline.evidence.json --strict-drift --report-dir reports
 ```
 
-baseline-model需gate且当前只有一个generated Step CI suite，baseline模型重新编成基线YAML，不使用当前snapshot伪造。
+`--baseline-model` 必须与 `--gate` 同时出现，且当前 scenarios 只能有一个 generated Step CI suite；baseline 模型会用 `renderDeliverables` 重新编成 `acceptance.stepci.yml`，绝不用当前 snapshot 冒充基线。
 
-- regression+baseline：**执行baseline全部flows**，保护旧合同，不是当前flows里“没改动”的子集。
-- dod+baseline：执行当前新增/可执行语义变化flows；按flow name对齐，重复name拒绝。fingerprint规范化capture变量/环境，剥schema节点文档annotation而保留validation semantics，不受生成ordinal/描述变化误导，也不误删名为description/default的业务property或const data。
-- 无baseline：只选显式regression/dod tags，不能自动推测基线。
-- filter按name substring或*? glob、重复tag要求全部命中，始终选**完整flow**保留上游捕获，不切散依赖steps。
+- `regression` + baseline：**执行基线全部 flows**，保护旧合同；它不是“当前 flows 里未被改动的那部分”。
+- `dod` + baseline：执行当前新增或**可执行语义**变化的 flows。按 flow name 对齐，重复 name 直接拒绝；指纹规范化 capture 变量与环境值、只剥 schema 节点上的文档 annotation（`examples/description/title/$comment/deprecated/default/readOnly/writeOnly` 与 `x-*`）而保留 validation semantics，因此生成顺序或描述变化不会误报，名为 `description`/`default` 的业务 property 与 `const` 数据也不会被误删。
+- 无 baseline：只按 `env.evidenceTags` 里显式的 `regression`/`dod` 标签选，不能自动推测基线。
+- `--filter` 按 flow name 子串或含 `*`/`?` 的 glob 匹配，`--tag` 可重复且要求全部命中；无论怎么筛都选**完整 flow**，保留上游捕获，不切开有依赖的 steps。
 
-通常空筛选失败，**唯一显式空成功例外**：baseline存在的DoD、没有filter/tag、当前与基线无增量，返回selectedFlowCount0和emptyReason，表示无需增量而非后端已经跑过。不能把它统计为已执行全绿。
+空选择通常是失败。**唯一显式空成功例外**：有 baseline 的 DoD、没有 `filter`/`tag`、当前与基线无增量——此时返回 `selectedFlowCount: 0`、`steps: []` 与 `emptyReason`，退出 0，表示“无需增量”而不是“后端已跑过全绿”，不能统计成已执行通过。
 
-## Pending不把红灯涂绿
+## Pending、报告与人类可读输出
 
---allow-pending只用于DoD；若断言失败但没有step execution error，也没有strict-drift发现，报告passed=false、pending=true，终端黄色/进度仍保留失败，可退出0供探索。HTTP连接/运行错误或strict drift不能豁免；regression不可用。严格CI不传该参数，因此未完成DoD真实失败。
+`--allow-pending` 只对 `--gate dod` 有效。当断言失败但没有 step execution error、也没有 strict-drift 发现时，报告保持 `passed: false`、`pending: true`：终端仍显示 PENDING（DoD WIP）与失败明细，但退出 0 供探索。HTTP 连接/运行错误或 strict drift 不可豁免，regression 不可用。严格 CI 不传该参数，所以未完成的 DoD 仍是真失败。
 
-默认traffic-light适合人，--verbose保留失败详情，NO_COLOR关闭色。--json、--report markdown|junit互斥；--report-dir一次写同一执行报告的JSON/Markdown/XML（名为gate或acceptance），不是为了多格式重跑SUT。退出passed/pending0，其他1；diff单独0无breaking/1breaking/2输入工具失败。
+默认输出是人类可读红绿灯（`trafficLightReporter`），`--verbose` 额外展示通过的断言，`NO_COLOR`/非 TTY 关闭颜色。`--json` 打印完整报告，`--report markdown|junit` 打印单一格式，两者互斥；`--report-dir <dir>` 从**同一次执行**写出 `<gate|acceptance>.json`、`.md`、`.xml` 三个文件，不为多格式重跑会改状态的 SUT。`evidence test` 退出：`passed` 或 `pending` 为 0，其他为 1。
 
-## 两种drift不能混淆
+## 两种 drift 不能混淆
 
---detect-drift/--strict-drift检查**本次HTTP响应**相对JSON Schema2020-12：AJV2020+formats，报告extraneous_field/missing_required/type_mismatch/schema_mismatch及RFC6901 path，不改payload、不开远端ref。enabled时取出schema交专用inspector，官方其他assertions仍权威；advisory drift不自动红，strict把它算失败。Open maps保持open，不把一切新增property当非法。
+`--detect-drift`/`--strict-drift` 检查的是**本次 HTTP 响应**相对 OpenAPI schema 的漂移：用 AJV2020 + `ajv-formats` 按 JSON Schema 2020-12 语义校验，报告 `extraneous_field`/`missing_required`/`type_mismatch`/`schema_mismatch` 与 RFC 6901 JSON Pointer；不改 payload、不取远端 ref（本地 `$ref` 由 AJV 解析），响应不是合法 JSON 时记 `type_mismatch`。启用时 schema 节点被取出交给专用 inspector，官方 Step CI 的其他 assertions 仍是权威；声明为 open 的 map 保持 open，不把一切新增 property 当非法。advisory drift 不自动判红，`--strict-drift` 才把它计入 step 失败。
 
-桌面/MCP的audit_production_drift则比较saved FM与OTLP trace的Evidence commits，是另一种语义审计，不由HTTP开关代替。
+桌面/MCP 的 `audit_production_drift` 比较 saved FM 与 OTLP trace 里的 Evidence commits，是另一种语义审计，不由 HTTP 开关代替。
 
-## 契约gate与CI基线纪律
+## 契约 gate 与 CI 基线纪律
 
-diff比较最终valid OpenAPI，固定oasdiff1.38.0，level≥2 breaking；默认Markdown，旧diff api写法默认JSON。api:setup显式准备cache，compare绝不联网下载，无tool/版本错失败闭合并保stdout/stderr。
+`evidence diff <base> <target>` 比较最终 valid OpenAPI：要求两边 `modelId` 一致，任一侧有 error diagnostics 即拒，两侧契约都先过 `assertOpenApiContract`。工具固定 oasdiff `1.38.0`（先 `--version` 精确比对），severity `level >= 2` 视为 breaking，`--allow-external-refs=false`，默认输出 Markdown changelog、`--format json` 输出结构化 changelog。二进制从仓库内 `node_modules/.cache/evidence/oasdiff/1.38.0/<platform-arch>` 解析（可用 `EVIDENCE_OASDIFF_BIN` 覆盖），`api:setup` 按平台与校验和预置，compare 阶段绝不联网下载；工具缺失/版本不符抛 `OasdiffError` 并保留 stdout/stderr，失败闭合不产出“无变更”。
 
-Evidence Governance先check→export --verify→从PR base/push before不可变SHA物化baseline→diff；base commit/path不存在只允许明确bootstrap策略，git show失败不能退HEAD。契约卫生成功后regression/dod独立矩阵启动隔离v2 backend，strict-drift，上传同次JSON/MD/JUnit+backend log；trap清SUT。GitLab模板复用这套纪律，见templates/ci。
+仓库的 Evidence Governance 工作流按固定顺序把关：`check` → `export --verify` → 从 PR base / push before 的不可变 SHA 物化 baseline → `diff --format markdown`。base commit 或路径不存在时只允许**显式 bootstrap**（同一 base 里的 bootstrap 模型，或非 PR 事件下的显式回退），`git show` 失败即 fatal，绝不退到 HEAD 与自己比较。契约卫生通过后，`regression` 与 `dod` 作为独立矩阵任务启动各自隔离的 v2 backend，带 `--strict-drift --report-dir reports`，用 trap 清理 SUT，并在 `always()` 下上传同一次执行产生的 JSON/Markdown/JUnit 与 backend log。GitLab 模板复用同一纪律（`templates/ci`），其 spec 断言模板里没有 `allow_failure`、`continue-on-error` 或 `--allow-pending`。
+
+## 旧库 bin 的弃用边界
+
+`evidence-api`（`libs/evidence-acceptance/dist/cli.js`）与 `evidence-model`（`libs/evidence-model-io/dist/cli.js`）仍可作为可执行文件运行，但只作为语法适配器：`[DEPRECATED]` 警告通过 `console.warn` 只写 stderr，业务输出仍写 stdout（`evidence-api` 用 canonical JSON），程序化 `import` 该模块时保持完全静默（入口判定用 `realpathSync` 比对，symlink 启动也能识别）。它们与统一 app 调用同一批库函数；`evidence-model` 对 `-o`/`--out` 混用单独判重复，未知命令或多余位置参数退出 2。根脚本 `model:pack/unpack/inspect`、`api:export/diff` 已指向 `apps/cli`。
 
 ## 代表测试与边界
 
-router/commands specs保护cac严格参数与cwd；legacy-shims e2e保护stderr-only警告/库依赖；export specs保护both-before-write/atomic/verify missing-stale-extra/symlinks；runner/suiteSelection保护官方执行、完整flow/基线语义/空DoD；governance/cli e2e对独立v1/v2/fault后端验证兼容、旧回归/新DoD、pending与strict drift，不靠mock SUT推断业务成功。
+`router.spec`/`cli.e2e` 保护 cac 严格参数、注入上下文、JSON 错误通道与真实后端生命周期；`story.spec`/`story-command.e2e` 保护离线否定解析、cwd 相对导出、空投影退出 0 与失败不留文件；`export.spec` 保护 both-before-write、原子替换、verify 的 MISSING/MODIFIED/EXTRA、symlink 与重叠拒绝；`model-commands.e2e` 保护 pack/unpack/compile/inspect 往返与 usage 失败；`legacy-shims.e2e` 保护 stderr-only 弃用提示与库依赖方向；runner/suiteSelection 的 specs 保护官方执行、完整 flow 与基线语义；`governance.e2e` 对独立 v1/v2/fault 后端验证旧 regression 绿、新 DoD 红、pending 与 strict drift，不靠 mock SUT 推断业务成功。
 
-相关：[快速开始](../quickstart.md) · [API投影](../contracts/api-projection.md) · [交付差异](../contracts/delivery-routes-and-diff.md) · [测试地图](../testing/verification-strategy.md)
+相关：[快速开始](../quickstart.md) · [API 投影](../contracts/api-projection.md) · [交付路由与差异](../contracts/delivery-routes-and-diff.md) · [源格式](../model/source-formats.md) · [构建与打包](../operations/build-and-package.md) · [验证策略](../testing/verification-strategy.md)

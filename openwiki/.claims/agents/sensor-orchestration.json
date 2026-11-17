@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:35d9e38eb204f6ebe44172c1084f910a98d407df3fde8eac280635d67e2f53bf",
+  "pageVersion": "sha256:2cc3de30c6e04d11c00d413315e3eff96973e67c54bac8f07cd2ffe1c6963a3c",
   "claims": [
     {
       "id": "claim_a007c15b40764a179f770eb7c0348624",
@@ -48,23 +48,19 @@
     },
     {
       "id": "claim_78f0f5453cd946b68100ef3e1fcefe7b",
-      "statement": "isStageGateReady requires a supplied stageGate whose passed flag is true in addition to zero owed key data decisions, zero blocking findings and, when an apiSummary exists, no uncovered entities and no breaking changes; because neither runNativeSensors nor the review preview supplies a gate summary, a plain sensor run always reports isStageGateReady false, which also makes the status bar's ready-to-hand-off label unreachable from a live run.",
+      "statement": "isStageGateReady 要求报告自带一个 passed 为真的 stageGate，外加零待决台账、零 blocking，以及存在 apiSummary 时无未覆盖实体与破坏变更；普通 sensor run 从不提供 stageGate，因此实时报告的该字段恒为 false，状态栏标签只能落到不可用、不闭合、等待 API 契约审查或等待台账决议，\"门禁：可交下游\" 不会被 live run 点亮。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/reviewPreview.ts#L55-L69",
-          "version": "repo-lines-v1:sha256:36c5c6bcce4cef366558f45654582e84dd947f055b61080830b73b0e39672abe:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhMDBlYzRjNTg1MzlhMGFlMzNmMGYzZTViZTU2MTlkNDI5MWQ1ZTFkMmI2MGNjZDlkMjMxZWQ2Y2RkOWQ1Y2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyZDBmNTZjYmQ5MGI3MGEyM2U3Yzc2NmRkZDg1NDQwZTdkNDM5ZWZjOGQ1ZWVhYjQxZGMyOTE3NTJlOTZmYzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkMzA0OGRjOWM3MTU2YzI5NTZiOGI1ODM5NWY3YmY4NWFkODkzYzk2ODQyNzEyMDc4NWRkMWJjZDFjZjg4NjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM2Y2M3NzMxNmQwYTdmYzQwNTQ4ZjY4ODhmNDQ0ZjdmZTc0ZTZlZWMyMzFjOWRhNmJiMTdlOTc1NmJlYmEwMmYifQ"
+          "resource": "repo://apps/desktop/src/renderer/components/BottomStatusBar.tsx#L39-L58",
+          "version": "repo-lines-v1:sha256:312fd843617465fef491478476a68b2ffc2890069eb36df5c627b80441429f62:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3ZTMwNDJmYTVhNWQyNjNiZGE0YTRhNzg2NzczNTY0YmRiN2E3Yzk5YjdiNTJhOTE3ODM2OWVmNzFlNTYyMmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFmMDk2MzU2NzFjYTkyNTdjODNlNDJhMWZlNzJhYzk2MjAyZGUwYjJkMjlkMDQ5MWM4NTQ1ZDY5MjY5N2IyNGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ1MzE4YmQ5ZmFmZTI0OTk3NDc3YzI4ZmYwMGQ3MWFhNGExOTg0NDIwOGIyNWIzOTg3NTRlM2RjMTFmOTQyM2QifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/components/BottomStatusBar.tsx#L42-L56",
-          "version": "repo-lines-v1:sha256:16dedce8641eef73bee584bea14c336e30a42c34abcf920c322cf13653ba0b70:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM2MTJmMGIzNDA4ODBkYWViYjQ2ZDU1NDczM2Y5YmZjYjZjMGZiZTg3ZjQwOWZmODdiY2I0NDJjZWYyNmRhZjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIzNmZkNmZkMDhmMmNkOTY1NWMyZGY2ZTgyOTQ2MzZiN2U1NTlkOGU2Yjc4MjljYmQxMjcwNDUwM2Y2YTYwNTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVkZDQ0Zjc2OTI4MGUzYWQ2Mzc5M2NlMzE0ZTg1YzVmNDBjOWRmNGQ4ZWJmMjZjOTU0MDk4NDhiMWU1Yjk0ZTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRmYWJkY2RlOTA3NzczMTk4NmRlMWIyNDNkOGJkNmQyODQyZGU4YzY2MWYwNTQyZmVhYjRjMDg1NmVlMmFiODUifQ"
+          "resource": "repo://libs/evidence-agent/src/sensors/native/nativeSensors.ts#L49-L70",
+          "version": "repo-lines-v1:sha256:d9a5a3778d22e0157800c0407d152ba55e683c9b0a918a87225b31b030d76154:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyYjk3OTk4YmJiNDI1YTEyZDU3MTJlOTA3MzI2ZTA4OTk0OTJlYjU2MjRhZDNiZmU0Y2JiNWQ1NjA2MjcyMjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJlYjE3MmI1YWQ5YTI0NjExYTZlZjg3ZjNkMWJkMGE5ODVhYzRjNjQ2MGM3YmNhYzE3ZTZlZWUyZjZhYzRkNjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQxMWFlYzVhMWMzMzcyZmNiY2VjZjEyN2QwYWJmZWYzN2I2MmZkNTg0M2EzMjczNjczN2UwN2I1MTlkMzBmZTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEzOTBkMjdlNzVlYjY2MGUwNDcxNDI4OTA2ZjAxY2M0MTk5YmIxZDA2ZDAwNzU2ZjU1NDI5NTBhYWU1YzYxYTgifQ"
         },
         {
-          "resource": "repo://libs/evidence-agent/src/sensors/native/nativeSensors.ts#L63-L71",
-          "version": "repo-lines-v1:sha256:3e502957a9e83275613294e06bcb825d396c810f4376f6bb7a7883efc38e7526:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjYzMWNlOGYyOGFlMmRlZDc2MGVlOTZjYTljZjIzY2U4YjFiMjgwZjBhOTM5ZDk1ZTM2MjdhNjQxNGMyMjFlNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDY1OTVmNGVlNWZmNjNkNTA5NTA0MTlkYzM0NDE0NTEzODUxZGM5NzM2ZmQxN2E0ZjdiZmE5MzBiMjYxYjZmMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjljYzVhYWM5ZDg4YTU0MDIxYzVmMmVjYTUzYWI2N2FkZGJkMTNlMTQ3YjQ3MDNhYzM1NmI4Mzg0ODExYmMyZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOWZmZTEyM2NmODBiY2E5NGYwYzhmM2ZhMmVmZWQzODNhMWY4YjdkNWQzZGUyNzdkYjVmNTE0Mzc0MTcwM2E3MiJ9"
-        },
-        {
-          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts#L341-L349",
-          "version": "repo-lines-v1:sha256:ec25de9afcc2c746f92286c511c36ce1b8a84af0739d69eb13b6b9a12aa87cba:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzQ2YWRlYzFhMTU5NTk0Y2NlMmU0NTAwOTFiMmEyMGYxMmM3MGNiYjVmZTM3OWZkY2ExOWNhODU3OWMwOWQ0NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWExZDFhNjMzOTAyMjljNzk4MzQ3ZTgzYTA0MDU0NDFjOTQwMDAzNTI4NGFkMTY4YzFiZjZjZGYxZDcwYTM3MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDMxZmFmYzRiMzg3NWJkZmYyY2UwZmE1YzE4NmI4YmI1OTJiYjlkN2I2ODA1MDUyMGU2OWJlMTM4OWVhNTQxZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDU1ZjhkZWZjNTMzOTgwY2RjMWY3ZjliMTNkZTc1ODJlNTQ0ZjUyYTg5M2VlOWQzNmUwNmE2NGU1MmZkYzM4NCJ9"
+          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts#L309-L357",
+          "version": "repo-lines-v1:sha256:8fe05835b163f2d145ec26374fcdbd67330c5d6838b47e7eddaa1b40813b8c4e:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ2NTNjNzc3MmYwZTAzYmZjMTRhNmExMTJmZDkyMDdiYWU4MzExNzFmNTI5MjJmNjk3ZGY4YTNhZjFmNzMxNGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUwMTJmNWFkZTIyZGRjZTA4MWY1MDkyYTFkYzA3MjUyNGEwOGY3ZjNkNWViNDQ1YTBhMDI5YmU0YTUyMDIxNTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRlMTAxNGRiNjgwNGQwNGYzMzk2YzVmMTM5MDA4NjdlZmI4NWU4MjJkMTZiMjUzNjYxZWMyZmRjNmRiYTgzZDcifQ"
         }
       ]
     },
@@ -74,39 +70,43 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-agent/src/sensors/native/nativeStageGate.ts",
-          "version": "repo-file-v1:sha256:e16395910af72fe454bd1f3ebb78782bc8b1eeac1a86b409e192e64fde2f283c"
+          "version": "repo-file-v1:sha256:f25f4914a0cd3004fe4189df48644f81da67c0d257ce9c526a447c361d96a3ac"
         }
       ]
     },
     {
       "id": "claim_745815363c844149841ea1dae676c5a6",
-      "statement": "gate 消费已有 FM 报告；engine 在 API 目标或无 saved report 时 fresh run，以 saved 或 fresh 报告和 scopes 做门禁。",
+      "statement": "nativeStageGate 消费一份已算好的 FM 报告；engine 的 checkStageGate 不接收内存 document，只读磁盘 modelRoot，总是以 release 模式 fresh 重跑一次完整扫描，再用调用方提供的 fmCheck 或本次 fresh 报告做门禁，并在两者 modelDigest 不同时追加错误并拒绝。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-agent/src/sensors/native/nativeStageGate.ts#L5-L11",
-          "version": "repo-lines-v1:sha256:50560a576a6bfd4222711fb52dbb116b1c3f83c7ce032c234d4109ef96b96927:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWFmMjJjZjA3MzI1OTJjMjQ3MTQxY2JlNjFlZmExMTAxMjYxMmY1YTMxMjJiOWFmOWJiYWY1MmY1NzI0ZDE5NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTcyYTQyOTM4MmIyZTE0NzE4ZTBlMzdiMDU3MGE4YTE3MDI5OTFmY2Q4NDk4Y2Q4NDA2MGE4YmY0ZjA1MDE3YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2JkNmM0MDhhYjA4NTk0YTY0NTUwODkxMTA0MjJmZmIyYzBmOGE3NzY1MjcxYjU0ZDBmNTdlMDBhYWE2MGM0MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDYzNjZkMjQ5YjM4NWY3ZGU3YTRlMjVjYjJlYTg0OGJlYWVhYzU3YzQzZjc5YzU3MjdkZDgxMzE5OTZhYmVmYiJ9"
+          "resource": "repo://libs/evidence-agent/src/sensors/native/nativeStageGate.ts#L112-L135",
+          "version": "repo-lines-v1:sha256:27561bd308773165a3e760e628f09f73d969a49add3ab70ba0727558253e540d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFjZWYwZTM2NWE4MDE4ZTFjODVhZmI5NDQ0Y2M0Yzk2NmY3ZTUwNmVjMjA4NDFmOGNmMDY4ZmRiNjUyMjEzOTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNiNDQ3ZDgwN2ZlOTU4ZTM3YTI5MDA4MTg0N2I4NGE4ZTJkY2I2YmY2ZmFiODc4NDM4MTEwOWJhODVjOGU4YTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVmODhmODJkN2VlMzFkZGFiM2NmNjhjOWRlN2FiMDhlNzU4YTVmZWJjM2U0OWNiNDQ4NzUyZTkzYTQzNmE3M2QifQ"
         },
         {
-          "resource": "repo://libs/evidence-agent/src/sensors/sensorsEngine.ts#L70-L118",
-          "version": "repo-lines-v1:sha256:a75926244290b507be34c072d8072f20a8e83ed2ef20fa240a32d5c8302f052e:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJjZmUwYjAwNWU4YTQxZTM5YzgyOGM3ZTU1MmE1YWUzOWJiNjcwMThmMDlmMzM5YThiMzE4NjFmNmYwZmQxY2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5YTI5MDY4OGYzMDQ2NjVkM2NjNDFiYzMxMjE2ZTE5MzA3ZDNhNTQwYjNhOWIyMTBmZmJhNzFhYWY3NzQzZTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJlNzQ5NTA0NmQyNWFhYjEyNzIzMzZiN2U5NTQ4MGE1OTNjZGY4NzFmMDRkMDE2MzUwMjljOGQ4N2U4ZDM4MjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc4ZGMzNTI1ODJjZjU3NmJiZmRiZGRiMDJmY2FhOWVkZGNiMWUyZmUzMzIxZTliZTE0NzU3M2I1NmQ2OGRiN2UifQ"
+          "resource": "repo://libs/evidence-agent/src/sensors/sensorsEngine.ts#L74-L107",
+          "version": "repo-lines-v1:sha256:71523ae5d002548117fa0586957fcba13242ead9cf9a0c9ae07c1dde72c71788:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3M2I2MGJhNTdlMDg2OTVhNWM0YWZlMDUwYmFiMDIzOTExMmY5NzBiMWQ3ZGEwNzUwYjFhNWNkMDAxODVlYTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3MzcxMTg0MzQ1Njg3YWJiOWNiODQzZGI0OTEyYTY2NTYzOTgwN2I5NzUyMzVhNDg0OTI0NTFlOTZiZWJlY2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJmNWIzZWZlNWI3MzlkZWU4Y2IyYjQ3OTI4NmMwNmIwMTllOTBlMGNiYjU1NGUyNTYzNTMwMmYyNDg2NjU0MWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVkY2E0NDA1MWU2NTRmOTUyOGViMThkYjViNDcyNDBhM2QwMDQ5NmFkODcwYTVhNWUzOWU4YTIxZWM5NThjOWYifQ"
         }
       ]
     },
     {
       "id": "claim_791cb7e175a64caba8b0080223958a1e",
-      "statement": "测试保护严重性、计数/去重、台账、不可用失败、scope/v6 门禁和 API/visualization 非对称。",
+      "statement": "测试保护严重性映射、计数与去重、台账上限与待决、不可用失败、scope 与 v6 门禁、旧摘要拒绝，以及 API 传感器 draft 警告与 release 阻塞的非对称和故障隔离。",
       "evidence": [
         {
+          "resource": "repo://libs/evidence-agent/src/sensors/native/nativeApiSensor.spec.ts",
+          "version": "repo-file-v1:sha256:e0dd9114600d1bbe3cab302bba4f367f8ebc91b16efff28337479d0d1c34e764"
+        },
+        {
           "resource": "repo://libs/evidence-agent/src/sensors/native/nativeSensors.spec.ts",
-          "version": "repo-file-v1:sha256:d2ed17abe2078c260049d918ddda3b86c0fb184c7ee99a678ec42f3fa698c1c0"
+          "version": "repo-file-v1:sha256:321c123ccc25db60cac9b3b930ae472d559bac9956af8ebaaf714f086b9e50f1"
         },
         {
           "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.spec.ts",
-          "version": "repo-file-v1:sha256:209a090d4d21b8c14968192fdf24a65e6d609538e915f1e1c1f4ff29b4f1e8c0"
+          "version": "repo-file-v1:sha256:8976e533d39f167231e4fadab552a255d7032bd78f71abe2e7161dfaad8df5fb"
         },
         {
-          "resource": "repo://libs/evidence-agent/src/sensors/sensorsEngine.spec.ts",
-          "version": "repo-file-v1:sha256:76cbb346aa772769ed8ec950456b555ba6e6a80d35efbc89b0dd148a773aab06"
+          "resource": "repo://libs/evidence-agent/src/sensors/sensorsEngine.spec.ts#L31-L82",
+          "version": "repo-lines-v1:sha256:fe79ef07b870eb6767e4703781de952c7139c03d7105696e2ae7ae4b6eba3a4f:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2MzI4YWUyZjdhN2VmYjMwNDFhMTMxMjY4MDkxNTA0NDk4NWFkZjE1NGM0NzEyNmY0ZTcyOGNhYTkyNmUwMGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUyZGJiYzUxMTU0NTBiZjM4ZmMwOTc1NjYxOWY2OTRlZTZiZTg0ZjI4MzA3YjBkZDI1MmM1NDc0NTA3YWU4NzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI1ZThhMTlhM2Q4N2Y1NjYwOGJkNDE4N2JmNjliZmEzMGE1NzNkYTQyYzQxM2RmOTk5YjQ1OWI0M2FmZGM2NjUifQ"
         }
       ]
     },
@@ -139,7 +139,7 @@
       "statement": "API 传感器仅统计 evidence 覆盖，oasdiff level>=2 在 draft 警告/release 阻塞，无问题输出 API_ALIGNED，不再手工输出 derivation drift。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-agent/src/sensors/native/nativeApiSensor.ts#L24-L103",
+          "resource": "repo://libs/evidence-agent/src/sensors/native/nativeApiSensor.ts#L26-L105",
           "version": "repo-lines-v1:sha256:6d862e6c267c5e7321f659d5d6be138e62dcd960a60d8e1f6d5b91c0d39e2052:eyJzZWxlY3RlZExpbmVDb3VudCI6ODAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlYmVjNzhkOWJlYmRhMmZlYzRiMDQ4ZmU4ODdmNjg0NTU2ZGNmNzE2OTUzY2QxODdlNWYyMTU5MTY3OTdiNmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFkZjU2NDdkNzg4ZmVlNWI4ZTRlMjk2ODhjOGMyMTZkMGY3MmRlYWFjYjA0YTgzNjk5NWE3MjRjZmFiMjA4NWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
@@ -178,33 +178,33 @@
     },
     {
       "id": "claim_c04a0b66e85a4fd497c2a179f1318295",
-      "statement": "独立漂移审计经 DriftRadar/MCP 提供，可折叠为 shared issues 并保留 remedy，不再使用 SimulationSandbox。",
+      "statement": "生产漂移经两条只读入口呈现：桌面 DriftRadar 选一份 OTLP/JSON 文件，MCP audit_production_drift 接收内联 document，两者都读磁盘上已保存的模型；DriftRadar 位于 libs/desktop/feature-drift，显示 span/commit 计数、解析错误以及每条 finding 的严重性、kind 标签、evidenceRef 和 remediation，取消选择文件保留上次结果，embedded 时以 region 停靠而不是弹 dialog。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/mcpRequestHandler.ts#L121-L125",
-          "version": "repo-lines-v1:sha256:af0834d2582d7b26f18812491d308cbc9ca713df7a74511e40f33131d4c052a4:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmQ2ZjNiYjE5YzQ3MTU0MmQ0YzI5YTQxMjZhMDI3NWQ4OTk4YWQ0MzVkN2FlNDkxNmJjZTIxYjE1NjliZGQ4MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODkzNTNmYzUxYWUxYmU5OTI1YmRkZTc5OTAzY2Q0NjAzZjdkOTFkM2JkMWJjNTI0ZGVhYmU4MGM0NTA3ZWViNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGViYTE3NGYwYjE5MjdlNWExNThjMWQwZDU2YTc2ZDQ4NzBhZWYxZmFjODI4OWE3YmZiN2M4MzMxZGViZDM1YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDFiMmU2OTc0NTkzZWQzODQyMmQwODg1ZjFkMWM3YzQzNGZmYjFmZmFmNTc4YmExMWJkZjQwNDg3ZmU3NWE4NiJ9"
+          "resource": "repo://apps/desktop/src/main/driftIpc.ts#L70-L95",
+          "version": "repo-lines-v1:sha256:519fefca1921d8d8572e050697fe80d01e292ac670c944589eb79116f89cbf81:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwMmJjYTQ4YzhjY2UxNzRiMzRmNjI1OGZkNDRjNjcxNWI0OWQ1OTlkZjU0OGY1ZjNjY2VlMGIyYWY5ZTM0NzQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhlZTZiNWJlMThkODU4MzFjZjJlYzI2NDJhMDVhOWQ2MWUzOTI5NGMzMTdlNGI2YjhkNzhhMDUzMTUwM2MyNjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI2NjJmM2I4MGYwNmQ2NGIzZThhNTM4ZTg0M2QwMmEyY2ZmZDBiNzI1ODQ1MWMyNGNlYTBmYTI1MWU2ZmY4M2MifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/components/drift/DriftRadar.tsx",
-          "version": "repo-file-v1:sha256:7a8520b4dbd49913dd05644a31795f35faa597750728934c055da2f854c7d5f7"
+          "resource": "repo://apps/desktop/src/main/mcpRequestHandler.ts#L118-L125",
+          "version": "repo-lines-v1:sha256:da6f626ecb1776d93a1fe5273e3a8b4cc661084cbdd324bb64934a3deac23b2b:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjlhY2JmN2Y0ZmVkMjYzNTI1NzcxYzA4ZjM0YWRkOWY4MzQwNDcxNmQ1OWYzZGJiYTk2MThkNDIzOWMyNWRmNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODkzNTNmYzUxYWUxYmU5OTI1YmRkZTc5OTAzY2Q0NjAzZjdkOTFkM2JkMWJjNTI0ZGVhYmU4MGM0NTA3ZWViNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmRjMDgwMTkyNzQ5ZGEwOWRhZTVkYTM4ZDc0NTYwNzc4YTZkMDUzNzUwOTM2ZTYyYjE5MjMyMDZiZjU0YzhjMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDFiMmU2OTc0NTkzZWQzODQyMmQwODg1ZjFkMWM3YzQzNGZmYjFmZmFmNTc4YmExMWJkZjQwNDg3ZmU3NWE4NiJ9"
         },
         {
-          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts#L168-L185",
-          "version": "repo-lines-v1:sha256:f8f2bde8ff583474ed75dfbb63150f0726e43850616d29953102971f25852861:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhNjI3OTE5OGEwZWY2YmZjZGVkMWQ4ZmE2ODEyMTM1ODljNTEzNTczNDAzOTIzY2FlOTk0NjFjNDU1OWYyYzQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5OTBlYjZjY2RiMGZlZmNjM2M5YTg4M2M4NzljOTg2NmJlMzM5MzFjYWFhYmYzNjYyZDdhYzRjNDEzZWM4YjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJkMWQyYzQ4NjcwODMzZWQwMDFiMTc0ZjM2ZWZiYTVkYjE3Mjg4OGQwZjdmOGM0YjM0NzAzMmVhN2VmMTYxOGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMwOTQwNjU4ZmNjNmVmOWEwNDdkZWZmM2NkNzIwNjAxM2JlMDAwN2UwY2E4NjZmYTYxMWZmYWY1ODc5MDE0MGIifQ"
+          "resource": "repo://libs/desktop/feature-drift/src/components/drift/DriftRadar.tsx#L11-L144",
+          "version": "repo-lines-v1:sha256:428da323810f9b300c43fd1597d64d1197c28f6a9e07a06a07bcbac293f85ab0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTM0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJiMWE0M2VlYTY0ZjcyYzA0MzhhMWY4ZGE3ZWNiMzcxYzJjMzAzYTYwYjQzODc5ODZiY2Q1YzcyZTI4MTg3NjIwIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhNjk4MmI4MDUwZDM4MWZjYzE3ZjIxNWE1YmQ0M2MxN2Y2MWYyMzZhNTY4ZmIxM2UwOWE1ZDkyNTQ3ODA3M2M3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
         }
       ]
     },
     {
       "id": "claim_5960684fae664bada335d3f46627bd37",
-      "statement": "For an api target the engine always re-runs a release-mode sensor pass, appends every audit_api issue above info as CODE: message, and refuses a saved report whose modelDigest differs from the fresh one, recomputing passed from the combined errors; for a visualization target it stays FM-only so API coverage gaps cannot close that hand-off.",
+      "statement": "API 门禁总是以 release 模式重跑，把所有非 info 的 audit_api 诊断追加为 CODE: message（包含 API_COVERAGE_GAP 这类警告，所以报告 passed 为真时门禁仍可能关闭），拒绝 modelDigest 与 fresh 不同的 saved 报告，并以合并后的错误重算 passed；StageGateReport 的目标只有 api，没有 visualization 目标。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-agent/src/sensors/sensorsEngine.spec.ts#L43-L91",
-          "version": "repo-lines-v1:sha256:0cd359bbee26ecce45b97bf771ce7bf3a86b66d77bdf4d09960c404280a3fd3c:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc5MjNlOWIxOTEyNDc4ZmQ3ODU3N2Y5ZWY5NTEyMWMwMjM5OTQ3NDk1OTI1MzYwOWUwNThmOTIzNjc4ODA2MzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3MjRmYmUwYmVjNzdkZDNhMWI4MDVhNzNkMGYxMGU1NmQ2MjljY2ZkNDUzNWM3OGRhMjU3YTYyN2MyYWFlMmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://libs/evidence-agent/src/sensors/sensorsEngine.spec.ts#L31-L82",
+          "version": "repo-lines-v1:sha256:fe79ef07b870eb6767e4703781de952c7139c03d7105696e2ae7ae4b6eba3a4f:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2MzI4YWUyZjdhN2VmYjMwNDFhMTMxMjY4MDkxNTA0NDk4NWFkZjE1NGM0NzEyNmY0ZTcyOGNhYTkyNmUwMGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUyZGJiYzUxMTU0NTBiZjM4ZmMwOTc1NjYxOWY2OTRlZTZiZTg0ZjI4MzA3YjBkZDI1MmM1NDc0NTA3YWU4NzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI1ZThhMTlhM2Q4N2Y1NjYwOGJkNDE4N2JmNjliZmEzMGE1NzNkYTQyYzQxM2RmOTk5YjQ1OWI0M2FmZGM2NjUifQ"
         },
         {
-          "resource": "repo://libs/evidence-agent/src/sensors/sensorsEngine.ts#L74-L118",
-          "version": "repo-lines-v1:sha256:fce63d2e07fc57c1b98fe3ca608da8ed4714eaf8a2cbb59edae346c6658af586:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3M2I2MGJhNTdlMDg2OTVhNWM0YWZlMDUwYmFiMDIzOTExMmY5NzBiMWQ3ZGEwNzUwYjFhNWNkMDAxODVlYTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5YTI5MDY4OGYzMDQ2NjVkM2NjNDFiYzMxMjE2ZTE5MzA3ZDNhNTQwYjNhOWIyMTBmZmJhNzFhYWY3NzQzZTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJmNWIzZWZlNWI3MzlkZWU4Y2IyYjQ3OTI4NmMwNmIwMTllOTBlMGNiYjU1NGUyNTYzNTMwMmYyNDg2NjU0MWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc4ZGMzNTI1ODJjZjU3NmJiZmRiZGRiMDJmY2FhOWVkZGNiMWUyZmUzMzIxZTliZTE0NzU3M2I1NmQ2OGRiN2UifQ"
+          "resource": "repo://libs/evidence-agent/src/sensors/sensorsEngine.ts#L74-L107",
+          "version": "repo-lines-v1:sha256:71523ae5d002548117fa0586957fcba13242ead9cf9a0c9ae07c1dde72c71788:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3M2I2MGJhNTdlMDg2OTVhNWM0YWZlMDUwYmFiMDIzOTExMmY5NzBiMWQ3ZGEwNzUwYjFhNWNkMDAxODVlYTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3MzcxMTg0MzQ1Njg3YWJiOWNiODQzZGI0OTEyYTY2NTYzOTgwN2I5NzUyMzVhNDg0OTI0NTFlOTZiZWJlY2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJmNWIzZWZlNWI3MzlkZWU4Y2IyYjQ3OTI4NmMwNmIwMTllOTBlMGNiYjU1NGUyNTYzNTMwMmYyNDg2NjU0MWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVkY2E0NDA1MWU2NTRmOTUyOGViMThkYjViNDcyNDBhM2QwMDQ5NmFkODcwYTVhNWUzOWU4YTIxZWM5NThjOWYifQ"
         }
       ]
     },
@@ -277,7 +277,7 @@
       "statement": "Findings must describe the revision on screen: the editor builds the diagnostic index from null instead of a report unless the report's documentRevision equals the live model revision and neither the live bridge nor the sensor state is loading or errored, and it re-runs the sensors after each save.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L235-L251",
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L265-L281",
           "version": "repo-lines-v1:sha256:d37670551359005081df16958d48491b2c7869075cc1fe46d722323c9be7a992:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdhYjEyMGYyY2E4NTZhNGY4MmJlOTQ3NjE1Njk3MDlmNzVhNjIwNDlmZTc5YjJjY2I5MDVhN2E0ZDQzZDgzMWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1ZmI0ZjI1MjAzNTFlMzBjZTlkYTJjMDY0NTc3ODY2ZmQzYjhjOTFjMjQyNDA2OWJiYmEzN2JjM2EwYmQzNTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZhNDEwZTgwYzcxYWY1MzdhOWFiNGJhNjgxMDc1MGMwMzQ0ZjQ0ZWE4MmJhODgyNjA1MGU4ZDIxNTBhMDllMjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM0MDE3MDZhM2JhMmJmMDkzYzllZDA3NmFmNmI3NDliYWMwYjY4N2EwNjViYzZhOTIxMjhlZGQ0ODY1MzYxMWQifQ"
         }
       ]
@@ -293,18 +293,134 @@
       ]
     },
     {
-      "id": "claim_5b5646400b164f9880daa0e077ebfcea",
-      "statement": "reviewPreview 复用实时 document 的 FM/台账报告，追加 validation: 严格诊断并用 objectId 定位，机器检查不等于业务批准。",
+      "id": "claim_2d009659201544ab9c74ed15fb2120e9",
+      "statement": "传感器引擎只有一种进程内实现：它读一次模型树并从该次读取作结论，没有可切换的模式、解释器或安装目录，检查逻辑与 schema 就是代码；桌面对每个项目根复用同一个 createSensorsEngine 实例，使画布与 MCP 得到同一份判定。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/reviewPreview.ts#L49-L79",
-          "version": "repo-lines-v1:sha256:103f6da2cf4251e57e19153526376657a2c2670404abd7dd1429fecca916a4e1:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3YWU3N2ViMjViMDM2ZjViNjRmZGU2NWQ2MjRiN2ZhNjE1NThmMDIyZTgzNzlmNTQ2ZjJhYjE3YmRkMzM1NmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA0MDE5MGEzMDU4ZDliMWU3NmIzYzU1MzdlNzI3YjViYzM2ZGIwNTU0Yjg3MWU1MGRiYjhkYzk1Yjg2OTgyNjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIzODBiNGQyZmMzOTY4NGJiZmJjOTQ3YTUwMWQ1NTViMWZhYjU1ODdjYzk5MzU3ZmQ2ZGU0YzIxOGEwMDBiODYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdkMDE3NGNmNTE5MTNkNDljZDM2ZGRjY2U3ZWJhOTFmYmVhMjkzNDZjYjYzMjI0MDM0ZTNlNWYxMDU1OTllNDcifQ"
+          "resource": "repo://apps/desktop/src/main/agentRuntime.ts#L88-L93",
+          "version": "repo-lines-v1:sha256:91a85575f04726c16673a983d31cdcadf37bfceff2dc6281e939239a83e09cf1:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGU4NzI5ZjQ2NmNkNjAwOWY2YTVkNjRjYjkyMTNmNGJkOWRmYWYyMDE0OTYzMDVlNjQ5ODNiMDU4NzE2MDgyNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjI3ZWVjMDU1ZWViNTc3Y2RjZTFkODA2MThkZTU2ZDJmZTM3MTQ0NmMyMTUwZjI1YWYyODM1Y2NjMTlkNWU5YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTA1YzQwZGVkOGUxYzc0Y2ZkYzIyMmQ1OThhYWVjNjBhZjY3Nzc3NTQ0NGM4YTYwNzA2ODFiOTc5ZGI2Njg2MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTRmMTYxZmM4MDg1YjJhNWVkYjBmOGZkMTNhZjZiMDk5MzQ0ZDgzMTU4OTEyZjY3ODg1Zjc1MzZlNThmNmY3MCJ9"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/mcpSensorService.ts#L36-L58",
+          "version": "repo-lines-v1:sha256:875d7b2af9d2d18f5c861a1e2d72e5731e573584d190eb13fa01e7b1b16cc0f3:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVmMjRlMTNlM2ZkMzMyOGU1MTgxNDE4NzRlOTNiNWRiMGQyYWQ1OTMyZTkwMGU5NzU2MGYxZmQ5ZTQ0YjYxOTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFiY2RhZjYwYTVjYjY1NjA1NWYxYjhmM2E5NzI5ZjQ0NjFmZjU0Y2I3ZTY5N2VkNmIxYmVkYjMzNjYxZDAxNDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVlMTMyNzQ1ZTNlN2IyZGU2NTI1NTM5NTc1Y2NlNDE3ZmQwZjJhNTVkMjRkZDA1ODNlZjczYjE1NDA3ZDAyOTYifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent/src/sensors/sensorsEngine.ts#L11-L24",
+          "version": "repo-lines-v1:sha256:08a9c66254edc02002d37dd056ba89011875e6acf35498c8e6f252c6c273bf80:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiOGM2OThjYmFmYTNjMDQxMTMxZDkxODdlZTU5MTVjMDJlYTcyNTcxMTlkYjU3YWJjNzQwMjU4ZDY4MGE4ZjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjllMGI5MTE0ODUxYTc0MGRjY2Y0ZmVkYmRiNTQ1NzEyMjYzMDRhY2RlNzhjOTZhMzkxNDhmNGJmNTQ2MGQxYTkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_da5fba895a4346fdba4f9a6da9368379",
+      "statement": "关键数据台账不参与 nativeStageGate 与 MCP run_stage_gate，因此在同一模型上 MCP 的 passed 可以为 true，而报告的 isStageGateReady 仍因待决台账或缺失 stageGate 为 false，两套口径必须同时成立才谈得上可交下游。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-agent/src/sensors/native/nativeStageGate.ts#L112-L135",
+          "version": "repo-lines-v1:sha256:27561bd308773165a3e760e628f09f73d969a49add3ab70ba0727558253e540d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFjZWYwZTM2NWE4MDE4ZTFjODVhZmI5NDQ0Y2M0Yzk2NmY3ZTUwNmVjMjA4NDFmOGNmMDY4ZmRiNjUyMjEzOTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNiNDQ3ZDgwN2ZlOTU4ZTM3YTI5MDA4MTg0N2I4NGE4ZTJkY2I2YmY2ZmFiODc4NDM4MTEwOWJhODVjOGU4YTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVmODhmODJkN2VlMzFkZGFiM2NmNjhjOWRlN2FiMDhlNzU4YTVmZWJjM2U0OWNiNDQ4NzUyZTkzYTQzNmE3M2QifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts#L330-L352",
+          "version": "repo-lines-v1:sha256:98cdcdb9a5296a0b4e0c186b504704810bcd68e6d89e7ec21966b9ff51de08f2:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNkYWMzYjViZmVmNjIzYjEyMzlmNzY2YzNmOTc5MzE2ODUxMTY3ZTI3N2Q5NjBmOTQ4ODBhYTcyNjA0MDExODYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxN2JhYWY4MWMzMmM4ZWM0NTc5NGI2NjA3YTA2NzJmYzE5OTc5MGNjOWNjMTU4OTliZDFjNGM5MDBmNjYzZWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEyNDVlZTI3NmE5YjI2OTMzM2NlZmZiOTNkNzA4ZTNhM2U1OWFkYWUyNDFiMzI3YzE0MjM5MDc0MDlmMGNiOTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE5ZTdkM2FmMjVkNTRlYjlhNWMwYWVkYWI1YjBhMzkwYTJiM2YzNzY5NTVkZGQ3ZjI1OTM1ZWYyYzMyNGY2YjQifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent/src/sensors/sensorsEngine.ts#L77-L105",
+          "version": "repo-lines-v1:sha256:df4a17ce931684a377281eb66e6a30acf64da255fc3514bae619f276bb9f2742:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE3N2ZjMjgyNTk3MDI1YmZmMzBhM2EzZjUzZTU5MmVkZGMwYWEyMjFjZGM0ODVmZDExZjY4Y2NiMDdlNzBhNWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFjMDFkNWEzMGNjZjgxZWIxZDdhMWIwZjU1ZmQyMDU3YzRjYmJlMmVlMGY3MWNjNDhmYWIzMjNkODc5ODUxZjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFmYjJjYzgzOTU2OWExOTI4MzhiYmRmYjUwOThlOWRjZGIxYzE2ZDM2Zjk0MmVhNzg5NDI4NjA0NTIzZWNmMWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM2YWQyODBjYTM1MjdkNzA2ZmY0OWU0MDY0NDQ4YThjYjJlNWM1ZjkwOGExZGM1M2VlNzU1NmM3NWVlZDBjZmYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7f1b9ccd87f94cf98c02708899c92eeb",
+      "statement": "MCP 把门禁投影成 passed、exitCode、driftDetected 与 blockingReasons；执行抛错时返回 passed false、exitCode 1 并把错误文本放进 blockingReasons 而不伪造 0，关键数据审计读不出模型时标为 producedBy unavailable 而不是返回一份看似干净的空台账。",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/mcpSensorService.ts#L73-L105",
+          "version": "repo-lines-v1:sha256:4105422f96f03a1c3904653720ae9f0801f2164ba1bf13023a3e06229faa77b5:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllZTZkMzMzNDM1ZTZkOTM4YjAxYWJiMzY2YjMwZWM2ZDZhYmQzMjBhOTIyZmE4MjY1MDdkZDkzNjE5YTc4OTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNlOTBjOTM3YWQxNmM1NmVmMTVlYmFkOGE4N2Q1YjU2M2I2NWY0NDczNWU3Y2VkNmYxYzNlNjU4NzQ4OTczM2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f4183e815ead4f4aa0d58155c4a19806",
+      "statement": "读 trace 时只有带 fm.evidence.ref 的 span 成为业务凭证提交，service.name 取自 resource，fm.value.* 与 fm.fulfillment.* 解码为写入值和履约声明，OTLP 用字符串编码的整数会转回数字，畸形 span 记入 errors 后被跳过而不是被猜测。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-agent/src/telemetry/productionTrace.ts#L1-L70",
+          "version": "repo-lines-v1:sha256:42275ebd67252d09e082fd0e3316b96a5c22a223b08336d2f40928f84740087d:eyJzZWxlY3RlZExpbmVDb3VudCI6NzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcyMTJkMDg1YzU5ZDFmYjM0OWI5NjkzMDdiYWFiMDBiZWI5YWE5Yjc4OTNkM2I2YWQ0ODhlMzJmZGZhM2VjYjgifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent/src/telemetry/productionTrace.ts#L236-L293",
+          "version": "repo-lines-v1:sha256:f91b99de0413e06381e13a1439aa78eabc429660be4d71b9a4f802dc739c2dee:eyJzZWxlY3RlZExpbmVDb3VudCI6NTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRhYjhkMjJiY2NkYTk5M2U1ZTY4NTBlMDIwYzVmZDQyMjlhNzUyMmJiY2JiMWY3MDk5MTY3OWVmZDc1ZTMxZmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZhNDFkNzNjNDUyMmJlYTM5ZmY4MTVlMjRiY2YxMzExODUzMWQ2NzFlYjNjZjUzMTIxODg1ZTExYTFjNDcyNGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_cf4856b5eaee4f56a0416b8776440090",
+      "statement": "漂移审计是按需只读的：没有轮询、没有写回模型、也没有自动补丁；driftIssues 与 buildSensorReport({ drift }) 能把 finding 折叠成 SensorIssue 并保留补救方向，但 runFullSensors 不喂漂移，所以漂移不改变报告的计数与门禁结论。",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/mcpDriftService.ts#L45-L60",
+          "version": "repo-lines-v1:sha256:4c3c14983d0e2c285b4a19f5b70d2da552b6a2a80b1c3f601aed3c92d992113d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMzNWQ1NzYzZWU0ZWQ4ZDljYzZlMmRjYzU0NWUyYzFlMDNiNmY0MmYxM2EwZWUwNTFkNTg0ZWQ4MjBlZDkxZTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFmYzUzOTY2ODNiYmQ4MDViZTMxZTc3MmZlMmNjNTg3NTYzZDhmMmU5NGVlZTc0ZmQxOTcwZGUzZmM1ZjJhNDAifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent/src/sensors/native/nativeSensors.ts#L49-L70",
+          "version": "repo-lines-v1:sha256:d9a5a3778d22e0157800c0407d152ba55e683c9b0a918a87225b31b030d76154:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyYjk3OTk4YmJiNDI1YTEyZDU3MTJlOTA3MzI2ZTA4OTk0OTJlYjU2MjRhZDNiZmU0Y2JiNWQ1NjA2MjcyMjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJlYjE3MmI1YWQ5YTI0NjExYTZlZjg3ZjNkMWJkMGE5ODVhYzRjNjQ2MGM3YmNhYzE3ZTZlZWUyZjZhYzRkNjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQxMWFlYzVhMWMzMzcyZmNiY2VjZjEyN2QwYWJmZWYzN2I2MmZkNTg0M2EzMjczNjczN2UwN2I1MTlkMzBmZTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEzOTBkMjdlNzVlYjY2MGUwNDcxNDI4OTA2ZjAxY2M0MTk5YmIxZDA2ZDAwNzU2ZjU1NDI5NTBhYWU1YzYxYTgifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts#L168-L190",
+          "version": "repo-lines-v1:sha256:d8ee36670dc4bf7a823ab70753aaf26fe5b9a8386aa02fbabb2f46f1a9c32436:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhNjI3OTE5OGEwZWY2YmZjZGVkMWQ4ZmE2ODEyMTM1ODljNTEzNTczNDAzOTIzY2FlOTk0NjFjNDU1OWYyYzQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmMGJjOWI3MDYyZWQyYzdiZWQ5YmRhODBlMmFmNWI3ZGUyOTVkNzUxNDE2YjQxZTk3MzllNDcyMzVlNTEwNjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJkMWQyYzQ4NjcwODMzZWQwMDFiMTc0ZjM2ZWZiYTVkYjE3Mjg4OGQwZjdmOGM0YjM0NzAzMmVhN2VmMTYxOGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU3YWJiNzQ5NzMwNTRlZmQxZDRlYTYzNjM5YTdjMzcxNjQ5MGFjZWI1NzNkN2FhYzExNjU0YTY5ZGY1YWY3MzIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_877153e807374b0da34fc3d37f80fe9f",
+      "statement": "decideGovernance 为每种漂移 kind 固定一个行动与宏工具：未建模凭证走 roleify_and_invert_dependency，未建模字段与跨上下文写入走 apply_model_patch，违约缺口走 add_breach_compensation，派生值入参与未知 kind 升级人工 ticket 且无工具；verdict 优先级为 production_overreach、needs_repair、model_lagging、healthy。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-agent/src/governance/governanceLoop.ts#L176-L200",
+          "version": "repo-lines-v1:sha256:8b6d8d13edb4277fbb9559612f44fc16600cf94dff009f641bddca5b69295808:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg0ZTQyMDhjZDZmZmI4YzRhMzU0N2IyZjU0YWRhMTk5NzhjM2YzNjVlNzhmOTUwMmVmNTE0NWNkZDJhYTg1NDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFjZTlhY2FjMjJlMWYyZWU5ZmJhOGU3MGJjMTZkNWVjZjFlNmE3MzE1MzI0MDg2NWQ2YmZlYzk4MTg4NzU0ZTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZmYWUxYTg0ZWJjMGRlODZkZGY1MWZkYWFmY2QwNzIzZWYzN2U1MDkxYTNhMDc1NTI2ZmNkZjYwNTZmZDI2ZmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEzMjEyNzMwNjJiYmM5Mjc3OGQzMjViM2E5ZGU2ZGIyNjUwY2NjODI3ZDg0ZDM2ODgxNGFhMmNjNTU2NmQzNDEifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent/src/governance/governanceLoop.ts#L86-L140",
+          "version": "repo-lines-v1:sha256:0a2a4958dc99c9dcb5973c3bfed1ede90ecdd5ca2cdfcfd6048f74fa3b26108d:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlZjY5MDA3YTdlNzVjY2RiMmMxOWVmYTlkOTVjNDNiZjc4N2YzM2EyYjljODI2NWM0YTVjZTY0MmZlNmRiZWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljMDI1MjAwMGFjODRlMjU0YjJkZjQ4MWE1YjYyYzJmMDZhNDJkYmM4ZDAyNDQ1NzA3MDQ4MDNjODEyZmE5NjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQyNjA0NzQ3NzIzNTFmMTkyMjEzMzI1ZmZlOGJhYTViZmIyNTliMGM3MWZkZGZkYzM0ZjVkNWY3NDJiNmU4MDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMzZjI0Y2U4NmRiNzM5YWFlN2VkNmUwOWFiZWVkZDNjODdjNTQwNjgwMjUzNTNhZWVkNTgzMjIyODZjN2Q5ZDIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2fc941af3c7d4ec2aa3db124d7c4e166",
+      "statement": "治理策略目前只由测试驱动：库内 spec 覆盖每种 kind、未知类型与验收门槛，桌面侧用真实 drift service 加 golden 模型验证一份模型产生一份决策；没有生产 UI 调用它，也没有自动执行补丁的调度器。",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/governanceLoop.spec.ts#L98-L184",
+          "version": "repo-lines-v1:sha256:d28f9b8efc8bdb94bd0b9ec6dbd5b061769da53498e7e091b7e4d39b509118e7:eyJzZWxlY3RlZExpbmVDb3VudCI6ODcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhjNWM1YjAxN2I1YmE4NzNmNzEzMGQ4Zjk4NzhhZGRkOGEyYWVhYmExNDc4YzY1YjViMmViZmJlNzJhZGQyZGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMwYWEyM2U4NDFiMTlmZmViNDZiY2E0YTY0YTUyNjJhNWRlZDNjMzc4OGI4MGQwMjhmOWQxYTBhMjlkMTRiYTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent/src/governance/governanceLoop.spec.ts#L1-L20",
+          "version": "repo-lines-v1:sha256:d05067ff2dae55efcdd590935ec71dd7658cd2f4b95a15bf54379b00e57f772a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNmMDFhYTk4NDYzN2E5NzIxNDJmYzIyMTA3ZTcxNDA3ZjlkMzc1Y2JkMjliNDg0NzFkY2RmYzNjZDk5ZjE5OTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlmOGExOGE4ZmJlMjIyMzdlMTg1OGRkZWNiODc3NzI2NWYwYTgwYzlhN2RiYTY4Y2Y5Y2Q1NjMwMjZkMGM2OWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFjMjM2YzMxMDQzODc3MzNiMTkyNjM3NjdiNmNlMjc3ZDEwOTAwMjBkYjVmMGU1YTk5NTA5YjEzZjY3ZGYwZmYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ae9dca692dbe46d58b490bca16f5997a",
+      "statement": "notifyModelChanged 拒绝 revision 不高于当前 live 快照的输入（整条忽略、不排重跑），接受新输入时清空 latestReport 并把最初的 baseDocument 固定为比较基线；dispose 时自增运行序号、清空快照并取消挂起的 debounce。",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/agentRuntime.ts#L225-L256",
+          "version": "repo-lines-v1:sha256:78195238590ae954fe388a1d3380745246a373f48ba336136b5096140826ee6e:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMwMGQyNTQ0ZDhjOWQzOTg2ODJkYmMzYmE2ZjYyYzAwNWU3YWQ1OTljN2FiNzg0NzliZGUzMTBkMzk4YWJhMmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFlNzI2NmMzNWU4MDlhMmExY2IwMWUxNTVlZDdkMjZiZWI2Zjc1MmQzNGE5Y2ExMzU0NTY1YjFkZDc5ZTlhZjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZjMTVkZDU4NWQ4NWRkYmQ2NTQzNmQzYTQxYTU4MzM3YzEwOTlmZDIxZDU4ZjEzMmI1NWVjMjI2ZDE1ZDliNjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg2MDY5YTdkYzA1MDcwZWVkN2E1ZGE5ZGJlOGRjMTg5YmM2ZjBmZjkwMTA3MTA5MDgxOGQ3MTc0NWUxZTA3ZjUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_eacc0964a84d4c21b0ee30f0ceb3c3e7",
+      "statement": "实时运行把 live 快照的 document 与 baseDocument 一并传给 runFullSensors，因此未保存的画布编辑与固定的比较基线进入同一次检查；没有 live 注册的调用方则按项目形态从磁盘读回文档。",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/agentRuntime.ts#L111-L152",
+          "version": "repo-lines-v1:sha256:df6af19552927e808f875adc71d6730e43d44cf536bf968d6d34f7c9f3975c89:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjMjFiYjYwM2MwMmIwNjViZTE0ZmNlMjU2NWVhMzk4NDk2MGJmNzJkZWUxZWZjNDE3MDQ1MmE0OTcxZmFiODkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2MjE3YWU2M2RjNmE3YjRjMzJmYTEyMmFkNGFiZWVkYWE4YWU2ZjgxYTMwMGEwNDQyZGRhMmVlY2RhNGYzYzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYzMDE3ZWY2OTBmYTliMjJjMWJlNmNmYWE1Mzg5M2U5ZmU2OTAxMzI0ODAxMjRkYmEwNjUxYTFhYzBlYjE3NTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhjNzJkZjljODZhOGIwOWJlMTk3NjMwMjJjZmRiYTcxOWFmM2E5NzNiMjlmYThjNjk5ODk5ZGFlODcyNjMyYTgifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-15T14:07:58.904Z"
+    "at": "2026-11-16T23:54:38.352Z"
   }
 }

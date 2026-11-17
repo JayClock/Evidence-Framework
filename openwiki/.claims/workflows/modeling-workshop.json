@@ -1,0 +1,194 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:d4ba1cc3bbaeacc8532b0174554b53a4e88eed89e2acec456d767bb6067721d6",
+  "claims": [
+    {
+      "id": "claim_fba3aa1f804c48a28c5013f04cb94639",
+      "statement": "WORKSHOP_STEPS 是共享词表而非模型属性：磁盘上不记录当前步骤，也没有 workshop 实体或进度字段；桌面上的“当前步骤”只是 AgentCopilot 的本地 selection state，跨轮保留但不进模型、不进 undo、不写文件，随消息以文本前缀发出。",
+      "evidence": [
+        {
+          "resource": "repo://libs/desktop/feature-agent/src/components/agent/AgentCopilot.tsx#L108-L122",
+          "version": "repo-lines-v1:sha256:0fbee1e3ed98d944d840000e8c015d1219fd36085923d0bbe74cc3c02cb23360:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE4ZGMxYWRkMTkyMmQ1OGVkODgxZTQ5OWI3YzQ4NDM4MWNlYWZjZWJhODA3NTUwZDc5YWQ5ZDUwZDI4MGRkN2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRjZjc4OTBlNGQ1YmZhMjI5ZDE1MzBhMWRkODg4Mjk2ODE4ZTE0NTcyMjYyNzMwOWRjZTdhNGY1MTZlM2Q0Y2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQyNzFiMDUwNGRhZjBjNjgyNDFmZDY2OTExZGU3YTQ4Y2VkYTM4ZjA4ZjRlZTFhODI5OTE1Y2QwNThiMTI5YzAifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/workshop.ts#L1-L20",
+          "version": "repo-lines-v1:sha256:491853e7a7e7d28ba94afacc37c48f701c34c56bb0c57bc31599a264ed2e2673:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk4MzRiN2YwMGUwMzYwYzA2Yzg3MmExNjhiN2U2YjMxZmY5ZWU0NmNlNzFiODZhOWQ1YjQwMGY1ODVmYTVkYzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA4NDQ0Y2FjYmEwNmQwNWQ3N2VlZmY2NmVhNzdmMWE2NDNkM2VkYTY0N2VhYzQ1NmM1OTJiOTAxY2M1MzA4ZjIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a01c2fca531a45569e7520f326e736f3",
+      "statement": "词表提供两种互斥的前缀文本：workshopStepRank 给 1-based 序号、workshopStepFocus 打印【第 N 步 · label】，REVERSE_CONTRACT_MODE 为无合同逆推提供自己的 label/hint/focus 前缀，二者占用同一个选择槽位。",
+      "evidence": [
+        {
+          "resource": "repo://libs/desktop/feature-agent/src/components/agent/WorkshopStepSelector.tsx#L14-L28",
+          "version": "repo-lines-v1:sha256:117cb268ad573042f39eb74da1cabd714f80f2e5ab7bb8ad02bcf091fc2253b0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyM2NiNGMxM2Q2Nzc1OWQ1NGY3NjcxZDQ0MDM0OTcyZDA5MDNhMzlkMDhhZmFlNzNiYjk4MWViOWFiMGRjZjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRmMzhlZDMzYjQyN2Y0MDI5YWQ5YTQ3OTI1NDk0YzE0ZGIyMzM2YzFkYzAwMWM5NzRhY2M4YTViYWQ4ZmY3OTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM4OWY4NjBiYTljOWFkMTE3NDE4ZGIzNTI2OGY1ODczZGY3NDk4NDUwYTIzOGFhOWM1NDUxMGNmZmRlOWMwZGIifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/workshop.ts#L75-L108",
+          "version": "repo-lines-v1:sha256:9e528c6f00f0be988f2caa843882114d5c9cf01813105350d868a05eada86b00:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM0NmQxNWMxNjk3MWZlYTU4N2M5M2VmZGZlYWU0ZWI2YTU5NDY4OGExMTY1YWU0OTczM2E0MTBhODM3NzBmZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3ZTBiMGQ2MDExMjdjOTAzNGM3N2UzNGViNzQ4MmQwZDJiODA2Mjg3N2JjNWJiOThlYjdkN2ZiZTI5ZGI0MTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNlMjVjZWUyYTgzZDk5OWZiZTllNjYwMDQ1ZDQ0ZjFmMDM3OTFkNGMxZWJmZWFhYWFiMDVmNzQwMTlmNzk2YzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f49321fa4260449ca7679948afba99a2",
+      "statement": "同一份七步词表被 schema 导出、桌面 pills 与向导消费，并被 WORKFLOW_PROMPT/ROLE_PROMPT 以文本复述；prompts.spec 断言七个中文锚点在 WORKFLOW_PROMPT 中按看板顺序出现，用来防止词表与提示词两处文本漂移。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-agent/src/prompts/prompts.spec.ts#L48-L65",
+          "version": "repo-lines-v1:sha256:da6232b0ae7da03f36c38c530a7fedd4af14cc9b0c3a53aa8af0b15980908160:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ0M2JlMDVlMzdkMDEzOTAwYjE5MTc0ZTAwNWFiNjA3ZWMxYTg2ZmIxZGI1ZmUxYmIzOTQwOGVkMzFjNzVmZWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyMGZjOWU2N2RiMDdlZDIzOWJiM2FkMjMxMmVhYWI5YTcwZTFmNmZiYTAxMjg4YjBiYTZlNjFkN2Y4ZWU3ODgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEwZDAxZGE5YWIzNmZjYWNhYTI1NjUzMWJiZTQzZDU5YzdhODBiZDFjNjhlODdhNjMxNjM0OGE2ODRjZjg2NTcifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent/src/prompts/role.ts#L40-L44",
+          "version": "repo-lines-v1:sha256:d558a2327a9ede6fe4fd572714285a5f4c431a3d85eb5f6294cb74eb9e3b14d9:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODAwZWEwZGE1MWNlOTViZmZmYTMzN2U3MTRmMjhiYWEyNGUwNzJkNDM0MzZmYmQ0ZDQ5MjY3OGMyZDgyNGZhNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjdiMDcwYjNlNGQzNjI4OWE4YzljODBjZjU2MWFmZWIxZGI2ZGJjOGRkNThjMzFlYmJjMmM1MGE5YzJkOWVhNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/index.ts#L139-L150",
+          "version": "repo-lines-v1:sha256:0c64531587deb92d98c3af56cb9f5d9b7e1e31bcb1f0ed6e94f647b49adc763a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNkYTk5MDA2MzZhOTA3Y2YwNmI1MjBjZDA3YjZiZGFjNDBiMTNhMDgzODYyMmFjYWE1Y2RjNmMwM2VjYmRjNjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRhZTQwZTJlZDQzZmYyNzM5NzVmZGM1YTAwOThiNjFlYzQ3YjY2NmMxZTI3N2M4ZjVjZDJhZjU0NTdhYTQ0ODgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIwMTUzY2Y2NGViMTM0YjI4YWYzNDNiOGRiNGRhNGI1OGUxYzM1YjBlNzQ3YjVkNTMyZDhlYmI5MTM2ZjA1MTgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_81495ddfeded48eabc253e6b37acee8e",
+      "statement": "inspectWorkshop 恒按词表顺序返回七条进度，每步状态只由结构事实推导：anchor-contract 需要恰一份合同、两个不同且归该 Context 的 party 角色、合同列入 rootRefs；pair-fulfillment 需要每个角色都是某请求的责任方且每个请求都有确认端（anchored 为前置条件）；trace-key-data 需要该上下文内台账无待决项；name-things、invert-dependency、close-breach 恒为 review；connect-flow 在范围检查通过时也只是 review。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/workshop/workshopProgress.ts#L19-L116",
+          "version": "repo-lines-v1:sha256:8337f3a18e546583418537c3d88f845662a0a200b6b393022b9b3306a4e6cf81:eyJzZWxlY3RlZExpbmVDb3VudCI6OTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNjZDM4MmRhNTk4ZWM4ZDQ3NjNiNGJlODNlNjZhMTE4NDg1YzI1NjBhOTQ3NDcwNTBhOWNjMWNkZjZiMmZjOGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxYTZmNzUwYWE1M2NiYTQzMmQwMjkwYTU4MDAyNWEwYjhiYjA3MmRkNGI4NzVlNzAzZGJmZmNkOWQ3YzhlYzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_02f0d6e6ab1448dab3356d95a2965f97",
+      "statement": "ready 只表示可观察结构事实成立，不是业务已经认可的断言：inspectWorkshop 的注释明确这一点，connect-flow 的缺口文案也写明静态检查不代表业务确认、不代表后端 HTTP 验收通过；传未知 contextRef 时第 1、2、6、7 步退化为 missing 而三步人工核对仍为 review。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/workshop/workshop.spec.ts#L85-L97",
+          "version": "repo-lines-v1:sha256:dbe4db5695d710abe86e955f55f7fbd526d6529a17293d0d2d0d860ec1b798d9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgyM2I3ZDBlNmNkNzkzNTI1YjcyMmVkM2RkNjllODhkOWE4MDk2YzMxZjcyNzQwMDE5MjczMWEwYmRhZWYyNTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZkMjVjMTZiZTc4M2FiMDM3ODhkMmRlMTI3OTUyNGIwZWUwZGZlYTE2NjUzMmQxNDNiM2Y4MWYyZDI4OWEyYTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/workshop/workshopProgress.ts#L16-L20",
+          "version": "repo-lines-v1:sha256:7cc8c72313c45461e55d53e3264240c312629a0ba1656dcd8453b6f50d762845:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTRhNWFhMWQzNGMwZTM3OWRlNzRkNjc0MWIzMTJhZmRiMjdmYzM1ZTYyZTQ2NDI4YjQ2ZDM1MTg0MmRiYmU5YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjAwZGQ5NTE1ZDI2NDEyYmFkOGEwODEwMDZlZjBmZjgwZGY3YjNlYjJiZWMzNjlkYzJhNTY5MDExMDU2Mzg2YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTFmYzk3Y2I0YTc2NmQxNDMzNjY1NDJjMjczN2I1ZWY3MTc4Nzc5YjY1Y2ZkNTY0YjkwOTMyODI0NjlkZDRjYSJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/workshop/workshopProgress.ts#L90-L114",
+          "version": "repo-lines-v1:sha256:ad48b4cc8e9dde6502b2a444f09828dfb2b7efb41e004c1b738b9562ab8c98fb:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEzYjU4MzZmZDAyNWIyZDIyOWVjNWMwODBkMTZkNWM4YTNiNmUzYmNiMzdlNzQ0NTUyYzdjMWUzZWY5Yjg0MWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJkNzhmN2FmN2EzYzI5MTU1NDkwY2JiZTlmMTY3ZTMxMjRhMWQyOTcyM2UzM2QzYmMyZjBkODQ5OGMzYzVhYjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM5NmIzNjkyZWY3ZGNhYmZlYzJhZTI3ZWYyNmY0NzhhZDYwMWU1ZjljMjBmYjEzOWM3NWU5MTYzZDhkMGYwNzgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_806eac6c5e554866875e879160682b6e",
+      "statement": "anchorWorkshopContract 在一次 session.mutate 内原子创建 context.workshop.N、两个 role.workshop.N party 角色与 contract.workshop.N（只带 signed_at 属性），createContractMutator 把合同写进该 Context 的 rootRefs 并拒绝已声明 rootRefs 的上下文，最后把 contextRef push 进 manifest.entryContextRefs，使空白工作区的第一份合同不留空 manifest 根，且 undo 把实体与 rootRefs 一起清除。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/mutations/entityMutations.ts#L37-L57",
+          "version": "repo-lines-v1:sha256:eb9846edb73306abf165c808abb7e007afeef8b1fb367aa8c7ac69fb2f9d1c7a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRhMDM4YjgwNDA3NDE4MjNhNzljNzk5ZjE1ZWEwMzUxNDJmZjZiMmI3MjI3MTljN2UxNzU4YjllY2VlZWY5YTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM2MmMwNjMwNTUwNjgwMjNkYTNkODc5NGYyZmM4Y2UyM2FiYWJiOWVmMzg2YjdiMDFkN2NmZjg1NDRhYjEyNTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgxYzViNGE3MTM5Zjc0ZTQwYjE0NDlhNDlmMmU1OTRjZjM5YmU5MGFhODkxYWI4NTBiMDAzMjg5YWUxMjJhOGMifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/workshop/workshop.spec.ts#L10-L30",
+          "version": "repo-lines-v1:sha256:e8d6d70c8b8d10fdec9d546d1ed8142e98c79c6f64548d0151f92eb5fef0b688:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU0M2Y5ZTNmM2FlNmMwYjhlMmZhMWYwMDg4YTM5MzAzYWVlY2EzOTU5YWU1OTM4NWU1ZGExMzk4ZDZjOGViOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI1MGEyMjVjMmM2MjI1ZWI3ZDQzMDcwMmJjZDQyNzBhNjg5MTg0MjhkZTM3NGMwNjg2MjlmODU0MTUzN2E3YmQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEwNDVlOTk3MTljMmEzMDZhODg3M2MzM2NmMTA2ZTY2ZWYxMmExOWFjMzlmODQ3MGZmZDQwMTA1YzhkNmM2YzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY4ZWZkZmVhODZhMGIwNzAwNDdiNmZhMDMyZWJhMDA4ZGVmMzk4N2RkOTQ4ZTZjYzFjZWI0YmFiNDRjMzI4NzcifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/workshop/workshopMutators.ts#L34-L73",
+          "version": "repo-lines-v1:sha256:51603c0da73d851996cd1f753ffc44f4895220eedad7852ef1e697e0750dae6e:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFiYTI2NTk2YTVhMjFkMDQ3Mzg2OGMzMmIwZjFjYzYyMDQwNTdmNzA3OGJkZTdlMTlmZjkzZjlmNzgxODcwMWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUwYzI5NTFmZmNhNWNlZDUyNDZmYTJlMzIxYTA2OWIyN2MzZjdmZjZiYmVjZWRjYmY1NGViNDNiNDg1N2FhMzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjljNDBkOGE4ZWMxZmM0YTdjMDc5MWQ5NmZjYmQ4OWZhNDAwMjE2MTJiNWMyNDhjMDliZmMwZmY1MGZkMWYxMzYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_20cd0d51edbe408daca5ff9505ff270d",
+      "statement": "addWorkshopFulfillment 拒绝相同的权利方与义务方并强制三项文本输入，请求带 started_at 与 expired_at（expired_at 的 meaning 就是人填的截止依据）、notes 提示继续绑定派生规则，确认带 confirmed_at，并通过 contractReferenceId 让请求从创建起直连根合同；它不写 examples、不计算截止时间、不生成补偿或法律救济结构。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/workshop/workshop.spec.ts#L31-L70",
+          "version": "repo-lines-v1:sha256:d40dcd01dcdb245cfd25025eaa73f993da56392d753aaa5508c2a00df796c956:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhOTgzNjRlYzIxYWUwYTc1MTMyZThiNWMyNzk3OTdiOWVmNGNhNzEwZDNlNzc1ZDNmOTc2ZjAxZjg2NTNhYjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU5NmYyM2IzMTVkNmQ0OGJkNzllYzA1YmFkNzVmNGU4MDU0ZThlYWY0ZDQ3NjNmNmQ2MDQ1MzczOGM5ZWZjM2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxOTQ0MjY3NDZlMTIyYzQ1Nzk3MDM2NzVmZDUxNTdkNTM5Y2Y0YjU4ZDg4Y2UwNjY3MDZkMDA3MTViMjk4NmMifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/workshop/workshopMutators.ts#L75-L117",
+          "version": "repo-lines-v1:sha256:f924c0570cc1eb9007f23c25bda5cd3b2642aaccd193b3c058e692e750479d3f:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY0MWRhNTE0Njc4M2NjNmJlMmJmMDcyMjIxMTA2Y2MzZjNjZjNkMTdkZWQ4NDQ0MjQwZDQzNzY1YjFiNDI3NjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZiYTcwODk0YTJlN2RhYWE0YjlhNWU0OTFhNmFjOTJlMzkyZTE1ODNjZjY5MzdlZTI1NzVmMzk0MTM4YTg1M2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a9cf177a5e674c5aa5c01823e689a2d8",
+      "statement": "工作坊 mutator 的中途失败不发布任何部分改动：底层 createFulfillmentPairMutator 通过 requireContractContext、requireRootContract、requireRoleBoundByContract 与 assertMandatoryTime 守卫，传入未被根合同绑定的角色时 session.mutate 抛错而文档仍是同一个 before 对象；成功路径则作为单个 undo 单元回放。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/mutations/fulfillmentMutations.ts#L53-L80",
+          "version": "repo-lines-v1:sha256:38c406b61f79db9ef8a7cfb21123787b93296f66c8906abd29dbede414b821da:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUyYTc2ZjU3OTJkZGE4ZTgzYTk2NDhiNmMyODZmNDM5N2ZmY2JkMjMwM2YyYjYzM2U1ODFhYTEyMTA5YTIzZDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM0YWZhMWMzNTZjYmUwMThhMmM2MDY3YTRmNDM0YjVlNDlkYzdlMzdjNGJmZTIyYzE0NTNiYzJlMmRlNjRiNWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNmMzlkOGI0ZGIyYWY3ZDJlMWVmMjVjZTFhMWVjYzY5YzQxNTNmNjQzMTg3Mzc0NGE0M2JiNWNkNWQzYjhlYzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFlNzQ2ZjJhNjI1YjgwY2U4ODQwMTRhZGZiYjExMzYwNTM4OWVkNWJlNzM4MTc4ZDU4MzFkZmIxMTM5OGRhNDQifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/workshop/workshop.spec.ts#L71-L97",
+          "version": "repo-lines-v1:sha256:38994eb05eea9fa9c386b9845bf4c6052b80a43c03aca100f811ae50e6f71756:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE0ZWJmZDZiMzkyMDcxZGI4YmYxZjYyYWNmOWI3YjBiNTI2ODk1M2Y3OWU5MWE3ZTJjMDMwYTViYWU1YmZlNTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ5MTBhYWQwMzVlYmFiOTEyMTY4NzIzMzU4YjgyMzczYzhkYTVkNDljYjU3ZjE4MDNhOWQ1NTQ2ZTFlZTgyNjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_92a37bb02bc44e499438a49ade803e5b",
+      "statement": "WorkshopWizardDrawer 只对前两步给表单（都走 session.mutate 并在成功后 onFocus 定位），第 3 步起把 `${step.label}：${step.businessPrompt}` 通过 onReview 交出去；EditorScreen 将其写成 copilotPrefill 并切到 copilot rail，AgentCopilot 只把文本填进 composer 并调用 onPrefillConsumed，不提交、不保存。",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/wizard/WorkshopWizardDrawer.tsx#L28-L190",
+          "version": "repo-lines-v1:sha256:6c9588cc33737df0aec8b4c0087b11af50962ba35f1901be97b6fc7a8177956e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlM2E0YzgyNDlhNmI0ODlkMWNlZTY1NzhlMjE3NWUxZDI4MDM0YmIzNGU5OTk4OTU3YmVkNTg0NjAxZjE0MDgyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIxNTc1NTRmNDYwMWUzMGI1NzQ2ZmM4NDlkNTQzNmZlOTkzNWIxNmQxZGQ4YmJjNGUyZjFlNTQwOWZhYTNlYWIxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJmNGZhZWU2Mjc5MjNkODE4OWRmMWU1OWQwYjgzOTY1ODE3YTUyYmM0N2I0Y2NhY2YwMzVjZjZiM2NlM2MyYWZjIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJiM2M2YjUwYzFmZGUwYTE4MGUyZTMyZDk3NTY5YzAxMGFlYjA4OWEzYzE1NGVjNjUzMjk3MzhjNzA3M2U1ZTBjIn0"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.spec.tsx#L87-L107",
+          "version": "repo-lines-v1:sha256:8978ef76bef6d0e70b4ba248258ac1eef6bd4d41594dc8051de51c8bc3a349fd:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY5MDJiNjQ4MTUzN2FlODdjNzQ4MmY1NzJiY2VlZjljYWJjZDViZDFjNDU0NzEzZjk2ODdlZmY4OWYxM2ZkY2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhhNDc1ODQ1MzYxZDdlZWRkZDBjMGM5ZTFlMWQ2YzczZTI1Y2EwZmJkNDQ4MjViZGQzZjVhN2QyMzRmMWUxODUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxNTI4MDIwOTA4MDAzODM0MTg3NDQ4YWMyODM2Zjk5YmRhY2MwZjQzNDFmNzQ2YzMxNWZhZjBmZDA0ZGU4ZTMifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L907-L918",
+          "version": "repo-lines-v1:sha256:d5ef4fe1b15738137b1c2adf0c83c73086413ab8e0616f49a8b04d15da4eb767:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmODgwMmZhZmUxMjNmZmRmZjNkZjM5YzhhOWY4OTJmZTJlNDZjZTQyM2Q0ZWEzMjU3Y2MyY2Y4MzQyNGQyOGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmODgwMmZhZmUxMjNmZmRmZjNkZjM5YzhhOWY4OTJmZTJlNDZjZTQyM2Q0ZWEzMjU3Y2MyY2Y4MzQyNGQyOGYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZlM2M1NzYxYTFlNDk4MmZiOGQ0YTA4MWM3MTZkOTE4MTAxM2U4YTRmYjRkZmNhMGY0MzYxNjA1ODA5YTliZWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY3Njg1NmUxNzhkZjZlNjE0NWI2NTVhNTQ4ZWY0NDVkZTVhMTk0NDQ0YzQxZjQ2MWRmMjMyZTA0NmYyYzE1ZmQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4da6316d19564e4a807e3fb98c6e3d0e",
+      "statement": "AgentCopilot 发送时解析选择为前缀：null 发纯文本、逆推模式发 REVERSE_CONTRACT_MODE.focus、步骤发 workshopStepFocus(id)，拼成 `${prefix}\\n${text}`；步骤选择跨轮粘性保留，再点一次或点清除按钮回到无前缀，spec 同时断言连续两轮都带同一前缀。",
+      "evidence": [
+        {
+          "resource": "repo://libs/desktop/feature-agent/src/components/agent/AgentCopilot.spec.tsx#L217-L262",
+          "version": "repo-lines-v1:sha256:9271c91ffd5f6c7944f0c3c08b98cfbf5257cdd54074507c99c2ceb5a10b1696:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5MTJhMDYyZWFiNWM2YzVmMTVhOWRmYmY5OGE1ZTlmZTVlNWNmZmY4YTliZGRmZjI0NDU5OGVlNGFmZWExYjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZlY2JkNjJiYWZhYjVkZmJlYTExOWE0Mjc1ZTVlZjVlMTk3MjFjZTk5MTYxZjljMTk3ZDAxNTcwYmExYTFjMWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQyMzMwNjFkYTk0MmE0ZTE5NDFjNmFmYjlhMDJjMWU4OTBmOTUwNjY4MzM2MGJiYmI0NmU5MmE3YmYwM2U3YjkifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-agent/src/components/agent/AgentCopilot.tsx#L108-L122",
+          "version": "repo-lines-v1:sha256:0fbee1e3ed98d944d840000e8c015d1219fd36085923d0bbe74cc3c02cb23360:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE4ZGMxYWRkMTkyMmQ1OGVkODgxZTQ5OWI3YzQ4NDM4MWNlYWZjZWJhODA3NTUwZDc5YWQ5ZDUwZDI4MGRkN2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRjZjc4OTBlNGQ1YmZhMjI5ZDE1MzBhMWRkODg4Mjk2ODE4ZTE0NTcyMjYyNzMwOWRjZTdhNGY1MTZlM2Q0Y2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQyNzFiMDUwNGRhZjBjNjgyNDFmZDY2OTExZGU3YTQ4Y2VkYTM4ZjA4ZjRlZTFhODI5OTE1Y2QwNThiMTI5YzAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ad103809261646878665d605e161a17c",
+      "statement": "向导把 mutator 抛出的错误写进 role=alert 而不改动模型，且“建立合约与双方”每次都新开一个合约上下文（同一上下文里的第二份合同会被 createContractMutator 以 context.rootMissing 拒绝），所以一个合约上下文恰一个根合同在创建侧就是硬约束。",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/wizard/WorkshopWizardDrawer.tsx#L40-L130",
+          "version": "repo-lines-v1:sha256:a410f0f3bed0c9503545c1ffa9afba6c0601fe86226467fea8df63be1001972c:eyJzZWxlY3RlZExpbmVDb3VudCI6OTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI4YzI2NjgzZWJlYjc1MWJlMTU1ODg2NjVhMTI3ZDgzMzUxZmJkZTZlNTQwYjc3ZWE5YmQwODZkMGU1MDM5ZjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA2MGYxZjYyNjFjMzY0NjNhYTY5MTMyOWRjM2U0ZGFkNmRkYmQzNTlhMTRlNzA3ZmQ5MjI5NjA4NDlhODY5NWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVmMDc5MjE5Yjk2Y2RjNzFlNzIyOGIzYzQ2YmViYzJjYWU3MDQ1ZWM3OWNmMmM4YmMyZTMxOGU0ZGYwYjM1MDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxYjAxMGFjZTk1YzIzYTk5MDQ2N2FjMjk1OWYwMWQyMzQ4ZmRhODg2OGNhZDg2YmY2ZDg5Zjc4M2I5NzlhMGYifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/mutations/entityMutations.ts#L37-L57",
+          "version": "repo-lines-v1:sha256:eb9846edb73306abf165c808abb7e007afeef8b1fb367aa8c7ac69fb2f9d1c7a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRhMDM4YjgwNDA3NDE4MjNhNzljNzk5ZjE1ZWEwMzUxNDJmZjZiMmI3MjI3MTljN2UxNzU4YjllY2VlZWY5YTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM2MmMwNjMwNTUwNjgwMjNkYTNkODc5NGYyZmM4Y2UyM2FiYWJiOWVmMzg2YjdiMDFkN2NmZjg1NDRhYjEyNTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgxYzViNGE3MTM5Zjc0ZTQwYjE0NDlhNDlmMmU1OTRjZjM5YmU5MGFhODkxYWI4NTBiMDAzMjg5YWUxMjJhOGMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_bdc7030883774298a78802ddaec0323d",
+      "statement": "WORKFLOW_PROMPT 规定每轮只推进七步中的一步、用户点名某一步就以那一步为本轮焦点（无点名时从最靠前的缺口接着走），并在没有合约可读时给出“从凭证逆推”的三问开场，对应 ReverseContractMode 前缀所指的开场路径。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-agent/src/prompts/prompts.spec.ts#L79-L92",
+          "version": "repo-lines-v1:sha256:e51f8f228d29383adbb97faabc6dc67cc6b92e12442f3787118fbc6b0463ebd6:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUwZDhmZjQ3MzI0Y2RmMjkyZGM2YjhiN2M4NzljMzQ4YjAyZTViYzhiNDg1NzM1MDRmYzAwZWMwZGNmZDJmMzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEyOTExMjYyNTVhOWRjODcwOTEzOTQ1ODRlMThjNmVlMWMwMTkzMzYyMzA1ODEyY2NmYWJhZmY1ZTliNzY2MTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI3YWZiOTU3ZGMxODkxYTE0OGM4YWE2MDIwODQ2M2QwMWVhYTg4YzdiM2Y3OTgyMjc3MzFmZGM0ZDBiMDMxODIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJjYmQ4ZGUzZmViZjdkYWY0ODQ4ZjgyYmU2YzAwMmFhMDVkYmZjYjMwN2E1OTA3MGZlZDdiMzJiNTEyM2VkNGQifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent/src/prompts/workflow.ts#L14-L32",
+          "version": "repo-lines-v1:sha256:b12ea2bb6429269b7667dff4447a5083f41b6bd34e6091387cf609af25618b21:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc4ZGQ2NzE3MDM5YzAzZThjMjBlMDcwYzYwNjU2ZDJjMzQ4MDc0YTIwMTEwMzk1ZTFjNzlkZDljZWM2YWZkODUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNhN2I1Mjc2ZWI5NzNjOTFmYWRiYjE3MTQ2NDk2Zjk2MGNiNTJlODE3M2U2OWViYmQ4MGE1YTY5NTBhODQwZmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcwMDVhNWU1N2I5YWU2MGZhZTIzZjhkODRkNDIzNDExOTg1NTZiN2M0MDY0MDkzNjgzYzQ1ODAxMDY1Y2MyMDcifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent/src/prompts/workflow.ts#L70-L86",
+          "version": "repo-lines-v1:sha256:a834c71f3b1a317980dce8df3b36fb751d7bfa53782e6ab05334326edaa2d953:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg4NDk3OTg1NTliZTgyOTM3NjUzMTMzYjJhZjI2YzU1NDAxZjlmMjM1YTU3ZTBlY2Q4NmMxZTgwOTE4N2JkZTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJlOWVhZjE1NDI4MWNlZjFkY2JiNzFjMWMyNDQ3ZTM3ZDdjYzY3ODNhNDRhN2UxZGE3NjVhMjAwZWFjNjQxNGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ0NmQ2N2VhMWUxOTQ3YTY2ZmM4ZDUxZTExODc1MGM3MWQ0MjZiMjQ5YWZlN2Y3YjA5YTg2OTYxZTgzZDI0MzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-16T23:54:38.352Z"
+  }
+}

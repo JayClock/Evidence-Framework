@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:10bb03569dbfe0b28f6b4cbdb0281fd04e236062296de4526c18dee0110e7a6f",
+  "pageVersion": "sha256:1065ccce66463ffeb427c6067f831dd41b1dca2710d5a86417814414a877e84c",
   "claims": [
     {
       "id": "claim_71a034064f924c369c99bf50d91bde55",
       "statement": "Ingestion accepts three input kinds over the draft and compile IPC channels handled in the main process: contract and blueprint are read deterministically without calling the configured model, text prefers the model when a generator is configured, and every result names the reader (contract, blueprint, text-rules or text-model) that produced the draft.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/ingestionIpc.ts#L57-L141",
-          "version": "repo-lines-v1:sha256:81eafaad72ba01c73e79f0bcae70849c683664faa3e21e157459c14b76316de0:eyJzZWxlY3RlZExpbmVDb3VudCI6ODUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjZmZiOWI3YjI2MGM3N2NiMmQ4YjA4ZjRmYTUyMDAzZGNlNjVmYjZjZDQxMWFlOWQ2OWNjNGJkYzY4NGQ4YWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQyNzEyNWY3YTZhOWIyZDM1Y2NiM2U3OTIyZDU3OTUyZDM0NWIzMWI4OWZhNjY1NGQ3NGRjMmMxZmJlY2MxZGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZGVmZDEyMWMwMmRkZjY1NDhiZmY5NGM3YWUzOGEyMzI1YTE1ZmFlNGYxOTJhODVjMzdjNzU3ZmE0YWM5MDUifQ"
+          "resource": "repo://apps/desktop/src/main/ingestionIpc.ts#L55-L146",
+          "version": "repo-lines-v1:sha256:778cf9d581010ce9154146382b00e8c090d586d027fa1ea380068820da806656:eyJzZWxlY3RlZExpbmVDb3VudCI6OTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc1MzM3NTcwNTg1MTk0MDU0YzBjNDM3MDMwNGNmMjcyNjgxNWMyZmVmYjIxNWM2NTZkN2JlZmM4MDFmZTFjZjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE5M2YxYzEzMjNhYTk5ZWQzNWVlZTQyMDg4M2I4Y2ExNWVjZGQ4NWYzOTViNTVjYWNhZDk3MzA5NGRmM2NmNmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRhOTE0ZTA0MWUzOTY4NTVhMzQ0ODNhNzAwZWY2YmNiMWYzNzllN2I0YzNmY2VmZWQyMTFlMzk5NTBiNGI0ZTAifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/shared/ingestion.ts#L12-L25",
-          "version": "repo-lines-v1:sha256:d420cf4426b4274efd03de138bc6a1a0d2691baadbd7204a919ecb30ccb4e6f5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiYjFiZjBkZDYxNGQ5NjU0NTIzMTYxMmQ3OGVlZWM4ZTVmNjQxODk1ODQ3NTZjNzcxODliYzVjMjEyOTVlZmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyZTNlNjIzOTRjNzEwMjQ1OGI3ZDk5MjI2YzBhYzhhN2M3MzIxMTQ5Yjg0ODEzNmVkMTZhMmY5YzNjNjUzYmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZmMTFkNGZlYThkMjg1YWRjMTg4M2ZlNTcwNjE1MmQzNzdkNWFjYjc1YWQ3MDkxNWYyMDVmNWIzMTFhM2YzMTcifQ"
+          "resource": "repo://libs/desktop/contracts/src/ingestion.ts#L9-L60",
+          "version": "repo-lines-v1:sha256:7b3658280a01dcbb18fbcfb0ad26311aa63d3092ba8ce7b96d742d9b933b082f:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3Y2ViMDkxODRiMzYxOTE2ODkzNmM3MWEyODk0YmNlZDI4MjdlYWMxZmM2ZWJmNDc4ZmY2YTY4MTFlODAzMmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ1MTE2ZmE5NzVhY2QzNWZkYTAyZmQ4Nzc5ZmY1NGE0ZjY4Yzk4YTgzOWViMTU5ZjVkODQ2MDg1MzQ5MWY4YzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM3NWZhNDRkNTI1MmJkMDc0M2U2NjlkMjgzNDE3MTZiZTI1NzNkNGQyMzE0NjNhNTFkZDE3MTIyZTM4YTUyNDgifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/shared/ipc.ts#L58-L66",
-          "version": "repo-lines-v1:sha256:b3713a9b2e0474ccbcdf337f47e56ccca059b0a19ab7c7d5dfc2f486f2e2f63f:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmUxZGQ4ODk0ODgxYjk2Zjg1Y2UxYmVlNzc5ZDUyMmJjYjE3ZWM4MGFkN2I4Mzg5OGI2YmMxMDQ2NzhjMjg0YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzhlMTQzNWNjZWVhNDcwMGU2OTc1MWYwMDMzMjZjYjYzNWU0MDhkZDU1YzllOTdmNGE3NzA5MzU5ZTVjZmQ2NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2U5OGFhMGMzZWVkMTE4NWI4YmMyZjczMWQ4MzFhZjg5ZThlOGExOTdlYTEzNDUwMWFkYjZiMTRiOGE3MjkxMCJ9"
+          "resource": "repo://libs/desktop/contracts/src/ipc.ts#L58-L66",
+          "version": "repo-lines-v1:sha256:20ed4b4e41aba4cc62dd4a8395482b2d9871c0abc519d0f7e90b0772ea67bc77:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjhjZWU3MzRkZmFhODBjNDc2NGE2OGY4NjNhODRlZTI5ODM2M2ViNTEzZjk3MTQxODQwZDk1OTA2ZWZjN2E3MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYThiYTMxZWU4N2YzYmY2MTJmNDU1ZThiM2U2NDA2ZTI3Mjg2NDNjZmY2NjFiY2U2YWY2YjQ4Yzg5MmFlOTk3MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjRmNmFiNjE1MDc0ODdmMDJmNmFkNTUzZjVlMGUwZmQ3MDdhOTY3NjQ0ZTY5OTNhYzc4MzA5YjA5Y2MzNTJlYiJ9"
         }
       ]
     },
@@ -91,8 +91,8 @@
       "statement": "Compiling a draft re-keys ids uniquely, then computes writability as a monotone fixpoint over contexts, roles, things and evidences: dropping a contract transitively drops the context it rooted and that context's evidences, every removal is reported once, and the compiler never invents a missing role or root.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/ingestion/compileDraft.ts#L103-L190",
-          "version": "repo-lines-v1:sha256:b83f4de16d8dc18d98b3351e95088f6178a7e56dfc0abbabe9b407d0b9932b0d:eyJzZWxlY3RlZExpbmVDb3VudCI6ODgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljZDZjMzFkNzZlNGMzNDBiNGRkMmMzYWJhOGJjNmY2MGZmODk2OGU2YmZkNTlmODMyZTZjYWFhZDA3M2YwMGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxY2VlYjViOGYwOTNjZDZhN2YwZTUwMDA0MWZiMmE4NDgyYmIxNGI1ZmE5NWMwMjYxYzliOTlmN2I1MzBjNzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyYzM0N2U0MTlkYzdjZjBhYzRlNTFjZWZjNmZiOTJmYWY3OTYyYWRmZDdjMTcyZDgxYmJhMmMxNDliMzY0YzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk2ZmVlMGNjNGI3NTQxNzliNGRhYjYxZmUwN2JhNDliOTMxMzhlZDE0ODlmZmFkZGVhMTYwMzA4ZDYyMWFmNzYifQ"
+          "resource": "repo://libs/evidence-model-core/src/ingestion/compileDraft.ts#L101-L281",
+          "version": "repo-lines-v1:sha256:ed2019cc8e83eaadea2b23f15735e9cddabd1ed0ceca193eb5d5c43784a9f11b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI5Y2Q2YzMxZDc2ZTRjMzQwYjRkZDJjM2FiYThiYzZmNjBmZjg5NjhlNmJmZDU5ZjgzMmU2Y2FhYWQwNzNmMDBhIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI1NTIyNmFhMGEzYjBiOTAwYzU4MTM5ZjQ3ZDViYTI1MDEyYTJlZThiNWZjY2JkMjM5MGVmY2QxZmRjZTlmMmRiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI5MmMzNDdlNDE5ZGM3Y2YwYWM0ZTUxY2VmYzZmYjkyZmFmNzk2MmFkZmQ3YzE3MmQ4MWJiYTJjMTQ5YjM2NGMzIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIyZTE3NDFhNTE0NzkxOTdkMzk2NTBmZjZlZDExMmJiYzZiOGE5OWIyZGVlM2EwZmVmMjI4NGI4MTRjODViNWJmIn0"
         },
         {
           "resource": "repo://libs/evidence-model-core/src/ingestion/draftSupport.ts#L14-L45",
@@ -102,11 +102,11 @@
     },
     {
       "id": "claim_058b7492097648948a7e3ce57cef57ae",
-      "statement": "A fulfilment pair receives a completion rule only when both ends survived compilation, both live in the same contract context, and the confirmation references the request; otherwise the rule is skipped and reported.",
+      "statement": "A fulfilment pair receives a completion rule only when both ends survived compilation and both live in the same contract context, otherwise the rule is skipped and the pair is reported; a confirmation that does not yet reference its request is connected by an explicit 1:1 `references` relationship instead of the pair being dropped or the fact being guessed.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/ingestion/compileDraft.ts#L589-L671",
-          "version": "repo-lines-v1:sha256:39835d7e7dd3d051ff52063a876cc7670d768381b4407fe2fffe1f492886567c:eyJzZWxlY3RlZExpbmVDb3VudCI6ODMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIyMjljOWMyYjM1Y2ExOTdkMGY5OThhOWI5Yjk1ZGQzYzI4NmZkMWMzM2U2ZDdmNzg2OGRjYmUxZTM0OWZlNDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY0NjU0ZTMxOTkzOGNjY2Q5ZTJmYmYyMDdkOGU3YmRhYjhlMGJlMThhZWI3MGZmZTgwZGU5NmU3OTFmMzU0MGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI1YzQxZTA2ZGQ3NGZmZWQzMDU2ODEzMzY1NGQ1YzA0NDAwNGM4ZDM2Zjk0MjI1ZjE0NWJiNTU4ZjJmZWYyZmEifQ"
+          "resource": "repo://libs/evidence-model-core/src/ingestion/compileDraft.ts#L612-L700",
+          "version": "repo-lines-v1:sha256:37e98e1be8253f9f960daccaad0839e1504872eb4fe424d758667e31d95f04e5:eyJzZWxlY3RlZExpbmVDb3VudCI6ODksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZjYTk5ZTVhY2M1YWUzYzhmYjc1YmZjOTkyZjVjYTFmZDliYjI3Mjg1YTYzMzAwOGFmYjk1NmM1YzM2ZDExNGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVlYmZhYWU1OWEwZTJkNmYwZmMwMGEzZmIzYjYxY2ZhOWIzMjU3ZDA1ODU5MmQ2NGY3NDkwNGQyYzQ1ZDVjODQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVlMTJiNjExODk0M2UzMGMwMDY4MzNlNzgxNjMwYTUzYjMyZjQxN2VmNWY5Nzk1YzNmMTJmMzMwODAyNGM1ZDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk1MDMzNTUwYmM3MTBlYzdmZjM0Y2Q5YmNjODhkOTk1ZjM3YzYzYmVjODJiYzg0YjhmNWM4NWU0MGE4N2IyMzkifQ"
         }
       ]
     },
@@ -129,12 +129,12 @@
       "statement": "补丁先应用再回结果，实际变更后记录 op/rationale、contexts/entities diff 与无 ghost overlay。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useAgentPatchBridge.ts#L28-L75",
-          "version": "repo-lines-v1:sha256:410ac030f9fa955b608b95d68730dbc1262d6c7dd6c30c63b729faa98b7d8526:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkxYzAwNTdiNWRiZDhhZTVlZDA4OTUyOWFiMWUwZWVlNmJhYzczMGQxODcwMTMzOTgxZDZiM2U1NzEzZmQwY2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI4Y2YxNzVkZjRhMTA1M2FkYWE4M2FlNTM0NGY3N2NiOTJjMWE2MmM2NTA4MDc3NTRhMzg0YTNhOGQ4MjhmODQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://libs/desktop/feature-agent/src/state/useAgentPatchBridge.ts#L30-L76",
+          "version": "repo-lines-v1:sha256:14ccee7cf4d4b09cbda563f8e91378c835426cb6d766e075da0ea756aeaa2fb2:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZmOWExZTM4YzBjMWEwNzQyMjM5NmNkZGYyODA4NjE5NzA5OTU3MWJjZjRjYjg1MjIyODA4ZWZkY2FkYzJmMTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/usePatchReview.ts#L43-L114",
-          "version": "repo-lines-v1:sha256:fe2b3c9a2f828f4d1912baf159691a6d25426b8053be8572193d48ae3063c813:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ4MmRkODMzZTgwOGU3ZDBkZDMwZDhkZjEzMzVmYjgyZWNlYmMzNzFjM2Q3MDQzNTcyNTk4ZGQ5MDlhMTcwN2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://libs/desktop/feature-agent/src/state/usePatchReview.ts#L43-L115",
+          "version": "repo-lines-v1:sha256:3d6a1765c2ea22c474c75e1fc926efe26d37538c2a733d1c00b0bfaa60b5bff0:eyJzZWxlY3RlZExpbmVDb3VudCI6NzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQzMjM1NjBjZTY0OTg4NTgwOGNkMDdjNmNkZTVmOWNiYjQ0OWViNTY3MDBlN2I3MWJlMzUwNzVhMDM2MDEzZGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc3MzQyZjc1NDA1YmM3ZmY1Y2FkZjYxNWY5NGEwMDczNWQ1ZTczNzBjZmMyM2NiMDkwZjQ5OTE1YzdhM2NiMDYifQ"
         }
       ]
     },
@@ -143,30 +143,34 @@
       "statement": "Revert calls session.undo only while the on-screen document is still identical to the patched document; after a later edit or patch the review closes without undoing, the revert button is not rendered, and the card tells the modeler to use the normal undo history, while accept always clears the review without touching the model.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/components/agent/InlinePatchCard.tsx#L100-L145",
-          "version": "repo-lines-v1:sha256:8c2046d448865980383b68abaeaae89ab15ac5c6598516cfaf7f07b2940e8e58:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE4MzA1YzIwYWZjZDU4OGYxZDllNjRlYTEwMzEzMWQwZDFkNmZiM2NiMzg5NmU1NDZhZGZhZWIzZDBhN2Q2NzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE4NTJkNWVjYjE1MDg5ZDdhYTBmN2M5MGJmMWJjZDAzNzdhNDZhODVjZmM4MTljMDBkMmZiM2Y3NDY5YjFmN2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYzI2YTlhNDE5NmM0NGI3MGFmMjEzZTUzNmRhNThkMDQ0YzMwYThlMWU5ZWE4MzQwODNiOWQ2MjhkNjk5YWYifQ"
+          "resource": "repo://libs/desktop/feature-agent/src/components/agent/InlinePatchCard.tsx#L103-L136",
+          "version": "repo-lines-v1:sha256:ef32774468b76f18d50da85497660814cd16d6bc6c79f6b1c029860fa102b51f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwMDhlYWM3NTAyNTk5ODkwZDNkYWVmMjI3ODU4OGEzZTIwYTVlYWJiYTA3YTZkNTU2MjQ0YjNkYjhkOWZlZDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgzZTkxOTNmN2I0OTk1OTVjNWFhYjk0YTA1ZmIxNmNkMmEzZDFhMmUzODViYTkxN2FhM2IxMjI2MWU2NDcwOWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQzYTQxZDY3NDUwMGY3N2I4YThmZjM0YzY1NzAwMDRiZjE4ZjI2NmVkNDNhMjlkZTcwNTM5ODFiMzlmYzg4ODQifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/usePatchReview.ts#L65-L114",
-          "version": "repo-lines-v1:sha256:91b82fdc6f71634ebd9d110bed62c89f7cb206d2cf7fb334528e42155431c0d6:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2NzUxOTY1NzkxZDhhZjA2MmEwMDViNzc1ZTI3OTNhZTk1NGY0NzBiNDZiYmJmYmMxNjUyZDJkYzEwMjgxYjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMyMDI3MmJjZjdlNzQ4ZjMyMTcyNmQzMzhkZWFkZmEwODkwZjFhZmI1MzE3OGNjM2Y3ZTI4NGNjYmNlYmY3ZjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://libs/desktop/feature-agent/src/state/usePatchReview.ts#L78-L100",
+          "version": "repo-lines-v1:sha256:0909f3968f50b903e854efde219ce458765dddfa1d89d8caa1956611eb6e9b0a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkYzUyZjA4YjM5YjA4YjAxYzhkMzA4YmY4ODBiMGJlZjAyZmQxZGZjYzlkOWFhOTNhNGQxYjVmNGQ1OGI2Y2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJmOWIyOTYxNzUyMWIxZWI5ZTIyOGM1ZTQxMmY4OWQ4YjcwZTJmNWZmZmRmZjkwZjVjMTkyOGI3MjI1YTc4MDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVhYzZhNzgyYjVmNTUwZDEzM2I1NGFjMjM0MzE2MmQ5ZTk0ZTFhZWM0MTQ5MGJhNzAxZjMwMjExOGE1ZDcxNGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ3ODAwZTdiODc3NDIzYmI0MmIyZWVhYzk0YWM0NmU5NDM5MzcxODlhMzdiMThjMDU3NTNjNGZiYTIzODc4YjMifQ"
         }
       ]
     },
     {
       "id": "claim_ad5d2f544faf4ed8ac3ea016f7d0fbbb",
-      "statement": "测试覆盖编译/传递 drops、patch overlay、保留、最新撤销、后续编辑保护及 Escape。",
+      "statement": "测试覆盖编译的传递 drops、patch overlay 标记、保留、仅撤销最新补丁、后续编辑后不 undo 也不撤销，以及 EditorScreen 上 Escape 撤销与保留两条端到端路径。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.spec.tsx",
-          "version": "repo-file-v1:sha256:4b0bf0966e20c0a21e67fa3aa4228e674b11f2a67e5d04fcedaa077254198035"
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.spec.tsx#L641-L727",
+          "version": "repo-lines-v1:sha256:67f547e01623217fdde008f531c3b3f065afd773ebd21831cca30e2231f692ff:eyJzZWxlY3RlZExpbmVDb3VudCI6ODcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5NmFmM2FhYWI2MTVjOGM4N2M3OTRkYmYxMjEwODJjMjA2ZmEwOTRkZGJlZjZjZjZlNTlmZGQ4ZTM4YmY0ODQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEzYzAzZDRhZTlmN2I3YmMzNWI0MjU5MDAxYTAxY2I3NTE1MWZlYjRkMjUzMWU0MWJhYjEyOGVjODk3NmMwNTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI0ZGMwZjU4NDIwNzQzMTc0NmE5N2ZjNzk3NTA0MGZlYTE5NWE1Y2M1MDBhMWYxYWFjMTI0MGU2Njk0MDBhMjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE2ZGU1YWFhNDlhMjA1ODc1MWQxNGI0MzBlODZhODI2MjAwMDg2ZjdlM2UwZWRkZTA4ZjA1MDlmNjk4MmQ3NjEifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/usePatchReview.spec.tsx",
-          "version": "repo-file-v1:sha256:126e71c795c50e2fec1852a665cff56b2566648db4a432df0979618a7fe7cd3f"
+          "resource": "repo://libs/desktop/feature-agent/src/state/useAgentPatchBridge.spec.tsx#L29-L228",
+          "version": "repo-lines-v1:sha256:3b3704f090d18c3c6e5c8368f37b58a12396cf3f485f4038ef20605fde331f5a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJmNmY1YjQwYjE1ODQ1N2QxNzg2NGYyMTc5MDc4NmRkNWEyZWNkYjY0YjY2YTY1MWY3ODhkNGUyNWNkMzMwM2QyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmNmY1YjQwYjE1ODQ1N2QxNzg2NGYyMTc5MDc4NmRkNWEyZWNkYjY0YjY2YTY1MWY3ODhkNGUyNWNkMzMwM2QyIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI1ZTM3YWRlOTU0Y2Y5ZTUzOTdiZmU0MGZmODY3NGNhMmY5ZmYyOGRmM2Y3N2U5NjYzNzQwY2MzNTExMmY0ZjUzIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
         },
         {
-          "resource": "repo://libs/evidence-model-core/src/ingestion/compileDraft.spec.ts",
-          "version": "repo-file-v1:sha256:3f82ec84bfd43180a997a810183507be3468878b140ebdc1ca3c1f922f9fc624"
+          "resource": "repo://libs/desktop/feature-agent/src/state/usePatchReview.spec.tsx#L143-L192",
+          "version": "repo-lines-v1:sha256:bfbfd1b7e6f2c44ac5037c2f8d901cf360c8ded2c40155c35536a165ad48a472:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwYWQyMDBmNzIxMzFjNDk2MjA5MjdlY2IyYmUyMmYwZGQ5OTQ3Y2M1NDc1ZGQ0ZTJmMjlhOTU1YmMyZjA2NzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU2ZDM5MjQzNjdhMzUxYjU5OGU5NmJiZTZkOGE5NDljYzE2NGZkNmU3NDFiOGI4NDkzZTkzY2EwOWJiZGU5OGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/ingestion/compileDraft.spec.ts#L34-L140",
+          "version": "repo-lines-v1:sha256:c4c00f9bad2ab78e02f0a1da367e65690081bde0c16adadf8c81e91ecca89c07:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJkZThkNjY4NTUxZjFhMGQ2MDdhZmYzN2U1NGZkZjgzYmYwYzQ2NTA5NjAyOGYyMDZiYzJhY2FjYjc1ZTk3NzkyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0NGYyZjdiODY0NGU3YTAyMWRiOGM5MzkyNmQ2MmNhYzQ5MzYxMjFkZGU3ODRmOTM0Y2IyMzVmZDBjMWFlMDFjIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI5MjQ0NDEzYjRjOGZjNjkwNjMxYWRmZjc2YWI4NWQ0ZTI3M2ZiMjZmYWZhOGFkZWUxMzZiNTY1Y2JkOTNlZDhhIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI5MzM3MWVkNmYxZTVlMDVhOTYyZDNiMTg5MmU4ODhlZDkxZjFlMTJiNTA1NWVlNWNmOWNiMTE4MWUzYmUxZGMyIn0"
         }
       ]
     },
@@ -179,8 +183,8 @@
           "version": "repo-lines-v1:sha256:8c70ca0b4319dad10168db1c33b85436ab61646138e808e25c09520f31ea600b:eyJzZWxlY3RlZExpbmVDb3VudCI6NjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAzNTcwZjdkMDk1MjgwNzc5N2ExNzMyMDI2OGNkMTU2ZDBmNDk3ZTdjNWYyOWY4MDg4NWZkZGQ3YWQ3YzQzZmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY2NTNlOGEzZWJmOTQ4MTIyZjhlN2JmODA1ZmFiZTZjYTRlYTgzNTk1YzZlM2M1YjEzMzc4ZjgxOWYyOWFlNDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU4ZTUwMGZlYzJiMzBjMzQzYWVjMTYzNWE5ODNhNGJlNDI5ZDhlNmRiMGJjYzA0Yzg5NjU0MjQ5M2RiZDRhNWQifQ"
         },
         {
-          "resource": "repo://libs/evidence-model-core/src/ingestion/contractAnnotator.ts#L119-L177",
-          "version": "repo-lines-v1:sha256:f6195dbd496808897ad8c5a72fc35059bd7dccbd83fea20b93642f493cb40b05:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFiMmZjNDljYjcxMThkNDJkOTQwY2E4ZDg5NDRkNDlmZDBmZGNmMDgwZjhlZDhlYTM1YzE5NWNjMmFmNGYzODciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAyM2VkYmVhNDdiZTQxYzM1MjFmOGE2YjhkYWJkMGI2OTlmODNkYTBiZjQ0NjZjNGI3YzBjMjY3MzJlYTliOWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://libs/evidence-model-core/src/ingestion/contractAnnotator.ts#L123-L184",
+          "version": "repo-lines-v1:sha256:df9eff3c635b165f4cc7ed67f14e47a6118e6327a47adf4bd18e6cd800aa04e6:eyJzZWxlY3RlZExpbmVDb3VudCI6NjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE1MDk2MDFkNWMzMmE3ZjIyNDRlNWNmNDA0N2I5ZmJiY2Y2MzY2YTQzNzk3ZGZkZDJhMDYwZjYwYzUxOTZhZmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkMTNhOTBiMDc4OTBjOTYyZjIzOTExNjM0MTQwYjI0MWIwY2M2MmZmYjZjYzNiNzQ4ZDgzZjQ3ZmZkMzNmMjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE1MTc4ODYyYjU4M2E1Yzc3Y2Y4NmMwMGQ3OGRjNGJmZTY0ZjJmNzIyNzljMjRmZmVjNjZlMmIyZmJiMTRlYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIyMDEyMzJmYWMyN2Q5NzdmNDkwZTBmYzAyNDg4OGE3MWE5NWFjYTI0OWRjMmZhYzk1YTI0M2RiYzU3NDg4OGMifQ"
         }
       ]
     },
@@ -193,22 +197,22 @@
           "version": "repo-lines-v1:sha256:d39a09f5e622ee7e6d4b00ff904011f16f208eb80af2d9ae9178aad9cf48d1d7:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkNDAxNGYxNDNjODNjN2NkMmIyNzljMGUxMjU0OWU3YzM4NTgyNzU5MzZjY2VkNzVhNWFkZTYyMDVlMjcwODIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdlYjAzN2M0YjNjMGY1OWRlNjFiNGUxM2I1NDU3NWY1NWE1NDM4OGQyMzdlNTlkMzI0ZTFmMDM3OTEzMjc2ODkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA0YmVjMTJkZGQ4ZmY0NDliNGQ5ZmQxZmQ5MjBhMjE5ZDQ3YmRiYWJjYWIwMzE0MzhhYzkxNWIzMmY0ZWNhMTAifQ"
         },
         {
-          "resource": "repo://libs/evidence-model-core/src/ingestion/contractReader.ts#L37-L143",
-          "version": "repo-lines-v1:sha256:02464d412488b8fb9c6cbda569146fe807b049579d0f0937ac6746a0df98cc03:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI5NzJhNDI5MzgyYjJlMTQ3MThlMGUzN2IwNTcwYThhMTcwMjk5MWZjZDg0OThjZDg0MDYwYThiZjRmMDUwMTdiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJjMTFiOGQyYWZlMmE4YjlmOTQzMTZjYThkYmFiNDllMGNhOGEwZDE0YThkNTY5MWVmMzcwZGNmODMwNDQ0ZjI2IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+          "resource": "repo://libs/evidence-model-core/src/ingestion/contractReader.ts#L39-L196",
+          "version": "repo-lines-v1:sha256:2ac6e6ab131c17dba3e752da5e8bdcbaa3013c06b070ea01964180f771977b13:eyJzZWxlY3RlZExpbmVDb3VudCI6MTU4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI5NzUyZmFiNTQ5NmRmMDlmYmRhYjAzOWY1MThlNjQzYjNjNjQ2NmM0YWVhNGI4NjllMzJhMjYyODBhYzA5NWJhIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJkNjg3OWU0ZWE4ZmI1ZDcxYjRjZmM1NWFjMmIxZGU0YmZkYjIzM2E2OTVhNTZjZTQ5YWU2YWUzODA4NTNhNjdlIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
         }
       ]
     },
     {
       "id": "claim_06ccfeb6e8394f538c3a4e8375049a0f",
-      "statement": "IngestionDraft is the single half-way shape every reader writes — a manifest name, a source and eight arrays of elements with provisional ids and optional provenance — and isIngestionDraftShape guards only those containers and ids so a draft with a wrong optional field still reaches the review panel.",
+      "statement": "IngestionDraft is the single half-way shape every reader writes — a manifest name, a source and eight arrays of elements with provisional ids and optional provenance — and isIngestionDraftShape guards the non-empty model name plus those containers' element ids only, so a draft with a wrong optional field still reaches the review panel.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/ingestion/draft.ts#L12-L45",
-          "version": "repo-lines-v1:sha256:fbe22a0733d1bcd0ce1667b3796ef16e1ae66b28accae40754bfc6ac1fb3dd2f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcyNWJlM2E4MGMzMzU1ZWRlN2U1MDEwY2E0NDRhMTQ2N2VmM2YwYTcyY2Y3MTFiNjA5ZmEyNTllMDE5Y2EyZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3M2FhNGE1ZjU3ZTM5MmUzNjA0ZjhlZWNjNjU3Mzk3MzZiMTEwODQ0Mjg2MWE0NDRmYmJkNDVhMDRkMmU4ZmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRkNWZiNGRmMTA0NTBiNWZkNjRjNmM1NWNmODY1NmY3MDFhMDAwODUyNmI1OTQ3MjQ3ZDcxMDY3MTMxZmY2YTYifQ"
+          "resource": "repo://libs/evidence-schema/src/ingestion/draft.ts#L12-L46",
+          "version": "repo-lines-v1:sha256:8166e13999b5a8d8f81bc2cdd729fbdf84adb48ecc8e9df5ed27e7222d844b0e:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1YzNjZWY5NDMxODRmNzAwMTg3ZWVjZjY5MTg5YjBjODdjZjQ0YjNmZDZlYTAyODkxZTEyY2Y2MDIwOWExZWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJlYmY3NzE2YjgyYmU0NTc5MjQ5MWVlM2E0Y2QwNGQ0YTJhN2Q1NTg4NmI0YzhlMDkzNzE2MjkyMDVkMWM1ZGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNkYThjM2ZiZTZlMmQyYzZhZDBjN2I0N2I0OGFkYTFlMTYyN2NhYWIzYjI0ZmVhZGUwZTdmZmUyMTcyMGIwZjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI4Njc1ODE0MTY0YWMwZGJiMWIzMzcxNzkzMTg3YWY1MmEzMDQ4MjZkMzMxZjk2ZWUyOTQyZDY1NGU4MjkzNDIifQ"
         },
         {
-          "resource": "repo://libs/evidence-schema/src/ingestion/draft.ts#L186-L232",
-          "version": "repo-lines-v1:sha256:eb56a706b6361ce2bf8a1f278f87938e3ce61f0da12de0c7119357e4d8bb086d:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5NWZhMGYxMTE3YjVlYTQwNDM0MTQwZGRlMWEzNDBjNzIwZGRiZjMyNjIxMmUxOTE4MzhkNGIxNTZkMzE2YmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEzZmMzY2E1YzIxYjk2MjRlMWU0YjMyOTRmZTJjNGM2MGQ3MWQ0NDgxOTRjZmMzODgwMzNiMzcxYmRkZjFiZTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIxMTA5ODA3MTNiZDNiYmY1MjFmNjIyNmJkNWI5YjA4NDUzM2MwYjU2OWQ5Y2E2OWNiZWU5MmZjYjdjY2UzNmUifQ"
+          "resource": "repo://libs/evidence-schema/src/ingestion/draft.ts#L215-L232",
+          "version": "repo-lines-v1:sha256:70aa1388e27a74ba5b2b20b2eebe7a46b4b99936908f7985c68ae8525c8c332d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYxMjgwMDlkZWI2N2NkZjYxY2E5OTU2YjdhYzliNTI2NmNmOWMyNDI1NjVhZGYzMDcxOTRjZjEzYTNiYzgzZjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYyNjAwMjc5Zjg1ZDk5MmM5ZmZiMzZiYzJlZDNmNzM1OGU4YjAzODkyM2I3NGMwOWJjMjg3OWUzOTAxNTA3MTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRmY2I3NTJhM2Q2NDNjNjc3NWMyMzhiNGVjOGVlOTU0ZTY2NTA3ZTJhMDMxZDhhMWE3YzM0Yzk4MWVlMjM1ZDIifQ"
         }
       ]
     },
@@ -231,12 +235,12 @@
       "statement": "renderer 再解析请求、一次 applyPatchBatch，共用人类历史，不再 CommandSequence。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useAgentPatchBridge.ts#L35-L70",
-          "version": "repo-lines-v1:sha256:54e793696fa8251c4c00bdd114c9a9ea4166335713ef129effe8fb7afe48396e:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjZTRmNTdhYmU4N2IxZTBjMzk3NjRjZmJiYzYyZmU0YjYzMWRlM2ZjYWNhZTJiNTRmOGUzNjcyOTIyMWY1NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhMzdlM2MwOTQxZDE1NzdjMDM5OGUzYjY3ODRlZjNiM2YwMTI4OGJjZGVjOWE0YmJhMWFiZmFhNzQwYWI2ZjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNmNTYwNWViN2Y5ZGE0NDM0ZmZmMmEzMjg4MGI0NWEyYzg0NmFhYmYzYmU0MzVlNjU1YmQ2NGMzMDQ2Mzg5Y2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmYzI1NzhiY2JlMzAyZWM0NWIyNTMwZjYyYWNlZDRmMTBkNTk4NzkzZWFjODc0ZTAzN2U1M2E1ZjgwZWU1MTEifQ"
+          "resource": "repo://libs/desktop/feature-agent/src/state/useAgentPatchBridge.ts#L37-L72",
+          "version": "repo-lines-v1:sha256:a62752f140a57907f7850d8a11e65af8b71c0bc3815bb0f044a111785ed6654b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjZTRmNTdhYmU4N2IxZTBjMzk3NjRjZmJiYzYyZmU0YjYzMWRlM2ZjYWNhZTJiNTRmOGUzNjcyOTIyMWY1NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhMzdlM2MwOTQxZDE1NzdjMDM5OGUzYjY3ODRlZjNiM2YwMTI4OGJjZGVjOWE0YmJhMWFiZmFhNzQwYWI2ZjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNmNTYwNWViN2Y5ZGE0NDM0ZmZmMmEzMjg4MGI0NWEyYzg0NmFhYmYzYmU0MzVlNjU1YmQ2NGMzMDQ2Mzg5Y2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI0NmMzZjU1N2I0NDFiMmY4NjEyMDE0OWUzMTYxYjhmNjA2ODZhMDc2YTdlMjIwY2UyOWEyYmY1NDcxMTZmZDEifQ"
         },
         {
-          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L132-L160",
-          "version": "repo-lines-v1:sha256:6ed75942301b0a469cf65ca4f02daaebb7cfeccdc63d94cd40eca5d8be54099f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlYmRiMzY1YmMwYjU3OWE3NzI2OGE2YTY3YjYwZTQwYzAwYWYxMDM3ODBlYzFlNzU2MjNhMTRlZGYzN2ZmYWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQzYzQ3YTc3YzM3NjNkY2QyM2QzYjg4ZTAyMDA5MDkzN2M2N2EwMzIzM2MwZDQ4NmFkYzUzNjgzOGFlZGYxYjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAyOWQ3ZGU2MjNiYjA2YTk0OGUwNWJlOGIyYjllYTgyYmQyZDFkNzE5YWMzZTY0YTQwODJmOTI5YjhjMTc5Y2EifQ"
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L133-L196",
+          "version": "repo-lines-v1:sha256:1aba28c6797a1ba74ea081bc13cb7c0ade53ed9b02168055da764efde9aa9265:eyJzZWxlY3RlZExpbmVDb3VudCI6NjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMzN2RlY2NiZTkxZDRlZDkwMGZjODk4NTU4NmJhZmNmMTk0MTljZDliMTIwMDFkYjc1ZmUxNjA0ZjEzYjU1OTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2MTZmM2Y1NDE4OTJjZmJjZGJjN2MzMzA2YTdiMDI0YTIyNDY5YTljOGUzYmM1MGQ1NGM3MDU4ZGI2ZTBkODQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNmN2ZjYWVmNmVlYjdmN2JjODVlZmQxZGVkN2VkNzIzMGFiM2UyMDVhMTViYmEyYzIwY2FjMmQzMDJkNTdkYjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFjYWVhNzE5ODk5M2E5M2Y3ZTcxNGU2OGJjNmY4ODJiMmM5ZWRkMWE4YmQxOWNkODBjMjI0ZjIzMDQwYjZkN2IifQ"
         }
       ]
     },
@@ -245,12 +249,12 @@
       "statement": "undo 应用 Immer inverse patches；review 只在当前与 after 同引用时 undo，否则保留后续工作只关闭。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/state/usePatchReview.ts#L84-L97",
-          "version": "repo-lines-v1:sha256:8a23c23dd3b2e7d5cacb6454e5b56518c6d70e36518dae8500a466892db6381b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJmOWIyOTYxNzUyMWIxZWI5ZTIyOGM1ZTQxMmY4OWQ4YjcwZTJmNWZmZmRmZjkwZjVjMTkyOGI3MjI1YTc4MDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk1NzdhZWMwMmNjOWQ0ZjQ5MDgyOGQ2NjZhZWU2YjJjNzM1OWZiMGExZjQxMGYxZjQ1NzRkZjZlZmY2MWMzYTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ3ODAwZTdiODc3NDIzYmI0MmIyZWVhYzk0YWM0NmU5NDM5MzcxODlhMzdiMThjMDU3NTNjNGZiYTIzODc4YjMifQ"
+          "resource": "repo://libs/desktop/feature-agent/src/state/usePatchReview.ts#L84-L100",
+          "version": "repo-lines-v1:sha256:417d3a3fc3ae5089f1089fb96f1d8f32c8a37f7f912e05a82e57fa987117d2fd:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJmOWIyOTYxNzUyMWIxZWI5ZTIyOGM1ZTQxMmY4OWQ4YjcwZTJmNWZmZmRmZjkwZjVjMTkyOGI3MjI1YTc4MDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFiMDE2YzA1ZmJjZTdjNGM4YzEzNjllZmZlOGE4YTA4NjU2MDQyYWRlZjlmZTIzNzRhZGRhNDM2NWQ0NjMzODEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ3ODAwZTdiODc3NDIzYmI0MmIyZWVhYzk0YWM0NmU5NDM5MzcxODlhMzdiMThjMDU3NTNjNGZiYTIzODc4YjMifQ"
         },
         {
-          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L159-L183",
-          "version": "repo-lines-v1:sha256:46e85c37a746ec72295b637582441438c1b3793aa6ec29b9e257c38593a0b884:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY3MDlkYjI0NTQxMGRiMGFiYjBlNjZkNGQzMjEwMWU2ZDExMjExNjdjOGRiYWIxYmU0MTkyMmI2MjU5MzUxMmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmYWM0ZTQzNjMwYWJmNjhjM2E0YTc1NzNmZDRjNDMwMDhiYTc5OGRkNzZjMzc1OWVlZWY1M2U2Y2ZmOGQyZTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1N2RhNjFjZDg4YTVlNjVhZDI5Mjg1MTNkOTZhOWFhYzU2ZGYzNjg2NDU5OTZhM2Y4MzM0Njc3MWY5Yzk0ODUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJiNTM4NmQ4Njk3ODcxMTZkY2UwYjJhYThmMTU2ZWY2NzQ1OTUzZTdmZTJlMWI4ZDUwMTNiNjcwOGZkOWJjZDYifQ"
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L162-L190",
+          "version": "repo-lines-v1:sha256:934326c0cba7d889e417d77bcfb96459fc961c40903712dee115f1482abd6f1e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhmYmFhZDEwYTJlZjc1OTg2OWRjMGJiZGVhNmU0NzUzMGNjMzVkYzRiNzM1OGRmYzE4NzI1MTEzMWQ5YTBjYmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYwYjBmZmY2MjViMjE5MmMyNjk4ZDllMjc2YmJhOTI2ODRkNzNmNjhmNDJmNzA3MmRiNWNkMzA4MGFkZWVhNWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQyOWE2M2Y1MmZiY2VhNzQ1MGNiNGJiN2RmMjQ3MjA3NDk4MDIxZmVhOTRmZTBhOTllMTQ5NjBjNjEwNTIwNzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU3NmE3NWI2OWY3MzUwM2U1ODgzMDQ1MTNjMTI3YjY1OTRiZjQwMjAyNWU4ODQ1NmQxMjYxMTZhMGM3ZTBiNWIifQ"
         }
       ]
     },
@@ -259,22 +263,116 @@
       "statement": "Escape and Mod+Enter belong to a pending patch review only while one exists, because the editor's window-level shortcut table adds acceptPatch and revertPatch only then; Escape reverts ahead of the typing guard and Mod+Enter accepts after it, and the inline copilot's capture-phase Escape stands down while a patch is pending so the revert wins.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/components/agent/InlinePatchCopilot.tsx#L57-L75",
-          "version": "repo-lines-v1:sha256:536dbcb82a6f68583438df1431b0f4940efb9a47af1d7b1803ab35b0cb77b1be:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkYzUyZjA4YjM5YjA4YjAxYzhkMzA4YmY4ODBiMGJlZjAyZmQxZGZjYzlkOWFhOTNhNGQxYjVmNGQ1OGI2Y2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjllMDRmZWY5Nzc2ZWYwMTgxZGE5NzJjMTJhZTM0NDM4Mzg2MzU3OGU3ZmQzMWRkZGMxYTg2ZGFiNzMyOWU3MjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjViMmExYjk2YmEyMDM0YmEwYzAzOWM2ZmExOTFkMzliNzFhOGI5OGMzOWE1MmZmMDllNmQ4OTIwY2EwNDE5ZDEifQ"
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L548-L601",
+          "version": "repo-lines-v1:sha256:b6d2b3f718bf59f0da5fb19b367442d575c018489d6f087214a041b6d0be5a63:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ODRlMmVlZWE3YTBmZWZmZTUxOGEyN2IwMWRmN2IyMmYzNGM2OGYzYjVmOGVjY2U3MDM5ZTIwOGY2NGFjYzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkYzZlYzY3OTRhZDcwNWJlZDM3N2Q2ODVmZDQ2YTk4OGVhYzIyYTI1MTQyYzg1NzNkZTFiNzUyNjJlNzRkOGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJjNmQ0NjI3NTcwYWNkYTM5NDk2MjlhMDkzMWRkOTIzM2Y1NzY2MGRmNmI0OTcwZmY0YTI4NjcxMmVkZjI0MjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZjNTlmM2RkMzgyZjliNmI3M2E5ZGUwNGM3MTg1NDFiNmY4YWNlZDQwNTA0YTllNGJhZGUyODNhYzU2YTdkYWQifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L556-L603",
-          "version": "repo-lines-v1:sha256:5b57f23d821e2f7125d454bd3315f0867ea39eb027b197c2b91d47f2e3c47067:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlNDJkNDAyOTk3ZDFlZWM4NjNlYTkxMDQ2NTMyMzJjMDg3MTc3YzVjZDZiYjAzODRkN2I2Njg2NTM1NGMyN2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE5NWQ2MDI1ZTEzYmU3ODM2OGI4NjljMzkwOTk2NmRmNGVjNWQ2ZjlmMTZiNDcwOTQ4Yjk5ZDliZjMyZGVkZjIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRlNGVjZTUzODAyODJmZTIwMzFhYjFiNmY5MzVhYjEwOTExYjMyOGRlODRlM2JiOWRlMmE3ZDRjZjVmZTc4N2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFkN2Y0MWQ1NzRkOGUwZDYwZTM3MGFmNWY2M2FkMWY0Zjc1NmQzNzNmYjA0MmIwZTkwYTRjMzgyNzM2NmE4YTYifQ"
+          "resource": "repo://apps/desktop/src/renderer/state/useEditorShortcuts.ts#L195-L218",
+          "version": "repo-lines-v1:sha256:04f91d59018b2f4389d27c3c5eb5d6df90a66e76a27b84d24027bd8e96f2b870:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYwM2JhNGU2ZjkzOWMwMmU5YTRlMzE0YTY1MzQ0OGE2NzhjMDZlNGJmNDk3MmJlZDI1NzM1OTFkYTAxN2VhOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYwM2JhNGU2ZjkzOWMwMmU5YTRlMzE0YTY1MzQ0OGE2NzhjMDZlNGJmNDk3MmJlZDI1NzM1OTFkYTAxN2VhOTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJlOTdkZjc3MTRmZDZhYzMwZDg5ZjZmZjVkOTAzOWRmY2EzMGEwNjVjZTQyZDIzZGUyZThhOWM5ZmQxOWYyODYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY5MTk1MjYzMTMxMDMxNDBmMmFhMTNhNzhjMGNjMDRiNmQ4YTBiMzg2MDg0MDdlYWE5MGJmZDdlYWI5NzNkMWEifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useEditorShortcuts.ts#L196-L227",
-          "version": "repo-lines-v1:sha256:698487ad059002db36bac8535052e4610f7be7f9495d34feaea87653f72ecb1e:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNiN2QwMGNkODQ2ZGIyMWY2MmE0ZGU2OTlkNjBjZDliN2M3OWI4MTg0MTIwMTE0OTU2YTdlOTE2NmVjZTAxMjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkMmMzZWQzZDE4NWFmYTc3NzNkOWQ2MzQxYzhjZWYyMDhmYWNmNzhkNzMzMWZhMzA0YTg5Mzk3OTllZDQ4NmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI3YzI0YmY3YjcyNWJiNjg1OWQ3NzdkZGU0NGRkNGFiN2UwM2ZjYTJiYjRmMWQxMTQzNTAzYmVlZWVlNjJlMWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYzOGFlN2ViMGU2ODJlZTYwOTMyMjM1OGNiY2I0MDJhODdhNzBkMzJkMjQzMGQ3YTViN2RkMmRlMjA1ZTRlMTMifQ"
+          "resource": "repo://libs/desktop/feature-agent/src/components/agent/InlinePatchCopilot.tsx#L58-L76",
+          "version": "repo-lines-v1:sha256:f9e36641eab0310dcf8192f0c605558174cac5e56125eb182b239bdecfdeb0b6:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyYjcyYWRkZjgxOGZlYjNkY2QzZjM5ZmU1NzExN2M5YzhjMzU0MWU1NjlmODllMGJkNTMzNDU4YzlhYjY0OTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIwZDYyZWQ0MmQ1MTAyZGQ3ZjQzOGMyZjYxYjdkMWQyYzRiOTlmYmNhMmM4NDc5NzkxNGFlOTliN2YyODkzZjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJhNmZmOGJhZjcyOGYxYzBkYzZlMThiOWFkZDA3Y2M1YWJjNjUwZjM4OTgxYTUyOTgwNTY3ZjJiYmYyZWQ3ZWUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_613852b2f7d8491cb65bd4fc0af73d5c",
+      "statement": "The editor screen owns the single usePatchReview controller and hands the same review to both the agent rail (AgentCopilot) and the inline copilot, so one applied patch has one review card; the review's overlay is passed to the canvas and the copilot rail badge lights while a review is pending.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L288-L295",
+          "version": "repo-lines-v1:sha256:0d69f1c020d84d2444e26e404b18a581502acd860658db4176595d5ea3447c51:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjk1OGEwYzZjNmQ1YjQ0M2EzNTViOTY0NjQxMTlmODM2MzdhYWJiYzU3YzFkNDVjNzU5Nzg1Y2VkMzRmOGU1MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDM1NjVhMGUyMmY2MTA0OTQ0YTVjNmY4MDg1NzAzNDlhOTdjYWNhYTg0ZmE5MTE2OTgwNjM5ZjgwZGFjMjljZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzQ0N2E1MDY4NjkzZDU3ZmJhOWVmYTZkN2M3ZWViNDZhZGYzZDI0N2RmYjU3YTE4OGVlMjJlYzhjN2VmOTQxYiJ9"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L700-L712",
+          "version": "repo-lines-v1:sha256:7f035bed40dc2034c1ed7a05ecf1615003733d8ac94cbef5aa4c74f9652468a5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ3YjhjMTA4NWY5NWExYWZhYmU1ZDE1MmFkNThkYjlkYzI2MzM2YzEyMThlMmI4NDBhZTdhZDgyNmEwZDU3NDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiMTA2M2M0ZGVhNjhhMzgxNjYxMTBiYWQyZDMzOGI0ZDcyZTAyZDM3YmUwODE1YTc4NDUxZTk5MzMyZDZkZmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFkYjY4ZTgxMmNlN2M1N2Y5OTI2ZGVjMWNlZWUzZDZlMmE5MGIyNDI2ZDNjMmJkZTNkYjVjYzkyMDA5OThjM2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEwNDNiNDRiZTc0ZjVmZWVhNmJjNjM1NjE1MjY2YzQxZmMwYzg2YzRjZjAxZjE3YzJjMDgzOWQ1NjNkZTVlMTUifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L866-L1000",
+          "version": "repo-lines-v1:sha256:f4e226ed121b0e0c17309845eefe65d4c462d4ada307aa73e8472f843ed6f0c4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTM1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJmNWI2YTIzZmI0NWM0OWMxOGM4NjkxNzc1YWU5YWI3MWIzZmUwZDZlMWJhMGVkODdjZDVjNzcyZjQ4OTdhODM5IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIxYWVmZDdmNGVkOGM3MGQwZmQ4ODZiYWM5YWUzMmYzZmE0NjMxZWQxNDQzMjdlY2NiODAyOTcxZWQ2ZjU2N2FlIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI4NTVhN2ViYjBkNTQwYTlhYTVjNzZlOGY5MTE0NmFhZjdlNDM0ZWJhNWJhZjM3NTgzODAzNTI1MmFjZTc3NjRiIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI5ZWUxOGRmMmJhYzIyOGZhNmQzOGZjMTIzNTA1ZWRhY2UzYjExNDY2MjNiMTY2NjU3MDk2YTAxYzQ4MzlhYjk0In0"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-agent/src/components/agent/AgentCopilot.tsx#L204-L212",
+          "version": "repo-lines-v1:sha256:1c48203b6e535086414a3aeff373218349f006d53f5177331537dcbe874af109:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFlOWIyODA0NGQxYzkwMDQ5N2MwNTJlYTQ0MjRkNmEyMDIwZmEzYTA0YjNkOTBiOGZmMGJkNzAwZDVmZmM4ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNWU1N2U2YzJjZGFkNjBhNGQ5NzBkODlmZjFhMTY1YjllZjViNTEwZDUyYmE2NTJkMDgxYjQ4Mjc3YjMxYjYwOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWJhNjgxZjRhNWM4Y2ZhYzY5ZTQ2ZmFlMzBkODdkNjcyNmI1MDYwMDcwNzc0MmFmODk1OGUwM2QyZTAyYmU3MiJ9"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-agent/src/components/agent/InlinePatchCopilot.tsx#L232-L246",
+          "version": "repo-lines-v1:sha256:6396953da14c337defa2b8b7a69fe7aff87d10d53ab3ebe0074e793e210abd75:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxMzAwNDg0N2UwNGQ4ODQxMmY5NGVhYjZiMDU2NDlkNjJiMDQyM2QwNDliYjRiMzI3YTgxNjMxNmQ2NDQzY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRlOWU5NTUzYmY2ZjYxY2FiM2Y0YWE4OTc3YmIzNjE1ZjExYzEzNGZlN2ExYzZlYWRkYjg1ODU3NDQ0YjRkNDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc1ZjlmZmVlNTEzZjhkNmI4NzI0YzBiMGE5NzM0OWM2ZDQ3NDEyZTU1M2U2NGYyODdhNzE1YzRkZWUwZTczMTQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d01babcae7a0464e83e251fcc3c20321",
+      "statement": "A batch that only runs `test` or changes nothing still answers success:true with the op names, yet records no undo entry because Immer produced no patches and opens no review card because before and after are the same reference, while any rejected batch answers success:false with the error and leaves the document untouched.",
+      "evidence": [
+        {
+          "resource": "repo://libs/desktop/feature-agent/src/state/useAgentPatchBridge.spec.tsx#L164-L205",
+          "version": "repo-lines-v1:sha256:179c9c8e0d4dcb048dc70297427de302746d45a15d0a31730195b513e06ab973:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2NWQ5N2FiNjAyZDExMGEyYjEwMGM2ZDgwMzBlZmU1NDI4OGEyNDVkYWJlYjdjYTc2MzVlZjBiYWY3NGY5ZTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyZDExY2FmNDNlOTdlZjM2OWU2YmVlZDFhMjY4YmQwNTgzOGYyOWI5ZGQyNTRiZjY5YmE2NDg4NDE0NzIzNGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgzOWU0YmI5MDVlMDk3ZDc0ZDVjNmIwNjkyMTMwYzNhYzRiYzFlYzU4MGJmMThjZjYzZDQ0M2U3YWM0MzlkMzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFkZTM0MzU0ZGEzM2Y5NGFiMmNhNTA3YTc0N2Q0ZmNmNzgyYTliMDhiY2QxZWJiYjA4ZmY3MDNiNThmNzQwYzcifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-agent/src/state/useAgentPatchBridge.ts#L37-L74",
+          "version": "repo-lines-v1:sha256:035b81e7baaf0ff54690cf3f414050c171110b199b0442897c2d0be905adaf29:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjZTRmNTdhYmU4N2IxZTBjMzk3NjRjZmJiYzYyZmU0YjYzMWRlM2ZjYWNhZTJiNTRmOGUzNjcyOTIyMWY1NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2NzdkMmYwMzFlOThiNWU5MTFjNWFkNGZiOWIyMTg2YTkzMjUyMmU4ZjQ2ZWU0MGJhYmZhZTNkYTAwZmMxMjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNmNTYwNWViN2Y5ZGE0NDM0ZmZmMmEzMjg4MGI0NWEyYzg0NmFhYmYzYmU0MzVlNjU1YmQ2NGMzMDQ2Mzg5Y2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIwZTc5NmFkNGNlMjM2MjU3NDA3OGU5ODEzN2JlMzJiMWVlYjEwMmE4MzIyMGQwOWY0OTJjZTYzN2UxMjI4MjcifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L133-L152",
+          "version": "repo-lines-v1:sha256:68cd0e1171c7bd0fe69168ca74a2e870cfec80b81b750314ad5e24a96cc91c5b:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMzN2RlY2NiZTkxZDRlZDkwMGZjODk4NTU4NmJhZmNmMTk0MTljZDliMTIwMDFkYjc1ZmUxNjA0ZjEzYjU1OTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ3ZDFhZTg5OGZmMzY3MTBlNDVhMzFkMjBiZTE0OWJiMDE0NTM0NmE5ZTYyMzI2ODljY2FmZTkzYTliMmM0MDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNmN2ZjYWVmNmVlYjdmN2JjODVlZmQxZGVkN2VkNzIzMGFiM2UyMDVhMTViYmEyYzIwY2FjMmQzMDJkNTdkYjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc1YTg2YTMwZmY5ZDFjMGYxM2NhMjlmYzBkNzMwMzI2MjVkNzE4YjIwOTA0Mzg3NTAzNjZlMzczMGVlZjUwYjcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_98542f6fe46f4e85bbdab6d5796722f6",
+      "statement": "The offline text reader recognises a fixed Chinese business vocabulary — agreement words, deadlines, completion verbs, proof documents, parties and things — reads a deadline clause as a request and a result-only clause as its confirmation, treats a breach clause as another obligation rather than a rollback, signs at most one contract per text unless a clause names another agreement, and reports unpaired requests and unpaired confirmations instead of inventing the other end.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/ingestion/draftAssembly.ts#L335-L425",
+          "version": "repo-lines-v1:sha256:9540239506379f0df7d3202e9a512a310cec4d0cb0e2afd300d307c743210dcd:eyJzZWxlY3RlZExpbmVDb3VudCI6OTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwODgyNjczZWQ3OTFkYjM2MjE2MmMwZjJmYmY4ZmUzODMyZTMxMmJiNmYzYjQ0OTdiNjhjMzY4OTM2MmI0NDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyZDExY2FmNDNlOTdlZjM2OWU2YmVlZDFhMjY4YmQwNTgzOGYyOWI5ZGQyNTRiZjY5YmE2NDg4NDE0NzIzNGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3YWI2YjliOTQyYTQ5Njc3ZTc1Njk2YzY3ZWYxNTJlYzkzZjEzNDM0NTY3ZjE0MDBiZTZmMTI2NzNmNmFmZjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRjMmVlMDU5YTc1NDUyYWViYzA5Y2U2NjM0ODg1YmEwM2MzMmQwOTVmNTNkOTE3ZDFmZjBmZTk4ZTQyOWEwNDIifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/ingestion/textExtractor.ts#L153-L334",
+          "version": "repo-lines-v1:sha256:955294789778894434086fee93b37a0be1b97d081875dab405e409da77e102b6:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI4NWRlMWFjZjE1YjQ0ZTlkOTY0NzViN2M0NzRjNWMzNWZkNGUwNTdiZWYyODQzMTA0ZGI2YTIzODQ0MTFmMTI2IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIxMWRjNTc0MzQ1NjExODZlMzVkYzEzNTNmNTNmY2MxZmVjYjcxNWI0MDNjOGE4ZjEwNTUxNGRkMDNlNWIxNDgxIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_720becefc146481d854cd0dd515b376e",
+      "statement": "Ingestion in the desktop app is main-only: the renderer reaches it through the preload `ingestion.draft/compile` invokes with no fs or model access, and main always registers the channels with `createModelIngestionReader()`, so a prose import always tries the model first and the local reader is only the failure path.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/ingestionIpc.ts#L222-L244",
+          "version": "repo-lines-v1:sha256:572cffc035d8f1880ded7ac13469e156ae10716e7811e6ec7890e22038584f7c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhMjY3MjdlNTAzYjdmODVmYTdhZTVmMGFkMzMzNjQxNzk2OWU2NTRkNDE0NDczYzhhMTg0NmY2MWU1YzNkYzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFlYWVjZjdmZmIxNDJlYmU4MDliZjQ5NjFiNzYyNjk3NTA0NjBkNDE3MTdhYWJkNTllYzNiNmY0ZDQwYWIxZGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/main.ts#L70-L80",
+          "version": "repo-lines-v1:sha256:8e036435a4fd3e33089cb096d3be26a087a813ff53e3c4e6f6eb9a9dc88b8980:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBiZDc5NWJiMTIwODBiMzc1MWQzMzEyZTVmNzhjNDlmMzU4OWNmNzBkYTNkYWFiZjY4ODU2MmNiYTIxODY0ZTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkYTRjMGQxODNiNmUzMGNmMjc1YzJhMDBiMjhhNGZiNTRjMzcwZDY4NzVmMmQ3OGI3N2VlODE0NjZjMDFhN2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY2YmQ4ZmMzMTVhYWY2MGRlODgzYmY5MTY1OTFiOTE4NjU5ZDMzNjAyZjI0NDc5NTk3MWYxOGNlZjE0MDVhMTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFiZDJhNzA1YWVkYjMyMjc2M2UyMzhiMjRlYmJmYWEzYWFkZTIzMWI4MjU2YzNkODUwMThjMWVmN2I0N2JjYWQifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/preload/index.ts#L192-L200",
+          "version": "repo-lines-v1:sha256:77494a5b98e125d092ab2a2f3c93ed47b201e1b0df1401184c61c8a6718494f1:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTNiYzA0NGFhNTRmNTA5YzdjY2U1ODNmMDBkNThjOWUzNDVjNTljMzA4MTM0ODJkNTRkZDI3ODZmMTM4NTRiZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGQ1Y2QyZmI0ZjNkZjg4NDUxNTI1NWIzOTUyM2YyZjhiNTQ3MmJlZWE5ZjU2NmZmY2EyMDRkYjgwMjU2MTA0MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjU0ZTc4NmEzZjRhMDE5ODY5OWVkMDE2YTA0MDEyMDQ5OTJjNzBiMTM5ZTU5M2EyNzNhY2Y2MWYxODE1OTc0ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODAwZjM4NmI0Yzk1NDA1MGZkZjVjNjUwMWMyOWE5YzExMTViOTNmYzk5MDgwYmY1ZDBmODg4OThmMTM5NmMzMiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_44c3da03e1cf49b98ac23b35b8099599",
+      "statement": "compileIngestionDraft writes one completion rule per fulfilment pair and never reads `draft.breachCompensations`, so the trigger-to-compensation link the readers assemble survives only in the draft: it becomes neither a rule nor a `breach_compensation` relationship, and it is not reported in `droppedIds`.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/ingestion/compileDraft.ts#L612-L700",
+          "version": "repo-lines-v1:sha256:37e98e1be8253f9f960daccaad0839e1504872eb4fe424d758667e31d95f04e5:eyJzZWxlY3RlZExpbmVDb3VudCI6ODksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZjYTk5ZTVhY2M1YWUzYzhmYjc1YmZjOTkyZjVjYTFmZDliYjI3Mjg1YTYzMzAwOGFmYjk1NmM1YzM2ZDExNGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVlYmZhYWU1OWEwZTJkNmYwZmMwMGEzZmIzYjYxY2ZhOWIzMjU3ZDA1ODU5MmQ2NGY3NDkwNGQyYzQ1ZDVjODQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVlMTJiNjExODk0M2UzMGMwMDY4MzNlNzgxNjMwYTUzYjMyZjQxN2VmNWY5Nzk1YzNmMTJmMzMwODAyNGM1ZDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk1MDMzNTUwYmM3MTBlYzdmZjM0Y2Q5YmNjODhkOTk1ZjM3YzYzYmVjODJiYzg0YjhmNWM4NWU0MGE4N2IyMzkifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/ingestion/draftAssembly.ts#L403-L425",
+          "version": "repo-lines-v1:sha256:1ab7f202f6ed2bbffe512e95893160f0f5037edecca2222238d7a7ab57bbf51c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEzOGU4MTExOWMxZGIyZGU4Mzg3ZWIzMzQwNWNjMjMyNzBlNmE0NTk5ODlmZjkzMWI1ZjlkNjBmNDA1YWIxNGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyZDExY2FmNDNlOTdlZjM2OWU2YmVlZDFhMjY4YmQwNTgzOGYyOWI5ZGQyNTRiZjY5YmE2NDg4NDE0NzIzNGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3ZDg2MzJlNTRlOTI5OGFiYjk1ODcyN2UyZDUxNDA4YWJhZjEzNjYwMzUzNzkxMDE0MGFiZjY1YjMwYWI2MTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRjMmVlMDU5YTc1NDUyYWViYzA5Y2U2NjM0ODg1YmEwM2MzMmQwOTVmNTNkOTE3ZDFmZjBmZTk4ZTQyOWEwNDIifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/relationship.ts#L20-L30",
+          "version": "repo-lines-v1:sha256:ccc994d2b3a006efc3a1681b9d7d28edea80d39c2518f124ffef0af58fc0938d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI4Zjc1MzUyNDNkNDgzYTRkMzg5YmJkNDBjOGZmOGEwOTVlNzU3NWYwMzI4OWU5YTk4ZDNmYjRmOWY2ZWIyN2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE5ZGZhYWE0ODU5OGVmODUyYjk3MzM1NWQ5NjdkNGIzZGMwMjQ2Yjg5Yzg3YTAwYmI4ZTdlMThhNjA4ZTNjY2MiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY1YTRlZTRmNGI3Mjc1N2ZjNjNjMmNmYTEyZGIyODIyYWNmNmVkZGRiYjFhNzI5MTViZGY3YTJlZjU2ZDU2ZjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEwNmQxMDk1YjljZmMzNWEwZWVmNzlhYmRmNDM0OWM4OWQ4ZTg2NjY4MjE3YjljZDRjY2FkMWRkYWJiMmVkZjIifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-15T14:07:58.904Z"
+    "at": "2026-11-16T23:54:38.352Z"
   }
 }

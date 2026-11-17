@@ -1,18 +1,22 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:11aee9db66f5ab22db2dfbae16400e03e3cb1ff18d703e6574d5427f9518a33d",
+  "pageVersion": "sha256:3e5d65bbc1658a4edd13de3a20ac5f009a928e88cf406053ee6ff1f86490fd36",
   "claims": [
     {
       "id": "claim_268478c2f76e469a8fa21a385f68eec1",
-      "statement": "布局为 headless bundled ELK 的 async computeGraphLayout，固定 layered/RIGHT/compound/orthogonal/seed，无 DOM 或手写泳道求解。",
+      "statement": "布局入口 computeGraphLayout 是 async 且按 layoutMode 分派：topology 用 bundled headless ELK（fixed layered/RIGHT/INCLUDE_CHILDREN/ORTHOGONAL、NETWORK_SIMPLEX/LAYER_SWEEP、randomSeed=1），swimlane 用纯展示的手排“阶段 × 责任泳道”网格并在 ELK 节点副本上自算坐标与正交线路；两者都不依赖 DOM 或文本测量，并返回同一 DomainGraphLayout。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-canvas-interaction/src/adapter/domainToElk.ts#L5-L23",
-          "version": "repo-lines-v1:sha256:6ac586f09584a07a77b492794cf1f3844b71e71da8e8293dbff7f99d8954b7d9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc1YmJlYjQ4YzcyZGM2YzAwNjQ5NjYxMjA1NWQ1Yjk3MDk1NzVlMjY3YzhmM2JmOTBhZDY3MTg2MDhlN2NlZTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJiYzkzZTM2MTkwYTBmMTI3MWIyMDdlM2I1ZDc3MmVhNDBkMmJhNDVhY2UwZGViOTJjMjBiMjM4ZDQwMzU0ZDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI2MjVjYjczYTgxM2QwMjdlMGNlM2QwOGVlODRkZjRiNGNiYTYyYTViMjM5NGNjYWJiMTRjNjM2ZjM3YWU4N2EifQ"
+          "resource": "repo://libs/evidence-canvas-interaction/src/adapter/domainToElk.ts#L5-L20",
+          "version": "repo-lines-v1:sha256:df1c4e4c533412eadaafc2858b1d9b455d68b0c83e59e664a953994e842b3453:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc1YmJlYjQ4YzcyZGM2YzAwNjQ5NjYxMjA1NWQ1Yjk3MDk1NzVlMjY3YzhmM2JmOTBhZDY3MTg2MDhlN2NlZTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZiMWU4ZjU5ZjI0N2RjNDg3MTQ1ZjBjZWM2MGVkODBmNmVjZTU3ZDYyZmRlZTJhNDg2NWQ1M2NlNzA1YmE1M2MiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJiYzkzZTM2MTkwYTBmMTI3MWIyMDdlM2I1ZDc3MmVhNDBkMmJhNDVhY2UwZGViOTJjMjBiMjM4ZDQwMzU0ZDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU2ZDg2NTdlZTljOTM4NDYyYWZhYmZmM2I3NzUyMTEyYjBiYzE5NzBiYmUzOGYzZjRiN2E2MGRkZjg3MDU2ZjMifQ"
         },
         {
-          "resource": "repo://libs/evidence-canvas-interaction/src/engine/layoutEngine.ts",
-          "version": "repo-file-v1:sha256:62de69698eed9b42ae0181100ebbcb6f816cbe718ea36024c5cc6aadb1af0bf0"
+          "resource": "repo://libs/evidence-canvas-interaction/src/engine/layoutEngine.ts#L22-L35",
+          "version": "repo-lines-v1:sha256:2012d6bd83780f65757a85e586d2289bb550b8a86ec4e5c870ee2457e833ca8d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFjNTQ3NDJmODFlYmViYWZiYjNhZTYwMTZhMjgxMjA1NmRiY2U2MzYwYTg2NDg1YTc4YWI4YTk3MmRjNmI0ZTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZjMDdmYmI5OTA3YmM3NGMyODVmNjliMzc1NjFlNThjY2Q2NDc2MmJmOGNjMTk2MzhkNGJkOGEwYmIyOGVhNTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/engine/swimlaneLayout.ts#L69-L135",
+          "version": "repo-lines-v1:sha256:83b1d64e1046ed865a4b530ecd4e12e73e6bd6490d1de2b53cb521cbd12f5e8e:eyJzZWxlY3RlZExpbmVDb3VudCI6NjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI1YjQ2NzlmZDk0MTcwNGFlNDJhMmJkODM2MzZiN2E1NWE5MGYwZGQ3YzIzY2RmM2RkODJhZmFiNTNhOWI5YjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE4YjQwNzc1YTE4ZTdlMGM3Zjk4Y2Y1YjRmOWMxYTU3MGU4NzY2YjlkNjc5OWI1ZGRmOGZmMWVlYTg5MzA5YjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcwZDBjNjNkZGQxN2M0MDExYTk2MmQwNzRlNzNmYjQzNTE3YWY2ZTNkZjNmODFkNzBiMGNjMmU0MGEwNGEyYmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVmNDFmYmMzYTI4MzliMTNhMDE0MDk1OWJiZTkyMDExZmRmMWE1NmUzOGZhNDIzYmM4OTAwYWY1NGJjYjA5N2IifQ"
         }
       ]
     },
@@ -38,11 +42,15 @@
     },
     {
       "id": "claim_cb2c77179e6e4178b93a864897f4959d",
-      "statement": "跨 Context 或 plays_role 边为 dashed，plays_role 有箭头；责任 links 仅来自显式 roleRefs/responsibleRoleRef，旧 crossing kind 分类已删除。",
+      "statement": "跨 Context 或 plays_role 边为 dashed，plays_role 才有箭头；责任 links 仅来自显式 roleRefs（contract_party）/responsibleRoleRef（responsibility），旧 crossing kind 分类已删除。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-canvas-interaction/src/adapter/elkToLayout.ts#L108-L177",
-          "version": "repo-lines-v1:sha256:1a43bfe5eea2a33728cf0705ee6f2a45ada8e59ed27b1c09275c48fba7332b2f:eyJzZWxlY3RlZExpbmVDb3VudCI6NzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIzOTU1NDg3NzNiYzVhZjA0M2JmOTk0ZjMxOWNkYjIyYmFkZDExNmY0ODdjMTFlNmU5NzUxZWMzYjE3ZWYyMDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI4NGExZDIzMWE1ZDhjYjdkMDVkZjc4NTA5ZTA0YmUzNWViOWM5ZjBkMTkwMjk0Yzc0NzFhMDBlYzljMmFiN2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJkZjEyYzkyMmFiOTIzZjYzNjNkMTFkZTM5ODQ5YTVmNmQzZTBmZWZjYWIyM2FiZmEzNGQ0ZGY1NTUwMWRlYzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgyMDFlOTc4ZDJhNTI3YTUxNzYwZTBhMmUxYjcwOTU2MWI4YjZmMGU1M2NhMjQ2YzhiODNmNWMyZjgzZmQ1YWMifQ"
+          "resource": "repo://libs/evidence-canvas-interaction/src/adapter/elkToLayout.ts#L107-L151",
+          "version": "repo-lines-v1:sha256:5c644ec0a56f544da49dc878cb36096dd40ea82d12840e121cbdcb690139b31d:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5OTBlYjZjY2RiMGZlZmNjM2M5YTg4M2M4NzljOTg2NmJlMzM5MzFjYWFhYmYzNjYyZDdhYzRjNDEzZWM4YjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUxNDhjZDdmYzkyMDg2YTlkNTUzMjU3NGZjNmZjMjQ3NTk1MWQ0Y2Q0NGQzNDNjMGJjMjBlOWE2ZjQxZjgxMmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwN2VlNmIxOWYwZjMyNmU0NDU3MjA5ZWZlMzJlYWJmYWRmODBkM2M5YjA2NDkxZmZhMDEyNzBlZTAwYWFjYTEifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/adapter/elkToLayout.ts#L152-L183",
+          "version": "repo-lines-v1:sha256:7422c11f688b20334fd351f73774b67eb525f556c24e437c6d8bb42cefb8a9fc:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY1OGZhYjZkNTRlOTEyZTNmYTNhNTYzYzBkYWE2MTM1ZTBkZWZhZTNhODJiYzUyOWMyNjA4ZmNmNjMwM2NmNjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM1YmJiZTg4OGJiOGI0Y2ZmMDc4N2Q1YzUxMTFmMTU4NjdmOGJhOGJiYjMwODdjOTk3YjI3MmQyY2I2ODczZjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ4NTgwNmE5YTY2ZDQ1MDY5YzI2ZDlhM2Q2ZDczMjZmZjVjOGM5MzQyOWQwMGM5Nzc4MmI4MWVlNGU2N2M4MTMifQ"
         }
       ]
     },
@@ -82,11 +90,11 @@
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/renderer/state/useEditorSession.ts",
-          "version": "repo-file-v1:sha256:309e59cdb34b418feeaad8c653d5ac78fabb0dd69f485c25006352d36352baaf"
+          "version": "repo-file-v1:sha256:1c370ef02de7e823f8f917263addbe788c56313c6b140e44b726aa7937aab347"
         },
         {
           "resource": "repo://apps/desktop/src/renderer/state/useGraphLayout.ts",
-          "version": "repo-file-v1:sha256:2fa0c689d7668cbf1821d9419c4ccbb6589f63bf25c30dc8a9a98ee4ea32ee4c"
+          "version": "repo-file-v1:sha256:35a26da5fa7435c176d0fc6571cae2995f9ea12c901c8a83e8c9a20bad5d4d6d"
         }
       ]
     },
@@ -142,11 +150,11 @@
     },
     {
       "id": "claim_ec010b2882bc41729679105cc95e0ee5",
-      "statement": "React Flow 管视口、partial marquee/fit，非模型拖拽编辑，缩放范围在 renderer 为0.25–4，pane click 清选区。",
+      "statement": "React Flow 管视口、partial marquee/fit，不是模型拖拽编辑器（节点不可 draggable/connectable）；缩放范围在 renderer 配置为 0.1–2，wheel zoom 关闭，pane click 清选区，选择变化只回报首个 entity 节点。",
       "evidence": [
         {
-          "resource": "repo://libs/desktop/feature-canvas/src/CanvasViewport.tsx",
-          "version": "repo-file-v1:sha256:2fac7bb934a71a9675e021ef50defb230f43bbfcc5c300aadccfd3fde9866044"
+          "resource": "repo://libs/desktop/feature-canvas/src/CanvasViewport.tsx#L440-L500",
+          "version": "repo-lines-v1:sha256:35782115abca299585370e967d3b381d94ab8d5a5ccba3e7f717beeaaef0bd05:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlY2Q5Mzc5YTVhY2RmMDc0MTg2NDI4YjY1MDQ2OWIxM2I5NDFlOGMzMDIyNzY2ZDRmYzNjOTY4OWRjMjM4YWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIzZTRhMGQ4YjIyYTU5NDQ1NzY4OGFiNzUxODhlNTFiODlkNjgyMTYyZjFjNjliYzU3NzdiOTZhNWFiOWY1ODAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM0NWE2ZmRjZmM0MjVjOTZjNzA5N2MxYzdhMDlkMmVlMTA0MGEwY2UzNWM3YzVjYjM4ZmU5ODE5ZmUyYjIxN2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk1MmUzM2Y0NjQ5M2RhN2JkOWRjMzEzZTc0NmFhNzI2MGMwOTE5MDlmM2NmNDBkMDg4OWI4M2Y0MjNhOTM5OGIifQ"
         }
       ]
     },
@@ -155,40 +163,44 @@
       "statement": "adapter 父前子、local box+parentId，显式尺寸和 handles；关系/pairLink 直接消费 ELK 世界坐标路由。",
       "evidence": [
         {
-          "resource": "repo://libs/desktop/feature-canvas/src/useReactFlowAdapter.ts#L121-L191",
+          "resource": "repo://libs/desktop/feature-canvas/src/useReactFlowAdapter.ts#L131-L201",
           "version": "repo-lines-v1:sha256:7a96d29848f03520ef217e0bdcdc2002a4182920eec453aae7ff190f5626b384:eyJzZWxlY3RlZExpbmVDb3VudCI6NzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5YmMyZjIwNmExOWQ0YmM3NTJlNDIxMDhmMjdjZGQxNGE4OTcyZGNhYjc2YmRkODc0MDg4MWE0Y2RhMDExYWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlmOGExOGE4ZmJlMjIyMzdlMTg1OGRkZWNiODc3NzI2NWYwYTgwYzlhN2RiYTY4Y2Y5Y2Q1NjMwMjZkMGM2OWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ0NzhlODA5NTE1Mzg0MTk0ZDg0YTJjOWNiOThlNTc5MGNkZGYyODZlYTJmMzZiZjMwOWJhOTdiZTVhOTI1NGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUyOTAzMjA5ODdhNzg3ZTBhMGM5YWFiMDI3YWNkMThhMWE2M2RmMzAyMGM4MDg4NzMyNWEyNmE5MjhlZTc5YzYifQ"
         },
         {
-          "resource": "repo://libs/desktop/feature-canvas/src/useReactFlowAdapter.ts#L265-L291",
+          "resource": "repo://libs/desktop/feature-canvas/src/useReactFlowAdapter.ts#L275-L301",
           "version": "repo-lines-v1:sha256:a24165608828a6e7b77e7783ca30452f2ad76ed3faf5bacb3f37fb1ee9075ae7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1Mjk1NzMxYWJmZDJjNmEyMWEzZmMzMjBlZmM4MTBhY2U5OTM3MzY4YjgzZTk2N2Q5OWJkMzQxNjkyNDdlNjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhYjBhMDQwNDA5YzYzN2MwYWZiNmVmODI4YzdhYTY1NzE0NTAxNmUxNGRmNGVmODQ5MDNjNGI1Yzc1YTgxNDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZhZDVjZjQ2M2JkNjUxZTQ3OGQ3MTg4NTVlYjU4NTMxZmY5ZTM2OWY4MTg1Y2IwMmJhYmUyMGQ2NTcwYWRlMGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg2NzI0YWUzYWJlMjgwMTMyODM4NGFlYTlhZGUwMThmNzZkZGZiYzg5ODAyNTc2MDhiMmMzNzIyZmY3MThmZmEifQ"
         }
       ]
     },
     {
       "id": "claim_18e614aa8d9340d6b930322707deb5b7",
-      "statement": "Framing is token-driven: fitToContent fits boundsOf(layout, scope) with padding, a change of scope or density refits and clears every hover mark, zoomCommand and focusRequest are deduplicated by monotonic tokens so a re-render cannot replay a key press, and boundsOf falls back to the scope bounds or the layout bounds with a 1 px minimum.",
+      "statement": "Framing is token-driven: fitToContent fits boundsOf(layout, scope) with 0.08 padding, a change of scope, density or layout mode (swimlane vs topology) refits and clears every hover mark, zoomCommand (in/out/fit/reset/selection) and focusRequest are deduplicated by monotonic tokens so a re-render cannot replay a key press, story focus recentres at 1.15 keyed by focusKey plus the active box, and boundsOf falls back to the scope bounds or the layout bounds with a 1 px minimum.",
       "evidence": [
         {
-          "resource": "repo://libs/desktop/feature-canvas/src/CanvasViewport.tsx#L270-L394",
-          "version": "repo-lines-v1:sha256:b4300b03585f3222a7f2367b8086defa062910e90ab3876c201ac5eb078d2c55:eyJzZWxlY3RlZExpbmVDb3VudCI6MTI1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJkYzMzZWFiYjA2NmJmNDg1NDc0Njg2MzhkY2YwOGYxMjY2NmJhNmUzMDhmYjIyODcwYmRhMGZmYmZiYzExNDA4IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIxMWJhMzNkYzU2YzRmZjk3Mzg4YmMwZmRkYjBmNDRhOTAzNWY5YzE5OGZlYzU4M2E3NDVkZmI0MzgyNWY2YTAwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyODJkZDJlMTkwOWYyZjRlODllMWFkOWE2ZGVhODdkMTgzZjBmZWI0MDQ4NzA1YmUyZWRjODY2ZWVmMWQzZjQ3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI0YTQ5YWRlYTMxOTJkMDdkYTQ3OGNmZmZlZWI5MjYxOTJkMWQ4OTNiN2MwZTUzODcyZWY1YmJmZTBkZmI5NTRmIn0"
+          "resource": "repo://libs/desktop/feature-canvas/src/CanvasViewport.tsx#L238-L300",
+          "version": "repo-lines-v1:sha256:e6671eeb77814208c2c51cc0fef862a8826f8ea3961229e2af2fb647422b2562:eyJzZWxlY3RlZExpbmVDb3VudCI6NjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1NjdiNWQ3MjFmODcwZmE0OWE4Nzc4YzA2ZmVmY2EyMzBmNmEyYTA0NDAzZTEzYTlkZDdlNmFjZTBhMDJiYWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM1ZWI1ZTI3YTQ2NDY4MTM5MmYyZThjMmViNGUxNTg3YTE0MmM0MThhYTI0NTA5OTk2OWYzNTg0NTAwNWRjZjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjViZjc3ZWM5Mzg2OWI2Y2Q1NTI4YTdiYWRiYjdjOThkZWI2OTBlOTM3ZWM1NzkyZTMwN2UwN2E1MWIzODUzMTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhhMTg2OTk4YmM0OTg5ZjA4ZGQxMTc2MDM1NDRkYWFjZjQ1MDM3YzdmMTI1ZWZkOTZmMzk1Mzc5ZGU2OGY5MGYifQ"
         },
         {
-          "resource": "repo://libs/desktop/feature-canvas/src/useReactFlowAdapter.ts#L315-L327",
-          "version": "repo-lines-v1:sha256:d5df7b8b6a8b73b0b8e2aef20b91ed447e95f4735b08d0d83906141361c66768:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5ODJmNzI2NTI4OWZlNmUzZGI4ZmE1ZTBkZjUxZmY5YzQyNmNjMDY2ZDJiMDE0MjI2YjgwNjFmMjY3OTdkODUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRjN2FmNjU2Y2Y0YjkwNDlmOTFiYjhiYmMxMDE3ZmM4ZWIzMjE5MTczOTljYzQxZDM4YTcyZjU4N2IwMjMwMjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://libs/desktop/feature-canvas/src/CanvasViewport.tsx#L301-L394",
+          "version": "repo-lines-v1:sha256:5aa5ba682050585d8b7b3f5a0f8f24a636525192153f5f6f5ea1b046bc080b3d:eyJzZWxlY3RlZExpbmVDb3VudCI6OTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg4YmMwMDQ1YTBiZjg4ODEyMWE3N2U3NmExNDZiYjdiYzgzZmU1ODY4ZTkxY2NmMGFjMjRiMDAwZjdiNjM4NzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YzM3ZDYyMTcyNWNhNDNjNGZjZTFjZjc2MjE1NGM2NmRjMGI5MjgwNTQxNDhjYTI5YWE3ZDM4ZTBlMTgxYzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdjZmQ3NjAxM2ZhZGJjZDcwZjdhYmM3MWI2MjYxNWJjYzEwNTIzZTNiY2NlN2FlY2YyNmY0YTk5OTExMjI0NWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJkZjk5YTM2MGZmOWMzYzg0NDJiMGNiMGY3ZmEyYTBiYmYyYThlOGU1NmMzNWU4ODQ2YzM5ZGZmNTZlMzBhNjgifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-canvas/src/useReactFlowAdapter.ts#L315-L330",
+          "version": "repo-lines-v1:sha256:378d5b1db3dbfc8281efccd87d6a8c4fe8f28042fd76d0c4b32d3fbb2379ad55:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3YmQ2NGM3YzI2NGZhZDUyMjFiNThiZmQxNzM1N2I1YTdjYTMwZTJhYzcxNzIwZGNhYzIwMGM1OGMwODhkMWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRlYTlmOGU0ZTFjOGZhYWJiNWRhOTJjYmI1NjdhMTVmMjJmN2YxZjdlMzZlODI5MGNhZTgyNjdjNTBkYjFiNWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNlZGZhMmU5NDM1MTlhMGI5ODJjMDVmNmFhY2Y4NGIxZGUzMjViMjIzZTgxZTRjYWE3ZTcwYjNiYjJkYmZiNzAifQ"
         }
       ]
     },
     {
       "id": "claim_6c9733f9195644fb81111f9937053412",
-      "statement": "The viewport hands its floating island a CanvasHudControls contract (zoom, zoom in/out, reset to 1:1, fit to content, grid style, minimap toggle), and the app's CanvasFloatingHud adds workspace concerns on top — view mode, card density, split target, clear selection — while object creation is deliberately absent because a Context and role bindings must exist first.",
+      "statement": "The viewport hands its floating island a CanvasHudControls contract (zoom, zoom in/out, reset to 1:1, fit to content, grid style, minimap toggle), and the app's CanvasFloatingHud adds workspace concerns on top — pointer/clear selection, card density, topology vs swimlane layout toggle, story entry, view mode and split target — while object creation is deliberately absent because a Context and role bindings must exist first.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/components/canvas/CanvasFloatingHud.tsx#L75-L121",
-          "version": "repo-lines-v1:sha256:25a36e170130efea90fefa8fe2d3598e6dfc750cef8b955e008b60c9ff8f048c:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAwNjQ0YzkzZmMwNDg5NGFiZDk0MjcxN2MzNzQ1MjYzN2JlYjkxYjc0ZWVjN2NhODg3YjFhNTg1MTgwNWU3MTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MzY2MmQ4NDUxNmY2OGE4NWYyYzYyMWVjNDAxZTBkYWYzMDUxODM1ZTNhZTdmMzQxMGQwMTU3NzJiMDlmNmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3YjFkNTRkZTExYjY2ODVjOTMzYTI4ZmEzYzg5YmM3MmI5YWE2ZmQzZDgxM2EyNjM0NzA4YzRiYTgxNjQ1MDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJkNzc4OWZhOTI4YzRlODQxNTg0ZDRiZThhN2VlNmRmYjExN2MyNjBhODFjNjNhMWI5ZThhOTViZjQ4NTczZGYifQ"
+          "resource": "repo://apps/desktop/src/renderer/components/canvas/CanvasFloatingHud.tsx#L40-L170",
+          "version": "repo-lines-v1:sha256:e5c5449d9a457ce9a3e2240aef464ac41b55b0f94eaea60d0b89582f2613f30b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI3YmYwZDkxOWU3NWE5ZmVmMjFmZWRhY2Y0MzMzNzE0NDg0NDE4MzRlMTdiMWQxMzVlMDQzY2ExZDZhMWZjNTVjIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwMjkzMDI0YTU5YjRhN2Q1MTJmN2JjMWZjMDMxNDhhNThkY2VhNDNlM2RmNTNlZTY3Njg2OTBjYjlhZTVhNmU0IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIxYzI5NTAzYzg2NTMzODNhNjc4N2IwZWIxZTliZTg5NjIyNjVmZjcyNWQzOTE1ZTcyYjM4YzQ5ODI4YWI2ZDZlIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIzNzVlYzZjNjI1Y2Q4OWUwYThjNzdjYjMzNWE2YjA5NDMwNDZhMDc3MjAxYmY4Nzg2YzA5ODRiMGE4NmUwYTZhIn0"
         },
         {
-          "resource": "repo://libs/desktop/feature-canvas/src/CanvasViewport.tsx#L93-L125",
-          "version": "repo-lines-v1:sha256:f8d52d9d10ad43cb33676546fe6520b59c00a6dc4256e0a6efa5db38767d9186:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5Yjc2NmJhYmU5NzcyY2EzNzE4YTk2ZDE2NzNkMmY0YzhjMDkyY2FhZTQxYmEzN2NmOTc1YThiYmNjZmRlZGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiZTkzNTU3YmE5MDE4Zjg3Njg4MmQ5M2JiMTNiMzA5NmZlYWQ3ODVmYTg3NjI2MDMxY2RhYzljNThjZWMxMjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcxNWM2YzJiODg1ZDhiNDAyODc3ODFmZTNhODcwY2Q4NzM0Njg4YzY2NTdhZjA0YTcyZTlmNjdmYjA0ZGVmZTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI0N2MzNzkyMzNmMmU2NDhjNWNjZTE1YTNlNmFmN2Y1MWQzMTBiZWJlNDE5ZDliOTUzMzAxMzYyMTZjZDIwYTYifQ"
+          "resource": "repo://libs/desktop/feature-canvas/src/CanvasViewport.tsx#L95-L125",
+          "version": "repo-lines-v1:sha256:3d0aaaf111c3158fc5dd6213f84dc001be48893cc24e9101922003b3ce0243c0:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU2YTIwMjE0YzZiNzgxNGI4NzRlZjVkYmQxZjVhZGEyNzgxNzUxNjM4OWU1ODVhYTY4NzBhYjFhZjExN2YyM2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVmMmIyMTI2MjdmNzFjYzUxY2U4MWRhOTgxN2E5MTJmZjdkZTQzOTIyOTBiZTU5MzZkZmFkZGE3MDg4YjZlYTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEwZjk5MGNhZTFlODk0ZGI5ZGM3M2EyZGMzMDFjMTU1Njc4MDk1MjNkYmFkY2FlZjhhNGU0NWQ3MjVmYTUxMmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAxMDgzMjU4Mjk4MzJiOTIwNTljMzA0OTI4MzQyOTEzMGE2NzRhNmRjNTk4OWQ5NThhOWIxZjI1ODVlOGI3YWYifQ"
         }
       ]
     },
@@ -212,15 +224,19 @@
     },
     {
       "id": "claim_91446fad50bb4864ba5a75ffb8050f6e",
-      "statement": "关系边绘 ELK polyline、halo/cardinality/hover label，plays_role 箭头且简化密度默认 muted；pairLink 是细虚线不再私造 midpoint。",
+      "statement": "关系边绘 ELK polyline、诊断 halo、cardinality chips、hover label 与组件内计算的 plays_role 箭头，plays_role 在简化密度默认 muted；flowKind 非 primary 时改用违约补偿/争议升级配色、专属 dash 与常显标签，story 激活时改动态 dash 并按方向反向；pairLink 是细虚线无箭头。",
       "evidence": [
         {
-          "resource": "repo://libs/desktop/feature-canvas/src/FulfillmentEdge.tsx",
-          "version": "repo-file-v1:sha256:e132061022c1d3504444682c15480896c31004f401e87538714a2e3fa4f8ae22"
+          "resource": "repo://libs/desktop/feature-canvas/src/FulfillmentEdge.tsx#L185-L220",
+          "version": "repo-lines-v1:sha256:a9a7fef16fea8cdc6e4cdd4561472262e987faf82d77312a582a53c8127f8f32:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZlOGJhZTczYjBmYmQ4ODNkNjdhMGM5NTUxYjI1ZWE5NDY3NGNmYmEyOWQ1NWI2Mjg5MThhZDI4Y2U5MDgyNjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcxZTA1YTk1YmI5YmRjNDM2ZmVhNTkzNzNhMGJjMzViYWFiMTA5MTBhZjFlMmUwYjVmMGI3Y2M3M2E2ZTczMjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU1YWY2MzdjMDdjZDMwMTlkZWIxODI2MGM5ZjUyMDg1YzUwNDlkMWRlNDkwZjZlY2UxMjI0ZjcwYzgyOThhNjQifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-canvas/src/FulfillmentEdge.tsx#L60-L150",
+          "version": "repo-lines-v1:sha256:45bc52e662c33781f978d1385b28df98a69dda22054afb471f97c9476b914a3e:eyJzZWxlY3RlZExpbmVDb3VudCI6OTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk5ODdhY2VmNjE1MWRhOGFhNzJkMTlkM2E3YWI3ZTI1YzY1ZTNlMTU4Y2U4OTE3MmE5MzJmNWZkYWM4ZjdkZDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1NzU1NGY0NjAxZTMwYjU3NDZmYzg0OWQ1NDM2ZmU5OTM1YjE2ZDFkZDhiYmM0ZTJmMWU1NDA5ZmFhM2VhYjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM1NWJlZDU0MjQzZmI3MjI1ZWM0ZDRmODY4NGJiNzI3ZDg0NTM0YjgzMmFhMWUzMjM2MTgwODg5ODI2N2ZiZTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc4M2JlZjI1MjliZWY5Yzc4YWQ4OWQyN2QxNzdjZmM3ODMwYjM3OTlkODI0YTNmNmMyODI1ZjFkNTNkMDJhNGIifQ"
         },
         {
           "resource": "repo://libs/desktop/feature-canvas/src/useReactFlowAdapter.ts#L211-L245",
-          "version": "repo-lines-v1:sha256:7ff4d017f17191da3ca3a678d7559925af2074e4e6d188c60d1c4f0b68cd29ae:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYwMDE2OWI3MmUyNjk4ZGZkMWY0OTUyODg1N2Q0ZDhjYTAyYjkzNjY1NjIxMzQ2ZjA2NDZmZTRjZGM1MWI2NTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhhMjk1OWVjODgzNTJkMzk1ZWUxNWRlNWMyM2RhYzNmYmQzZDllNDcxYWQ4YWVjZWE3NDYzNDNmZjI2ZjdhMTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBiYmJlMTNiMWU4YTY2YTQzZTJkZDU5ZDY4OGNlMzExMWEwYmI2ZTYxNGIzZDAyMWJmY2JjMTc3NTIzNGNkMTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYyY2QzMmNjZjNjZmJlZDI0MDY4Yzg5NmYzZGVkYWY5OGFjYzE3MWUyOGEzZTYzZjE2ZWRlZmE3OGMzMzA3YTgifQ"
+          "version": "repo-lines-v1:sha256:875c3c6b1d38a9a107f94049f753c5aa03a2f6b70645e18f3d6dd7e66f580207:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkYzk0NDRkYTJhZDI1NGYyMTM2NmZmYmNiZDg0OTBlNjllY2YwODA5ZDc3NmU1M2U2MTQyMzI2OWIxOTczMTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJiYjAzN2RjNWQyNmU5YmRhZjUxNDAxZmM5NjY5MzYwNmQ3YTFkNWZkYjhlOTZlZWI3MTcxZjhjMDg5ZjY2NjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA2YzIwNDY3Yzk3MjhmOWU1MjNjN2ZiMTcwMDliOGFhYmM1NTU0YTYwMWU2YTQzYTRkYzU3NDgzYWY5ZWJkMDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkwOWI3NjZlOWFkYTRiMTZkNGRjNTA0YzQ1YjNjOTEyZmI0YjE1MmZjODY3OGUwZDc0YTc3NzBjMzE5MjAyNWMifQ"
         }
       ]
     },
@@ -282,15 +298,15 @@
     },
     {
       "id": "claim_4ba9cb7926c5474aa37233736b9c1af2",
-      "statement": "KeyDataLedgerSheet is the wide ledger, opened from the attribute grid, the inspector footer or Alt+L; it edits the same session, states the field and decision-owed counts, edits the active row's expression from a CelFormulaBar, and captures Escape on window with stopPropagation so closing it does not clear the canvas selection.",
+      "statement": "KeyDataLedgerSheet is the wide ledger, opened from the attribute grid, the inspector footer or Alt+L (only while an object is selected); it edits the same session, states the field and decision-owed counts, edits the active row's expression from a CelFormulaBar, and captures Escape on window with stopPropagation so closing it does not clear the canvas selection.",
       "evidence": [
         {
-          "resource": "repo://libs/desktop/feature-inspector/src/RightInspector.tsx#L68-L100",
-          "version": "repo-lines-v1:sha256:b5deda235e46ce57f2fde2e122c01588c2f95f8ca905f33aede3aa13a11702c1:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ0NTk0MzQwOWRhYTU4ZDE3NjhiMGM4NzczMTRkMzVjMzAwNTQwM2VjY2FlNDFkOWJhZjE5NDg1NjE1MjY1NTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM3ZWVjNTVmMmJhZjIwYjEzODY5ZDM1Y2M4M2Y1OTFkZmI2M2U0NzE1NTA4OTJhNzgwODQ0ZWEzM2YzMDEyOTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJjZGNlMmE2ZWQyMjNkMTM1ODU2M2MwMGI3ZDZmODcxNGE4NzY2YjMxNGRlNGFiNzIyN2RjY2E3NDc4MWQ4YmMifQ"
+          "resource": "repo://libs/desktop/feature-inspector/src/RightInspector.tsx#L83-L150",
+          "version": "repo-lines-v1:sha256:836b4f85e1947f23ef50847306179df2ee019a81ef2ff554d14112f7b36aeec5:eyJzZWxlY3RlZExpbmVDb3VudCI6NjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmZjFkYWNhZThhZGU4MjhmZDA4MmU2MTVhYTk5OTBiNDcyMmU4MTVjYjE4ZWY2ZTI1NDdmOGU1ODNjNDdjMjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ3ZDAwYzUyMzAzMDE2MmRjNTIxNTk3MjM5NGZjN2MzNzhiNjUxNGVjNGE1NDRlYjllZjZjMWI3OTQwOWNlOTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUyNGQzMjNlMzVkNzgyYjA1NmFlODkwZTk0MDk4NzAxMDBmODQ2MjU1OThlNmU2ZDljNWUxZGU5MTUzNDVhYzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxOTZiM2JkM2ZhZDQyMzU4MzkzZmIxNmU4OTYxNmJkMDkzNGZkZmRlOWYyNDg5ZWY3ODk2ZDA2YzIzYmI2ZDkifQ"
         },
         {
-          "resource": "repo://libs/desktop/feature-inspector/src/inspector/KeyDataLedgerSheet.tsx#L30-L160",
-          "version": "repo-lines-v1:sha256:d6b6e5216a3687be17e76ffd90c6ba278d511891d2afc29979178c050bb64b48:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2ZDAxZmYxNDhiMDQwOTZlMjcxY2FkNjJjZWYwZjgxZTFkMGJlZDQ5NjE3MzNmMzlhZDQ3MmU2MmU3NGY1ZWFiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIxYmUwNDI0ZWIwNDAyMjRkMjBlNDZjOGVkZTgzZjkzMWRkNTI0MDBmMWNmZGY2MGYxZTE3NDM4ZTM1MjkwZjY4IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJiY2EyM2VjMGRjYWJkNThiNzVkNjg5ODFkNTE5NzM1YjZhYmYzOTk3ZGI5M2Y4MTM0OTBlMDgxZTdmNmJiZmIzIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI3ZGUxM2RlMDA0MWRjZGMzZGE3ODZlZmExMGYxNjQ0OTI5NjJjMWM4ZjZmODZkZDc3ODkwMTllOGQxY2ExMjAzIn0"
+          "resource": "repo://libs/desktop/feature-inspector/src/inspector/KeyDataLedgerSheet.tsx#L82-L152",
+          "version": "repo-lines-v1:sha256:23cdd20f4b594a153f00a921d5dca876e4241aa7caa0bd8a2e522ef5cb546b2b:eyJzZWxlY3RlZExpbmVDb3VudCI6NzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU0YTFiMjU5YjA0OGI2MWExNDk2Y2JjOGM3NjEwMzcwMmRiZDJmZTVhZTVhMDZiMDNjY2I4Y2Q3M2I3M2EzZGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAzNzNhZGIxZjE2MDUzNGM2NDQ4NWUxMDFkNmU0NTNhNjE1OGM2ZTcxYmEyMWEyZjM2ZWI5YzUwODQ3NWNiYjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE4ZjE5ZTgyMDNhNTMwN2ViN2QyYjQxMzZjY2JlYzU0N2MzMzgxOGQ5NzUyZDViZjE4OTIyMmJmM2Y0ZTg3NTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgxOWYyZmFhZWEyMmMyYjcwNGUwYThkNWZhN2ZmMDkwNjhlNmI1NDJjMjk4YTI2MmY2NTBhN2FkZDc0YjYxYWUifQ"
         }
       ]
     },
@@ -329,10 +345,138 @@
           "version": "repo-lines-v1:sha256:f310750461574dc0f34303756172153549bdb8dbd5356ac1af0f8a5578f2394d:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDQ3N2YxYWJmNjEzYzQwMDEyZjUxN2I1ZTQyZWE5MjU5MjRkYTViNWQzODRlNTdiN2RjMDhiYzhjMzhlMjZlMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDRkMzNmMWU3ZjZkNDI4OGIyOTIzZDZmMzRjNWI5MTFkNTVmN2RmYWUwMTBjOGVlMThiMWFhYzY5YmM0YmMyZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTQ0MzU3YjZiMjA2MGRkZTIwOWE1MWY1NDIxOWE2Mzk2NGM4ZmYxYWQxZjc0NDUxMjg3Mzc4Y2YwOTZjMTgwZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
         }
       ]
+    },
+    {
+      "id": "claim_215571ac231a4d2ca520bddf2fc89290",
+      "statement": "useGraphLayout 只在异步结果属于当前 (graph, viewMode, layoutMode) 三元组时发布几何：迟到结果按 cancelled 标记丢弃，未匹配时对外是空的 EMPTY_GRAPH_LAYOUT 加 layoutPending，失败时同样清空几何并暴露 layoutError，由 EditorScreen 显示计算中/失败提示。",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L645-L675",
+          "version": "repo-lines-v1:sha256:15ab71720f2671916bedaa48af4e4ff0ab23acf6c09e5bdf27daed38c50adba3:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJkYWQwZTc3YTExZDc1NjE4MmVkMGI4MTdhZjk1NjYzZTA5ODE2NjZjMjkyZWZiMzBhZWVhMjRmMjVkYTU0NTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVjYzc3YmQ3Y2Y5ODQxZWU2MTY4YzllNjQwNDJiZmFjMzhjODY5MTI5YmJhYTMyZmNiZTE1Y2Q3NjA5ODlmY2EiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY5ZGJkYjZmMTYwZjNmMGNkNWUzOTFkYWM2ZTE2ZDQ4ZDc1N2JiNmVhNTI5OTA0MTY5NjljMThjYmRlNjI3MmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBmNjBjYTE2ODBiMmMyZTQwNjA3YWIxMmUxNGJhYmJiY2JhZTFlODJkNTE0ZjliZTEzY2UwMzNjOTM5N2I0MzkifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/state/useGraphLayout.ts#L15-L66",
+          "version": "repo-lines-v1:sha256:90a1b2b79a6afaffe050250bb642044590ebceae04efcfc6a6adcaa348dbcfb6:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4NmE5NmE3MWE5ODlkN2IyYTBiNzg1ODFiYzk0YzY1ZjlhM2I5OTMzNThmYjJiYjczNDkxNTBmOWFiMmM4NWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYyMjU5YWYwMjM3NjY0YWRjYzZmOWM0OGE4YWJjYzk5ZjFhYzk1MTQ3ZDQwMGQ2YzEzNGE3YTAxMWExOWQ5NjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c1ccf0ad85a640cfaad95273cde41bba",
+      "statement": "swimlane 布局是纯展示：阶段由凭证 kind 决定，泳道由合同 roleRefs、responsibleRoleRef、party 角色自身以及固定的共同约定/能力支撑组成，阶段宽度跨 Context 对齐、嵌套 Context 依次堆叠，区域盒只存在于 swimlaneRegions 与 SwimlaneOverlay，不进业务模型。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/engine/swimlaneLayout.ts#L14-L45",
+          "version": "repo-lines-v1:sha256:a2ec8ac7e9603834e48371d152a9d5026a0e84b661524a720718ea81df2e3d5d:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwNTUwMzZiY2FmZWUwNzk4Zjg4Y2NiYzRjMTFkMzQ2ZTZkYTQ4ODBjNTIyNTEyN2Y4ZjgxZmFkNmUxZmJhMjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlMWMyOTQ1ZjMwNDRkZTJlYWM5ZTAyNmJiYjg3OWQ4ZTAzOGU0ODgxNjNkNmIyNjdjOGVkZDhjMDBiM2E3Y2EiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRkYjhjNDA5Y2I4NmU1ZjkwZWI1NWRmNmZmMjA1ZTdkOTUxZWIyZjcwOGU0OGExZmE2NmVhZTU5YzFjOTExN2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3MDA5ODE1MmU2YjM5YjU4NDdiZDRmYjFjYTgzMWU4NzMxYTRlNmFjZDRiN2EyYzQzYWExMzVkMmY0YTBhNDYifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/engine/swimlaneLayout.ts#L69-L170",
+          "version": "repo-lines-v1:sha256:05e34f422bd533cebd29acdd9536b926abd190779036c1d61ac9343092752a45:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJiNWI0Njc5ZmQ5NDE3MDRhZTQyYTJiZDgzNjM2YjdhNTVhOTBmMGRkN2MyM2NkZjNkZDgyYWZhYjUzYTliOWI3IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmZGE4ODM5OThhZDkwNDMxYjlhZTU0ZWZkMGRlN2JiMzYwNTRkOWZjOGYzZWM4NmUxY2E5OGIyYTVkMDQwNzkzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3MGQwYzYzZGRkMTdjNDAxMWE5NjJkMDc0ZTczZmI0MzUxN2FmNmUzZGYzZjgxZDcwYjBjYzJlNDBhMDRhMmJmIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlODIyMDA1ZDJlNzU0ZTljNzhhMTkwMWUzODVhYmE1Njg2YWE2NmM4NDhkMDkwZGJlODQwOWNiOTY5ZWU3ZmU0In0"
+        },
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/layout/types.ts#L70-L80",
+          "version": "repo-lines-v1:sha256:b57c80fe1907250843786b2289d7b69290b4d87498197685d9585680885103bf:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhNzY3NDQyNjQ1ZWE4Mjg1OGQ4ZTBiMGFhOGE2NmE2YTM5N2MyNzZhY2ZkYWI5OTJlYWI0ZGVkMThlYmE3NWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJjZDA5OGU5Y2I1YjRhZjAzMzViNTk0ZjYwMmNiYjgyZTM0MDNmM2U3NDEyMzczYjI1NjdmNzRhYzMzZjBkYzQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZjZjhiYzZkZDJhMDg3M2EyMGZjYmRmZTMyNGVhNWEwZDRjYWIzZjQyMjgyYzNiOTkyNDM0ZjhhNTE2NTI2ZDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUxYmFkMGJhNzM5ODgzNDE5NjNlNmNlMDU2NDRlZWVmMThmYjNjYzBlMGQwZjNlNGM5YzNlNDNhMDQ2ODRiMDUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7a632436cd9840ea9d868edce10a5211",
+      "statement": "swimlane 的线路显式避障：默认右出并走行下方走廊，一旦某段会穿过任何卡片就改走 root 右缘主干，因此两种布局模式下边都不刺穿卡片。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/engine/swimlaneLayout.spec.ts#L45-L70",
+          "version": "repo-lines-v1:sha256:af55e568ea8433c19a0eb5945ce7286141436e721aca682f619bad8993471d50:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3NDRkMjA4YzdkMGZmODc4MzdlNGZlOTVjMjIxZjkzNDJmNTA1ODg2NzhmY2I4MWQ4YzQ2ZDY5MzQ3NmU5OTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg3YTNiMGM4MjNiNWYwYzE3MzM0MjA2ZmRjOWJlYWY1M2EzM2RhNzAxZDgyZmU4YzY0YjY4NTcwYzlkZGQ0NTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZhYWRmYjRjMjhiYWVjNmQ3NjZlYzliMjM3NTVhN2JkMjQwMDNjZDMzODhhYzQzMmFlOGI4ZWRkZWY1NTc3NDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFlOWQ4Zjc5YjJhNjM4NGQ4MzkwZDNmNDljYzlkYmI5ZTUxNTMzZmZhMDJmMmIzM2NmZmI5YTA2NzQ3ZmQ2YTAifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/engine/swimlaneLayout.ts#L175-L240",
+          "version": "repo-lines-v1:sha256:223f95e6b693bd271254edbe1ad49a9126e86a4fe218fa2dd60050e13fe00a16:eyJzZWxlY3RlZExpbmVDb3VudCI6NjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI1NGFmZWRjM2Y2NGQ3NTRiMDdiYjAyZTJkZDI3ZjBlYzU0OTc4NjIwYmQ0NGM2OTNlZTU5Nzc2MWY4ZjMzYTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMwYzdhZDhhNzJkNDRiZmMzOWRiOWExZjVjZTcwYjhhOWUwZWFmOTA4NmEyODYyMWUwOTdiZDIzZTVjNmQxOTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEzYjMyNzVmNzZiMGRmMGQ1Y2ZhOTc4NzIwZjU5MWQ2NDMwYjhmMWJlYzYzNDMyY2VmZWFlZGIxNTFhYTY1YTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM0ZWM0MzI0ZGZkOGZlZTE4ZjliYWYxNzY5NmJmZGQ2M2VkZGNkY2FlNjRiNzA1Y2I5OGFiY2JmMWU5NjVlMWQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b2bbd62e3fdd4ce88e78d601a97940e5",
+      "statement": "applyStoryFocus 在 convertLayoutToReactFlow 之后覆盖 hover/选择的 dim：involved 节点不透明、无关节点 0.35 且 dimmed 置 false，活动卡片带 pulse class，只有连接活动实体与其依赖的边（含 pairLink）被动画且方向由 source 决定 storyReversed；焦点为 null 或实体已消失时原样返回。",
+      "evidence": [
+        {
+          "resource": "repo://libs/desktop/feature-canvas/src/CanvasViewport.tsx#L205-L215",
+          "version": "repo-lines-v1:sha256:7ec2ecea2a842c2e939baf395369b1d8ed87b45bbabea474f0c4454752e57497:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg3Mjg4MTRmZWIxMDVkNjNiMDJjNzYxNGRkZDMwNTM3MDhjMzkxM2MyZTMyMWY5M2I1OTVkY2UyYmQ5ZmUyYjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNjZDE0ODA4YTJjZDVhMmJjNWQyMGNhOWIyNDdmMDMxMzI5NDU0NTUxZDg4YjM0NGEyYzVkMDdlNTM5Y2QyMGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdiMzRjOTgyYTk0Nzg3YWJjMzU0ZThlNTdhMjM1Mjg0ZDlhZjdhZWNlZGNkNjg1M2EyYmZjMDA0MmFhYTVlMDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM2M2M0ODU1N2Y2M2Y0NTkxNjg1MGI5NGY1Yzg1NTQzYzA3MDhiZDQ2ZWRkODFiODY0Y2NjNjNjMjRlMTY0ZDEifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-canvas/src/storyFocus.ts#L1-L93",
+          "version": "repo-lines-v1:sha256:33a551bf33c504f9b7790e3f03b0d8aa14c3c172b6094558e913339c9dec970e:eyJzZWxlY3RlZExpbmVDb3VudCI6OTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlMmIzYmE1NDc4YzMzY2QwNGQ4ZmEzMmUyN2Q2YjYxOTY4YTFkYzhlOGIxOThhYzYyNzc5ODc5OTQ2NTU3MDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b44348aa28af4d99b668e0ac713067e2",
+      "statement": "故事焦点由 app 侧 useStoryPlayback 从当前 flow step 生成（活动实体、basedOn 依赖、acting/responsible 角色、focusKey 含 flow/step/sequence/stepHash），播放期间 scope 被置空并撤掉范围控件，避免推演画面被遮罩裁掉。",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L666-L705",
+          "version": "repo-lines-v1:sha256:706b01f6208137f03c87e94c74eabfaf69665fef230c49a523680e07e3dcb40f:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYzN2NjMGUzZWY5ZThjMTY0NTk5NjEzYjQ0NzQ4MjcxM2I0YWY5ZDFhOGYzM2Y3ZjM0NjFhOWYxYmZhYWE4MzQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhNTM5NjNjZmQ1NWJkM2VhY2IxMjU4NTU5NTE5ZTFiNjI2NGMzOWYwZDM5NjA3NDViMmQyZWNhYjQwMTJiOTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNhNTNlMzlkYWQ4ZTgxZDRjZGMzYWQ0NTkyODMxMTAyMzZhMWViYzk0NWQ1YmFmNmI3M2VlN2Y3NzI4ODUwODMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk1ZThmMGIyNzMzMDZiMmEyMGI4YjcyMGY2NDA0NjM2NjkzNWQ3ZWQwNzRkNTM1MTUzNjg5ZGFiMzIzMjY5MjEifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-story/src/state/useStoryPlayback.ts#L99-L118",
+          "version": "repo-lines-v1:sha256:114f1177ff6e94bb351480eea195b41e257324dbf9548cbdf5c25e91604aa9d0:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlMDM2ZmM0Zjc3MjBlNGZhOWI2YmNiODc1N2FmMTFkYTNlZDVlN2Q2ODVmOTVmZTFhNDlmMTZiOWRiZmNmNjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkOWUxMjU0NjQyNTU3NmQzZGVhZThjOWI5ZGJmMTI4ZDVkNmRkYWY1ZDdmZTg1NzkzNDkyN2RlZmZhM2I5ZGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZjMDZjODdiNGQ4ZTQxZTY1NTU4OTNmNjBhZjc0YmE5MzQ1YTczOGY1ZTMwMzQ2YmU0NDk1ODAxODg3ZjY5NTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRiYTBkMTljNjE0MjI2YmVjNTViNDAxZWI4MjUwMTg2YmQ0ZTUyMzY3NTUxMWQxY2Q3OTQ0NzQzNmE2OGFmOTYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3666f81469904526b12cde61cabb1eab",
+      "statement": "违约/争议标记是模型事实而非高亮：关系上的 flowKind（primary/breach_compensation/escalation）由边画成固定配色、专属 dash 与常显标签，不依赖 hover 或选中；该字段由 RelationshipFlowSection 通过 session.mutate 设置，并声明标记不代表履约完成或法务批准。",
+      "evidence": [
+        {
+          "resource": "repo://libs/desktop/feature-canvas/src/FulfillmentEdge.tsx#L60-L100",
+          "version": "repo-lines-v1:sha256:6ca948cef99fa7fa7aa68046973f2c415a153325b77bf9956a746904e6e09e53:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk5ODdhY2VmNjE1MWRhOGFhNzJkMTlkM2E3YWI3ZTI1YzY1ZTNlMTU4Y2U4OTE3MmE5MzJmNWZkYWM4ZjdkZDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU4ZTFhZTYxZjEyNDljYTkyYjkzYmMzMjljZDI0ZDlhZWFmOGU0MzYzMmViOGY2Yjc1MzZhY2VkYzdiMmRmMGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM1NWJlZDU0MjQzZmI3MjI1ZWM0ZDRmODY4NGJiNzI3ZDg0NTM0YjgzMmFhMWUzMjM2MTgwODg5ODI2N2ZiZTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZlM2YxNGVhYWI4ZmU1ODllMTUzMmQwYWE4NjNmYTIxZTFhYjljODZjNzBmZTlhYzkzMWZiMGEyYzY2MTAwZDYifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-inspector/src/inspector/RelationshipFlowSection.tsx#L30-L70",
+          "version": "repo-lines-v1:sha256:b229a12dae298f36c26cf9969cdce3bfb4bd26115656af4455c53cf8e803493f:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliMzY0YTZiMzUxMTUzYWM4NmRhYWIzZjgyODY0M2QxMWJmODU2OTUxYWFkNzA4OTI5OTZiYjY1N2RjOTA1NzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQwN2ZkNzIyMjk2OTViNjUwOGJkYzMxNmY4YTk2ZjNkNTYzYTY3ODU1YzA1ODRkNDBlZTAwODk2MGEyMTgxZTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRhODQyZGMyZmUzYzg3M2Q3OWNkNjY5M2MzZDM4Njc1ZWQ1NDA2MDA1NDFmMzFiMTEwYTIxODhhYmE4MTY5MzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIzOWRhOGRkOTA4OGY0MDM3ZjZjMTZlNGJjZGEyNmYwZmJjMDdmOTZhMmZkODQ1ZDM5YWEzYTJjMzY0MmNkOTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_331bcfe89c1b4e169ccab49e4fd0d5e0",
+      "statement": "业务公式是 native CEL AST 上的无损视图：token 保存精确源码切片与只用于展示的 label，拼接 token.text 可逐字还原源串；替换前校验原切片并用 translateBusinessFormula 重新解析，失败返回 null 且界面报“未保存”不提交；注释、集合绑定、运行时标量与未解析别名整体回退为 CEL 源码模式。",
+      "evidence": [
+        {
+          "resource": "repo://libs/desktop/feature-inspector/src/inspector/cel/BusinessFormulaView.tsx#L55-L140",
+          "version": "repo-lines-v1:sha256:aabe270ef29b92331d10ff5ba6435380912543560364d0813cd8da5e3fdbdfae:eyJzZWxlY3RlZExpbmVDb3VudCI6ODYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE4YTQ3ZDM1YzliNDA1MmNlOTliZTdiZTY3MWUwMDBiN2QwN2FjZjFkMWE5NDAwNjU1NWE1MjU1OTI5YzRjMzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYxYmM4MDI5NGY1MWVhZTYxYzAxYjJjYmZiNTdlOTU3ZDIzOTM3MjEyNDA1MGRjNzg4ZDE4OGQ0YjQ0YmJiODYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNkZTBlNzdiMGY2OGU4MDYyM2QwMjJkY2EwOThkZWJjNWI4OTJkMGU2MjdkZTcxMTkyMDk0MGY5M2I4ZjZhMjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU2ZDJiNDY4OThmY2EyYmRiM2NjYTY4NjAzYzY5ZWFjMDVjMjY3ZjAxOTU3MjM3MDNiM2UyYjZmODU2MGY0ZjQifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-inspector/src/inspector/cel/CelFormulaBar.tsx#L36-L110",
+          "version": "repo-lines-v1:sha256:b5a6462c9e39571f1ae1260b555cb19e41c4bc3588adc891a0fde9971e4b36d4:eyJzZWxlY3RlZExpbmVDb3VudCI6NzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjYjhmMDBhNjQ3NTBhODA5ZjRlYTQzNTIxZDViMzlkYTQ0MjI4ZTkzZmM4ZmE5MWFlYTk4YTFiZDZkNDBkMDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ2MjJiNjNlZDExYTkxMTEzMTYyYTlkYTYyM2YyYTUxNGVmMWNiNWIyYmU3NGFkNTMyNzBkN2QzZTJlZjZkMTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU3MWU0NTUwOTE1OTQ0YjQ0MDg5ODg5NGEwOTNkYjMwOGY5N2UwZDgwODg0YTEwMWYzOTExNzFhNDUyN2ZlYjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxOWI2NDdiNDU1OGNkYTY4NDQyMzYxNTU1ZDAwMTJmMmJkOWI4ZjU5MjdhOWMyMGMyYzE0ZmM4MTQxNzhkY2QifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/cel/celFormulaTranslator.ts#L143-L175",
+          "version": "repo-lines-v1:sha256:d1e64de0a772bb90200fc90c32347bb71c950432a40212c2ca541955c9bfb0ba:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhiNTRiMTZkYTY2YjQ1OTExNGE4OTM0ZjZhMGVjMjcxOWNiZjg0MzRkNWQ5MThhNjk2ZjdjZWU5NzVlMDE1M2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjNzIwMTM1ODcwODE0ZDE3MDY5OGJmYWE5YWY5YzljNmZiYjg3MTIwZThmYmQzYmUzNTlkOTRhNzMwMmYyZmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQyMDg4NjA4NzcwNzI0OWEyM2Q0ZTc4ZDEyZDQwOWM3Y2MxNzZkZjJlNTJmOTFmNGIzMTY4NWFjNjIxYjYyN2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZhYzU1NWZiZGM2ZWU4NmM2ZTQ5ODcwYWY3ZTcwYjcxM2NhNjg4YzM3NTFkNjAxNjg2ZmJlNmVjNjY4YzE1OGUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/cel/celFormulaTranslator.ts#L46-L140",
+          "version": "repo-lines-v1:sha256:4a559b8419f7c1da7522a15b70b111bf75764cfa2fe4688e574987828f81f586:eyJzZWxlY3RlZExpbmVDb3VudCI6OTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcyNDhjODEyOTU3N2E5YTA1NWNmNTBkOWI0NzFhOTc3OThiYjllYmE5NzliMjI2ZjQxY2E3NDA0OTMyMzdlMWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkOWUxMjU0NjQyNTU3NmQzZGVhZThjOWI5ZGJmMTI4ZDVkNmRkYWY1ZDdmZTg1NzkzNDkyN2RlZmZhM2I5ZGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYwZjc0NTk0OWQ0Zjk3ZDlmNzkxNjQ2NWU2ZjllZTZlNGEzNGVhZmY2NDU1NDE5OGU4YjUxOTgwYWU5Nzk0NDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxZGE3MTk4NjViNzRiY2U5Mjk1OTVmNmUwYWE5NzdhYzNmZjJlZWE4Y2M4MTRhNzdkYzhkMzRjM2I3NWZlZjYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_def2eba3126d455ab7737721aa66f4b6",
+      "statement": "CelFormulaBar 只编辑已存在的派生规则表达式并走 updateRuleMutator，把普通输入字段变成派生字段的绑定决定留在属性行，所以公式栏改常量、插入计算与源码编辑都落在同一条规则表达式和同一份 ModelSession 历史上。",
+      "evidence": [
+        {
+          "resource": "repo://libs/desktop/feature-inspector/src/inspector/DerivedRuleSection.tsx#L75-L135",
+          "version": "repo-lines-v1:sha256:8d91289739aabc9b15c51bb1a01b2014ae80f3c93129a2409a7e61683b22df0c:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWZhNWM2ZmYxOWRiMmM2NjMyMmI5MWY4NzgwOWM2NWFjYWZjNDE3OTQwMDliNTE2YzA2ZGJhZjRiNjA4ZjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI1NzVmMDg0Mzc1YmEyZThlZDU4YjY1ZDEyMTMxZjdjOThiMWI2N2VmYzViMzcyYjQ4ZmY3MjkwZjg2MjViOTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY3NWNmNTg0N2UzNTc2NmY5ZjI1YWVjZTU3NmU0YzliMTdmMjRhNjFkZTZkYmE2NjdhZWYwNzZjOWE0ZDA5NGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhmNzBiMjFkM2ZlODJiYjY2M2IzZDE0YjZkYjU2NWI1MjEwZGVkMDAxNjYzYTg3NDBkY2Q4YjI1M2I0NWM0OWUifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-inspector/src/inspector/KeyDataLedgerSheet.tsx#L129-L152",
+          "version": "repo-lines-v1:sha256:5d582330d30c14e51e9faf5baa19dfae04e644690e17aec22bc950e2c8899407:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYyZGYxMGIyZTA0M2UxNjA1OWI3MDUwZDJkYmJlZDJkOGE4NjMzY2ZmYmEwNjI1YzdiNWUxMTRiZWY1MWQ2YmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAzNzNhZGIxZjE2MDUzNGM2NDQ4NWUxMDFkNmU0NTNhNjE1OGM2ZTcxYmEyMWEyZjM2ZWI5YzUwODQ3NWNiYjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE1ZjE1YTk0OWJhZGI0YWVhNDhjZWIwMTk5YTViYjFiM2NkNTQzYmZmMTU1MDNkNmQ1MzBjNTdlZDlkYzQwMzQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgxOWYyZmFhZWEyMmMyYjcwNGUwYThkNWZhN2ZmMDkwNjhlNmI1NDJjMjk4YTI2MmY2NTBhN2FkZDc0YjYxYWUifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-inspector/src/inspector/cel/CelFormulaBar.tsx#L24-L40",
+          "version": "repo-lines-v1:sha256:f4065b103ceb6dcb6c90b0cbc8edb1a99b9ce988c6fa0eeeaf1d3cedb95e0899:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI2NjE2YmFjMzQzODE5NTFkMDM4NDVmNWRjYmYxOTg4NDdmOTkxNzI4OWQ2OWZjMzkyYjk0YzFjYWI5MmY2MDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY0YjQyYzhhMDk2NWQ5NmNkNWQ3OGJlMjIyNDM0Mzg1MmYwZjNlOGI3NDZkZDEwZWI2NzVkNWEyZTBlZWIyYjQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM3YWY2OGYxNGQxYmQ5NGEyYjZhZmMwNTlkNzkzZjhlNGEzZGI0MWY4MDRjNzllZDMxMmVhMzE0ZmUyYTAyYjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk3NzMzY2M4YWYxN2Y4MGE2NWVhZWYxY2U5MDhiYzI5ZmRkMDAwMTQ2ZTQxNjNkNDg1NDU0ZGIwMWYwNTk0MjgifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-15T14:07:58.904Z"
+    "at": "2026-11-16T23:54:38.352Z"
   }
 }

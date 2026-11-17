@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:b4de76a852fde09cfb31f397bc26b5d6fa5cbd91a439b38a38bcb15873156056",
+  "pageVersion": "sha256:f90252d95b749c6386f2a81834c03ab1198f3392894533a51c8b960cde13c6a1",
   "claims": [
     {
       "id": "claim_bda93da0553b4aee8e3362edf44058c2",
@@ -185,24 +185,6 @@
       ]
     },
     {
-      "id": "claim_39b7a4fbd573466abec3ea2a8d924821",
-      "statement": "`workbenchFingerprint` (sha256 over the model tree files plus `.evidence/api/api.json`, excluding `generated/` and `__pycache__`) brackets review-page generation, and the desktop preview throws `预览期间磁盘输入变化，请重新预览` instead of returning data for a model that changed while it was being read.",
-      "evidence": [
-        {
-          "resource": "repo://apps/desktop/src/main/reviewPreview.ts#L107-L108",
-          "version": "repo-lines-v1:sha256:7db826a8489396df3a65b9dcca28752889e276e3a67c943a5b3c8e0c95f5cef6:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzAxYThkYTA3MzYwYjc0MTgwZTg3YTIwY2Y5MTQwN2QwMjE3M2FkYzQ4ZWY5MTdmOTFmNTg1MDFiNjExMzdhYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWNkZDAxMDI4NDVhYzk0MzgzODhmMGM3ZjM3YTk3NTVhNjU2ZDdlNTg0Y2E3Yjc2NDMzMWYxNzE5YmNhMjcxZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2UwMmQ3ZWI2YmE1MDEyNTg2ZjBmODQ4M2UwODI5ZGEyYzhhM2Y3ZDQyNDdmMmNkYzhmZDY5ZGU5MTk2MjQ0NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWU5ODAwNDE4N2U4NTYyNjI0N2QyOGUxNWNjMzkwZWMxMjA1YzEyMDkxY2VlM2RkM2UwNWIyYzFiYmE2YmFmMCJ9"
-        },
-        {
-          "resource": "repo://apps/desktop/src/main/reviewPreview.ts#L36-L40",
-          "version": "repo-lines-v1:sha256:4460b806a3d23699808946e1f15ccb35b305401c5201ccc76b4acd03b09b8539:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTlkMjY3OTIyNjA5ODdiZTdkODE0YTcxNTExNjFjZTAyNjQ3NDI2NDAwNDFhOTAyM2I3YjE0ZTA3YzMxNGRmNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTdiY2U2NWE1NWQ3NjhkZTljZjNhNTkxZmQyNzExNDZiNzY4Yjk2MTQ1MTUyNjE2NjI1YjcxYWJhNjgwMGZlNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmZlODQ1MjNlMjdiMjkxM2YzNWViYWJhOWQ2MTVmMTdhNjVjMzMwYzU4YjNiZjE0MjI0NDllODZlMDlmMTJjYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTQ2ZWVmZjA4ZWM4NTE4YzdkMWMwNDVlYTBlZTkxYjVjZjJlMTk5NTg0YmVhZjFiODdhZmEyYzQ1N2FiMmExNSJ9"
-        },
-        {
-          "resource": "repo://libs/evidence-visualization/src/generate/collectWorkbench.ts#L148-L193",
-          "version": "repo-lines-v1:sha256:c13f75949761dee559ac3372a163ebfdc0f78d79307d3b51892cb72255416e6a:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyMTI5YzI3MzUyYjQ5NTU0OGIwNzFhZTM0YWI5MDgxMTcyODczNDI4ZjZmODdmNTRiNTgwZTUxNTNjOWFhMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZlNTNlNDMwNmY5MjkyMjQ0OTE2NGQ0MmU0MTQ5MjFmZDY3MDZkZTQzZjYzN2VkMTU4MTUzZWMxNDQ5YzFlOTkifQ"
-        }
-      ]
-    },
-    {
       "id": "claim_f1b2ba42098f4b26b8b967fd2679f3d9",
       "statement": "The desktop store's `fingerprint` is a sha1 over the manifest and three source trees (sorted, each fed as path, NUL, content, NUL) or over the bundle file's text, returning null when nothing is there; it does not cover `validation/` or `README.md`, and only `projectStore.spec.ts` exercises it today, so external-edit detection in the app is the watcher rather than a fingerprint poll.",
       "evidence": [
@@ -319,10 +301,114 @@
           "version": "repo-file-v1:sha256:de46689fbfa0c37fd81f1b5e76489ccbbddd991765cab677d3725a99daeaf89f"
         }
       ]
+    },
+    {
+      "id": "claim_3133a7aeb39e4c1eaeb2f65bf2f4f77d",
+      "statement": "Which reader runs is decided by the file-name suffix, not the content shape: `isModelBundlePath` only tests a case-insensitive `.evidence.json` ending, and the desktop folds a project root into either that file itself or `<root>/.evidence/fm`, which is the path the watcher, the readers and the digest all use as their boundary.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/modelSource.ts#L11-L24",
+          "version": "repo-lines-v1:sha256:9518c798ea4a1e2814d1b9b837b5e133265128150cc702dfaf337eab68de0cfb:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZkYzE4YjFjYTBlYThkMjA1NDdmNjllMmU3OWVlYzE1NGQ1ZTlkNDk0ZTgzZjVkZDNkM2RiYTY3M2NiODVlMGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxMzk4MjgwNmE4OGI1ZWMyZWI4YjY0YWI1ZDNjY2ZjZTk1MGE2YzMyNzIxODk1MDI5OThlNWM0Mjc0YTQ5NGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhmYjQ0ODUyNTlmNGUyNTExNjhjODY1OGQ2NzYxOWZkYjg0ODUwN2EzNTg3NTk0MmQzMzkzZGU3OTcyNzI5NTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/projectIpc.ts#L50-L70",
+          "version": "repo-lines-v1:sha256:9ffeed1f1bc8a8dd72e9df2f3ea4c70d44399c2d5377a63ed8f266098d31175c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwY2FkMDMxMmZjMjM1MjUxZWY3NTU1NzMwZmQ5ZDlhNTI3ZGZhNGI1NzdkNzg4MDZhMjNjZWY3OGJjMDhiZTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEwYjljZTBlOTEyZDE0Y2RlNzBkYWQ5NWY5YzNhZWYxNmYxY2Q0MjFhMDAyNWE3MDk0NDBhY2M0ZTJkMTRkM2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM5YmI2YzY1ZTgyYzI3MDk2YmQwNGQxYzA4YjJmNjUwZTFlMWZlNzhmMDIxMjgwNWEyZTM2N2M4ZGQwMjVmYmQifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/adapters/modelBundle.ts#L45-L58",
+          "version": "repo-lines-v1:sha256:ea90e267fecd5c4767a2708afe1b97c217c7415f592d0e2970a341cfbd404cad:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4YjQzZmYwMTMwYjE2YWU4MzFhYzA2YTJhYjcxMWFkZGUxNGZkMDZhMTg3MDFjNGRmNTgyYjljZDM1MzYyNzQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ3NWJiOGQ3ZDAzOTY5NDJiMDYwODRmN2FjYjMzYzYxYmM5Mjc0NGY5MmQ1NTg4NjAwYjhjNzJkNjMzMDU5OWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhiZGYxZjk0ODY0YzBkMTRmZjUwNzY4NzA0ZDc5ZjhmYzA5YmU1MmIwNzJiNDRmNjJjMmY4MzJhM2M5MGIxNTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJjMGRjNzM3MjQxMDM2NTg1YzY2Y2Q5YmQwNzc0ODdlNDMyZmIyNTBkODdjYzdhZjZmZWQwNTZjY2JhOTE0YzMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_720587373ef04173bed1a9c14093fffa",
+      "statement": "A model's source input is only `model.json` plus JSON files inside the `entities`/`relationships`/`rules` trees, while `generated/`, `__pycache__` and dot paths are skipped by every reader; other root directories such as a hand-made `cache/` are not model input (the parser ignores them) yet still fall inside `readModelRootBytes`, so editing them changes the digest without changing the document.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/adapters/modelSourceFiles.ts#L61-L80",
+          "version": "repo-lines-v1:sha256:3c5c189e2d92d7c9694ee6a2786484805e698833dd2415b78e894514e224789c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBmNjJiZGM5NzhkYzRkNDY2MjM1MWY0YzkxNTQzNzM5ZjZkOGNhMjY1YmEyZmVlZTQyNmE5N2MzZTY1YzNlYjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5M2NjZGJlN2I4MGRmN2NmZjRlMzI2OGM4ZmNhZWRkYTFkYWJjMWU4ODM4OTc2MjQyNjhkZGQyOWQ3ZmI4MDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA1Y2YwYmRlODdjNDYwNTVlMDhkM2NkMGY2YTVhOTgwOThkZDM2M2MxNTQ5NWY0Nzg0NTU3MzAxNzJjMjBkNzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZhN2I3YTYyYTZjM2E3MDQwNDVlOWU1NmVlNGZkNDI0ZTIzMDg0NmI3M2QxNDFjMzlmZWQ4MjMyMzc4MTk0YWUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/adapters/modelSourceFiles.ts#L9-L41",
+          "version": "repo-lines-v1:sha256:41c3ec3c8e8b82e6a81e5c1b9960b4d9bb9a7a14d4e3fa29786a25989ca34cc9:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZhNGRlZDRhZTFiNmI0ZDNmMWVhMWE1ZDAxYmE2MmM1NzEyZDM0NWU3NTMwNmMyODM4YzA2YmIyMzZhMzI2NDUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJmN2Y3YThiNWYyZTU5MWZmNDQwMWFkNzhhN2RiYTMwODQxOWQ3ZGUzM2YzMjQ4Yzk2YTZhOGE2NmRhNGMyODIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUxOTMxZjEwMmFhNTFhMDNkMjg2ODU0ZjM3OTZkNmY2ODMxNmM1YThmOTk3MTFjODkxMDAyNDA3NmQ5ZTE3MWEifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-io/src/adapters/modelRoot.ts#L174-L186",
+          "version": "repo-lines-v1:sha256:0b973e5764251e09153a21e817748a3fd977d736ce1132db55bd90be3f70dcfa:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdjOGNiZTYwNThhNWQ4Y2YxMTQzNjk2MzNmY2EzYjBjNjU0Y2ZlODU1MTVlY2RmZDA1MzNmNGFiZTgwYjQwNmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhMTczOWY1NjQ0ZGViODQ2MjdjYzFhMjgxYmJjYWQ1NGY4NTZmZjE0N2U0YjU1NmNiMWMwNTg4OWE3OWI0ZTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRlMGU5NDlkNmFmOTM0YTA5MTE4YmY4MGU3MDcwMzVkN2E5ZjRjMGU3ZTljYjllZDUyYjkzODQxMTA2MmIzZTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA1YTM4MGZlOWZmYzQ3ODJlNTM4MTEyMjAwYTA5ZGQ2MjAwZDZmMzk4ZGYzYmI1NTU2MTgxOTIwMmU1NDEyM2YifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-io/src/adapters/modelRoot.ts#L20-L31",
+          "version": "repo-lines-v1:sha256:05d784a68637a071897d6117a1c7d9cbbfd7aef6ff7c919b1d562873102f3636:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1MzlmYzVjZjE2NzMyOTU3Y2NiZDBiOTg5NWI1ZTliMGRmODQ1MjVhOTZmMmNhNWU4MmViYTAyMjU0OWFjMzQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg0ZTQyMDhjZDZmZmI4YzRhMzU0N2IyZjU0YWRhMTk5NzhjM2YzNjVlNzhmOTUwMmVmNTE0NWNkZDJhYTg1NDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlmY2U1ZTU2NGJkZjBmNWVhOWMyZmI0MWQzOTk0OGViZDg4ZGZiMzZlOTIxNjlkZjIxNzlkZWE5NWYzMGIxMzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRiMDQyOGQwMTVhOTk5MzUzMjc5ZmJkODQ2ZTcxNjBiYTE1MGIyNGIzNzUzZmNjMDU3YzBkMjM1NTVjNjY1ZjkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f0759ed7d3864cddb64042324d3752f0",
+      "statement": "Digests are carrier-specific: `modelDigestOf` over a bundle hashes that single file's bytes, so it can never equal the multi-path digest of the tree the bundle unpacks to; likewise a bundle written inside the read model directory joins that directory's byte digest even though it is never parsed as a model object, which is why `pack` prefers an out-of-tree output.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-io/src/adapters/modelRoot.ts#L188-L207",
+          "version": "repo-lines-v1:sha256:b4f6747c9c3ced74e0f64aba7f80406b79b9a272e502fe210ee4c7396fb11fb5:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ5YzY5NWE0MzE3YjIyNzk1YzJhZGYwZTk3ZjUwNzJkNTA4MjNhMDgwOTM0YmY0NzcxODdhY2Q0MzU0ZDYwZjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRiNDAzYzZiYWJjY2UyMTU2NWNjZjk5MGZlZjRhOWQ0Y2NhYTU0ZjE2NjU1ODMxNjkxNjY1N2QxMTQ5NGVlZTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFiMjI0NDYwYWI2YzFiODU5YTJiNmZhNDUyNzE4ZjQ3ZWIyZTBlMWE5YjhkNzRmOGUyZWM5YzI1YjgxMWJhMzgifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-io/src/commands.ts#L54-L66",
+          "version": "repo-lines-v1:sha256:b52f6225ef93af641cd703812658506556f6d70326429888e8f7c2f7f240bdc8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc3MmJlZWE4ZDY5MDU3MGJlNTVjNTgyYzI2NWRmYmNkNjBkNDkwZmMzNzhiNmY3ZjY4M2QyZGY0ODYyM2RlZTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA4YWZhNGUzMjQ2YjJhNGUzMDNlN2E1ZWFiM2VkMjM1ZTM4Y2UzZGI0OTlkZDlhODc5YTk4MzY2Y2I2M2JiMzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhkM2M2NmNmOWVlZTE2MmVkMTBiYmFlZWMyMmVkMTg4OGI3ZTU1OTIxZmJhNzIyYmUwZGU3Nzg5YjhkMGQwZGUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_68fa21256d324ab2acde1de57da15235",
+      "statement": "`pack` refuses rather than repairs: when the scanned directory yields any source issue (including a retired `validation/` tree) the command exits 1 and writes no bundle, and `unpackModelBundle` returns early with empty `written`/`unchanged` when the bundle produces issues, so no output file is created or overwritten.",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-io/src/adapters/modelFileAdapter.ts#L244-L262",
+          "version": "repo-lines-v1:sha256:cf49f0998c53fc97c8814390c02093e70d42c6835803d0a440169b0d74acd370:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE2NzZmMDZjNzAxMWJlYmM3NmM0ZTkxZjQzNTQ4NGIwM2Q0NjFjZDJhYjA2NzVjMjJmMTJjYzE5NGViNTFlZGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk4MGU2ZGZmOTU1YTExMTE4Yzc1N2M4N2QyNjM4NTNlMTE4NjVlM2YyYWRhYzcwYjNjNmM3YTMwNTJiODFmMjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg3MWU1N2FiMDJiNDUxYzRhMGQ2ZTA1NmZiMDk3ZDEyNjBhNDhmZWRiYzBlOGFhMGYxYmE5ODUzZmEzMGRmOWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZhYThhNWViNGNkMTk3ZmVkMzU1NWJkOTBjZWNlNGE5YzQ2ZWUwNGU1MDM3OTg3NmJkNjNlNGNhYWQzZWFlZjEifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-io/src/commands.ts#L67-L106",
+          "version": "repo-lines-v1:sha256:477faf738dfd8672c4f27b8b2f414867ceba71c27b987187afdc00d426effe42:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3NDc1YTY5MjQyMGE2OGY0MmM5MzIzODlhN2Y2NzU3YWQxNDU3MGJhYWMwOWVmNWQ3YTI3YTYzMWRiY2MzMmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZGM3NWQyOWQxZmY2NTJiYmI2MTEwNDFiMDM2ZmUzZmQ2NmJkODZlZGEwNDZlYjNkNTJiNzYzMjQ3YWNmMmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUxZTM3MjVkYTAwMmI0NmVkOGI0ZGU4ODAwM2FkOTcxMGRjYWYxOGQ1N2M0NzAxZGMzYmVmZjBiMmM1Y2IxM2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZiNTQ4MGQzZjcyYjQ2MmVjMDdjYjNmNmMxYzdmMTlhN2UyYzdmMzA2N2RhYzdjZTFiYjE0ODUwZDgwOWY5NzgifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-io/src/legacyRemoval.spec.ts#L30-L83",
+          "version": "repo-lines-v1:sha256:4cf4c3557e59a78be6dc651679c2de63c2242cb1dde8803506272fed71cc8350:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEzYjgwOGRmZTU1ZTViZjY3YjQyZTI2ZTMxNjI2ZDI3MWI3N2FkMzFlNThiNjRkNTVlYzViNTJlNWJmNTY5NjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_67f0b2cfd7c84e849f7eebc3b769459a",
+      "statement": "Opening a desktop project only succeeds when the source yields entities or when every finding is the `model.empty` blank-start code; otherwise the store returns the joined issue list as an error instead of opening a canvas.",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/projectStore.ts#L110-L140",
+          "version": "repo-lines-v1:sha256:56a68aa39d3047d4c2e1efda213ccaec32dc6e57be82ed17dab9c62918a08b92:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI1MGY1MmQ5MGMzZjAzMmI0NzZhMDJiNjAyYWVmYmM0YzhlMTljMjA1NDk1NjZkOWU2NzkyNzcwZmFkNjBmY2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZhN2Y0ZjE1ODg5N2JkZTcxYWJjZjg0ZTc2YmIxNWY2Yjg3M2I3Y2Y5ODQ0ZTE1ZDUxZWY3NThlOTliOWYxYjUifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/projectStore.ts#L276-L345",
+          "version": "repo-lines-v1:sha256:de79c1579596cdbfda3a816ea8b51ca69ee53606e62aa579b2cdf4af34b87868:eyJzZWxlY3RlZExpbmVDb3VudCI6NzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc4NmY5OWFjZjg5MzNjM2Q5ZGJkOTFhMzRlOGU2YzlkY2RiNmUxMmVjZWYyYWI1N2I3NWQ0MDIxZDJiODllZGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3MWZhOTJjNTJmYzA4Y2UwZDMyM2VhNmI4ODk4YzcyMWJhNzg4ODQ5ZWJiYzg2MjljYTE3M2ViYmU0MTZiNzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRmYWRmZjc4ODViNDc4NjE1YWNmNGQ5ZTA2NDVlNTVkZDU5YzhmMmJkOTkwYzViNWRmODIyZmQzNjRjZTQ0OTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1754f7cd8c054d3083fbcb220c102461",
+      "statement": "The app CLI and the model-io command share the verbs but not the check behaviour: `evidence check` goes through `loadModel`, accepts a directory or a bundle and prints the static report only, whereas the model-io `check` verb reads the root bytes twice for a digest snapshot and rejects a bundle path with a usage error.",
+      "evidence": [
+        {
+          "resource": "repo://apps/cli/src/commands/check.ts#L1-L36",
+          "version": "repo-lines-v1:sha256:b27f4a63b2f27fa40ca0c8436a95a153d9f9e816ac6b5305e1617ac758a5849c:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkMGNiYzM0OTk3ODNmMjJiM2Q5YmI5YTBkZDljNjAzZTczY2Y4MDkxZmRiNzVhMjgzZDllZWY4YzAxNzkyMGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/cli/src/model.ts#L1-L22",
+          "version": "repo-lines-v1:sha256:11bb8a44fdef69b1041befcfddbd979c105af424a4f963763b5b1fd17741aae7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0MGQ1NjBkOThkZjIxNTA4NjllYWZjZDYzMDcxYjU5N2ZiMDNkZWEwNmJmYjFhODk4ZTk2YTFjYjExYzI3YzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-io/src/commands.ts#L251-L300",
+          "version": "repo-lines-v1:sha256:76cc1ae06391111fc7f48090ba75182ee97417ea79a52d145a54d2ffd56571af:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5NGRmY2YwZmZiMDVmZWViZDgwOTYzOGMxNDIwYmNjMzVkYjBmOGRjYWY4MjI5NDMyNjJkMGIzZmJhMzVhZmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhOTFjNGE4YzNhMzhmZWI1ZTU5YmRiNmM0MGQxMDMwZmY1M2ViYzg3NzQwYThlNWE2NGVjN2RmNzUwYTg1Y2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVjZjI1YTk3Mzc1NDc2MWYwNTVhMDU3MTMwNjhlNDQ2MTgyYWZkMzc1YWFmNzY0ZDM2YjQ5YTdlM2IzNmRjN2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNlNmMwMzYwOTM5ODYwOGM4NWIzMWM1MTAzZWU4ODVlYTBlMzQ5NmE1NTZlMzhjMDRkYjQyODg5NjE0MWM0MjcifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-15T14:07:58.904Z"
+    "at": "2026-11-16T23:54:38.352Z"
   }
 }

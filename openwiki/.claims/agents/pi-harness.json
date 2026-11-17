@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:eae9ffdc9184e0b240de9eac23887244324aa2e8aade0be45326a3179760f862",
+  "pageVersion": "sha256:ce521e612231ddebfd4b94db7f7d7b9cb5540dd1c912d339f99a6eb410e98573",
   "claims": [
     {
       "id": "claim_c08824c2d15442f09d8d2d854923d444",
@@ -62,11 +62,11 @@
     },
     {
       "id": "claim_2d6860d6fe654a589d6198343db08a79",
-      "statement": "Pi's event stream is projected onto exactly five plain desktop events (text delta, tool start, tool end, settled, error) and unknown SDK events are dropped, letting the renderer cap transcript text at 8,000 characters and model tool calls as an activity list without importing the SDK.",
+      "statement": "Pi 的事件流被投影成恰好五种纯桌面事件（text-delta、tool-call-started、tool-call-completed、agent-settled、agent-error），其余 SDK 事件在这里丢弃，因此 renderer 可以把 transcript 截到末尾 8000 字符、把工具调用建模成活动列表，而无需 import SDK。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useAgentSession.ts#L32-L96",
-          "version": "repo-lines-v1:sha256:764cf9543c379f14d01838a6caa7fb9ecb2e98abc3f4fc8db353ec762c403606:eyJzZWxlY3RlZExpbmVDb3VudCI6NjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhkYjFiY2JlMWQ0MWE3YzA2OGM0NDBlMTE2YmZlODNjYzk4NmY1OGEzY2JhYzY1NGNkMWExNWZmZDMzM2Q4YjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRiMjg4NjIzMDJhM2ZkZDNiZjYzNTVlMTE0Zjg1YTRiODFmNThhMWMxY2I1MWUxNjYwMTYwYjQxNzU4YmE5NDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI4MzhiMzJmZjY4MGNlNWU1NzUxNDllZjA3Y2M3ODhkMWNjNWRhNDFjNDYzZGMyZWQ5MGRkMjk1YzcwZmExM2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA4NzQ0NWM4MTNmNjAyOGYzMjM3Zjk5MGRiOWFjZWUxNGFiZTEyNTJhNTRkOTZkMGU1ODExOTUwMWZhYzg5MDYifQ"
+          "resource": "repo://libs/desktop/feature-agent/src/state/useAgentSession.ts#L24-L95",
+          "version": "repo-lines-v1:sha256:788f5dca4e4b2be85d53c3948d581573758097d28ace0a86c81bf5535478f66a:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRhODc1NWFmNDkxYTQzZTkzMzY5YTRlOWI4OTJhZWRkNjIwNGMzMzFlZWQxY2EzNTdlZDdjZmI4MGM2MmEwOTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNlNGFhMDA2ZmE4YzRlOWQzMmQ1NGZiZjdjZTAzYzQ3NzkzNmI0NjgyOTU0YThkODdiNDc2YjYwNTgxMjU5OGMifQ"
         },
         {
           "resource": "repo://libs/evidence-agent/src/session/streamEvents.ts#L9-L80",
@@ -94,43 +94,47 @@
     },
     {
       "id": "claim_c363ef088ee1465fa193078d7226998a",
-      "statement": "Pi extension 注册 11 工具，四个算子重新加载文档，以 createModelPatch 生成 RFC 6902 并共享 applyModelPatch，拒绝不提交。",
+      "statement": "Pi 扩展按 TOOL_NAMES 注册 11 个工具；其中 4 个领域算子来自共享的 @evidence-poc/evidence-tools 注册表（与 apply_model_patch 同处 MODEL_TOOL_NAMES），执行时重新 loadDocument、用 createModelPatch 生成 RFC 6902 批次再交宿主 applyModelPatch，mutator 失败则一个补丁都不发送。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-agent/src/tools/evidenceTools.ts#L119-L131",
-          "version": "repo-lines-v1:sha256:8d59e869f602e94038417873f92e9881a736de97da7fc3d5b2d2fec987130a01:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiMTk4ZmI0OTE3OTU3MmRhZDUwNmYzMTA1NTE5YTRjYTAzOTNiZDU4ZGViMzkzMjY0YWZkYmU5ZTMzYzM3YTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI0MmVjMDEyYjU3ZWQ0NzNlNDQzNGVlMzAwYjllY2YxZmZiM2IyNWRlZDVhNWIzODIxMjU2YTUzZDY0Y2JlNzIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIyOTY0NGNmOTc3YjVjMzRmYWMwMzg5N2FiMTAwYjQwYThjYjhjZTQwN2ZiYWYzOWMxMTk3YjNmMzIyNWQ5Y2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEwOGQ5MzhmZmRkNGZlYmFlZjU3NmI1OTdhMDMwYTEwYjE4YWE0MGM4NGFlYzJkYWI2NzY0MzUxNTJiYTI1NWYifQ"
+          "resource": "repo://libs/evidence-agent/src/tools/evidenceTools.ts#L336-L339",
+          "version": "repo-lines-v1:sha256:acc695dff9336dd5096e18cf5e1bf3f9f7cf11ce432d2b6fb0d74314da8c02b1:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDQ0NTdlOWY3ZjBmYTk2MDJiMDQyNGNkMjc0MDY0Yjc2ZDFjNDY5ZjEyMmEzZTIyZDMxOTM4MDY5MjQ3MDJlYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMmUxZjQ3OTJjNjVlYzE1Mjc0YWNlYzllNGRiZjJlNTE5ZTYwZWVkZWZkMjVmNmIyODIyNzdkMDU5ZWQ4NTEzNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWVhYzQzMTgzOTdjZDljNTJlNGMyOTIwZWRmNjk4YjlkMWIxMWJhODhmZThkYzA1ZGNlYWIyMzZiZmYzNDM3MSJ9"
         },
         {
-          "resource": "repo://libs/evidence-agent/src/tools/evidenceTools.ts#L373-L407",
-          "version": "repo-lines-v1:sha256:e7b346151f15b9282ad055b939fc9249703ad5c73e4c07c617f79427426ebc41:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRiZTlmZGRhODJiMDQzMDBlNDE4MmExNjE1YjM3MzMzNWY0OWMwNjYyYWEzMTE4YzIxMjk1NDU0MzU3MTZhMDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3MTUzYTgyMTcwNmYzZTE0M2U3OTc3YTZiZjhmNDNiNTFjNDFjMmY1MzViMTlmYzZkNjNmY2U4NGIzYTBlZDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU3ZWM5Y2NkNzRjY2E4ZTQ1NzAwODkyNzllMDVhYTI4YzY2ZWQwNmU4ZTdhZDc0OWM3MTYwZjdlMjk5ZTRlOWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZlZGNiN2UwNzgyNWIwMjM5YzA3ZTc2YzhiZGMzZWYyNjQwNDEwNDEyM2E3YTdlN2FiMGE4NGM3NjY4YmJkYjUifQ"
+          "resource": "repo://libs/evidence-agent/src/tools/evidenceTools.ts#L91-L131",
+          "version": "repo-lines-v1:sha256:b4f9f1b430ea538ef7cab2bd0608f43ba2596ef22a48eae26b90adb61f95e421:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmMmEyZjk5NmYwOGU2ODBiZDI5MjEzNWE2ZmE0OTc4YmRhMjZlNjAyZDg0ZjMzY2IxZDU5NDc3NWQ0MzA0YjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE0ZThlYjYyMGY4MDhjMThmNGUzMDFiMzQzMjYzMGZjNjA3M2NjNjI3NGZmMWY5MDllNTZiNGFjMTFhNGNjODUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA2NzUyMzBhYmZhMTQ5YzZhYmVjMzQ0ZTQwNzRjZDk0MGE5YzgzMTM0NWM3ZjUxODRhNjFhYjUzNmNjYjZhYTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM1ZGQ5ZjQ2ZGZmYjViZjAxNjQ3YzAyYjUyM2Y5YThhOTk4ZWE0OTM0MWNlOGJiN2E2YjcyZWZmNTkzMWE5YzQifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-tools/src/index.ts#L55-L110",
+          "version": "repo-lines-v1:sha256:77041fe000318091b92dfdf33931bb8c5c14e3da6f7d4aacbc2c1f25b70eb783:eyJzZWxlY3RlZExpbmVDb3VudCI6NTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0NDQ2MzBkYWFiYTVlNjczMDU1NGY2Y2VlMzZmNTExOTA3ZTcyYmE3NjIyZDlhYTBjOTdkMzU4NTM5NzJjYmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3MTUzYTgyMTcwNmYzZTE0M2U3OTc3YTZiZjhmNDNiNTFjNDFjMmY1MzViMTlmYzZkNjNmY2U4NGIzYTBlZDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRkNzI3NDBhM2Y4NDI5MDhiYjM1Y2UyZjE3YTQzZjMxY2IxM2FjZWEyZjIyZjc5ZTFmZGViMTBlY2Q0ZTFmOGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc2NjNiNzcwM2I1YzVmMzI2NjYzMDAxMGRjYWNlZGFhYzFlMjBjNmIxMGNhNTM1NmY1MWYwMTc4ZGE0MWY2NTIifQ"
         }
       ]
     },
     {
       "id": "claim_db69c799ccb4421cb2fb6d179c3a9cca",
-      "statement": "工具执行前用 Zod 校验补丁请求，成功列 op，renderer 拒绝转 isError，不再接受 typed commands。",
+      "statement": "模型写入口在执行前用 Zod 校验输入，apply_model_patch 成功时把每个 op 名称列回模型，renderer 拒绝则转成 isError 以便下一轮自我修正，且不再接受旧的 typed commands。",
       "evidence": [
-        {
-          "resource": "repo://libs/evidence-agent/src/tools/evidenceTools.ts#L224-L250",
-          "version": "repo-lines-v1:sha256:19ab6c1b3291c3fd2244db309fd76e748795c798c935c3d3d75e5413566aa119:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyMDgyMzEwYTdiYzNmMjRmNTJlNDA0M2Y0NGU3Y2VkMTAzNDRlM2JiN2VkZGE1NTEyNDBhMjQyZGM4NWVlZmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMyZjM5YWU2NDk0YmI1OTgzZDczY2I1ZGMxMmZkNWZhZTgyZDI5NDRlMjUzZjZlNzk3YTJkYjRkZjliZjljOTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFhYjNjNGEyODUxOTYwNzA0Nzg3Y2I2OTQ1NDE0MjMxNmNiODY0MDVmYWVlNmU2MjdkOWQ3ZjFhY2Q5MzE3MWYifQ"
-        },
         {
           "resource": "repo://libs/evidence-agent/src/tools/registerZodTool.ts#L18-L32",
           "version": "repo-lines-v1:sha256:3d2a6b5e5f16ace6adca0a3cd8e6e1973519214c330c7554b5f63b9bfb813d14:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlhMTc2YWFhOGY5MjJiNmZlMWY5NTdlMTYwYmE1NTc5ZTE2ZTY1MTk0OTZlYjYyZmRhNTc3NTAxNWQyNjllYzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-tools/src/index.ts#L96-L150",
+          "version": "repo-lines-v1:sha256:1a287205c71af047f46b4d701bc75b0d4363d3b46cca2f0ee3ab81debc37e508:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNkZWE4OTUzODNhYTViMTIyMDY1ZDYyOWM1Mzg5NGNkY2ZhMGViNjY4NzFhZTRmYjVkM2VjNzk0YzQxNGIzYzQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVkMGQwNDJmM2RhYWM2NzBlZTllNzc3NmQ2MDZiNDFlMDc2OTJjZWZlMmZlMTEyZGM2MjVjOGNjMmU2YTA5NDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZkNTM3ZDAwYjE1ZjEwYzIyMmQ4YjhjYmM4NTIzZDBjMDIyOGQwYzQzYzVlM2Q4MmU3MjUxZDQyNzgzY2FlYmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE0Y2ViODkyMzA3OGFmMTcxNWEwMjMwMjkxMmVjNDQ3MDQ2ZWFiMDM1ZDUzNzFmZDYxM2E5YTQ1YmY5OGNjNmIifQ"
         }
       ]
     },
     {
       "id": "claim_88b64a1981974687bc3ef5c9ad72b8d2",
-      "statement": "补丁 IPC 以 UUID 和 15 秒超时关联，renderer 再校验并一次 applyPatchBatch 共用历史，只有实际变更才产生 before/after 审查。",
+      "statement": "补丁通道以 UUID 与 15 秒超时把主进程的请求关联到 renderer 的回答，renderer 再解析共享 schema 并一次 applyPatchBatch 提交到同一条撤销历史，只有文档真的变化才产生 before/after 审查。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/agentIpcHandlers.ts#L90-L110",
-          "version": "repo-lines-v1:sha256:b6418208730d518aab9af20125ed3d42ce1426317f13e94c0f1a29123c4c2ce8:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU0OTA0Mjg5Y2I1MTFmMGE2YjYzZDhlZDRjZWU3MzI2NTJhNjg0NzIwNDZmY2Q0NmZjMGFlOTU5YmY1MjJlYmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5YzEzNTkwNjY1NjMyM2QxYzVlYTQxNjU0ZWU2NmFmYjU4NWFjZGNmYWVhY2ExMjFkNWUzMGJmMTkzZWVkZDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkzOTM4MzA4NjAwNmI5NGU5MTZkZjkyOWFiMDE2NjAzYzg0MTdmYzk5NGRiMjJmMGViN2NhZGNkZjExZjZhZTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYyNjNjYmQ1OTljN2RmNDFmNjMzYWNhNWE5ZmE3NjhmZmFkNjY1MjM3NGQxZmFhMjNkMWMzMzU5ZTI2NDJhZTIifQ"
+          "resource": "repo://apps/desktop/src/main/agentIpcHandlers.ts#L88-L112",
+          "version": "repo-lines-v1:sha256:c0ac6c5b238ee42b4a4dd0a4c52ea3246debf099101feb217cc592606f783b5e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjViOWY2N2IzNmE2OGZjODk5MDNkOTQ3MzdjNTc5ZWRkMjRlMjRhODAxNDhhNzMwYTIxY2FmMTcwMjQ4M2E0YTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkYTM3OWM3YmUzNmI4OThkOGNiZDU2ZTVmYTNhMjFlYmNiMTE5OWM4YzExNDYwMGZmNGVkYTZhZmUxYTE2MDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhkZjFmOTk2MGY2MDVmMzE4MzEyZTRlODU4YmMwYzM0NWE0OGEwOGI0NzU2MmZlZmNjYWE3ZjVhYjUzYjQ3MTUifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useAgentPatchBridge.ts#L28-L75",
-          "version": "repo-lines-v1:sha256:410ac030f9fa955b608b95d68730dbc1262d6c7dd6c30c63b729faa98b7d8526:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkxYzAwNTdiNWRiZDhhZTVlZDA4OTUyOWFiMWUwZWVlNmJhYzczMGQxODcwMTMzOTgxZDZiM2U1NzEzZmQwY2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI4Y2YxNzVkZjRhMTA1M2FkYWE4M2FlNTM0NGY3N2NiOTJjMWE2MmM2NTA4MDc3NTRhMzg0YTNhOGQ4MjhmODQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://libs/desktop/feature-agent/src/state/useAgentPatchBridge.ts#L26-L76",
+          "version": "repo-lines-v1:sha256:c7a40ee7a0bb889b4ccd7435be0c49e667eff0001145dfb8922706c5a1d54bfb:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQzMWJkMjdkODdhMDYwMTNmMjc5NTQ2YzYxNGVhNDVmNzBmOWQ5YTMwOTdlY2MyMWUwYTBmZWEzNTYwNmQ4ODIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIwZWI0MDBmNmEwZjZmZDM1ODdhYmZlNmM3N2FjZWU5MmM0YTI5ZTIxZTNkMzhmYjI1MmU3MTlkMDY2NGRjNGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAifQ"
         }
       ]
     },
@@ -180,33 +184,33 @@
     },
     {
       "id": "claim_88c89c313a15435eb01ed72dbc0fcc18",
-      "statement": "测试覆盖 renderer 补丁拒绝反馈、算子先读模型以及失败算子不发送补丁。",
+      "statement": "测试覆盖 renderer 补丁拒绝结论原样回到工具、算子先读取模型树、以及被拒算子不发送任何补丁命令。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/agentRuntime.spec.ts",
-          "version": "repo-file-v1:sha256:1dd9bf0328ad77d7bda07e0ef5373c9acb4424979e5cdff7afafd5d8d7208573"
+          "resource": "repo://apps/desktop/src/main/agentRuntime.spec.ts#L361-L475",
+          "version": "repo-lines-v1:sha256:79bb526b481425aee8a666e529eeb3d6a910a5c8d91f7ebcc711589939bf361d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIyYjVmOTY3NDg4MDcxMTJmNGU4NGRhYzkzMjQ1OGRkZWJkOTNjZmZiODg3MDNjZTEzMjJkYTE0ZTNjZmM0MzcwIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI3MTdhZjExMDFjOTdiN2MyZjUyNTQwNzgyZTYzNGNjNDQ0MGYwZTk3MDM0MWU1MmY5NzUyMzExZDc4YjdkN2QwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJiNzc5ZDExOGQ2ZTNjYmY0NTA1Mzk3NDhkZWU3YTQzMDdhY2JlNjQ0NmNiYTI5N2YyNzYwZmE1ZDBiYmExYmMyIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIyOTRhZDk3MDZmYmRlYWJlZGFmODYyMDVhYWQ4OGM4NDU4MTA3MDkxM2NjODUwMDRjMjFlMjU5NzllMDNmM2IwIn0"
         },
         {
-          "resource": "repo://libs/evidence-agent/src/tools/evidenceTools.spec.ts",
-          "version": "repo-file-v1:sha256:7a1bde4156c4c33d91f3a1e2b81f074c3af9a28f8572e5dd8e64150140322882"
+          "resource": "repo://libs/evidence-agent/src/tools/evidenceTools.spec.ts#L449-L540",
+          "version": "repo-lines-v1:sha256:94a6b231d1d5b167793759704157dfe14579f6b788758ce32ab63093bc64b146:eyJzZWxlY3RlZExpbmVDb3VudCI6OTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2MGMwMmJkYjQ3NGJhMzZjYzc0MTFhNDc0MTY4YjYzYjhiODc2ZDM5NGI2NGFmZjRmNzljOTFlN2ZiYzY1ZjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU2ZDM5MjQzNjdhMzUxYjU5OGU5NmJiZTZkOGE5NDljYzE2NGZkNmU3NDFiOGI4NDkzZTkzY2EwOWJiZGU5OGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU3ODFiMTQ0ODI5ZjFkNGM4MWRhN2NkY2VlNGRhY2VlM2M1ZTgxYjkwZmU3YWNhYzU5NjRhYzc5MjZiYTI3MDEifQ"
         }
       ]
     },
     {
       "id": "claim_49ff2d4e333a40ab9eea401475035fbd",
-      "statement": "会话、工具、提示词、传感器、治理和 trace reader 同属 evidence-agent，browser 入口隔离 Node 会话运行时。",
+      "statement": "会话、工具、提示词、传感器、治理、trace reader 与 story 投影同属 evidence-agent，browser 子入口只导出类型与传感器报告 DTO（外加 trace/drift 纯审计函数），Node 会话运行时留在进程入口。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-agent/package.json",
-          "version": "repo-file-v1:sha256:61d62b9d56ef1da68cd5f52eb70bc34fefb477fedeb8af0b1831e016cb864757"
+          "resource": "repo://libs/evidence-agent/package.json#L7-L25",
+          "version": "repo-lines-v1:sha256:77ac1553f028c4894e1257d8a59819fc51721e37a6461042485ea60bb2b04fd6:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQzYmE5N2NiMzdlNDhlMDk1ZmQxNmI2MGIxZGFhNjQ4ZmNmN2I4ODI1NzYzMDNhMDI3Nzc2ZWQyNzU5YzgwNmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFjZmE3ZWMzMDIxNDRmMTU0MDc4NWVmMzVmMjBkNDIxY2UxMzg5NWY3NDMxMjkyZDAyNGJiYTNmOWZhMDVjOWYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEzZDFhMzU0ZjhjYjI1OGE0NDRmMzY1MmQxYTQyMDNlMTFiYjBmNmQ3M2Y2YWIyOTY0NWY3OGIwZjA5Zjg2YzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNiMDgwMzczM2RkNDk0NjU5NGRhZTI5MzUxZWM0ZjVjODYxODdiMzZkNWMyOWRhNmJmZDNhNDc0OGM3OTc3YzIifQ"
         },
         {
-          "resource": "repo://libs/evidence-agent/src/browser.ts",
-          "version": "repo-file-v1:sha256:941f32722c9643322e476ad89fa30e0322cb8e058594448b9ef66011df96b817"
+          "resource": "repo://libs/evidence-agent/src/browser.ts#L1-L44",
+          "version": "repo-lines-v1:sha256:4c9f3a2bba15db2ef2cbbe702f6abd0a20e8d155563e123291436e5898db697a:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExNzQ0MjkwOTg3MDNlNjM0Y2M2NjRlNDk3NWQxNGFjNDkxMjc0OWU1MTYyNGFiMWEzNTNiZTI0NzNmOWMxMGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEyM2U4ODYwNDBiMzJjMjkxMDEwYjI4NDA4ZWVlZGVkZDI3ZGJkMWJmZDBjYmRiNjY4NzI3ZTc4MjNlN2YxNTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         },
         {
-          "resource": "repo://libs/evidence-agent/src/index.ts",
-          "version": "repo-file-v1:sha256:8edb2c8873ea08cd19c0e7d33a1641ab694eb27e837d7eec106b56b0de59de93"
+          "resource": "repo://libs/evidence-agent/src/index.ts#L33-L95",
+          "version": "repo-lines-v1:sha256:718e42e062bea4b4e642b69ce68140e19838e44874749f9de75a51fddc7ef402:eyJzZWxlY3RlZExpbmVDb3VudCI6NjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBhMmYwNjQyOGVjZDdhNDc0YWJhMGQ5NGVkOTAyYjE1OTI4ODcyZGM4YjQ4NDI1OGEwYmY4NzMyYjZlZmI4OTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY1ZTA1MjMzY2NiMzc4MTYyZTMzMDBlZDhiYTU5YmZjYjBjNWRlMjNjYmQyYTBhOWU0MzUyODUwMGNlZjYyYzgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFiMDFlZmNlMWIxNGE3ZWM1NDliY2I4YjdmYzI0ODAzNmUxYzdlNDQ0NTFkZTJkNTIxNjJiMmUxODY0M2FkNGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhmNzRjOWJkMDNiNzI0NDg3ZjhkMmE2YWNjNjIwMmNmZmFlN2Q1ZWM0Yzk0ZjU4YTQwMTZmOTY5NjcyNDQ4MjAifQ"
         }
       ]
     },
@@ -215,7 +219,7 @@
       "statement": "run_sensors 文本返回紧凑门禁投影，details 保存完整报告。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-agent/src/tools/evidenceTools.ts#L198-L223",
+          "resource": "repo://libs/evidence-agent/src/tools/evidenceTools.ts#L204-L229",
           "version": "repo-lines-v1:sha256:59ba367492d8d50cb96b8daedd4f0e4551602cbde74394b09960e0abd79476e3:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMTE1MzA4NDRkN2I2ZDFjMTA4MmEwYjgxOWNiZmRiM2I5YTM2MWRmOGY1YzM2MmEyNDE3YzU1OTA3MzdlODgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyZDExY2FmNDNlOTdlZjM2OWU2YmVlZDFhMjY4YmQwNTgzOGYyOWI5ZGQyNTRiZjY5YmE2NDg4NDE0NzIzNGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ3ODdmZWI4MDg4MDI2OGEzYjBmMjViMTBjMzczNDFiNjMzMDM2ZGQ0NDMxNzRhZDBiNzg4NjcwOWNmOTI4MjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgxY2VkYmVlMmMxZWRlYTA3MTUzYWFlZTQyNDU5MGMwNWNkZjQ0OGYxY2ZmNjY0OGViZjkyOTA0ZGQwMjY2NzgifQ"
         }
       ]
@@ -225,18 +229,18 @@
       "statement": "get_api_diff 只在副本试算 proposedPatches，sync_api_projection 只刷新诊断不改模型或发布基线。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-agent/src/tools/evidenceTools.ts#L151-L196",
+          "resource": "repo://libs/evidence-agent/src/tools/evidenceTools.ts#L157-L202",
           "version": "repo-lines-v1:sha256:08ba2556110686b30df626028a39831108b9b429d88f79926d16cde41fdd4add:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRjMzljZWNiZjhlYzNkNWRlMGI4MzZmOWE0YzlkYTcyNzRhNDcxYWE1Y2IwMzk1ZWU0YjE0MGU2ZTFkY2FkZDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlkNDQxMjlhOTI3MDM4YWQ4YjQxZWJiOTJkODE1MTk2ZDMwMGY4YmYzNTZmMWRlMWFlZDMxMTRhZDUyOWM4YmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ0NGMyOTgwMTE3MDRlOWU3ODVlNmI3MjAzMjIzZGVkMWYyMjQwOTMxYTI0NGZhYjQ2ZDIxYjhhOGViMGRhNzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU0NmZiNTRmZmI3YTk1M2E3YWYzMzYzMWM0NGRjNzg2ZDY2YjViMzNhMzQzMGM5Y2NhMmZkODU4YzI3OGVlOTEifQ"
         }
       ]
     },
     {
       "id": "claim_f077cf92950c452684783726d4f9ff42",
-      "statement": "协议和蓝图读取工具只读，蓝图不能解析返回 isError 而非空成功。",
+      "statement": "协议条款分类与蓝图读取两个工具只读不写；蓝图解析失败时返回 isError 与失败摘要，而不是看起来成功的空草稿。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-agent/src/tools/evidenceTools.ts#L266-L353",
-          "version": "repo-lines-v1:sha256:bd41aa4b32f02425304fabf810ef9772be2479529a3d7a8571b1385849e3a945:eyJzZWxlY3RlZExpbmVDb3VudCI6ODgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3MTUzYTgyMTcwNmYzZTE0M2U3OTc3YTZiZjhmNDNiNTFjNDFjMmY1MzViMTlmYzZkNjNmY2U4NGIzYTBlZDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjczMWM2NTBkMzFhODE1MTZlOTk5ZTQ4ZjIzNTdmMWIzMmFiNDJjNDRhNWZjYjY4YTBmMTUyYWE3NGZjNzY4MTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc5ZDFmZGZiNWU4YTdhYWM2NzkzNmI0Yjk2ZTE5OTA5ODE5MzY5MWMyNzg3OTVkNDM3OTJjZDU0MDk4YzQwYjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE0YmM2NjMwMmE1NWI2OGMxZTE3NzZhOWVkYjBkNTZhN2RlN2I3YzFiNDE3MmJkZWRlZWQ0OWEwOTQ5NmViMDQifQ"
+          "resource": "repo://libs/evidence-agent/src/tools/evidenceTools.ts#L250-L330",
+          "version": "repo-lines-v1:sha256:20a29b52143081452c4e8d18c781c29e4f815c049a8875f42d41fb01d0fcefc3:eyJzZWxlY3RlZExpbmVDb3VudCI6ODEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU2MzRjMGEyZTlhZmJiZjQ5NmY2NDRlNWE3MDI1NzcyZTE0M2ZjNzVkZWNkNjkxNDM1YzExYzY5ZjRiMzRlMzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQwNTllODYxZGVhNTUwOTU4MmM5YjM3OTg3ODA2ZGJhNDJiZTg1YjBlNjRlMjIxOWI2ZTQ3NzJkMjYwYjMwYjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg2NThkZDM3YzE0ZDczNmRlOTkxYTBmM2M4NmVhMzkxMmQ3MTRhODdiMzRiZTRhZjQ3ZmIxNGE2OGE4ZWQzY2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc1YWNkNjZiMTlkOGY5YTg0NjY3M2RjYzNmYjlmNzIyNTRjYzhkNzIxZmRmNDkzYWFiZmJhZmU2YzJkNWM5ZDcifQ"
         }
       ]
     },
@@ -277,30 +281,30 @@
       "statement": "The renderer turns composer text into a prompt when idle and a steer while a run is streaming, and both the agent rail and the over-canvas card prefix that text with the chosen workshop step or the selected entity because the session keeps no such state of its own.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/components/agent/AgentCopilot.tsx#L107-L120",
-          "version": "repo-lines-v1:sha256:64642aed16076b8388f7bd9be18f365140c0dd26b7c0d87d7f01732689f767a8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjMDYzMTE2NDZkMjhiYWQ0M2ZjZDk3YTAwNDlhZDI2Nzg2YjJhOTRmNDJjMGM5OGU3NzQwN2IyZTU2NTRjZDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE4N2Q3NzYzZTI0Y2EzMzFiZDJmODgxZjEzNDExMmUxMGEzN2NmNmIxYThkZDc0YWFmZGViYzViZWYwYjU3MWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU1MWZlOTA1NzY1MTY5ODViOTJhNjlkNjg4MTFhM2RkYzg5Y2JiNWU4YjZkNGI2ZGMzODY3M2FhMmQyMzBiYjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIzOGI4OTM4MTM1OGQyYWEzNjVhMWE4OWVlN2ExZGU0N2M0YzIyMDkyMzkxOGU1NGU0NWJmMDNhYzg5NTkwZTQifQ"
+          "resource": "repo://libs/desktop/feature-agent/src/components/agent/AgentCopilot.tsx#L104-L121",
+          "version": "repo-lines-v1:sha256:5974a1d2efb5ecb3fa7890398d4537defd120eb726ca6285f4b508e2f786274c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiYWFmZDUwOTUyZjIzNDQ0ODE2MGFlOWViZTdhMDY1ZjJhODQ1NGMwYjBlZjEyZWQyMmI4YzZjNTVhZjFkNmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxOWQzYzJkZDA4YzIxZTEwNzI1YzNjYzQ0ZTdiZmE2Yjg2NDQxMjZjM2M3YjQyMGUwMGU3YTYxZGNmZDlkMzYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNmNzE1OWZmZGQzYzA1MzhkMTc3NzhmOGM2N2E5MmU2NGViOTg3OWZkMTc4OTBjOTdjNjg5NGFlNDRlMGUwOTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZhYTkzMDZjNmRiNDI1YTA5YTExYWU3ODZiMWRkZWU5YTcxYTlhOTVkZDgzMTA0NmM1YjViOWFhMmY0NGJlNjYifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/components/agent/InlinePatchCopilot.tsx#L79-L86",
-          "version": "repo-lines-v1:sha256:3aba270981928f83b58474e4dbd0f2826e8c33fde31fdafd5da8ccb3f139cc95:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDQzYzUwMjlkZDVmMzI2YmZiZDZhNzI0MDMzNDliZmVhZjQzZGMxNTk1MzE5MzZiOTJiNDE3ZTg5NjBhNGI5NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDJhMmNiMjVhMTIyYjQ0MjIxYTYyMzRlYzY2MGE3YjVmYjdmOWJkZTdiM2I5ZTJiM2M1NTlhMGQ5NmZhYzczOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNWIyYTFiOTZiYTIwMzRiYTBjMDM5YzZmYTE5MWQzOWI3MWE4Yjk4YzM5YTUyZmYwOWU2ZDg5MjBjYTA0MTlkMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGMzODM5ZDI4YzFiN2FmZGRiNTAzMGVmMzlhN2FmMjIyMGRkMWM5N2M1ODIxMGNlZDEzYzJhZWRiMGYyMjE3NSJ9"
+          "resource": "repo://libs/desktop/feature-agent/src/components/agent/InlinePatchCopilot.tsx#L80-L90",
+          "version": "repo-lines-v1:sha256:efa1b37bbb715256fb795f36d67010449bde97fd4a5d0accb5a6f78b71f1116a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE4ZGMxYWRkMTkyMmQ1OGVkODgxZTQ5OWI3YzQ4NDM4MWNlYWZjZWJhODA3NTUwZDc5YWQ5ZDUwZDI4MGRkN2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2ZjQxYTBkZWNlNjZiN2Q3NzFiMDQ5ODIxZTNkOWM4MDdhNzM4MzhlMWQyZWNmMzVlZjAzNjFjOTEzZmUxOGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJhNmZmOGJhZjcyOGYxYzBkYzZlMThiOWFkZDA3Y2M1YWJjNjUwZjM4OTgxYTUyOTgwNTY3ZjJiYmYyZWQ3ZWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdmZTc1ODAxNzRiOGJmZTI4NWJiODdhMTk3YmY4OTM4NzY3MGMxMWMwZTgzZjUyMDE3YzA1NGVmYzAwOTI4YzMifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useAgentSession.ts#L118-L172",
-          "version": "repo-lines-v1:sha256:ab810d6ddeb1c52a9130773bae43987b4346c7111c4c7cd0b50c03e90cd89cd6:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5N2U4OGExMmJkYzFmMjU0MzRhNTQzNGQ0NTQzNmQwOWQwYWU0NzZjY2E4YWZhN2M1MmY2OWU3NWY2YTRlYzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY3YTIyMTk0MjU2YzQxZTYzNzY1MzIxNmFiNjdmNzRjZWJhMTBmZWY2NDhjZmNkNTI2YzcwOTg5MGIwZjc5ZTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIzZTlmNDE2MWVlMWZkNzY2OWFmOTk4NWZlZjg3Mzg1MDZlYzJjMWU0YjQwZTQ5ZTI4YzlmZmI2NmY0YzM3NTYifQ"
+          "resource": "repo://libs/desktop/feature-agent/src/state/useAgentSession.ts#L114-L175",
+          "version": "repo-lines-v1:sha256:1535bfd3672582a0c654703cde929839d4de497292c167df8ea23a388abe22f2:eyJzZWxlY3RlZExpbmVDb3VudCI6NjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc5ODY2ZTNlYzVjMDczZDAwNzhkNWM5ZjY2OWIyMzM4YTAwYzc0Mzg0ZmMyYzJiN2IwYzg1OWIwZmNiMTNmNGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliNjJmNjBkODU5MGE1NzljZjQ2ZjhkNjczNzhjNGM1NzJiOTYyY2VjY2RiOTBjN2E1ZjdiNDJiOTYwNzgyYTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkwNThhNTc1ZjFmMjgzOGY4Mzk0NTNkYmU4Yzk4YmY0OTM3NWJjZWNkNTgwMWFiMmEwOWY0Y2VlODljMzAyMDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUxZDhmNTAxNTU3MjIwMDNlMDI3NDMyMDY4MzZiZmU1M2U4YzE4YWQ3MTliY2Q2NTlhNmUzYjBkNjFiYTlmOWIifQ"
         }
       ]
     },
     {
       "id": "claim_a46f75cd65c14ae49ad1a1e6407dfcf3",
-      "statement": "An applied agent patch becomes a review: usePatchReview diffs the before and after snapshots, builds a canvas overlay of changed ids, and offers a one-step revert only while the patched document is still the one on screen.",
+      "statement": "已应用的 agent 补丁变成一次可拒绝的审查：usePatchReview 用 diffDomainModels 比对 before/after，产出新增/修改/删除 id 与 canvas overlay，并且只在被补丁后的文档仍是屏幕上的文档时提供一步撤销。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L269-L272",
-          "version": "repo-lines-v1:sha256:c95924f3ac20f0795746dc24efc291dd42be30b23e76938a52da22c38cd19a19:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWMwZjE0OGM4MDJkMDQ3OWIwNjNhMzQ1ZWQ0ZmFmN2E0MGVjMTAxMzgwMTA2MDE3ZDJjOWViODVjNTE3MzFiYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiY2Q4MzM0OWUwMGEwZmEwYmZiZjI3NjgyNjNlZTdlYjBlMTFkOGZkOTIyMGUxNWE1YWE1OGNkMjA1NjhlZmRhOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTNlYjMwOTlkOTFhZjVjNmJkYjI2M2Y2YTQ3YjQ4YWMyMjIwNjFjMTIxODk5Njg1MDEzMzg1OGI3YTdkZDFjZSJ9"
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L288-L295",
+          "version": "repo-lines-v1:sha256:0d69f1c020d84d2444e26e404b18a581502acd860658db4176595d5ea3447c51:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjk1OGEwYzZjNmQ1YjQ0M2EzNTViOTY0NjQxMTlmODM2MzdhYWJiYzU3YzFkNDVjNzU5Nzg1Y2VkMzRmOGU1MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDM1NjVhMGUyMmY2MTA0OTQ0YTVjNmY4MDg1NzAzNDlhOTdjYWNhYTg0ZmE5MTE2OTgwNjM5ZjgwZGFjMjljZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzQ0N2E1MDY4NjkzZDU3ZmJhOWVmYTZkN2M3ZWViNDZhZGYzZDI0N2RmYjU3YTE4OGVlMjJlYzhjN2VmOTQxYiJ9"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/usePatchReview.ts#L50-L114",
-          "version": "repo-lines-v1:sha256:e4a09d8bfe80c01e3081be95a9b474a5b7f1ebf319ca2873218b76935c73989d:eyJzZWxlY3RlZExpbmVDb3VudCI6NjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdiOGFlZWVjMWExZTA5Zjk3OTlmNWI4YTBiMzcwNzM1OTdjODNjNDMyYzcwNTM0YjQ4NjlmZmZjZjYwODlkZGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3ZDg2MzJlNTRlOTI5OGFiYjk1ODcyN2UyZDUxNDA4YWJhZjEzNjYwMzUzNzkxMDE0MGFiZjY1YjMwYWI2MTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://libs/desktop/feature-agent/src/state/usePatchReview.ts#L44-L115",
+          "version": "repo-lines-v1:sha256:260f02210d6406af6c56e500a01481336392f164a12033a1453e1f06738add7c:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZjODUwNDU0YTJkYjFhNmRkMGVjZDRhMTgxODdiMDJiZTUwYmU5NjY5MjdlNTU4YzM4NDI0NjdjZDViNjljN2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE0NTRiOGU1OGIxODJmOTU4ZjE3ZTA3MjQ2NzBiZmM4YTc2NTBlMjcwMjg0YmFmMWI4MmVlMmIxOTllMzM4YTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc3MzQyZjc1NDA1YmM3ZmY1Y2FkZjYxNWY5NGEwMDczNWQ1ZTczNzBjZmMyM2NiMDkwZjQ5OTE1YzdhM2NiMDYifQ"
         }
       ]
     },
@@ -355,10 +359,52 @@
           "version": "repo-lines-v1:sha256:08bb59ef6a124d60646a792edd0e12e9ddabd71f3cc5a0032a8915275110d192:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGYxMjI5MWI5YTkwZDg0YjJjMjE4MzgzMzBlZTk0N2E3MGU5ZjIxZDAyNWE0NjhiY2JkZGIwNTMxYTYxNGRmOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGUxNjNlYTQyNzE0YTk0OTlhZDU2ZGZiNWM4ZGU0MDQ4OGU0NzBlMTc4ZWZkMTk3NzkwYzQ1MGZiZWUzNjA4NiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOWFhMWZhN2I4MDhiMTQ5ZmUxMDc5ODhiOTNhMmZiMTkwN2U3NzA0MjhhODhmYmFjMmFiNDE4NTNjNzQzZTk2NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
         }
       ]
+    },
+    {
+      "id": "claim_111e523b6306438b93e85ff24211115c",
+      "statement": "推理文本不进事件流：桌面把带推理模型的输出当普通文本转发，renderer 用 parseStreamedTranscript 从唯一一条 transcript 里取出第一个 <thought> 或 <thinking> 块，thinkingActive 表示开标签已到而闭标签未到，折叠时只露尾部 80 字符。",
+      "evidence": [
+        {
+          "resource": "repo://libs/desktop/feature-agent/src/components/agent/ThinkingBlock.tsx#L16-L74",
+          "version": "repo-lines-v1:sha256:9b5a0a3d21c808fc5ddc908c765c726505d0fa8976e991571fd53002babb8d23:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM4NjBkNjhhOTkxOGViY2NmMzcwZDA2NDljNWFlYzUyZTBjZTM3NWY3ZGE1OTA2OGU4YjRjOTAzZDg4ZDA0ODYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYzNzdjZGI4MjBjZTRjM2I3MmQ5YTllZTljMTQ5MjA4YTMxNzI5MDc2NWZmMzljYTQ0Yjc1MGVlODlmMjc0MjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwNDFkNGI5Mjg4NGY2NzM1NzQ2OWY4ODQ5OTUyMjgyMzIwMWQ1NDYwMjI2YTAwNTY0NDgxYmQxOWM5YTM1MWQifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-agent/src/components/agent/thinkingParser.ts#L1-L69",
+          "version": "repo-lines-v1:sha256:c58cf9f4a03a537d9d906ac9040663937d5c19c7751b3d2850de4e85e70e3dbf:eyJzZWxlY3RlZExpbmVDb3VudCI6NjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-agent/src/session/streamEvents.ts#L24-L38",
+          "version": "repo-lines-v1:sha256:52ace81c3f496273428fa2b51e6afcac742c20053cc8748bf952155e71c80d22:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZkOTE1MTUwYjNjMzMwZDg2MWNmZmU5MTU1MTJmN2I0Mzk3ZTZhZWFmYWVhY2Q0NmQ4Mzk0NDFmYjE3YzAyYzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZkMzA1Zjc2NDRmZGI2OWVlOWE1YWQyYzUzZmM5Zjc1NmU4ZGU1MjZjYTg3ZTlkNGMzZDE1ODg0MjAwYjBiNTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ5ZTY3ZWIwMzdmNGY2OWVjNWVkZGQwMWFmODM0OWQ5ODYyODdkODY2MzUwNGUwMzBhZGMyYTBmZmQyMTVlZTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI3ZWM5YWFhNDg5ZmRjNjFhYWE4OWZhNTYzNzQ3YjA3OWExYjExODBhNzA2OWNlNmE4NzhjMzRiOWRhZGE4NjEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0ad64ba189db4642ae695d121d89301f",
+      "statement": "工具活动条目用中文标题映射已知工具，并保留原始工具名作为调用审计标识；未知工具回退到原名，展开后显示 JSON 入参。",
+      "evidence": [
+        {
+          "resource": "repo://libs/desktop/feature-agent/src/components/agent/ToolActivityItem.tsx#L10-L100",
+          "version": "repo-lines-v1:sha256:1faa07beeaf1e3a8848431b87a6582ab37e3f893c35b7227ff1e22cfef36fb71:eyJzZWxlY3RlZExpbmVDb3VudCI6OTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYwMmRiNzhjMTY0ODBlZjM2NjI2NjQ0MGZlMGFiODJjZjNkOTcxN2NkNjFiNGVlNzQ5NGZmYzAxYmMzNjkxM2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwMDhlYWM3NTAyNTk5ODkwZDNkYWVmMjI3ODU4OGEzZTIwYTVlYWJiYTA3YTZkNTU2MjQ0YjNkYjhkOWZlZDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMxZWViZTNhZDNiYTRhYzJiZTliMjQwZTkzMjE1N2UwYmJjNGJmMGNlNWFhZTJlOTZiN2FlN2YwOWI4ZjIzOWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc1ZjlmZmVlNTEzZjhkNmI4NzI0YzBiMGE5NzM0OWM2ZDQ3NDEyZTU1M2U2NGYyODdhNzE1YzRkZWUwZTczMTQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a3af7b8918e54df3b0d4b00795c339e2",
+      "statement": "行内协同卡在没有画布选择时拒绝发问只显示提示，有选择时把问题写成“关于 label（kind）：正文”；没有待处理补丁时它用 capture 阶段 Escape 关闭自己并 stopPropagation，避免同时清掉被讨论的选区。",
+      "evidence": [
+        {
+          "resource": "repo://libs/desktop/feature-agent/src/components/agent/InlinePatchCopilot.tsx#L100-L125",
+          "version": "repo-lines-v1:sha256:ee8ace6ac5eafbc6f575df7b6f43d84849c34f80cb3d9f7cb954b09900d26d21:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwZWQ0YjQ5OTQxNmU5YjI5YzkwMDE1NTk5YmQ0NDBiMTJkN2MxYWEzMTQyNGM5NWMzNzE5MzhlZDJkNmQwNDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwMDBlZDI5NGVkOGQ1NzI2MWIyZjc0NTczNWJkMWRlODhiYzliN2I0ZTc5NDRlZGExOWYwMDAwYzM0NWM2ZGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJmY2JhMWZmYzA3ODAxMDcwNzEzZWE5NWY3YmNiOWEzMjVjZDdkNGE2MmI2MmYzODYxNTllODY0NTM5NGZkOWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU2NDg2OWVjYTE1YTY5NjgzYWY3Yjc3NjBhNjljYWUwODcyMWEwNjY1MzYxZjAzODBmOWYxODU5N2ZhODllNTYifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-agent/src/components/agent/InlinePatchCopilot.tsx#L56-L90",
+          "version": "repo-lines-v1:sha256:6b3910abf73befd01f532523e15552666ae1ab575f3ad2666febf30b0393f4fd:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI4YjMzYTJlOGY0MjcwOTIxNWE3YjY4YWRlZDE0NTFmYTE5MjYzZWU4N2U5NjRmYmYzOWU4N2EwZDZhYTcxNGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2ZjQxYTBkZWNlNjZiN2Q3NzFiMDQ5ODIxZTNkOWM4MDdhNzM4MzhlMWQyZWNmMzVlZjAzNjFjOTEzZmUxOGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQwZDQzODVkZDg2NzdkNDVkZTFjY2I0NjRmMWU0MDQxMzE2ZGY0MTZiYjMwNzA4YzZhNjkzYmU0Y2E3ZmNhZWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdmZTc1ODAxNzRiOGJmZTI4NWJiODdhMTk3YmY4OTM4NzY3MGMxMWMwZTgzZjUyMDE3YzA1NGVmYzAwOTI4YzMifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-15T14:07:58.904Z"
+    "at": "2026-11-16T23:54:38.352Z"
   }
 }

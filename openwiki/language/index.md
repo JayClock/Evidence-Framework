@@ -1,4 +1,4 @@
 # 文件
 
-- [FM v5 语言与严格契约](fm-dsl.md) - Zod 定义的 FM v5 AST、跨对象语义约束和稳定诊断，实体/角色/Context/关系/规则红线，以及 examples[].test 的标准验收元数据。
-- [关键数据、派生与来源追溯](key-data-and-provenance.md) - 八类来源分类、关键数据台账与 native CEL 属性依赖链如何协作，以及 sourceSnippet、业务时间、JSON精确整数和审查结论的边界。
+- [FM v5 语言与建模红线](fm-dsl.md) - FM v5 可落盘词表与红线：manifest 与三平集合、四类实体、两类关系、六类 CEL 规则、内联 examples、条款三分类与工作坊七步共享词表，以及 Zod strict 加跨对象 refinement 的校验流水线。
+- [关键数据、派生与来源追溯](key-data-and-provenance.md) - 关键数据台账的八类来源与待决局限、native CEL lineage 如何证明公式读过哪些模型属性、元素级 sourceSnippet 与条款审计抽屉的双向定位，以及这些机制各自的边界。

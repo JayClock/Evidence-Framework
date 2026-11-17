@@ -1,36 +1,48 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:8215f6e38cab88ef2e28fcc7054b2c42cdcb0fed743d9167eebc18ceaa6c8ae3",
+  "pageVersion": "sha256:23780e2537d45aaa4317e3f0b03dcd80a2e0bc7e9d034d2991285c50c47c3232",
   "claims": [
     {
       "id": "claim_fe4254228849474d93ef6b6f97e17914",
-      "statement": "The editor window is composed by EditorWorkspace as a 48px TopHeader row, a flexible studio, a 32px BottomStatusBar and one overlay layer; the studio holds the 48px ActivityRail, an optional ActivityDrawer, and a horizontal resizable pair of centre stage and RightInspector, so no permanent outline column or bottom console drawer exists in this shell.",
+      "statement": "EditorWorkspace 把编辑器窗口组合成一条 48px TopHeader、一条画布放映控制行（拓扑视图 / 业务流放映，放映时换成 StoryPlayerBar）、一个可伸缩 studio 和一条 32px BottomStatusBar，再加一个排在 studio 之后的覆盖层（两个 hub、命令面板、场景工作台、Toaster）；studio 里是 48px ActivityRail、可选 ActivityDrawer 以及 autoSaveId=evidence-studio-horizontal-v2 的横向面板组（center-stage 最小 35%、right-rail 默认 20%、14–26%、可折 0），没有永久大纲列也没有常驻底部控制台，问题条只在打开时占画布底部 38%。",
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/renderer/components/console/ProblemsPanel.tsx#L33-L40",
           "version": "repo-lines-v1:sha256:b4cac3954002bb16b4bc8e6b19e38fd0cc3120a3df9975cf7af59b98b1eb1406:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzcxZjI4NTcwMTIwN2U2ZTczMmNmOTg0MDUzNzI0YTBjMThkM2VjNGRlNzJiYTNhNmI5MDZlZjI1MThiM2EyNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMmI3YTA1Zjg0ZmVkMWNjMDYyZGVmOWU4ODRmMThiNjQ5MmYzMzE0NzFiYjI3MjhlNmQyOTMwOTE1NmVmMzg5OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGFmYzk0YjA5NzUxM2ZmYWRkM2ZiYzZiYmVjNDE0ZTViY2NmYWY5YjQ3MzBkNmM0ZGU0ZmQ5NDkxODgyZTk2NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDkxMjhkZjUxYWM4MWNiYjA4YmQzMDVhZmQ0NWEyODY2NmJlNGY5ZjUzMDNjNzk0ZjFjZTQyN2JkYTMyMTNmMyJ9"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L812-L866",
-          "version": "repo-lines-v1:sha256:eb782b3fcbea744b14fa1c70060d2d811c6a4738b1b646a5609bba958e91a6e4:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3MjE2ZThlOWMwYTFhNjhkMDZjMmZiYWE1ZmQyMTM5NDgyYjhlZmQwYTE5MzE1YjkxNWU2Y2NlODQ5ZDg5ZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY3YWQ4Yzc4M2QzYWM1MWYzOTM5YzUxZWFkYThjNGMyY2RkZmMzMjA3YzBhOTJmZmRlZjBmMTRiMGZlNTY0MmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRhM2EwY2I3NDMwYjlhMjQ0ZjZlOTlkNmY2YTg4YjZjY2U2NGJmYmIzYWUwOGVmNDFhNzczNmQ2NGMxMjgzN2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI4YmY0N2RkMjMzZDA3NDFkMmE2YWQ1NWEwMzA3MmI1MDljODZiOTExYmQwOGQzODc5ZTA0Y2U1MWI3NTllOWQifQ"
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L1043-L1060",
+          "version": "repo-lines-v1:sha256:b3135bacccdf59037eb4616904b330f7d18ccef67c6cfeae5e5a0d60fb8372a6:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJiNTBlMmRlZWY0YzZiNWI4MGI4MDAzNDBiMmRlMjhiNzRlZmI5YzZiNTFjMDU4ZWMyNmUwMjkxMzcxYWMzNzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFjOTI5OWI1MTRlMTBiNzcwZmZiZmJmNTEzMzUzNjgxMDg0MDQxYjQwMjU0NmMyMDNjZTc4MThmMGRjNmFhZjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIwOWM5M2I5MzVlYmRkNWNmZTAxN2RlOTE2OWY4Njc5OTBlMDkzOTYwMDg3NjVmMTM2Y2ZlMTExNGUyZTA0YTYifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L924-L951",
-          "version": "repo-lines-v1:sha256:5e0a258015dc1b2088b1ff6bd6f13c57692e45f822dc9ba7f487715266eba253:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg2Yjk0NjIxMTRmOWM1ZGE0NDY3MWI0YWVmMDhjZjQ5ZDdjMjgzZGVhZWY2ZTcyMWY4OTIyNTg0NmYzOTBkNWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5MDJlMDk1MTM2M2MxOGQ5NzNlM2Y1OWUzNmFmNzg0Y2U5MzNmM2Y3ZGQ0NTAxMTBjYTlmZDgzYmQzODUxYzIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJjM2ZiMjdmNmQ2OTc4Y2Y2MDViYmEzOWQwZjQxYTg2NDc5N2EwYzFlMThjM2M5NTRiYTZjYTY0ZTE2ODdiZDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBlZjI2Yjc2ODE0ZDU4NGVhYjNmYjY5MmZhOWI2YThjMDhlYWYxYmQ2MjE4MWVkZTk3MDgzMTE0YTJmNmVkM2MifQ"
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L793-L866",
+          "version": "repo-lines-v1:sha256:e305fdcec20330069e649e49e620278dff759823c80ab9af7c58c0d95daebf4e:eyJzZWxlY3RlZExpbmVDb3VudCI6NzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiZmY3MjdiYjZkNzY0ZGNhMjQwOGNmOWM4OTljOGMwODBjNWViOTY3MDU5OGE2NGEwNDhjMGYyMjZkZTMzMGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY1YjZhMjNmYjQ1YzQ5YzE4Yzg2OTE3NzVhZTlhYjcxYjNmZTBkNmUxYmEwZWQ4N2NkNWM3NzJmNDg5N2E4MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVjMmJjM2U1ZjA5M2M2ZmE5YTNjNmQzZTI5NWM4OGQ0YzNlNGIwZTNjZGU0NTJmYTI4MzFhM2NiMzQyOWJlOGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhiNTVhYzg0ZDdjNjI0MDA1MjA1MzlmOTZkNDljNWE5ZmFmMzRlZDhiY2Y3M2RhMzQzMWU2YTRhYTM2MDhmODkifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L851-L990",
+          "version": "repo-lines-v1:sha256:aff87693bc4d98dd925aa68416c39917f434d9acd04d308ea0b3ba33e26b5417:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI5YWUyNTFmZWJiYTg4NjQ1ZDcwN2E1OTUyMzU2ZjA3MTgyOGE4NDVlNzM4ZTBkZmIxZTJhNmJjM2RjOTZhNGIwIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0YzRkNjYxOWNkNWQ4ZmVhNTVhMTkzYWU1NTk5NTA3ODA0NGRkYTkwMjU5YTBiNjI3N2UyMTQ0OGY2YjI5MjYwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI2MzdhMTFhNGY5NzllZmIxNDEwMjA4MzE5ZjM4YjA1OTVhOWFiNzE1MGI3YTE2YWY5ZGUzMTU0Yzg0M2NhYTE4IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJmYzYwNDMxNTkxMDk5ZGYzNTY3ODU2MGViZGQ5NjNkYzRjNTQyMDBlNjg5MWJiNTUwZTJlNjFlZjJjMDcwYWZjIn0"
         }
       ]
     },
     {
       "id": "claim_5df9886436df48dda695b88b300f9219",
-      "statement": "48px rail四tab为topology/diagnostics/drift/copilot，诊断计数和pending patch dot由相应状态投影，不再simulation。",
+      "statement": "48px ActivityRail 现在是六项 taxonomy：topology（业务结构）、diagnostics（门禁与诊断）、drift（生产漂移）、copilot（AI 协同）、clauses（条款审计）、workshop（共创工作坊），RAIL_TAB_CHORDS 给出 ⌘+1…⌘+6 并由 rail 自己在 useWorkspaceLayoutState 里监听（要求 meta/ctrl、无 alt/shift、目标不可编辑）；badge 由屏幕投影：diagnostics 打 block+warn 计数并按阻塞/警告取色，copilot 只画裸点表示仍有未结算 agent patch。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/components/layout/ActivityRail.tsx#L75-L105",
-          "version": "repo-lines-v1:sha256:72456825dd6f6df378f8af03a2d8159b4b72fa0ab26b37647b104afd13dd35fc:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzZWRjOGJlYmY4NTQ4NjAwYjhmOTA0YTE0ZGU1NzE0MjgyMGMyYTA4YTk2NDU1M2U5YThhMDE5MjcwNDRiNjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5ZTVhMGQ2ZmViYWJmOWJjZWI1YTllNjVlYzU3NGM4NDZmOWM4YTA5MDJkOTgwYTQ5YTVlNmM5MDhlODdhZTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg3NDRjNWI5NDBhMmQ3MGI1MmUwNDUyNGIwNWU0NzMwZDBhMDFlNzkxYzkzNmI4M2M0NWY4ZDE4NGQxNWFlNDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlmOGE4YTVhM2M3N2Q2MjJhODM1ZGRkOTY2ZWZmNzYwZDQ2NDQzNjYxZDBkNTBlZjM3YTAwOGIyMDUzMWQwZTIifQ"
+          "resource": "repo://apps/desktop/src/renderer/components/layout/ActivityRail.tsx#L27-L66",
+          "version": "repo-lines-v1:sha256:2c42353b1c72f2cd0aefaefcdb8490c5613a5f9802b0780658fa12a0c181fb44:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYxYzAyY2I4NzdmYzRiYjZhOGFlOWNiYmI5ZWQ1NDM2Yjg3ZjdlMzc5MTVhZmQxZmJmMTAxMzBhMTE2OWE5MTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkNWNkMmZiNGYzZGY4ODQ1MTUyNTViMzk1MjNmMmY4YjU0NzJiZWVhOWY1NjZmZmNhMjA0ZGI4MDI1NjEwNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ4OTgxNDlkZDUwMjM4N2Q3Y2M4NmI4MDlmNzNhNTVkNmQxNjNiYTRjODA2ODc4OTkxMDc5NDFlYjM2YzYzOTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMxMGM4ZjEyNWRmZDRhNjMzMTM2NDgyMDM0YjEzNWVhNGJmY2FhZDA3YTRmMjI0YWM5NDMwZGY1YmIxNjliOTYifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L852-L877",
+          "version": "repo-lines-v1:sha256:c892fbc3f547674be9b981b01e99e38b2d1b29f5354c5a6387c3c1c9d4ac716f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5NjM5M2EwMWQ5ZjkzMDRmZDBhZGNkZWY1ZmIxNjYxNDEwNTYzMzhkM2YyODRkYTNhMGMxMjYwYWFiYjg5MDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQxMzc1N2FjYmY2MjU4ZjRmM2RlMzFmNmEzNzI0ZTM0MWMxM2FkYWIwNTBjMzc4Y2I5Njc4ZDVjYjVmMWVkMmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVmMjk3Y2UyMDhmNTNmNGRhYWZjMmMzNjYyMTZhNTUyOWNkN2JiN2UxODFiM2NlZDU0MWM2NzY2NmY1MmZjMjgifQ"
         },
         {
           "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceLayoutState.ts#L3-L14",
-          "version": "repo-lines-v1:sha256:c358a14f671d052126fac7272ddf2a0aa323d0a441822bcab9b2078a96a7e778:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5MzM1ODliZDYwZDJkMjFlNDA4N2ViZWYyYmU1ZjI1MTliNDE1OTNiMjg2NDQ0ZDg1MDcwZWNhZGMzMDlmZmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU4YjQzZTUzZjYzMDIwNjE0ZTNhZmZmN2JkYTExNTg0ZTZkM2Y4ZmNhYzRjMjYyNDRkZTBlMTY3M2JlNjI5NzYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc5MTA5MzczM2YxNmZhMTA5NWE4OGE3MjdkNWYyMDBiYmQ2ZGUwZTk3NGM0OWFmYzNjMDY3MDA4NmQ1MDczMWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkxOGQ1NzMwZTc5MjdhNzExMzIwMzA1NTg3YTQxYzk0YzkwMGVhYjVlMDBhYmFlYjg2ZDlhNmM0MWMzZTI5ZTUifQ"
+          "version": "repo-lines-v1:sha256:0d2ae53c21f4a5f25dda1e92bd43cd18cf6cba335c252fb41dee6d5028671688:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUyOTM0MTM1NTY2YTJkY2JiOTAxN2Q4YWViZTViOGRlNTZjZmQ2YTIzMThkZDViNjUxMWU0MzcxNGU1MjFkZGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc5MTA5MzczM2YxNmZhMTA5NWE4OGE3MjdkNWYyMDBiYmQ2ZGUwZTk3NGM0OWFmYzNjMDY3MDA4NmQ1MDczMWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc4MWZkZmM0YWFjZDc1OTYwZjBjYjZhYmYyODE5ZTY3ZjJhNjkwZjM4YjliNzZhZTNjNGFlNjNjZjhjMzIxMDIifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceLayoutState.ts#L56-L70",
+          "version": "repo-lines-v1:sha256:4f829413481eb000f73c211d744385cd19563d8ef16b07cc272224b03d0b1f06:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY1NmU4NDEyNDAwODE0MWU3NzE5ZDE0Y2U0MzEzMzM0YTRlYjIwODY4Y2RiNzBhZjBjMDkxNjc4NjNhNWNmZGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZkM2VhZTc3ZGE5ZmJjMWQyY2Q3MDRjNTQ5NTdmZTY1YzJmN2ExMjNiODYxMDI0NDE1YWQ0OTNiMDE4YTFlZGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI4YjJhMDVkNTQyYjViYmI0ZWVlMzgxYzNmZGNhMWY1ZjY5NGFjOWQxZmYzZTkxZDViNjU5MjZjZWVjZWU0ZjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA4Y2Y0MWRlZjRmMmMzMzhkODY1MTEwODhhMDgxZmY3YmZmOWJlN2U3NjAzZTg4MWY2MmJhNjdlMmYyODFjNjAifQ"
         }
       ]
     },
@@ -43,22 +55,22 @@
           "version": "repo-lines-v1:sha256:4fc99cedc84ffdc718e10c9ae2d56aceb4101fff31b186dedf7875622090dc93:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiY2EzMzE3M2UwZDYxYzA4YzYwMzY3ZjJkODJmMjM4MWRlYjYzMjg2YmEwN2Q5NTFmMjYzYjhmYzY1MDNmMGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVhYTg4ZmI2ZDU4ZjI0MjU3NWQ4ZTViNjlhOTA2ZjFhNzQ4ZTgxNGYzM2EyN2I0ZThhYTI3ODUyMDYzNWQ4MzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRkNDUwMDNlYTcwZDA1MDA5ZDI4MWVmNTU2YjYxOGI1ZGM2OTE5OTYzYTAyMmIzNjgxZmI0ZDY4Zjg0YzE0ZDYifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceLayoutState.ts#L90-L112",
+          "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceLayoutState.ts#L94-L116",
           "version": "repo-lines-v1:sha256:7bd7d55c57903cf02946057bffa57d6f78ee380ec128499e9035af1db62eac33:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI4NjRiMWM0ZmU0YjFmZDA5N2MxOTI3MjYyYmI2NWY2YThhYTkzMWM5MGQxM2Y0YmFlNGMyOThhZTNkMzZmODkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE3OTJmODQ3YmIyMWNiMjkyZGQwOWY3ZmE2ZTdjYWM0YThjMTRkOTdkMzg5NjMzYjNkMTUyMGVhMTRiNWIxZGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI5N2ZkZjliMzIxZWQ1OTdjMDUyOGI4OTIzNTdjMGMzYjJjMTRhMmM3YWM1M2FlNGVkYzI2MWI2MWNiZDhkMzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhmMThlOWI0Y2E2NjNlYjZmYzY3YzU5YTg1M2FjYmUyZDVkZDk4MGFhNWEzOTg2ZTY4YTFiNzc3YjRlZWM0MDMifQ"
         }
       ]
     },
     {
       "id": "claim_bd23d13f71c64cc8929a80a81ea1db2e",
-      "statement": "A single ActivityDrawer shell renders every rail tab, either pinned as a 300px in-flow column or floating as a 320px absolute panel starting at left-12 over the canvas, and the tab content is selected by activeRailTab so switching tabs replaces the drawer rather than stacking another one.",
+      "statement": "所有抽屉共用同一个 ActivityDrawer 壳（标题、pin 开关、关闭按钮、可选 footer）：pinned 时占 w-[300px] 行内宽度把画布压窄，未 pinned 时是 absolute inset-y-0 left-12 z-30 w-[320px] 浮在画布上，data-region/data-pinned 供测试与 MCP 几何读取；内容由 activeRailTab 选择（topology→TopologyDrawer、workshop→WorkshopWizardDrawer、clauses→ClauseTraceDrawer、drift→embedded DriftRadar、copilot→AgentCopilot），所以换 tab 是替换而不是叠加，diagnostics 根本不开抽屉。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/components/layout/ActivityDrawer.tsx#L20-L45",
-          "version": "repo-lines-v1:sha256:91477d9cdac647b51c2c9344a8c51f9afd670f17d0c2f2d128e1ed4029b2505c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgxMzJjNGFmNWZlZTUzN2ZlYjhlNjgzNTFkNjg1YjI4NDA5N2E2ZjBkZmIwZjYzYThmYmY1MjVjZmJkNDJiNGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyOGMyZmFiMzNhZWRjZDNiNDcyYzhlOTUwZDg4ZGNhZjZkNzAwODRjZmI2YTgyODIxMWRjYjczYWUwZGMxNWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRkNmI4N2RkNjkzYWI3MmI2ZGVmMWUxMjllNTM3YmY4Y2Y1N2M2YzVjYTE0OGE3MGFmMWQyOTYxZjAxODMyOGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRlZTQwOTViYTAwNzllYjQ5YTQ5YzYwZDM5MDU2OGJhZWYwNGFjNzE1ZjAxMzk4NzRlYzlkYTZmNzI4MWU5NjEifQ"
+          "resource": "repo://apps/desktop/src/renderer/components/layout/ActivityDrawer.tsx#L19-L50",
+          "version": "repo-lines-v1:sha256:087da5b48c724f560a12eac455c6abc70c61fa44470ec46540a13f037c85cd4e:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkyZGFlZTc1NDRiZmEwYThmZGQ1ZmMwZjg1Zjk1YzE1NzgwNzAwYTdmYTExYTFlYWFiMGM1MWU2ZjJiNWZmODkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzZDBkODdiNzE2NzY1NTE3ZjdhM2ExNzhjMjM0MmNlMzRlYmVkOTlkYTc3MGY2NWM4OTA4NDJlZmZjMWVmM2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ2OGVlNjBlYTdlODhlMjVhYzZhYWNlNTdhNjUwZGRmZjFjNDI2YTI4YzJjZGY5YTVlYWM0M2I0NDQwZWU1NjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRkMjExMDJhNDc5MmQ5NzFhZmMxNTcxMTY5YTk1MGViMWEwN2FhZDA0M2UyMzQzZTJhMGU0NmQ1ZWJkZTE2ZmYifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L862-L922",
-          "version": "repo-lines-v1:sha256:5394638e08d194ead69db13bea4293cdb76d5c4e195d2346cdf880c4793f6c7b:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ3M2EyMGRlZmE3MDkwZWZhNDI1MTNlN2FhOTlhZmZhYWFhZTQ5NzBjYTQ0NWFhOTIxMmI0MzA3YTY0YjRjMjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRkYTQ3MzAxYjM3OGI5ZWJjOTIwNjA4ODVjOGJlYzAzMzdmMDEyZDk0YmM4OWJmMzAwYmRhZmZiNDFjZjRiZmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE2Mjg3NGFiM2IzYTdmOWI0YWNiZTZkYmRkMDUyMTZlYTYxNGM3OWIxMTgxMjliZmJmYjRiNGFlMDc2NDI1MWQifQ"
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L878-L950",
+          "version": "repo-lines-v1:sha256:5298c93b207d4f6336ef0c7dfb459c5cad4cc43fcea2b562c2414b52fb762b03:eyJzZWxlY3RlZExpbmVDb3VudCI6NzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRhZGVkNWQ5YWRmNWUwOGQwZjc1NDZmZjMxMjJmZTNiZTI1MjM3YzE5MzNkNjE3Zjc4M2MyZGQ4MGRiZDY5ZTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI5ZDM2ODY3MWM0NjNiZjBkNDQ4YzVkYzY0ZjZkZjM4MGJkMDU1YWM0ZGQ5MzE3OGE2N2I4MTYyMDY0ZjBlODEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZjNDExNGM1YWNkMWM3YzAxMTdiMjk0M2MwMGZjNDQ3YmNmNmY5NjRmNmJkNGFmZTRlN2ViZDhlYTNhZWJkY2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ5MzIyNzczNGNhMGJmMzZmMTg0NWIzNDA3NzUwNDYzN2M3YTAxM2Y1ZTkxY2NlZWE3ZGEzMTUxOTlmZmFlYTMifQ"
         },
         {
           "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceLayoutState.spec.ts#L48-L56",
@@ -68,47 +80,45 @@
     },
     {
       "id": "claim_fbda09bab47949fa8268ff2ca5bb37ab",
-      "statement": "delivery/drift/review 是单一互斥hub，fixed在studio外，第二个替换而非叠加。",
+      "statement": "HubSurface 只有 'delivery' | 'drift' 两个值，activeHub 是单一互斥状态，打开第二个替换第一个，且两个 hub 都渲染在 studio 之后（⌥D、⌥⇧S 与命令面板的行共用 openHub）；但只有 DeliveryHub 自带 fixed inset-0 z-40 遮罩式卡片，DriftRadar 作为 hub 时根元素是 flex-1 区域、占据 shell 剩余高度而不是盖住页头与状态栏。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L989-L1010",
-          "version": "repo-lines-v1:sha256:b5c29b6ab86e2ac94a6cb8cad2bc38c6e02e7e55bb7a56339adcb60b8d218ba6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJkZmNiYWE4MjMyNGM4MjhmYThiZjE1NjIyYTNiNjEzZGEyYmY2ZTc3MmYwNjdiNTNlYTQ3MzI2NzAzNWVhNmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU0YWYwNDM2NDgxMzBiMjRlMDFjNzM1OTZjMjMyZTYzNWQ4MGZlYTM3NjkyMWIyZDA3ZDllMTBmMTM0ZWQxNTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMzZGU3ZTg4NTI2YjJiZGRmZDNmMjk0MzYyZTZkYTY0OTI3OWFhMTM0YjAzMTFlOTY2MTVlMmUxODVjYTVlNDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIwMDlmNmM5NjEzNWM0MTQ1MzkzZGMyOTY4OGZmNjJiMjM0M2I1NDBmMTY3NmZiNTdhYmUzYjQwYzY2NjBkN2MifQ"
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L1026-L1041",
+          "version": "repo-lines-v1:sha256:491f84a3a6e38b09a3e96109e9f7909e25d840851829f7f4d3a562729c6be872:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQzYzc3OGZiMjk4YzU2MDVkZDgyYTExZGZhZmJhZmY0NjczYTQ4ODEyZWNjZWM4N2E1Mjg5MTcxNDExNzVjZTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NWYzZWQzZGI4OGNjZmE4NmJkZDA2NDdiZTg2YjE3Y2Y1M2M1NjFmMjQzM2UwNThjZWE3MWM5Y2ZiNTMzMmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMxNDJmZDY0ZTMwMjBkYzE2MDEzMmEzZDQzNTA1NDIyNzdkMTg1MzM4ZTM1ZjRiMzdkMjc3MDlmY2NiNDAwZDcifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceLayoutState.ts#L12-L28",
-          "version": "repo-lines-v1:sha256:e06922e53fd3626810fc71432b152d822700920f10ef5977f54051839b6fb4ac:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEzNGNkZDMzYzdlMGFlZWRiNTBkNDRlNGQyNjJhYjFjODkxNWM0ZmFlN2FjOTkyNjk1MzZlNzEzMzhlZmJmM2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJjYjEyYTY1ZjM2MjQ1MWYwMzdmYmY0MDJiZDYyMGViNjI1MmI0MDliNjM0NmMzMjYwNzdmYzA5ZDg1MzJkYjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI4ODU2ZTMyNzM3ODI0ZDJiZTk3MDc1Y2E1ZTIwMjQ4NjlhOTc5ZDE5ZjgxOWY2ZDViY2VlZGZkZWY3OTdiYTUifQ"
+          "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceLayoutState.ts#L13-L30",
+          "version": "repo-lines-v1:sha256:56b420e3e2ee579fa325d4987fd6edc6c3bdfc065727cbb3ac52c38a3f6764d7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc0ODhiNjViN2E0NjA5ZjQxOTQyYTZlMmY3MzU3ZmFjMDY2NDgwMDhlY2FmMjhmZThjODJkYmJlMmJjZWIzZTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEzNGNkZDMzYzdlMGFlZWRiNTBkNDRlNGQyNjJhYjFjODkxNWM0ZmFlN2FjOTkyNjk1MzZlNzEzMzhlZmJmM2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBiYTczMGUxYzNmOGRjOGY0MTA2YjcxMzI0MzIwY2IwM2JkOGY3MTg1YzU3MTlkNmZlMTg0M2MxYTdjNzkwY2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI4ODU2ZTMyNzM3ODI0ZDJiZTk3MDc1Y2E1ZTIwMjQ4NjlhOTc5ZDE5ZjgxOWY2ZDViY2VlZGZkZWY3OTdiYTUifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-delivery/src/components/delivery/DeliveryHub.tsx#L44-L70",
+          "version": "repo-lines-v1:sha256:dc43ea73fca8ae0b710080aa63fd68c3ec6f1204aac2cfecefa8d11b463eac56:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyMzY5MjUzOWZmN2YyZWU1ZmExMmUxYzQzYzk0NzU4MzQxN2E0NmVlOTk2ZWM3M2FlNDg4MzY2NDhhMTIxNDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1ODFlNGYzNjBiYWVhZjY5YTUwNmIxZDIxODlkMzIwODYxNGIxYjM1NmM2N2Y0NDk4NGM4NTdiNDY4NGU5ZmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3MWMxZTgzYzNkOWYzMGFiOGIyMTkwNTBmMzUxZWVmZTk4ZmZiZWQ1ODBlZTYxYjMwOWExYTI3NzVjNTliNTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJlMDNlZGExMzhjMjc4YWQwZDRmMDJkZjNjMTBlMGYxNWI2OGQ1ZjQ2MDY0NmRmZjEwNGMwYmMxODY2YzE0NTYifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-drift/src/components/drift/DriftRadar.tsx#L17-L30",
+          "version": "repo-lines-v1:sha256:703af68bdf97c025dfb9ef4199a0154dd802c4ec8ad04ffa5bd42a211413b2ef:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEwNDVkMTE4NTczOWNiYzQxZjIyYzc3OGY5YjllYTQ1ZWZkMGExYjYyZjExYmM1YTgzYTA3MDg0NjgwNDk2ZDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdjM2VhNWJhODIxMGFiMDBjMWVlZDIzNDk3NjAwZjhlMGE3NmYyOGU2Mzk5N2QyM2JjN2VhYTlkZjM2NjQ2ZWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiZTIwYWUzOWU2Yzc5ZTQ3MmI4OGY1YzE2ZDdlNjUwMDQ2YWQ1YTEwZjdmMWQ4MjhhNjcxNDcwZmZmZDI5NTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIwMmFjY2I5M2Q5Mzc0N2ZiNjUwYmU3ZGZiY2EzMTA5ZjU0MTJlZDM5MDYwZjJmZGVkZDhmNWViOTUyNTdhMDcifQ"
         }
       ]
     },
     {
       "id": "claim_8d5583a720cb4cbd991f711a2d26cd08",
-      "statement": "review dialog处理Escape/Tab和focus恢复；Delivery/Drift自身仅关闭按钮，无同样键盘trap。",
+      "statement": "两个 hub 是手写的 role=\"dialog\"/region 面板，内部只有“关闭”按钮，既不 trap Tab 也不自己消费 Escape，因此 Escape 会落到窗口级 handler 并按 pending patch → closeSplit → clearSelection 的顺序生效；作为对比，CommandPalette 与 ScenarioStudioModal 走 ui-kit Dialog（Radix 提供 focus trap、Escape 与 portal），后者还在 content 上 stopPropagation，所以视觉上的“模态”不能当成完整的焦点管理保证。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/components/drift/DriftRadar.tsx#L12-L28",
-          "version": "repo-lines-v1:sha256:0567f085296dfc5a723b2c75853945708cf0b0f2be2d143780dc863d4eaa7e69:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNjM2FhM2JjZjA3NDAxYjY5MzEyNzVjMzg4NzM3NmU3NzAyYjYyN2U4ZmM3ZThiY2JiYjgzNzY1ZDIzYzI2MjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEzN2NjYmZkMzc5Y2IxNjBkYTI3NzNhY2E4MTg5YTMzN2JjOWNmZDY5NDgxOWRlMjNmMTNjNGRhMzVmMzY1MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE1N2U4NzYyYmIwOTQ1ODRmOGRkZDc0NTI3ZWFjODA2MTM4MWNlOTVjOTM0ZTlmODI3Y2FhMTZjMmNiMzMyM2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ5ZjA3NTJlODZmOTAwNmZiMGNlZWZkNTg4ZjM2NDQzYmMzNzM0MmY5ZGJjNjNhY2ViZjJiYTk2MmUzZGYyNTcifQ"
+          "resource": "repo://apps/desktop/src/renderer/state/useEditorShortcuts.ts#L180-L206",
+          "version": "repo-lines-v1:sha256:bbf58c003bce00ff3a4c38540c36978d11f80d42ed98a10c65d5856bdfa2e05f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliNjJmNjBkODU5MGE1NzljZjQ2ZjhkNjczNzhjNGM1NzJiOTYyY2VjY2RiOTBjN2E1ZjdiNDJiOTYwNzgyYTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3MTA2YzkyNDcyOTljMDBlMGQwNTAyODA1Mjg1MWY0YTI0NTE4NmI5NzNlYjk4OTAzZjZkYjBiM2M1OTEzYmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI3OThiMzNmY2VlMzcyM2U4YzI4YzdhMDc1Njc3YzZhOTU4MjY3Zjk0Y2E3Y2E4YThiZTFhMDBiOTk2YWY3MWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3ZDBjMDEwZWM2MDJiNzkyN2VlZTQ0NjFiNjkzMTAzNDVmZmQ0NjRiOWNhY2JhZTA1NDA3MTc2MTk1Y2NhMmQifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/components/review/ReviewHubModal.tsx#L44-L110",
-          "version": "repo-lines-v1:sha256:68cc6595ac2b9afa1a88d2439d6545b0017830271e8b5a64ee110bf044f39ac9:eyJzZWxlY3RlZExpbmVDb3VudCI6NjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJkMWYyOWJhODgwMjQ1NWQyODZlNzZiMTE0MTdlMGRjZjNjMmIyODY5MTE5NmFhODMxMGY2NjY0MjkyMTJkZWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI2YmJiZTNkNmM4NGVmNjU4YWIxZWEyNWUyNTE5MTJjMTM5YzRlNzFhOTE3NTAyNjFkNzAzN2UxNDEzZjUyNTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRkZjlmYzJjZDdiZjMzNjk0MTM0MTk1OGIyY2Q0ZDdjNzczMzRhNDI1YTZlYWY0NTBjNjFjODk0N2M2OGE4MGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYwZTEwMmNjYzFjNjkwOWY2MDIwN2I5MmEzMmVjNDY4YjZmOWQxYjU2MmM1M2Q3ZWJlMzQ0MzY5MjExZTZhMjYifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_4d5422329f8747339621712966d5d275",
-      "statement": "The review hub takes one previewReview snapshot of the live document on mount and marks it stale when the input revision moves, and its per-finding actions either locate the issue on the canvas (disabled when stale, busy or unlocatable) or hand it to the copilot, which closes the hub, opens the copilot drawer, focuses the issue and prefills the composer through a token-stamped prompt.",
-      "evidence": [
-        {
-          "resource": "repo://apps/desktop/src/renderer/components/review/ReviewHubModal.tsx#L151-L174",
-          "version": "repo-lines-v1:sha256:ccdafedf6ce90f3cfd979779a582162a486f7efa21dce57e2209902bd3af4cf5:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVmNzdlNDkzOGZkMGExNjgzOGQ5OTk2NTI1Mzc0NGQwZmQwOWRjMDYwZDk3YjE0MWVhOWEwOTUyYzEyNGRkYTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM4M2ZmMDlhZDhkMjkzNmEzMmQ5MTNiZGI5NDFlNzU1NmEyNmYxZDVkNGQ3NTNjZWViZDE3NzVkOWViY2I5NDYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM4NDg1Yzg5MTVkM2U4M2JlYWM4YTU3NGJkYmY4OGQzZjIwMTNkNmNmYjQ5YmVhNDA3ODg0ZjllOTAwNzkzN2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE0NGQ3YjIwNjlhMTE1ZDE5N2Y0ZmM5N2FiNDJkYjJjNmRiMTM4MmViMWNmMTQ3NGFmMzVhNGRmM2JhYmY3MTYifQ"
+          "resource": "repo://libs/desktop/feature-delivery/src/components/delivery/DeliveryHub.tsx#L44-L90",
+          "version": "repo-lines-v1:sha256:3abaddca8b8f58d36c5cc81c078fd8ae765ef96bbd60a7329795bd219eb47d55:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyMzY5MjUzOWZmN2YyZWU1ZmExMmUxYzQzYzk0NzU4MzQxN2E0NmVlOTk2ZWM3M2FlNDg4MzY2NDhhMTIxNDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNiMjU5ZTQ1ZGEzOGFlNzNkZGNmYWYwYWQ5NTYwNzI5MmQxYTc5NTM4YTI4MTYyYmM2NWVmMDMyNjM4YzFlOWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3MWMxZTgzYzNkOWYzMGFiOGIyMTkwNTBmMzUxZWVmZTk4ZmZiZWQ1ODBlZTYxYjMwOWExYTI3NzVjNTliNTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhkODIxMzczNTZmMDJmZDI4MDAzZjgxOTE4MTRmMTQzOWY4ZGUxODVmMjYxYjI1YmVhZmYwZTQ2OWM5NGUzNTkifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/components/review/ReviewHubModal.tsx#L52-L62",
-          "version": "repo-lines-v1:sha256:91bd876d0047d0a23844537b338c218d2b184ab7895b1d927051834bcbf7a3aa:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5NjZmYmZhODg5OThkYTc0NjU2YzUwMTk0OTU2YzI1ZjA4NDk0NTc2NjBjMDA5ZmU2M2QxZTlmYTlkYzkzMWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3MjE2ZThlOWMwYTFhNjhkMDZjMmZiYWE1ZmQyMTM5NDgyYjhlZmQwYTE5MzE1YjkxNWU2Y2NlODQ5ZDg5ZGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE3ZTJiYjA3MWM3NTYwNzgzMGJkYjY5ZGFlNGY3NjVmMWZiYWE3NzI2NThjODUzMmMxMWMwMzVkNWRiZGRkY2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMxNmExZjNjMTVjZjMwNmNiMTBlMWNmMjdkZmMyNmViNjNhMWY1ZDQ3YmNmZDA4YzBjZTY2M2Y5ODMzYzYyMzkifQ"
+          "resource": "repo://libs/desktop/feature-drift/src/components/drift/DriftRadar.tsx#L17-L32",
+          "version": "repo-lines-v1:sha256:1b18ea562bc1388195fb75acaa626a2e79f32610d2e1229cf83a75dfb57379b5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEwNDVkMTE4NTczOWNiYzQxZjIyYzc3OGY5YjllYTQ1ZWZkMGExYjYyZjExYmM1YTgzYTA3MDg0NjgwNDk2ZDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZmZjQ2YWUzZDk0Y2MwMGRiMDI3NDI0NGU5NTM0MWVkOGU4ODE0YTc3OGExOGU1NmNiNDBiNWFkZGZmMDM5MTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiZTIwYWUzOWU2Yzc5ZTQ3MmI4OGY1YzE2ZDdlNjUwMDQ2YWQ1YTEwZjdmMWQ4MjhhNjcxNDcwZmZmZDI5NTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhkNzU0ZGY0MTlmMDE5ZDNlZGFkN2RmMDMyMjQzYWVkYmEwYmZkM2Q2YjViNjZjNGQxYjlhZWRhMmYyOGMzNmYifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L1001-L1018",
-          "version": "repo-lines-v1:sha256:cb0a5a5b2b232a5baf27f83ab1c7f45e78b9a6592288d2d916e79c6c1547a3aa:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5MGVlNjQ3OTFlMjdiOTAwM2U2MjJiYjI3OWZkY2MxNGUyZDU5ZGUwODc5NTVkZTAyNjhjMDQ1MzJmODc0ODYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQzYzc3OGZiMjk4YzU2MDVkZDgyYTExZGZhZmJhZmY0NjczYTQ4ODEyZWNjZWM4N2E1Mjg5MTcxNDExNzVjZTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFjOTI5OWI1MTRlMTBiNzcwZmZiZmJmNTEzMzUzNjgxMDg0MDQxYjQwMjU0NmMyMDNjZTc4MThmMGRjNmFhZjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMxNDJmZDY0ZTMwMjBkYzE2MDEzMmEzZDQzNTA1NDIyNzdkMTg1MzM4ZTM1ZjRiMzdkMjc3MDlmY2NiNDAwZDcifQ"
+          "resource": "repo://libs/desktop/ui-kit/src/components/dialog/Dialog.tsx#L7-L20",
+          "version": "repo-lines-v1:sha256:843a998e3c63460b2c5d4ca6dffc8aa2780936181a71ba5743a367723bab452d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1ZTY1NTU3NWUxNmQzY2JjMjUxYzIyMDZiYTVlMWExYzRiYzllZTkyOGFiNzBhOTgyOWQ4MDYyOTc2NzEzNjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY0ZjRlMGYyNmQ3ZDY1ZjYyZTk4N2JiNWY4ZTY0OWQyYjQ0NzA5ZGM0N2I2M2FiNjE2MTA5NGU2ZGQ3MjBhNTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUyNWQ3NWQ1ZjE0Nzk3ZDAwYzQ5NDY3NTgyYzgyNTMzY2JlNjZjMGU1NWI5NDc1Njk5NDVmZWJkYjQ3MjhlYjAifQ"
         }
       ]
     },
@@ -117,11 +127,11 @@
       "statement": "Whether the split stage is open is derived from the view mode (mode === 'split') rather than stored as a second boolean, and closeSplit returns the mode to graph while keeping the chosen pane, so the segmented control and the visible column cannot disagree.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceSplitState.ts#L44-L58",
+          "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceSplitState.ts#L51-L65",
           "version": "repo-lines-v1:sha256:2356096a947c3633e67e92c742dbd65091bea8c4a6878d686c6cead115d48fbd:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxZjI5NjNlMmIzMTE5OGViNzYxNDAyNjJiZDczNTJmOGM0MmJhOGI4MzY1NDU1ODM4NjQ5ZWRjMGJlY2Q4YTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxZjhlNzA0ZWMzYTVmODYxMzY1NjRkZjNkNzJlZTJkODU1ZTdlMjZmOGFmYTMyNTc4ZmI0MDIyMWFmMWEwMzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhkNzcwMjU3MTA0YTNlZWE2NzdlODA1NTYxZDFjMjYxYzFlYzk1NTNlN2U0YjJkY2JhOTYyNWJhNmM3M2NlOWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVmN2ZiMWUxNDAwYzBjZDU2NThlZTcyZWY0NTFmYTU1M2UzMmY1MjFjMzU2N2YxNjE0MTY4MWI3ZWFjYmVmZjYifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceSplitState.ts#L59-L85",
+          "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceSplitState.ts#L66-L92",
           "version": "repo-lines-v1:sha256:c7e5fd5baffa4dadfc1c726e10ff643efa796fa8f7156e52a97578b0d67b17d6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVlMmYxMGRjMDQxYmViZmZjY2M3ZjViMGM2ZjNkNjU0MzczNTNmNThlZmY5NGY1ZDQ4ZDZiZjgxNDUwZmFhMzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAyYjQwNWJhMWE0ZGQyMmNiZDc3OTBjMDczNzJlNDI3YThhMzk0OTJiZmU3NDIyMGQ4MWFiYTIxOWQ3MTZmNGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJjMDY2NDg0NzNkZDc5ZTJmZTI0YTkyYTJjY2U4MjA1NWJjNjNkOGNlYWMyYmM4NWNhZmUxODRmMjFmNWQ3NDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIzOWI0NTU4ZTc4MTQ2MmNkNzM2YTA4ZjkzNmI1MDQxZjJjYzMwYzk5ZjI1YTU5YmE0ODFkYjVhOGYyMDE1YjgifQ"
         }
       ]
@@ -138,47 +148,59 @@
     },
     {
       "id": "claim_a54fca44918a4474acb53d7cee66da6b",
-      "statement": "graph/table/split三模式，split四pane为ledger/openapi/cel/drift，接口/rule badges来自当前投影/文档。",
+      "statement": "主舞台有 graph/table/split 三模式，split 的副视口 SPLIT_PANES 为 ledger、openapi、cel、drift、story 五项；badge 只给两处——openapi 取 delivery.analysis.preview.routes.length，cel 取 document.rules.length；story pane 被选中时 storyActive 成立，画布关闭 scope 过滤（scope=null、不传 onScopeChange）。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L717-L762",
-          "version": "repo-lines-v1:sha256:f2fcd89fd000ead33d26c0884c478572d16bba3efb074cd5921d1a854dfdeaaa:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhOTliYjljOGM4YjY3OWJlYzUwOWEyOTk4OTZjZWUyNjI4MWRlZTQ5YzJiODEzYmRmNGVjMWYxMDA5MGQ4MWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE2MWY1MzBjZGEwZDViMmRkMjRkNzE2Yzg2ZDQ1MWFhZTEzNmU4MTA5NzgzZmQ5ZjBlNGNlY2MyNjRhYTIwODkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZkZGYxYTRmZTNhM2QyMjVjYmM4MmE4YTVjMDhiOWY0NzMzNTQwZDUxNmZhYjQ5NDA5Y2U4OGQzMTJmZTQ0ODQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEyYTYxZDA1OWI0MzQxZDI4ZGI3MTQ4ODQyNTA2Nzk2ODFjMzdmMWZlOWFmMGNhZWVlNjJmNmU0NDUzM2UyZGIifQ"
+          "resource": "repo://apps/desktop/src/renderer/components/split/SecondaryStage.tsx#L40-L110",
+          "version": "repo-lines-v1:sha256:efb05284b59f72bf46d7c4be9305bcafd7bbf2b9c1347f6963079c0fe412d24f:eyJzZWxlY3RlZExpbmVDb3VudCI6NzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI3YjgzMjc4MDdiNTRhMzYwYjEwNDBjZGM4OGRkNTJjMGIyOWUzZWJiMmE0OWE1MjNmNGFlMTBkYzcyMzEzMzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZiYWNlYzNhZTI5ODEzNjVjYzgwM2ZiOTE5MWU1OTFiMWMyNTc4NTE4YmI0Nzg5MjJmMjU2ZjVhYjc2N2E4ZDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNkODdlNDczZGI5NzE1NjBkN2JlNDE3YzY2ZTFiOThjYzI0ZmM5MGM4MGYzM2FhNjE5MjVkYTkxYjc4YzllMTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ5NThjZDNiNWU5ZDkxZjQ4YzVjOTc4Y2M1NGNhNzBmNTgwNGExZTU5NDZiZWI0YmRlZjkzNTAxYjdmM2Y0NWYifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L700-L770",
+          "version": "repo-lines-v1:sha256:ad0307b5196d00085881a74016a4de88d0b94aeecb224e0bfd256372f774e2d8:eyJzZWxlY3RlZExpbmVDb3VudCI6NzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ3YjhjMTA4NWY5NWExYWZhYmU1ZDE1MmFkNThkYjlkYzI2MzM2YzEyMThlMmI4NDBhZTdhZDgyNmEwZDU3NDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiZTE2YjM0ZDFmMjRmNjkzYmEwZTBiYmFlMWI2MGY0OWU4NzVjOGE3MmUxNzMyNjkxMjkxMGY1NGI5MDkwYzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFkYjY4ZTgxMmNlN2M1N2Y5OTI2ZGVjMWNlZWUzZDZlMmE5MGIyNDI2ZDNjMmJkZTNkYjVjYzkyMDA5OThjM2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYwMzI3ZjhhZjhhZGIyY2U4ZGI5MDg4N2Y1YzYwNDQ2MjA1YmRiMThjZWI4ZjMwZWZhNDFjNzdlZWE4YTU4YzUifQ"
         },
         {
           "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceSplitState.ts#L6-L15",
-          "version": "repo-lines-v1:sha256:c4b0bf7453b1795ab8176d3d185b2cbc95c5b48fe0647ee510709e41f7674933:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZjMTI2ZGY3ZmYwNDBkYTYzOGVjOWE5MDEzN2MxNmRjNTlmMDIxMzA2MDA3M2MyMjI0Y2Q4MGUwNTc5M2FjOWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjllYzBjMThlMTYyMTQ5MGU1YzI1ZjAxMTQ3MDc4ZWFjMjViYmU1YmQ5Zjc2NGYzOWMwYWU2MDI0ZDU1N2FmMTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlmZmI1MGY5Zjg5NTZhMDMwYTVkZTcyODllZDNlYTNlNWVlMTYyYjQ5ZjEyM2FmYjRmOGNiMTZhZTE3MmFmN2IifQ"
+          "version": "repo-lines-v1:sha256:107ae71718231c07573f93069a11b472a254da62abe633786d252158e5370a7e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBhOTM5OGFmYTkwMDBkM2MxNDkwMDYxOGY1YmEzZTAxMWEyZjNmYWFhMGU2MDRmZDhhN2U0YTI3NjBjODg2NzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM4NDYwZmIxOGI5MWRlYjJhM2IyMzg2N2Q0MDI1ZjRkYzFkYTcwMjNkNTQzNzBkMzlmNWZmZjNlZGJhODdlYTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZlYTQ1OGFhN2M1NmY1NTg4ZGI1YzY4NzdiZjAxYTE1NDg1ZDU5NzVkYWQyYzk0YTZlZDEwOTVhZjBlMGY3ZjEifQ"
         }
       ]
     },
     {
       "id": "claim_486c9a58582d483f849be82cf40699fe",
-      "statement": "Panel geometry persistence is delegated to react-resizable-panels autoSaveId keys (evidence-studio-horizontal-v2 and evidence-stage-split-<direction>-v1); useWorkspaceSplitState's splitSize is only read as defaultSize and never written back from a drag.",
+      "statement": "面板几何交给 react-resizable-panels 的 autoSaveId（evidence-studio-horizontal-v2 与 evidence-stage-split-<direction>-v1）按方向记忆；useWorkspaceSplitState 的 splitSize 只作为第二条面板的 defaultSize 传入、从不从拖拽回写，方向由 splitDirection state 决定。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L767-L793",
-          "version": "repo-lines-v1:sha256:0b8dd611ecee9cd6749485bddd1ef33dc6368ceb6ad9bfbb9b0897a015f55432:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM0Mjg0N2Y1NGMzZWRkZGY3NDkzNzIyYTBkZjJmZmI0NzY2ODAyMmVhYjY4NmI2YWM2ZTkzYTdhZTMxZGM1ZDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ0NGY0ODY3MzlhZDIwZDZlZWRmNTU2OTBjNDMyNTA4N2NhODM3ZGNhMjA3OTNhMGZkODg1NWQ0ODIxNTE1NTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ5ZGNmZTkwYjc1YWQzNjIyMjEyMGYxNjdhZjQ3ZTYyOTJhZjBkMTEzMWU0MmU1YmM0Zjg0M2RmZTdlYzJmNGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFiMTJhODlmNDNlYTNjODgzZmY1YmNkMDhlYTc1MzhiNTlmMGFmZmQ1ZDI2NTYwMjVhMWI0ZTRlYmUxZDUwYjcifQ"
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L771-L800",
+          "version": "repo-lines-v1:sha256:da8c2c5b065ffe2f21b6f2338ee09fa7e6c5627143cc324833e92d86d1d4aa4f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiNTE5NGQ3ZWJlY2MxMjZiYTI3MjFlZWNjODZhMTNmZGFhZDY2ZDUxNDMzMjkzYzJkNDViZDI0NzUzNTNjZmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFhMzQzOThhNThmY2Y4NmYxODY5ZDU0NjdiNTA1YjUzOWNkZmY2MmEzODAwMTgzNjhmNmM2ZThmOTVkODc3NGYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU2NmVjYmVkNzJlODFhZmZjNDYwOGMxYmY5NmFjZDE5Y2FhMDA3MTU5ZDM2MzlmNDA4ZDg0ZDAzMGIyNzIzZWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJiZjUzNTM1ZjdkZDY2MDAxYTJiNDQ0NjA0ZDhkZjRiZWVhOGUyOGQ1ODNlYWIwMDUwZmYzZDU1ZWNiMmY4OWEifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L924-L951",
-          "version": "repo-lines-v1:sha256:5e0a258015dc1b2088b1ff6bd6f13c57692e45f822dc9ba7f487715266eba253:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg2Yjk0NjIxMTRmOWM1ZGE0NDY3MWI0YWVmMDhjZjQ5ZDdjMjgzZGVhZWY2ZTcyMWY4OTIyNTg0NmYzOTBkNWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5MDJlMDk1MTM2M2MxOGQ5NzNlM2Y1OWUzNmFmNzg0Y2U5MzNmM2Y3ZGQ0NTAxMTBjYTlmZDgzYmQzODUxYzIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJjM2ZiMjdmNmQ2OTc4Y2Y2MDViYmEzOWQwZjQxYTg2NDc5N2EwYzFlMThjM2M5NTRiYTZjYTY0ZTE2ODdiZDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBlZjI2Yjc2ODE0ZDU4NGVhYjNmYjY5MmZhOWI2YThjMDhlYWYxYmQ2MjE4MWVkZTk3MDgzMTE0YTJmNmVkM2MifQ"
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L954-L985",
+          "version": "repo-lines-v1:sha256:c20fb7008bf696f8cd817d107427ff1cec675694fe8e1790707f35792bef3b82:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiYzJlODM1NDk0ZjJlYjAxNzU2NmNhZGFlOWY1OTUxZWRjMDRmY2I5ZDhiZDMzMTY5NjY5MDFjYWVkZDZjZjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJhOTJlYmQyYWYwZWUwNmUyMTAzZGVhN2M1MWZiNzg3YWI5OTQzMjVhYzUyZWNhZDBmYTkxZTRjZmVmZGJkMWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ5MzIyNzczNGNhMGJmMzZmMTg0NWIzNDA3NzUwNDYzN2M3YTAxM2Y1ZTkxY2NlZWE3ZGEzMTUxOTlmZmFlYTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU0M2FmNjIzNmRkMTZhY2I4NjZhNWU4MDA5YTg5YWIzOTFmYzk0ODNlNzBlYzQzNDEyZmM4MjcyYTg3ZTU5ODYifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceSplitState.ts#L94-L112",
-          "version": "repo-lines-v1:sha256:d2535dde3ddd674bd3d0ae762ae675c6c841166f2f57992a1141eca9f4a08eb4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljNGUwMzdlMTU4ZGUzMGVkNDNkODQxYjM1YzQ1NTZjNDliZGZhMDM1Y2YzOTU5MWM0NTE4ZGExNzNkM2FlMzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjExY2Y0MDRkODU4NWJhMzIwNGRlOTAxNjlmMjQ4NjE3NzU0MzAzNGMzZWU1MDdhMWVkNGNkMjRlZTE0MGQ0ZWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceSplitState.ts#L88-L112",
+          "version": "repo-lines-v1:sha256:d92cc7dd58d1b665da405e2e20464a7c0edb9cbe0421e284fea38e20197df59a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkOTA3OWJhNjM3YTM5NDg0Njk0MWI0YmZiMWM0NGQxMGI0ODhhYjU1YjE0NTNhMTgwMWY5MGQyMTcxYzBlYWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZmNmFhYmRmODhlOGQ3ODY4OTg1OTczN2Y5ZWIxMmYyODE4NWVkOWZjYTVkYzA4M2MyNTJlZGVkYjg0NDYzZmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAzZTEwYjljMmM1NGY5Y2UwNzNmYzIzM2E3ZWQ1MWY2NjEwNmI2OGE2NjM4ZTA3ZTE5ZWJmYmMxYzZiZjQwZGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhkOGYwNDZiYjMzMDMyMGZkMDI0ZTRjNmM1MzdhN2UyMGM4MTkxMThmOWIzODU5YjM1M2Q3ZTIyZmQwNTVjYmQifQ"
         }
       ]
     },
     {
       "id": "claim_aaa80f100cdc4ca6848c8b0e01f74ac6",
-      "statement": "CHORDS in commandRegistry.ts is the single source of the key caps the command palette prints, always rendered as ⌘ even though the handlers accept metaKey or ctrlKey, because the desktop shell ships for macOS first; the rail tooltips print ⌘1..4 from RAIL_TAB_CHORDS and the HUD prints ⌘0 and ⇧1 as literals.",
+      "statement": "CHORDS 是命令面板键帽的唯一来源，且一律印 ⌘（handler 同时接受 metaKey 或 ctrlKey，因为桌面壳先面向 macOS），但它目前只定义了 railTopology…railCopilot 四个 rail 键帽，而 rail tooltip 读的是覆盖全部六项的 RAIL_TAB_CHORDS，所以新增 rail tab 要改两处；HUD 的「⌘0」与「⇧1」是字面量 title。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/components/canvas/CanvasFloatingHud.tsx#L197-L246",
-          "version": "repo-lines-v1:sha256:92df8daaa384f67e7d4eadc4fd8b1afc9634b17ac7d9a836c9f7cd374475a04d:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI5MmI0MzJlYTRmOGViMDY0Yjc2OWRiNDQzNDIyY2MxYWFjNzNjMmU5MjhmNGVhZDJhODllYzhkZTM3NmI5ZjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg0ZGIxZWY1MGU2N2UxMGQxZjAyNzBjYTY2ZGI1YzEyMzNiZmI3MzhlODJjYTAwNjQ5MzJkMjVhYmQ5ZWQ3NGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJlOTQyZjllY2I5NzMzMDU3YjBmZWY5OGNlOTE2NWEwMjNkODY2MTk3MDJjOTAwM2VkMGRhYmIxOGJlY2M3MGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkwNGUwZTc1MTA2MTY0NzYzNjFkNjUwZmQ3NzUwNTU5NmMzODRkMDM2NDU4ZjNhYmQyYmZmYzM3NjIzZTRkMDgifQ"
+          "resource": "repo://apps/desktop/src/renderer/components/canvas/CanvasFloatingHud.tsx#L262-L285",
+          "version": "repo-lines-v1:sha256:5a20b9b3facf1000dadcaacefab84ddbea000a68bf96c72aaf606e1e98a24f32:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg0ZGIxZWY1MGU2N2UxMGQxZjAyNzBjYTY2ZGI1YzEyMzNiZmI3MzhlODJjYTAwNjQ5MzJkMjVhYmQ5ZWQ3NGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY5MDZjODEyZWRhMDE3ZWUwMzcwNmNmZjQ0N2NmMjg2YmYzMTlkOGMzYTE4ZTBlNzhlNzI4MmFjNjY3Mzk4MTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhhOGQ4NjM5MjI4YmFkNzhkYWYxZmFkNjczM2I0YjQwY2NjMmNmZWJmZWNmMTg5ZWYzN2ZiNzQxOGQ5NDFjMjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM4YTYzOTEwZjczZWZhOWUzM2ZmMzZkMjY0YTdjMGVhOTg1YjkyNTk4ZDUzY2JmMjIyNDdjYmQyYTJmYTMyMmQifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/commandRegistry.ts#L76-L105",
-          "version": "repo-lines-v1:sha256:74327abda4b9ee7939ca39aabd53ea567f7702aad30dd6a5dfc93da4f9a09b9a:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUzYjZkMDg3NzBmNTU1YTUxY2U3YTM4Njc3MmNmZGYxOGU0NmFhMWMzMGRlZDRmM2FiOTA1YzhjZDg5YjcxYzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5NTljZmIzMWJmMTc4MzY1OWFmNTRhZGJmMDE2MDVlMTMwYTdlNjYzMjg4NmUzNDY1Zjc0MzRjOTljZTNiYTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ3NjQxMTFhZmQ5ZTdlMmVkMTBiMjA3MmI1MWM2M2VlNTZmOTQ2MDUwMzc1ZjA3ODg5MjJmY2U4ZDAyZDE1YjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY1NjhiNjMzZWE3ZWFkMDdjNzMxMDkxZjgwZjM0NDhiMzM1MjdhOTI5YzY5NTk3ZDVjNjdiN2IzYzhiNDZlZWYifQ"
+          "resource": "repo://apps/desktop/src/renderer/components/layout/ActivityRail.tsx#L133-L146",
+          "version": "repo-lines-v1:sha256:cf14ab2891707535a3269c5bdd74a6ed76d6ff9cba633d62fe813cf1562dc3ea:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlkMjRhMjFiMTUzODA3ZTY3MTZkZTQ3YTQ0Yzg1YTI1MjZmYmEwYzM1OTJlODRkYjAyYjA0NWQxYmVhYTk0N2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY1N2YxY2YxZWM0MjQzMzkxNThkOTMwNDk5NzkxNjhhZjY4NmI0NDg0YWQwMDRiZjVlNGM4NmQ4MWQ1NDNjY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM3NzY5NTIxMzU5MDVjYTZjMjhjNWIwZjFkNTJmM2Y4MjQ2ZGRkZTU4NDYyZWQzOTA4NGUwM2IxN2FhMmJmZDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRmOGMxYjc0YzA2OTg2NzlmMmRjMWIzZmQ3NTc5MzRiMzljOThmMDg5MTIxOGZlMTFjOTlhYWE5NDI5MDQzZTcifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/state/commandRegistry.ts#L66-L100",
+          "version": "repo-lines-v1:sha256:07b7a3a84506369351023f001343322dd109c75bb86af492a47b8edc6a19b762:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM2NGFlN2U5ZDM4ZWUwZmFjMTM3NjViMDY4MGU1YzNjOWNmNTFiZjQxNzE3NzRjNGJhYzc4Y2VlYzc0OGNkZGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkyMDA1ODIxNmYyMDA4YjY4YjYyYTZhMmFhYWRmMjI1MmJlMzEwODVmMjYyYTkxYzIzNWU2MDFkNjQwNjdlNDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY4ZDc3ZTE1MDJiZmRmMTFmNWI4ZmNjY2NhZjZkYWQ3NjFlZDMzNWM4OTE0MzczNDIyYWY5NzVjMDMxMmZiNzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE2ZDYxNjcxZWE4ZmJmZmQyNTAzZjNhZjRmMGIyYjMxN2U5MjNjNDE4YzhmYmU1YjNjM2IxZDMzOGQxMWFkMDYifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceLayoutState.ts#L56-L70",
+          "version": "repo-lines-v1:sha256:4f829413481eb000f73c211d744385cd19563d8ef16b07cc272224b03d0b1f06:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY1NmU4NDEyNDAwODE0MWU3NzE5ZDE0Y2U0MzEzMzM0YTRlYjIwODY4Y2RiNzBhZjBjMDkxNjc4NjNhNWNmZGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZkM2VhZTc3ZGE5ZmJjMWQyY2Q3MDRjNTQ5NTdmZTY1YzJmN2ExMjNiODYxMDI0NDE1YWQ0OTNiMDE4YTFlZGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI4YjJhMDVkNTQyYjViYmI0ZWVlMzgxYzNmZGNhMWY1ZjY5NGFjOWQxZmYzZTkxZDViNjU5MjZjZWVjZWU0ZjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA4Y2Y0MWRlZjRmMmMzMzhkODY1MTEwODhhMDgxZmY3YmZmOWJlN2U3NjAzZTg4MWY2MmJhNjdlMmYyODFjNjAifQ"
         }
       ]
     },
@@ -187,7 +209,7 @@
       "statement": "rail用Mod digits、view用Alt digits/event.code、V避输入；split映射也含Alt3/4，实际仲裁尊重defaultPrevented，不能只凭显示表断言无冲突。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useEditorShortcuts.ts#L144-L164",
+          "resource": "repo://apps/desktop/src/renderer/state/useEditorShortcuts.ts#L126-L146",
           "version": "repo-lines-v1:sha256:ad49269956a9da7af6650c9de382558e27331bd7ef9ca0ca4f36c43e81131720:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQwMTNlYTk2Y2Y4M2I1ZjNkOGVkOTg3N2NkYjBjZDU5ZjQ2OTNmMThlYjYzMzdmYTBjMGZhM2M3MWM3MmNkM2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM0NWJjNWMxNTJiNGZlOGQyYTFhNzQ5MGE0YmE1YWJmOGRiMDRmZDA0ZGY4YmU3ZDQ0ZWZlOTE0MzA4ZDUzMTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZiMGFjNWU5OTVjYWZjYjAzMzA3MjU0OTgxNjlmZDk0M2FhMWYwNzljNmQzZjUzNGVlMzAzN2I5OWQzODQ4YmEifQ"
         },
         {
@@ -205,22 +227,22 @@
           "version": "repo-lines-v1:sha256:f2c4218c29254b0b543972f911576580b1a8cd3eddb631014464b3c29d175463:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY0OGVjODQ3ODZjZDIyMzM3NDYzMzUwMzhhMDI2NjZjOTlhNDdhOGU1NDdhNTRlZmJhYTRhYzVlMzQ5MDkwMDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFhNjI1MzY1ZGE5Yzc1ZTUyM2U1NzliN2M5NGFkMzY4OThiY2FiNjNhNjViNTgzMTExN2QyMmQxOWE2M2ViNWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM1NmRjZTJlOTE2ZTNkMWUyNTU3M2Y2NGZkZTA3YjdiNjRiOTA3YTFlYjZhNWNmMTdhZDNmZThjM2E4MGM5YjIifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useEditorShortcuts.ts#L78-L83",
+          "resource": "repo://apps/desktop/src/renderer/state/useEditorShortcuts.ts#L75-L80",
           "version": "repo-lines-v1:sha256:940c14726a35b860ff5910523121104728cc18374ef518dea6b3ce0324660ba3:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTcyZDhhZDRiYTY0ODMwN2Y4MmNmMGQ3YjM4MzM1NzAyYTAzZjM1NjMyODlkMmZlNmVhMWI3Zjk3ZjQyNGU1NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWI2MmY2MGQ4NTkwYTU3OWNmNDZmOGQ2NzM3OGM0YzU3MmI5NjJjZWNjZGI5MGM3YTVmN2I0MmI5NjA3ODJhNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmU5NDhiYThkMDBlYjRjMGQyM2I5OWVmNWVjYTc2YmUyYWMyMTNjNTAwNzI2OTA5MDM0MGQ2OTNiNDE3Y2Q0NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDg3ZDA3YjFlMDZkNmIxOTNjZTQ2YjMwZjUzZTBmZGEyNTRlZWVjMzlmZDQxZTY0MWE5Y2MxOWI0ZDg1OTA3YSJ9"
         }
       ]
     },
     {
       "id": "claim_d6dbff505bc4446f93a0490e4d3e2712",
-      "statement": "Within the editor's keydown handler a pending agent patch outranks everything else on Escape and Mod+Enter: revertPatch is checked before the typing guard so a patch can be taken back from a focused field, acceptPatch on Mod+Enter is checked after that guard so it never steals a textarea newline, and both handlers are spread into the table only while a patch review exists.",
+      "statement": "在 editor 的窗口级 keydown 里，pending agent patch 压过其余语义：Escape 的 revertPatch 检查排在 typing guard 之前（可从聚焦输入框里撤回补丁），Mod+Enter 的 acceptPatch 检查排在 typing guard 之后（不抢 textarea 换行），而这两个 handler 只有在存在 patch review 时才被展开进快捷键表。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L560-L597",
-          "version": "repo-lines-v1:sha256:14d9d8b39fbd799c26b49ddf81fad44c6373bd8560e158ccc41c3d271728cb42:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljOWQ5ZDQ5OTExODIxNDdjYTlkZGMwNTk0ZmE3N2Q5Y2I2NzU4NDEzMTk4M2Y0ZjhkOWE5MGUxYjM4MTNmNTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmNDBmOTUwMWE2MTdkZDYzNjFkZTRlNGQzNjAxNmIzMmU3YmEzNTFmOTNkMmVhZDM5MzM0ZGE0MDE4OWQwZmQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI4YzdiNDY5NTRiOTljZjY2ZjhiYzM5ZWYzMzY4ZDRiNjY5YmVlN2Y0NTNjZjhlZTZiMjI1NTZlYmRkNDZlYjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI4M2FlOTE1Y2NiNTljYzI0Yzc2YTc2NWE0NzVkZGM2M2VmMDcyZGQ3ODRhMzI5ZWMwNGFlM2RjMzhkMGE3ZjEifQ"
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L560-L600",
+          "version": "repo-lines-v1:sha256:d462c2637af2de5314170430e8fcdd7a5a7db7aeab273445af8790bf3e8e19f3:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk4YjJhZTU5ZjFmODc0MWUyMDI1MGMwOWVhMzY3NmUyNDFkMTRmN2MwYmJmYWMwYjQ4OWFiMDFkZWE3Nzc1YmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5M2Y1ZmNkYmRmOWQyYjZmN2E0MzI1MWVjMThmODcwNjM3ZmZjMGY4MGZhNWI1YzkwMGQxMmI3Y2MzZWZlNWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNmZDY1ZGQ5MWQ1MDEwZGRhMDYzMjIzMDUwOWQyNTgzNzQwNjkwM2VlMDljNGFlY2JiYTViZDEzNzM5NTA3YmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMwYTM1MWQ3YjE0NjQ1MjFkM2I2ZmM2ZTAwY2I5NzI2YTgxY2I5YmUxMWY0NWU0ODA4YmEwMDIzZDZiYmFkNzcifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useEditorShortcuts.ts#L200-L240",
-          "version": "repo-lines-v1:sha256:705a521dbe584a7558930f0bc82de949dd9b166c33d1a510a3f237b4d731bc21:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkZmE0ZDYzNWViYjUxYjBiNjcxMGFkZTBhMmFmMmNiZThhMmE3NDJmNmY0MDU5ZjRjMGYwMjRjN2Y0YTExYTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAxMzQxZDBjNTg4MmU5MWE2NmM2MGNiODYwMjBiMjQ3ZjBhZmMzMzZjZGY3NmMwYWUxOGJjZDIwYWM4ZmUxZDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJlZmZiMjAxMTljY2QzMTQwNmExNjdjMDlhNjc4ZjJiNTkzZWY3YWQ0YmUwOWRlYzZjYTA3MGIyZTJiYzI0MmQifQ"
+          "resource": "repo://apps/desktop/src/renderer/state/useEditorShortcuts.ts#L180-L206",
+          "version": "repo-lines-v1:sha256:bbf58c003bce00ff3a4c38540c36978d11f80d42ed98a10c65d5856bdfa2e05f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliNjJmNjBkODU5MGE1NzljZjQ2ZjhkNjczNzhjNGM1NzJiOTYyY2VjY2RiOTBjN2E1ZjdiNDJiOTYwNzgyYTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3MTA2YzkyNDcyOTljMDBlMGQwNTAyODA1Mjg1MWY0YTI0NTE4NmI5NzNlYjk4OTAzZjZkYjBiM2M1OTEzYmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI3OThiMzNmY2VlMzcyM2U4YzI4YzdhMDc1Njc3YzZhOTU4MjY3Zjk0Y2E3Y2E4YThiZTFhMDBiOTk2YWY3MWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3ZDBjMDEwZWM2MDJiNzkyN2VlZTQ0NjFiNjkzMTAzNDVmZmQ0NjRiOWNhY2JhZTA1NDA3MTc2MTk1Y2NhMmQifQ"
         }
       ]
     },
@@ -229,26 +251,26 @@
       "statement": "Below the pending patch, Escape closes the split stage before it clears the canvas selection, and only an Escape that no surface claimed reaches clearSelection; the closeSplit handler is bound only while split.isSplit so a single-surface workspace keeps selection clearing on Escape.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useEditorShortcuts.spec.tsx#L120-L131",
+          "resource": "repo://apps/desktop/src/renderer/state/useEditorShortcuts.spec.tsx#L117-L128",
           "version": "repo-lines-v1:sha256:27203285d45999520da08353b4d85325ed4808147cba144d842ae1544045bd49:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlYzgxODNhZmYzODI2MGVjMjUxZjNkNDMzNzZjNzBiYzU3YmVlNjNmY2EzMGRhM2NhOWZiMzJkODU5ZWQ4YjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQwMThkYzg4NTM1NGY0OGNhMjllZDdjZmQzZjQ3ZjQ3ZjAxMmE3MGQwY2RhNGNmNTczMDM0YTEzNDU0OTI3ZDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRlNDBjZDIzMzM2ZmZlOGZlOTA3NDA3NGNhOTk1Y2IzYjNjMzUzMzI0ZDZjNDgzMjI5ZDllODE3MmI4Mzg5NzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY1ZmMwNzhhMjhmYWRmZWJhMmI2Y2E2ZTM4ZTg5ZjMxNTViYTVkZWJhMjIwY2RiMzAzNjhlZTViM2M5NDU0ZTQifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useEditorShortcuts.ts#L210-L240",
+          "resource": "repo://apps/desktop/src/renderer/state/useEditorShortcuts.ts#L192-L222",
           "version": "repo-lines-v1:sha256:d2d20245c3f0f711b72758c88acdb85d88b0324370eca60db690b057123c317d:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg1OWYyYzc2ZTFmZmMzODJlNjk3NTVhOWRjMDgwOTE4YzVkODY5ZjJlNjczMWU1Zjc2NGNiYzYyMTQ1NGMyNzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM0NWJjNWMxNTJiNGZlOGQyYTFhNzQ5MGE0YmE1YWJmOGRiMDRmZDA0ZGY4YmU3ZDQ0ZWZlOTE0MzA4ZDUzMTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJlZmZiMjAxMTljY2QzMTQwNmExNjdjMDlhNjc4ZjJiNTkzZWY3YWQ0YmUwOWRlYzZjYTA3MGIyZTJiYzI0MmQifQ"
         }
       ]
     },
     {
       "id": "claim_3532595ee80542f5ac05f675d47a6126",
-      "statement": "Two surfaces claim Escape in the capture phase with stopPropagation so the window-level editor handler never runs: the key-data ledger sheet always closes itself, and the inline copilot closes itself only while no agent patch is pending, so a pending patch still reverts.",
+      "statement": "两个 surface 在 capture 阶段消费 Escape 并 stopPropagation，使窗口级 handler 不再运行：feature-inspector 的 KeyDataLedgerSheet 总是关闭自己，feature-agent 的 InlinePatchCopilot 只在没有 pending agent patch 时关闭自己（有补丁时让位给撤销）。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/components/agent/InlinePatchCopilot.spec.tsx#L129-L136",
-          "version": "repo-lines-v1:sha256:c26b2193daae95e4cb3f0cf9dcfe925bcf9b56237150b7544ce4937c1e239dac:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODQ5ZTNiNDg2ZjY1YzgyOGIwMjIzMTBiOGZlZmFjMzcyNTdkNjhmNjQ2NzA5ZjNiMDBjYjc4MmFiN2JiZGU3MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTQ0MmIyNzRjNWE3NGMyOThjYTQ1ZGNiZDBjNWQwZjE5OTAyZmM1YmU5MDM1NjU1YjkzMDYwZWNiZjUwMWZhOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGEzNmViMjA1ZDYxYTY5MWMxMjZhMmFhOTYxY2RmN2FiN2M1NGVhY2YxM2I5M2QwNmNjNTQ5MzRkODU4MjNiYyJ9"
+          "resource": "repo://libs/desktop/feature-agent/src/components/agent/InlinePatchCopilot.spec.tsx#L129-L136",
+          "version": "repo-lines-v1:sha256:8d1fb3e021d96a12df4fcb5d4df74d559f3db2efc026a27abe169ca9f05d10b1:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2EzZTQ2Zjk0Mjc2YjZmNmY0ZWQxZjAyYWY3OGJlZjZhMmVlMWM0MzlkZDU1ODRiOTczOTQ4MzEzMjE0ZDJiNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDQ3OWY0NGQyYThlMjNiMzYwODgzNGViODhiY2Y0ZWMyYzBlNGZmMDgzNTAwMDVkYzNlYzUxODNhODYzNzIzMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2Y5Y2UyMDY4YmQzNjY2ODFjMzg4NTA3NWEyYjZkMDYyODBkNGU1NTAwYmMyNjdjOGJmNWRkYTFhOTk1NThmNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWIyMTRlMDYwNTFiZjVmNmY3YTE4ZDU2OWU5Y2MzNGMyZWUzYmMyYjkxNDdiYjk3ZTliOTJiNGExZGJkNjZhNyJ9"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/components/agent/InlinePatchCopilot.tsx#L57-L75",
-          "version": "repo-lines-v1:sha256:536dbcb82a6f68583438df1431b0f4940efb9a47af1d7b1803ab35b0cb77b1be:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkYzUyZjA4YjM5YjA4YjAxYzhkMzA4YmY4ODBiMGJlZjAyZmQxZGZjYzlkOWFhOTNhNGQxYjVmNGQ1OGI2Y2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjllMDRmZWY5Nzc2ZWYwMTgxZGE5NzJjMTJhZTM0NDM4Mzg2MzU3OGU3ZmQzMWRkZGMxYTg2ZGFiNzMyOWU3MjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjViMmExYjk2YmEyMDM0YmEwYzAzOWM2ZmExOTFkMzliNzFhOGI5OGMzOWE1MmZmMDllNmQ4OTIwY2EwNDE5ZDEifQ"
+          "resource": "repo://libs/desktop/feature-agent/src/components/agent/InlinePatchCopilot.tsx#L57-L76",
+          "version": "repo-lines-v1:sha256:b0e0de4fdd86e07f35e4324396213de650591888131e5c63a4407592f0d530bb:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkYzUyZjA4YjM5YjA4YjAxYzhkMzA4YmY4ODBiMGJlZjAyZmQxZGZjYzlkOWFhOTNhNGQxYjVmNGQ1OGI2Y2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyYjcyYWRkZjgxOGZlYjNkY2QzZjM5ZmU1NzExN2M5YzhjMzU0MWU1NjlmODllMGJkNTMzNDU4YzlhYjY0OTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjllMDRmZWY5Nzc2ZWYwMTgxZGE5NzJjMTJhZTM0NDM4Mzg2MzU3OGU3ZmQzMWRkZGMxYTg2ZGFiNzMyOWU3MjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJhNmZmOGJhZjcyOGYxYzBkYzZlMThiOWFkZDA3Y2M1YWJjNjUwZjM4OTgxYTUyOTgwNTY3ZjJiYmYyZWQ3ZWUifQ"
         },
         {
           "resource": "repo://libs/desktop/feature-inspector/src/inspector/KeyDataLedgerSheet.tsx#L80-L99",
@@ -261,11 +283,11 @@
       "statement": "Navigation of the single workspace selection is split into three mechanisms: the bilateralSync focus bus carrying token-stamped focus-entity/focus-rule intents between panes, shell focus/zoom request tokens that make the canvas pan to a node, and a view-mode effect that re-issues a focus request for the current selection when the stage changes away from the ledger.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L315-L330",
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L337-L352",
           "version": "repo-lines-v1:sha256:a308861acae6326c3e1b7f4a621ebb5bc145263acfe698ebc0066adffdfc4000:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYxODhjOTkyZTI4M2VlMzEyYWQzMDg4OGRkZTc4ZGI4YzdhNGEyMGE5ZTQ3YmEzNWU1OTk4YWYxNzYyMmM5NjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMzYTU0N2IyYmQwNDU4NmVlZWZlOTZmMWFhNWE3ZDc1NmZjYmJlYjAzYjZjZDIzMjliNzFiOGM4MGNjYzE2YmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ3OTQzODU3NzkzOGI4ZTQwMWY2NjIzOWZhZWM2NDY4MDlkOGMwZmZkMDNkNzBlYWVkYjU0Zjk5ZmIyOTYzZmMifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L417-L440",
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L439-L462",
           "version": "repo-lines-v1:sha256:42d5fdac0abf4f22a1280b3cd577f440a22ae44798eca94bb161288802df5f1b:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1ZjQ3YzU1OWYyMDdhMWI0MGU0YzUyYjNiZDcwY2NiYmI4MDZhMmEyY2QyMTY4OTdmMzk2ZTQ1MzhjYmZhMjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5YTY3M2RkZjg2ZTFlOGZlNTQ0OGExOWUxYTQ4MWVlYjQwOTIxZmJkZWIyMzUyOGE3OTU3NDQ2Yjc0MjdjZWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmNzcxYjczODVjY2MwMTA2MGNkOWQ3YjFlNDFhYTUyMjBiMWEwZjcwYWU3NDhjNzRiNjA4Y2ZkNjAzMzZiODAifQ"
         },
         {
@@ -279,44 +301,48 @@
       "statement": "The shell is the only place that resolves navigation intent: focusIssue treats an entity#attribute target as select-the-attribute-row plus pan while a Context or relationship target only pans to its geometry without inventing a selection, and focusFromPane ignores the canvas's own announcement, refuses ids the layout does not contain and drops a scope that would hide the target.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L349-L440",
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L371-L462",
           "version": "repo-lines-v1:sha256:e2733f82407948ebda934cf67963aedf8053a8b853c22e806fc20177db5370ed:eyJzZWxlY3RlZExpbmVDb3VudCI6OTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU0NzdhOGM1ZTk2ZTVmZWUyOGEwOTU1MjFjM2MyZTU3ZWU4YzVjMjdkMWZmYzE4OGU2MDg3MzEzZGYwNzA4ZTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRmZWM0NjE0ZGYxZGVmY2ZlZDZjNzEwOWFiNTI5YzU1OTU4ZDU5YTNiMTIzMTA5MmFiZjQxNDA2YjYxY2FhN2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmNzcxYjczODVjY2MwMTA2MGNkOWQ3YjFlNDFhYTUyMjBiMWEwZjcwYWU3NDhjNzRiNjA4Y2ZkNjAzMzZiODAifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceLayoutState.ts#L34-L52",
+          "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceLayoutState.ts#L36-L54",
           "version": "repo-lines-v1:sha256:d6777713f9f315e588045b1f11cb40c176dd9468ffbcb59f93593ab1b7c48163:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjZGVmNzMzYWRhOGJhYzNkMTM3MzkxZGI0MmEwNzljMjViZjY4ZmM2N2I3OGQ5MDc4MGJmMDc5NjNkYWM5NzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1OWZiNGJlNjg4YzNkMmEyMjRhOTU0Y2I1NzIyY2NiMzBkMjUzZWNjMWY2YzUwOTczZGUyYzgwYzZkODYxYmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMxYzE2ZmZlYjI0NDJjNjJiNzdmZjkwZDIyMTg2NzRjNjQzMzI5NWYyNDRiN2FkNjhjZTk0YWM5YmFmMzFmOWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI3MGMzZDYzYzg1ZmFiOTA0OWRhMGVhNTZkMDMyZjJjNDJiNmFkMWI5YmMyZTJmMTBkN2E5NDgwZGZiOWZlYjkifQ"
         }
       ]
     },
     {
       "id": "claim_41b718e19a794e32958e9da1b74c53b0",
-      "statement": "drawer定位后unpinned关闭、pinned保留；search以token开后聚焦，诊断定位与problem active issue协作。",
+      "statement": "「抽屉只是手段，画布才是目的」由三条规则支撑：未 pin 的抽屉在定位到对象后立即关闭而 pin 的保留，⌘F 先打开 topology 抽屉再在下一 paint 用 token 把光标放进搜索框，问题条与 rail 共享 activeIssueId——badge/状态栏只切换问题条，只有画布 finding 或列表内换行会经 openProblemsWithIssue 同时展开问题条并聚焦那一行。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L304-L394",
-          "version": "repo-lines-v1:sha256:d4bd4a4249c543c7cf570136a4b14b9593ae2d25b4ffce827b53ea1571b7234b:eyJzZWxlY3RlZExpbmVDb3VudCI6OTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJkYWNjOTI1MTdmMGQyNmE4OTViY2MyMzhiZTIyNzY4N2VhZTQzYjg4NmI3YzY4N2U5ZmRlNTE3NmFmMzNmNmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImExYzI1MzQzY2VlNTI2ZjUyODU2MDgzNTBmODU1ODFjNGVmNjc2MDdlNzRhODcxNDRhZDM3MzI2YWU5Y2Q2NDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMyNDI3YzhlMTZiNDI5NDFkOTJiNjBjOWQ3MGYwZWM0NjIyOGQwZWYzZjQzN2E5YmRjYTkwNjEyYjRlOWY1YWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFjNDk2OTlmZDY1ZmIyZTAxYWM5NTg1ZDVhZWI3MDdjNjU0ZmQ4OGMwMzQwMzMwMDU2NDUxOTVlOWM4N2Y3ZDkifQ"
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L322-L340",
+          "version": "repo-lines-v1:sha256:83a62f1398dd71d2bcd4269d8b86a0ac210e5d9079b5b165cba7052987123f0c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdmNTZhZjAzZmZkYjJiZTRjOWU5M2FhOTRkNGVmZmNmZTBlOTViZmFmNTRlZTg0NWRkODUwNGJjNDYwYTIxMDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5NjZmYmZhODg5OThkYTc0NjU2YzUwMTk0OTU2YzI1ZjA4NDk0NTc2NjBjMDA5ZmU2M2QxZTlmYTlkYzkzMWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ5NWZiZDE1ODg4ZjFhMzQwNGJmNjhmNzhlMTM2YTE3NjNmOGJhYTlkYTQ4ZTFiMzI1OThiZDQ2NTZlODE2NWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU4ZmNmMDU4NzczM2ZhNmViYzRlMjdlMTc4NjRlMGJmM2NhZmQ2NzgwNjI2NGM3Yjk1NGY4MmZmNTZjZTkwMmQifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L881-L895",
-          "version": "repo-lines-v1:sha256:5dd0fbe8f59a77874b2fa3d06b1613900906d01c080ee6c9300a1d8fe744d663:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgyYjIwMGVkNmEwMWY3MmY5Y2VmYzI3ZWEzNmM1YTM2YzljM2M2YjgyOTJmNGM2NGM2YTJkNWE0ZmM5MTU5NjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJmODIzOTk3MTQ1YWEwNjA1ODYxZDRhOWNjMTM0OTJiNGQ0NDhiZDk5OGVjOWU0MDJkOGNlYmNlYjMxODI3YjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3ODkzODI1ODQ3MTRhZjg1OWRjMTgzYzdjOTBjYjRmMTI1OWJkYjY5YmE4ZWRlOTIzZDBjZjFlZTgwNDM2NWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzZDJkOTBlZTA0YWJlYzkwODQ5NjkwYTljYThjMTQ3ZWZlMjFmNGFhZGQ0ZDk0OGM0NTlhYmEzNTA5MmFjMTIifQ"
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L356-L400",
+          "version": "repo-lines-v1:sha256:23a5ff5d68605a9a390eb4fdb4e11f211e959b2c250897e41f203b5d3c241af4:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdiYWE0NzQ0NTZhZmIxYTY5YjdkNWM0NzM2NWNlN2ViMTFlOTNmOTZmZmYxMTExYWY3NWZkZmFmYWFmNzc2MmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ3OTQzODU3NzkzOGI4ZTQwMWY2NjIzOWZhZWM2NDY4MDlkOGMwZmZkMDNkNzBlYWVkYjU0Zjk5ZmIyOTYzZmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE3NDkyMWQ3NjExNTNjZTZlZmIxY2Y3NWMwOTc0YmI5MDg2ODYzMTI4ZjRiMDgwODY1ZWI3ZGUzZGE0MzNlZGEifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L886-L900",
+          "version": "repo-lines-v1:sha256:e455f0fd6c59f8420138cea01fd86793f0ee8a527557ee91e75c10bfb7bf3cbf:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5YzFkN2I5M2FmNGYwYjUxYTA1NGNlMGZjZjQzNGQzNDA0NTYzMzIyMjVlM2UyMjJiMDRmYzI0Njc0NWJjZmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVhZWE2ZjIyYTllMTZmODg5M2NkOWU1ZTM5OTkxNDE0YTgxYmFiZTE5ZGE4ZmMwYTA0ZjA4NDk1NjFiNzZhMmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZmZWZmYWVlODMyZjM0MjRmYmI1YWUyZGRkMzNmMzI0MGRiNWEwOWIwMWFhZWNiMWUyNzk4YmMxNTIwNjJhMmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZjNWIzMmJhMzEzYjRmMmZhYzAzOWMwYWJmY2NlZmI2M2VjMDI4OTMyNjc4MmM3Njc5MTlhNGVjMWM4MGFmZDUifQ"
         }
       ]
     },
     {
       "id": "claim_ffbf6555c99f496f8c8883bb4eb723f5",
-      "statement": "The command palette is an index over existing behaviour: buildCommands is a pure function of CommandCapabilities and the same handlers the chord table and header call, disabled rows remain with an explanatory reason, object targets appear only once the query is non-empty, and a chosen row closes the palette before performing its action so a native save dialog is not left behind a focus trap.",
+      "statement": "命令面板是既有行为的索引：buildCommands 是 CommandCapabilities 与同一批 handler 的纯函数，不可用的行（撤销/重做栈为空、已在该视图、没有选区）保留在列表里解释当前状态而不是隐藏，业务对象分组只在查询非空时出现，选中一行先关闭面板再执行以避免原生保存对话框留在 focus trap 之后，useCommandRegistry 用 memo 稳定顺序、groupCommands 固定七个分组。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/components/command/CommandPalette.tsx#L44-L110",
-          "version": "repo-lines-v1:sha256:981d37a9ae99d59b352e4feae392a681fbd901e6b391642daa69fd6da0c7f6ae:eyJzZWxlY3RlZExpbmVDb3VudCI6NjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMyYWQ5MDNlMmM2Zjc4MTc3YjIzNTc1MjUxZmVhODMxZjI5MzUwNjg0NDJjNGQ4Nzc4MWFjMmEyN2RkYzJlZTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAwNjQzMWY0M2M4YTJmNTQ4YmM1YzRhZGI5Mjg1NTFmY2JhZjAzNGI1YmZhNDcwNGY0M2E1ODRlYTA1NmVhYTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE5NWJmNDEwNWVjOTg3MzdhZjUwZDJkMmVhOGI2Y2VjNGQyMjFkNmU2NjgwMTJiN2Q1MzI3OWIxMjJjNDEzMTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI2MzcwNTM5NTlhZTUyMjUwMDM2ODVmYmYzODdmOGQyNDU2MzNlMjFiYzI1NmFkMmY2ODVmMDNjMjFkYTIwMGMifQ"
+          "resource": "repo://apps/desktop/src/renderer/components/command/CommandPalette.tsx#L44-L80",
+          "version": "repo-lines-v1:sha256:afb460e3f218a76c33eb5205b567f057d86949eb94f83e89a2eb686a359a41c3:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMyYWQ5MDNlMmM2Zjc4MTc3YjIzNTc1MjUxZmVhODMxZjI5MzUwNjg0NDJjNGQ4Nzc4MWFjMmEyN2RkYzJlZTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJhNzE2MDY3NGQ1YzdkNGJhZGZhYWRlMzAwNWE4NDI3MDUyMjc2MWZkODMwODRiMGEyZmM2YzQ0ZjUwMzE5YzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE5NWJmNDEwNWVjOTg3MzdhZjUwZDJkMmVhOGI2Y2VjNGQyMjFkNmU2NjgwMTJiN2Q1MzI3OWIxMjJjNDEzMTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY2NmU1YTEwMjAwYjE0ZjUwNjViNWM1NDAxY2ZiMzVkZWQwNzNmNzgxZDk4ZmJmN2Y5MzkxYzYwYWU3MWFiZmIifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/commandRegistry.ts#L150-L166",
-          "version": "repo-lines-v1:sha256:7e38e5e350e38949ea4d673c2a57ce665f3ebdffee8d57fa86d70eb87d680d94:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1ZTFmNzA2NjE1ZmZmOTk5ZGMwMTE4ZDEwMDYxY2MyMjg4NTU4ZGM3MjYxNWM0ZDMxZThjZDZiZmYxNDZjNzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgzMDQ3OGFmMGE2MzlmYzlhNGQyMTAwNWFmMGFkN2MyODA4ZTUxNmU1NzZkYTUxOWVkNzFlNGRhOGI2ZGU3OGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVhOTcwMjViMGYzNWZiNjlmMzZiNzFkMTQ0ZjFmZjc0MjE5OWZmMmUyNDBhYWI2ZjA0N2RhZjY1N2E1MjkyZjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjExMDQ4OTFlMTQ3NDI3YzFhZWQ2ZGJlMWYxZjkyMzY1MjE2MDRiNTllZDFmYTMxNmI5ODRhNGMxYjI2NTQyZWMifQ"
+          "resource": "repo://apps/desktop/src/renderer/components/command/CommandPalette.tsx#L88-L140",
+          "version": "repo-lines-v1:sha256:8bcc0ca9a684a7eb100308f59930dc4f461b431a569d92cfb03f78be1e1b7806:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM0NWRmYTg0MGJlYzhlYjNjYmZiZGFhMzg5Mzc4YTdlNGM4NThiZjMxMDkzYjBlNGI2ZTJjNzYzMzNmYjI1NzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMxNGNhNDY5ZDE1ZDQxNzU1MmM2ZmZlNWZhNzJlNzkwMTA1NzQ0NDUwNjIyZWMwOWM5ODYzZGQzMzY3Nzc2YzIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBiNmMyOTU5YzEyNjBmOTgxYmU4ZGZhYzA5ZjcxZjgzMjk5MTk4ZmU5MDQ2ZDIxZjc3ODUwZGQ1MWRlOTk0NzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU0MTQ4NWVhYTVlYzViZmQ0ZmEyNTM2MmI3YTMwYzRiZGY1NjNjYWFlOGNhZmVlZTBhMjgwMzQzNjhjMzE2NTcifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/commandRegistry.ts#L168-L385",
-          "version": "repo-lines-v1:sha256:47c2a0872bdf97a8ef82ff8fe1c8855011f2e103efc98996d9715a8a99fd4dea:eyJzZWxlY3RlZExpbmVDb3VudCI6MjE4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJmOWNhODkxYmZmN2FjMWY3Y2VhYWU0MGVmMDUxMDY2YmU5ZWZlNDdiNGU0MjgxZTg2YzMxOWJlMmM1NWViY2U0IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJiYTE5MjZjMjQ3NzQ0YTM5MTZlODJiN2Y3MjE3MTRiZjljN2Q2YjgwMmRkZmQyMzQxNjY4YTJhMWIwZmYyNWQ0IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3MmI5NTg2ZTRkNzhjODQ5Y2ZjYTZmMTExN2ViNDlmN2FmNDAxMGI4ZTZiNDkwMjU3ZDI4M2VhNzM3YzMwNjVmIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+          "resource": "repo://apps/desktop/src/renderer/state/commandRegistry.ts#L120-L200",
+          "version": "repo-lines-v1:sha256:7ad2fc123343c72956cb9cafbebcf2029b2e9d03cb882f8f63e83d0ae3c9731d:eyJzZWxlY3RlZExpbmVDb3VudCI6ODEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3MzgwNDgzZWY2YjA5Y2QzYTRkNjAyZTc2OGI4NjA3MDY5MTdjMmM4OGE5OTc0MzFkNDBjYWVlM2FhZmU3ZmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwMjFjYmFkYzcyNGIxOWI2MTdiZjljZmExYjI1YjhiZDk4MGMxMTMxZjUzNjdjODFhZTczMThhNTNkYzZkMDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIxNTIwMjQyOTZhYjg1NGFmNzBhOWE0YTY1YTUzYTk0YWRiY2FhOTlhNWU5OGY0NzNiNTNjOGUxZDQ1NmI4ZjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY4MmM4NzljOGU4MmZlMTdhYjNlNjQ3YWNiYmQ1ZTZkMGI1MzkxMjQ1ZDBkNjViM2NlYTBjNzM3MDI5MDRiMzMifQ"
         },
         {
           "resource": "repo://apps/desktop/src/renderer/state/useCommandRegistry.ts#L8-L25",
@@ -326,15 +352,19 @@
     },
     {
       "id": "claim_1293ea70857245f99cb59a987829ab47",
-      "statement": "The floating HUD is a workspace control island, not a canvas one: the canvas supplies only viewport math and positions the strip at the bottom centre, and CanvasFloatingHud adds card density, view mode, split target and paper while deliberately offering no object-creation action, because creation must honour Context and role bindings owned by the inspector and the agent.",
+      "statement": "浮动 HUD 是工作区控制岛而不是画布的控制条：CanvasViewport 只提供缩放/底纹/minimap 数学并把条带定位在底部中央（absolute inset-x-0 bottom-4 居中），CanvasFloatingHud 再加指针（清除选择）、卡片密度、权责泳道/拓扑布局、业务场景推演入口、视图分段控件、分屏对照选择、「只看总台账」、底纹与 zoom/fit，并刻意不提供新建对象，因为创建必须遵守 inspector 与 agent 掌握的 Context 与角色绑定。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/components/canvas/CanvasFloatingHud.tsx#L58-L121",
-          "version": "repo-lines-v1:sha256:2d4088a489d680890f7914d01b35e9399de26c38228c5ccae57457b10640fc66:eyJzZWxlY3RlZExpbmVDb3VudCI6NjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE0NjdmZWRkZmIxYTM5NjM2MTM0MjdiNjAyYzMzNTQxZWU2NjE4NjVlODA4OGE0OWQ5NWEzYWNmZmFiMGFhOWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MzY2MmQ4NDUxNmY2OGE4NWYyYzYyMWVjNDAxZTBkYWYzMDUxODM1ZTNhZTdmMzQxMGQwMTU3NzJiMDlmNmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRjOTAyNmJhZTZmMjNkNDExMmQ4MWU5MTU0NjFjYzE1NDBjMjJkZTI5ZDM1NWJlMGNjYjkyODdiNjEwNTExZjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJkNzc4OWZhOTI4YzRlODQxNTg0ZDRiZThhN2VlNmRmYjExN2MyNjBhODFjNjNhMWI5ZThhOTViZjQ4NTczZGYifQ"
+          "resource": "repo://apps/desktop/src/renderer/components/canvas/CanvasFloatingHud.tsx#L122-L250",
+          "version": "repo-lines-v1:sha256:6830a0bc8d29918284a1dd06c7ea4b7f77f811bbd932b7d0e8baf2f0ae0c2ee8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTI5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIzZWNkOTM3OWE1YWNkZjA3NDE4NjQyOGI2NTA0NjliMTNiOTQxZThjMzAyMjc2NmQ0ZmMzYzk2ODlkYzIzOGFiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI2YzBkYmRkMzI4YjYyOGEzYjJiMThkMmMwMzkzOTc3ZTcyNThmNzAyOTliNDA0MGZmMzI5MGM4NDlhNGY4YzIyIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI5NTYxN2UxMTdjMzVkNzBlYTEwZjQwNTAwMTQ3OTgxYWMzMGY2MjA1MzAwODRjZDQzZjk1M2MyZjE1MGNjYzM3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI5NTYxN2UxMTdjMzVkNzBlYTEwZjQwNTAwMTQ3OTgxYWMzMGY2MjA1MzAwODRjZDQzZjk1M2MyZjE1MGNjYzM3In0"
         },
         {
-          "resource": "repo://libs/desktop/feature-canvas/src/CanvasViewport.tsx#L555-L573",
-          "version": "repo-lines-v1:sha256:b08e7b32975391365b2f42db75bdfcfebc9d26e22b2a8d3a754d8da4096b9131:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxNjRlYzE0ODM4OWQyZDUyNmJiNDVlNTc4N2UwOTM5MTI2NWYxMjMxY2EyNWNiOWJkMzQ0N2QyNDczODY0NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNjYjFhMmU4NDBiN2ZmMDE0MDJiNDQ3YzdkODNlZjYwNDM1ODY5ZWI5NDIzNjkyNGFiM2QxODcyYmQyZGYyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxY2E2YmQ4MTFjOGJkMjhjMmJmMWIwMzdhYTRmZTZmMWFhNzc5MTQ2YmU2NDIzNTE3Y2E0OTI3MmJlMDFmYjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI3NTM4NzY1ZWUwNTQzNjE1NGI3NWNjYjZkMzUwNmEyMzE1YzhkYzY5ZGMzYzE1YTJhOWY5NzZmOTZlYTNlN2UifQ"
+          "resource": "repo://apps/desktop/src/renderer/components/canvas/CanvasFloatingHud.tsx#L60-L121",
+          "version": "repo-lines-v1:sha256:631e9f1a184d1021c3f40cd4a742d9df66283334aba68bb1114f17805f1b9e05:eyJzZWxlY3RlZExpbmVDb3VudCI6NjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY2NjIyOGMzNWZiNDExZTNlY2IzZDQ4OTkzZThjMmY1YmM5NmZmMzVhM2RhNjZlMjY2ZjM1NDFmNzljODFiMTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY0YmIyMWNmZTNhYThhNWRlZDZhMGJiNTY2ZjNlZmJjOTcxZWI3ODNhYmIwMWI3MmRlZjI1ZThmODMyNjJiY2QifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-canvas/src/CanvasViewport.tsx#L595-L618",
+          "version": "repo-lines-v1:sha256:46cff969060a88ad5c858ceabb4f930f73f2ee14535bdf91039af4b54c6f1203:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxNjRlYzE0ODM4OWQyZDUyNmJiNDVlNTc4N2UwOTM5MTI2NWYxMjMxY2EyNWNiOWJkMzQ0N2QyNDczODY0NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUwNTYzMDRiMGVlYWJkODhhZDRjYmRkNjBiZGY0NjY1MWFkODU3YWQxZTAxMDRlNDJhYmZmNmIwNDNhZThlYTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxY2E2YmQ4MTFjOGJkMjhjMmJmMWIwMzdhYTRmZTZmMWFhNzc5MTQ2YmU2NDIzNTE3Y2E0OTI3MmJlMDFmYjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwMTk2OWE1MTE4NTIxZTk1MzQ5NDI4YzEwNGRlODgwYTk1MWQ4MGIxZDZjYWUwMDI3NGY3Mzk0YTlhMTI5NGUifQ"
         }
       ]
     },
@@ -343,11 +373,11 @@
       "statement": "EditorScreen replaces the entire workspace with a message screen when the project path is missing or projects.open fails, and renders a role=alert strip between the header and the studio while live model sync is failing, rather than letting either failure hide inside the studio.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L126-L152",
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L138-L164",
           "version": "repo-lines-v1:sha256:037fe0cef8f68712b1472f543c0a8d4574cb05692c4946487bc3f87816d8f47d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdmZjUwYmE5YzJmODRjMjAyYzk3NDU3NmU0N2VmOGRkNDY0N2FmYWM5ZTNlZWI4MzgwZTBlZGZjNmY4NWE1ZTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU4ZmRiNWU2NTVmY2Q2Yjc5NThjZTlmOTNhMGM1ZjRjMzRlODIxOWQ4NjNjMTJhNGMwMzgyNzQxMjg3MjAyODAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU4YTQxYzBlMzlmODRmYjVkZTAxN2RjMmQyZjBlZTY3MzIwZWE5MmQxMGJiMTRkMzQxZDE1OWY2ZTA0YmY5ODIifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L825-L827",
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L840-L842",
           "version": "repo-lines-v1:sha256:efa2a54adfb3ac4e52b19c18a02ab034a9bf802361a3052e9b41a9146beb09ad:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDhjNjIxZDliMzZmZmZmYjZjZDdjM2RiZmQ3MGZjZmMzNTJiY2NjMjAxOGI5YjRhMjZiZGZkNjQ0OWRmNzNmMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2VmODYwZDJmMGZhMWMwYzMxMmNhZDBiNDE1M2Y3MWM4OGI3ZjdmMmQ2MTZlNDk0OTAwMzc2ZDU1YmE4MTU0MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzBkNDFmNjhhOWU4MmYzZDZhMjY0NmY3OTA5Yzk4YWIyODFmNjhhYzE2OGRlNDhiMGJjZWYyZDNhNDAyNDFiYyJ9"
         }
       ]
@@ -357,7 +387,7 @@
       "statement": "The wide key-data ledger is a modal ui-kit Sheet opened from inside the inspector, and Alt+L opens it only while an entity is selected, which is why the inspector binds that chord rather than the workspace shortcut table.",
       "evidence": [
         {
-          "resource": "repo://libs/desktop/feature-inspector/src/RightInspector.tsx#L73-L93",
+          "resource": "repo://libs/desktop/feature-inspector/src/RightInspector.tsx#L76-L96",
           "version": "repo-lines-v1:sha256:bd55829b54922960728dd15e57ab1cd4547bd1b02867189ea1b30921aef54920:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ4MGUxMzE5NDFlOGVmZWMyMGJjNzc4ODE2Y2Y5OTE1MjY5MTZhN2E0NDhiZDg1OTZhMTkwYjQ1ZTUxMTFjODEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlmMTY0MTMwZDc0NGVjNjE2Zjc1NjcwZDAxY2I2ZDEzMzMyMmZiZDFkM2NmMjllNDdlMjYzZjcxNWRmZmIyZGYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ0OWNhNzI4M2YzMGQyZmQ0OGNkNjhmYTg5NzY3YzJhNDQ5NTIxZTY1ZTM2ZTdmNGI1MGZiYzdkNDdmMGJkNDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJiN2MzZDUyNWY4YWMzN2FjMThiZjQwMzk4MWMxMzkzMmNjODZmMDZmNDllZTY5ZDdmMzg5NjAyZDYxNjU0NjcifQ"
         },
         {
@@ -365,10 +395,118 @@
           "version": "repo-lines-v1:sha256:94154cc57ea2f6d84482d6b4fba454bd86fbeed02472e686b78aabbcf2a3a969:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3Y2VmYTM5MDdlZWU2YzBhNGUxNTZmNjQyN2Q3ODg5NmJkNzA5ZTFkZDUyN2I1NDRmMWM3MzQxYzQ5YWZmZTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdmZGI4YTc1YWJjMTZiYzIyMzEzYmRmZTFiYWNhOWI1ZGJiN2YwZGViYjhmYjZhMmViYjg0YzMyZDEwODUxM2MiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk1NWNiMjYyMTM0ZmNjNTNhNGI5YTljZmIzNzk5YmZmOWRhNTA4Y2Y4NjQzNTA4NTJlMDcxMzYyOThjNWY2YTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzZGQ5ZGFkYTM4NDI3NmIyZmJlMWI0MTQ2ZGE2MzVmMDQ0YTM5M2Q0NGMyNDQ2MzQxMmUxMzU3NzA1MTdiZTQifQ"
         }
       ]
+    },
+    {
+      "id": "claim_c59c59c9cf564a5aad6fe74634589ff4",
+      "statement": "BottomStatusBar 是 32px 状态栏：左侧把 FM 一致性结论与传感器门禁摘要（阻塞/警告/提示计数、门禁标签、stale 标记、API 路由覆盖率）并列为可点击入口以切换问题条，中段给业务对象/履约连线/上下文计数，右侧显示保存错误、外部修改的重新加载/忽略以及 dirty 或已保存时间，因此判定结论与写盘状态在画布之外同一行可见。",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/BottomStatusBar.tsx#L130-L225",
+          "version": "repo-lines-v1:sha256:5ad0611ce4c458553f861b98381b12a29cc2bdcb509bcf9b28b4aa87f7891e23:eyJzZWxlY3RlZExpbmVDb3VudCI6OTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU0MDIxZjAwZTk2OTlhMjRhMmM1N2IxMGFhZjg4NjhiOTQ5YjIxY2JhNDU2Mzc0MmMyZWRlZjRjNDMzOGNkMDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5OTY3ZWMxZWQzODM2ZjhlYjE3YWZmMTcyYjViZmVmN2RlNjA0ODVhNDM5YzZjYTExYzU5MWUxNzU1NzM5YWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZjNWFmZWVhOWM0ZDFmYWM0ZGQxMWNiNWExMzU2NzcwZmMwNDgzMjI0ZWJhMmU0ZWU4NWNiZDk5YTA1Nzc3NGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/BottomStatusBar.tsx#L41-L64",
+          "version": "repo-lines-v1:sha256:838496fc9bbdf1d969a8739f065147dbacc90c5b91521122b8f26557c63af660:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZjZWI3ZGFlYzU4NjQxMDM1ODhlYWQ2MDQxY2Q2NWVmN2ZlNDk4ZTRlNmQxZWI5ZDQyMmNmZDQxMjIzM2NkNDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU3ZjY3NmVkNjQ3ZmFiNzNmN2EwOGE4MDY2NzdlYmUyMjQxMzNiMmVlOTllODVkMDM5NWUxMTJmYzQ0MDQ1NTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdhODc1MzAzZGYyM2Y4OGRkODY1OWIxOThiODg5Y2IzY2Y0YTc1NTU4YjU5ZGRiOTVlOTlkOGU0NWU3OWU5YjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ5NzE4NGQ3YWNjMjQwYTg4ZjExZWY3ZTJkODI5MGU2N2FmN2QwYjcyZDdiYTc5NGQ0ZWVkOWRiNDM5MmY1MDAifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L1043-L1057",
+          "version": "repo-lines-v1:sha256:2d601c9b768c6e9bb028261f3e213b69f0b5147b07a279f0c50595c79f5eb9ad:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJiNTBlMmRlZWY0YzZiNWI4MGI4MDAzNDBiMmRlMjhiNzRlZmI5YzZiNTFjMDU4ZWMyNmUwMjkxMzcxYWMzNzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA4OTkzODYyYjU3M2ZmMjUzMWQzOTk1YWI5Mzg4YzM3MGQ5OWI2Njk1ZjVlNDVjNWE5ZWE4MTUxZDVhN2E3NjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFjOTI5OWI1MTRlMTBiNzcwZmZiZmJmNTEzMzUzNjgxMDg0MDQxYjQwMjU0NmMyMDNjZTc4MThmMGRjNmFhZjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFkMzcwZDFkOTYyODk5OTQ2MzM1MWIwZWNmMWUzNmVhOTZmYjQzNjNiYTU3MWFhMGY3NzI5NDA2NGI4NDUwZmMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7bddc42266b34722beda113e57c9d744",
+      "statement": "ScenarioStudioModal 是本地推演弹窗（唯一入口是 HUD 的「业务场景推演」）：mount 时取 session.getDocument() 快照为 base，编辑只改本地 items，document 一变（含 undo 与外部修改）即标 stale 并禁用保存；保存走 session.mutate(replaceScenarioExamples(...)) 进入 undo 历史但仍需 ⌘S 落盘，「保存并放映」再 selectFlow + setSkipAi(true) + openSplit('story') 并关闭弹窗，只写回既有的 entity.examples[].test 通道。",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/scenario/ScenarioStudioModal.tsx#L144-L160",
+          "version": "repo-lines-v1:sha256:0b0c5972fa73e885b4b72a83eacfc54e450d5439ef6ee8a34f0edc6b558fda29:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMzZTlmYThjZjM4NWQ2YmM3MDI0ZmEzY2VhMjdjN2U4ZGIwNWJjMjVjZDhjZmNkNjdlNWI2MmFjZTk0Nzk4ODUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZDI0OGM5MWU1NzMzNTc1YTBmOWE5ZDJiMDY5MjljN2UzYzZmMzE3ZmRiOWExMjZiNzkzN2YyODY2NWY0ZGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc1ZWY0ZjEzNzZiNzRjMzgxYzkyNTViNDE0YTY5Y2VmYzhkMmIwNTI0MGQ2ZGMxNjI0YjYwZDFhNTdlMDMzNWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRjOTIwNDlmZjc3ZWEzNjE1ZjI0NDMxZWNkYzY2MDE1YWZjMjlmZjhjMjViYzIyNzc0OWQyODZlNzk5N2ViYWMifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/components/scenario/ScenarioStudioModal.tsx#L44-L78",
+          "version": "repo-lines-v1:sha256:561444530ac72490c4cb3dffed38e30c5669bd5fd1fe8152b7d95e441b15ccf3:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkxYzJhYzkzMzQyNjJhMzg3NjgyNjY1MGEzYmNhZDBhY2U0YjRkYjcyZWZjMDdiODZlYjU2YWE3ZDU1YjhjMDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZlZmY4ODhlYjM2N2M5YWQ1OGZjYjI4MGI3YjkyODAxMTFiY2UwZTJiMDVkYWEyNTE1ZTI0YWJhOTVmZWFlNjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA2MzIxZmY5N2ZiZTc0MzI5MGFhNjAzMGVkNzNkNDhiZmJkZjE5MDdkMDhhNzZkNWE4ZmY1N2JiZjkzZWUyMTgifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L1066-L1080",
+          "version": "repo-lines-v1:sha256:6c4061e65848edca4d2cb439c392b827b900899c464e6f6761387da127d81a30:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmNDA4YzQzMjQ2MjQ1OTJjNGQ5NzY3ZjI2OWM2OTMwZTBkNWY0NmVlODA4ZDU3ODE4ZmRmMzgzMjA1NzhkZGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhjODRkYzA5YzU5MWQzNWI4YmU3NjBlMzZkMGIxZjM2OTI1NDU4NWQyYWEzODIyM2M1Y2RhMTZmNGU5NDE5MzYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZlZTdhOWU2NzRmYTVlNmU2NDg5MTc0NTIwODhmZDY2YzcyZDg5NzQ1OTgyMzhmNzA4ZWFkOGNmMmZkN2VmN2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNjNzA3MzMxM2FiZDE4MTA1YzVjYjJmMzY5ZTQyNmYxNTY0ZWRlODQ5MjZlNzYyMzlhMjY2MjVmNWE0MzlhYWYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_984dd9a64d7c4760b1fdf195b1436e99",
+      "statement": "Dashboard 只负责「进哪个项目」：App 用 hash 路由把 #/editor?rootPath=… 交给 EditorScreen、其余交给 DashboardScreen，Dashboard 读 projects.listRecent() 与 listTemplates() 并给三个入口——从业务文本生成（IngestDraftModal）、新建模型（CreateProjectModal，默认 procurement 模板）、打开本地项目（showOpenDialog → projects.open → openEditorWindow），starter 卡片过滤掉 blank 模板并显示模板自带的对象与规则数，打开失败时把错误留在页面且不开新窗口。",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/App.tsx#L5-L28",
+          "version": "repo-lines-v1:sha256:9898766a7d4c15c2531d93bf7c10727f616302cafdb04d7e89adb46525c0f218:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE4YjBmNzRlOGQ3MzFhY2RlZTk5MTY4NGI5MDJkZWEwZDM4ZGU2MjRlMWIwNjZkY2IzNzg2MTcyZDNkZTYwZTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU0MzA4Y2U2M2ZjYTI4OTUxOTkwOWI5NTE4MzEzYThiZTFjMGI1M2ExMTMwYmZkNjliMzdhMmI1NTI5YWFkZTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/screens/DashboardScreen.tsx#L100-L180",
+          "version": "repo-lines-v1:sha256:c768031e087acd3e4e66ef9c682a5bd63ad3fb03065b6d8ac7339e762945e99e:eyJzZWxlY3RlZExpbmVDb3VudCI6ODEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBmNjg3YzQxMzc1ZmNhMzJhMWMwYzM2OTExOTZjM2RjMGI0NDk3MDVlODdjYWZkODRmZGVlYzhiZmI2OGNiZGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY5OThmYWE2ZjY0NjA2MTE2NzIxOWY3NTM3YzE4OTQ3MmM0NzAwYjkzOTQxN2Y2MTM0YzU2YjVkYmY4MWM1ZTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI2OTQzMDczZWI4NTQ1ZDg3OTgxOWM0ZTg0MWE4ZDdkMzk2ZWI3NjVjZjgwOWFlODIyMGM0MWFkYzg5NjAzODUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ4YWZkZTlmYWFmZjIxZTkyNmQ1ZThkNmQ5MjQ4YWExNDY5MjUxNTNmZmRjYzM1Y2ZmOTMwYzdhYTFlNjIyNTYifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/screens/DashboardScreen.tsx#L16-L100",
+          "version": "repo-lines-v1:sha256:31153f3dd1ec3024923e96743d0451933079ea4f8eecd4bb748ace8fc15193bd:eyJzZWxlY3RlZExpbmVDb3VudCI6ODUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ1NmNhMTFlZDdlYjg4NmI3ZDU3Mzc0NTFiOTVlZWFjYjA0NjM4ZmQxZDc5NDgxZjZjMjRmOTliODVhMzhiZDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBmNjg3YzQxMzc1ZmNhMzJhMWMwYzM2OTExOTZjM2RjMGI0NDk3MDVlODdjYWZkODRmZGVlYzhiZmI2OGNiZGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxMjU2NTE5Yzg3NDc3ZDEwNWRjYzQ0ZWQyMmY4Nzc2ODYzZmQ3ZmQwMTMzYjAzM2NlZjc3OTIxMjRmNDgyNmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVlMWFjNjAxNjJiYmIyOWVkOWM1YzI4NWY0MzM2MjZiMzQxNzU5NTAxNGExNTYyYWJhNDI5NzU1MmIwNjNkYTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4d58968b85d748c7aa1b93a3633bb272",
+      "statement": "界面形成固定的所有权边界：DeliveryHub/useDeliveryHub、DriftRadar/useDriftAudit、StoryDrawer/useStoryPlayback、RightInspector/KeyDataLedgerSheet、AgentCopilot/InlinePatchCopilot、CanvasViewport 的实现住在 libs/desktop/feature-*，而 apps/desktop/src/renderer 只提供组合件（ActivityRail/ActivityDrawer、SecondaryStage 及 OpenAPI/CEL 视图、TopologyDrawer/ClauseTraceDrawer/WorkshopWizardDrawer、CanvasFloatingHud、ProblemsPanel、BottomStatusBar、McpStatusPill、CommandPalette、ScenarioStudioModal）与窗口/路由，focus 与 portal 语义由 ui-kit 的 Dialog/Sheet 统一提供。",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L18-L70",
+          "version": "repo-lines-v1:sha256:ff79b71d99f35ded9c5c2988774074e278f780e749533c0f0bd4cf88ffb7579e:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlmOTE2ZTQ1ZDNjZGYzYTk5ODFhYjljZDY1MWU2Yjk1ZTBiMTMwZGMyNGMyYmU5ZjQzZWU2MDMwZjA2ODgxMTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJhM2Y1NjBjNDg2NjhiMzQ0MmM4ZTBmMzEzMGUxNmU4MTkwNzhhMjllZDBlNzk1OTg3NGRiMjEwMWZkMjFiNmQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY1YzM1YzI1NWU4Y2RhNTJjYTJkZjdjMmI0MmY5YjUzNGMxOWEyMzllNmRkNjI0NzU4YjVmNzc0OTkxNGQ4NzQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI4MzYwNTQxYjk1YTk3MmRiMGYxZDQxMzIwMjg3NTIyZTZhM2Y0MzVjZGZkYmNmMzhmN2NmZmM3NDA4MWIxZTgifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-delivery/src/components/delivery/DeliveryHub.tsx#L20-L44",
+          "version": "repo-lines-v1:sha256:d9f7d9241d3c33ae0246230d311b1d111d5eff068ac3510f53cb0ec24130f69d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU3YWFkYzNhY2RkZDBlNDIzNjhiZTc0YzQyYWRmODIyMWYyODVmMTVlYjgzM2Y1NWUzODIwZjRiZTIwZTU5MmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyMzY5MjUzOWZmN2YyZWU1ZmExMmUxYzQzYzk0NzU4MzQxN2E0NmVlOTk2ZWM3M2FlNDg4MzY2NDhhMTIxNDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc5MzQzNGU0YTRjMmJkNWQ3MzMzZjVlMDk5YTM0N2I5N2M4ZGJkYzM1MjVlMDY2ZDZjZjU5ZTcxYzk0YmFiNWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM5N2E0N2UzMDFiMjIyZmJmMDBlMGQwNmIxZGZmNTFjYmRkY2QzNmUyNzI5OTQyMTQ5ZDBkOTgwODBkOWQwNGMifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/ui-kit/src/components/dialog/Dialog.tsx#L7-L20",
+          "version": "repo-lines-v1:sha256:843a998e3c63460b2c5d4ca6dffc8aa2780936181a71ba5743a367723bab452d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1ZTY1NTU3NWUxNmQzY2JjMjUxYzIyMDZiYTVlMWExYzRiYzllZTkyOGFiNzBhOTgyOWQ4MDYyOTc2NzEzNjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY0ZjRlMGYyNmQ3ZDY1ZjYyZTk4N2JiNWY4ZTY0OWQyYjQ0NzA5ZGM0N2I2M2FiNjE2MTA5NGU2ZGQ3MjBhNTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUyNWQ3NWQ1ZjE0Nzk3ZDAwYzQ5NDY3NTgyYzgyNTMzY2JlNjZjMGU1NWI5NDc1Njk5NDVmZWJkYjQ3MjhlYjAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9fe2dbc03ab74bd6b1a48fa17a141bab",
+      "statement": "同一个 DriftRadar 可用于 rail 抽屉、split 的 drift pane 与 hub（embedded 只决定 role 是 region 还是 dialog）：useDriftAudit 选择文件后经 main 读取已保存模型与 OTLP JSON，显示 span/commit 计数、是否「存在阻塞漂移」、findings 与解析错误；未审计时明确说还没比对过而不是用空表冒充绿灯，loading 期间禁止重复选择，取消选择保留上一次结果，且不会自动回放历史，必须由人显式选 trace。",
+      "evidence": [
+        {
+          "resource": "repo://libs/desktop/feature-drift/src/components/drift/DriftRadar.tsx#L10-L100",
+          "version": "repo-lines-v1:sha256:baa687957814869dd9ac166fc3fff100f54767eaa43cf1bcacad252c142a1a11:eyJzZWxlY3RlZExpbmVDb3VudCI6OTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZjNDI0OWQxZDZmMmEyYWY0YzU1ZjNjYjZiN2JhNzAwOTI1N2YxMWQxZjIzOTIxNDkyOWMzYjQ2MzdkYzEyOGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE0YjQwNmUyYWJlMzA5ZTY5NDAzYTljNDk0NzRlNGYwM2RjZTBiOTUyYmNhNDkwMmNjZjIxZDJlYWJjMDAxM2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVhMGI2MjgyY2VmMjFlMjVkNTU0NDJmNTliNDdhY2UxMTA2NWU3MTlhYTExNjU3ZmFlNWE2YzgwMDc5OThiZTUifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-drift/src/state/useDriftAudit.ts#L35-L69",
+          "version": "repo-lines-v1:sha256:e0697306d10a74543948daf87ca41ba2011f89fe94e1911d973b89b76888457e:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdhM2Y0NzNkMTJlNjMxZjlkNzFhZjNjMzJmY2Y5MGU2OTc3NTRlMjliNGNhNmExMTEzNjIwYzZkNzBmN2QwMTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e4efa34ac0f94b2485df3a1f59351b4b",
+      "statement": "DeliveryHub 的 live preview 以窗口打开时的 initialDocument 为会话基线（保存不重置差异），document 变化后 150ms debounce 重算并用 revision 与 generation 校验丢弃过期结果，重算期间 stale 使旧预览不可导出，导出携带 expectedModelDigest 且被 busy/stale/canExportDraft 三重门禁挡住。",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L221-L227",
+          "version": "repo-lines-v1:sha256:f4cea5ab9292a65d5cc731d3e44382502df2d8dd3cd843a94b5ee6065d1c6d6b:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmI0Njc4MTQ0MzU3OGEyMGUwMDIzMjhjODVjMTRlNjllMTRmYjU3ODdlZWRlZGI4NTcxMmZkZGJjOGEzNjkwYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWYyZmFmZGMzZmExMGExMzIwMzg0Zjc3YmQzN2E5Yzg0NmI1ZTk1NGM3MzY1ZTFiNWU2ZGZjNWZhMjIzZjUwZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2ViNmQxODhlNjdkNDI3NDE2YjZmOTdkZjQ2NDIyMDIyZjgyZmZjZmYwOWE0YmI5MjU2OTBkYTA3ZDg0MjM1NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTU5NzlkYTNjMDBjNmRlMjZjZDk4OWIyNmU0MDA5ZTFiZTAwMDk2MTJkYTA5ZDZjYzAyOWI3ZWJjZGFhZTU5ZSJ9"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-delivery/src/components/delivery/DeliveryHub.tsx#L80-L125",
+          "version": "repo-lines-v1:sha256:d8803294049c1899664d804f13593135605c705988748d18e2333b38b97699b1:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdjZjFmMmZiZTQ2OGY4OWU1ZmMzODczNTAyODIxZjIzM2VkMmM2MTYyZmEyNTMwZjdiYTNiYTMwNmI0ZTcwZTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3ODlmZTY2Nzg3ZDE4NGQ3YWM4MGMzNGM1OTk5OGFiNjQyOWYzYTEwMWQzYWFlNjgxYTdhY2ExNzA0ZDY1NzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjllYmVmYmYwMTc0YzUzNzdiYjM1ODhiYjJiM2JjZjM5MDJhNjVhM2QwM2U1NmI4ZDBjNGJlM2E1NTc5YjdiYTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVjOWMyYTQ2MmQ5MGM3OTUzODRkYmE1Zjg4ZjNlNjI0MWQzMWQzY2YyNGE0YTc2MTA2NjQ2OTRjNDQ1MDhhMDQifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-delivery/src/state/useDeliveryHub.ts#L125-L157",
+          "version": "repo-lines-v1:sha256:54fc3ecda9e1c3d6e0c0163f1907e01e0062cca3c423b62e2f7e5321f3d88f1d:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBiMmYyY2FhNjNjYzI0M2E3NjM2NjAyNWY2MDZiNjMwYjU4ZTYwMGIyMThmZGE2NTkwYzZlNTU5ZjhiMWY3NTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM1NGZhZjlmNDhmMzM5YmQxMjIyYmJmYmNkZWU3ZGYzODAwMTIyMDU2N2M4MTUxYjUzYzBmMWMyNTNhZDE4NDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-delivery/src/state/useDeliveryHub.ts#L52-L125",
+          "version": "repo-lines-v1:sha256:8c624ea89a4c8dbfd3ee700f0c9ed00c17e13051e31257f23c943fa21cdf32e4:eyJzZWxlY3RlZExpbmVDb3VudCI6NzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5Yzk0NjUzODE4ZTU3YjFhYjNlOTc4Y2I5YWI1ZGRiNDU4ODYxYWQxNjg0MTdjYjI3Yzk3MWVmMmE5YzJlNmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBiMmYyY2FhNjNjYzI0M2E3NjM2NjAyNWY2MDZiNjMwYjU4ZTYwMGIyMThmZGE2NTkwYzZlNTU5ZjhiMWY3NTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY0OGViMzgyZjRkZDUxNGUzN2Q5YzFmZTJhNDQzNTgyMDhjZWM4NzMxNTk3ZDhlNGM5ZjdlMzg4Y2IzYzdjYTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3YzgwNmViYTkxMGI2MjhhMzNjOWZlYWM4MzE1ODQ5YWM0YjAxOGUyNDVmYjQ1MmYxMmI2OTFlNzc3MDI3OGIifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-15T14:07:58.904Z"
+    "at": "2026-11-16T23:54:38.352Z"
   }
 }
