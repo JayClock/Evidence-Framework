@@ -1,6 +1,9 @@
 import path from 'node:path';
 
-import { app, BrowserWindow, nativeTheme } from 'electron';
+import { app, BrowserWindow, nativeTheme, safeStorage } from 'electron';
+import { AiConfigService } from './ai/aiConfigService';
+import { DesktopSafeCredentialStore } from './ai/safeStorageStore';
+import { registerAiConfigIpc } from './ai/aiConfigIpc';
 import {
   getEvidenceMcpBridgeEndpoint,
   runEvidenceMcpStdio,
@@ -67,15 +70,26 @@ const startApplication = async (): Promise<void> => {
     ),
   });
 
-  const agentIpc = registerAgentIpc();
+  const userDataPath = app.getPath('userData');
+  const aiConfig = new AiConfigService({
+    userDataPath,
+    store: new DesktopSafeCredentialStore(userDataPath, safeStorage),
+  });
+  const getModelOptions = () => aiConfig.getModelOptions();
+  const agentIpc = registerAgentIpc({ getModelOptions });
 
   registerProjectIpc({ projectStore, openEditorWindow });
   registerIngestionIpc({
     projectStore,
-    generate: createModelIngestionReader(),
+    generate: createModelIngestionReader({ getModelOptions }),
     openEditorWindow,
   });
-  const storyIpc = registerStoryIpc();
+  const storyIpc = registerStoryIpc({ getModelOptions });
+  const aiConfigIpc = registerAiConfigIpc(aiConfig, async () => {
+    storyIpc.resetModels();
+    await agentIpc.resetModels();
+  });
+  app.once('before-quit', () => aiConfigIpc.dispose());
   app.once('before-quit', () => storyIpc.dispose());
   registerDriftIpc();
   registerDeliveryIpc();

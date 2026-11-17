@@ -11,6 +11,7 @@ import {
   type CanvasContext,
   type EvidenceAgentSession,
   type EvidenceAgentSessionOptions,
+  type EvidenceModelOptions,
   type ModelPatchRequest,
   type ModelPatchResult,
   type SensorOutcome,
@@ -51,6 +52,7 @@ export interface AgentRuntimeOptions {
   /** Transcript the session continues, when the project already has one. */
   sessionFile?: string | null;
   sensorDelayMs?: number;
+  getModelOptions?: () => Promise<EvidenceModelOptions>;
 }
 
 export interface AgentRuntime {
@@ -68,6 +70,7 @@ export interface AgentRuntime {
   setCanvasContext: (context: CanvasContext) => void;
   getCanvasContext: () => CanvasContext;
   getSession: () => EvidenceAgentSession | null;
+  resetModel: () => Promise<void>;
   dispose: () => void;
 }
 
@@ -88,6 +91,7 @@ export const createAgentRuntime = ({
   sessionDirectory,
   sessionFile,
   sensorDelayMs,
+  getModelOptions,
 }: AgentRuntimeOptions): AgentRuntime => {
   const resolvedRoot = path.resolve(rootPath);
   // A bundle project keeps the model and `.evidence/` next to the file, so every
@@ -153,20 +157,28 @@ export const createAgentRuntime = ({
       : (await readModelDirectory(modelRoot)).document);
 
   let starting: Promise<EvidenceAgentSession> | null = null;
+  let modelGeneration = 0;
 
   const ensureSession = async (): Promise<EvidenceAgentSession> => {
     if (session !== null) {
       return session;
     }
 
-    starting ??= startSession();
-    session = await starting;
-
-    return session;
+    const pending = (starting ??= startSession());
+    try {
+      return await pending;
+    } finally {
+      if (starting === pending) starting = null;
+    }
   };
 
   const startSession = async (): Promise<EvidenceAgentSession> => {
+    const generation = modelGeneration;
+    const modelOptions = await getModelOptions?.();
+    if (disposed || generation !== modelGeneration)
+      throw new Error('模型配置已变化，请重试。');
     const created = sessionFactory({
+      ...modelOptions,
       projectRoot: projectDirectory,
       ...(sessionDirectory === undefined ? {} : { sessionDirectory }),
       ...(sessionFile === undefined || sessionFile === null
@@ -195,9 +207,16 @@ export const createAgentRuntime = ({
     });
 
     created.subscribe(transport.publishEvent);
-    await created.start();
-
-    return created;
+    try {
+      await created.start();
+      if (disposed || generation !== modelGeneration)
+        throw new Error('模型配置已变化，请重试。');
+      session = created;
+      return created;
+    } catch (error) {
+      created.dispose();
+      throw error;
+    }
   };
 
   return {
@@ -241,6 +260,18 @@ export const createAgentRuntime = ({
     },
     getCanvasContext: () => canvasContext,
     getSession: () => session,
+    resetModel: async () => {
+      ++modelGeneration;
+      const previous = session;
+      if (previous) sessionFile = previous.getSessionFile() ?? sessionFile;
+      session = null;
+      starting = null;
+      try {
+        await previous?.abort();
+      } finally {
+        previous?.dispose();
+      }
+    },
     dispose: () => {
       disposed = true;
       ++runSequence;

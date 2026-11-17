@@ -6,6 +6,7 @@ import {
   createStoryAgent,
   simulateWhatIf,
   type FlowStoryProjector,
+  type EvidenceModelOptions,
 } from '@evidence-poc/evidence-agent';
 import {
   EMPTY_MODEL_ISSUE_CODE,
@@ -38,6 +39,7 @@ export interface StoryIpcOptions {
   readModel?: (rootPath: string) => Promise<DomainModelDocument>;
   createProjector?: typeof createFlowStoryProjector;
   simulate?: typeof simulateWhatIf;
+  getModelOptions?: () => Promise<EvidenceModelOptions>;
 }
 
 const readSavedModel = async (
@@ -57,6 +59,7 @@ export const registerStoryIpc = ({
   readModel = readSavedModel,
   createProjector = createFlowStoryProjector,
   simulate = simulateWhatIf,
+  getModelOptions,
 }: StoryIpcOptions = {}) => {
   const projectors = new Map<
     WebContents,
@@ -117,9 +120,18 @@ export const registerStoryIpc = ({
       const skipAi = input.skipAi === true;
       let projector = cache.modes.get(skipAi);
       if (!projector) {
+        const projectRoot = projectDirectoryOf(input.rootPath);
         projector = createProjector({
           skipAi,
-          projectRoot: projectDirectoryOf(input.rootPath),
+          projectRoot,
+          ...(!skipAi && getModelOptions
+            ? {
+                agent: createStoryAgent({
+                  projectRoot,
+                  ...(await getModelOptions()),
+                }),
+              }
+            : {}),
         });
         cache.modes.set(skipAi, projector);
       }
@@ -155,6 +167,7 @@ export const registerStoryIpc = ({
         },
         {
           agent: createStoryAgent({
+            ...(await getModelOptions?.()),
             projectRoot: projectDirectoryOf(input.rootPath),
           }),
         },
@@ -163,6 +176,15 @@ export const registerStoryIpc = ({
   );
 
   return {
+    resetModels: () => {
+      for (const [sender, cache] of projectors) {
+        cache.modes.delete(false);
+        if (!sender.isDestroyed())
+          sender.send(STORY_IPC_CHANNELS.INVALIDATED, {
+            rootPath: cache.rootPath,
+          });
+      }
+    },
     dispose: () => {
       projectors.clear();
       tracked.clear();

@@ -20,7 +20,11 @@ import {
   type SensorTriggerInput,
 } from '@evidence-poc/desktop-contracts/agentIpc';
 
-import { createAgentRuntime, type AgentRuntime } from './agentRuntime';
+import {
+  createAgentRuntime,
+  type AgentRuntime,
+  type AgentRuntimeOptions,
+} from './agentRuntime';
 
 export const PATCH_TIMEOUT_MS = 15_000;
 
@@ -28,6 +32,7 @@ export interface AgentIpcOptions {
   /** Test injection: production builds the default runtime. */
   createRuntime?: typeof createAgentRuntime;
   patchTimeoutMs?: number;
+  getModelOptions?: AgentRuntimeOptions['getModelOptions'];
 }
 
 interface PendingPatch {
@@ -48,8 +53,10 @@ const toMessage = (error: unknown): string =>
 export const registerAgentIpc = ({
   createRuntime = createAgentRuntime,
   patchTimeoutMs = PATCH_TIMEOUT_MS,
+  getModelOptions,
 }: AgentIpcOptions = {}): {
   dispose: () => void;
+  resetModels: () => Promise<void>;
 } => {
   const runtimes = new Map<string, AgentRuntime>();
   const starting = new Map<string, Promise<AgentRuntime>>();
@@ -112,6 +119,7 @@ export const registerAgentIpc = ({
 
     const runtime = createRuntime({
       rootPath,
+      getModelOptions,
       transport: {
         publishEvent: (event) => {
           if (!sender.isDestroyed()) {
@@ -245,6 +253,11 @@ export const registerAgentIpc = ({
   );
 
   return {
+    resetModels: async () => {
+      await Promise.all(
+        [...runtimes.values()].map((runtime) => runtime.resetModel()),
+      );
+    },
     dispose: () => {
       for (const entry of pending.values()) {
         clearTimeout(entry.timer);

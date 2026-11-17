@@ -2,7 +2,10 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
-import { createEvidenceAgentSession } from '@evidence-poc/evidence-agent';
+import {
+  createEvidenceAgentSession,
+  type EvidenceModelOptions,
+} from '@evidence-poc/evidence-agent';
 
 import type { IngestionTextGenerator } from './ingestionIpc';
 
@@ -22,18 +25,22 @@ export const createModelIngestionReader = ({
   sessionFactory = createEvidenceAgentSession,
   workingDirectory,
   timeoutMs = 120_000,
+  getModelOptions,
 }: {
   sessionFactory?: typeof createEvidenceAgentSession;
   workingDirectory?: () => Promise<string>;
   timeoutMs?: number;
+  getModelOptions?: () => Promise<EvidenceModelOptions>;
 } = {}): IngestionTextGenerator => {
   return async ({ systemPrompt, userPrompt }) => {
+    const modelOptions = await getModelOptions?.();
     const cwd =
       workingDirectory === undefined
         ? await mkdtemp(path.join(tmpdir(), 'evidence-ingestion-'))
         : await workingDirectory();
 
     const session = sessionFactory({
+      ...modelOptions,
       projectRoot: cwd,
       instructions: [systemPrompt],
       noTools: 'all',
