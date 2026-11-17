@@ -1,7 +1,38 @@
 import { readModelRoot } from '@evidence-poc/evidence-model-io';
 import { API_FIXTURES } from '../testing/fixtures.js';
 import { buildDeliveryContract } from './modelDelivery.js';
+import { compileSchema } from '../schemas/jsonSchema.js';
 import { buildDeliveryRoutes } from './routes.js';
+
+it('projects money as the same minor-unit object accepted by FM and native CEL', async () => {
+  const { bundle } = await readModelRoot(`${API_FIXTURES}full-lifecycle/fm`);
+  const entity = bundle.entities.find(
+    (item) => item.id === 'contract.product-procurement',
+  )!;
+  entity.attributes!.push({
+    name: 'total_money',
+    label: '签约总价',
+    meaning: '合同约定金额及币种',
+    valueType: 'money',
+    required: true,
+  });
+  const contract = buildDeliveryContract(bundle);
+  const schema = contract.components.schemas[
+    'contract_product-procurement'
+  ] as { properties: Record<string, unknown> };
+  const validator = compileSchema(schema.properties['total_money']);
+  expect(validator.validate({ minorUnits: 100000, currency: 'CNY' })).toBe(
+    true,
+  );
+  expect(validator.validate({ minorUnits: -100, currency: 'USD' })).toBe(true);
+  for (const value of [
+    100000,
+    { amount: 100000, currency: 'CNY' },
+    { minorUnits: 1.5, currency: 'CNY' },
+    { minorUnits: 100000, currency: '' },
+  ])
+    expect(validator.validate(value)).toBe(false);
+});
 
 it('keeps complete response schemas even when GET follows POST and marks server-owned values read-only', async () => {
   const { bundle } = await readModelRoot(`${API_FIXTURES}full-lifecycle/fm`);

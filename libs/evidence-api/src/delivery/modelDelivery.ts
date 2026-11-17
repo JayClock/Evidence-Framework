@@ -48,7 +48,14 @@ const SCHEMA_FOR_TYPE: Record<string, JsonObject> = {
   },
   double: { type: 'number' },
   decimal: { type: 'number' },
-  money: { type: 'number' },
+  money: {
+    type: 'object',
+    required: ['minorUnits', 'currency'],
+    properties: {
+      minorUnits: { type: 'integer' },
+      currency: { type: 'string', minLength: 1 },
+    },
+  },
   string: { type: 'string' },
   bytes: { type: 'string', format: 'byte' },
   timestamp: { type: 'string', format: 'date-time' },
