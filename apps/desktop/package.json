@@ -6,6 +6,8 @@
   "productName": "Evidence Modeling",
   "main": ".vite/build/main.js",
   "dependencies": {
+    "@earendil-works/pi-ai": "^1.5.2",
+    "@earendil-works/pi-coding-agent": "^1.5.2",
     "@evidence-poc/desktop-feature-canvas": "workspace:*",
     "@evidence-poc/desktop-feature-inspector": "workspace:*",
     "@evidence-poc/desktop-ui-kit": "workspace:*",

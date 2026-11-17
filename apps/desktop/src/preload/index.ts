@@ -1,3 +1,4 @@
+import { EVIDENCE_AI_CONFIG_IPC_CHANNELS as AI } from '@evidence-poc/desktop-contracts/aiConfig';
 import { contextBridge, ipcRenderer } from 'electron';
 
 import {
@@ -35,6 +36,22 @@ import {
  * Node module, only the project calls and the agent surface.
  */
 const api: EvidenceDesktopApi = {
+  aiConfig: {
+    getStatus: () => ipcRenderer.invoke(AI.getStatus),
+    save: (request) => ipcRenderer.invoke(AI.save, request),
+    testConnection: (request) => ipcRenderer.invoke(AI.testConnection, request),
+    importCli: () => ipcRenderer.invoke(AI.importCli),
+    onChanged: (listener) => {
+      const handler = (
+        _event: Electron.IpcRendererEvent,
+        status: Parameters<typeof listener>[0],
+      ) => listener(status);
+      ipcRenderer.on(AI.changed, handler);
+      return () => {
+        ipcRenderer.removeListener(AI.changed, handler);
+      };
+    },
+  },
   projects: {
     showOpenDialog: () =>
       ipcRenderer.invoke(EVIDENCE_IPC_CHANNELS.showOpenDialog),

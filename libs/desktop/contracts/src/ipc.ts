@@ -1,3 +1,4 @@
+import type { EvidenceAiConfigApi } from './aiConfig.js';
 import type {
   LiveDeliveryInput,
   LiveDeliveryResult,
@@ -66,6 +67,7 @@ export type EvidenceIngestionIpcChannel =
 
 /** The only surface the renderer can reach: no `ipcRenderer`, no `fs`. */
 export interface EvidenceDesktopApi {
+  aiConfig: EvidenceAiConfigApi;
   projects: {
     showOpenDialog: () => Promise<OpenProjectDialogResult>;
     /** Picks the folder or bundle path a new project is written to. */

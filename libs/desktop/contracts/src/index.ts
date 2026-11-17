@@ -1,3 +1,4 @@
+export * from './aiConfig.js';
 export * from './agentIpc.js';
 export * from './delivery.js';
 export * from './drift.js';

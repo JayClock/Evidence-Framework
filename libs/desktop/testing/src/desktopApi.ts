@@ -320,6 +320,20 @@ export const installDesktopApi = ({
     calls,
     agentMock,
     mcpMock,
+    aiConfig: {
+      getStatus: async () => ({
+        isConfigured: true,
+        activeProviderId: 'deepseek',
+        activeModelId: 'deepseek-chat',
+        thinkingLevel: 'off',
+        hasLocalPiCliConfig: false,
+        availableModels: [],
+      }),
+      save: async () => ({ success: true }),
+      testConnection: async () => ({ success: true, latencyMs: 1 }),
+      importCli: async () => ({ imported: false }),
+      onChanged: () => () => undefined,
+    },
     projects: {
       showOpenDialog: async () => {
         calls.showOpenDialog += 1;
