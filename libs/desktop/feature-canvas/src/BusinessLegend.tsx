@@ -95,9 +95,12 @@ export const BusinessLegend = ({
                 strokeDasharray={EDGE_STYLES.dashed}
               />
             </svg>
-            <span>虚线：跨业务边界或角色扮演</span>
+            <span>灰色虚线：角色扮演</span>
           </div>
-          <p>箭头：角色扮演（plays_role）</p>
+          <p>绿色实线：主履约推进；箭头由依据指向后续凭证</p>
+          <p>橙色虚线：违约补偿；紫色双线：争议升级</p>
+          <p>灰色虚线与箭头：角色扮演（plays_role）</p>
+          <p>ƒ / ✓：领域测算与核验能力，参数来自模型</p>
           <p>履约配对线：同一履约，不代表引用</p>
           {standard ? (
             <>

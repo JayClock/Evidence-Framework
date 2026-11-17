@@ -31,7 +31,12 @@
   animation: evidence-story-flow 0.9s linear infinite;
 }
 
+.evidence-primary-flow {
+  animation: evidence-story-flow 2s linear infinite reverse;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .evidence-primary-flow,
   .evidence-story-active,
   .evidence-story-flow {
     animation: none;

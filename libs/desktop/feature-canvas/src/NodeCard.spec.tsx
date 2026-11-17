@@ -114,6 +114,104 @@ describe('business card summaries', () => {
 });
 
 describe('NodeCard modes', () => {
+  it('distinguishes a rights window from a fixed confirmation stamp and exposes CEL guards', async () => {
+    const document = createDesktopFixture();
+    const layout = await computeGraphLayout(createDomainGraph(document), {
+      layoutMode: 'swimlane',
+    });
+    const summaries = summarizeCards(document);
+    const props = {
+      selected: false,
+      dimmed: false,
+      highlighted: false,
+      viewMode: 'standard' as const,
+      onHover: vi.fn(),
+      onSelect: vi.fn(),
+    };
+    const { container, rerender } = render(
+      <NodeCard
+        {...props}
+        node={layout.nodeById.get('evidence.request')!}
+        summary={summaries.get('evidence.request')!}
+      />,
+    );
+    expect(screen.getByText('权利方主张')).toHaveAttribute(
+      'title',
+      expect.stringContaining('主张方：供应方企业'),
+    );
+    expect(
+      container.querySelector(
+        '[data-start-attribute="started_at"][data-end-attribute="expired_at"]',
+      ),
+    ).not.toBeNull();
+    expect(container.querySelector('[data-card-rule]')).toHaveAttribute(
+      'title',
+      expect.stringContaining('confirmation.confirmed_at'),
+    );
+    rerender(
+      <NodeCard
+        {...props}
+        node={layout.nodeById.get('evidence.confirmation')!}
+        summary={summaries.get('evidence.confirmation')!}
+      />,
+    );
+    expect(screen.getByLabelText(/^盖章确认：/)).toHaveAttribute(
+      'data-time-attribute',
+      'confirmed_at',
+    );
+    expect(container.querySelector('[data-rights-claim]')).toBeNull();
+    expect(container.querySelector('[data-node-id]')).toHaveStyle({
+      borderRightWidth: '2px',
+    });
+  });
+
+  it('renders compact domain capabilities with modeled parameters, without choosing a conflicting sample', async () => {
+    const document = createDesktopFixture();
+    document.entities.push({
+      type: 'entity',
+      id: 'calculator',
+      category: 'participant',
+      kind: 'thing',
+      domainRole: 'calculator',
+      label: '罚息测算',
+      attributes: [
+        {
+          name: 'daily_rate',
+          label: '日罚息',
+          meaning: '合同日费率',
+          valueType: 'decimal',
+        },
+      ],
+      examples: [{ label: '标准', value: { daily_rate: 0.0005 } }],
+    });
+    const layout = await computeGraphLayout(createDomainGraph(document));
+    const node = layout.nodeById.get('calculator')!;
+    const props = {
+      node,
+      summary: summarizeCards(document).get(node.nodeId)!,
+      selected: false,
+      dimmed: false,
+      highlighted: false,
+      viewMode: 'standard' as const,
+      onHover: vi.fn(),
+      onSelect: vi.fn(),
+    };
+    const { container, rerender } = render(<NodeCard {...props} />);
+    expect(
+      container.querySelector('[data-capability="calculator"]'),
+    ).not.toBeNull();
+    expect(screen.getByText('日罚息：0.05%')).toBeInTheDocument();
+    node.entity.examples!.push({
+      label: '另一个方案',
+      value: { daily_rate: 0.001 },
+    });
+    rerender(<NodeCard {...props} />);
+    expect(screen.queryByText('日罚息：0.05%')).toBeNull();
+    expect(
+      container.querySelector('[data-capability="calculator"]'),
+    ).toHaveTextContent('日罚息');
+  });
+
   it('shows projected routes, distinguishes internal operations and hides stale bindings', async () => {
     const document = createDesktopFixture();
     const node = (

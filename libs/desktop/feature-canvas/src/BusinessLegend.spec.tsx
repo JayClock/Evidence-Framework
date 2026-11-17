@@ -18,7 +18,10 @@ describe('BusinessLegend', () => {
       'aria-expanded',
       'true',
     );
-    expect(screen.getByText('虚线：跨业务边界或角色扮演')).toBeVisible();
+    expect(screen.getByText('灰色虚线：角色扮演')).toBeVisible();
+    expect(
+      screen.getByText('橙色虚线：违约补偿；紫色双线：争议升级'),
+    ).toBeVisible();
     expect(screen.queryByText(/法定/)).toBeNull();
     expect(screen.getByText('1..N：源端 / 目标端关系基数')).toBeVisible();
     expect(container.firstChild).toHaveAttribute('data-evidence-capture-hide');
@@ -29,7 +32,7 @@ describe('BusinessLegend', () => {
       'true',
     );
     fireEvent.click(screen.getByRole('button', { name: '图例说明' }));
-    expect(screen.getByText('虚线：跨业务边界或角色扮演')).not.toBeVisible();
+    expect(screen.getByText('灰色虚线：角色扮演')).not.toBeVisible();
   });
   it('describes only what the compact board draws', () => {
     render(<BusinessLegend viewMode="simplified" />);

@@ -57,26 +57,38 @@ const businessTime = (entity: EntityAST): string | null => {
  * says "this obligation is open over a period". A rounded bar rather than a
  * plain line, because the corner is where the "expired" end reads.
  */
-const IntervalBar = ({ accent }: { accent: string }) => (
+export const IntervalTaskBar = ({
+  accent,
+  window,
+}: {
+  accent: string;
+  window: string | null;
+}) => (
   <span
-    aria-hidden="true"
+    aria-label={`履行时段：${window ?? 'started_at → expired_at'}`}
+    data-start-attribute="started_at"
+    data-end-attribute="expired_at"
     data-node-shape="interval"
-    className="mt-0.5 flex h-[7px] w-full items-center"
+    title={window ?? 'started_at → expired_at'}
+    className="mt-0.5 flex w-full items-center gap-1"
   >
     <span
-      className="h-[3px] flex-1 rounded-full"
-      style={{ backgroundColor: `${accent}44` }}
-    />
-    <span
-      className="h-[7px] w-[3px] shrink-0 rounded-full"
+      className="h-[6px] w-[6px] shrink-0 rounded-full"
       style={{ backgroundColor: accent }}
     />
     <span
-      className="h-[3px] flex-1 rounded-full"
-      style={{ backgroundColor: `${accent}44` }}
+      className="h-[4px] flex-1 rounded-full"
+      style={{ backgroundColor: `${accent}66` }}
+    />
+    <span className="truncate text-[8px]" style={{ color: accent }}>
+      {window ?? '有效履行窗口'}
+    </span>
+    <span
+      className="h-[4px] flex-1 rounded-full"
+      style={{ backgroundColor: `${accent}66` }}
     />
     <span
-      className="h-[7px] w-[3px] shrink-0 rounded-full"
+      className="h-[6px] w-[6px] shrink-0 rounded-full"
       style={{ backgroundColor: accent }}
     />
   </span>
@@ -89,20 +101,75 @@ const IntervalBar = ({ accent }: { accent: string }) => (
  * request would say the obligation is still open. The ring is the signature
  * metaphor the method uses: this moment already happened and cannot change.
  */
-const MomentStamp = ({ accent }: { accent: string }) => (
+export const MomentStamp = ({
+  accent,
+  time,
+  confirmation,
+}: {
+  accent: string;
+  time: string | null;
+  confirmation: boolean;
+}) => (
   <span
-    aria-hidden="true"
+    aria-label={`${confirmation ? '盖章确认' : '签署时刻'}：${time ?? (confirmation ? 'confirmed_at' : 'signed_at')}`}
+    data-time-attribute={confirmation ? 'confirmed_at' : 'signed_at'}
     data-node-shape="moment"
-    className="mt-0.5 inline-flex items-center gap-1 rounded-full border px-1.5 py-[1px] text-[8px] font-semibold"
+    className="mt-0.5 inline-flex max-w-full items-center gap-1 rounded-full border-2 border-double px-1.5 py-[1px] text-[8px] font-semibold"
     style={{ borderColor: accent, color: accent }}
   >
     <span
-      className="h-[5px] w-[5px] rounded-full"
-      style={{ backgroundColor: accent }}
+      className="h-[6px] w-[6px] shrink-0 rounded-full border"
+      style={{ borderColor: accent }}
     />
-    时刻
+    <span className="truncate">
+      {confirmation ? '盖章确认' : '签署时刻'} · {time}
+    </span>
   </span>
 );
+
+/** Show declared parameter labels and unanimous example values, never invent
+ * constants or silently choose a branch's conflicting sample value. */
+export const CapabilityChips = ({ entity }: { entity: EntityAST }) => {
+  if (entity.category !== 'participant' || !entity.domainRole) return null;
+  return (
+    <div
+      data-capability={entity.domainRole}
+      className="mt-1 flex max-w-full flex-col gap-0.5 text-[9px] text-[#3d7553]"
+    >
+      <span className="rounded-full border border-[#78a788] bg-white px-2 font-semibold">
+        {entity.domainRole === 'calculator' ? 'ƒ 测算器' : '✓ 核验器'}
+      </span>
+      {(entity.attributes ?? []).slice(0, 3).map((attribute) => {
+        const values = (entity.examples ?? [])
+          .map((example) => example.value[attribute.name])
+          .filter((value) => value !== undefined);
+        const value =
+          values.length &&
+          values.every((v) => JSON.stringify(v) === JSON.stringify(values[0]))
+            ? values[0]
+            : undefined;
+        const formatted =
+          typeof value === 'number' && /rate/i.test(attribute.name)
+            ? `${Number((value * 100).toPrecision(8))}%`
+            : typeof value === 'string'
+              ? value
+              : value === undefined
+                ? null
+                : JSON.stringify(value);
+        return (
+          <span
+            key={attribute.name}
+            className="truncate rounded border border-[#78a788]/50 px-1"
+            title={attribute.meaning}
+          >
+            {attribute.label ?? attribute.name}
+            {formatted === null ? '' : `：${formatted}`}
+          </span>
+        );
+      })}
+    </div>
+  );
+};
 
 /**
  * One placed business object, drawn as the paper the method talks about.
@@ -155,9 +222,24 @@ export const NodeCard = ({
         width: box.width,
         height: box.height,
         borderRadius: entityRadius(entity),
-        borderTopColor: selected ? '#2f5d8f' : token.stroke,
-        borderRightColor: selected ? '#2f5d8f' : token.stroke,
-        borderBottomColor: selected ? '#2f5d8f' : token.stroke,
+        borderTopColor: selected
+          ? '#2f5d8f'
+          : shape === 'moment'
+            ? color
+            : token.stroke,
+        borderRightColor: selected
+          ? '#2f5d8f'
+          : shape === 'moment'
+            ? color
+            : token.stroke,
+        borderBottomColor: selected
+          ? '#2f5d8f'
+          : shape === 'moment'
+            ? color
+            : token.stroke,
+        borderTopWidth: shape === 'moment' ? 2 : 1,
+        borderRightWidth: shape === 'moment' ? 2 : 1,
+        borderBottomWidth: shape === 'moment' ? 2 : 1,
         borderLeftWidth: 3,
         borderLeftColor: color,
         backgroundColor: token.fill,
@@ -183,6 +265,16 @@ export const NodeCard = ({
           {entityKindLabel(entity)}
         </span>
         <span className="flex min-w-0 items-center justify-end gap-1">
+          {entity.category === 'evidence' &&
+          entity.kind === 'fulfillment_request' ? (
+            <span
+              data-rights-claim=""
+              className="min-w-0 truncate rounded bg-[#fff8e8] px-1 text-[8px] text-[#8d6200]"
+              title={`主张方：${summary.partyBadge?.label ?? summary.responsibility ?? '待声明'}`}
+            >
+              权利方主张
+            </span>
+          ) : null}
           {summary.partyBadge !== null ? (
             <span
               className="min-w-0 truncate rounded border border-[#78a788] bg-[#eff8f1] px-1 text-[#3d7553]"
@@ -251,8 +343,20 @@ export const NodeCard = ({
             {!api.stale && routes.length > 1 ? ` +${routes.length - 1}` : ''}
           </span>
         ) : null}
-        {shape === 'interval' ? <IntervalBar accent={color} /> : null}
-        {shape === 'moment' ? <MomentStamp accent={color} /> : null}
+        {shape === 'interval' ? (
+          <IntervalTaskBar accent={color} window={time} />
+        ) : null}
+        {shape === 'moment' ? (
+          <MomentStamp
+            accent={color}
+            time={time}
+            confirmation={
+              entity.category === 'evidence' &&
+              entity.kind === 'fulfillment_confirmation'
+            }
+          />
+        ) : null}
+        <CapabilityChips entity={entity} />
       </div>
       {standard ? (
         <div
@@ -272,6 +376,19 @@ export const NodeCard = ({
               ? ` +${summary.remainingAttributes}`
               : ''}
           </div>
+          {(summary.ruleFormulas ?? [])
+            .slice(0, viewMode === 'expanded' ? 2 : 1)
+            .map((rule) => (
+              <div
+                key={rule.id}
+                data-card-rule={rule.id}
+                className="truncate font-mono text-[8px] text-[#8d6200]"
+                title={`${rule.label} (${rule.kind})\n${rule.expression}`}
+                aria-label={`CEL ${rule.kind}：${rule.expression}`}
+              >
+                ƒ {rule.expression}
+              </div>
+            ))}
           <div className="flex justify-between gap-1">
             <span>关键数据 {summary.keyDataCount}</span>
             {summary.rules.length ? (

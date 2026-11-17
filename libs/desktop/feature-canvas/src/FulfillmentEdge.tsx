@@ -2,7 +2,7 @@ import { RELATIONSHIP_FLOW_LABELS } from '@evidence-poc/evidence-schema';
 import type { EdgeProps } from '@xyflow/react';
 
 import { useCanvasInteraction } from './CanvasInteractionContext';
-import { EDGE_STYLES } from './colors';
+import { EDGE_STYLES, FLOW_EDGE_STYLES } from './colors';
 import { pointOnRoute } from './edgeLabels';
 import type {
   FulfillmentFlowEdge,
@@ -51,16 +51,26 @@ export const FulfillmentEdge = ({ data }: EdgeProps<FulfillmentFlowEdge>) => {
     .join(' ');
   const flowKind = relationship.flowKind ?? 'primary';
   const breach = flowKind !== 'primary';
-  const flowColor = flowKind === 'breach_compensation' ? '#d97706' : '#7e22ce';
-  const stroke = breach ? flowColor : highlighted ? EDGE_HIGHLIGHT : EDGE_COLOR;
-  const strokeWidth = highlighted ? EDGE_STYLES.activeWidth : EDGE_STYLES.width;
-  const strokeDasharray = breach
-    ? flowKind === 'escalation'
-      ? '6 3 1 3'
-      : '6 4'
-    : relationship.dashed
-      ? EDGE_STYLES.dashed
-      : undefined;
+  const flowColor = FLOW_EDGE_STYLES[flowKind].stroke;
+  const primary = relationship.kind === 'references' && !breach;
+  const stroke =
+    breach || primary ? flowColor : highlighted ? EDGE_HIGHLIGHT : EDGE_COLOR;
+  const strokeWidth =
+    breach || primary
+      ? FLOW_EDGE_STYLES[flowKind].width + (highlighted ? 0.5 : 0)
+      : highlighted
+        ? EDGE_STYLES.activeWidth
+        : EDGE_STYLES.width;
+  const strokeDasharray =
+    flowKind === 'breach_compensation'
+      ? FLOW_EDGE_STYLES.breach_compensation.dash
+      : flowKind === 'escalation'
+        ? undefined
+        : primary
+          ? undefined
+          : relationship.dashed
+            ? EDGE_STYLES.dashed
+            : undefined;
 
   const opacity = outOfScope ? 0.15 : muted ? 0 : dimmed ? 0.16 : 1;
   const interactive = !outOfScope && !muted;
@@ -106,7 +116,11 @@ export const FulfillmentEdge = ({ data }: EdgeProps<FulfillmentFlowEdge>) => {
         fill="none"
         stroke={stroke}
         strokeWidth={strokeWidth}
-        strokeDasharray={data.storyActive ? '8 5' : strokeDasharray}
+        strokeDasharray={
+          data.storyActive && flowKind !== 'escalation'
+            ? '8 5'
+            : strokeDasharray
+        }
         className={data.storyActive ? 'evidence-story-flow' : undefined}
         data-story-edge={data.storyActive ? '' : undefined}
         style={{
@@ -121,10 +135,36 @@ export const FulfillmentEdge = ({ data }: EdgeProps<FulfillmentFlowEdge>) => {
         }
         onMouseLeave={() => interactive && onHoverEdge(null)}
       />
+      {flowKind === 'escalation' ? (
+        <polyline
+          data-escalation-gap=""
+          points={points}
+          fill="none"
+          stroke="white"
+          strokeWidth={2}
+          style={{ pointerEvents: 'none', strokeLinejoin: 'round' }}
+        />
+      ) : null}
+      {primary && !data.storyActive ? (
+        <polyline
+          data-primary-pulse=""
+          points={points}
+          fill="none"
+          stroke={flowColor}
+          strokeWidth={1.5}
+          strokeDasharray="2 26"
+          className="evidence-primary-flow"
+          style={{ pointerEvents: 'none' }}
+        />
+      ) : null}
       <EndArrow
-        points={relationship.points}
+        points={
+          relationship.kind === 'references'
+            ? [...relationship.points].reverse()
+            : relationship.points
+        }
         color={stroke}
-        visible={relationship.kind === 'plays_role'}
+        visible={true}
       />
 
       {cardinality.source === undefined && cardinality.target === undefined
@@ -150,16 +190,25 @@ export const FulfillmentEdge = ({ data }: EdgeProps<FulfillmentFlowEdge>) => {
               />
             ),
           )}
-      {hovered && !breach ? (
-        <text
-          x={midpoint.x}
-          y={midpoint.y - 14}
-          fontSize={9}
-          textAnchor="middle"
-          fill="#2f5d8f"
+      {hovered ? (
+        <g
+          transform={`translate(${midpoint.x}, ${midpoint.y - 28})`}
+          data-responsibility-popover=""
+          style={{ pointerEvents: 'none' }}
         >
-          {label}
-        </text>
+          <rect
+            x={-130}
+            y={-13}
+            width={260}
+            height={26}
+            rx={5}
+            fill="white"
+            stroke={flowColor}
+          />
+          <text y={3} fontSize={9} textAnchor="middle" fill={stroke}>
+            {label.length > 36 ? `${label.slice(0, 35)}…` : label}
+          </text>
+        </g>
       ) : null}
     </g>
   );

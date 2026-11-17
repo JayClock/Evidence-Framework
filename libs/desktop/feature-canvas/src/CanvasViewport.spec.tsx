@@ -153,6 +153,44 @@ describe('CanvasViewport', () => {
       '6 4',
     );
   });
+  it('draws primary green progression and escalation as independent purple rails', () => {
+    const { container, rerender } = setup();
+    const line = container.querySelector(
+      '[data-edge-id="relation.confirmation-references-request"] [data-edge-line]',
+    );
+    expect(line).toHaveAttribute('stroke', '#21835b');
+    expect(line).toHaveAttribute('stroke-width', '2.5');
+    expect(container.querySelector('[data-primary-pulse]')).not.toBeNull();
+    rerender(
+      <CanvasViewport
+        document={document}
+        graph={graph}
+        layout={{
+          ...layout,
+          edges: layout.edges.map((e) => ({ ...e, flowKind: 'escalation' })),
+        }}
+        viewMode="standard"
+        selection={{ nodeId: null, attributeName: null }}
+        focusRequest={null}
+        zoomCommand={null}
+        onSelect={vi.fn()}
+        onClearSelection={vi.fn()}
+      />,
+    );
+    const escalation = container.querySelector(
+      '[data-flow-kind="escalation"]',
+    )!;
+    expect(escalation.querySelector('[data-edge-line]')).toHaveAttribute(
+      'stroke',
+      '#7e22ce',
+    );
+    expect(escalation.querySelector('[data-escalation-gap]')).toHaveAttribute(
+      'stroke-width',
+      '2',
+    );
+    expect(escalation.textContent).toContain('争议升级');
+  });
+
   it('draws the placed objects, their Contexts and the routed relationships', () => {
     const { container } = setup();
 

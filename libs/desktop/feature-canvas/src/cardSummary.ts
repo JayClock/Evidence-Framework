@@ -12,6 +12,12 @@ export interface CardSummary {
   remainingAttributes: number;
   keyDataCount: number;
   rules: string[];
+  ruleFormulas?: readonly {
+    id: string;
+    label: string;
+    kind: string;
+    expression: string;
+  }[];
 }
 
 /**
@@ -142,6 +148,15 @@ export const summarizeCards = (
             (attribute) => attribute.keyData === true,
           ).length,
           rules: [...ruleIds].map((id) => rules.get(id)!.label),
+          ruleFormulas: [...ruleIds].map((id) => {
+            const rule = rules.get(id)!;
+            return {
+              id,
+              label: rule.label,
+              kind: rule.kind,
+              expression: rule.expression,
+            };
+          }),
         },
       ];
     }),

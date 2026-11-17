@@ -32,6 +32,12 @@ export const EDGE_STYLES = {
   activeWidth: 2.2,
 } as const;
 
+export const FLOW_EDGE_STYLES = {
+  primary: { stroke: '#21835b', width: 2.5 },
+  breach_compensation: { stroke: '#d97706', width: 2, dash: '6 4' },
+  escalation: { stroke: '#7e22ce', width: 6 },
+} as const;
+
 export const CATEGORY_COLORS = {
   evidence: '#b43656',
   participant: '#3d7553',
@@ -62,7 +68,9 @@ export const entityColor = (entity: EntityAST): string =>
 
 /** Evidence keeps square corners, roles and participants are rounded cards. */
 export const entityRadius = (entity: EntityAST): number =>
-  CATEGORY_TOKENS[entity.category].radius;
+  entity.category === 'participant' && entity.domainRole
+    ? 16
+    : CATEGORY_TOKENS[entity.category].radius;
 
 /**
  * Short form of a recognised business-time attribute name.
@@ -95,7 +103,7 @@ export const formatBusinessTimeWindow = (
 };
 
 /** How a node states its relationship to the clock. */
-export type NodeShape = 'interval' | 'moment' | 'card';
+export type NodeShape = 'interval' | 'moment' | 'capability' | 'card';
 
 /**
  * Shape of one card: a period, an instant, or neither.
@@ -108,7 +116,9 @@ export type NodeShape = 'interval' | 'moment' | 'card';
  */
 export const entityShape = (entity: EntityAST): NodeShape => {
   if (entity.category !== 'evidence') {
-    return 'card';
+    return entity.category === 'participant' && entity.domainRole
+      ? 'capability'
+      : 'card';
   }
 
   switch (entity.kind) {
