@@ -1,0 +1,1132 @@
+{
+  "type": "fm_bundle",
+  "schemaVersion": "5.0",
+  "manifest": {
+    "type": "fm_model",
+    "schemaVersion": "5.0",
+    "id": "full-spectrum-procurement",
+    "name": "工业智能制造装备跨境采购与托管清结算全生命周期履约模型",
+    "version": "1.0.0",
+    "ruleLanguage": "CEL",
+    "description": "全节点覆盖模型：覆盖寻源比选、主采购合同、多方托管监管、技术核验与阶梯费率测算、违约追偿与跨合同凭证角色化的全要素8X Flow复杂工业级案例",
+    "entryContextRefs": ["ctx-main-procurement", "ctx-escrow-settlement"]
+  },
+  "entities": [
+    {
+      "type": "entity",
+      "id": "ctx-main-procurement",
+      "category": "context",
+      "kind": "contract",
+      "label": "工业机器人主采购合同上下文（Main Procurement Contract Context）",
+      "rootRefs": ["doc-procurement-contract"]
+    },
+    {
+      "type": "entity",
+      "id": "ctx-sourcing",
+      "category": "context",
+      "kind": "pre_contract",
+      "parentContextRef": "ctx-main-procurement",
+      "label": "缔约前设备寻源比选上下文（Pre-Contract Sourcing Context）"
+    },
+    {
+      "type": "entity",
+      "id": "ctx-escrow-settlement",
+      "category": "context",
+      "kind": "contract",
+      "label": "三方资金与物权托管清算上下文（Escrow & Settlement Context）",
+      "rootRefs": ["doc-escrow-agreement"]
+    },
+    {
+      "type": "entity",
+      "id": "ctx-machinery-domain",
+      "category": "context",
+      "kind": "domain",
+      "label": "工业装备标的物与技术标准领域（Machinery Asset Domain）",
+      "rootRefs": ["thing-robot-workstation"]
+    },
+    {
+      "type": "entity",
+      "id": "ctx-fintech-domain",
+      "category": "context",
+      "kind": "domain",
+      "label": "金融科技清算与违约测算领域（FinTech & Calculation Domain）",
+      "rootRefs": ["thing-tariff-calculator"]
+    },
+    {
+      "type": "entity",
+      "id": "ctx-inspection-domain",
+      "category": "context",
+      "kind": "domain",
+      "label": "国际出入境检验与合规认证支持域（Regulatory Inspection Domain）",
+      "rootRefs": ["thing-compliance-checker"]
+    },
+    {
+      "type": "entity",
+      "id": "party-buyer-corp",
+      "category": "participant",
+      "kind": "party",
+      "label": "领航智能制造装备集团（Global Leadtech Group Corp）"
+    },
+    {
+      "type": "entity",
+      "id": "party-supplier-apex",
+      "category": "participant",
+      "kind": "party",
+      "label": "顶峰高精数控工业机器人有限责任公司（Apex Precision Robotics Ltd）"
+    },
+    {
+      "type": "entity",
+      "id": "party-escrow-bank",
+      "category": "participant",
+      "kind": "party",
+      "label": "远东国际信托与离岸托管清算银行（Pacific Escrow Trust Bank）"
+    },
+    {
+      "type": "entity",
+      "id": "party-sgs-inspection",
+      "category": "participant",
+      "kind": "party",
+      "label": "瑞士SGS国际工业产品技术公证检测行（SGS Industrial Inspection Bureau）"
+    },
+    {
+      "type": "entity",
+      "id": "thing-robot-workstation",
+      "category": "participant",
+      "kind": "thing",
+      "contextRef": "ctx-machinery-domain",
+      "label": "六轴重载工业机器人柔性装配单元标的物",
+      "attributes": [
+        {
+          "name": "unit_model",
+          "label": "设备型号",
+          "meaning": "交付工业母机出厂技术型号代码",
+          "valueType": "string",
+          "required": true
+        },
+        {
+          "name": "nominal_capacity",
+          "label": "额定负载能力(kg)",
+          "meaning": "机械臂末端额定最大有效载荷",
+          "valueType": "int",
+          "required": true
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "thing-tariff-calculator",
+      "category": "participant",
+      "kind": "thing",
+      "domainRole": "calculator",
+      "contextRef": "ctx-fintech-domain",
+      "label": "跨境税费与逾期违约罚息阶梯测算器",
+      "attributes": [
+        {
+          "name": "penalty_daily_rate",
+          "label": "日罚息基准费率",
+          "meaning": "主合同约定的每日万分之五基准违约金费率",
+          "valueType": "decimal",
+          "required": true,
+          "keyData": true
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "thing-compliance-checker",
+      "category": "participant",
+      "kind": "thing",
+      "domainRole": "checker",
+      "contextRef": "ctx-inspection-domain",
+      "label": "工业母机技术标准与进出口合规核验器",
+      "attributes": [
+        {
+          "name": "iso_standard_code",
+          "label": "ISO执行标准号",
+          "meaning": "国际标准化组织工业机器人安全及精度执行标准号",
+          "valueType": "string",
+          "required": true
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "role-buyer",
+      "category": "role",
+      "kind": "party",
+      "contextRef": "ctx-main-procurement",
+      "label": "采购方当事人买方角色（Procurement Buyer Role）"
+    },
+    {
+      "type": "entity",
+      "id": "role-seller",
+      "category": "role",
+      "kind": "party",
+      "contextRef": "ctx-main-procurement",
+      "label": "供货方当事人卖方角色（Equipment Supplier Role）"
+    },
+    {
+      "type": "entity",
+      "id": "role-escrow-depositor",
+      "category": "role",
+      "kind": "party",
+      "contextRef": "ctx-escrow-settlement",
+      "label": "资金托管委托人角色（Escrow Depositor Role）"
+    },
+    {
+      "type": "entity",
+      "id": "role-escrow-agent",
+      "category": "role",
+      "kind": "party",
+      "contextRef": "ctx-escrow-settlement",
+      "label": "托管结算代理人角色（Escrow Settlement Agent Role）"
+    },
+    {
+      "type": "entity",
+      "id": "role-clearing-engine",
+      "category": "role",
+      "kind": "domain",
+      "contextRef": "ctx-fintech-domain",
+      "label": "资金清算核算器"
+    },
+    {
+      "type": "entity",
+      "id": "role-technical-inspector",
+      "category": "role",
+      "kind": "third_party",
+      "contextRef": "ctx-inspection-domain",
+      "label": "中立第三方专业质检官"
+    },
+    {
+      "type": "entity",
+      "id": "role-sourcing-gateway",
+      "category": "role",
+      "kind": "context",
+      "contextRef": "ctx-main-procurement",
+      "label": "寻源比选阶段转结主合同网关角色"
+    },
+    {
+      "type": "entity",
+      "id": "role-collateral-voucher",
+      "category": "role",
+      "kind": "evidence",
+      "contextRef": "ctx-escrow-settlement",
+      "label": "跨合同提货凭单质押担保角色"
+    },
+    {
+      "type": "entity",
+      "id": "doc-sourcing-rfp",
+      "category": "evidence",
+      "kind": "rfp",
+      "contextRef": "ctx-sourcing",
+      "responsibleRoleRef": "role-buyer",
+      "label": "智能装备全球采购招标建议书（Global Procurement RFP）",
+      "attributes": [
+        {
+          "name": "rfp_budget_ceiling",
+          "label": "采购预算上限",
+          "meaning": "买方立项批复的最高采购限额资金预算",
+          "valueType": "money",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "started_at",
+          "label": "招标启动时间",
+          "meaning": "全球招标平台公开发布标书的起始时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "expired_at",
+          "label": "截标时间",
+          "meaning": "供应商提交密封投标文件的最晚截止时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "doc-supplier-proposal",
+      "category": "evidence",
+      "kind": "proposal",
+      "contextRef": "ctx-sourcing",
+      "responsibleRoleRef": "role-seller",
+      "label": "顶峰数控智能制造装备竞标技术报价单（Apex Bid Proposal）",
+      "attributes": [
+        {
+          "name": "quoted_total_price",
+          "label": "投标总报价",
+          "meaning": "供应商投标文件填报的整机集成总报价",
+          "valueType": "money",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "started_at",
+          "label": "报价承诺生效时间",
+          "meaning": "投标文件提交并锁定承诺的起始时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "expired_at",
+          "label": "报价有效截止日",
+          "meaning": "该投标文件报价承诺具有约束力的最终时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "doc-procurement-contract",
+      "category": "evidence",
+      "kind": "contract",
+      "contextRef": "ctx-main-procurement",
+      "roleRefs": ["role-buyer", "role-seller"],
+      "label": "高端智能装备国际采购主买卖契约（Master Equipment Procurement Agreement）",
+      "attributes": [
+        {
+          "name": "contract_total_amount",
+          "label": "合同签约总价",
+          "meaning": "买卖双方正式签署的设备交钥匙总价款",
+          "valueType": "money",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "down_payment_rate",
+          "label": "预付款比例",
+          "meaning": "签约后卖方排产前须支付的预付款百分比",
+          "valueType": "decimal",
+          "required": true
+        },
+        {
+          "name": "delivery_deadline_days",
+          "label": "发货交期允许天数",
+          "meaning": "自收到预付款到出厂发货的最大允许日历天数",
+          "valueType": "int",
+          "required": true
+        },
+        {
+          "name": "signed_at",
+          "label": "契约签署生效时刻",
+          "meaning": "双方加盖电子印章正式生效时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "doc-escrow-agreement",
+      "category": "evidence",
+      "kind": "contract",
+      "contextRef": "ctx-escrow-settlement",
+      "roleRefs": ["role-escrow-depositor", "role-escrow-agent"],
+      "label": "买方与托管行三方资金托管监管协议（Tripartite Escrow Agreement）",
+      "attributes": [
+        {
+          "name": "escrow_locked_amount",
+          "label": "托管账户冻结资金",
+          "meaning": "买方存入托管指定独立账户的全额待清算资金",
+          "valueType": "money",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "signed_at",
+          "label": "托管协议签署时刻",
+          "meaning": "托管银行完成账户开立并签署监管协议生效时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "req-advance-payment",
+      "category": "evidence",
+      "kind": "fulfillment_request",
+      "contextRef": "ctx-main-procurement",
+      "responsibleRoleRef": "role-seller",
+      "label": "首期生产预付款支付请求（Advance Down Payment Request）",
+      "attributes": [
+        {
+          "name": "advance_amount",
+          "label": "应付首期金额",
+          "meaning": "卖方依照合同约定比例主张的首期排产备料款",
+          "valueType": "money",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "started_at",
+          "label": "催付开放时间",
+          "meaning": "预付款支付通知书送达买方的时限起始时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "expired_at",
+          "label": "支付最迟截止时间",
+          "meaning": "买方必须完成首期电汇的最迟时限",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "conf-advance-payment",
+      "category": "evidence",
+      "kind": "fulfillment_confirmation",
+      "contextRef": "ctx-main-procurement",
+      "responsibleRoleRef": "role-buyer",
+      "label": "首期预付款到账确认书（Advance Payment Bank Confirmation）",
+      "attributes": [
+        {
+          "name": "confirmed_amount",
+          "label": "实付到账金额",
+          "meaning": "托管行出具的电汇到账清算金额",
+          "valueType": "money",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "confirmed_at",
+          "label": "电汇入账确认时刻",
+          "meaning": "银行系统清算入账并生成回执时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "req-equipment-delivery",
+      "category": "evidence",
+      "kind": "fulfillment_request",
+      "contextRef": "ctx-main-procurement",
+      "responsibleRoleRef": "role-buyer",
+      "label": "整机出厂及航运交付催告请求（Equipment Factory Dispatch Request）",
+      "attributes": [
+        {
+          "name": "shipped_units_count",
+          "label": "交付机组数量",
+          "meaning": "本批次要求完成装箱出厂的整套工作站台数",
+          "valueType": "int",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "started_at",
+          "label": "提货窗口起始时间",
+          "meaning": "承运商进入工厂集港提货作业最早时间",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "expired_at",
+          "label": "交货合同最后时限",
+          "meaning": "合同约定的不可延误之最终交货到港截止时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "conf-equipment-delivery",
+      "category": "evidence",
+      "kind": "fulfillment_confirmation",
+      "contextRef": "ctx-main-procurement",
+      "responsibleRoleRef": "role-seller",
+      "label": "国际海运多式联运提单签收确认（Multimodal Delivery Confirmation）",
+      "attributes": [
+        {
+          "name": "port_arrival_status",
+          "label": "口岸到货检验状态",
+          "meaning": "目的港口岸现场海关查验与外包装铅封状态",
+          "valueType": "string",
+          "required": true
+        },
+        {
+          "name": "confirmed_at",
+          "label": "码头卸货签收时刻",
+          "meaning": "多式联运大副提单收据签发时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "req-breach-penalty",
+      "category": "evidence",
+      "kind": "fulfillment_request",
+      "contextRef": "ctx-main-procurement",
+      "responsibleRoleRef": "role-buyer",
+      "label": "交货逾期违约赔偿与滞纳金索赔请求（Late Delivery Penalty Request）",
+      "attributes": [
+        {
+          "name": "overdue_days",
+          "label": "实际逾期天数",
+          "meaning": "超出合同发货时限的日历天数",
+          "valueType": "int",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "claimed_penalty_amount",
+          "label": "索赔违约金总额",
+          "meaning": "依据CEL派生规则计算出的违约金赔付总额",
+          "valueType": "money",
+          "required": true,
+          "keyData": true,
+          "derivedByRuleRef": "rule-derive-penalty-amount"
+        },
+        {
+          "name": "started_at",
+          "label": "索赔主张发起时间",
+          "meaning": "买方正式递交违约追偿通知书时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "expired_at",
+          "label": "清偿宽限期截止时间",
+          "meaning": "卖方支付或签署划拨确认的最后救济期限",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "conf-breach-settlement",
+      "category": "evidence",
+      "kind": "fulfillment_confirmation",
+      "contextRef": "ctx-main-procurement",
+      "responsibleRoleRef": "role-seller",
+      "label": "违约金抵扣与赔偿结清确认凭据（Penalty Compensation Settlement Receipt）",
+      "attributes": [
+        {
+          "name": "settled_penalty_amount",
+          "label": "实际结清违约金额",
+          "meaning": "从托管尾款中实际划拨抵扣或转账偿付的违约金额",
+          "valueType": "money",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "confirmed_at",
+          "label": "违约清结确认时刻",
+          "meaning": "双方在违约结清协议上双签盖章确认时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "doc-sgs-inspection-cert",
+      "category": "evidence",
+      "kind": "other_evidence",
+      "contextRef": "ctx-main-procurement",
+      "responsibleRoleRef": "role-seller",
+      "label": "SGS中立国际技术质量公证证书（SGS Technical Inspection Certificate）",
+      "attributes": [
+        {
+          "name": "passed_safety_checks",
+          "label": "安全合规核验通过标志",
+          "meaning": "是否完全通过CE/ISO高压电气与机械防碰撞测试",
+          "valueType": "bool",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "created_at",
+          "label": "证书颁发盖章时刻",
+          "meaning": "检测实验室签发防伪报告的电子签章时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "req-escrow-release",
+      "category": "evidence",
+      "kind": "fulfillment_request",
+      "contextRef": "ctx-escrow-settlement",
+      "responsibleRoleRef": "role-escrow-depositor",
+      "label": "验收合格后托管尾款放款请求（Final Escrow Release Request）",
+      "attributes": [
+        {
+          "name": "release_amount",
+          "label": "尾款放款金额",
+          "meaning": "验收通过后可向供应商划付的托管尾款",
+          "valueType": "money",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "started_at",
+          "label": "放款窗口开始",
+          "meaning": "买方提交验收凭证后放款窗口的起点",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "expired_at",
+          "label": "放款窗口截止",
+          "meaning": "托管银行应完成尾款清算的最后时限",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "conf-escrow-release",
+      "category": "evidence",
+      "kind": "fulfillment_confirmation",
+      "contextRef": "ctx-escrow-settlement",
+      "responsibleRoleRef": "role-escrow-agent",
+      "label": "托管尾款清算放款确认（Final Escrow Release Confirmation）",
+      "attributes": [
+        {
+          "name": "released_amount",
+          "label": "实际放款金额",
+          "meaning": "托管银行清算后实际划入供应商账户的尾款",
+          "valueType": "money",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "confirmed_at",
+          "label": "放款确认时刻",
+          "meaning": "银行完成最终划拨并生成回执的时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "type": "relationship",
+      "id": "rel-buyer-plays-main",
+      "kind": "plays_role",
+      "sourceRef": "party-buyer-corp",
+      "targetRef": "role-buyer",
+      "label": "买方企业法人扮演主合同买方角色",
+      "sourceCardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "rel-seller-plays-main",
+      "kind": "plays_role",
+      "sourceRef": "party-supplier-apex",
+      "targetRef": "role-seller",
+      "label": "供应商法人扮演主合同卖方角色",
+      "sourceCardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "rel-buyer-plays-depositor",
+      "kind": "plays_role",
+      "sourceRef": "party-buyer-corp",
+      "targetRef": "role-escrow-depositor",
+      "label": "买方企业法人扮演托管委托人角色",
+      "sourceCardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "rel-bank-plays-agent",
+      "kind": "plays_role",
+      "sourceRef": "party-escrow-bank",
+      "targetRef": "role-escrow-agent",
+      "label": "托管银行扮演清算监管代理人",
+      "sourceCardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "rel-sgs-plays-third-party",
+      "kind": "plays_role",
+      "sourceRef": "party-sgs-inspection",
+      "targetRef": "role-technical-inspector",
+      "label": "SGS出入境检测行扮演中立第三方质检官",
+      "sourceCardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "rel-calculator-plays-domain-role",
+      "kind": "plays_role",
+      "sourceRef": "thing-tariff-calculator",
+      "targetRef": "role-clearing-engine",
+      "label": "罚息测算器实体扮演清算引擎领域角色",
+      "sourceCardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "rel-sourcing-plays-context-role",
+      "kind": "plays_role",
+      "sourceRef": "ctx-sourcing",
+      "targetRef": "role-sourcing-gateway",
+      "label": "寻源比价前置上下文扮演主合同接入网关",
+      "sourceCardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "rel-delivery-conf-plays-evidence-role",
+      "kind": "plays_role",
+      "sourceRef": "conf-equipment-delivery",
+      "targetRef": "role-collateral-voucher",
+      "label": "提单确认凭证角色化作为托管放款质押单据",
+      "sourceCardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "rel-contract-references-proposal",
+      "kind": "references",
+      "flowKind": "primary",
+      "sourceRef": "doc-procurement-contract",
+      "targetRef": "doc-supplier-proposal",
+      "label": "主合同签署依据寻源中选之投标报价方案",
+      "sourceCardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "rel-contract-targets-asset",
+      "kind": "references",
+      "flowKind": "primary",
+      "sourceRef": "doc-procurement-contract",
+      "targetRef": "thing-robot-workstation",
+      "label": "采购契约约定标的装备资产",
+      "sourceCardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": "many"
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "rel-req-advance-to-contract",
+      "kind": "references",
+      "flowKind": "primary",
+      "sourceRef": "req-advance-payment",
+      "targetRef": "doc-procurement-contract",
+      "label": "首付请求依据主采购契约条款主张",
+      "sourceCardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "rel-conf-advance-pairs-req",
+      "kind": "references",
+      "flowKind": "primary",
+      "sourceRef": "conf-advance-payment",
+      "targetRef": "req-advance-payment",
+      "label": "预付款确认凭据闭环对应支付请求",
+      "sourceCardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "rel-req-delivery-depends-advance",
+      "kind": "references",
+      "flowKind": "primary",
+      "sourceRef": "req-equipment-delivery",
+      "targetRef": "conf-advance-payment",
+      "label": "发货交付要求以预付款到账确认作为前置依据",
+      "sourceCardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "rel-conf-delivery-pairs-req",
+      "kind": "references",
+      "flowKind": "primary",
+      "sourceRef": "conf-equipment-delivery",
+      "targetRef": "req-equipment-delivery",
+      "label": "提单签收确认终结发货履约请求",
+      "sourceCardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "rel-delivery-requires-inspection",
+      "kind": "references",
+      "flowKind": "primary",
+      "sourceRef": "conf-equipment-delivery",
+      "targetRef": "doc-sgs-inspection-cert",
+      "label": "设备交付验收核验SGS国际合格证书",
+      "sourceCardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "rel-breach-claims-overdue",
+      "kind": "references",
+      "flowKind": "breach_compensation",
+      "sourceRef": "req-breach-penalty",
+      "targetRef": "req-equipment-delivery",
+      "label": "违约索赔指控发货交付请求逾期违约",
+      "sourceCardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "rel-breach-uses-calculator",
+      "kind": "references",
+      "flowKind": "breach_compensation",
+      "sourceRef": "req-breach-penalty",
+      "targetRef": "thing-tariff-calculator",
+      "label": "索赔金额通过日罚息测算器派生计算",
+      "sourceCardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "rel-conf-breach-pairs-req",
+      "kind": "references",
+      "flowKind": "breach_compensation",
+      "sourceRef": "conf-breach-settlement",
+      "targetRef": "req-breach-penalty",
+      "label": "违约清偿凭单完成违约责任补偿闭环",
+      "sourceCardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "rel-escrow-references-voucher",
+      "kind": "references",
+      "flowKind": "escalation",
+      "sourceRef": "doc-escrow-agreement",
+      "targetRef": "role-collateral-voucher",
+      "label": "托管监管协议在违约争议时依据质押凭单裁决冻结资金",
+      "sourceCardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "rel-proposal-references-rfp",
+      "kind": "references",
+      "flowKind": "primary",
+      "sourceRef": "doc-supplier-proposal",
+      "targetRef": "doc-sourcing-rfp",
+      "label": "投标报价回应采购招标",
+      "sourceCardinality": { "min": 1, "max": 1 },
+      "targetCardinality": { "min": 1, "max": 1 }
+    },
+    {
+      "type": "relationship",
+      "id": "rel-inspection-uses-checker",
+      "kind": "references",
+      "flowKind": "primary",
+      "sourceRef": "doc-sgs-inspection-cert",
+      "targetRef": "thing-compliance-checker",
+      "label": "技术证书引用合规核验能力",
+      "sourceCardinality": { "min": 1, "max": 1 },
+      "targetCardinality": { "min": 1, "max": 1 }
+    },
+    {
+      "type": "relationship",
+      "id": "rel-release-references-agreement",
+      "kind": "references",
+      "flowKind": "primary",
+      "sourceRef": "req-escrow-release",
+      "targetRef": "doc-escrow-agreement",
+      "label": "托管放款依据独立监管协议",
+      "sourceCardinality": { "min": 1, "max": 1 },
+      "targetCardinality": { "min": 1, "max": 1 }
+    },
+    {
+      "type": "relationship",
+      "id": "rel-release-requires-inspection",
+      "kind": "references",
+      "flowKind": "primary",
+      "sourceRef": "req-escrow-release",
+      "targetRef": "doc-sgs-inspection-cert",
+      "label": "托管放款核验技术验收证书",
+      "sourceCardinality": { "min": 1, "max": 1 },
+      "targetCardinality": { "min": 1, "max": 1 }
+    },
+    {
+      "type": "relationship",
+      "id": "rel-release-conf-pairs-req",
+      "kind": "references",
+      "flowKind": "primary",
+      "sourceRef": "conf-escrow-release",
+      "targetRef": "req-escrow-release",
+      "label": "托管尾款放款闭环",
+      "sourceCardinality": { "min": 1, "max": 1 },
+      "targetCardinality": { "min": 1, "max": 1 }
+    }
+  ],
+  "rules": [
+    {
+      "type": "rule",
+      "id": "rule-supplier-eligibility",
+      "kind": "eligibility",
+      "label": "高端装备供应商准入与技术能力认证门禁",
+      "description": "供应商参与竞标必须满足最低设备额定负载及安全合规标准[doc.supplier.proposal]",
+      "contextRef": "ctx-sourcing",
+      "bindings": {
+        "proposal": {
+          "ref": "doc-supplier-proposal",
+          "cardinality": "one"
+        }
+      },
+      "expression": "proposal.quoted_total_price.amount > 0",
+      "resultType": "bool"
+    },
+    {
+      "type": "rule",
+      "id": "rule-precondition-delivery",
+      "kind": "precondition",
+      "label": "设备出厂发货前置全额收到预付款守卫",
+      "description": "买方必须先全额履约首期预付款，卖方才具备出厂发货义务[req.equipment.delivery]",
+      "contextRef": "ctx-main-procurement",
+      "bindings": {
+        "adv_conf": {
+          "ref": "conf-advance-payment",
+          "cardinality": "one"
+        },
+        "adv_req": {
+          "ref": "req-advance-payment",
+          "cardinality": "one"
+        }
+      },
+      "expression": "adv_conf.confirmed_amount.amount >= adv_req.advance_amount.amount",
+      "resultType": "bool"
+    },
+    {
+      "type": "rule",
+      "id": "rule-derive-penalty-amount",
+      "kind": "derivation",
+      "label": "逾期交付日阶梯违约赔偿金派生算法",
+      "description": "依据逾期天数与基准日费率派生违约金总额[req.breach.penalty]",
+      "contextRef": "ctx-main-procurement",
+      "bindings": {
+        "req": {
+          "ref": "req-breach-penalty",
+          "cardinality": "one"
+        },
+        "calculator": {
+          "ref": "thing-tariff-calculator",
+          "cardinality": "one"
+        },
+        "contract": {
+          "ref": "doc-procurement-contract",
+          "cardinality": "one"
+        }
+      },
+      "expression": "{\"amount\": int(double(contract.contract_total_amount.amount) * calculator.penalty_daily_rate * double(req.overdue_days)), \"currency\": contract.contract_total_amount.currency}",
+      "resultType": "money",
+      "target": {
+        "entityRef": "req-breach-penalty",
+        "attribute": "claimed_penalty_amount"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule-invariant-escrow-balance",
+      "kind": "invariant",
+      "label": "托管账户全额资金锁定守恒不变式",
+      "description": "托管账户中已划拨与仍冻结资金总和必须严格等于主采购合同总额[doc.escrow.agreement]",
+      "contextRef": "ctx-escrow-settlement",
+      "bindings": {
+        "escrow": {
+          "ref": "doc-escrow-agreement",
+          "cardinality": "one"
+        }
+      },
+      "expression": "escrow.escrow_locked_amount.amount > 0",
+      "resultType": "bool"
+    },
+    {
+      "type": "rule",
+      "id": "rule-breach-detection-overdue",
+      "kind": "breach",
+      "label": "发货交期逾期自动判定违约触发规则",
+      "description": "提单签收确认时刻超过发货请求约定截止期时判定卖方违约[req.equipment.delivery]",
+      "contextRef": "ctx-main-procurement",
+      "bindings": {
+        "del_req": {
+          "ref": "req-equipment-delivery",
+          "cardinality": "one"
+        },
+        "del_conf": {
+          "ref": "conf-equipment-delivery",
+          "cardinality": "one"
+        }
+      },
+      "expression": "del_conf.confirmed_at > del_req.expired_at",
+      "resultType": "bool"
+    },
+    {
+      "type": "rule",
+      "id": "rule-completion-advance-payment",
+      "kind": "completion",
+      "label": "首期预付款履约项对账完结认定准则",
+      "description": "实付到账金额达到申请金额且在到账时效内完成视为该项履约闭环[req.advance.payment]",
+      "contextRef": "ctx-main-procurement",
+      "bindings": {
+        "adv_req": {
+          "ref": "req-advance-payment",
+          "cardinality": "one"
+        },
+        "adv_conf": {
+          "ref": "conf-advance-payment",
+          "cardinality": "one"
+        }
+      },
+      "expression": "adv_conf.confirmed_amount.amount >= adv_req.advance_amount.amount && adv_conf.confirmed_at <= adv_req.expired_at",
+      "resultType": "bool"
+    }
+  ]
+}
