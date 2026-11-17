@@ -13,6 +13,7 @@ import {
   TooltipTrigger,
 } from '@evidence-poc/desktop-ui-kit';
 
+import { AiModelStatusPill } from './settings/AiModelStatusPill';
 import { McpStatusPill } from './McpStatusPill';
 
 interface TopHeaderProps {
@@ -106,6 +107,7 @@ export const TopHeader = ({
           </Tooltip>
         </TooltipProvider>
 
+        <AiModelStatusPill />
         <McpStatusPill />
 
         <Button

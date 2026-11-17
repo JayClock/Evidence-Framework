@@ -1,3 +1,4 @@
+import { AiConfigurationProvider } from './state/AiConfiguration';
 import { DashboardScreen } from './screens/DashboardScreen';
 import { EditorScreen } from './screens/EditorScreen';
 
@@ -20,9 +21,13 @@ export const parseRoute = (hash: string): AppRoute => {
 export const App = () => {
   const route = parseRoute(window.location.hash);
 
-  return route.name === 'editor' ? (
-    <EditorScreen rootPath={route.rootPath} />
-  ) : (
-    <DashboardScreen />
+  return (
+    <AiConfigurationProvider>
+      {route.name === 'editor' ? (
+        <EditorScreen rootPath={route.rootPath} />
+      ) : (
+        <DashboardScreen />
+      )}
+    </AiConfigurationProvider>
   );
 };

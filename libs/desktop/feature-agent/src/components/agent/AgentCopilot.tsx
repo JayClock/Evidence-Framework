@@ -41,6 +41,8 @@ export interface AgentCopilotProps {
   prefill?: { token: number; text: string } | null;
   /** Called once a prefill is in the composer, so it is not replayed later. */
   onPrefillConsumed?: () => void;
+  aiConfigured?: boolean;
+  onConfigureAi?: () => void;
 }
 
 /**
@@ -64,6 +66,8 @@ export const AgentCopilot = ({
   focusToken,
   prefill = null,
   onPrefillConsumed,
+  aiConfigured = true,
+  onConfigureAi,
 }: AgentCopilotProps) => {
   const { state, submit, stop, dismissError } = controller;
   const [value, setValue] = useState('');
@@ -107,7 +111,7 @@ export const AgentCopilot = ({
   const send = useCallback(async () => {
     const text = value.trim();
 
-    if (text === '') return;
+    if (!aiConfigured || text === '') return;
 
     setValue('');
     const prefix =
@@ -118,7 +122,7 @@ export const AgentCopilot = ({
           : workshopStepFocus(selection);
 
     await submit(prefix === '' ? text : `${prefix}\n${text}`);
-  }, [selection, submit, value]);
+  }, [aiConfigured, selection, submit, value]);
 
   const empty =
     state.transcript === '' &&
@@ -151,6 +155,22 @@ export const AgentCopilot = ({
         </span>
       </header>
 
+      {!aiConfigured ? (
+        <div className="space-y-2 border-b border-evidence-line p-4 text-xs">
+          <h3 className="font-medium">欢迎使用 Evidence 智能建模助理</h3>
+          <p>
+            开始前，请先配置大模型提供商与 API
+            Key，即可开启业务流推演与智能补丁补全。
+          </p>
+          <button
+            type="button"
+            onClick={onConfigureAi}
+            className="text-evidence-accent underline"
+          >
+            立刻配置 API Key
+          </button>
+        </div>
+      ) : null}
       {state.error === null ? null : (
         <div className="flex items-center justify-between gap-2 border-b border-[#b42318]/30 bg-[#b42318]/5 px-2 py-1.5 text-[11px] text-[#b42318]">
           <span className="min-w-0 truncate">{state.error}</span>
@@ -246,6 +266,7 @@ export const AgentCopilot = ({
           ref={textareaRef}
           aria-label="访谈内容"
           value={value}
+          disabled={!aiConfigured}
           rows={2}
           onChange={(event) => setValue(event.target.value)}
           onKeyDown={(event) => {
@@ -262,9 +283,11 @@ export const AgentCopilot = ({
             }
           }}
           placeholder={
-            state.running
-              ? '插话纠偏：运费由买方承担，不是卖方'
-              : '描述经营事实，或提出要澄清的履约与凭证'
+            !aiConfigured
+              ? '请先配置 API Key'
+              : state.running
+                ? '插话纠偏：运费由买方承担，不是卖方'
+                : '描述经营事实，或提出要澄清的履约与凭证'
           }
           className={cn(
             'max-h-40 w-full resize-none rounded border border-evidence-line bg-white px-2 py-1 text-[12px] leading-relaxed text-evidence-ink outline-none',
@@ -294,7 +317,7 @@ export const AgentCopilot = ({
             <button
               type="button"
               onClick={() => void send()}
-              disabled={value.trim() === ''}
+              disabled={!aiConfigured || value.trim() === ''}
               className="flex items-center gap-1 rounded bg-evidence-accent px-2.5 py-1 text-[10px] text-white hover:bg-[#274c76] disabled:cursor-not-allowed disabled:opacity-40"
             >
               {state.running ? '插话' : '发送'}

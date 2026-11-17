@@ -1,3 +1,4 @@
+import { useAiConfiguration } from '../../state/AiConfiguration';
 import { useState } from 'react';
 
 import type {
@@ -88,6 +89,7 @@ export const IngestDraftModal = ({
   onClose,
   onCompiled,
 }: IngestDraftModalProps) => {
+  const ai = useAiConfiguration();
   const [kind, setKind] = useState<IngestionInputKind>('contract');
   const [content, setContent] = useState('');
   const [modelName, setModelName] = useState('文本导入的履约模型');
@@ -168,6 +170,20 @@ export const IngestDraftModal = ({
         </header>
 
         <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4">
+          {ai && !ai.aiConfigured ? (
+            <aside className="mb-3 rounded border border-evidence-line p-3 text-xs">
+              未配置大模型：仍可使用离线合同、蓝图和规则解读。要启用 AI
+              文本解读，请先
+              <button
+                type="button"
+                className="text-evidence-accent underline"
+                onClick={ai.openSettings}
+              >
+                配置 API Key
+              </button>
+              。
+            </aside>
+          ) : null}
           <div className="flex gap-2">
             {INPUT_KINDS.map((option) => (
               <button

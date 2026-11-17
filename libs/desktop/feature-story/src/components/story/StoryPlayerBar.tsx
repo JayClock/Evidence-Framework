@@ -3,13 +3,20 @@ import type { StoryPlaybackController } from '../../state/useStoryPlayback';
 export interface StoryPlayerBarProps {
   playback: StoryPlaybackController;
   onExit: () => void;
+  aiConfigured?: boolean;
+  onConfigureAi?: () => void;
 }
 
 const buttonClass =
   'rounded border border-evidence-line bg-white px-2 py-1 text-[11px] text-evidence-ink hover:bg-evidence-hover disabled:cursor-not-allowed disabled:opacity-40';
 
 /** A controller for declared business examples, never a rule/test runner. */
-export const StoryPlayerBar = ({ playback, onExit }: StoryPlayerBarProps) => (
+export const StoryPlayerBar = ({
+  playback,
+  onExit,
+  aiConfigured = true,
+  onConfigureAi,
+}: StoryPlayerBarProps) => (
   <div
     role="toolbar"
     aria-label="业务流放映控制"
@@ -76,7 +83,13 @@ export const StoryPlayerBar = ({ playback, onExit }: StoryPlayerBarProps) => (
       <input
         type="checkbox"
         checked={playback.skipAi}
-        onChange={(event) => playback.setSkipAi(event.target.checked)}
+        onChange={(event) => {
+          if (!event.target.checked && !aiConfigured) {
+            onConfigureAi?.();
+            return;
+          }
+          playback.setSkipAi(event.target.checked);
+        }}
       />
       仅模型事实
     </label>

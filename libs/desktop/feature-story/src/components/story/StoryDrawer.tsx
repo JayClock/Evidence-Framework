@@ -6,6 +6,8 @@ interface StoryDrawerProps {
   playback: StoryPlaybackController;
   dirty?: boolean;
   externalConflict?: boolean;
+  aiConfigured?: boolean;
+  onConfigureAi?: () => void;
 }
 
 const buttonClass =
@@ -241,6 +243,8 @@ export const StoryDrawer = ({
   playback,
   dirty = false,
   externalConflict = false,
+  aiConfigured = true,
+  onConfigureAi,
 }: StoryDrawerProps) => (
   <section
     aria-label="业务故事"
@@ -265,6 +269,14 @@ export const StoryDrawer = ({
           </p>
         ) : null}
       </header>
+      {!aiConfigured ? (
+        <aside className="rounded border border-evidence-line p-3">
+          <p>当前为离线放映。配置大模型后可使用 AI 旁白与 What-If 推演。</p>
+          <button type="button" className={buttonClass} onClick={onConfigureAi}>
+            配置 API Key
+          </button>
+        </aside>
+      ) : null}
       {playback.loading ? (
         <p role="status" className="text-evidence-muted">
           正在增量更新剧情…
@@ -304,7 +316,7 @@ export const StoryDrawer = ({
           skipAi={playback.skipAi}
         />
       ) : null}
-      {playback.scene ? (
+      {playback.scene && aiConfigured ? (
         <WhatIfQuestion
           key={`${playback.projection?.flowId}:${playback.scene.stepIndex}:${playback.scene.stepHash}`}
           playback={playback}

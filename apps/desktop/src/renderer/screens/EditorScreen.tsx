@@ -90,6 +90,7 @@ import {
   type FocusRuleEvent,
 } from '../state/useBilateralSync';
 import { useWorkspaceSplitState } from '../state/useWorkspaceSplitState';
+import { useAiConfiguration } from '../state/AiConfiguration';
 import { useWorkspaceViewMode } from '../state/useWorkspaceViewMode';
 
 type LoadState =
@@ -182,6 +183,7 @@ const EditorWorkspace = ({
   project,
   initialDocument,
 }: EditorWorkspaceProps) => {
+  const ai = useAiConfiguration();
   const [scenarioOpen, setScenarioOpen] = useState(false);
   const [layoutMode, setLayoutMode] = useState<CanvasLayoutMode>('topology');
   const [viewMode, setViewMode] = useState<CanvasViewMode>('simplified');
@@ -208,6 +210,7 @@ const EditorWorkspace = ({
     rootPath: project.rootPath,
     document: state.document,
     enabled: storyActive,
+    aiConfigured: ai?.aiConfigured,
     refreshSavedSources: state.externalChangeAt !== null,
     onInvalidated: reloadFromDiskIfClean,
   });
@@ -543,7 +546,27 @@ const EditorWorkspace = ({
     ],
   );
 
-  const commands = useCommandRegistry(commandCapabilities, commandHandlers);
+  const registeredCommands = useCommandRegistry(
+    commandCapabilities,
+    commandHandlers,
+  );
+  const commands = useMemo(
+    () =>
+      ai
+        ? [
+            ...registeredCommands,
+            {
+              id: 'ai-settings',
+              title: '配置大模型 / AI Settings',
+              category: 'agent' as const,
+              shortcut: '⌘+,',
+              keywords: ['API Key', '模型', 'provider'],
+              perform: ai.openSettings,
+            },
+          ]
+        : registeredCommands,
+    [registeredCommands, ai],
+  );
 
   const { accept: acceptPatch, revert: revertPatch } = patchReview;
 
@@ -735,6 +758,8 @@ const EditorWorkspace = ({
       panes={{
         story: (
           <StoryDrawer
+            aiConfigured={ai?.aiConfigured}
+            onConfigureAi={ai?.openSettings}
             playback={story}
             dirty={state.dirty}
             externalConflict={state.dirty && state.externalChangeAt !== null}
@@ -834,7 +859,12 @@ const EditorWorkspace = ({
             </button>
           </div>
           {storyActive ? (
-            <StoryPlayerBar playback={story} onExit={split.closeSplit} />
+            <StoryPlayerBar
+              playback={story}
+              onExit={split.closeSplit}
+              aiConfigured={ai?.aiConfigured}
+              onConfigureAi={ai?.openSettings}
+            />
           ) : null}
         </div>
 
@@ -938,6 +968,8 @@ const EditorWorkspace = ({
 
                 {layout.activeRailTab === 'copilot' ? (
                   <AgentCopilot
+                    aiConfigured={ai?.aiConfigured}
+                    onConfigureAi={ai?.openSettings}
                     controller={agent}
                     patchReview={patchReview}
                     focus={promptFocus}

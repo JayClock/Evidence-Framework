@@ -1,3 +1,4 @@
+import { AiModelStatusPill } from '../components/settings/AiModelStatusPill';
 import { useEffect, useState } from 'react';
 
 import type {
@@ -126,6 +127,7 @@ export const DashboardScreen = () => {
           </p>
         </div>
         <div className="evidence-no-drag flex items-center gap-2">
+          <AiModelStatusPill />
           <button
             type="button"
             onClick={() => {
@@ -212,7 +214,8 @@ export const DashboardScreen = () => {
                       {template.description}
                     </span>
                     <span className="mt-1.5 block text-[10px] text-evidence-muted">
-                      {template.entityCount} 业务对象 · {template.ruleCount} 规则
+                      {template.entityCount} 业务对象 · {template.ruleCount}{' '}
+                      规则
                     </span>
                   </button>
                 </li>

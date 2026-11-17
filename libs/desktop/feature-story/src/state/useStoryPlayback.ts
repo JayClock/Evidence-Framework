@@ -16,6 +16,7 @@ export interface StoryPlaybackOptions {
   rootPath: string;
   document: DomainModelDocument;
   enabled: boolean;
+  aiConfigured?: boolean;
   /** A watcher notice received before playback was opened still needs a read. */
   refreshSavedSources?: boolean;
   /** Reload the canvas only when doing so cannot discard local edits. */
@@ -33,12 +34,14 @@ export const useStoryPlayback = ({
   rootPath,
   document,
   enabled,
+  aiConfigured = true,
   refreshSavedSources = false,
   onInvalidated,
 }: StoryPlaybackOptions) => {
   const [flows, setFlows] = useState<readonly FlowScenarioTrace[]>([]);
   const [preferredFlowId, setPreferredFlowId] = useState<string>();
-  const [skipAi, setSkipAi] = useState(false);
+  const [requestedSkipAi, setSkipAi] = useState(false);
+  const skipAi = requestedSkipAi || !aiConfigured;
   const [refresh, setRefresh] = useState(0);
   const [sourceRefresh, setSourceRefresh] = useState(0);
   const [invalidating, setInvalidating] = useState(false);
