@@ -45,6 +45,25 @@ ACTIONS = {
         "milestone-statement": ("escrow", "seller"),
     },
 }
+COLLECTION_NAMES = {
+    "agreement": "agreements",
+    "escrow": "escrows",
+    "fulfillment": "fulfillments",
+    "settlement": "settlements",
+    "order": "orders",
+    "commitment": "commitments",
+    "deposit-lock": "deposit-locks",
+    "custody-statement": "custody-statements",
+    "delivery": "deliveries",
+    "acceptance": "acceptances",
+    "first-milestone": "first-milestones",
+    "final-milestone": "final-milestones",
+    "milestone-acceptance": "milestone-acceptances",
+    "release": "releases",
+    "settlement-receipt": "settlement-receipts",
+    "milestone-release": "milestone-releases",
+    "milestone-statement": "milestone-statements",
+}
 DELIVERIES = {"delivery", "first-milestone", "final-milestone"}
 ACCEPTANCES = {"acceptance", "milestone-acceptance"}
 RELEASES = {"release", "milestone-release"}
@@ -142,7 +161,7 @@ class EscrowService:
                 id,
                 order_id,
                 data,
-                f"/{lane}/{CONTRACTS[lane][0]}/{quote(id, safe='')}",
+                f"/{COLLECTION_NAMES[CONTRACTS[lane][0]]}/{quote(id, safe='')}",
             )
         )
 
@@ -195,7 +214,7 @@ class EscrowService:
                 contract_id,
                 contract.order_id,
                 data,
-                f"{contract.href}/{action}/request/{quote(data['id'], safe='')}",
+                f"{contract.href}/{COLLECTION_NAMES[action]}/{quote(data['id'], safe='')}",
             )
         )
 

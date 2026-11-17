@@ -7,7 +7,7 @@ from pydantic import ValidationError
 from .context import RequestContextMiddleware, business_context
 from .domain import wire
 from .ledger import BusinessError
-from .service import ACTIONS, CONTRACTS, EscrowService
+from .service import ACTIONS, COLLECTION_NAMES, CONTRACTS, EscrowService
 
 FAULTS = ("none", "accept-derived", "extra-field", "clock", "precision")
 
@@ -56,7 +56,7 @@ def create_app(test_mode=False, mode="v2", clock=None, fault="none"):
             raise BusinessError(403, "FORBIDDEN", "Role cannot perform operation")
         return now
 
-    def response(fact, status=201):
+    def representation(fact):
         data = {**fact.data, "_links": {"self": {"href": fact.href}}}
         if fault == "extra-field":
             data["unmodeled"] = True
@@ -66,12 +66,38 @@ def create_app(test_mode=False, mode="v2", clock=None, fault="none"):
                 key: int(float(value)) if type(value) is int else value
                 for key, value in data.items()
             }
+        return wire(data)
+
+    def response(fact, status=201):
         return JSONResponse(
-            wire(data),
+            representation(fact),
             status,
             headers={"Location": fact.href} if status == 201 else None,
             media_type="application/hal+json",
         )
+
+    def collection(href, name, facts):
+        return JSONResponse(
+            {
+                "_links": {"self": {"href": href}},
+                "_embedded": {name: [representation(f) for f in facts]},
+                "total": len(facts),
+            },
+            media_type="application/hal+json",
+        )
+
+    def list_contracts_handler(lane, roles):
+        async def list_contracts():
+            authorize(lane, roles)
+            name = COLLECTION_NAMES[CONTRACTS[lane][0]]
+            with service.ledger.transaction:
+                return collection(
+                    f"/{name}",
+                    name,
+                    service.ledger.list(f"contract.{CONTRACTS[lane][0]}"),
+                )
+
+        return list_contracts
 
     def sign_handler(lane, roles):
         async def sign(request: Request):
@@ -117,20 +143,42 @@ def create_app(test_mode=False, mode="v2", clock=None, fault="none"):
 
         return confirm
 
-    def ledger_handler(lane, action, role):
-        async def get_request(contractId: str):
+    def list_requests_handler(lane, action, role):
+        async def list_requests(contractId: str):
+            authorize(lane, [role])
+            with service.ledger.transaction:
+                contract = service.ledger.get(
+                    contractId, f"contract.{CONTRACTS[lane][0]}"
+                )
+                name = COLLECTION_NAMES[action]
+                return collection(
+                    f"{contract.href}/{name}",
+                    name,
+                    service.ledger.list(f"request.{action}", contractId),
+                )
+
+        return list_requests
+
+    def get_request_handler(lane, action, role, confirmation=False):
+        async def get_request(contractId: str, requestId: str):
             authorize(lane, [role])
             with service.ledger.transaction:
                 service.ledger.get(contractId, f"contract.{CONTRACTS[lane][0]}")
-                fact = service.ledger.find(contractId, f"request.{action}")
-                if fact is None:
-                    raise BusinessError(404, "NOT_FOUND", "Request has not been formed")
-                return response(fact, 200)
+                fact = service.ledger.get(requestId, f"request.{action}")
+                if fact.contract_id != contractId:
+                    raise BusinessError(
+                        404, "NOT_FOUND", "Request belongs to another contract"
+                    )
+                return response(
+                    service.ledger.confirmation(requestId) if confirmation else fact,
+                    200,
+                )
 
         return get_request
 
     for lane, (name, roles) in CONTRACTS.items():
-        root = f"/{lane}/{name}"
+        root = f"/{COLLECTION_NAMES[name]}"
+        app.add_api_route(root, list_contracts_handler(lane, roles), methods=["GET"])
         app.add_api_route(root, sign_handler(lane, roles), methods=["POST"])
         app.add_api_route(
             root + "/{contractId}", get_handler(lane, roles), methods=["GET"]
@@ -138,18 +186,28 @@ def create_app(test_mode=False, mode="v2", clock=None, fault="none"):
         for action, (request_role, confirm_role) in ACTIONS[lane].items():
             if mode == "v1" and "milestone" in action:
                 continue
-            base = root + "/{contractId}/" + action
+            base = root + "/{contractId}/" + COLLECTION_NAMES[action]
             app.add_api_route(
-                base, ledger_handler(lane, action, request_role), methods=["GET"]
+                base, list_requests_handler(lane, action, request_role), methods=["GET"]
             )
             app.add_api_route(
-                base + "/request",
+                base,
                 request_handler(lane, action, request_role),
                 methods=["POST"],
             )
             app.add_api_route(
-                base + "/request/{requestId}/confirmation",
+                base + "/{requestId}",
+                get_request_handler(lane, action, request_role),
+                methods=["GET"],
+            )
+            app.add_api_route(
+                base + "/{requestId}/confirmation",
                 confirm_handler(lane, action, confirm_role),
                 methods=["POST"],
+            )
+            app.add_api_route(
+                base + "/{requestId}/confirmation",
+                get_request_handler(lane, action, confirm_role, confirmation=True),
+                methods=["GET"],
             )
     return app

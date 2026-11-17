@@ -49,28 +49,31 @@ def post(client, path, body, role="role.procurement-buyer"):
     assert result.status_code == 201, (path, result.text)
     assert result.headers["content-type"] == "application/hal+json"
     assert result.headers["location"] == result.json()["_links"]["self"]["href"]
+    read = call(client, "GET", result.headers["location"], role=role)
+    assert read.status_code == 200, read.text
+    assert read.json() == result.json()
     return result.json()
 
 
 def order(client, id):
-    post(client, "/procurement/agreement", terms(id))
-    root = f"/procurement/agreement/{id}"
-    post(client, root + "/order/request", {"id": id + "-request"})
+    post(client, "/agreements", terms(id))
+    root = f"/agreements/{id}"
+    post(client, root + "/orders", {"id": id + "-request"})
     post(
         client,
-        root + f"/order/request/{id}-request/confirmation",
+        root + f"/orders/{id}-request/confirmation",
         {"id": id + "-order"},
         "role.procurement-seller",
     )
     post(
         client,
-        root + "/commitment/request",
+        root + "/commitments",
         {"id": id + "-commit"},
         "role.procurement-seller",
     )
     post(
         client,
-        root + f"/commitment/request/{id}-commit/confirmation",
+        root + f"/commitments/{id}-commit/confirmation",
         {"id": id + "-committed", "acknowledged": True},
     )
 
@@ -78,35 +81,112 @@ def order(client, id):
 def deposit(client, id):
     post(
         client,
-        "/escrow/escrow",
+        "/escrows",
         {"id": id + "-escrow", "order_confirmation_id": id + "-order"},
         "role.escrow-buyer",
     )
-    root = f"/escrow/escrow/{id}-escrow"
+    root = f"/escrows/{id}-escrow"
     post(
         client,
-        root + "/deposit-lock/request",
+        root + "/deposit-locks",
         {"id": id + "-lock"},
         "role.escrow-buyer",
     )
     post(
         client,
-        root + f"/deposit-lock/request/{id}-lock/confirmation",
+        root + f"/deposit-locks/{id}-lock/confirmation",
         {"id": id + "-deposit"},
         "role.escrow-escrow",
     )
     post(
         client,
-        root + "/custody-statement/request",
+        root + "/custody-statements",
         {"id": id + "-statement"},
         "role.escrow-escrow",
     )
     post(
         client,
-        root + f"/custody-statement/request/{id}-statement/confirmation",
+        root + f"/custody-statements/{id}-statement/confirmation",
         {"id": id + "-custody", "acknowledged": True},
         "role.escrow-buyer",
     )
+
+
+@pytest.mark.parametrize(
+    "name,role",
+    [
+        ("agreements", "role.procurement-buyer"),
+        ("escrows", "role.escrow-buyer"),
+        ("fulfillments", "role.fulfillment-seller"),
+        ("settlements", "role.settlement-escrow"),
+    ],
+)
+def test_empty_contract_collections(name, role):
+    with TestClient(create_app(test_mode=True)) as client:
+        result = call(client, "GET", f"/{name}", role=role)
+        assert result.status_code == 200
+        assert result.headers["content-type"] == "application/hal+json"
+        assert "location" not in result.headers
+        assert result.json() == {
+            "_links": {"self": {"href": f"/{name}"}},
+            "_embedded": {name: []},
+            "total": 0,
+        }
+
+
+def test_hal_collections_and_scoped_primary_reads():
+    with TestClient(create_app(test_mode=True)) as client:
+        a = post(client, "/agreements", terms("a b"))
+        b = post(client, "/agreements", terms("b"))
+        root = a["_links"]["self"]["href"]
+        assert root == "/agreements/a%20b"
+        contracts = call(client, "GET", "/agreements").json()
+        assert contracts["total"] == 2
+        assert contracts["_embedded"]["agreements"] == [a, b]
+        path = root + "/orders"
+        assert call(client, "GET", path).json()["_embedded"] == {"orders": []}
+        req = post(client, path, {"id": "req"})
+        listed = call(client, "GET", path).json()
+        assert listed == {
+            "_links": {"self": {"href": path}},
+            "_embedded": {"orders": [req]},
+            "total": 1,
+        }
+        assert call(client, "GET", "/agreements/b/orders").json()["total"] == 0
+        confirmation = path + "/req/confirmation"
+        seller = "role.procurement-seller"
+        assert call(client, "GET", confirmation, role=seller).status_code == 404
+        post(client, confirmation, {"id": "confirmed"}, seller)
+        for suffix in ("req", "req/confirmation"):
+            role = (
+                seller if suffix.endswith("confirmation") else "role.procurement-buyer"
+            )
+            assert (
+                call(
+                    client, "GET", "/agreements/b/orders/" + suffix, role=role
+                ).status_code
+                == 404
+            )
+            assert (
+                call(
+                    client,
+                    "GET",
+                    root + "/commitments/" + suffix,
+                    role=seller if suffix == "req" else "role.procurement-buyer",
+                ).status_code
+                == 404
+            )
+        assert call(client, "GET", path + "/req", role=seller).status_code == 403
+        assert call(client, "GET", confirmation).status_code == 403
+        assert call(client, "GET", "/agreements/missing/orders").status_code == 404
+        assert (
+            call(client, "GET", "/escrows/a%20b", role="role.escrow-buyer").status_code
+            == 404
+        )
+        assert (
+            call(client, "GET", "/agreements", role="role.escrow-buyer").status_code
+            == 403
+        )
 
 
 @pytest.mark.parametrize("value", [True, 1.5, 2**53, "9223372036854775808", "01", "-0"])
@@ -158,16 +238,13 @@ def test_exact_arithmetic():
 def test_security_strict_fields_get_expiry_and_v1():
     with TestClient(create_app(test_mode=True, mode="v1")) as client:
         assert (
-            call(
-                client, "POST", "/procurement/agreement", terms("a"), role=""
-            ).status_code
-            == 401
+            call(client, "POST", "/agreements", terms("a"), role="").status_code == 401
         )
         assert (
             call(
                 client,
                 "POST",
-                "/procurement/agreement",
+                "/agreements",
                 terms("a"),
                 clock="2026-02-30T00:00:00Z",
             ).status_code
@@ -177,7 +254,7 @@ def test_security_strict_fields_get_expiry_and_v1():
             call(
                 client,
                 "POST",
-                "/procurement/agreement",
+                "/agreements",
                 terms("a"),
                 role="role.escrow-buyer",
             ).status_code
@@ -187,33 +264,30 @@ def test_security_strict_fields_get_expiry_and_v1():
             call(
                 client,
                 "POST",
-                "/procurement/agreement",
+                "/agreements",
                 terms("a") | {"signed_at": WHEN},
             ).status_code
             == 422
         )
-        post(client, "/procurement/agreement", terms("a"))
-        assert call(client, "GET", "/procurement/agreement/a").status_code == 200
-        assert (
-            call(client, "POST", "/procurement/agreement", terms("a")).status_code
-            == 409
-        )
+        post(client, "/agreements", terms("a"))
+        assert call(client, "GET", "/agreements/a").status_code == 200
+        assert call(client, "POST", "/agreements", terms("a")).status_code == 409
         assert (
             call(
                 client,
                 "POST",
-                "/procurement/agreement/a/order/request",
+                "/agreements/a/orders",
                 {"id": "early"},
                 clock="2026-05-31T00:00:00Z",
             ).status_code
             == 422
         )
-        post(client, "/procurement/agreement/a/order/request", {"id": "req"})
+        post(client, "/agreements/a/orders", {"id": "req"})
         assert (
             call(
                 client,
                 "POST",
-                "/procurement/agreement/a/order/request/req/confirmation",
+                "/agreements/a/orders/req/confirmation",
                 {"id": "expired"},
                 "role.procurement-seller",
                 "2026-06-03T00:00:01Z",
@@ -224,17 +298,14 @@ def test_security_strict_fields_get_expiry_and_v1():
             call(
                 client,
                 "POST",
-                "/fulfillment/fulfillment/x/first-milestone/request",
+                "/fulfillments/x/first-milestones",
                 {"id": "x"},
                 "role.fulfillment-buyer",
             ).status_code
             == 404
         )
     with TestClient(create_app()) as client:
-        assert (
-            call(client, "POST", "/procurement/agreement", terms("a")).status_code
-            == 503
-        )
+        assert call(client, "POST", "/agreements", terms("a")).status_code == 503
 
 
 def test_request_clock_isolation():
@@ -242,9 +313,7 @@ def test_request_clock_isolation():
 
         def sign(i):
             clock = f"2026-06-01T00:00:{i:02d}Z"
-            result = call(
-                client, "POST", "/procurement/agreement", terms(str(i)), clock=clock
-            )
+            result = call(client, "POST", "/agreements", terms(str(i)), clock=clock)
             assert result.status_code == 201
             assert result.json()["signed_at"] == clock
 
@@ -266,42 +335,42 @@ def test_full_journey_cross_order_and_atomic_release():
             call(
                 client,
                 "POST",
-                "/fulfillment/fulfillment",
+                "/fulfillments",
                 linked,
                 "role.fulfillment-buyer",
             ).status_code
             == 422
         )
         linked["deposit_confirmation_id"] = "a-deposit"
-        post(client, "/fulfillment/fulfillment", linked, "role.fulfillment-buyer")
-        root = "/fulfillment/fulfillment/fulfillment"
+        post(client, "/fulfillments", linked, "role.fulfillment-buyer")
+        root = "/fulfillments/fulfillment"
         post(
             client,
-            root + "/delivery/request",
+            root + "/deliveries",
             {"id": "delivery"},
             "role.fulfillment-buyer",
         )
         post(
             client,
-            root + "/delivery/request/delivery/confirmation",
+            root + "/deliveries/delivery/confirmation",
             {"id": "delivered", "delivered_quantity": 2},
             "role.fulfillment-seller",
         )
         post(
             client,
-            root + "/acceptance/request",
+            root + "/acceptances",
             {"id": "accept"},
             "role.fulfillment-seller",
         )
         post(
             client,
-            root + "/acceptance/request/accept/confirmation",
+            root + "/acceptances/accept/confirmation",
             {"id": "accepted", "accepted": True},
             "role.fulfillment-buyer",
         )
         post(
             client,
-            "/settlement/settlement",
+            "/settlements",
             {
                 "id": "settlement",
                 "order_confirmation_id": "a-order",
@@ -310,7 +379,7 @@ def test_full_journey_cross_order_and_atomic_release():
             },
             "role.settlement-seller",
         )
-        path = "/settlement/settlement/settlement/release/request"
+        path = "/settlements/settlement/releases"
         post(client, path, {"id": "release"}, "role.settlement-seller")
         assert (
             call(

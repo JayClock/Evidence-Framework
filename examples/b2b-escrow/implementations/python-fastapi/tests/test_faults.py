@@ -9,10 +9,7 @@ from app.domain import parse_time
 @pytest.mark.parametrize("fault", FAULTS)
 def test_faults_are_explicit_and_test_only(fault):
     with TestClient(create_app(fault=fault)) as client:
-        assert (
-            call(client, "POST", "/procurement/agreement", terms("closed")).status_code
-            == 503
-        )
+        assert call(client, "POST", "/agreements", terms("closed")).status_code == 503
     with TestClient(
         create_app(
             test_mode=True,
@@ -20,7 +17,7 @@ def test_faults_are_explicit_and_test_only(fault):
             clock=lambda: parse_time("2026-07-09T00:00:00Z"),
         )
     ) as client:
-        response = call(client, "POST", "/procurement/agreement", terms("fault"))
+        response = call(client, "POST", "/agreements", terms("fault"))
         assert response.status_code == 201
         data = response.json()
         assert (data.get("unmodeled") is True) == (fault == "extra-field")
@@ -32,22 +29,20 @@ def test_faults_are_explicit_and_test_only(fault):
             call(
                 client,
                 "POST",
-                "/procurement/agreement",
+                "/agreements",
                 terms("forbidden"),
                 role="role.procurement-escrow",
             ).status_code
             == 403
         )
         assert (
-            call(
-                client, "POST", "/procurement/agreement", terms("bad"), clock="bad"
-            ).status_code
+            call(client, "POST", "/agreements", terms("bad"), clock="bad").status_code
             == 400
         )
         response = call(
             client,
             "POST",
-            "/settlement/settlement/absent/release/request/absent/confirmation",
+            "/settlements/absent/releases/absent/confirmation",
             {"id": "tamper", "payout_minor": 999999},
             role="role.settlement-escrow",
         )

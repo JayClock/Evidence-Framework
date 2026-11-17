@@ -51,6 +51,21 @@ class Ledger:
             None,
         )
 
+    def list(self, kind, contract_id=None):
+        return [
+            deepcopy(f)
+            for f in self._facts.values()
+            if f.kind == kind and (contract_id is None or f.contract_id == contract_id)
+        ]
+
+    def confirmation(self, request_id):
+        fact = next(
+            (f for f in self._facts.values() if f.request_id == request_id), None
+        )
+        if fact is None:
+            raise BusinessError(404, "NOT_FOUND", "Confirmation has not been formed")
+        return deepcopy(fact)
+
     def previous(self, contract_id, kind):
         fact = self.find(contract_id, kind)
         require(fact is not None, f"Missing prerequisite {kind}")
