@@ -7,7 +7,7 @@ const yamlText = [
   'info:',
   '  title: 采购',
   'paths:',
-  '  /v1/procurement/orders:',
+  '  /product-procurements:',
   '    post:',
   '      requestBody: {}',
   'components:',
@@ -19,8 +19,8 @@ const yamlText = [
 ].join('\n');
 
 const bindings = [
-  { entityRef: 'contract.product-procurement', path: '/v1/procurement/orders' },
-  { entityRef: 'evidence.purchase-order', path: '/v1/procurement/orders' },
+  { entityRef: 'contract.product-procurement', path: '/product-procurements' },
+  { entityRef: 'evidence.purchase-order', path: '/product-procurements' },
 ];
 
 describe('OpenAPI line index', () => {
@@ -34,7 +34,7 @@ describe('OpenAPI line index', () => {
 
   it('falls back to the route a schema-less entity is reachable through', () => {
     const index = buildOpenApiLineIndex(yamlText, [
-      { entityRef: 'role.buyer', path: '/v1/procurement/orders' },
+      { entityRef: 'role.buyer', path: '/product-procurements' },
     ]);
 
     expect(index.entityLine.get('role.buyer')).toBe(5);

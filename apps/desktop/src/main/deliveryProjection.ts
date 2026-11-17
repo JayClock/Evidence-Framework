@@ -45,6 +45,8 @@ export interface DeliveryPreview {
     supplies: readonly string[];
     consumes: readonly string[];
     notes: string;
+    routePrefixes: readonly string[];
+    routes: readonly string[];
     routeCount: number;
   }[];
   links: readonly {
@@ -86,6 +88,8 @@ export const previewOf = (bundle: DeliveryBundle): DeliveryPreview => {
       name: service.name,
       kind: service.kind,
       contextRef: service.contextRef,
+      routePrefixes: [...service.routePrefixes],
+      routes: [...service.routes],
       supplies: [...service.supplies],
       consumes: [...service.consumes],
       notes: service.notes,

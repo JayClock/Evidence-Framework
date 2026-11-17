@@ -21,10 +21,11 @@ export const liveDeliveryPreview = (
     openapi: '3.1.0',
     info: {
       title: '测试',
-      version: '1.0',
+      version: '6.0.0',
       description: '由履约模型直接投影的契约。',
     },
     'x-evidence-model': 'test',
+    'x-evidence-model-version': '1.0',
     paths: {},
     components: { schemas: {}, examples: {} },
     'x-evidence-services': [],

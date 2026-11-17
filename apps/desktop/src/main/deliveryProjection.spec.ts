@@ -26,7 +26,7 @@ describe('live delivery inputs', () => {
       const snapshot = JSON.parse(
         files.find((item) => item.path === 'projection.json')!.content,
       );
-      expect(snapshot.schemaVersion).toBe('5.1');
+      expect(snapshot.schemaVersion).toBe('6.0');
       expect(snapshot.mode).toBe('draft');
       expect(snapshot.digests.model).toMatch(/^sha256:[a-f0-9]{64}$/);
       expect(snapshot.digests.checkReport).toBeUndefined();

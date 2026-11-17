@@ -27,6 +27,11 @@ const controller = (
         consumes: [],
         notes: '',
         routeCount: 2,
+        routePrefixes: ['/product-procurements'],
+        routes: [
+          'route.sign.contract.procurement',
+          'route.read.contract.procurement',
+        ],
       },
     ],
     links: [],
@@ -55,6 +60,7 @@ describe('DeliveryHub', () => {
     render(<DeliveryHub hub={controller()} onClose={() => undefined} />);
     expect(screen.getByText('核心履约')).toBeInTheDocument();
     expect(screen.getByText('尚无确认。')).toBeInTheDocument();
+    expect(screen.getByText('/product-procurements')).toBeInTheDocument();
     expect(screen.getByRole('status')).toHaveTextContent('保存不会重置差异');
   });
   it('exports only the current accepted draft', () => {

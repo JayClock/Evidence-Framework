@@ -6,7 +6,7 @@ import { createMcpDeliveryService } from './mcpDeliveryService';
 
 const bundle = (): DeliveryBundle =>
   ({
-    schemaVersion: '5.1',
+    schemaVersion: '6.0',
     apiId: 'procurement-api',
     mode: 'draft',
     journeys: [],
@@ -21,7 +21,7 @@ const bundle = (): DeliveryBundle =>
         id: 'route.sign.contract.procurement',
         operationId: 'signContractProcurement',
         method: 'POST',
-        path: '/procurement/procurement',
+        path: '/procurements',
         purpose: 'sign',
         serviceId: 'service.procurement',
         contextRef: 'context.procurement',
@@ -31,7 +31,9 @@ const bundle = (): DeliveryBundle =>
         confirmationRef: null,
         summary: '签署采购协议',
         shape: 'collection',
-        itemPath: '/procurement/procurement/{contractId}',
+        responseShape: 'item',
+        parameterEntityRefs: { contractId: 'contract.procurement' },
+        itemPath: '/procurements/{contractId}',
         allowedPartyRoleRefs: [],
         exposure: 'internal',
         outputFields: [],
@@ -45,7 +47,7 @@ const bundle = (): DeliveryBundle =>
         id: 'route.read.contract.procurement',
         operationId: 'readContractProcurement',
         method: 'GET',
-        path: '/procurement/procurement/{contractId}',
+        path: '/procurements/{contractId}',
         purpose: 'read',
         serviceId: 'service.procurement',
         contextRef: 'context.procurement',
@@ -55,7 +57,9 @@ const bundle = (): DeliveryBundle =>
         confirmationRef: null,
         summary: '读取采购协议',
         shape: 'collection',
-        itemPath: '/procurement/procurement/{contractId}',
+        responseShape: 'item',
+        parameterEntityRefs: { contractId: 'contract.procurement' },
+        itemPath: '/procurements/{contractId}',
         allowedPartyRoleRefs: [],
         exposure: 'internal',
         outputFields: [],
@@ -72,7 +76,11 @@ const bundle = (): DeliveryBundle =>
         name: '采购',
         kind: 'fulfillment',
         contextRef: 'context.procurement',
-        lane: 'procurement',
+        routePrefixes: ['/procurements'],
+        routes: [
+          'route.sign.contract.procurement',
+          'route.read.contract.procurement',
+        ],
         rootRefs: ['contract.procurement'],
         evidenceRefs: ['contract.procurement'],
         supplies: [],
@@ -93,11 +101,12 @@ const bundle = (): DeliveryBundle =>
     ],
     openapi: {
       openapi: '3.1.0',
-      info: { title: '商品采购', version: '1.1.0', description: '' },
+      info: { title: '商品采购', version: '6.0.0', description: '' },
       'x-evidence-model': 'procurement',
+      'x-evidence-model-version': '1.1.0',
       paths: {
-        '/procurement/procurement': { post: {} },
-        '/procurement/procurement/{contractId}': { get: {} },
+        '/procurements': { post: {} },
+        '/procurements/{contractId}': { get: {} },
       },
       components: { schemas: {} },
       'x-evidence-services': [],
@@ -116,6 +125,11 @@ describe('createMcpDeliveryService', () => {
       id: 'service.procurement',
       kind: 'fulfillment',
       routeCount: 2,
+      routePrefixes: ['/procurements'],
+      routes: [
+        'route.sign.contract.procurement',
+        'route.read.contract.procurement',
+      ],
     });
     expect(topology.links[0]).toMatchObject({ mode: 'async' });
     expect(topology.limitations).toHaveLength(1);

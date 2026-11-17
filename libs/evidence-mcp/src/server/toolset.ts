@@ -205,7 +205,7 @@ export const createEvidenceTools = (
     name: TOOL_NAMES.deliveryTopology,
     title: '读取交付拓扑',
     description:
-      '返回模型落成的服务边界：每个上下文一个服务，跨边界的调用方式（同步/异步）与尚未闭环的能力。用于在写代码前确认微服务切分与依赖方向。',
+      '返回模型落成的服务边界：每个上下文一个服务，routePrefixes 与精确 routes 标明业务路径归属，跨边界的调用方式（同步/异步）与尚未闭环的能力。用于在写代码前确认微服务切分与依赖方向。',
     inputSchema: z.object({}).strict(),
     annotations: READ_ONLY,
     run: async () => json(await client.getDeliveryTopology()),
@@ -214,7 +214,7 @@ export const createEvidenceTools = (
     name: TOOL_NAMES.openApiContract,
     title: '导出 OpenAPI 契约',
     description:
-      '返回模型投影出的 OpenAPI 3.1 文档：履约请求映射为发起接口，履约确认映射为完成接口。派生值与业务时间不出现在请求体中。',
+      '返回模型投影出的 OpenAPI 3.1 文档：履约请求映射为发起接口，履约确认映射为完成接口。公开 URI 从业务聚合根起始，与部署上下文解耦；每个创建端点有对称 GET，响应采用 HAL self 与集合 _embedded。派生值与业务时间不出现在请求体中。',
     inputSchema: z.object({}).strict(),
     annotations: READ_ONLY,
     run: async () => json(await client.exportOpenApiContract()),

@@ -89,6 +89,8 @@ export interface DeliveryPreviewService {
   supplies: readonly string[];
   consumes: readonly string[];
   notes: string;
+  routePrefixes: readonly string[];
+  routes: readonly string[];
   routeCount: number;
 }
 

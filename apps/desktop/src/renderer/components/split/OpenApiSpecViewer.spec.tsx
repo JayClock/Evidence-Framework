@@ -14,7 +14,7 @@ const analysis = () => {
       routes: [
         {
           method: 'POST',
-          path: '/v1/procurement/orders',
+          path: '/product-procurements',
           summary: '发起采购',
           serviceId: 'svc.procurement',
         },
@@ -25,7 +25,7 @@ const analysis = () => {
         id: 'route.1',
         entityRef: 'contract.product-procurement',
         method: 'POST',
-        path: '/v1/procurement/orders',
+        path: '/product-procurements',
         roleRefs: [],
         exposure: 'external' as const,
         fields: [],
@@ -35,7 +35,8 @@ const analysis = () => {
       openapi: '3.1.0' as const,
       info: { title: '采购', version: '1.0', description: '' },
       'x-evidence-model': 'procurement',
-      paths: { '/v1/procurement/orders': { post: { summary: '发起采购' } } },
+      'x-evidence-model-version': '1.0.0',
+      paths: { '/product-procurements': { post: { summary: '发起采购' } } },
       components: {
         examples: {},
         schemas: {

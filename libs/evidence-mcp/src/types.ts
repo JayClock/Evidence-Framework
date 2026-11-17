@@ -126,6 +126,8 @@ export interface McpDeliveryTopology {
     contextRef: string;
     supplies: readonly string[];
     consumes: readonly string[];
+    routePrefixes: readonly string[];
+    routes: readonly string[];
     routeCount: number;
   }[];
   links: readonly {

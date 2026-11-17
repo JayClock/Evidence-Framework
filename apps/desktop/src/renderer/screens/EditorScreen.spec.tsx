@@ -577,6 +577,8 @@ describe('EditorScreen', () => {
               consumes: [],
               notes: '合同上下文。',
               routeCount: 4,
+              routePrefixes: ['/product-procurements'],
+              routes: [],
             },
           ],
           links: [],
@@ -1029,7 +1031,7 @@ describe('EditorScreen dual-mode stage', () => {
           routes: [
             {
               method: 'POST',
-              path: '/v1/procurement/orders',
+              path: '/product-procurements',
               summary: '发起采购',
               serviceId: 'svc.procurement',
             },

@@ -186,6 +186,9 @@ export const DeliveryHub = ({
                         </td>
                         <td className="border-b border-evidence-line py-1 pr-2">
                           {service.routeCount}
+                          <div className="font-mono text-[10px] text-evidence-muted">
+                            {service.routePrefixes.join(' · ')}
+                          </div>
                         </td>
                         <td className="border-b border-evidence-line py-1 text-evidence-muted">
                           {service.notes}

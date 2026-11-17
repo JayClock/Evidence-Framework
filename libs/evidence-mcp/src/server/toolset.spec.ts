@@ -91,7 +91,19 @@ const createClient = (
     modelId: 'product-procurement',
     modelName: '商品采购',
     modelVersion: '1.0.0',
-    services: [],
+    services: [
+      {
+        id: 'service.procurement',
+        name: '采购',
+        kind: 'fulfillment' as const,
+        contextRef: 'context.procurement',
+        supplies: [],
+        consumes: [],
+        routeCount: 1,
+        routePrefixes: ['/product-procurements'],
+        routes: ['route.sign.contract.product-procurement'],
+      },
+    ],
     links: [],
     limitations: [],
   })),
@@ -294,6 +306,12 @@ describe('createEvidenceTools', () => {
     expect(topology.tool.annotations.readOnlyHint).toBe(true);
     expect(topologyResult.value).toMatchObject({
       modelId: 'product-procurement',
+      services: [
+        {
+          routePrefixes: ['/product-procurements'],
+          routes: ['route.sign.contract.product-procurement'],
+        },
+      ],
     });
     expect(contract.client.exportOpenApiContract).toHaveBeenCalledTimes(1);
     expect(contractResult.value).toMatchObject({ pathCount: 0 });

@@ -37,6 +37,8 @@ const topologyOf = (bundle: DeliveryBundle): McpDeliveryTopology => {
       name: service.name,
       kind: service.kind,
       contextRef: service.contextRef,
+      routePrefixes: [...service.routePrefixes],
+      routes: [...service.routes],
       supplies: [...service.supplies],
       consumes: [...service.consumes],
       routeCount: counts.get(service.id) ?? 0,
@@ -59,7 +61,8 @@ export const createMcpDeliveryService = (
     modelSourceOf(projectDirectoryOf(rootPath));
 
   return {
-    topology: async (rootPath) => topologyOf(await build(modelRootOf(rootPath))),
+    topology: async (rootPath) =>
+      topologyOf(await build(modelRootOf(rootPath))),
     openapi: async (rootPath) => {
       const bundle = await build(modelRootOf(rootPath));
 
