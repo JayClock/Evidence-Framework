@@ -43,6 +43,14 @@ var Definitions = map[string]Definition{
 	"settlement":  {"settlement", []string{"seller", "escrow"}, map[string][2]string{"release": {"seller", "escrow"}, "settlement-receipt": {"escrow", "seller"}, "milestone-release": {"seller", "escrow"}, "milestone-statement": {"escrow", "seller"}}},
 }
 
+// CollectionOf keeps the standalone service's public business vocabulary local.
+func CollectionOf(name string) string {
+	if name == "delivery" {
+		return "deliveries"
+	}
+	return name + "s"
+}
+
 func delivery(a string) bool {
 	return a == "delivery" || a == "first-milestone" || a == "final-milestone"
 }
@@ -240,14 +248,27 @@ func chronology(f Fact, now time.Time) {
 	invalid("Missing fact time")
 }
 func (l *Ledger) Get(id, kind string) Fact { l.mu.Lock(); defer l.mu.Unlock(); return l.get(id, kind) }
-func (l *Ledger) Find(contract, kind string) Fact {
+func (l *Ledger) List(kind, contract string) []Fact {
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	f, ok := l.find(contract, kind)
-	if !ok {
-		fail(404, "NOT_FOUND", "Request has not been formed")
+	facts := make([]Fact, 0)
+	for _, f := range l.facts {
+		if f.Kind == kind && (contract == "" || f.ContractID == contract) {
+			facts = append(facts, clone(f))
+		}
 	}
-	return f
+	return facts
+}
+func (l *Ledger) Confirmation(requestID string) Fact {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	for _, f := range l.facts {
+		if f.RequestID == requestID {
+			return clone(f)
+		}
+	}
+	fail(404, "NOT_FOUND", "Confirmation has not been formed")
+	return Fact{}
 }
 func (l *Ledger) Sign(lane string, input Data, now time.Time) Fact {
 	l.mu.Lock()
@@ -296,7 +317,7 @@ func (l *Ledger) Sign(lane string, input Data, now time.Time) Fact {
 		}
 	}
 	d["signed_at"] = stamp(now)
-	return l.commit(Fact{ID: id, Kind: "contract." + Definitions[lane].Name, ContractID: id, OrderID: orderID, Data: d, Href: "/" + lane + "/" + Definitions[lane].Name + "/" + url.PathEscape(id)})
+	return l.commit(Fact{ID: id, Kind: "contract." + Definitions[lane].Name, ContractID: id, OrderID: orderID, Data: d, Href: "/" + CollectionOf(Definitions[lane].Name) + "/" + url.PathEscape(id)})
 }
 func acceptanceKind(k string) bool {
 	return k == "confirmation.acceptance" || k == "confirmation.milestone-acceptance"
@@ -333,7 +354,7 @@ func (l *Ledger) Request(lane, action, contractID string, input Data, now time.T
 	d["started_at"] = stamp(now)
 	d["expired_at"] = stamp(now.Add(48 * time.Hour))
 	id := d["id"].(string)
-	return l.commit(Fact{ID: id, Kind: "request." + action, ContractID: contractID, OrderID: c.OrderID, Data: d, Href: c.Href + "/" + action + "/request/" + url.PathEscape(id)})
+	return l.commit(Fact{ID: id, Kind: "request." + action, ContractID: contractID, OrderID: c.OrderID, Data: d, Href: c.Href + "/" + CollectionOf(action) + "/" + url.PathEscape(id)})
 }
 func (l *Ledger) Confirm(lane, action, contractID, requestID string, input Data, now time.Time) Fact {
 	l.mu.Lock()

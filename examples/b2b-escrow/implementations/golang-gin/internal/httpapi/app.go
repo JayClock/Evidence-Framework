@@ -19,6 +19,16 @@ type Options struct {
 	Clock    func() time.Time
 }
 
+type HalLink struct {
+	Href string `json:"href"`
+}
+
+type HalCollection struct {
+	Links    map[string]HalLink       `json:"_links"`
+	Embedded map[string][]domain.Data `json:"_embedded"`
+	Total    int                      `json:"total"`
+}
+
 func ValidFault(fault string) bool {
 	switch fault {
 	case "", "none", "accept-derived", "extra-field", "clock", "precision":
@@ -99,11 +109,7 @@ func New(options Options) *gin.Engine {
 		}
 		return data
 	}
-	send := func(c *gin.Context, status int, f domain.Fact) {
-		if status == 201 {
-			c.Header("Location", f.Href)
-		}
-		c.Header("Content-Type", "application/hal+json")
+	representation := func(f domain.Fact) domain.Data {
 		data := domain.Representation(f)
 		if options.Fault == "extra-field" {
 			data["unmodeled"] = true
@@ -121,11 +127,34 @@ func New(options Options) *gin.Engine {
 				}
 			}
 		}
-		c.JSON(status, data)
+		return data
+	}
+	send := func(c *gin.Context, status int, f domain.Fact) {
+		if status == 201 {
+			c.Header("Location", f.Href)
+		}
+		c.Header("Content-Type", "application/hal+json")
+		c.JSON(status, representation(f))
+	}
+	collection := func(c *gin.Context, href, name string, facts []domain.Fact) {
+		items := make([]domain.Data, 0, len(facts))
+		for _, fact := range facts {
+			items = append(items, representation(fact))
+		}
+		c.Header("Content-Type", "application/hal+json")
+		c.JSON(200, HalCollection{
+			Links:    map[string]HalLink{"self": {Href: href}},
+			Embedded: map[string][]domain.Data{name: items},
+			Total:    len(items),
+		})
 	}
 	for lane, def := range domain.Definitions {
 		lane, def := lane, def
-		root := "/" + lane + "/" + def.Name
+		root := "/" + domain.CollectionOf(def.Name)
+		app.GET(root, func(c *gin.Context) {
+			authorize(c, lane, def.Roles)
+			collection(c, root, domain.CollectionOf(def.Name), ledger.List("contract."+def.Name, ""))
+		})
 		app.POST(root, func(c *gin.Context) {
 			authorize(c, lane, def.Roles)
 			send(c, 201, ledger.Sign(lane, read(c), c.MustGet("now").(time.Time)))
@@ -139,17 +168,34 @@ func New(options Options) *gin.Engine {
 			if options.Mode == "v1" && strings.Contains(action, "milestone") {
 				continue
 			}
-			base := root + "/:contractId/" + action
+			base := root + "/:contractId/" + domain.CollectionOf(action)
+			requestFact := func(c *gin.Context) domain.Fact {
+				ledger.Get(c.Param("contractId"), "contract."+def.Name)
+				fact := ledger.Get(c.Param("requestId"), "request."+action)
+				if fact.ContractID != c.Param("contractId") {
+					panic(&domain.Error{Status: 404, Code: "NOT_FOUND", Detail: "Request belongs to another contract"})
+				}
+				return fact
+			}
 			app.GET(base, func(c *gin.Context) {
 				authorize(c, lane, []string{roles[0]})
-				ledger.Get(c.Param("contractId"), "contract."+def.Name)
-				send(c, 200, ledger.Find(c.Param("contractId"), "request."+action))
+				contract := ledger.Get(c.Param("contractId"), "contract."+def.Name)
+				collection(c, contract.Href+"/"+domain.CollectionOf(action), domain.CollectionOf(action), ledger.List("request."+action, contract.ID))
 			})
-			app.POST(base+"/request", func(c *gin.Context) {
+			app.GET(base+"/:requestId", func(c *gin.Context) {
+				authorize(c, lane, []string{roles[0]})
+				send(c, 200, requestFact(c))
+			})
+			app.GET(base+"/:requestId/confirmation", func(c *gin.Context) {
+				authorize(c, lane, []string{roles[1]})
+				requestFact(c)
+				send(c, 200, ledger.Confirmation(c.Param("requestId")))
+			})
+			app.POST(base, func(c *gin.Context) {
 				authorize(c, lane, []string{roles[0]})
 				send(c, 201, ledger.Request(lane, action, c.Param("contractId"), read(c), c.MustGet("now").(time.Time)))
 			})
-			app.POST(base+"/request/:requestId/confirmation", func(c *gin.Context) {
+			app.POST(base+"/:requestId/confirmation", func(c *gin.Context) {
 				authorize(c, lane, []string{roles[1]})
 				input := read(c)
 				if _, supplied := input["payout_minor"]; options.Fault == "accept-derived" && supplied && (action == "release" || action == "milestone-release") {
