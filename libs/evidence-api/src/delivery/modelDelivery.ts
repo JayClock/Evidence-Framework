@@ -412,7 +412,8 @@ export interface DeliveryContract {
     id: string;
     kind: string;
     contextRef: string;
-    basePath: string;
+    routePrefixes: readonly string[];
+    routes: readonly string[];
   }[];
 }
 
@@ -425,7 +426,7 @@ export interface DeliveryContract {
 export const buildDeliveryContract = (
   document: DomainModelDocument,
   routes: readonly DeliveryRoute[] = buildDeliveryRoutes(document),
-  services: readonly DeliveryService[] = buildDeliveryTopology(document)
+  services: readonly DeliveryService[] = buildDeliveryTopology(document, routes)
     .services,
 ): DeliveryContract => {
   const componentOf = componentName;
@@ -458,7 +459,8 @@ export const buildDeliveryContract = (
       id: service.id,
       kind: service.kind,
       contextRef: service.contextRef,
-      basePath: `/${service.lane}`,
+      routePrefixes: service.routePrefixes,
+      routes: service.routes,
     })),
   };
 };
@@ -503,6 +505,10 @@ export interface DeliveryDeployment {
       environment: Record<string, string>;
       dependsOn: readonly string[];
       expose: readonly string[];
+      labels?: Record<string, string>;
+      command?: readonly string[];
+      ports?: readonly string[];
+      volumes?: readonly string[];
     }
   >;
 }
@@ -517,7 +523,7 @@ export interface DeliveryDeployment {
 export const buildDeliveryDeployment = (
   document: DomainModelDocument,
   routes: readonly DeliveryRoute[] = buildDeliveryRoutes(document),
-  services: readonly DeliveryService[] = buildDeliveryTopology(document)
+  services: readonly DeliveryService[] = buildDeliveryTopology(document, routes)
     .services,
   links: readonly { from: string; to: string }[] = buildDeliveryTopology(
     document,
@@ -526,40 +532,88 @@ export const buildDeliveryDeployment = (
   const allocator = createSegmentAllocator(
     services.map((service) => service.contextRef),
   );
-  const pathsByService = new Map<string, Set<string>>();
-
-  for (const route of routes) {
-    const bucket = pathsByService.get(route.serviceId) ?? new Set<string>();
-    bucket.add(route.path.split('/')[1] ?? '');
-    pathsByService.set(route.serviceId, bucket);
-  }
-
+  const serviceKey = (id: string) =>
+    id.replace(/^service\./, '').replaceAll('.', '-');
   return {
     version: '3',
-    services: Object.fromEntries(
-      services.map((service) => [
-        service.id.replace(/^service\./, ''),
-        {
-          image: `evidence/${allocator.segmentOf(service.contextRef)}:latest`,
-          environment: {
-            EVIDENCE_MODEL: document.manifest.id,
-            EVIDENCE_CONTEXT: service.contextRef,
-            EVIDENCE_SERVICE_KIND: service.kind,
-            EVIDENCE_BASE_PATH: `/${service.lane}`,
-          },
-          dependsOn: links
-            .filter((link) => link.from === service.id)
-            .map((link) => link.to.replace(/^service\./, ''))
-            .sort(),
-          expose: [...(pathsByService.get(service.id) ?? [])]
-            .filter((path) => path !== '')
-            .sort()
-            .map((path) => `/${path}`),
-        },
-      ]),
-    ),
+    services: {
+      gateway: {
+        image: 'traefik:v3',
+        environment: {},
+        command: [
+          '--providers.docker=true',
+          '--providers.docker.exposedbydefault=false',
+          '--entrypoints.web.address=:80',
+        ],
+        ports: ['8080:80'],
+        volumes: ['/var/run/docker.sock:/var/run/docker.sock:ro'],
+        dependsOn: services.map((service) => serviceKey(service.id)).sort(),
+        expose: ['80'],
+      },
+      ...Object.fromEntries(
+        services.map((service) => {
+          const key = serviceKey(service.id);
+          const owned = routes.filter((route) =>
+            service.routes.includes(route.id),
+          );
+          const labels: Record<string, string> = {
+            'traefik.enable': String(owned.length > 0),
+            ['traefik.http.services.' + key + '.loadbalancer.server.port']:
+              '8080',
+          };
+          // Match whole method/path templates. A child service can own a single
+          // operation under another service's root without changing the URI.
+          for (const [index, route] of owned.entries()) {
+            const router = 'traefik.http.routers.' + key + '-' + index;
+            labels[router + '.rule'] =
+              'Method(`' +
+              route.method +
+              '`) && PathRegexp(`' +
+              routePattern(route.path) +
+              '`)';
+            labels[router + '.service'] = key;
+            labels[router + '.entrypoints'] = 'web';
+          }
+          return [
+            key,
+            {
+              image:
+                'evidence/' +
+                allocator.segmentOf(service.contextRef) +
+                ':latest',
+              environment: {
+                EVIDENCE_MODEL: document.manifest.id,
+                EVIDENCE_CONTEXT: service.contextRef,
+                EVIDENCE_SERVICE_KIND: service.kind,
+                EVIDENCE_ROUTE_PREFIXES: JSON.stringify(service.routePrefixes),
+                EVIDENCE_ROUTES: JSON.stringify(service.routes),
+              },
+              dependsOn: links
+                .filter((link) => link.from === service.id)
+                .map((link) => serviceKey(link.to))
+                .sort(),
+              expose: ['8080'],
+              labels,
+            },
+          ];
+        }),
+      ),
+    },
   };
 };
+
+/** Escape literals before introducing the one-segment parameter matcher. */
+const routePattern = (path: string): string =>
+  '^' +
+  path
+    .split(/(\{[^{}]+\})/g)
+    .map((part) =>
+      part.startsWith('{')
+        ? '[^/]+'
+        : part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
+    )
+    .join('') +
+  '$';
 
 /** The whole delivery, as one document a caller can write to disk. */
 export interface ModelDelivery {
@@ -615,7 +669,7 @@ export const buildModelDelivery = (
   document: DomainModelDocument,
 ): ModelDelivery => {
   const routes = buildDeliveryRoutes(document);
-  const topology = buildDeliveryTopology(document);
+  const topology = buildDeliveryTopology(document, routes);
   const services = topology.services;
   const openapi = buildDeliveryContract(document, routes, services);
 

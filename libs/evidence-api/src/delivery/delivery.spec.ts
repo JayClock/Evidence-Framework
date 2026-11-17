@@ -30,11 +30,7 @@ const operationAt = (
 describe('buildDeliveryContract', () => {
   it('names one operation id per route and tags it with its Context', async () => {
     const contract = buildDeliveryContract(await model());
-    const sign = operationAt(
-      contract,
-      '/product-procurement/product-procurement',
-      'post',
-    );
+    const sign = operationAt(contract, '/product-procurements', 'post');
 
     expect(sign['operationId']).toBe('signContractProductProcurement');
     expect(sign['tags']).toEqual(['context:context.product-procurement']);
@@ -45,7 +41,7 @@ describe('buildDeliveryContract', () => {
     const contract = buildDeliveryContract(await model());
     const confirm = operationAt(
       contract,
-      '/product-procurement/product-procurement/{contractId}/payment/request/confirmation',
+      '/product-procurements/{contractId}/payment/confirmation',
       'post',
     );
     const body = confirm['requestBody'] as {
@@ -66,7 +62,7 @@ describe('buildDeliveryContract', () => {
     const contract = buildDeliveryContract(await model());
     const request = operationAt(
       contract,
-      '/product-procurement/product-procurement/{contractId}/payment/request',
+      '/product-procurements/{contractId}/payment',
       'post',
     );
 
@@ -75,34 +71,22 @@ describe('buildDeliveryContract', () => {
     ).toContain('409');
   });
 
-  it('publishes the service base paths with the document', async () => {
+  it('publishes the service business prefixes with the document', async () => {
     const contract = buildDeliveryContract(await model());
 
-    expect(contract['x-evidence-services']).toEqual([
-      {
-        id: 'service.product-catalog',
-        kind: 'domain',
-        contextRef: 'context.product-catalog',
-        basePath: '/product-catalog',
-      },
+    expect(
+      contract['x-evidence-services'].map(({ id, routePrefixes }) => ({
+        id,
+        routePrefixes,
+      })),
+    ).toEqual([
+      { id: 'service.product-catalog', routePrefixes: ['/products'] },
       {
         id: 'service.product-procurement',
-        kind: 'fulfillment',
-        contextRef: 'context.product-procurement',
-        basePath: '/product-procurement',
+        routePrefixes: ['/product-inquiries', '/product-procurements'],
       },
-      {
-        id: 'service.product-sourcing',
-        kind: 'channel',
-        contextRef: 'context.product-sourcing',
-        basePath: '/product-sourcing',
-      },
-      {
-        id: 'service.wechat-payment',
-        kind: 'capability',
-        contextRef: 'context.wechat-payment',
-        basePath: '/wechat-payment',
-      },
+      { id: 'service.product-sourcing', routePrefixes: ['/product-inquiries'] },
+      { id: 'service.wechat-payment', routePrefixes: ['/wechat-payments'] },
     ]);
   });
 });
@@ -113,6 +97,7 @@ describe('buildDeliveryDeployment', () => {
     const deployment = buildDeliveryDeployment(document);
 
     expect(Object.keys(deployment.services)).toEqual([
+      'gateway',
       'product-catalog',
       'product-procurement',
       'product-sourcing',

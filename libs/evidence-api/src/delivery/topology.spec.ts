@@ -12,7 +12,7 @@ const model = async (): Promise<DomainModelDocument> => {
 };
 
 describe('buildDeliveryTopology', () => {
-  it('turns each Context into exactly one service with a lane', async () => {
+  it('turns each Context into exactly one service with business route ownership', async () => {
     const { services } = buildDeliveryTopology(await model());
 
     expect(services.map((service) => service.id)).toEqual([
@@ -21,12 +21,16 @@ describe('buildDeliveryTopology', () => {
       'service.product-sourcing',
       'service.wechat-payment',
     ]);
-    expect(services.map((service) => service.lane)).toEqual([
-      'product-catalog',
-      'product-procurement',
-      'product-sourcing',
-      'wechat-payment',
+    expect(services.map((service) => service.routePrefixes)).toEqual([
+      ['/products'],
+      ['/product-inquiries', '/product-procurements'],
+      ['/product-inquiries'],
+      ['/wechat-payments'],
     ]);
+    for (const service of services) {
+      expect(service).not.toHaveProperty('lane');
+      expect(service.routes.length).toBeGreaterThan(0);
+    }
   });
 
   it('reads a pre-contract Context as a channel and a domain Context as a domain', async () => {
@@ -69,4 +73,42 @@ describe('buildDeliveryTopology', () => {
       reads.map((link) => `${link.from}->${link.to}:${link.mode}`),
     ).toContain('service.product-procurement->service.product-catalog:sync');
   });
+});
+
+it('owns each method/path once, including proposal signing executed by the contract service', async () => {
+  const document = await model();
+  const { buildDeliveryRoutes } = await import('./routes.js');
+  const { buildDeliveryDeployment } = await import('./modelDelivery.js');
+  const routes = buildDeliveryRoutes(document);
+  const { services } = buildDeliveryTopology(document, routes);
+  const owned = services.flatMap((service) => service.routes);
+  expect(owned.sort()).toEqual(routes.map((route) => route.id).sort());
+  const deployment = buildDeliveryDeployment(document, routes, services);
+  for (const service of services) {
+    const container =
+      deployment.services[service.id.replace(/^service\./, '')]!;
+    expect(JSON.parse(container.environment.EVIDENCE_ROUTE_PREFIXES!)).toEqual(
+      service.routePrefixes,
+    );
+    expect(container.environment).not.toHaveProperty('EVIDENCE_BASE_PATH');
+    const rules = Object.entries(container.labels!)
+      .filter(([key]) => key.endsWith('.rule'))
+      .map(([, value]) => value);
+    expect(rules).toHaveLength(service.routes.length);
+    for (const route of routes.filter((route) =>
+      service.routes.includes(route.id),
+    )) {
+      const concrete = route.path.replace(/\{[^{}]+\}/g, 'one');
+      expect(
+        rules.filter((rule) => {
+          const match = rule.match(
+            /^Method\(`(GET|POST)`\) && PathRegexp\(`(.*)`\)$/,
+          )!;
+          return (
+            match[1] === route.method && new RegExp(match[2]!).test(concrete)
+          );
+        }),
+      ).toHaveLength(1);
+    }
+  }
 });

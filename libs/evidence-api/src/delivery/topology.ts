@@ -8,7 +8,8 @@ import {
   type DomainGraph,
 } from '@evidence-poc/evidence-model-core';
 
-import { rawSegmentOf, serviceIdOf } from './segments.js';
+import { serviceIdOf } from './segments.js';
+import { buildDeliveryRoutes, type DeliveryRoute } from './routes.js';
 
 /**
  * The services a model splits into, and how they talk.
@@ -42,8 +43,10 @@ export interface DeliveryService {
   name: string;
   kind: DeliveryServiceKind;
   contextRef: string;
-  /** Path segment the Context's routes hang under. */
-  lane: string;
+  /** Business roots served here; deployment boundaries never enter public URIs. */
+  routePrefixes: readonly string[];
+  /** Exact method/path operations, including cross-context proposal signing. */
+  routes: readonly string[];
   /** Root objects the Context declares. */
   rootRefs: readonly string[];
   /** Evidence kinds the Context holds, for a reader skimming the topology. */
@@ -212,6 +215,7 @@ const notesFor = (
  */
 export const buildDeliveryTopology = (
   document: DomainModelDocument,
+  routes: readonly DeliveryRoute[] = buildDeliveryRoutes(document),
 ): DeliveryTopology => {
   const graph = createDomainGraph(document);
   const supplies = socketSupplies(graph);
@@ -249,7 +253,17 @@ export const buildDeliveryTopology = (
       name: context.label,
       kind,
       contextRef: context.id,
-      lane: rawSegmentOf(context.id),
+      routePrefixes: [
+        ...new Set(
+          routes
+            .filter((route) => route.serviceId === serviceIdOf(context.id))
+            .map((route) => '/' + route.path.split('/')[1]),
+        ),
+      ].sort(),
+      routes: routes
+        .filter((route) => route.serviceId === serviceIdOf(context.id))
+        .map((route) => route.id)
+        .sort(),
       rootRefs: [...(context.rootRefs ?? [])].sort(),
       evidenceRefs: members
         .filter((entity) => entity.category === 'evidence')

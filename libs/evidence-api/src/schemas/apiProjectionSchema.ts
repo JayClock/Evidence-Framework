@@ -181,7 +181,41 @@ export const API_PROJECTION_SCHEMA_TEXT = String.raw`{
     "services": {
       "type": "array",
       "items": {
-        "type": "object"
+        "type": "object",
+        "required": [
+          "id",
+          "contextRef",
+          "routePrefixes",
+          "routes"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "contextRef": {
+            "type": "string"
+          },
+          "routePrefixes": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^/"
+            }
+          },
+          "routes": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "not": {
+          "required": [
+            "lane"
+          ]
+        }
       }
     },
     "links": {

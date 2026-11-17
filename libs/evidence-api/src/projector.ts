@@ -29,6 +29,7 @@ import {
 } from './loader/apiLoader.js';
 import type { ApiJourneyStep, EvidenceApiSnapshot } from './types.js';
 import { deriveJourneys, weaveHypermedia } from './http/hateoasWeaver.js';
+import { buildDeliveryTopology } from './delivery/topology.js';
 
 export type Projection = EvidenceApiSnapshot;
 
@@ -172,7 +173,8 @@ export const buildProjection = ({
       nextPossibleSteps: [...(step.nextPossibleSteps ?? [])],
     });
   }
-  const openapi = buildDeliveryContract(model, routes, baseline.services);
+  const topology = buildDeliveryTopology(model, routes);
+  const openapi = buildDeliveryContract(model, routes, topology.services);
   diagnostics.push(...validateDeliveryExamples(openapi, routes));
   const sorted = normalizeDiagnostics(diagnostics);
   const projection: EvidenceApiSnapshot = {
@@ -181,6 +183,7 @@ export const buildProjection = ({
     apiId: typeof overlay?.['id'] === 'string' ? overlay['id'] : 'default-api',
     mode: 'draft',
     routes,
+    services: topology.services,
     hypermedia,
     journeys:
       declared.length === 0 ? deriveJourneys(routes, hypermedia) : journeys,
@@ -188,8 +191,8 @@ export const buildProjection = ({
     deployment: buildDeliveryDeployment(
       model,
       routes,
-      baseline.services,
-      baseline.links,
+      topology.services,
+      topology.links,
     ),
     diagnostics: sorted,
     digests: {
