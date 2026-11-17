@@ -25,7 +25,7 @@ it('official Step CI Runner consumes emitted YAML and resolves chained captures'
             value,
           ]),
         ),
-        _links: {},
+        _links: { self: { href: step.route.itemPath } },
       }),
     );
   });
@@ -40,7 +40,7 @@ it('official Step CI Runner consumes emitted YAML and resolves chained captures'
       JSON.stringify(result.result.tests, null, 2),
     ).toBe(true);
     expect(requests).toHaveLength(3);
-    expect(requests[2]).toContain('/request/request-001/confirmation');
+    expect(requests[2]).toContain('/payments/request-001/confirmation');
     expect(
       result.result.tests[0]!.steps.every(
         (step) => !step.skipped && !step.errored,

@@ -111,7 +111,7 @@ describe('B2B escrow phase-one contract', () => {
 
   it('compiles valid OpenAPI and exactly reproduces the committed artifacts', () => {
     expect(head).toMatchObject({
-      endpointCount: 47,
+      endpointCount: 77,
       flowCount: 5,
       stepCount: 121,
     });

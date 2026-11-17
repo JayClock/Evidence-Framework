@@ -117,3 +117,5 @@ export {
 
 export { validateDeliveryExamples } from './delivery/modelDelivery.js';
 export { assertOpenApiContract } from './openapi/validateContract.js';
+
+export { migrateOverlay } from './loader/migrateOverlay.js';

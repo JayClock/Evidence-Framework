@@ -9,6 +9,7 @@ import {
 } from './plugins/context.js';
 import {
   actions,
+  collectionOf,
   contracts,
   EscrowService,
   type Lane,
@@ -98,7 +99,24 @@ export function createApp(options: Options = {}) {
 
   for (const lane of Object.keys(contracts) as Lane[]) {
     const definition = contracts[lane];
-    const root = `/${lane}/${definition.name}`;
+    const root = `/${collectionOf(definition.name)}`;
+    const collection = (href: string, name: string, facts: Fact[]) => ({
+      _links: { self: { href } },
+      _embedded: { [name]: facts.map(representation) },
+      total: facts.length,
+    });
+    app.get(root, (_request, reply) => {
+      authorize(definition.roles);
+      return reply
+        .type('application/hal+json')
+        .send(
+          collection(
+            root,
+            collectionOf(definition.name),
+            service.ledger.list('contract.' + definition.name),
+          ),
+        );
+    });
     app.post(root, (request, reply) => {
       authorize(definition.roles);
       const fact = service.sign(lane, request.body, businessContext().now);
@@ -126,42 +144,85 @@ export function createApp(options: Options = {}) {
     );
     for (const [action, roles] of Object.entries(actions[lane])) {
       if (options.mode === 'v1' && /milestone/.test(action)) continue;
-      const base = `${root}/:contractId/${action}`;
-      const requestRole = `role.${lane}-${roles[0]}`;
-      const confirmRole = `role.${lane}-${roles[1]}`;
+      const base = root + '/:contractId/' + collectionOf(action);
+      const requestRole = 'role.' + lane + '-' + roles[0];
+      const confirmRole = 'role.' + lane + '-' + roles[1];
+      const requestFact = (contractId: string, requestId: string) => {
+        const fact = service.ledger.get(requestId, 'request.' + action);
+        if (fact.contractId !== contractId)
+          return notFound('Request belongs to another contract');
+        return fact;
+      };
       app.get<{ Params: { contractId: string } }>(base, (request, reply) => {
         authorize([requestRole]);
         service.ledger.get(
           request.params.contractId,
-          `contract.${definition.name}`,
+          'contract.' + definition.name,
         );
-        const fact = service.ledger.find(
-          request.params.contractId,
-          `request.${action}`,
-        );
-        if (!fact) return notFound('Request has not been formed');
-        return reply.type('application/hal+json').send(representation(fact));
+        return reply
+          .type('application/hal+json')
+          .send(
+            collection(
+              root +
+                '/' +
+                encodeURIComponent(request.params.contractId) +
+                '/' +
+                collectionOf(action),
+              collectionOf(action),
+              service.ledger.list(
+                'request.' + action,
+                request.params.contractId,
+              ),
+            ),
+          );
       });
-      app.post<{ Params: { contractId: string } }>(
-        `${base}/request`,
+      app.get<{ Params: { contractId: string; requestId: string } }>(
+        base + '/:requestId',
         (request, reply) => {
           authorize([requestRole]);
-          const fact = service.request(
-            lane,
-            action,
-            request.params.contractId,
-            request.body,
-            businessContext().now,
-          );
           return reply
-            .code(201)
-            .header('Location', fact.href)
             .type('application/hal+json')
-            .send(representation(fact));
+            .send(
+              representation(
+                requestFact(
+                  request.params.contractId,
+                  request.params.requestId,
+                ),
+              ),
+            );
         },
       );
+      app.get<{ Params: { contractId: string; requestId: string } }>(
+        base + '/:requestId/confirmation',
+        (request, reply) => {
+          authorize([confirmRole]);
+          requestFact(request.params.contractId, request.params.requestId);
+          return reply
+            .type('application/hal+json')
+            .send(
+              representation(
+                service.ledger.confirmation(request.params.requestId),
+              ),
+            );
+        },
+      );
+      app.post<{ Params: { contractId: string } }>(base, (request, reply) => {
+        authorize([requestRole]);
+        const fact = service.request(
+          lane,
+          action,
+          request.params.contractId,
+          request.body,
+          businessContext().now,
+        );
+        return reply
+          .code(201)
+          .header('Location', fact.href)
+          .type('application/hal+json')
+          .send(representation(fact));
+      });
       app.post<{ Params: { contractId: string; requestId: string } }>(
-        `${base}/request/:requestId/confirmation`,
+        `${base}/:requestId/confirmation`,
         (request, reply) => {
           authorize([confirmRole]);
           // Deliberately broken test-only mode, never a normal input path.

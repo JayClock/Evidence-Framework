@@ -140,7 +140,7 @@ it('uses the final overlay paths rather than the unmodified model surface', asyn
   const target = buildProjection({
     index,
     design: {
-      routes: [{ id: 'route.sign.contract.agreement', path: '/agreements' }],
+      routes: [{ id: 'route.sign.contract.agreement', path: '/signed-agreements' }],
     },
   }).projection;
   expect(

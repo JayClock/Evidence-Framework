@@ -46,7 +46,7 @@ describe('direct inline-example acceptance projection', () => {
     expect(steps[2]!.inputs).not.toHaveProperty('total_amount');
     expect(steps[2]!.inputs).not.toHaveProperty('confirmed_at');
     expect(Object.values(steps[1]!.captures)).toContain('$.id');
-    expect(steps[2]!.parameters.requestId).toBeDefined();
+    expect(steps[2]!.parameters.paymentId).toBeDefined();
     expect(model).toEqual(before);
     expect(projectAcceptanceTests(model)).toEqual(projection);
   });
@@ -182,7 +182,7 @@ describe('direct inline-example acceptance projection', () => {
     const model = createAcceptanceModel();
     Object.assign(getExample(model).test!, {
       pathParameters: {
-        requestId: {
+        paymentId: {
           exampleRef: 'request.payment#requested',
           jsonpath: '$.reference',
         },
@@ -222,4 +222,55 @@ describe('direct inline-example acceptance projection', () => {
     projection.flows[0]!.steps[0]!.assertions['$.object'] = { nested: 1 };
     expect(() => renderHurl(projection)).toThrow('HURL_UNSUPPORTED');
   });
+});
+
+it('selects proposal signing from example causality and captures business-named URI parameters', () => {
+  const model = createAcceptanceModel();
+  model.relationships.find(
+    (edge) =>
+      edge.sourceRef === 'proposal.quotation' &&
+      edge.targetRef === 'rfp.inquiry',
+  )!.sourceCardinality = { min: 0, max: 'many' };
+  for (const [entityRef, label, role, parent] of [
+    ['rfp.inquiry', 'opened', 'role.buyer', undefined],
+    ['proposal.quotation', 'offered', 'role.seller', 'rfp.inquiry#opened'],
+  ] as const) {
+    model.entities.find((entity) => entity.id === entityRef)!.examples = [
+      {
+        label,
+        value: {
+          id: label,
+          started_at: EXAMPLE_AS_OF,
+          expired_at: '2026-04-01T10:00:00Z',
+        },
+        test: {
+          flow: 'payment',
+          asOf: EXAMPLE_AS_OF,
+          actingRoleRef: role,
+          ...(parent === undefined ? {} : { basedOn: [parent] }),
+        },
+      },
+    ];
+  }
+  getExample(model, 'contract.agreement').test!.basedOn = [
+    'proposal.quotation#offered',
+  ];
+  const projection = projectAcceptanceTests(model);
+  const steps = projection.flows[0]!.steps;
+  expect(steps.map((step) => step.route.purpose)).toEqual([
+    'open',
+    'propose',
+    'sign',
+    'request',
+    'confirm',
+  ]);
+  expect(steps[2]!.route.path).toBe(
+    '/inquiries/{inquiryId}/quotations/{quotationId}/agreements',
+  );
+  expect(Object.keys(steps[2]!.parameters).sort()).toEqual([
+    'inquiryId',
+    'quotationId',
+  ]);
+  expect(renderStepCi(projection)).toContain('/quotations/');
+  expect(Object.values(renderHurl(projection))[0]).toContain('/quotations/');
 });

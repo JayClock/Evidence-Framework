@@ -33,6 +33,14 @@ export const contracts = {
     roles: ['role.settlement-seller', 'role.settlement-escrow'],
   },
 } as const;
+/** The standalone service owns its business vocabulary without importing the projector. */
+export const collectionOf = (noun: string): string =>
+  /[^aeiou]y$/.test(noun)
+    ? noun.slice(0, -1) + 'ies'
+    : /(?:s|x|z|ch|sh)$/.test(noun)
+      ? noun + 'es'
+      : noun + 's';
+
 export type Lane = keyof typeof contracts;
 export const actions: Record<Lane, Record<string, [string, string]>> = {
   procurement: { order: ['buyer', 'seller'], commitment: ['seller', 'buyer'] },
@@ -162,7 +170,7 @@ export class EscrowService {
       contractId,
       orderId,
       data: { ...data, signed_at: this.stamp(now) },
-      href: `/${lane}/${contracts[lane].name}/${encodeURIComponent(contractId)}`,
+      href: `/${collectionOf(contracts[lane].name)}/${encodeURIComponent(contractId)}`,
     });
   }
 
@@ -226,7 +234,7 @@ export class EscrowService {
         started_at: this.stamp(now),
         expired_at: this.stamp(new Date(now.getTime() + 48 * 3600000)),
       },
-      href: `${contract.href}/${action}/request/${encodeURIComponent(data.id)}`,
+      href: `${contract.href}/${collectionOf(action)}/${encodeURIComponent(data.id)}`,
     });
   }
 

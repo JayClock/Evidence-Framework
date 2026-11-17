@@ -1,10 +1,10 @@
 /** Embedded contract; keep its bytes synchronized with schemas/api.schema.json. */
 export const API_SCHEMA_TEXT = String.raw`{
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://evidence.local/api-overlay/v5/api.schema.json",
+  "$id": "https://evidence.local/api-overlay/v6/api.schema.json",
   "type": "object",
   "properties": {
-    "schemaVersion": { "const": "5.0" },
+    "schemaVersion": { "enum": ["5.0", "6.0"] },
     "id": { "type": "string", "minLength": 1 },
     "routes": {
       "type": "array",

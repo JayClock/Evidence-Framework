@@ -116,7 +116,7 @@ export function createCli(context: CommandContext = defaultContext()): CAC {
   cli
     .command(
       'api <command>',
-      'Legacy API inspect/check/project/deliver/diff/export-tests workflows',
+      'API inspect/check/project/deliver/diff/export-tests/migrate-overlay workflows',
     )
     .option('--project-root <dir>', 'Project root')
     .option(
@@ -125,6 +125,7 @@ export function createCli(context: CommandContext = defaultContext()): CAC {
     )
     .option('--fm-check <file>', 'Pinned check report')
     .option('--api <file>', 'API overlay')
+    .option('--in <file>', 'Legacy overlay input for migrate-overlay')
     .option('-o, --out <dir>', 'Dedicated output directory')
     .option('--base <path>', 'Baseline model for API diff')
     .option('--target <path>', 'Target model for API diff')

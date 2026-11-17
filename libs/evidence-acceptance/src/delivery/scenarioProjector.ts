@@ -76,9 +76,22 @@ export function projectAcceptanceTests(
       const candidates = routes.filter(
         (route) => route.entityRef === entity.id && route.method === 'POST',
       );
-      if (candidates.length !== 1)
+      const fromProposal = candidates.filter((route) =>
+        (example.test!.basedOn ?? []).some(
+          (ref) =>
+            route.id ===
+            'route.sign-from-' + ref.split('#')[0] + '.' + entity.id,
+        ),
+      );
+      const selected =
+        fromProposal.length > 0
+          ? fromProposal
+          : candidates.filter(
+              (route) => !route.id.startsWith('route.sign-from-'),
+            );
+      if (selected.length !== 1)
         fail(ref, 'requires exactly one modeled POST route');
-      const route = candidates[0]!;
+      const route = selected[0]!;
       const test = example.test;
       if (!route.allowedPartyRoleRefs.includes(test.actingRoleRef))
         fail(ref, `role '${test.actingRoleRef}' cannot call ${route.id}`);
@@ -272,12 +285,7 @@ export function projectAcceptanceTests(
     for (const name of names) {
       let source = test.pathParameters?.[name];
       if (source === undefined) {
-        const entityRef =
-          name === 'contractId'
-            ? route.contractRef
-            : name === 'requestId'
-              ? route.requestRef
-              : null;
+        const entityRef = route.parameterEntityRefs[name];
         const candidates = upstream.filter(
           (source) => source.route.entityRef === entityRef,
         );

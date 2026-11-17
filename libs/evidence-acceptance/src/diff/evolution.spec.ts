@@ -27,7 +27,7 @@ describe('procurement contract evolution', () => {
     expect(result.hasBreakingChanges).toBe(false);
     expect(
       result.changes.filter((change) => change.id === 'endpoint-added'),
-    ).toHaveLength(6);
+    ).toHaveLength(8);
   });
 
   it('reports removed operations and required input additions', async () => {

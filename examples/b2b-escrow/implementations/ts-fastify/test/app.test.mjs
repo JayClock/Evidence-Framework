@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { test } from 'node:test';
 import { createApp } from '../dist/app.js';
+import { collectionOf } from '../dist/services/escrowService.js';
 import { businessContext, requestContext } from '../dist/plugins/context.js';
 import { integer, price, settle, jsonValue } from '../dist/domain/money.js';
 
@@ -19,10 +20,10 @@ const terms = {
   delivery_deadline: now,
 };
 const base = {
-  procurement: '/procurement/agreement',
-  escrow: '/escrow/escrow',
-  fulfillment: '/fulfillment/fulfillment',
-  settlement: '/settlement/settlement',
+  procurement: '/agreements',
+  escrow: '/escrows',
+  fulfillment: '/fulfillments',
+  settlement: '/settlements',
 };
 let sequence = 0;
 const uid = () => `unrelated-${++sequence}`;
@@ -50,11 +51,11 @@ async function pair(
   const request = await post(
     app,
     lane,
-    `/${contractId}/${action}/request`,
+    `/${contractId}/${collectionOf(action)}`,
     { id: uid() },
     roles[0],
   );
-  const url = `/${contractId}/${action}/request/${request.id}/confirmation`;
+  const url = `/${contractId}/${collectionOf(action)}/${request.id}/confirmation`;
   return post(app, lane, url, { id: uid(), ...body }, roles[1]);
 }
 async function ready(app) {
@@ -125,7 +126,7 @@ async function ready(app) {
   const request = await post(
     app,
     'settlement',
-    `/${settlement.id}/release/request`,
+    `/${settlement.id}/releases`,
     { id: uid() },
     'seller',
   );
@@ -135,7 +136,7 @@ async function ready(app) {
     deposit,
     acceptance,
     linkage,
-    url: `/${settlement.id}/release/request/${request.id}/confirmation`,
+    url: `/${settlement.id}/releases/${request.id}/confirmation`,
     settlement,
   };
 }
@@ -299,7 +300,7 @@ test('references are explicit and order-consistent; concurrent releases commit o
   await post(
     app,
     'fulfillment',
-    `/${first.fulfillment.id}/first-milestone/request`,
+    `/${first.fulfillment.id}/first-milestones`,
     { id: uid() },
     'buyer',
     409,
@@ -307,7 +308,7 @@ test('references are explicit and order-consistent; concurrent releases commit o
   await post(
     app,
     'fulfillment',
-    `/${first.fulfillment.id}/delivery/request`,
+    `/${first.fulfillment.id}/deliveries`,
     { id: uid() },
     'buyer',
     409,
@@ -395,7 +396,7 @@ test('references are explicit and order-consistent; concurrent releases commit o
   await post(
     app,
     'settlement',
-    `/${another.id}/release/request`,
+    `/${another.id}/releases`,
     { id: uid() },
     'seller',
     409,
@@ -431,7 +432,7 @@ test('request ownership, temporal ordering, expiry, missing prerequisites and de
   await post(
     app,
     'procurement',
-    `/${one.id}/commitment/request`,
+    `/${one.id}/commitments`,
     { id: uid() },
     'seller',
     409,
@@ -439,14 +440,14 @@ test('request ownership, temporal ordering, expiry, missing prerequisites and de
   const request = await post(
     app,
     'procurement',
-    `/${one.id}/order/request`,
+    `/${one.id}/orders`,
     { id: uid() },
     'buyer',
   );
   await post(
     app,
     'procurement',
-    `/${two.id}/order/request/${request.id}/confirmation`,
+    `/${two.id}/orders/${request.id}/confirmation`,
     { id: uid() },
     'seller',
     409,
@@ -454,7 +455,7 @@ test('request ownership, temporal ordering, expiry, missing prerequisites and de
   await post(
     app,
     'procurement',
-    `/${one.id}/order/request/${request.id}/confirmation`,
+    `/${one.id}/orders/${request.id}/confirmation`,
     { id: uid() },
     'seller',
     409,
@@ -463,31 +464,32 @@ test('request ownership, temporal ordering, expiry, missing prerequisites and de
   await post(
     app,
     'procurement',
-    `/${one.id}/order/request/${request.id}/confirmation`,
+    `/${one.id}/orders/${request.id}/confirmation`,
     { id: uid() },
     'seller',
     409,
     '2026-07-04T00:00:00Z',
   );
   const ledger = await app.inject({
-    url: `${base.procurement}/${one.id}/order`,
+    url: `${base.procurement}/${one.id}/orders/${request.id}`,
     headers: { 'x-evidence-role': 'role.procurement-buyer' },
   });
   assert.equal(ledger.statusCode, 200);
   assert.equal(ledger.json().id, request.id);
   assert.equal(ledger.json().expired_at, '2026-07-03T00:00:00Z');
   const absent = await app.inject({
-    url: `${base.procurement}/${two.id}/order`,
+    url: `${base.procurement}/${two.id}/orders`,
     headers: { 'x-evidence-role': 'role.procurement-buyer' },
   });
-  assert.equal(absent.statusCode, 404);
+  assert.equal(absent.statusCode, 200);
+  assert.equal(absent.json().total, 0);
   const legacy = createApp({ testMode: true, mode: 'v1' });
   t.after(() => legacy.close());
   assert.equal(
     (
       await legacy.inject({
         method: 'POST',
-        url: '/fulfillment/fulfillment/any/first-milestone/request',
+        url: '/fulfillments/any/first-milestones',
         payload: { id: uid() },
         headers: { 'x-evidence-role': 'role.fulfillment-buyer' },
       })
@@ -531,5 +533,56 @@ test('standalone manifests and source do not refer to the framework or sibling i
     Object.values(manifest.dependencies).every(
       (v) => !v.includes('workspace:'),
     ),
+  );
+});
+
+test('each created primary URI supports GET and collection HAL links follow the same identity', async (t) => {
+  const app = createApp({ testMode: true });
+  t.after(() => app.close());
+  const headers = (role) => ({
+    'x-evidence-role': `role.procurement-${role}`,
+    'x-evidence-asof': now,
+  });
+  const contract = await app.inject({
+    method: 'POST',
+    url: '/agreements',
+    headers: headers('buyer'),
+    payload: { id: uid(), ...terms },
+  });
+  const request = await app.inject({
+    method: 'POST',
+    url: contract.headers.location + '/orders',
+    headers: headers('buyer'),
+    payload: { id: uid() },
+  });
+  const confirmation = await app.inject({
+    method: 'POST',
+    url: request.headers.location + '/confirmation',
+    headers: headers('seller'),
+    payload: { id: uid() },
+  });
+  for (const [response, role] of [
+    [contract, 'buyer'],
+    [request, 'buyer'],
+    [confirmation, 'seller'],
+  ]) {
+    assert.equal(response.statusCode, 201, response.body);
+    assert.equal(response.json()._links.self.href, response.headers.location);
+    const read = await app.inject({
+      url: response.headers.location,
+      headers: headers(role),
+    });
+    assert.equal(read.statusCode, 200, read.body);
+    assert.deepEqual(read.json(), response.json());
+  }
+  const list = await app.inject({
+    url: contract.headers.location + '/orders',
+    headers: headers('buyer'),
+  });
+  assert.equal(list.statusCode, 200);
+  assert.equal(list.json().total, 1);
+  assert.equal(
+    list.json()._embedded.orders[0]._links.self.href,
+    request.headers.location,
   );
 });

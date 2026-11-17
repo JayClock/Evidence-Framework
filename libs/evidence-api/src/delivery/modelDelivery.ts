@@ -406,6 +406,7 @@ export interface DeliveryContract {
     description: string;
   };
   'x-evidence-model': string;
+  'x-evidence-model-version': string;
   paths: Record<string, JsonObject>;
   components: { schemas: JsonObject; examples: JsonObject };
   'x-evidence-services': readonly {
@@ -450,6 +451,7 @@ export const buildDeliveryContract = (
       ].join('\n'),
     },
     'x-evidence-model': document.manifest.id,
+    'x-evidence-model-version': document.manifest.version,
     paths,
     components: {
       schemas: objectSchemas(routes, componentOf),

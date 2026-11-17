@@ -55,6 +55,7 @@ export const createProcurementBaseModel = (): DomainModelDocument => {
       kind: 'pre_contract',
       label: 'Sourcing',
       parentContextRef: 'context.procurement',
+      rootRefs: ['rfp.inquiry'],
     },
     ...['buyer', 'seller'].flatMap<EntityAST>((role) => [
       {

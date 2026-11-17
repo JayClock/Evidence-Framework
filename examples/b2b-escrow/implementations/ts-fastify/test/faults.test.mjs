@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createApp } from '../dist/app.js';
+import { collectionOf } from '../dist/services/escrowService.js';
 
 const when = '2026-06-01T00:00:00Z';
 const terms = {
@@ -38,7 +39,7 @@ for (const fault of [
     });
     const request = {
       method: 'POST',
-      url: '/procurement/agreement',
+      url: '/agreements',
       headers,
       payload: terms,
     };
@@ -72,7 +73,7 @@ for (const fault of [
     );
     const tamper = await app.inject({
       method: 'POST',
-      url: '/settlement/settlement/absent/release/request/absent/confirmation',
+      url: '/settlements/absent/releases/absent/confirmation',
       headers: { ...headers, 'x-evidence-role': 'role.settlement-escrow' },
       payload: { id: 'tamper', payout_minor: 999999 },
     });

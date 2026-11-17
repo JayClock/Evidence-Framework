@@ -32,6 +32,25 @@ export class MemoryLedger {
     return fact && structuredClone(fact);
   }
 
+  list(kind: string, contractId?: string): Fact[] {
+    return [...this.facts.values()]
+      .filter(
+        (fact) =>
+          fact.kind === kind &&
+          (contractId === undefined || fact.contractId === contractId),
+      )
+      .map((fact) => structuredClone(fact));
+  }
+
+  confirmation(requestId: string): Fact {
+    const fact = [...this.facts.values()].find(
+      (fact) => fact.requestId === requestId,
+    );
+    return fact
+      ? structuredClone(fact)
+      : notFound('Confirmation has not been formed');
+  }
+
   released(orderId: string): boolean {
     return [...this.facts.values()].some(
       (f) =>
