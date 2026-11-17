@@ -17,7 +17,7 @@ export interface ApiJourneyStep {
 /** One model-driven contract for previews, exports and downstream consumers. */
 export interface EvidenceApiSnapshot
   extends Omit<ModelDelivery, 'schemaVersion'> {
-  schemaVersion: '5.1';
+  schemaVersion: '6.0';
   apiId: string;
   journeys: readonly ApiJourneyStep[];
   diagnostics: readonly Diagnostic[];

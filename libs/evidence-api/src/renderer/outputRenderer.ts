@@ -32,7 +32,7 @@ import { API_SCHEMA_TEXT } from '../schemas/apiSchema.js';
 export const TOOL_NAME = 'evidence-api';
 
 /** Projection contract version, written into every manifest it renders. */
-export const TOOL_VERSION = '5.1.0';
+export const TOOL_VERSION = '6.0.0';
 
 const sha256 = (content: string): string =>
   createHash('sha256').update(content, 'utf8').digest('hex');
@@ -46,7 +46,7 @@ export const renderOutputs = (
   );
 
   const manifest = {
-    schemaVersion: '5.1',
+    schemaVersion: '6.0',
     apiId: projection.apiId,
     tool: {
       name: TOOL_NAME,

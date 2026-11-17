@@ -257,3 +257,31 @@ describe('OpenAPI consumer contract', () => {
     ).toBe(true);
   }, 15000);
 });
+
+it('publishes distinct HAL collection schemas with linked summaries', () => {
+  const model = structuredClone(stages[1]!);
+  model.entities.find(
+    (entity) => entity.id === 'contract.agreement',
+  )!.examples = [
+    { label: 'signed', value: { id: 'a', signed_at: '2026-01-01T00:00:00Z' } },
+  ];
+  const snapshot = buildDelivery(model);
+  const operation = operationFor(snapshot, 'route.list.contract.agreement');
+  const media = operation.responses['200']!.content!['application/hal+json']!;
+  const schema = resolveSchema(snapshot.openapi, media.schema);
+  expect(schema.required).toEqual(['_links', '_embedded', 'total']);
+  expect(schema.properties!._embedded!.properties).toHaveProperty('agreements');
+  expect(Object.values(media.examples!)[0]).toMatchObject({
+    value: {
+      _links: { self: { href: '/agreements' } },
+      _embedded: {
+        agreements: [
+          { id: 'a', _links: { self: { href: '/agreements/{contractId}' } } },
+        ],
+      },
+      total: 1,
+    },
+  });
+  expect(snapshot.schemaVersion).toBe('6.0');
+  expect(snapshot.openapi.info.version).toBe('6.0.0');
+});

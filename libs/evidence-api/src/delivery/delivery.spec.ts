@@ -247,7 +247,7 @@ describe('buildDelivery', () => {
     const bundle = buildDelivery(openEndedModel());
     const report = bundle.limitations.join('\n');
 
-    expect(bundle.schemaVersion).toBe('5.1');
+    expect(bundle.schemaVersion).toBe('6.0');
     expect(bundle.modelId).toBe('open-ended');
     expect(report).toContain('request.delivery 没有履约确认');
     expect(report).toContain('派生属性 total_amount');

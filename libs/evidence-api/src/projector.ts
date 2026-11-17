@@ -102,10 +102,21 @@ export const buildProjection = ({
     return {
       ...route,
       path,
-      itemPath: `${path}${route.itemPath.slice(route.path.length)}`,
+      itemPath:
+        route.responseShape === 'item' && route.method === 'GET'
+          ? path
+          : route.itemPath,
       summary: override.summary ?? route.summary,
     };
   });
+  // Every create response follows the final primary GET, even when only that GET is overridden.
+  const primaries = new Map(
+    routes
+      .filter((route) => route.id === 'route.read.' + route.entityRef)
+      .map((route) => [route.entityRef, route.path]),
+  );
+  for (const route of routes)
+    route.itemPath = primaries.get(route.entityRef) ?? route.itemPath;
   const occupied = new Set<string>();
   for (const route of routes) {
     const key = `${route.method} ${route.path.replace(/\{[^{}]+\}/g, '{}')}`;
@@ -166,7 +177,7 @@ export const buildProjection = ({
   const sorted = normalizeDiagnostics(diagnostics);
   const projection: EvidenceApiSnapshot = {
     ...baseline,
-    schemaVersion: '5.1',
+    schemaVersion: '6.0',
     apiId: typeof overlay?.['id'] === 'string' ? overlay['id'] : 'default-api',
     mode: 'draft',
     routes,

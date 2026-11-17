@@ -4,6 +4,7 @@ import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 import { createDomainGraph } from '@evidence-poc/evidence-model-core';
 
 import { componentName } from './schemaName.js';
+import { pluralSegmentOf } from './segments.js';
 import {
   weaveHypermedia,
   halLinksFor,
@@ -90,9 +91,35 @@ const requestExampleValue = (
       .map((field) => [field.name, value[field.name]]),
   );
 
+const responseValue = (
+  route: DeliveryRoute,
+  value: JsonObject,
+  links: JsonObject = {},
+): JsonObject =>
+  route.responseShape === 'collection'
+    ? {
+        _links: links,
+        _embedded: {
+          [pluralSegmentOf(route.entityRef)]: [
+            {
+              ...value,
+              _links: {
+                self: {
+                  href: route.itemPath,
+                  templated: route.itemPath.includes('{'),
+                },
+              },
+            },
+          ],
+        },
+        total: 1,
+      }
+    : { ...value, _links: links };
+
 const examplesFor = (
   route: DeliveryRoute,
   direction: 'request' | 'response',
+  links: JsonObject = {},
 ): JsonObject =>
   Object.fromEntries(
     route.examples.map((example, position) => [
@@ -105,25 +132,30 @@ const examplesFor = (
         value:
           direction === 'request'
             ? requestExampleValue(route, example.value)
-            : { ...example.value, _links: {} },
+            : responseValue(route, example.value, links),
       },
     ]),
   );
 
 const examplesForSchemas = (routes: readonly DeliveryRoute[]): JsonObject =>
   Object.fromEntries(
-    routes.flatMap((route) =>
-      route.examples.map((example, position) => [
-        exampleKey(route, example.label, position),
-        {
-          summary: example.label,
-          ...(example.description === undefined
-            ? {}
-            : { description: example.description }),
-          value: { ...example.value, _links: {} },
-        },
-      ]),
-    ),
+    routes
+      .filter((route) => route.id === 'route.read.' + route.entityRef)
+      .flatMap((route) =>
+        route.examples.map((example, position) => [
+          exampleKey(route, example.label, position),
+          {
+            summary: example.label,
+            ...(example.description === undefined
+              ? {}
+              : { description: example.description }),
+            value: {
+              ...example.value,
+              _links: { self: { href: route.itemPath } },
+            },
+          },
+        ]),
+      ),
   );
 
 const parameterName = (path: string): string[] => {
@@ -182,6 +214,7 @@ const objectSchemas = (
 
     properties['_links'] = {
       type: 'object',
+      required: ['self'],
       additionalProperties: {
         type: 'object',
         required: ['href'],
@@ -203,13 +236,52 @@ const objectSchemas = (
         : {
             examples: route.examples.map((example) => ({
               ...example.value,
-              _links: {},
+              _links: { self: { href: route.itemPath } },
             })),
           }),
       additionalProperties: false,
     };
   }
 
+  for (const route of routes.filter(
+    (route) => route.responseShape === 'collection',
+  )) {
+    const key = componentOf(route.entityRef);
+    const entity = schemas[key] as JsonObject;
+    const properties = entity['properties'] as JsonObject;
+    const summaryKey = key + 'Summary';
+    schemas[summaryKey] = {
+      type: 'object',
+      properties,
+      required: [
+        '_links',
+        ...route.outputFields
+          .filter((field) => field.valueType === 'id' && field.required)
+          .map((field) => field.name),
+      ],
+      additionalProperties: false,
+    };
+    schemas[key + 'Collection'] = {
+      type: 'object',
+      required: ['_links', '_embedded', 'total'],
+      properties: {
+        _links: properties['_links'],
+        _embedded: {
+          type: 'object',
+          required: [pluralSegmentOf(route.entityRef)],
+          properties: {
+            [pluralSegmentOf(route.entityRef)]: {
+              type: 'array',
+              items: { $ref: '#/components/schemas/' + summaryKey },
+            },
+          },
+          additionalProperties: false,
+        },
+        total: { type: 'integer', minimum: 0 },
+      },
+      additionalProperties: false,
+    };
+  }
   return schemas;
 };
 
@@ -306,10 +378,16 @@ const operationOf = (
                 'application/hal+json': {
                   ...(route.examples.length === 0
                     ? {}
-                    : { examples: examplesFor(route, 'response') }),
+                    : {
+                        examples: examplesFor(
+                          route,
+                          'response',
+                          halLinksFor(links, route.id),
+                        ),
+                      }),
                   'x-evidence-link-templates': halLinksFor(links, route.id),
                   schema: {
-                    $ref: `#/components/schemas/${componentOf(response.entityRef)}`,
+                    $ref: `#/components/schemas/${componentOf(response.entityRef)}${route.responseShape === 'collection' ? 'Collection' : ''}`,
                   },
                 },
               },
@@ -364,7 +442,7 @@ export const buildDeliveryContract = (
     openapi: '3.1.0',
     info: {
       title: document.manifest.name,
-      version: document.manifest.version,
+      version: '6.0.0',
       description: [
         '由履约模型直接投影的契约：每个路径对应一个业务凭证时刻。',
         '派生值由服务端计算，业务时间由服务端打点，调用方不能提交或回填。',
@@ -397,7 +475,12 @@ export const validateDeliveryExamples = (
       contract.components.schemas[componentName(route.entityRef)],
     );
     for (const example of route.examples) {
-      if (!schema.validate({ ...example.value, _links: {} }))
+      if (
+        !schema.validate({
+          ...example.value,
+          _links: { self: { href: route.itemPath } },
+        })
+      )
         diagnostics.push(
           errorDiagnostic(
             'API_EXAMPLE_INVALID',

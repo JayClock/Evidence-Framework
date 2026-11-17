@@ -30,7 +30,8 @@ it('keeps branch links, HAL responses and journeys consistent without imposing a
     const target = snapshot.routes.find(
       (route) => route.id === link.targetRouteId,
     )!;
-    expect(link.href).toBe(link.rel === 'self' ? target.itemPath : target.path);
+    expect(link.href).toBe(target.path);
+    if (link.rel === 'self') expect(target.method).toBe('GET');
   }
   for (const step of snapshot.journeys)
     for (const next of step.nextPossibleSteps)
@@ -59,7 +60,7 @@ it('keeps branch links, HAL responses and journeys consistent without imposing a
   });
   const cyclic = buildDelivery(reversed);
   expect(cyclic.journeys).toEqual(buildDelivery(reversed).journeys);
-  expect(cyclic.hypermedia).toHaveLength(changed.hypermedia.length + 1);
+  expect(cyclic.hypermedia).toHaveLength(changed.hypermedia.length + 2);
 });
 
 it('moves possible navigation and journeys when a prerequisite changes', async () => {
@@ -136,5 +137,53 @@ it('uses final overlay paths, keeps templates explicit, and never fabricates lin
     for (const response of Object.values(responses))
       if (response.content !== undefined)
         expect(response.content['application/hal+json']).toBeDefined();
+  }
+});
+
+it('uses GET self links for every creation and signs proposals into the contract primary URI', () => {
+  const snapshot = buildDelivery(procurementEvolution()[1]!);
+  const sign = snapshot.routes.find((route) =>
+    route.id.startsWith('route.sign-from-'),
+  )!;
+  const proposal = snapshot.routes.find(
+    (route) => route.id === 'route.read.proposal.quotation',
+  )!;
+  expect(
+    halLinksFor(snapshot.hypermedia, proposal.id)['next:contract.agreement'],
+  ).toMatchObject({ href: sign.path, method: 'POST' });
+  expect(halLinksFor(snapshot.hypermedia, sign.id).self).toMatchObject({
+    href: '/agreements/{contractId}',
+  });
+  expect(
+    operationFor(snapshot, sign.id).responses['201']!.headers!['Location'],
+  ).toMatchObject({ 'x-evidence-uri-template': '/agreements/{contractId}' });
+  for (const route of snapshot.routes.filter(
+    (route) => route.method === 'POST',
+  )) {
+    const self = snapshot.hypermedia.find(
+      (link) => link.sourceRouteId === route.id && link.rel === 'self',
+    )!;
+    expect(self).toMatchObject({ method: 'GET', href: route.itemPath });
+  }
+});
+
+it('keeps creation identities synchronized when the primary GET is overridden', () => {
+  const snapshot = buildProjection({
+    index: loadFmFromDocument(procurementEvolution()[1]!).index!,
+    design: {
+      routes: [
+        { id: 'route.read.contract.agreement', path: '/signed/{contractId}' },
+      ],
+    },
+  }).projection;
+  expect(snapshot.diagnostics).toEqual([]);
+  for (const sign of snapshot.routes.filter(
+    (route) =>
+      route.entityRef === 'contract.agreement' && route.method === 'POST',
+  )) {
+    expect(sign.itemPath).toBe('/signed/{contractId}');
+    expect(halLinksFor(snapshot.hypermedia, sign.id).self).toMatchObject({
+      href: '/signed/{contractId}',
+    });
   }
 });

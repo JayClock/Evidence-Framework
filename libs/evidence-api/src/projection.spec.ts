@@ -28,7 +28,7 @@ describe('model-driven snapshots', () => {
     const baseline = project(before);
     const current = project(after);
     expect(current.diagnostics).toEqual([]);
-    expect(current.routes).toHaveLength(baseline.routes.length + 6);
+    expect(current.routes).toHaveLength(baseline.routes.length + 8);
     const routeId = design.routes[0]!.id;
     expect(current.routes.find((route) => route.id === routeId)).toEqual(
       baseline.routes.find((route) => route.id === routeId),
@@ -55,7 +55,7 @@ describe('model-driven snapshots', () => {
       index: loadFmFromDocument(bundle).index!,
     }).projection;
     expect(memory).toEqual(projected);
-    expect(memory.schemaVersion).toBe('5.1');
+    expect(memory.schemaVersion).toBe('6.0');
     expect(memory.mode).toBe('draft');
     expect(memory.routes.length).toBeGreaterThan(0);
     expect(memory.journeys.length).toBeGreaterThan(0);

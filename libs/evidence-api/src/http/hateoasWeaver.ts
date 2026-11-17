@@ -33,7 +33,13 @@ export const weaveHypermedia = (
     };
     links.set(`${source.id}\0${rel}\0${target.id}`, link);
   };
-  for (const route of routes) add(route, route, 'self', route.itemPath);
+  for (const route of routes) {
+    const primary = routes.find(
+      (candidate) => candidate.id === 'route.read.' + route.entityRef,
+    );
+    const target = route.responseShape === 'collection' ? route : primary;
+    if (target !== undefined) add(route, target, 'self', target.path);
+  }
   const entities = new Map(
     document.entities.map((entity) => [entity.id, entity]),
   );
@@ -46,9 +52,19 @@ export const weaveHypermedia = (
       prerequisite?.category !== 'evidence'
     )
       continue;
-    const targets = routes.filter(
-      (route) => route.entityRef === dependent.id && route.method === 'POST',
-    );
+    const targets = routes.filter((route) => {
+      if (route.entityRef !== dependent.id || route.method !== 'POST')
+        return false;
+      if (dependent.kind === 'contract' && prerequisite.kind === 'proposal') {
+        const primary = routes.find(
+          (candidate) => candidate.id === 'route.read.' + prerequisite.id,
+        );
+        return (
+          primary !== undefined && route.path.startsWith(primary.path + '/')
+        );
+      }
+      return !route.id.startsWith('route.sign-from-');
+    });
     for (const source of routes.filter(
       (route) => route.entityRef === prerequisite.id,
     )) {
