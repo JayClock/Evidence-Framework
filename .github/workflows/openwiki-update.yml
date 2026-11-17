@@ -2,8 +2,9 @@ name: OpenWiki Update
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 16 * * *" # 北京时间 00:00 (UTC 16:00)
+  # Scheduled updates are temporarily paused; manual runs remain available.
+  # schedule:
+  #   - cron: "0 16 * * *" # 北京时间 00:00 (UTC 16:00)
 
 permissions:
   contents: write
