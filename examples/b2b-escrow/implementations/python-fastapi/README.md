@@ -20,6 +20,14 @@ uv run --frozen python -m app.main --test-mode --port 8083
 - `--fault none|accept-derived|extra-field|clock|precision`：默认 `none`，未知值启动失败。仅在测试模式下模拟接受 caller 派生值、泄漏字段、忽略合法注入时钟或经 float 丢失整数精度；不改变正常账本算法，保留身份与时钟格式校验。
 - Uvicorn 接收 SIGINT / SIGTERM 退出。每次全量验收和每个 gate 均需干净进程；账本重启即清空。
 
+## v6 HTTP 契约
+
+合同集合为 `/agreements`、`/escrows`、`/fulfillments`、`/settlements`，均支持 GET 列表和 POST 签署。合同实例通过 `/{collection}/{contractId}` 读取。
+
+履约项使用合同下的业务复数集合，例如 `POST /agreements/{contractId}/orders`；GET 同一路径返回订单请求集合，GET `…/orders/{orderId}` 读取请求。POST / GET `…/orders/{orderId}/confirmation` 登记或读取确认。交付集合为 `deliveries`，其余履约项使用 `commitments`、`deposit-locks`、`custody-statements`、`acceptances`、`first-milestones`、`final-milestones`、`milestone-acceptances`、`releases`、`settlement-receipts`、`milestone-releases`、`milestone-statements`。
+
+每个正常 POST 的 201 `Location` 与 `_links.self.href` 指向同一可 GET 的主 URI。集合以 `application/hal+json` 返回 `_links.self`、`_embedded.<集合名>` 数组和 `total`；空集合返回空数组与 0。合同读取沿用签署角色，履约项集合/请求读取使用请求方角色，确认读取使用确认方角色。
+
 ## 结构与语义
 
 - `app/api.py`：FastAPI 路由、错误归一化、HAL / Location 输出以及有界请求读取。

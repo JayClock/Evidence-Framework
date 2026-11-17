@@ -7,7 +7,7 @@ function example(scenario) {
     scenario.gate === 'regression' ? 'single-on-time' : 'milestone-precision';
   const step = {
     flow,
-    url: 'http://127.0.0.1:1234/procurement/agreement',
+    url: 'http://127.0.0.1:1234/agreements',
     status: 201,
     passed: true,
     skipped: false,
@@ -31,10 +31,10 @@ function example(scenario) {
     first.passed = false;
     if (scenario.unavailable) {
       first.status = 404;
-      first.url += '/first-milestone';
+      first.url = 'http://127.0.0.1:1234/fulfillments/c/first-milestones';
       report.suites[0].steps[1].skipped = true;
     } else if (scenario.fault === 'accept-derived') {
-      first.url += '/release/request/r/confirmation';
+      first.url = 'http://127.0.0.1:1234/settlements/c/releases/r/confirmation';
       first.expectedStatus = 422;
     } else if (scenario.fault === 'extra-field') {
       first.driftIssues = [{ type: 'extraneous_field', path: '/unmodeled' }];

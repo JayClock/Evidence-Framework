@@ -40,8 +40,14 @@ Optional arguments:
 
 ## HTTP and domain behavior
 
-- Four bilateral contracts: `/procurement/agreement`, `/escrow/escrow`,
-  `/fulfillment/fulfillment`, `/settlement/settlement`.
+- Four bilateral contract collections: `/agreements`, `/escrows`,
+  `/fulfillments`, `/settlements`. Each supports GET collection and POST signing;
+  contract instances use `/{collection}/{contractId}`.
+- Obligation requests use plural business collections, such as
+  `POST /agreements/{contractId}/orders` and
+  `POST /fulfillments/{contractId}/deliveries`. GET the same path to list
+  requests; GET `…/orders/{orderId}` to read one. POST/GET
+  `…/orders/{orderId}/confirmation` records/reads its confirmation.
 - Explicit evidence IDs connect orders, funded deposits and accepted deliveries.
   IDs are opaque; no prefix parsing, global “latest order” or test-label lookup.
 - Caller DTOs reject unknown fields, derived amounts and server-stamped times.
@@ -57,8 +63,12 @@ Optional arguments:
 - Validation and memory commits happen synchronously in one event-loop turn.
   Failed writes commit nothing; concurrent releases produce one 201 and one 409.
   A database adapter would need real transactions and uniqueness constraints.
-- Successful responses use HAL JSON and Location headers. GET contract and GET
-  obligation ledger routes expose stored facts, not recomputed test answers.
+- Successful responses use HAL JSON. Each normal POST's 201 Location and
+  `_links.self.href` identify the same readable primary URI. Collection GETs
+  return `_links.self`, `_embedded.<business-collection>` arrays and `total`;
+  empty collections have an empty array and zero total. Contract reads use the
+  signing roles, request collection/instance reads use the requesting role,
+  and confirmation reads use the confirming role. GETs expose stored facts.
 
 ## Limits
 
