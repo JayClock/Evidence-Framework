@@ -4,6 +4,8 @@ import { collectFlowScenarios } from '@evidence-poc/evidence-model-core';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 import { installDesktopApi } from '@evidence-poc/desktop-testing/desktopApi';
 import { storyResult } from '@evidence-poc/desktop-testing/story';
+// Golden example data, not a cross-project source-code dependency.
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import modelText from '../../../../../examples/full-spectrum-procurement/model/full-spectrum-procurement.evidence.json?raw';
 import { StoryPlayerBar } from '../components/story/StoryPlayerBar';
 import { STORY_REFRESH_DELAY, useStoryPlayback } from './useStoryPlayback';

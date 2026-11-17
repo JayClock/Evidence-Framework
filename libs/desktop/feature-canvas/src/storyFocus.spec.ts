@@ -3,6 +3,8 @@ import { computeGraphLayout } from '@evidence-poc/evidence-canvas-interaction';
 import { createDomainGraph } from '@evidence-poc/evidence-model-core';
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
+// Golden example data, not a cross-project source-code dependency.
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import modelText from '../../../../examples/full-spectrum-procurement/model/full-spectrum-procurement.evidence.json?raw';
 import { summarizeCards } from './cardSummary';
 import { convertLayoutToReactFlow } from './useReactFlowAdapter';
