@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:b876f3e9f3cd5e5582a457e7496d63182f2ad27ef5383d714c39da51defe059e",
+  "pageVersion": "sha256:36155713075c6f4d879756830cde7b40b1c88466dfb79821d338c0bd47d1e983",
   "claims": [
     {
       "id": "claim_4260686904514941808ef785c7ef5562",
@@ -37,7 +37,7 @@
       "statement": "scope仅独立Context且不可重复，保留subtree/真实依赖，不因共享Party拖入其他合同。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/validation/scope.ts#L110-L221",
+          "resource": "repo://libs/evidence-model-core/src/validation/scope.ts#L111-L222",
           "version": "repo-lines-v1:sha256:7b361ce0be7ace89d87c8d0566cc0d4c892aaa2b3fc46f79263d47704edb7119:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIwM2NkNjAxNjJlM2U0YjZiMjcwNTdlY2IxYzdlZDZiM2UxNTJjOWY3ZDc5ZDQ0MDJmOTc1MWNkMDdkODJmYzEyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJiYTg0YzU4Y2FhZDYxNmNkMTA1NjE3OGM4MzdjYjRkMjA0ZDk0ZWQ4MDExMjUyYzJhZTM3NWZjOGI3NWI0ZjA1IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIwMzBjN2VkYzU4NzQ4Njk2ZWE2ODE0YTIyMmM0ODZjZTFkNjAwY2ExZDA1Mzk4MzcwZGVhYWUwYjk0MzIwNDU0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIwNDQwN2UyM2JhYTViMzkxYzE0NWE3OGY2NDQwNTk1MGM4NWM3YTdlMjc2Mjk4MzgzMjJiMjkyMmE4NDVmMDhlIn0"
         }
       ]
@@ -48,7 +48,7 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-model-core/src/validation/scope.ts",
-          "version": "repo-file-v1:sha256:31aa2a7ffa28beec4f94ad9131444eabe282f941283126772b4199b44814913a"
+          "version": "repo-file-v1:sha256:30b0bc5204673c9d677c777a1fdcf69851b25c3c0827c756cdfcf300635a477c"
         }
       ]
     },
@@ -68,7 +68,7 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-model-core/src/validation/scope.ts",
-          "version": "repo-file-v1:sha256:31aa2a7ffa28beec4f94ad9131444eabe282f941283126772b4199b44814913a"
+          "version": "repo-file-v1:sha256:30b0bc5204673c9d677c777a1fdcf69851b25c3c0827c756cdfcf300635a477c"
         }
       ]
     },
@@ -110,7 +110,7 @@
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/main/driftIpc.ts",
-          "version": "repo-file-v1:sha256:ebca0dc73877f3ec542fba64ea3f056f796157e2e59727f6f3702d262a0a4a3f"
+          "version": "repo-file-v1:sha256:b68dcc61abc438d51de7297f26abcc204200265094744c1f0caf1ec4efb1d672"
         },
         {
           "resource": "repo://apps/desktop/src/main/mcpDriftService.ts",
@@ -159,10 +159,42 @@
           "version": "repo-file-v1:sha256:de46689fbfa0c37fd81f1b5e76489ccbbddd991765cab677d3725a99daeaf89f"
         }
       ]
+    },
+    {
+      "id": "claim_0d862b3a6ec34d158415621b8ef2be5f",
+      "statement": "当前 scenarioStudio 将流程保存为实体 examples[].test；flowAggregator 产生只读故事轨迹，journey preview 只读可见前缀且不代表 HTTP 验收。",
+      "evidence": [
+        {
+          "resource": "repo://libs/desktop/feature-story/src/state/journeyPreview.ts",
+          "version": "repo-file-v1:sha256:f24bcc09d64d558b8a27c0e2af82ed4ac1d8bca7a494da043921888258399a41"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/scenario/scenarioStudio.ts",
+          "version": "repo-file-v1:sha256:c20c9a1d7fd9b33ab6b9312af34c0128e8933ab81fa2b93cd78fb9ccf55f652c"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/trace/flowAggregator.ts",
+          "version": "repo-file-v1:sha256:c60435cc5c04049e507f93aa8b828cae22db379e5b7a132af3276f6a0a326489"
+        }
+      ]
+    },
+    {
+      "id": "claim_9449ddf442764ecaa2d73adcf292b8be",
+      "statement": "breach flow 完整性要求显式 references 被违约请求；补偿源为新请求且无环，升级为有责任角色和 hand-off notes 的 other_evidence，仍检查请求闭环。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/validation/breachFlow.ts",
+          "version": "repo-file-v1:sha256:12e9e6e7439a714085754a60b7d647c095a8f13e32023b60996e94b29d90b824"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/validation/scope.ts",
+          "version": "repo-file-v1:sha256:30b0bc5204673c9d677c777a1fdcf69851b25c3c0827c756cdfcf300635a477c"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-15T14:07:58.904Z"
+    "at": "2026-11-17T06:43:02.055Z"
   }
 }

@@ -5,14 +5,12 @@ description: Immer recipes、guarded mutators与标准RFC6902如何构成原子�
 tags: [mutations, session, undo, subscriptions, patches, diff, graph, purity]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-15T14:07:58.904Z
+    at: 2026-11-17T06:43:02.055Z
 sources:
   - id: openwiki-source-55138c775f581f8c989ca7dc
     resource: repo://apps/desktop/src/main/agentRuntime.ts
   - id: openwiki-source-71f7c0262d5ba642c71843ea
     resource: repo://apps/desktop/src/main/ingestionIpc.ts
-  - id: openwiki-source-4847134dd2de8026fd1ac93f
-    resource: repo://apps/desktop/src/renderer/state/useAgentPatchBridge.ts
   - id: openwiki-source-f0f06a0981a7ca97c510b44d
     resource: repo://apps/desktop/src/renderer/state/useEditorSession.ts
   - id: openwiki-source-46aa2f0fdf6e50b3fa7d4eb0
@@ -21,12 +19,12 @@ sources:
     resource: repo://apps/desktop/src/renderer/state/useLiveModelBridge.ts
   - id: openwiki-source-034a304691f6c1f77f682d25
     resource: repo://apps/desktop/src/renderer/state/useMcpBridge.ts
-  - id: openwiki-source-ef46d50ae45e81fdfe3ff913
-    resource: repo://apps/desktop/src/renderer/state/usePatchReview.ts
-  - id: openwiki-source-25f64c8e5d94b447bfe67308
-    resource: repo://apps/desktop/src/shared/delivery.ts
-  - id: openwiki-source-418388028b19fdeb893f56a8
-    resource: repo://libs/evidence-agent/src/tools/evidenceTools.ts
+  - id: openwiki-source-55662d405492cfd3a6e7e1bd
+    resource: repo://libs/desktop/contracts/src/delivery.ts
+  - id: openwiki-source-8a3964422b76faf8b78c4915
+    resource: repo://libs/desktop/feature-agent/src/state/useAgentPatchBridge.ts
+  - id: openwiki-source-0c662531e68a2db936eccc7f
+    resource: repo://libs/desktop/feature-agent/src/state/usePatchReview.ts
   - id: openwiki-source-bab9cd022cd0c06c4edacf32
     resource: repo://libs/evidence-model-core/src/diff/modelDiff.ts
   - id: openwiki-source-f02b234edea2573a78a178f1
@@ -61,7 +59,9 @@ sources:
     resource: repo://libs/evidence-model-core/src/session/types.ts
   - id: openwiki-source-307bb5e668d266a4bd7c1f2d
     resource: repo://libs/evidence-schema/src/ast/jsonPatch.ts
-generated: { by: "pi", at: "2026-11-15T14:07:58.904Z" }
+  - id: openwiki-source-f3dd6cff8734842de5630223
+    resource: repo://libs/evidence-tools/src/index.ts
+generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
 ---
 
 # 受控模型变更、会话与历史
@@ -88,7 +88,7 @@ entity identity的id/type/category不可随update改，rule的id/type/kind/conte
 
 复合mutators一次写成完整业务结构：createContract连接rootRefs、bindDerivedRule连接rule与attribute、createFulfillmentPair写请求/确认/引用/完成rule并要求mandatory business time。caller在单个session.mutate中组合多个mutator即一批，失败全不提交，不再手算inverse Command。
 
-四领域算子introduceFulfillmentPair/addBreachCompensation/roleifyAndInvertDependency/isolateDomainCalculator也是guarded recipes，返回createdIds等OperatorResult；createModelPatch(document,recipe)在本地执行后只取标准patches与snapshot result。算子没有特权写通道，工具仍交给renderer事务。
+四领域算子introduceFulfillmentPair/addBreachCompensation/roleifyAndInvertDependency/isolateDomainCalculator也是guarded recipes，返回createdIds等OperatorResult；createModelPatch(document,recipe)在本地执行后只取标准patches与snapshot result。算子没有特权写通道。evidence-tools 的统一 registry 向 Pi/MCP 提供同一五个写工具的 schema、描述、非幂等写注解和执行路径；宿主继续拥有事务、历史与静态门禁。
 
 ## RFC6902边界与安全
 

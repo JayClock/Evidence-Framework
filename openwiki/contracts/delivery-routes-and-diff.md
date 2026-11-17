@@ -1,11 +1,11 @@
 ---
 type: contract
 title: 交付路由、快照与契约差异
-description: Context 如何成为服务和 HTTP 路由，字段来源如何限制请求，以及固定 oasdiff 比较最终 OpenAPI、桌面实时预览和冻结导出的行为。
+description: 业务聚合根如何成为 URI、Context 如何成为服务，字段来源如何限制请求，以及固定 oasdiff 比较最终 OpenAPI、桌面实时预览和冻结导出的行为。
 tags: [delivery, topology, routing, openapi, field-origin, api-diff, breaking-changes, desktop]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-15T14:07:58.904Z
+    at: 2026-11-17T06:43:02.055Z
 sources:
   - id: openwiki-source-c8d6c908e749a45544b1e625
     resource: repo://apps/desktop/src/main/deliveryIpc.ts
@@ -13,20 +13,24 @@ sources:
     resource: repo://apps/desktop/src/main/deliveryProjection.ts
   - id: openwiki-source-59e7a4a2571d0728d39ecc85
     resource: repo://apps/desktop/src/main/mcpDeliveryService.ts
-  - id: openwiki-source-bfde1ed5e55faa5637c3af55
-    resource: repo://apps/desktop/src/renderer/components/delivery/DeliveryHub.tsx
-  - id: openwiki-source-65d314ab90b405626f065b6c
-    resource: repo://apps/desktop/src/renderer/components/delivery/IncrementalDiffPanel.tsx
-  - id: openwiki-source-c919289fc6afaab5804152ac
-    resource: repo://apps/desktop/src/renderer/state/useDeliveryHub.spec.tsx
-  - id: openwiki-source-a6788f27362fa4c6195f1a93
-    resource: repo://apps/desktop/src/renderer/state/useDeliveryHub.ts
   - id: openwiki-source-bf747dad922ce4438e285478
     resource: repo://libs/desktop/feature-canvas/src/LiveApiContext.tsx
+  - id: openwiki-source-71d7e1232409d0d4ee39377c
+    resource: repo://libs/desktop/feature-delivery/src/components/delivery/DeliveryHub.tsx
+  - id: openwiki-source-13f689fde06662821c655520
+    resource: repo://libs/desktop/feature-delivery/src/components/delivery/IncrementalDiffPanel.tsx
+  - id: openwiki-source-effa8775635d4ee2d4bfa795
+    resource: repo://libs/desktop/feature-delivery/src/state/useDeliveryHub.spec.tsx
+  - id: openwiki-source-32df59b611c02b85d275991a
+    resource: repo://libs/desktop/feature-delivery/src/state/useDeliveryHub.ts
+  - id: openwiki-source-00036286abae2d8c898e2cef
+    resource: repo://libs/evidence-acceptance/src/commands.ts
+  - id: openwiki-source-d0f0c50af79c1c9e74ccaeb4
+    resource: repo://libs/evidence-acceptance/src/diff/compareContracts.ts
+  - id: openwiki-source-d7e13f22c3acec1fe75d3f7c
+    resource: repo://libs/evidence-acceptance/src/diff/oasdiffRunner.ts
   - id: openwiki-source-feaf4e64c269397a25f93a3d
     resource: repo://libs/evidence-agent/src/sensors/native/nativeApiSensor.ts
-  - id: openwiki-source-a2b00d4266d693ffa57e8b71
-    resource: repo://libs/evidence-api/src/commands.ts
   - id: openwiki-source-e945d84c4f7201722caecdad
     resource: repo://libs/evidence-api/src/delivery/addressing.ts
   - id: openwiki-source-53303a19d90a404248f1d663
@@ -41,22 +45,18 @@ sources:
     resource: repo://libs/evidence-api/src/delivery/segments.ts
   - id: openwiki-source-db628d3d14b8f1801370c287
     resource: repo://libs/evidence-api/src/delivery/topology.ts
-  - id: openwiki-source-fdf03a55449747c10f80626c
-    resource: repo://libs/evidence-api/src/diff/compareContracts.ts
-  - id: openwiki-source-a6e3374295c84097fbc44d71
-    resource: repo://libs/evidence-api/src/diff/oasdiffRunner.ts
   - id: openwiki-source-aac6631a251b846350b2d550
     resource: repo://libs/evidence-mcp/src/server/toolset.ts
-generated: { by: "pi", at: "2026-11-15T14:07:58.904Z" }
+generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
 ---
 
 # 交付路由、快照与契约差异
 
-路由/拓扑来自 `evidence-api/src/delivery`，比较来自 `src/diff/compareContracts.ts`。不发明接口，也不以“重新投影”掩盖破坏性变化。`buildDelivery(document)` 与 loaded index+overlay 的 buildProjection 最终形成同一 draft snapshot。
+路由/拓扑来自 `evidence-api/src/delivery`，比较来自 `evidence-acceptance/src/diff/compareContracts.ts`。不发明接口，也不以“重新投影”掩盖破坏性变化。`buildDelivery(document)` 与 loaded index+overlay 的 buildProjection 最终形成同一 draft snapshot。
 
 ## Context、服务和跨边界
 
-buildDeliveryTopology 每个 Context 一个 service，而非每表一个服务，避免把一组请求/确认拆成分布式事务。serviceId 用 context 的稳定 ID，lane 来自点分 ID 末段。分类顺序是：回答其他 Context 的 evidence-role socket → capability；否则 pre_contract → channel、domain → domain、其余 fulfillment。
+buildDeliveryTopology 每个 Context 一个 service，而非每表一个服务，避免把一组请求/确认拆成分布式事务。serviceId 用 context 的稳定 ID，公开 URI 从业务根开始。service 用 routePrefixes 和精确 routes 声明实际所有权，最终 overlay routes 参与重新计算。分类顺序是：回答其他 Context 的 evidence-role socket → capability；否则 pre_contract → channel、domain → domain、其余 fulfillment。
 
 - channel 承载询价/报价，签约向 core 单向推进，不回写渠道。
 - fulfillment 持有合同履约账；domain 回答计算/检查，不持履约账。
@@ -64,15 +64,15 @@ buildDeliveryTopology 每个 Context 一个 service，而非每表一个服务�
 
 跨 context 的 evidence plays_role 定义供应方 supplies、消费方 consumes 和 capability async link，确认在供应方自己的时钟形成回调。Domain 被规则 binding/ref 或 references 读取时为 reads/sync；pre_contract 到 parent contract 为 signs/sync。links 按 ID 去重排序，services 按 context 排序；替换能力提供方不应改变 core paths。
 
-部署 compose 是占位草图：image/port 非发布配置，但 EVIDENCE_MODEL/CONTEXT/SERVICE_KIND/BASE_PATH、依赖和 expose 来自同一 topology；OpenAPI x-evidence-services 复用它，不能各写一套边界。
+部署 compose 是占位草图：image/port 非发布配置，但 EVIDENCE_MODEL/CONTEXT/SERVICE_KIND/ROUTE_PREFIXES/ROUTES、依赖和 expose 来自同一 topology；Traefik 逐操作按 Method 与完整路径正则路由；OpenAPI x-evidence-services 复用它，不能各写一套边界。
 
 ## HTTP 寻址与角色
 
-routes 按 Context/对象 ID 稳定生成：contract sign POST/read GET、fulfillment request POST/ledger GET/confirm POST、pre-contract rfp open/read/proposal、domain thing read。没有 enquiry 引用的 proposal 留在 lane root 并明示缺失，不猜父资源；没有根合同的请求不嵌在虚构合同之下。
+routes 从业务聚合根生成，Context 不加公共前缀：合同 /product-procurements、征询 /product-inquiries、领域事实 /products。履约项嵌在合同主 URI 下；proposal 按 references 嵌在征询下，方案成单与直接签约均返回合同主 URI。每个创建实体都有主 GET，集合有 list GET；具有 modeled id 的独立 other_evidence 提供顶层只读查询。
 
-segment allocator 在 ID 类别内分配末段，冲突才加类别/序号；operationId 是稳定 camelCase。GET itemPath=path，POST 的实例地址按业务对象加 contractId/requestId/confirmationId/rfpId/proposalId。
+segment allocator 在全局业务根与局部兄弟资源命名空间分配，真实冲突用稳定身份后缀，不受无关角色和 Context 重命名影响；operationId 为稳定 camelCase。itemPath 指实体主 GET，集合 self 指集合 GET；parameterEntityRefs 显式标明模板参数属于哪个实体。
 
-`childShape` 不依赖 references 箭头方向，读取 child endpoint 的 cardinality；只有所有已发现 max=1 才 singleton，未知不推断唯一。最终寻址区分 /request 与 /requests，并只为 collection 添加实例参数；多个 confirmation 另加区分段。
+`childShape` 不依赖 references 箭头方向，读取 child endpoint 的 cardinality；只有所有已发现 max=1 才 singleton，未知不推断唯一。最终寻址使用业务名词，如单例 /payment 与集合 /payments/{paymentId}；仅集合增加实例参数，确认同样有主 GET。
 
 callerRoles 从根合同 roleRefs 按 responsibleRoleRef 收窄，再保留 participant.party 真正 plays 的 role.party。空集合仍保留路由、OpenAPI 与 topology，但 exposure=internal；模型角色线索不是运行时授权实现。
 
@@ -104,7 +104,7 @@ draft breaking 是 warn，仍可导出带警示草稿；release sensor 将其升
 
 ## 展示与测试
 
-DeliveryHub 全览显示 services/route counts/kind notes、sync/async crossings、bindings 的角色/exposure 和 limitations；差异页展示双摘要、原生 changelog/changes、coverage、非 API_ALIGNED 问题，支持定位和复制 Markdown，不再展示旧字段 shifted taxonomy。LiveApiProvider 让画布复用相同 bindings，inspector 通过 browser-safe delivery field entry 显示 Input/CEL Derived/Service Timestamp。MCP 的两个交付工具从 saved readDelivery 获取相同边界，不写模型。
+DeliveryHub 全览显示 services/routePrefixes/route counts/kind notes、sync/async crossings、bindings 的角色/exposure 和 limitations；差异页展示双摘要、原生 changelog/changes、coverage、非 API_ALIGNED 问题，支持定位和复制 Markdown，不再展示旧字段 shifted taxonomy。LiveApiProvider 让画布复用相同 bindings，inspector 通过 browser-safe delivery field entry 显示 Input/CEL Derived/Service Timestamp。MCP 的两个交付工具从 saved readDelivery 获取相同边界，不写模型。
 
 routes/topology/fieldContract specs 保护稳定寻址、角色和字段纪律；oasdiffRunner/compare/breakingScenarios/evolution specs 保护真实原生比较与版本失败；desktop liveDeliveryIpc/useDeliveryHub specs 保护 no-disk、冻结、摘要 pin、过期 reply、baseline 和 disabled export。
 

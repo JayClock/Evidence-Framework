@@ -1,38 +1,38 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:eb0cd02dc80c8f743e25927ceaf5ab71d5f9665aad68aab1dd2bd6fccd829358",
+  "pageVersion": "sha256:3f914af06a0e2d7f1d1d06fc2b5bd84d87c22a0adcf670ee6602c92321be5e35",
   "claims": [
     {
       "id": "claim_319186a606cf4eb5b41077fcdfadf0b8",
       "statement": "Electron 隔离 renderer 且关闭 Node integration，preload 仅暴露 typed evidenceAPI。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/windows.ts#L28-L49",
-          "version": "repo-lines-v1:sha256:18d9c48ecc2acbfa1480ce40e9965b69dd9c28a5376858c39c9195507e1f898a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzZDcxNTU5MmUxZjdhN2UzNTg2ODgwYTFiNTBkYTBjZGFkMzY2Njk0Yzc3NmVhZDlmMjQzZjdiMWYwNzk2ZDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA1YzYyN2NiNmE2MzQyZWMxM2FkODk2ZWFjYTg1YTJlMDhiYmQwZmRiYzIyNzRkM2ZiMGM4NTRhZmI2NWI5MWUifQ"
+          "resource": "repo://apps/desktop/src/main/windows.ts",
+          "version": "repo-file-v1:sha256:7d9ca6cfb2e5d5b2c5869ed17c892de1b84e5f24235f5e620d4a95152855690f"
         },
         {
-          "resource": "repo://apps/desktop/src/preload/index.ts#L34-L193",
-          "version": "repo-lines-v1:sha256:eb0610c4e4595fd55b6fd9a11e598f15ecd0ce2d8866a11d85846f957bb53db9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJiNThmMWMxNjJlYjVhYzdlZjMxNTBhYTFiNzkwMzkyMGUzMzRlOWMzZDQ5MzM1YTJiMDc1YzZmOWM0ZDU0MTIzIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJlYTgyZGJjYWEyYThmZTI3ODJiZjY1NzA0YTk3NTExNTk5YThkZTViM2Q5MTkyNDMwNjdhYTJmNWUzZjc3NWJiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJiZjZjZmMxMDA0OTFiMTU0NDVlODIxNDI5MmZlMmY2ZTcyMDk4ODM1ZDI2ZjY3Y2U0NGY4NGNhZjkxODI1YzcwIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+          "resource": "repo://apps/desktop/src/preload/index.ts",
+          "version": "repo-file-v1:sha256:a664ac6e00c28e316e4384f7057c49590aa38dbe22a682d8e9a67f0fede848d2"
         }
       ]
     },
     {
       "id": "claim_05befca32a3f4158ae3b52cd6757edd6",
-      "statement": "preload 提供 projects/agent/mcp/drift/ingestion/system，订阅可取消，补丁/MCP 回答为 send，旧 simulation 已删除。",
+      "statement": "preload 提供 projects/agent/mcp/drift/ingestion/story/aiConfig/system，订阅可取消，补丁/MCP 回答为 send，旧 simulation/review 已删除。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/preload/index.ts#L34-L193",
-          "version": "repo-lines-v1:sha256:eb0610c4e4595fd55b6fd9a11e598f15ecd0ce2d8866a11d85846f957bb53db9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJiNThmMWMxNjJlYjVhYzdlZjMxNTBhYTFiNzkwMzkyMGUzMzRlOWMzZDQ5MzM1YTJiMDc1YzZmOWM0ZDU0MTIzIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJlYTgyZGJjYWEyYThmZTI3ODJiZjY1NzA0YTk3NTExNTk5YThkZTViM2Q5MTkyNDMwNjdhYTJmNWUzZjc3NWJiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJiZjZjZmMxMDA0OTFiMTU0NDVlODIxNDI5MmZlMmY2ZTcyMDk4ODM1ZDI2ZjY3Y2U0NGY4NGNhZjkxODI1YzcwIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+          "resource": "repo://apps/desktop/src/preload/index.ts",
+          "version": "repo-file-v1:sha256:a664ac6e00c28e316e4384f7057c49590aa38dbe22a682d8e9a67f0fede848d2"
         }
       ]
     },
     {
       "id": "claim_f56eb7c5fa72408f818137022475698a",
-      "statement": "main 注册 drift 而非 simulation，组合 store/IPC/Agent/MCP 后开 dashboard，MCP 启动失败降级、退出释放资源。",
+      "statement": "main 组合项目/摄取/story/AI/drift/delivery/Agent 与 MCP；MCP 启动失败降级，退出释放资源，AI 配置变化重置 story 和 Agent 模型。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/main.ts#L62-L135",
-          "version": "repo-lines-v1:sha256:b29207e6c1ecc28df74ab590312a021193efc5efcd3317c0d1b31a44d7642aa6:eyJzZWxlY3RlZExpbmVDb3VudCI6NzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlZDA4MzE4NGY5YWZkYWI5M2VmZWEzMWJkMjY1ZDgwNWY3ZjY5ZmUzZGZhYjA3Y2Q0ODEyYWNkNDRmMzhiNjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyMTI5YzI3MzUyYjQ5NTU0OGIwNzFhZTM0YWI5MDgxMTcyODczNDI4ZjZmODdmNTRiNTgwZTUxNTNjOWFhMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkxN2E2OTYwZjlkYWFmZGNkMGU1OTcyZDk4Yjk4ZWFlZDJjZjRmNWVlNmJmY2RjYmQ0ZTM4OWVhMmJjMzYzMTEifQ"
+          "resource": "repo://apps/desktop/src/main/main.ts",
+          "version": "repo-file-v1:sha256:42b4ffc91faab6739d8b429421737e9ba298d53a678b43db5956f4f971137aef"
         }
       ]
     },
@@ -41,11 +41,11 @@
       "statement": "With --mcp-stdio the same executable opens no window, reads no project store and registers nothing, running only the stdio MCP server against the derived endpoint.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/main.ts#L137-L138",
+          "resource": "repo://apps/desktop/src/main/main.ts#L152-L153",
           "version": "repo-lines-v1:sha256:03a42be7aad9cf31e7126f6d67707fcf7150cecd596e9d7ec533b587ac8bf701:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTdmM2UxNDM5MDU4MTg1ZDRjOGNkZTQxMWJiOWI3NTgwZDhhN2QxMzA3ODlkODI3N2YxNGM4NGY2ZjI5MDY1YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmE3N2M4OTA3OTY5NDNkNTYyNDdmMGY1ZTRiZTljYTRkNjI4MGQ5ZTVhNDZhNWQyYTc1NDhkM2UwNzEyNTI0ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjAwNzE0Zjg5NWFlYjYzMDllNjI3MjE4YjAwOGZhYTc0YmRkZDM0YTQzNTU2YjAxYmIwMzg4ZDNiZDk5OTUyMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2JjNmI4OTRkODhkNDMyYjQ5NjliY2UzYmExNjNkYTc5ZGYzMmFhNmUzNzYzOTEyZmE2ZDY0N2I4ZjgxYjViNCJ9"
         },
         {
-          "resource": "repo://apps/desktop/src/main/main.ts#L35-L60",
+          "resource": "repo://apps/desktop/src/main/main.ts#L38-L63",
           "version": "repo-lines-v1:sha256:53d3e19492fa526c1610f5cd7fa49879a2ee7224d110ae761ad9a1c026323941:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiOGY4NTU1YWNhZWRlZWIxMDk4NDc4ZWI2NjBmYjNmNGIyZDc0YzdmMzYyMWZlZGI0MWU1MGY1OGQ0ZjEzYTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ5YmYyYzFmYWRhMjcwNWU5NTIzYTIyOGY2M2QzMTk1ZjhlMzgyMmI4OTI0YzcwNTUwMWYwNjE2MjYzODUxN2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMyOTYyY2MzYmUzODkyNTE4MTkxMzZlYzNhZGIxZmNhMzg5ZDhjZWM1YmYxODYxZTQ1NmQ0NDgzY2NiODNhZTMifQ"
         }
       ]
@@ -117,8 +117,8 @@
       "statement": "All shell consumers resolve paths through three helpers in modelSource.ts: isBundleProject tests for a *.evidence.json path, projectDirectoryOf returns the project root for a tree and the bundle's parent directory for a bundle, and modelSourceOf returns <root>/.evidence/fm for a tree and the bundle file itself; there is no trace-path helper, so traces are no longer placed at a fixed path beside the project directory.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/modelSource.ts#L11-L24",
-          "version": "repo-lines-v1:sha256:66dd1a027a4459a3ffb09c7bbd07ffb2ec13201936ea9cfa17207158ae974d4e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZkYzE4YjFjYTBlYThkMjA1NDdmNjllMmU3OWVlYzE1NGQ1ZTlkNDk0ZTgzZjVkZDNkM2RiYTY3M2NiODVlMGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxMzk4MjgwNmE4OGI1ZWMyZWI4YjY0YWI1ZDNjY2ZjZTk1MGE2YzMyNzIxODk1MDI5OThlNWM0Mjc0YTQ5NGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhmYjQ0ODUyNTlmNGUyNTExNjhjODY1OGQ2NzYxOWZkYjg0ODUwN2EzNTg3NTk0MmQzMzkzZGU3OTcyNzI5NTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://apps/desktop/src/main/modelSource.ts",
+          "version": "repo-file-v1:sha256:e2112af557be541c96e43406027dc59f1be7681c87cbb65681869b8d8add78a5"
         }
       ]
     },
@@ -133,24 +133,6 @@
       ]
     },
     {
-      "id": "claim_c98d284089624cfb97d69905660d44f0",
-      "statement": "Review export runs in the main process from on-disk sources: a diff review first asks for a portable *.evidence.json baseline snapshot and reads it as a file rather than executing Git, then a save path is chosen, scope refs are derived from the model's non-child entry Contexts when .evidence/api/api.json exists, page assets resolve from the packaged resources directory or the workspace package, and the call returns saved, cancelled or failed instead of throwing across IPC.",
-      "evidence": [
-        {
-          "resource": "repo://apps/desktop/src/main/installAssets.ts#L22-L68",
-          "version": "repo-lines-v1:sha256:108ea7df4fa322591ec6dc956c260dfbeec08ceddec1eef88159bd4e882077c2:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc1N2FiM2JmNmY5YjU5MWVmZmQyNmI0NWY3OTU0MTkwNTFjOWY1Mjg5NTJmYTFiMTM5YTdkMDliNjBlNTVjZjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI1MmE4M2JhNmQ5NjljY2QxZDQ5ZTBmM2JhN2MzOGE5MGRlZTBjZDVkOTUxNzFmYWZiNjNjY2U4ZmNiNWFiZGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
-        },
-        {
-          "resource": "repo://apps/desktop/src/main/reviewIpc.ts#L144-L219",
-          "version": "repo-lines-v1:sha256:e32c4a81b361a17196efbb5450f480a50adef0b6b51a4aa4b6c04324e09c19a9:eyJzZWxlY3RlZExpbmVDb3VudCI6NzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjczZDI5ZmZhZjc3M2RkZWYxMzBkMTI4OGU5MTA0ZmY1NGNmYzU1MmU5NTA1YTRjZjgyMThmYWRhZGI1ZGY1YWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFhZjRkM2RkNjg1OTU4NDMzZjNhMDUxZTNhYTdlYmM3OWIxNDQyZWU1ZTI2MTM4NjYzN2Y2NTEyMzBhNjNlNTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
-        },
-        {
-          "resource": "repo://apps/desktop/src/main/reviewIpc.ts#L44-L66",
-          "version": "repo-lines-v1:sha256:986d7f65152f829286f790042cfd458dd305302cfb68d8d6f8842a283c3070b4:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkY2ViNmI3YzA3ZjE2NTlmZjEzNTJkMjQzMmQ2YTUwNTNhMmFjY2E1ZjU3NWFlZDFkMWRjMzhlYTNlYzBhMDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ0YzA3NjRlYmU1OTJiYmY1ZmE0YWNlMGVlMDMwODQ2NTVlOTczMzg3NWNkZTNhYzU4NTg5MWM3OTlhNDYxMWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImViNTQ2MmJiZjI4ODA1ZmIzNWIzMGQzYmEyNzE3ZDY3NDJlZmJiY2MwOTVlN2Q0YWE5N2UwNmI2M2FhYzMxNzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE2ZTQ5ZGM1NTQyMDBiNGQzZjIyMjEwMmMyOGJjMDVhYjlkNDkxYjg4YzNhZGFhNTY0ZWE2OGE4ZTFhNDIzOGIifQ"
-        }
-      ]
-    },
-    {
       "id": "claim_48950bc3c96c4ad098fe7f825e2892f8",
       "statement": "The renderer selects its screen from the window hash: parseRoute returns the editor route with the decoded rootPath for /editor?rootPath=..., keeps a missing root path empty so the editor can explain it, and defaults every other hash to the dashboard, so an unknown hash never yields a blank window.",
       "evidence": [
@@ -159,7 +141,7 @@
           "version": "repo-lines-v1:sha256:198005c10891a7c64ca4b96154e4fa7cb1e131ac2ff30fb11b64f84cc3430b5d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZlNGJiMGViYTQ2Njc4Mzg4ODdiM2JjZWEyMzIwMWY5NTc1ZTcxODgyMWRjOTQyZjNjYjNiNzkyMzkxYThhNDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAxYWQ1MDMzZmVhY2FkYjQ3NzZmZjZiOTdkMzMzZTg3ZTY2MjcyMGM1ODIxYzA4ZTJhOGFhNjJkZmUxOTU1MmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/App.tsx#L6-L21",
+          "resource": "repo://apps/desktop/src/renderer/App.tsx#L7-L22",
           "version": "repo-lines-v1:sha256:141ea3baec0a226b5f63fdf3f5f437395aa4d134045ecd3e24ea1222c5f2beb8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNkM2EzZTFiNjUwYjdjNWZlNmY0OTAwZmQ1NTJlMzdlOWE0MGVjZWRiYjZjZTdlZThjNGQ1OTM5ZTI4NGZmYWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzN2FhMDFlMzkzMWRjYzEyMGZiZjc3NzdlMmJmYmFlMzkwNjhkYmVjMzBkNWQwNGFjZDFlNGJmNjBlZjBiNTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImExYWRiYjZlOTgyZmZlN2Y2Y2RjMmIxYWYzMWNlZjgyMTUyYjIzN2I5NjYwZjczZDU4OWNkODZlYmE2ZGE3ZjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMyMTc5MGFjNDQ4ODZkNTlmMzk0M2FjOGRkY2ExODg0NjUxYWQzMWE2MWFiZGI5ZWRmNTZjOGVlMDA1OTE5NGYifQ"
         }
       ]
@@ -169,7 +151,7 @@
       "statement": "The dashboard loads recent projects and starter templates in parallel on mount, opens a project by calling projects.open and then projects.openEditorWindow, and creating a project uses showCreateDialog to pick a tree directory or a bundle file path, writes the starter document, starts the watcher for the requesting window and is echoed back through openEditorWindow; listProjectTemplates builds each template to report its real entity, relationship and rule counts, and the blank template is hidden from the starter cards.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/projectIpc.ts#L91-L155",
+          "resource": "repo://apps/desktop/src/main/projectIpc.ts#L93-L157",
           "version": "repo-lines-v1:sha256:d2ac35d369b0fdb771e6661cfbee37dfc78afd241642bbb79f7aa1c199bc82ac:eyJzZWxlY3RlZExpbmVDb3VudCI6NjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MmZmMDFmZTM5YmE1YzZkMDg2MGNhODE2Y2Q0MGNlZTRjMmMzYzVlMjc3OTlmYmFlYTRhOGIwNmExOWQxODciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkwYzI5ZDNiZjVhYWRiMDZiMTBkN2M2ODE2ZDRlMTYyOTY3ZTEwYWMzZGEzNzQ3MWM1YWRmZTFkNjMyMTU5NTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY4OTRlN2ViZmQ0YjgwYWYwNDgzM2E0MDkxOTMwY2IyY2Q0YjJmY2JkMDM1NGI1N2Y1ZTI3MzZjZGE1YzU4MTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA2ZDQ3YzQ2YmViMWM1OGM2MDEyYTNkOThkZjdlOTA5Y2VmMGU3OTc3M2U1NzkxMjk0ZDM1MmEwZTJiMzUyNDAifQ"
         },
         {
@@ -177,7 +159,7 @@
           "version": "repo-lines-v1:sha256:6a4ee85a08ba28c8f206facf70cabc4baf34af90a99947125af598fe67d257f4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIxODJlZmQwZGZhMjU4ODk1YzgyZGNlOWNjMDUyYzRmZmQyZjZiMjg4NDM5YmQyYTM1NGZiOWE5MmZkMTVkYTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRmNGQwN2IxNmE2NGYxOWNlN2QzMDgxODg0OWQ2OWFlNjI2NzUxOWUzYTM5NmYwNDAyNzQ2NzQ1MTJmN2MwNzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/screens/DashboardScreen.tsx#L23-L104",
+          "resource": "repo://apps/desktop/src/renderer/screens/DashboardScreen.tsx#L24-L105",
           "version": "repo-lines-v1:sha256:f28f439fcead272b53c847b0209f3f928ea596900d861f1ff0562182e26a6f9d:eyJzZWxlY3RlZExpbmVDb3VudCI6ODIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgxNTMyMzQ5MzEyZTM1N2JjY2EzNGU1YWEzMDIyYzhjN2I4NTMyOWY1ODViOGIyOWI2ZmYzMjE3YWY0OWIyYjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ4NzE3OTBmNDE1YTdiMjA0MDlhMWU5ODQ3ZTM3YjcyYzhlNDRhMGE0YWRjNTVjYmQyOTQ5ZjY2ZmY5MjY5ZjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIyZTRhYWU4YmRiNTBhMWQxOTc4ODdmYmU5OGQ0OTg2YzJhNjM1NjQ5OGE2NDU1NzJlNmVkYTY3ZTAwOWQzMTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAxNzg3ZDdhZjZhNDA2NjE5YmE0MzM0NDc1NjdmOTFiN2FmMzdkMzY1NGEyODc3YmI2M2M0Y2I4ZWI1Y2Q0ZGUifQ"
         }
       ]
@@ -205,22 +187,12 @@
       "statement": "The editor window subscribes to projects.onChanged and records only the change timestamp, so an external write produces a reload prompt and reloadFromDisk re-opens the project through projects.open rather than the canvas being replaced silently.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/projectIpc.ts#L39-L67",
-          "version": "repo-lines-v1:sha256:0851665566de7bd63c39cce5345c52d241a4b15c158f17671710b7e5acc37c7c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU3OTRlNjU3YmM5OGZhMTU2ZTZjZjAwOGQ5YTkyYzdlYjdmODE4NWE0NjcwNjZjMDliODQwMTY4MGRjNzY4OGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQzZWMwMDc1ZmVmZGFjODk1MjllMDAwMTY4MDkxMGQxNGVjOTc2NDA3MzdjNmUyMGY1YmMwNDIxZDJiMzAwYmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYxMzI4MzllMWI5ZmIyMjJmMmQ1MzA1NDI0MjYyMTA5YjIyOGJhMWJhNjEzNzdmNzlkY2UwMDQxMDA5MDQ3Y2EifQ"
+          "resource": "repo://apps/desktop/src/main/projectIpc.ts",
+          "version": "repo-file-v1:sha256:b119e5dc7997e0d4792a371e5c2667084df9e87c80a6a66f9a61f5048943564c"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useEditorSession.ts#L108-L118",
-          "version": "repo-lines-v1:sha256:3f7feb6868aeda08aee700b36a5ee157e2561746ad8d358f6b297454a941cc9f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk5NTg2NjQ1ZmJjMmVlMjZkNGYzMDQyZGUzODE5NjlhZjNlYjBmMWY0YjZhYzk4NzM5YzBmYjk2ZDZhNjBkYWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZjJjNDc5YzM3MWQ1YmVlOWFmOWFjMDUzNTAyOGY1M2VmZmZmMmIyZWJmMTM5YmE2NTIyYjQzZDBhZDhmNTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFiMjA0OTAwNjViOWU5YjQxYTdiMTkyZjNjMDgyMDBiMWU5ODI0M2E5ZjU2MzU5Y2MxMTNhNDQ5MmFjMzUzMjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVmZGI4NWQ0YzZmYWY5OTRlMzA5YzY1ZmMzYTdlNTFiYzIwN2U1NDM3MGZhOTIzYjYxMDQ3MjA1MTlmN2NmNjYifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_8fa0db90515544708194a6a5b3713486",
-      "statement": "reviewPreview 分析实时 document 不写盘，前后 disk fingerprint 不同拒绝混合快照，HTML 用安装资源在 main 生成。",
-      "evidence": [
-        {
-          "resource": "repo://apps/desktop/src/main/reviewPreview.ts#L28-L110",
-          "version": "repo-lines-v1:sha256:2044671cc54f1b520eb2d7fea7e3b6979dc3e73cbf19a0fdb806e58f292aa869:eyJzZWxlY3RlZExpbmVDb3VudCI6ODMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg2ZTBhMjM2N2Y4NTY0ZjI1ZDEyYmJmZTRjYWNkMzIwMjZjY2M2YWExY2QxNDBlNmU0YzIzYzRjNDhmM2M3OGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY4ZjEzZWIxYWEzNzBlZjQ1NTQzN2M4ZGIzYjRlZGM2MTc4MTU1YjE4NDVlN2FjNDZiM2RjNWYwYWNjNDdkZjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://apps/desktop/src/renderer/state/useEditorSession.ts",
+          "version": "repo-file-v1:sha256:1c370ef02de7e823f8f917263addbe788c56313c6b140e44b726aa7937aab347"
         }
       ]
     },
@@ -240,7 +212,7 @@
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/main/driftIpc.ts",
-          "version": "repo-file-v1:sha256:ebca0dc73877f3ec542fba64ea3f056f796157e2e59727f6f3702d262a0a4a3f"
+          "version": "repo-file-v1:sha256:b68dcc61abc438d51de7297f26abcc204200265094744c1f0caf1ec4efb1d672"
         }
       ]
     },
@@ -263,8 +235,8 @@
       "statement": "registerAgentIpc keeps one runtime per project root, creates it lazily on the first call from a window, tracks which windows own which root, and disposes the runtime when that window is destroyed or the app quits.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/agentIpcHandlers.ts#L48-L148",
-          "version": "repo-lines-v1:sha256:59c03888272d0ead32b01f6a9d37d2d0e9112e4e078d03d9b1834a63d93ed2b9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlNTQ3YzBjODEwNmE0MDQ2ZWU0ODA2NzAzNDY1ZjE2M2Y5NGI1ZWE2M2JkZDU5N2VkNzMxMjJkZDNkNWRkMmMxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MmEyY2IyNWExMjJiNDQyMjFhNjIzNGVjNjYwYTdiNWZiN2Y5YmRlN2IzYjllMmIzYzU1OWEwZDk2ZmFjNzM5IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3ZDdhMDU1MTY5NTNhZjRiODQ1ZTBjMGNkYWU4NjcxMGMzZTA3MmQ5YmIyOTZkNDc4MDM2NTViYjRiYjgxMWU3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJmYmJjNTVmNTljMThjNjliMGQ3MGU4OTFlYTM4YWIxZDdkNTVkY2YwYjY5NmU0MmI3NzZjNjAyZTFlNjRiMDY4In0"
+          "resource": "repo://apps/desktop/src/main/agentIpcHandlers.ts",
+          "version": "repo-file-v1:sha256:f6aec85070789f282d1e5f0dd5683bf087f1089bd05578a988abf95ce19126fd"
         }
       ]
     },
@@ -273,16 +245,8 @@
       "statement": "An agent patch is applied by the renderer: the main process sends evidence:agent:apply-patch with a fresh request id and resolves with the renderer's verdict on evidence:agent:apply-patch-result, refusing immediately with '编辑器窗口已关闭。' when the window is destroyed and with a retry message after the 15 second timeout.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/agentIpcHandlers.ts#L231-L245",
-          "version": "repo-lines-v1:sha256:924bab94c97ecdf4e5f583bfbc25301a55665a7aa0e497655661a80fb4ee2508:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZmZGI5ODM0ZTA5MGQxZTk3M2Y0ZTJmMzgwYmE5ODc2M2E2MDZhMjBlMzMzMmE0OWJhODU1NDk0YjMxYjdhMDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI1NjZmYzc4NDJjODE2MjEwMDgxMzA1YjZlNTZkNjQ3OGU3MWVkZDkxZjdjOTJlYWRhZWNmOThjMzBlZDRiNzYifQ"
-        },
-        {
-          "resource": "repo://apps/desktop/src/main/agentIpcHandlers.ts#L25-L25",
-          "version": "repo-lines-v1:sha256:443ee9b459fb4a00620ed8ecc12e458688b20bcf13e7e7ab1f79ada4f0b3f6e0:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDQzZWU5YjQ1OWZiNGEwMDYyMGVkOGVjYzEyZTQ1ODY4OGIyMGJjZjEzZTdlN2FiMWY3OWFkYTRmMGIzZjZlMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDQzZWU5YjQ1OWZiNGEwMDYyMGVkOGVjYzEyZTQ1ODY4OGIyMGJjZjEzZTdlN2FiMWY3OWFkYTRmMGIzZjZlMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzYzZjk0ODg0MWFmMzY4OGFiYTJkNWQ5MTJjMDQ2YmY1MTgzNjRlM2RhY2MxMjAzZjA5ODhiZWIwNzlkMTRhZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWEyNjRiMWU2OTczYjIzMTkyYWMyZjcwYjU1Y2VlODFjNzFiNjlkMTUxMzRmZTcxMmUyMDUyODQ1NTExMGRmNyJ9"
-        },
-        {
-          "resource": "repo://apps/desktop/src/main/agentIpcHandlers.ts#L90-L115",
-          "version": "repo-lines-v1:sha256:1d848001c2e1d5a84b8515a5c043e58d973f83843f2795440903bc7a65402525:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU0OTA0Mjg5Y2I1MTFmMGE2YjYzZDhlZDRjZWU3MzI2NTJhNjg0NzIwNDZmY2Q0NmZjMGFlOTU5YmY1MjJlYmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRlNDVjZTU2MzNkZDcwNGZkOGQyYzAwOTllYTRjNDRhOGI4ZDVjOTZjMTBhZjlmNDEwMzllMTIxZDIxNWI0Y2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkzOTM4MzA4NjAwNmI5NGU5MTZkZjkyOWFiMDE2NjAzYzg0MTdmYzk5NGRiMjJmMGViN2NhZGNkZjExZjZhZTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNmNGVkYTZkY2QzOGU5MjdhYTYxYWU2MzMyMjIxMTdjZGI5ZGI5YmY2Mjg5OTk3MDEwOWQyZTAwZGFkOGUyZTMifQ"
+          "resource": "repo://apps/desktop/src/main/agentIpcHandlers.ts",
+          "version": "repo-file-v1:sha256:f6aec85070789f282d1e5f0dd5683bf087f1089bd05578a988abf95ce19126fd"
         }
       ]
     },
@@ -291,14 +255,36 @@
       "statement": "MCP 使用 listEditorWindows 首窗承载模型与截图，status 推所有窗口且可拉取。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/main.ts#L93-L119",
+          "resource": "repo://apps/desktop/src/main/main.ts#L108-L134",
           "version": "repo-lines-v1:sha256:3862e5276cce0ad363338c42c801de669bde9cdb8040326cbf2e8c71eff70c47:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZmN2Q0Yzk4ODI1M2U3YzMyZWU3ODJkOGNmZjVjNDIwOTFhZDg0NjU3ZjlhZTVjODAxNzQ4ZDU1ZWIxN2U5ODMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyOWM2NzU0ODlkNTlmZWM1ZGNkNDkyMzJkNWU5ZGVkZGE2ZTBjOTljMjY3ODE4NTlkMDRiZTQ2MDMzY2U5YzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYwMjBkNzY1MDNlM2Y5MzkxODQzYjFiZGM5MjkyY2E4NjI3Zjg2ZmRlOWFiNGVlZGNiOTJiNWFjMTlkYWI1MWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg4YmUxYjYzMzMyNmIwMmQwZjFlMGVmYjlmYjExZjU4YTAyMGQ5ZWIxZTgyMDA3ZjVjYWVlN2VkYTFhY2VlN2YifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b9a062d7fd7044279cad5beab2b936bf",
+      "statement": "桌面 AI 设置与加密凭证保存在 userData，renderer 只接收公共状态；连接测试不持久化，配置变化重置 Agent/story runtime，CLI auth 仅显式只读导入。",
+      "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/ai/aiConfigService.ts",
+          "version": "repo-file-v1:sha256:5686ce4c5b321e2d832bff1c20b494e101f1f75113b9fd402837cc3e5c5c38d6"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/ai/safeStorageStore.ts",
+          "version": "repo-file-v1:sha256:4b5be9763945ffbe8aaa4e60ab5839ef70f8a32cc365ac090c0e6978117224c9"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/main.ts",
+          "version": "repo-file-v1:sha256:42b4ffc91faab6739d8b429421737e9ba298d53a678b43db5956f4f971137aef"
+        },
+        {
+          "resource": "repo://apps/desktop/src/preload/index.ts",
+          "version": "repo-file-v1:sha256:a664ac6e00c28e316e4384f7057c49590aa38dbe22a682d8e9a67f0fede848d2"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-15T14:07:58.904Z"
+    "at": "2026-11-17T06:43:02.055Z"
   }
 }

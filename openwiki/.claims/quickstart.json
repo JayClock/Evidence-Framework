@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:c0e92dde5225d95f5ecdcdab9089180b720ebed8e319beff9ef778f58053d321",
+  "pageVersion": "sha256:912115380dcac7d48853b045546a8762f1bf1b72316fae161cd897b19a532732",
   "claims": [
     {
       "id": "claim_df5076f9176f4575a1cdc338083b09af",
@@ -14,19 +14,19 @@
     },
     {
       "id": "claim_d1426e9010cc4646a5e2c5090221d33b",
-      "statement": "setup为Node/pnpm install加显式api:setup，工作区两个应用十二库，无项目skill树或第二解释器。",
+      "statement": "Node/pnpm install 加显式 api:setup；workspace 两应用十八库，独立 Fastify 另需 example:setup，无项目 skill 树或第二解释器。",
       "evidence": [
         {
-          "resource": "repo://ENVIRONMENT.md#L1-L10",
-          "version": "repo-lines-v1:sha256:167cf64c5703da73ad907471543274d2c164c1557c7e2bbfb0ff49060dd515b1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg0YTM0YjQ4MjUwODI1MDhjM2YzYmRhNzM1MmZjMTBjYTBiNzRmMjk3ZWE3MjgzNWUyYWU5YjI2ZTY0NDkwYjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI2MzgxOGUwYzdiNDZmZWJhNzU5ZWU3MWM4MDMzMjA5OTBmZmYzMzJhODczZmJiMDc3YWU5ZmVjM2VmOTcwYmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZmZGVjOGNjM2VkZWMxYjczNjczZTAyMmNiOGU1YWRjMTUwOGNkYmRhN2JiYWNlOGVhNjNmYTExN2M4NDNlNWQifQ"
+          "resource": "repo://ENVIRONMENT.md",
+          "version": "repo-file-v1:sha256:ad75bfea8458d026cfcfb901ff8f3110f1b9532004c3f82b660923d63bf93ab1"
         },
         {
           "resource": "repo://apps/cli/package.json",
-          "version": "repo-file-v1:sha256:856b2fbaffd0d39dc137f947c0f545dd69e554725ccd42d13c7ae0c1f286187a"
+          "version": "repo-file-v1:sha256:d2ca0caf923736c9567219fb3ade2e92c22afe1983df6b171b147a8e3646f20e"
         },
         {
           "resource": "repo://tsconfig.json",
-          "version": "repo-file-v1:sha256:3aab78bcf55f70094f80b30ef2451319e8faea8cf41d9b1f6ce553dd8de461cb"
+          "version": "repo-file-v1:sha256:b598c5d19f8e91fbfac3bab736fb0c5eaa80e2768eeda50bf28fb23496fff842"
         }
       ]
     },
@@ -35,8 +35,8 @@
       "statement": "build/test/lint根脚本是Nx wrappers，evidence/model/api根入口现在走apps/cli/dist。",
       "evidence": [
         {
-          "resource": "repo://package.json#L5-L23",
-          "version": "repo-lines-v1:sha256:a4e51b89108349ee2de247734a889a8cc2c9d157a95ff7824509060110c1be9e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0ODMzZDU5NDljMDNhNDBjYTk1MjQ5MTYxMGE2NjU5NjQ0YjNhYTQ2NjM2MmY3OTkwMjBkYmYxOTgxNTQ3ZGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAwZmE2YjdjN2FkYzExY2UwOThhNGE5Y2Y3NTJlYmQ4NWRkM2U1OGFjMGY4ZTgwNGQ5MzI5Y2FmOWI0YWJmZTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE0M2QyZDJhMTBiYzQyZTk5MmQzNjBiYjM3MDFhOTk0YzNhMjYyMTJmNGU3NDg1OGQyZTBjZTNkOGNiMDdmOGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEyNTY5ZTYyYTY3YTFmNmQxNTE5MjRhMWE0YmNiYTg3OGU1NTgwMjhkZTA5ZTlmNTk4MjUzMWNjMGU5NDI2NTUifQ"
+          "resource": "repo://package.json",
+          "version": "repo-file-v1:sha256:4b1b9596b78b202b81e917f1c2522240e76da6f2e8c3bf7aa26db4628f3e071e"
         }
       ]
     },
@@ -45,22 +45,22 @@
       "statement": "项目用树/Bundle携同一FM模型与内联examples，指令/schema/assets随库安装，不从working copy发现；legacy validation不再支持。",
       "evidence": [
         {
-          "resource": "repo://AGENTS.md#L1-L18",
-          "version": "repo-lines-v1:sha256:1689fe15980363ea9ab01863767d022fb78195398a21f4fc384b6ab9774ada31:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUxMjBiMDcxOGVkMDQwNmVmMzc2OWViMzRjN2E4NjNkNzNmMzlmOWE5N2JmYWRhZTE4NjRhMzdjY2RmMDgxZjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVmMTgwZjljMTI2OTAzYmNjMzMxYWE5NTQ1NmU0OTQ0NGE3ZDRkMDExZThhMmE4M2Y1ZGM4NzAyMzkxODEyZDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFhZmI5NjA2ZjViMGQ4ZjYzNGIyNjAzNzhkNmVjZTI1M2I1YzE0NDdhOWJmMWQwNDkzNDk0NDBhOGI1ZWJmMDkifQ"
+          "resource": "repo://AGENTS.md",
+          "version": "repo-file-v1:sha256:285207093780af1f6bd8b1971f24af26774959c5097cc48d0c4654b9da4450c2"
         },
         {
-          "resource": "repo://libs/evidence-model-core/src/adapters/modelBundle.ts#L232-L254",
-          "version": "repo-lines-v1:sha256:85f33664c874d70e990c61914af294dc1c8c3b02350db06594636d0d1c25147a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiNjYxYjRiOWMyOTM5NTIzZjVjNjYxMTBiODJkMTVlZjg3ZThhZDQ2MWQ2ZmI0ZDNjMzYxZWM5ZDBjYjZmN2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIyOTU2YTdlNWM1ZWVjZGJmNGQxYzM3MzY0OTc5NGNmNjJhZjIzMzQyODMxMjk4ZGEwZWU2MGRkYjBiZmExMzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcxNzgxMGNhZTExZjMwOGFkODhmOTJhYjAxMjAyZWEzYjkxNmRlNzRhM2Y2NDY3MGMzMzYxZWMwNDliNmIxZmMifQ"
+          "resource": "repo://libs/evidence-model-core/src/adapters/modelBundle.ts",
+          "version": "repo-file-v1:sha256:6a66859ee2bd17fd0e456a2b34e4cce601163f2a41633bad63470f129aac05f5"
         }
       ]
     },
     {
       "id": "claim_40a52e6231ba417781694bf15cae60b7",
-      "statement": "统一evidence覆盖check/model/review/export/test/diff/api，旧三库bin是弃用shim，timeline/simulate/role-play已删除。",
+      "statement": "统一 evidence 提供 check/model/story/export/test/diff/api，旧 model/API 两 shim 保留；review 与旧 timeline/simulate/role-play 已删除。",
       "evidence": [
         {
-          "resource": "repo://apps/cli/src/router.ts#L22-L136",
-          "version": "repo-lines-v1:sha256:01754d4183702da41d97ffb8bbbaca076cb0aed8c38555b9fcf796cbc30f100c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI0N2VmOGM4NGNkZThkOThkZDZhN2E4YTNhYmFkZWFkM2U0NTJmMjRlMWUzYjMxYjFlYTFlYjNkMjYxYzEyNmNiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmN2U3MjU4YjhiNjFmYjk3MDVjNjhmNTE3N2Q5ZTMwOGQxNTM0ZWQ3MGU1MDk5MmZhZDFmYmU2YTUwZjQxNTM0IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI1MTNlZmE4NWEzNTY4M2FjN2FmZWE0N2MyNjQ2YjBjYmNkMGFkYjhkMjhhYmRhYzQ1ZDhlYTQwYjYzODA4OWM0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI3MDE0ZjllMDE0Y2I5MzkzYjA1Yjg1NzU2MzM3NGUzMGUwNDEyYTRlOTIyYmRiYzFkZWRmY2I0ZmRlZTFiYzZmIn0"
+          "resource": "repo://apps/cli/src/router.ts",
+          "version": "repo-file-v1:sha256:47ecefdc10b1f1be1dc0d3682061395c6a2dce69989bbf9550e6adffc5c64870"
         },
         {
           "resource": "repo://libs/evidence-model-io/src/legacyRemoval.spec.ts",
@@ -87,46 +87,46 @@
       "statement": "兼容API workflow error退出1不写，只有gaps退出3仍写draft；complete与writable不同。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-api/src/commands.ts#L396-L439",
-          "version": "repo-lines-v1:sha256:1adb7e47dac929b019203f182d55fd9edd49ca333da119c4a7014cfa48c926f4:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhiYTJkMjZiNGExMjQ4ZTE0NGM3NzcyN2MxYzZkMTY0NWQ3MjRiNGZjZWZlMTZiZmJhM2VjYmU5NThkZmY0ZGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNkMWNmYTI3OTcwZTJhYWFmYWZhZmY5ZTA5OWVlZmU2ZDYwNDczNmFiNDIwOTBlOTYwMzZiYWM0ZWVkZTE4YzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUyNmZjNTJhNGM0N2ExZTM4MDUyZjYzN2VjYjY5NGYxMDJmOGY3Njg1ZWI2MTMyZWUyZjNiMDU0ODA1MzYwYzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY5NThkMjg4OTE1ZDJhOGQxNzA2MjlhYjUyYzI5NTNkNzJiMGI0Y2E3NjkyMjk0Y2FmNGVjNDA0YjIxZjFlMjAifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_7563b376d6944760bb17f7e97ce8114e",
-      "statement": "review默认views/index.html，离线只读，发布拒symlink/非自有marker文件；统一review与旧generate共享逻辑。",
-      "evidence": [
-        {
-          "resource": "repo://libs/evidence-visualization/src/commands.ts",
-          "version": "repo-file-v1:sha256:87a9e2ea7e1370e14a64aabcaf28e22a4c4194f5ceffa19529e61cf8113f7af6"
-        },
-        {
-          "resource": "repo://libs/evidence-visualization/src/publish/workbenchPublisher.ts#L33-L87",
-          "version": "repo-lines-v1:sha256:05ab952dc947a93900460e516a2afeea7f6ca23f936f9c2f9226f4f6309aac5e:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRhZjEwMDRiYWU5Zjc3NWI4Mzc5NmY5ZGYyZGFhMGExOGFlMWU5NzJlNmRmN2U0MzVhZDA2M2NkMDlhNWQyY2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNhNjljN2FhYjM3ZmE1Mjc4ZDhhMGY1NzgyNGY3ODUxYTM1NGJiZGFlYjQyMWUxNGYxNTNlODhmZGU4NmFlMWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://libs/evidence-acceptance/src/commands.ts",
+          "version": "repo-file-v1:sha256:5323fc399254a538f75ecc034a6f0796686aa46572f84699e3043c16e59c99e8"
         }
       ]
     },
     {
       "id": "claim_954923a1673640c797f59bff06f86403",
-      "statement": "MCP经local socket与同binary stdio代理，13工具中patch和三算子为write，共用renderer JSON Patch/undo通道。",
+      "statement": "MCP 通过 local socket 与同 binary stdio 代理，14 工具中 patch 加四 recipe 为共享的非幂等写工具，提交 renderer JSON Patch/undo。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/main.ts#L35-L58",
-          "version": "repo-lines-v1:sha256:a08f885f0f9133f273ebfc5a9241384c989b542987a75a3db24caaba2f761c6c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiOGY4NTU1YWNhZWRlZWIxMDk4NDc4ZWI2NjBmYjNmNGIyZDc0YzdmMzYyMWZlZGI0MWU1MGY1OGQ0ZjEzYTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY4NGEwZDYyZjQ0Y2RhZjIxOGM4M2QxOTMyYzBjMTk1MjAzNDNhNGE0M2IzZGRjZDUyYTIyOGJhOTUyYjEzZDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY1M2YxNTUwMzQ1ZGNhMGM1YjY2ZDE0NWFkNTk0NDBlNjJjNWJmYzg5NGIwMDY3YTZhYjc2YzMyNjFiZGFjODQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcyMTI5YzI3MzUyYjQ5NTU0OGIwNzFhZTM0YWI5MDgxMTcyODczNDI4ZjZmODdmNTRiNTgwZTUxNTNjOWFhMDIifQ"
+          "resource": "repo://apps/desktop/src/main/main.ts",
+          "version": "repo-file-v1:sha256:42b4ffc91faab6739d8b429421737e9ba298d53a678b43db5956f4f971137aef"
         },
         {
-          "resource": "repo://libs/evidence-mcp/src/server/toolset.ts#L65-L79",
-          "version": "repo-lines-v1:sha256:c6363e8c62b83fa223eab28f62d4a8c4630d29f9c87998cf9024fc09a1ecdb5a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmMTcyNzNlNGU2M2I0ZGE4Nzk1N2YwZDJkMDk4ODcwNzE2NjZjMjQyN2Q4YTBkNmVmMDA2MjY4Y2YxMDgxZmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE3NGVlOGE4ZDFhYTg0NTM5MWJjNjc5ZWI3MGNlN2Y0NmEzY2Q2ZmIyZDE2ZmNjYTY3ZmExNzhmNGY4YzFlMGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1M2NiODRjM2Q4MmMxM2U3ZjVjNGUzYTFiOTRhOTQxYjBhNTI0MWEzZDBlMWY4YTM0YTQ0YzEwYzc5YWVhMWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM1ZTBhNzk2NTdlNTQwYTIzMWJjMjU1NmM2YWJlNWE2MTdhZjcwZDIxMzJmNTZlMDRkYTcxMDQxNzdiZWVhMTYifQ"
+          "resource": "repo://libs/evidence-mcp/src/server/toolset.ts",
+          "version": "repo-file-v1:sha256:1f410babf84280cf300e889b5733d80a553eb785384c7d499928cf8cc798d326"
+        }
+      ]
+    },
+    {
+      "id": "claim_146414af0bed4a528c19b9be8f6f10bf",
+      "statement": "API v6 用业务聚合根 URI，创建有对称主 GET、HAL self/集合 _embedded，服务 routePrefixes/routes 与公开路径解耦，overlay 可用模型感知命令迁移。",
+      "evidence": [
+        {
+          "resource": "repo://apps/cli/src/commands/api.ts",
+          "version": "repo-file-v1:sha256:bcbfc0de398b980370238714041709c57ccab4862fe5f1e1afba0bf5837fe028"
         },
         {
-          "resource": "repo://libs/evidence-mcp/src/server/toolset.ts#L91-L127",
-          "version": "repo-lines-v1:sha256:31e8cd50e079abe77015a18d390a50f427c23a6d244604d02093a658b7bae64f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU4M2MzYTdmY2U0OWI5ZGI2NzdlZDkwZmM1MGJjOWFjMjgyOGRiZTk1NDgyNjdjODc4ZWJmNzM2ZDQzZWE0MjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlMzNkYzczMWU3ZDA3YjFmMGMwNWNmZWJkN2UxOTIyMDIzZTYwNzdiYzBhZTdiYTMwMTQ4ZjUwODMzYTI1YTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc4Y2U1NGEzZTNmOTk0YmZkZjFlOGY3NjU0N2U5NjY5NjJlMTEwYTdkOGFiNDdhOTI5NDk5MzkxODllMGZmOTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVlZWNhOWFmY2U1ZjIwMzVkOTdjYjgwNGEwNjI4MmE0YTEyMjM5ZWM1YTI0YWJiNmFlZmVlNzAzZTQ4YjhjODIifQ"
+          "resource": "repo://docs/api-projection-v6.md",
+          "version": "repo-file-v1:sha256:2efb907009591aa653d6be160ee223351ae4b79d6307ec3b1c0ab206fb105c74"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/delivery/routes.ts",
+          "version": "repo-file-v1:sha256:c89e334df9b5c064ebab899b5ea150f3b9d7b53ead5fc35112e84e3d685cc87b"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-15T14:07:58.904Z"
+    "at": "2026-11-17T06:43:02.055Z"
   }
 }

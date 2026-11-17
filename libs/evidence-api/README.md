@@ -36,11 +36,15 @@ The legacy projection command validates the OpenAPI meta-schema before publishin
 `openapi.json` alongside the delivery projection and manifest. Explicit overlays
 may adjust routes/journeys but cannot invent model semantics or hide errors.
 
+See [API projection v6](../../docs/api-projection-v6.md) for aggregate-root
+addresses, singleton/collection cardinality, HAL, service routing and overlay
+migration. API snapshots and manifests use schema 6.0; FM models remain 5.0.
+
 ## Inline examples
 
 An entity's optional `examples` contains named **complete entity facts**, not
 workflow steps. Values must satisfy its response payload schema. The projection
-adds an empty HAL `_links` map to response examples; request examples contain only
+adds a HAL `_links.self` identity to response examples; request examples contain only
 caller-owned fields, never derived values or service timestamps. Invalid examples
 block export instead of being silently turned into passing tests.
 

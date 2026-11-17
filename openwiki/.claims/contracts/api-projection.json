@@ -1,18 +1,14 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:62051477a3f313d556144f0b16f8bb15bb8e48d9e11b5960f965e64dd66c214d",
+  "pageVersion": "sha256:089bd7d69c243dd3839e6d2d0756dd37431527b64f900dde78c2c9fa4cc24ad4",
   "claims": [
     {
       "id": "claim_1ccbd29e511e46929319ccbea00159be",
       "statement": "投影可不提供 check；提供时要求 v6 等证据条件，失效或摘要过期为 gap 而保留草稿，源字节并发变化则无 index。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-api/src/adapter/fmAdapter.ts#L100-L146",
-          "version": "repo-lines-v1:sha256:59ebb555f27efd0a51e8797259bf1ad1daaf6beb89d3958296e6a968c7b91805:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFhZDUxMTNiZjMwYWM2NDk4ZDE5MzdiYWMxNzJhMGU3OTQxZWU4YzBlNTE0OGM4YjhlNDU0OGQ0NzU5MzNhMmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2NDBiYzBkZDExNmFjYzc3MjM2ZWZmNWFmYjZjZjc3MGQ3OTNiMjA1MjBhY2Q4MjNkN2Y1ZDQwYmZlNDQ0ZTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUyNDk4ZTYyYWUwZmY4ZjdjMDQwZWQ5MTc5MDQ4MTBiMTVjYjQ3OTNjYTAwYmQwNzdkMzBmMTRkYmI4NWI2MjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgzYzMyNzhhNTJjOTMyYjgwODUyZTI0OTZmYmVlNDJjOTA3NGQ3MDI3MjE3ODYwMDM1N2M0NzkwZGE4N2MxOWEifQ"
-        },
-        {
-          "resource": "repo://libs/evidence-api/src/adapter/fmAdapter.ts#L76-L97",
-          "version": "repo-lines-v1:sha256:622c654bdca413502ddad9fd53c8bd33391884b399e657be622187a45d679f8b:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhkMzYzMzY3ZTQyMjM5OGQ5NDg5MjA2ZjdjYmJlMDRmMDc1NDk3ZGIxMGFiMmI2NGJmMzg4OTM5Y2E5MThiMmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmZmUzNGY2Mzk0Y2Y1NjdlZTc4ZmFiYTYzZjA3NDhmNmQ5OThiZDljOGMxOGNhYjg4MmMzNDgxZGViNGI3YTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE2NjY4N2FmM2UxMzQzODFjNTQ5NGY3MmQzNWE4YzE3ZGFlMTZhNDdjNzEyNzJhZjFjMTkwNWQ5NjI1MjJkY2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNhOWMzODJmOTU0MTI5ZDEyYjU3OTkyOWI4OTQzYjBmODBhZTk0ZDc2Y2QwZjk3NjMxMzNhODYzNzQwMmIyZTUifQ"
+          "resource": "repo://libs/evidence-api/src/adapter/fmAdapter.ts",
+          "version": "repo-file-v1:sha256:1df7c862d398000c72f24be5e0138acf74e9016bfbcd5f715a4712f0151a1bfe"
         }
       ]
     },
@@ -21,28 +17,16 @@
       "statement": "The overlay input and the produced snapshot are validated against two different embedded JSON Schemas, compiled once and cached, api.schema.json for the design and api-projection.schema.json for the output, and the loader refuses YAML, duplicate JSON keys including nested and escaped ones, non-JSON constants and duplicate ids within routes or journeys instead of accepting what JSON.parse would silently collapse.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-api/src/apiLoader.spec.ts#L25-L46",
-          "version": "repo-lines-v1:sha256:be139180e05114ea2c780bfbd8589f8566b4e3056a87dcd692411d092181a590:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU4OTQyNWEwYzhkM2ExOTRjZTMxZTUzMGZkYWM3NmIxN2FhYmI5OTYxM2VjMzA5ZDViYjYyYjdkY2RkYTgxZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFmYzhkZjVjNjQ2ZTViYWNkOGZhMzRkZGExOTU3MmVlZGIyYjkyYjYyMzI0ODlmODUwMTQxZTVhODc4NTNmMGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZmODQwZjliZmE1YzQ0MTNhYzMyZTYyZWZhY2Y3NzhhMTMwNjQyYjczYTY3ODY5OTkyYWEzZmMxMDY0OTAwOTQifQ"
+          "resource": "repo://libs/evidence-api/src/apiLoader.spec.ts",
+          "version": "repo-file-v1:sha256:8886e1a45c6fb42769647c07565e5a5f916ce89c01160e7961e8ab333c037e80"
         },
         {
-          "resource": "repo://libs/evidence-api/src/loader/apiLoader.ts#L118-L141",
-          "version": "repo-lines-v1:sha256:51be548f2335b8e1144d8d44f7aba505a8cb632903045b085b7d4731c27f7e7d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZiNDU4MjEzNTJlMGRkNzk3ZTEyZjVmNmVhMzNmZTc3OGFlYjI4ZTZlYjFiY2U4ZDJmMGQxYjFkYjc0MjUyZDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExZGY4N2E0NzMxNmM3MDhjNTUwMjA5OGU5YWY2YzQ0NTM0ZWI4MGJlYWRjZjYwNjMwMjhlZmNhODU5MzdhYmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJmNGQ0MWVjNjJhYmQ3ZjlkOWE3ZGIzMmZhYjFmNmJmMjZjYmI4OTJiMzUzY2Y4MGQwMzkyNzliNjkwZDA0YjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQyZTZjOGNmM2NmYjE3ZDE3NmI5NDQxNGFiZDhkNTJkNTg5NTJjNzk0NTMwMTRmNTQzNmRiMDQ5NzdmM2E1MmEifQ"
+          "resource": "repo://libs/evidence-api/src/loader/apiLoader.ts",
+          "version": "repo-file-v1:sha256:ac2f7d158f02cb3900b081cd896bb18c2c83fd933d0c9629583e875d7f03144a"
         },
         {
-          "resource": "repo://libs/evidence-api/src/loader/apiLoader.ts#L196-L239",
-          "version": "repo-lines-v1:sha256:211ff67f2dbec020d03d9e0757165540a6b8d917397783eb7a19db3a432595f1:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg0ZTQyMDhjZDZmZmI4YzRhMzU0N2IyZjU0YWRhMTk5NzhjM2YzNjVlNzhmOTUwMmVmNTE0NWNkZDJhYTg1NDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEwZjFiZDgwN2Y3MGQ4ZDQ2OWEzODc3ZDczMDJmM2IxMmFlZjI2OWRjMDQ0OTQ5MDViMjk1ZTJhODIwZmU5NTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE2MTNjZDNmZmE2YTc4NDI3MTMyMDY5ZGM1Y2JiNzk3NDFlNGEzNjJiODM3OTE0Y2JjYmNmYzUxMTJkMjAwZmYifQ"
-        },
-        {
-          "resource": "repo://libs/evidence-api/src/loader/apiLoader.ts#L39-L62",
-          "version": "repo-lines-v1:sha256:b78310f5964e2f25a6da30b6237a224dd8e0e364bf817cec854e970ee633b168:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2MjY3OWE5ZmE1MjM3NzE3Nzk3YTU5MWU3MmNmMjdhODdmNmU1ZmJmOTk4ZjQzYzFmZmE5YWQwODY0NWM1OGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIxOWM1OTUwYzhhZDBkYzI0YTYyOTdkMjcwMWZjZTczZmI3OTE5N2ZjMGUxY2Y0ZjViY2YxNDM0MjBlMTQyYTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkxNTY3ZWM3NTQyMTdmYzY2MTI3ZTIwY2JhODM0Y2E0NWZlODEwZTYyYzU1YWY0NmRjNmJhOWI5OGQ2MGUzYmMifQ"
-        },
-        {
-          "resource": "repo://libs/evidence-api/src/loader/apiLoader.ts#L88-L104",
-          "version": "repo-lines-v1:sha256:4877a8b5046f182a900d8dac56c1791ff520032f8ced21a5ed057c98cd22a5d3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjMGRkODI5N2VkODk3NGMxMDM2Nzc3YWRmNTc5YzUxMTNmNjA5NDZhZjRiNzQ4ZTlkOTVjNzE4MzhmNjY3YjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVkMzhhMDZjMTVlNWVlMmRkNjZhZGU4OTc0MTI5Mjc3ZTM5YjU5NmQzNGMwNTBkY2Y1ZWY4NzViZmM4NGU4NGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJkNTZiMDI2YTk3MmU5MjM4ZTk4NWIyMDNkOTZkODIxYWI4NmIyYWVkNWMyNTRhMGUwMDdmM2E3OGVmY2I0OGMifQ"
-        },
-        {
-          "resource": "repo://libs/evidence-api/src/schemas/apiSchema.ts#L1-L47",
-          "version": "repo-lines-v1:sha256:18036b76eac7158bfc9d57c999134dce8765d343c739ecbe3f143d4a4aa49e61:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhNTE4NmY2ODA0ZTIwNjY0ODBjNjBhYTEwNzFlMzk2YjgzOGQwNDRkMjU4NDljNjZmNWU3ZWRjNjMxMzI4YmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZlZjYxMGJhYzIyMzI1NzAzMTE1NmRjZDYyMTg3ODQzNTJlNmQ1ZmE4NTQ5OTAzM2MxZWY4NjA5ZjNjN2U2NmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNjOTAwNjkwODUxNWNhYjM0ZDE0ZmE5ODAxYWQ1NWJjN2EwZjVmMzdmNDcwYTgzOTQ5M2Q2ZmI1MDIyZGZjMWQifQ"
+          "resource": "repo://libs/evidence-api/src/schemas/apiSchema.ts",
+          "version": "repo-file-v1:sha256:23ebdfd99ae1300fdc204454a179ce55c5f222b78aee08eff227872978b2532c"
         }
       ]
     },
@@ -51,8 +35,8 @@
       "statement": "共享 API command 以 0/1/3 区分 clean/error/gaps，project/deliver 仅 error 阻止写出，gaps 仍写草稿。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-api/src/commands.ts#L396-L439",
-          "version": "repo-lines-v1:sha256:1adb7e47dac929b019203f182d55fd9edd49ca333da119c4a7014cfa48c926f4:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhiYTJkMjZiNGExMjQ4ZTE0NGM3NzcyN2MxYzZkMTY0NWQ3MjRiNGZjZWZlMTZiZmJhM2VjYmU5NThkZmY0ZGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNkMWNmYTI3OTcwZTJhYWFmYWZhZmY5ZTA5OWVlZmU2ZDYwNDczNmFiNDIwOTBlOTYwMzZiYWM0ZWVkZTE4YzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUyNmZjNTJhNGM0N2ExZTM4MDUyZjYzN2VjYjY5NGYxMDJmOGY3Njg1ZWI2MTMyZWUyZjNiMDU0ODA1MzYwYzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY5NThkMjg4OTE1ZDJhOGQxNzA2MjlhYjUyYzI5NTNkNzJiMGI0Y2E3NjkyMjk0Y2FmNGVjNDA0YjIxZjFlMjAifQ"
+          "resource": "repo://libs/evidence-acceptance/src/commands.ts",
+          "version": "repo-file-v1:sha256:5323fc399254a538f75ecc034a6f0796686aa46572f84699e3043c16e59c99e8"
         }
       ]
     },
@@ -62,15 +46,15 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-api/src/openapi/openapi.spec.ts",
-          "version": "repo-file-v1:sha256:425ba91d0dd112c9a12202fdb62110abecd47acef2c133e6fa5011bd83ed2d07"
+          "version": "repo-file-v1:sha256:7c2e9eeed7b5fa1e77a021c1278ce56b2f9d2d8b9272e6bf79bc11486253f3fc"
         },
         {
           "resource": "repo://libs/evidence-api/src/projection.spec.ts",
-          "version": "repo-file-v1:sha256:8cf60d5939f6af03df916fd9201f32a60ebf217284a87d84e1edc503365a029d"
+          "version": "repo-file-v1:sha256:830125e1d1284403690066bff4cae968212b0d877f982b7bfc3bbd80a29f8abc"
         },
         {
           "resource": "repo://libs/evidence-api/src/renderer/outputRenderer.spec.ts",
-          "version": "repo-file-v1:sha256:aa8170e1fa895a34648065692166ccd1022664654ed275359241e38f76df14fe"
+          "version": "repo-file-v1:sha256:3a78e60cccf4d0274cda709c6fbc4c0480eb8b926a7bfcdab75d46b292c8ac5c"
         }
       ]
     },
@@ -79,8 +63,8 @@
       "statement": "投影先模型基线、后受控 overlay/journey/hypermedia，最后从最终 routes 构建 OpenAPI，防 snapshot 与 contract 路径分叉。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-api/src/projector.ts#L49-L190",
-          "version": "repo-lines-v1:sha256:5ecfe5749bba4e8cec080294bb466d3153af9a1b71f3c72ad7b413be6b3ab1f3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJjZjc4NDAxYzE2MTdiY2Y5NTYwMWUyMzNlMDA0NWY4MmU2NWQ0NzQ4NTkyYTBjZTAwN2Q5ODkwODY0ZDFiNmZjIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwMGFhYWU0N2UwOGI2ODRmOWNhMWM5ZmRmMDg4NjQzZTAxMmZlODhiMDhiMTBjOGVkMTVkMjQzMjU3ZmFjMTA0IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJkY2QxOTE3NWIzODYyM2Q4YTlkYjBhZDljMGU3Zjg0ZDQ5ZjlmYjk5ZWUzODVlMTEwMWYwYTIzN2ExM2FiMjA1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJkNWQ1YTQxMDZhMmFlNDEwMDM1MDk0OWVhOGYyNGNmZDhhYTA4NDMzMDY1YWFiMjBmYjEwYWNiN2RjNmQ2NGM3In0"
+          "resource": "repo://libs/evidence-api/src/projector.ts",
+          "version": "repo-file-v1:sha256:baed67dd7add9345154653f7c2510e6aac82cc3a432ef920ac54e8bda8fa4133"
         }
       ]
     },
@@ -89,22 +73,22 @@
       "statement": "投影重新严格验证 FM，问题成为 FM_INVALID error；草稿仍可显示但命令不写错误契约。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-api/src/commands.ts#L398-L418",
-          "version": "repo-lines-v1:sha256:db5c33a74e4b80cc2056c216704858a452c19ca1b275a2f04f079e004be5e1ec:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI2ODZmY2YwZmQxZDYyNjVkMGViZjhmNjM1MjdhMDRhODVjN2NiOTU4MjEyODAyZDc2ZjAxZDMwYzhmMTBjYjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUxNGI1NTQwOTU0NDVhMDZhY2Q1NTJlMTU5M2U5NTgyZTk2YzE2ZDMxMDUyNmNmYzJhODViNGE3NTA0NDY4MDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMyNzkxM2I2ZDkzZWQwZWFjNWI4Nzc3ZjQ4Mjg1NTRiZDQxN2RmZTE2NWM0YWFlOWYzZDIwMTY3MmM3NWU3ZmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImExN2JhNTZkZDQ3ODBjZGZmNzM4M2Q1ZjAyZjcyOTFjMmJiODkwYjc0N2IyYTVjZjU1ZjdkNDg4YjAwMGUyOWEifQ"
+          "resource": "repo://libs/evidence-acceptance/src/commands.ts",
+          "version": "repo-file-v1:sha256:5323fc399254a538f75ecc034a6f0796686aa46572f84699e3043c16e59c99e8"
         },
         {
-          "resource": "repo://libs/evidence-api/src/projector.ts#L49-L65",
-          "version": "repo-lines-v1:sha256:1d931b6e128fcebea340b51dfad1a4014ffa7817e727141769d0a7765173d414:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNmNzg0MDFjMTYxN2JjZjk1NjAxZTIzM2UwMDQ1ZjgyZTY1ZDQ3NDg1OTJhMGNlMDA3ZDk4OTA4NjRkMWI2ZmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg0ZTQyMDhjZDZmZmI4YzRhMzU0N2IyZjU0YWRhMTk5NzhjM2YzNjVlNzhmOTUwMmVmNTE0NWNkZDJhYTg1NDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRjZDE5MTc1YjM4NjIzZDhhOWRiMGFkOWMwZTdmODRkNDlmOWZiOTllZTM4NWUxMTAxZjBhMjM3YTEzYWIyMDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJjMDgyNDgwZGI4MWQ3MGEyYzRkMTBhZGU5NjkxZTIxZmRiMzk3N2Q2NGIwNDk2MjViNTc5ZTAwOTRjYzk5NmMifQ"
+          "resource": "repo://libs/evidence-api/src/projector.ts",
+          "version": "repo-file-v1:sha256:baed67dd7add9345154653f7c2510e6aac82cc3a432ef920ac54e8bda8fa4133"
         }
       ]
     },
     {
       "id": "claim_e55e9428a74d4b5887bd1e250779ae79",
-      "statement": "snapshot 固定 schemaVersion 5.1 和 mode draft，并记录 model/design/check digests，不宣称发布就绪。",
+      "statement": "snapshot 固定 schemaVersion 6.0 和 mode draft，并记录 model/design/check digests，不宣称发布就绪。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-api/src/projector.ts#L164-L190",
-          "version": "repo-lines-v1:sha256:8c46aa9b7ea8ca6cb99992f354bdfee849ddfcef9e806fc47354f06aa51391bb:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhNTRjYWM1ZjUzZGFmZjBjZTkyYjQ3YjY2NTRiNWNlZDk3YzFmYTc3M2Q3YTA0ZjllMzJjNGRkZWNhMjdiNmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAwYWFhZTQ3ZTA4YjY4NGY5Y2ExYzlmZGYwODg2NDNlMDEyZmU4OGIwOGIxMGM4ZWQxNWQyNDMyNTdmYWMxMDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRlMWJkMmM2NGEwOTQyYjMyZjA2NjE0NTFkZjRhMTM5NzlmYmI4ZWZlNzE2NjAwMmFmNTkzNDFhNjMwNDg4YWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ1ZDVhNDEwNmEyYWU0MTAwMzUwOTQ5ZWE4ZjI0Y2ZkOGFhMDg0MzMwNjVhYWIyMGZiMTBhY2I3ZGM2ZDY0YzcifQ"
+          "resource": "repo://libs/evidence-api/src/projector.ts",
+          "version": "repo-file-v1:sha256:baed67dd7add9345154653f7c2510e6aac82cc3a432ef920ac54e8bda8fa4133"
         }
       ]
     },
@@ -113,16 +97,16 @@
       "statement": "The overlay contract allows only schemaVersion, id, routes and journeys with additionalProperties false; an obsolete full design carrying resources, bindings or capabilities is refused with DESIGN_INVALID, and a route override must name an existing route id, keep the original path parameter names without empty segments or unbalanced braces, and not collide with another method plus path.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-api/src/apiLoader.spec.ts#L79-L92",
-          "version": "repo-lines-v1:sha256:99e1a54fedb24dc05e420e4f62d7260ccbf096708186da259eccf3c6ebc1502b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkMDc4MTAzYjQ3YjcyNWRjZTk0ZjQwZDEwNjI0ZTkyNWM0ZDczNTU0OGVjMjExNzUzMmExZDcxZTE5YmMzZDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI5YjVlMmY1ZmU4ZjE5ZDgwNzUwMGE4MWMxODFmY2I3MjlmZWJkZGIzZWExZjkwMjRmOTY0OTcxMjZhMDVmNWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE3N2RhNGIzYTUxNmEwMTUyNWQ1OGNmZWE4NjczY2MwOGI3MDc3NzdlNzJmYzA1YmJiM2U3NWVhNWFhY2U4ZjMifQ"
+          "resource": "repo://libs/evidence-api/src/apiLoader.spec.ts",
+          "version": "repo-file-v1:sha256:8886e1a45c6fb42769647c07565e5a5f916ce89c01160e7961e8ab333c037e80"
         },
         {
-          "resource": "repo://libs/evidence-api/src/projector.ts#L75-L118",
-          "version": "repo-lines-v1:sha256:af1f89d63d79fc79c51ef6216b5dd2accd7000d32969bf27340a1606aef098e0:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU3OTAzODEwZmI3MWU1OTQ2OWNhNDQ0ZDMzZGQxOGFlNjkwMGRmNzE4MWRjNDJlYzE2OTgxYjhjOTAzZjBjMWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxZmQ1N2VjMjYxNjlmNWRkMTA1ZDhhYmFlM2IxOGM3MTNkOTc5YmQwZTBkM2JlMGYxZmM4ZmFhOWYzYjFmNjIifQ"
+          "resource": "repo://libs/evidence-api/src/projector.ts",
+          "version": "repo-file-v1:sha256:baed67dd7add9345154653f7c2510e6aac82cc3a432ef920ac54e8bda8fa4133"
         },
         {
-          "resource": "repo://libs/evidence-api/src/schemas/apiSchema.ts#L1-L47",
-          "version": "repo-lines-v1:sha256:18036b76eac7158bfc9d57c999134dce8765d343c739ecbe3f143d4a4aa49e61:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhNTE4NmY2ODA0ZTIwNjY0ODBjNjBhYTEwNzFlMzk2YjgzOGQwNDRkMjU4NDljNjZmNWU3ZWRjNjMxMzI4YmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZlZjYxMGJhYzIyMzI1NzAzMTE1NmRjZDYyMTg3ODQzNTJlNmQ1ZmE4NTQ5OTAzM2MxZWY4NjA5ZjNjN2U2NmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNjOTAwNjkwODUxNWNhYjM0ZDE0ZmE5ODAxYWQ1NWJjN2EwZjVmMzdmNDcwYTgzOTQ5M2Q2ZmI1MDIyZGZjMWQifQ"
+          "resource": "repo://libs/evidence-api/src/schemas/apiSchema.ts",
+          "version": "repo-file-v1:sha256:23ebdfd99ae1300fdc204454a179ce55c5f222b78aee08eff227872978b2532c"
         }
       ]
     },
@@ -131,8 +115,8 @@
       "statement": "If the overlay loader reports any diagnostic, buildProjection drops the overlay entirely and projects the model baseline while still reporting the diagnostics, so a partially valid overlay is never half-applied.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-api/src/projector.ts#L67-L71",
-          "version": "repo-lines-v1:sha256:3fb7e641e9cc29d5c01d1326c55e9f23dc6150a602369d0b563083f1a34f3f34:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDQxY2U1ODM3MWE3Zjk2YjVhNWEyNDM2ZjFkNzUzOWQzNDEzNTUzODQ4NDlhY2M0Mjk5ZTYxYmViZDU5ZDRiMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2E1NDMwZmJkZTU2OGYzZTI5ZmZhNzkzZmI1ZTk5MzRjNjdiOTQ3M2RhNDFhNWM3NmFkNDk0MTk2ZTA3YmI5MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzE2OTQ2ZGQ3NTQyY2Q2N2ZlODBkOGE5NGFhM2I0NzE0NTg5ODE4OWQ4ZTA3MTdjY2U4ZmQyMDk2ZDVjNGQzMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTc5MDM4MTBmYjcxZTU5NDY5Y2E0NDRkMzNkZDE4YWU2OTAwZGY3MTgxZGM0MmVjMTY5ODFiOGM5MDNmMGMxZSJ9"
+          "resource": "repo://libs/evidence-api/src/projector.ts",
+          "version": "repo-file-v1:sha256:baed67dd7add9345154653f7c2510e6aac82cc3a432ef920ac54e8bda8fa4133"
         }
       ]
     },
@@ -141,36 +125,36 @@
       "statement": "An overlay journey is accepted only when its route exists, its actor is a role/party entity contained in that route's allowedPartyRoleRefs, and every nextPossibleSteps entry resolves; without overlay journeys the projection derives one step per POST route and allowed party role, connected through non-self hypermedia rather than an assumed order.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-api/src/http/hateoasWeaver.ts#L84-L113",
-          "version": "repo-lines-v1:sha256:459e343189a1d78de34a5a18529c5cc3b4f8d07a707b206c9ce5da186ebb7eac:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmZjllYjVmNzE5OTZjOWYwMDU1M2ZiMDAzM2M1Y2ZhYzdhZmIzM2NkYzVhNmVmYWIyMzU0YTk0NmU0MmE3MzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI0MGViNDI5Y2M5NmRkZWNlOTM3N2EzM2JjMDUxYmUyYmM0NzRmYTQyODc5ODIxMGE3M2MzMzkzMzE3NThjZWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQwOTYzMmU1MmNlZmEyMDUyODM3ZDkyMzgwNWMzMTk0YzRkYzAwZmE1NTc5NzNmYzRkNWY4NDUzMjNkNmI2MGUifQ"
+          "resource": "repo://libs/evidence-api/src/http/hateoasWeaver.ts",
+          "version": "repo-file-v1:sha256:3497b11508b73716a27a8ad6a2db84243ab751be17252e33187ca5fa3e28ea16"
         },
         {
-          "resource": "repo://libs/evidence-api/src/projector.ts#L119-L161",
-          "version": "repo-lines-v1:sha256:dc889c15a8d5467b6ebf831f3fc4e2b206c03a2df60068efa1e7f01b39dfb8c2:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQzZmRiZWVhM2MyYWU4MWIzYWIzZmRjOTM2OTlkNWY1YjE2Y2UwNmQ2NTY0YjFmNWI3NWI5NTdkNTdhNTlkYTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlhMjc1ODJlOGVmNjIyODdmZjEwOWEyZmU5NzY0NGRmMzE4NzM4ZTExMDFmOTA0ZmNkYjZjMDllMGY5M2I4NTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVmN2M5ZjBlYWI1YzNiYmQ1NWVlZmU2ZGVkNDhhMDM1Y2FkMzZiMjg0Y2EzNzZhYTNkYTI2M2YxMzFmOGNhYmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJkYjBkNDkyNWI5M2E0YTY5ZDQxZmU5ODZlNTRjZmU2NGQ4MzZmMTBjNDdhMTdkNjI4NTAwMjkzYTUxOTk0YWYifQ"
+          "resource": "repo://libs/evidence-api/src/projector.ts",
+          "version": "repo-file-v1:sha256:baed67dd7add9345154653f7c2510e6aac82cc3a432ef920ac54e8bda8fa4133"
         }
       ]
     },
     {
       "id": "claim_aa192d36317a4853a68372e33135f0a7",
-      "statement": "A snapshot's hypermedia contains a self link to each route's itemPath plus next:<entityRef> links from every route of a prerequisite Evidence to every POST route of each Evidence it references, deduplicated and sorted by source, relation and target, with templated hrefs flagged instead of resolved.",
+      "statement": "POST self 与 Location 指向最终主 GET；集合 self 指向集合，HAL _embedded 摘要有自身 self 和 total；references 编织 templated next 导航而非运行时可用性承诺。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-api/src/http/hateoasWeaver.spec.ts#L10-L45",
-          "version": "repo-lines-v1:sha256:6bee40ab6fe3bfb0f88958b9cb68b67126421d452def2394f4302c6258d0995e:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFiN2UxM2M0MmZhMDQxZjZlYWIwYjJlNzgxMzljMzljYzY4NTE4Y2Y3MTk3NjhjZmUxNmFlNjc1NWIzZmY3ZTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY3ZjY0N2E4NTM0NGIyZTVmMTg5MWZlN2I1NzI1NTU0ZTQ1YWY1MmI1YzA2ZmY1YjdhNTQ4NjBhOGZmZDY0MWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU2ZjE0NGNiZTg2NTAyN2I0YWI5YWE2NjBkNjg2ZTE5YTI0ZTM0MDdhOWE5MzNjN2VmZWE1YjA5YzE4NjQ3NGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdmZGYwMDNkN2RhZWQyYTExMTA1YzBkZThhZGI3YjhiNmFkMDM4OTJlZWZiYmMyMDk0MjUxMDE2YzQwNDI1ODQifQ"
+          "resource": "repo://libs/evidence-api/src/http/hateoasWeaver.spec.ts",
+          "version": "repo-file-v1:sha256:078cd61881f3df42ed9da90d660cac8fefb90799086f6404f98944613ee5be75"
         },
         {
-          "resource": "repo://libs/evidence-api/src/http/hateoasWeaver.ts#L15-L64",
-          "version": "repo-lines-v1:sha256:48d7d519a56eb1ea044c760a1f5fb264f236853c097516f3a583e581b8ef3c62:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY4YzM2ZTUzY2UzYWYwMmVlZjgyNjBiNmU0M2Q0NGEwNTdkYzQ3OTI4NjhjYmE3NDkzNjFjZTdhZjhmNmQ2OWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIyYzZmYTE5YWE0MTdmOGViMTAxOWZjOWE1ZjBiNjAwOTBlNDI3YTZhM2I5NmUxOTc3MTdkYzdjMGRiYTQxYTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUwMjAyYTQzY2MzZGM0YTkzOThlNGExNWVmODFlM2M1NGIzNDllYjNkMjkwOTVkZmE2ZWM4ZDk5YzZiYjc5ZDQifQ"
+          "resource": "repo://libs/evidence-api/src/http/hateoasWeaver.ts",
+          "version": "repo-file-v1:sha256:3497b11508b73716a27a8ad6a2db84243ab751be17252e33187ca5fa3e28ea16"
         }
       ]
     },
     {
       "id": "claim_c899d4f828004c5ebeec4b5db560c2e9",
-      "statement": "OpenAPI 3.1.0 每 operation 追溯 entity/context/service、角色与履约关系，并为读写对象生成 component schemas。",
+      "statement": "OpenAPI 3.1.0 每 operation 追溯 entity/context/service、角色与履约关系，并为读写对象生成 component schemas。 info.version 为 6.0.0，模型版本保留 x-evidence-model-version。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-api/src/delivery/modelDelivery.ts#L200-L377",
-          "version": "repo-lines-v1:sha256:5b799f3760608b4556cb52c5f51b650f2932143b85c695941569c3d781a41abd:eyJzZWxlY3RlZExpbmVDb3VudCI6MTc4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJjMTYxM2JmMzdhYmJjNjBjYWVjMjAwZDM3MTMzZDkyY2IzZDA4MTFlMDI5MDIzN2QyZDI5YzQ0ZmU2YTgxY2UwIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJjZGJjYWNkNmVlOTc5MTZmZmIxODRmZmNlMjU0ODAwMDJmMTUzM2RjMDJjNTQzZDM5MjExNzM4YWYzYjYxM2M4IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJiNTc2MjlkOTdkM2QzYzRkOTY5NDM1MzQ1MmM1MmJlMmFmYTFkYWU3MGZhNTY1N2ZkMGExZTliZmYzZjRhNTM2IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIzNGE3NjAyN2Q2OGUzNmQ0YmE3M2JhNGUyZDc0YzU3MzIyYzE0MDFmY2U4NDczYTliYzFlMWVhMjZiN2ZkNjYwIn0"
+          "resource": "repo://libs/evidence-api/src/delivery/modelDelivery.ts",
+          "version": "repo-file-v1:sha256:98815e906f0a8eeaf1f83990545b56691c59b652af26c1be960812c7ebfbdc65"
         }
       ]
     },
@@ -180,11 +164,11 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-api/src/delivery/fieldContract.spec.ts",
-          "version": "repo-file-v1:sha256:252f6d3606aee2e71f7e9d008c5a6cfd6486ca4c91caeec49a18ffa26637f3b7"
+          "version": "repo-file-v1:sha256:92fe1f0c94cded2511bf061cde470da7d0966dd96dd68ca390978d49eeded5c2"
         },
         {
-          "resource": "repo://libs/evidence-api/src/delivery/modelDelivery.ts#L130-L295",
-          "version": "repo-lines-v1:sha256:6a3245b52b58e0264cba6ac27f9869806f486a77410ab3a388b5966ab76bbd8a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTY2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI0ODkzZjQwZTM3ODFlYjg5NmM4MmQwNDZhMDgwNjdhMTFlMzVjZGYyZjFkZmFmMjZmZWE5MGI4ZGI2Njc2NDEzIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIyOGQzYjMwYmM3MmFhNmY5OTBlNDU4NTE1MWY5NTcxMTE4YzQ5NTdlODhkY2Y0YTdlZmRhMjBlMTUyMzc3MGM1IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJjZWY0NTg5YzY1NzJjNGJjZDNmYjNmN2UyMWNlNzFiNzQ0ZGI3OTYyYjJjM2E4YWZkZDdlMzRiZDA5ZWEwMjMzIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI5MTZmOTUyZjgzMTZkZDQ2MDlkYjQ4MDJhNWZjMGE4MmRkNzU1NGU0NWNiMWMyNGNlYzBhMGM3ZTEzZTJhZTkzIn0"
+          "resource": "repo://libs/evidence-api/src/delivery/modelDelivery.ts",
+          "version": "repo-file-v1:sha256:98815e906f0a8eeaf1f83990545b56691c59b652af26c1be960812c7ebfbdc65"
         }
       ]
     },
@@ -193,12 +177,12 @@
       "statement": "Because the OpenAPI meta-schema cannot prove semantics, the shared contractProblems helper additionally requires only resolvable local component references, unique operationIds, required path parameters that match the path exactly, and no request body on GET.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-api/src/openapi/openapi.spec.ts#L205-L233",
-          "version": "repo-lines-v1:sha256:2fe7e95dc1f92b09648af80965f0f580ec6eb41963aa5c79477df0d36ddac703:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM0NGE3Y2UxYjA4YzU0OTA2NTg4NDAxMzY3MjEzNDVmZjZlOTgyNjIyNTE1OTNjOTA0ZDExMmJiYzRjMDVkZWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxMWRlM2IyNWNiMmZmNGY4NzJiNDA4ZjU0ODI0NTI3NDY4YmY0MDJjNmY4MTUzNTliZjNjMjlkNzNmZDk5NWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZmZTZhNmM5NTBkMjFmNWU3ZGNkMjQxZDU4MTA2Nzc0ZDY5MzYyZTZkYzEzNmIxNzVkODc1MzJmNTk1ZDA1MmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhlOTQ3NmUyOTUyODM4ZTI3ODc5ZmZhY2RhMjY4NDJmMDNjZWI3MmUyZDNmNWNiZTg1OTEyZjYzNTMwMzMwYWYifQ"
+          "resource": "repo://libs/evidence-api/src/openapi/openapi.spec.ts",
+          "version": "repo-file-v1:sha256:7c2e9eeed7b5fa1e77a021c1278ce56b2f9d2d8b9272e6bf79bc11486253f3fc"
         },
         {
-          "resource": "repo://libs/evidence-api/tests/support/openapi.ts#L1-L50",
-          "version": "repo-lines-v1:sha256:41f8076521d65df0c02c846933ab5546ea1d8316e7192e907bb26786c9ffaf74:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImExYTQyZDkxZWQ3OGFkNWQxZmJlNGY5N2RmNTcwNzRkNzI0NTIxYmFiYzM2ZWE3MDcxZjU3NjU4ZGQ1NzEyYmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://libs/evidence-api/src/testing/openapi.ts",
+          "version": "repo-file-v1:sha256:41f8076521d65df0c02c846933ab5546ea1d8316e7192e907bb26786c9ffaf74"
         }
       ]
     },
@@ -207,12 +191,12 @@
       "statement": "Whatever the model cannot answer is printed rather than guessed: a fulfillment pair without a confirmation and a derived attribute that needs a server-side rule runtime both become limitations entries, which are also written to limitations.md when non-empty.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-api/src/delivery/files.ts#L42-L56",
-          "version": "repo-lines-v1:sha256:26d00d4d2e25a44d0c169def4e320eb735d053dde6dd3b2477bd0158a65f3fd7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRhYWViN2M5NzQ4M2ExZjc1YTFlZDU2ZGVjMzYzNDkyM2VjZWNlN2E1YWQxNmYxNzIyMGUxOWM0YWMwN2JkNzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkNjQ5NDM2YTlmZGNlODM4ZTZhNmM1ZWYyM2NjNmQ3MjY3Njg3NzBhODNmYjUzNjNlNjg4OWI1ZjdiNTEwODYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgwNmExNzlmNDlmNTQ4OTE4ZDZkZjYyMzI3ZDFkYTYzY2ZiYTc2OWEyZTEwNDVkZTBmNDA5OGE3NGY5NGY4ODciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMwNjllNjg2NDAzOTU0Y2U2MTJjYTg1YmZmYWI0NmMzNzA0NmMxZDdlZWJhODhhYzMxNjFlYTgwZDBhNTliMTMifQ"
+          "resource": "repo://libs/evidence-api/src/delivery/files.ts",
+          "version": "repo-file-v1:sha256:af583f667154c30605e34a3b3a1b5cfc03e077c7fe16321da06ade0c9456588c"
         },
         {
-          "resource": "repo://libs/evidence-api/src/delivery/modelDelivery.ts#L498-L521",
-          "version": "repo-lines-v1:sha256:c5f03542d6f2cd528affb93e7ae7b27c987e0b201b16f1fde9806695b0d75352:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1YTYyZDUwZDlmYjAxZDA1OWYyODBkYWI4OGJlMzYyZjk3N2Y5NDczMDBiNjg3NDRjMjVkNWFjZGVmNDk5MjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFhMTYyM2IwOWMxMmExNGQxNTFkMzZmNDg5NDE3ZDlmMmEwNWVjNjU1MDU4YmIyZjkzZGUyMjZiOWRhYzhkODgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMwMDY4NThkMzlhY2FmMmI5NGJiZTBmZjE5MDNmZDU2YmM0NzZkODFmYWI5Njc3ZTQ0YTY4NzZlYzRiMDA0NWMifQ"
+          "resource": "repo://libs/evidence-api/src/delivery/modelDelivery.ts",
+          "version": "repo-file-v1:sha256:98815e906f0a8eeaf1f83990545b56691c59b652af26c1be960812c7ebfbdc65"
         }
       ]
     },
@@ -221,8 +205,8 @@
       "statement": "模型 evidence-only coverage 在 agent API sensor 统计，缺路由为 warn/API_COVERAGE_GAP，不把角色当 CRUD。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-agent/src/sensors/native/nativeApiSensor.ts#L33-L51",
-          "version": "repo-lines-v1:sha256:f12d573965c6f7ea61a93977a646b33c6646ef585719d68c1bd287778436ad56:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY4YzFkNGEwZDdkY2IwOGViNjkxMzk4ZWUxZGI5OTA4Y2FiM2RkNjY0MTA5MjM4NjdlY2NhNTdlODRiYzFlMDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlkOTgzNTQ5OWU1YmE5MWY4NzI2N2M5NTJiNzhlYWVkZDZjNDY2Zjk1YjY4ODFiMDdiNDZjY2FlYzBjZGYxNDYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM0ODViMTdhNmE4ZDRiYzM5ZTY1OGYzZTI0MDdkY2EyNWFiMzcyZTY3YzM4NzgyYmI1NmZjNzc2MmZmYmEwNTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE4ZTJkMDkzOTM3MDYyOGViNzQxMWZmM2U1ZDA5MTljOTQ0ZWVhYjQwOTQ2YWFiZTkzYzQyZTBkOGYxMGVmZTgifQ"
+          "resource": "repo://libs/evidence-agent/src/sensors/native/nativeApiSensor.ts",
+          "version": "repo-file-v1:sha256:35659c2c2dfb779e3dbff84d3fa62ba4c5009de8717a05fc975ef79b27c36f46"
         }
       ]
     },
@@ -231,12 +215,12 @@
       "statement": "An endpoint without model backing cannot be produced: routes are generated from modeled objects, the overlay can only retarget an existing route id, and each operation keeps x-evidence-entity, x-evidence-context and x-evidence-service so a reader can walk from a path back to the object it exposes.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-api/src/delivery/modelDelivery.ts#L248-L283",
-          "version": "repo-lines-v1:sha256:dd91a8ca842f4dd3c856ac41fba6d465cb57cc657aa0bb84ebe95546c07a466f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE5ZDU4YjI1MTYyNzFmMjA4YmM5Njk0OWJjNDNmZTg4ZjdkZTI5YWJkY2Y5ODdlOTFhYzIzYzQ4ZTZmN2IyMDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJmYjY5Y2Y4ZTI0MjVjOTQ2Yjc5MDAxM2ViNTQ5MGEwYTQ5ZDFjNTQ3ODdjOTBhNjE1OWE5YjU4MjAzZjMxYTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM0YTc2MDI3ZDY4ZTM2ZDRiYTczYmE0ZTJkNzRjNTczMjJjMTQwMWZjZTg0NzNhOWJjMWUxZWEyNmI3ZmQ2NjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRmZGVlNGY2YzlhOTlmYWU5ZDI5ODc0MTY0NzlkYmQzMGI3ZDNkZjAyYWIxY2QxNTljZmFlNGMzYzAyZjhjOGYifQ"
+          "resource": "repo://libs/evidence-api/src/delivery/modelDelivery.ts",
+          "version": "repo-file-v1:sha256:98815e906f0a8eeaf1f83990545b56691c59b652af26c1be960812c7ebfbdc65"
         },
         {
-          "resource": "repo://libs/evidence-api/src/projector.ts#L67-L82",
-          "version": "repo-lines-v1:sha256:d65153c105bf45dc7039554514d27387d778cac24c78609a4da82119d15e3207:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA0MWNlNTgzNzFhN2Y5NmI1YTVhMjQzNmYxZDc1MzlkMzQxMzU1Mzg0ODQ5YWNjNDI5OWU2MWJlYmQ1OWQ0YjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcxNjk0NmRkNzU0MmNkNjdmZTgwZDhhOTRhYTNiNDcxNDU4OTgxODlkOGUwNzE3Y2NlOGZkMjA5NmQ1YzRkMzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI3MTRiYWJhZjU1MmRlNWM3ZWM3OTZlYzU3YTllMjdlNTA1NDNiZDI0YTk0MGE2MmM1ZGE0NjFiZDU5YTdmNGUifQ"
+          "resource": "repo://libs/evidence-api/src/projector.ts",
+          "version": "repo-file-v1:sha256:baed67dd7add9345154653f7c2510e6aac82cc3a432ef920ac54e8bda8fa4133"
         }
       ]
     },
@@ -245,12 +229,12 @@
       "statement": "renderOutputs serializes one snapshot into openapi.json, topology.json, routes.json, deployment.compose.json, projection.json, http-journeys.json, an optional limitations.md and manifest.json, where the manifest records the tool name and version, digests of both schemas, Node and ajv versions, the snapshot's input digests and a sha256/bytes entry per output.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-api/src/delivery/files.ts#L18-L60",
-          "version": "repo-lines-v1:sha256:69db24c5ca44723fe20482296ea72b315bcd4b272ce7d65fd84916b19dde460d:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3OWUwODRlOTQ2ZGNkYmUwYjdmOWNiYzBiNmQ2Yzc2NjAzYjJmMWNkM2JmMDViOTNmOTIxMDc4NDBhY2E0NDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRhMWYxOTBmMTBmNmY0ZDVkNjM1ZTBhZGRjYTY0OTFhMjdmNzNlMzJkZWQ2YTcxMDA1NDcwZGU4NzhkYzMyOWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAzNzA3NDhlYmI4YWY2MmZjNWRjNGQ0ZGY1NGVjMzMzM2MyNzE2NWI4YjQ0MDQwNGY0NDJhNTcyNjljZGI2NGMifQ"
+          "resource": "repo://libs/evidence-api/src/delivery/files.ts",
+          "version": "repo-file-v1:sha256:af583f667154c30605e34a3b3a1b5cfc03e077c7fe16321da06ade0c9456588c"
         },
         {
-          "resource": "repo://libs/evidence-api/src/renderer/outputRenderer.ts#L31-L92",
-          "version": "repo-lines-v1:sha256:8328741e2a86d9367401c883adde33768815870d877fccb768afdc9753e90f64:eyJzZWxlY3RlZExpbmVDb3VudCI6NjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiNGVhMzY5YTNlYTcyYjFkNWRiYmE5ZjlmNjE2OGE5ZDJhZTk4ZTg0NDI1MTc5YmFhZjBjZTViZGM0NGYwOWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzODIxZDRhM2Q0ODc0YzE1MTY3MzI4MTlhNjJhMjk4YjRjOTU1N2JiNjQzNTQxYjQxNzNjODUxNTVkZWY5YmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk1Zjg1MTdiNTgyOWY4Y2QxYjg3ZGZjZTdmNzc4ZjQwNWZmNjFiMTZmMDRjY2VjY2Y4YmQ3MThkMzgyYjAxNTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE1MjliZTM2MDRlMTc5MWU4NDk0OTVhNDY2NTk0MzYzYjY1MDk2YmIwMTljMjZlODY5N2NkMjExMzcxMDcyMDAifQ"
+          "resource": "repo://libs/evidence-api/src/renderer/outputRenderer.ts",
+          "version": "repo-file-v1:sha256:7520021793f7bf5afe5e9aec5723ad902e2d20dee10ba7af3d3738218c6d06a8"
         }
       ]
     },
@@ -259,8 +243,8 @@
       "statement": "The generated tree is replaced all-or-nothing: files are staged in a sibling temp directory, the previous tree is renamed aside, a failed final rename restores it, and only direct file names are accepted so a generated path cannot escape the directory.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-api/src/renderer/outputRenderer.ts#L112-L170",
-          "version": "repo-lines-v1:sha256:7cc087125dbe3e8600e98101baaeb8050c0f2f6001bdf19ce11246d1abe4ae1e:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5OWEzNTBjNzkxMTg0Y2RjMDg4YTI0YWIyMzM1YTViMTA2NTFmZDE4M2EwYjY4NTIyOTFkMDQ5MjBmYzViN2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJiZDdkMjgzMzlmZWQwOGMxY2RhYTllYzg2MDY1ZmI2MmI2NjQyZjhjNTEzMjM0NzBlMTgzYjdhYjcyNDE3NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJmNGY3NmQwNzZkYTg4ZDZkN2EyMDg0YThiMzI0ZTEwZjdkY2MwY2E5MmMwMjhhODg4N2MxMmIxZDI4ZjkyZmMifQ"
+          "resource": "repo://libs/evidence-api/src/renderer/outputRenderer.ts",
+          "version": "repo-file-v1:sha256:7520021793f7bf5afe5e9aec5723ad902e2d20dee10ba7af3d3738218c6d06a8"
         }
       ]
     },
@@ -269,8 +253,8 @@
       "statement": "兼容 API resolved commands 要求绝对路径、out 在项目内且不与输入重叠，realpath 祖先解析防 symlink 绕过。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-api/src/commands.ts#L85-L145",
-          "version": "repo-lines-v1:sha256:e4b0f924aa7cd2fe5e1b859236be6d8214d4c996323b1f856b63a6540b369c2f:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAyN2Y1OGYzNTE1NDAwNGViNDYwMmJjZjhjMGU3YTVhMGEzODNjOGRjNjFjYzMyZDU0MzkwMDEyYzc3M2M1ZWYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU3NGY1ZmQ5ZGUzMWM4YTE0Mjc2ZDg0MGVhODEyMzViYTMyZjM2MDcwZDk1ZGZlZjg3YmUzYTIxZjNkMWU3ZGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJhYmE5YzY3ZDA5OTcwZGRlNDYzMWE1YzQ4YzdjNTE5NDFkNzQ4N2FlNjQxYjg4MmMwYmQxY2I0MDA4YjhmNjEifQ"
+          "resource": "repo://libs/evidence-acceptance/src/commands.ts",
+          "version": "repo-file-v1:sha256:5323fc399254a538f75ecc034a6f0796686aa46572f84699e3043c16e59c99e8"
         }
       ]
     },
@@ -279,12 +263,12 @@
       "statement": "command 校验最终 projection schema 并将错误影响退出码；嵌入 schema 文本与随包文件字节相同。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-api/src/apiLoader.spec.ts#L25-L46",
-          "version": "repo-lines-v1:sha256:be139180e05114ea2c780bfbd8589f8566b4e3056a87dcd692411d092181a590:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU4OTQyNWEwYzhkM2ExOTRjZTMxZTUzMGZkYWM3NmIxN2FhYmI5OTYxM2VjMzA5ZDViYjYyYjdkY2RkYTgxZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFmYzhkZjVjNjQ2ZTViYWNkOGZhMzRkZGExOTU3MmVlZGIyYjkyYjYyMzI0ODlmODUwMTQxZTVhODc4NTNmMGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZmODQwZjliZmE1YzQ0MTNhYzMyZTYyZWZhY2Y3NzhhMTMwNjQyYjczYTY3ODY5OTkyYWEzZmMxMDY0OTAwOTQifQ"
+          "resource": "repo://libs/evidence-acceptance/src/commands.ts",
+          "version": "repo-file-v1:sha256:5323fc399254a538f75ecc034a6f0796686aa46572f84699e3043c16e59c99e8"
         },
         {
-          "resource": "repo://libs/evidence-api/src/commands.ts#L396-L418",
-          "version": "repo-lines-v1:sha256:375f537b5b64723c16b97932e1f4f12d3b64472317e845d1e4121163e4b9f172:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhiYTJkMjZiNGExMjQ4ZTE0NGM3NzcyN2MxYzZkMTY0NWQ3MjRiNGZjZWZlMTZiZmJhM2VjYmU5NThkZmY0ZGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUxNGI1NTQwOTU0NDVhMDZhY2Q1NTJlMTU5M2U5NTgyZTk2YzE2ZDMxMDUyNmNmYzJhODViNGE3NTA0NDY4MDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUyNmZjNTJhNGM0N2ExZTM4MDUyZjYzN2VjYjY5NGYxMDJmOGY3Njg1ZWI2MTMyZWUyZjNiMDU0ODA1MzYwYzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImExN2JhNTZkZDQ3ODBjZGZmNzM4M2Q1ZjAyZjcyOTFjMmJiODkwYjc0N2IyYTVjZjU1ZjdkNDg4YjAwMGUyOWEifQ"
+          "resource": "repo://libs/evidence-api/src/apiLoader.spec.ts",
+          "version": "repo-file-v1:sha256:8886e1a45c6fb42769647c07565e5a5f916ce89c01160e7961e8ab333c037e80"
         }
       ]
     },
@@ -293,12 +277,8 @@
       "statement": "Diagnostics carry three severities with distinct promises — error blocks delivery, gap is an open question, warning is advice — and are deduplicated by full JSON identity then sorted by severity, code, targetRef, message and finally identity so two runs that found the same things print them identically.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-api/src/diagnostics.ts#L1-L13",
-          "version": "repo-lines-v1:sha256:7b7c27281fb154789dd83038519d29898e9395803767b0c30448994e02f73aa4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIyMzRlZmQ5Mjc5Y2IyZjc1N2ExMjFlYzUxZWJjZWNmYWMzYWQ1MDFiMjZlYjVkZjFkY2I3OTZjNTIxMmY1OTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhjMGI4NGY5N2M4ZDMzOWQ0YWZlMzYzYjUwYjUzNmJhODBhYzAwN2NiOTBmYzE1NjZiNWQwYTEwYzQ0NzY0ZWQifQ"
-        },
-        {
-          "resource": "repo://libs/evidence-api/src/diagnostics.ts#L96-L131",
-          "version": "repo-lines-v1:sha256:6ba062a1198c5ba101b74635a12f50de5ec3f029d66057b70b0e874b253d1fd4:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJmYzU4NDQ5NTA2NjY2Mzg1OWZiOTVjYjM5Njc4MTE3OTNlYWZjNjVlOTFhYzc4ODIwZDExNjY1MDU4ODU2MzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAifQ"
+          "resource": "repo://libs/evidence-api/src/diagnostics.ts",
+          "version": "repo-file-v1:sha256:6714d33da024a2184dc4f869539600c4cc2565dc561a97dc03d37effbfc4917f"
         }
       ]
     },
@@ -307,14 +287,60 @@
       "statement": "inspect 只读展示模型/角色/参与者/资源线索/context/文件摘要，不提出路由也不再输出旧 scenarios。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-api/src/inspect.ts#L61-L97",
-          "version": "repo-lines-v1:sha256:100fd96596300fa1de0060b3841ebfac09c458c907be5de888d3604bc119e30e:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg1ZTUxNThlM2QzMTljOGFhMTE0NzgxN2Y2NGMwYmMzMTc3NmY3NGM5NTQzNGI2YTI4ZjJiNjI1ODFmZWNjMDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk0MjAzYmU4YmI4M2M0NGZiNDA4NjhjYjQ1NWM0NDc2OGU5Y2Y2NDA4ZDcyOTU5NmVjZmIwYzE2MDc2OThkMGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://libs/evidence-api/src/inspect.ts",
+          "version": "repo-file-v1:sha256:755d95c2a570df2cd108593afb94b59080d348b667e26f44d0befde29277aab5"
+        }
+      ]
+    },
+    {
+      "id": "claim_3ac8d22c787c45d7a6dcace4839d7792",
+      "statement": "公开 URI 按业务聚合根和 references 子基数生成，并为创建及集合补齐主 GET；全局根与局部兄弟段稳定消歧。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/delivery/addressing.ts",
+          "version": "repo-file-v1:sha256:c68f3e683d9e3f3b862b01ef1fc03e75d8b16304e04371b43f81e1c29b8bf151"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/delivery/routes.ts",
+          "version": "repo-file-v1:sha256:c89e334df9b5c064ebab899b5ea150f3b9d7b53ead5fc35112e84e3d685cc87b"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/delivery/segments.ts",
+          "version": "repo-file-v1:sha256:b7d097a409699fc39cae2b216912a436b767cff1ae8e84a8faa5115b46416d43"
+        }
+      ]
+    },
+    {
+      "id": "claim_e2951082c6764215b9e6aae03baa8fe3",
+      "statement": "Context 服务通过最终 routePrefixes/routes 表达所有权；Traefik 逐操作匹配 method 与完整路径正则，公开 URI 不含 lane。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/delivery/modelDelivery.ts",
+          "version": "repo-file-v1:sha256:98815e906f0a8eeaf1f83990545b56691c59b652af26c1be960812c7ebfbdc65"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/delivery/topology.ts",
+          "version": "repo-file-v1:sha256:ac784609e4674bf5d84c378b6c4ec058da7a14a9b0cf596cea34a5a5cb835968"
+        }
+      ]
+    },
+    {
+      "id": "claim_df5f11d1a92c46cea3f53b6cb8d3669f",
+      "statement": "模型感知 overlay 迁移升级路径、ledger 与 journey 引用，拒绝未知或歧义，不覆盖旧文件。",
+      "evidence": [
+        {
+          "resource": "repo://apps/cli/src/commands/api.ts",
+          "version": "repo-file-v1:sha256:bcbfc0de398b980370238714041709c57ccab4862fe5f1e1afba0bf5837fe028"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/loader/migrateOverlay.ts",
+          "version": "repo-file-v1:sha256:96797d5e3eb1442b1c66c40e7be370ce22da0df8ff91ccae37295f9e2f439099"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-15T14:55:15.403Z"
+    "at": "2026-11-17T06:43:02.055Z"
   }
 }

@@ -47,6 +47,10 @@ npx evidence-model compile .evidence/fm --out .evidence/fm/generated/model.json
 npx evidence-api project --project-root "$PWD" --fm .evidence/fm --fm-check check.json --api .evidence/api/api.json
 ```
 
+API projection v6 uses business aggregate roots rather than deployment Context
+prefixes. See [API projection v6](docs/api-projection-v6.md) for URI rules, HAL,
+gateway ownership and the model-aware `evidence api migrate-overlay` command.
+
 ## Unified contracts and acceptance CLI
 
 Build once, then use the same `evidence` entry point for model checks, contract

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:4b7499ec2a56d4c31f3ea98724334d2f0a4ae8edc0b1bc3689b629590672ce8c",
+  "pageVersion": "sha256:49d2d93edb5ddf46a66ffbc6fae9e9a5ab0c14d7f571ea71109a538a37d65845",
   "claims": [
     {
       "id": "claim_ee126c5ec7e54e45ba574ec335210e21",
@@ -130,19 +130,19 @@
     },
     {
       "id": "claim_1821d89346c14667a4445e0df28bb512",
-      "statement": "来源是元素级provenance→entity.sourceSnippet，Zod明确允许，属性草稿不持独立来源。",
+      "statement": "元素 provenance 编译成 entity.sourceSnippet；可携条款 index/UTF-16 范围，协议全文/条款在 manifest.sourceDocument；属性草稿无独立来源字段。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/ingestion/compileDraft.ts#L490-L505",
-          "version": "repo-lines-v1:sha256:b4fee6c395456ec28d599f4fbf358b3c6838878e991929cc6d9e0f25aad85172:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY1Y2ViZTIxODVhNWMxZmMyYzk1YTE1ZmYyZTgzZjY4ZDM3ZGZlNGY1ZjRhYmFiMGM2YWY2NmZlZTA0ZGY5NWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyY2U2NGMyZjI5ZTgyYWU4M2UxMTIwZDZiODYzNjMzZTI3MjRlMjMzNGIxZmM3MTUyYTc2N2UwM2ExMjI2NjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYzZTcyMWQ1YzNjNTlkNjllYjE4YTc0ZTg0N2JlYWI5NGIyNGM1NGZmMGFjOWFmNzE5NjU0MTBhN2EyY2Y5MWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ0ODNmZjEwOWE4ODNjMjMzMGNkMDY3MGE0ODE2OWM4MjQ4N2FjZWMxYWM2ZjUwZjkzMmE3MjQwNThhNjRlMjEifQ"
+          "resource": "repo://libs/evidence-model-core/src/ingestion/compileDraft.ts",
+          "version": "repo-file-v1:sha256:92b808b62e388c4f1b7440244a142b9e63f9d2f8e54d510640c750e80d0fd2b1"
         },
         {
-          "resource": "repo://libs/evidence-schema/src/ast/entity.ts#L170-L181",
-          "version": "repo-lines-v1:sha256:d1f75832d48c602b401df038838dc76e5116c0231ca5b984ff99a5340437dca9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ2YzE1NzE0MTkwY2Q5NDZjYTMxYmU2OTg3ZTA1N2VmY2ZmNzA1YmY4Y2MxMzZkYmUwMGMzMWE4YjE5YWY1MzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhkODM5NzMyYzFmNTU2MWU3Nzc5MTdlMDcxOTk0NzMwY2VjMTlhNjkxYTE5M2U2MjJlZmU5ZTYwMGRlZWM5MzUifQ"
+          "resource": "repo://libs/evidence-schema/src/ast/entity.ts",
+          "version": "repo-file-v1:sha256:d6f792b144eeec4b2742db06ccc48fc962303843c073b434d496e4f284681e7d"
         },
         {
           "resource": "repo://libs/evidence-schema/src/ast/provenance.ts",
-          "version": "repo-file-v1:sha256:1eb8a7c485aa6b5d595411df9ef14250e30a8f84f39837ecf4f56d791006c2cb"
+          "version": "repo-file-v1:sha256:10f922d80736813fc7c63c71886a70dcd59a384aaa82f2819b994c7e55ecae3e"
         }
       ]
     },
@@ -275,26 +275,30 @@
       "statement": "传感器只分析模型，不对照访谈；interview仅来源kind，sourceSnippet是元素阅读线索。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-agent/src/sensors/native/nativeSensors.ts#L41-L58",
-          "version": "repo-lines-v1:sha256:a17a5d239199f8c558c927ecd08b187777de82d7fd2b5b2183cdd4f0ea3b8fee:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNjNjI2NDhhMmU2YzIwMjY4NjZlMDQ1M2E4ZGY1MmRmOTcwYTNmOThjOWE5YjljMWVhYjI5NjczZTQyZjVhYzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMxMDFiNTc0OWI5ZTBkOGNkMzQ5YzEwMTk3ZDE3MWNkOTYxM2ZkOTZmZjY2MjUzNzdlZWEzNDhmZGFiMjQ3MTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRkMzNlMzA0MGQ1YTgzNjQzZmQ3YzQ5MmIzMzRmYzFmZjk3YzQ3M2UxMjg2MjA1ZWYxYzFmZDVkYjEwMGVhNjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI1YTAyNTAxMzkwMTc1ZjlkMDBjZDE4Njc0ZjcxN2NmY2VjZjgyZDQyYmQzYTVjZmFmYTgzYzQ0YzA3YWFmMzMifQ"
+          "resource": "repo://libs/evidence-agent/src/sensors/native/nativeSensors.ts",
+          "version": "repo-file-v1:sha256:8eb6c3d9598ad3bfe496273fb6e6d8409988c527512eb014c87728adcbebac3e"
         },
         {
           "resource": "repo://libs/evidence-schema/src/ast/provenance.ts",
-          "version": "repo-file-v1:sha256:1eb8a7c485aa6b5d595411df9ef14250e30a8f84f39837ecf4f56d791006c2cb"
+          "version": "repo-file-v1:sha256:10f922d80736813fc7c63c71886a70dcd59a384aaa82f2819b994c7e55ecae3e"
         }
       ]
     },
     {
       "id": "claim_80cec428914440bdb580c5bfd89dbd7f",
-      "statement": "The offline workbench projection whitelists every emitted field and deliberately carries no provenance, file paths, raw inputs or history, because a reader allowed to see the model is not automatically allowed to see where it came from.",
+      "statement": "当前公开 API 与 flow story 投影按声明字段构造，不发送 manifest.sourceDocument 或 entity.sourceSnippet；旧离线 workbench 已撤除。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-visualization/src/projection/workbenchProjection.spec.ts#L230-L247",
-          "version": "repo-lines-v1:sha256:b4710c102567b23ca41d9466d99ffb51288f31b1a89751ae97a2fdbb3af1a610:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRlZWIxMWMyNzdlYTU1YjU4YjFjYTBkYWVkZGQ3YWNjNWIzNTZiNzMzMGMzZjAzNDZjZWRiNTA0ZGVhOWYzMTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwNmQyOGY3ZWM2MjYxZjg0YTJjMWM3MzhmMjFkNmM1NjEwYWM5YTVlMTdmNzdkNzJlNjk5ZWI4MzQ2NzY4YWIifQ"
+          "resource": "repo://libs/evidence-agent/src/story/flowStoryProjector.ts",
+          "version": "repo-file-v1:sha256:63f9a12f8b14d97dac859762b57be27068fc3d1f608597e80daf84cb16f40878"
         },
         {
-          "resource": "repo://libs/evidence-visualization/src/projection/workbenchProjection.ts#L9-L19",
-          "version": "repo-lines-v1:sha256:86e71882e77b78fc7409c2866775bdf1e1d78284693dd3f22cbf9a352aab0741:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU4YzM5M2Q5NWNiZmU4OTdjYmM1MjVhNTkzN2Y2NGUzNzE4NzIzMGMxOGU5YmU2MDQ5OGU4NDExZTRkYjllNTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ4NTJmZGRkZWI2YTQ2NTk2NjRmMDdlNDcwMjUzMTI3NTA2MWJlNmRiY2JhMTg2NGRlM2I1NGE3YmE1M2ZmMGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE4NWU4MjhiZTVlYmEwODUyNTczODQwYTgyMWQxOTU5ZDg3ODkzZDE5OGYwZjFkNTMyOGZkODdmYmVlMGJiNDkifQ"
+          "resource": "repo://libs/evidence-agent/src/story/storyAgent.ts",
+          "version": "repo-file-v1:sha256:28301843af812be5ebb44f53f53040cf1ba424b0f0bdf215463d0334a0290ed0"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/delivery/modelDelivery.ts",
+          "version": "repo-file-v1:sha256:98815e906f0a8eeaf1f83990545b56691c59b652af26c1be960812c7ebfbdc65"
         }
       ]
     },
@@ -339,10 +343,24 @@
           "version": "repo-file-v1:sha256:3a09c020c22acab4e1e6bf4951352a33ad0d394dc20a2fbc4c29141311aa84df"
         }
       ]
+    },
+    {
+      "id": "claim_da2de8be5b2349518d661e47cf880041",
+      "statement": "collectClauseTrace 在有全文时只接受原句一致的精确范围/index/唯一文本匹配，歧义留 unmatched；无全文时按 snippet 归组，不模糊解析法律引用。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/ingestion/clauseTrace.spec.ts",
+          "version": "repo-file-v1:sha256:17ffb5561f0634c93c7336a86b13f2bb2abc6ee6de97be36f9c38b53a200f661"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/ingestion/clauseTrace.ts",
+          "version": "repo-file-v1:sha256:50a480d0f624f190690b4328b263755f3459288dde32e4925ca9dcf83d0bdbbd"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-15T14:55:15.403Z"
+    "at": "2026-11-17T06:43:02.055Z"
   }
 }

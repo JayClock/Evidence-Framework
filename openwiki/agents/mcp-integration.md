@@ -5,7 +5,7 @@ description: 外部 IDE 和 CLI Agent 如何经本地 socket 访问桌面实时�
 tags: [mcp, desktop, bridge, ipc, agent, security]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-15T14:07:58.904Z
+    at: 2026-11-17T06:43:02.055Z
 sources:
   - id: openwiki-source-fc371e1f84c3b5d478075b07
     resource: repo://apps/desktop/src/main/deliveryProjection.ts
@@ -39,8 +39,8 @@ sources:
     resource: repo://apps/desktop/src/renderer/components/McpStatusPill.tsx
   - id: openwiki-source-034a304691f6c1f77f682d25
     resource: repo://apps/desktop/src/renderer/state/useMcpBridge.ts
-  - id: openwiki-source-81469134c3e497ba45c34184
-    resource: repo://apps/desktop/src/shared/mcpIpc.ts
+  - id: openwiki-source-c1447b0a1d84b7b06f5158c2
+    resource: repo://libs/desktop/contracts/src/mcpIpc.ts
   - id: openwiki-source-9ad3f46aa18e9c002bf6f482
     resource: repo://libs/evidence-agent/src/sensors/sensorReport.ts
   - id: openwiki-source-761175c9daae6ba4b731889e
@@ -53,7 +53,11 @@ sources:
     resource: repo://libs/evidence-mcp/src/bridge/server.ts
   - id: openwiki-source-aac6631a251b846350b2d550
     resource: repo://libs/evidence-mcp/src/server/toolset.ts
-generated: { by: "pi", at: "2026-11-15T14:07:58.904Z" }
+  - id: openwiki-source-4c008c3497d98e90590e5286
+    resource: repo://libs/evidence-tools/README.md
+  - id: openwiki-source-f3dd6cff8734842de5630223
+    resource: repo://libs/evidence-tools/src/index.ts
+generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
 ---
 
 # MCP 工具与桌面桥
@@ -64,7 +68,7 @@ generated: { by: "pi", at: "2026-11-15T14:07:58.904Z" }
 
 桌面可执行文件带 `--mcp-stdio` 时只启动 stdio 服务，不打开窗口、不读取项目存储，也不注册客户端；它仍需要另一个运行中的桌面宿主。启动失败写 stderr 并退出 1。`runEvidenceMcpStdio` 用桥客户端连接 `McpServer`，stdin 结束即结束；服务器把工具异常包装成错误结果。
 
-当前注册 **13 个工具**，不是旧文档中的 14 个：
+当前注册 **14 个工具**：9 个只读和 5 个共享写工具。
 
 | 所有者 | 工具 |
 | --- | --- |
@@ -73,9 +77,9 @@ generated: { by: "pi", at: "2026-11-15T14:07:58.904Z" }
 | 主进程交付服务 | `get_delivery_topology`、`export_openapi_contract` |
 | 主进程漂移服务 | `audit_production_drift` |
 | 截图协作 | `get_canvas_screenshot` |
-| 生成补丁的领域算子 | `introduce_fulfillment_pair`、`add_breach_compensation`、`roleify_and_invert_dependency` |
+| 生成补丁的领域算子 | `introduce_fulfillment_pair`、`add_breach_compensation`、`roleify_and_invert_dependency`、`isolate_domain_calculator` |
 
-只有补丁工具和三个算子标为 `readOnlyHint: false`、`destructiveHint: true`。所有工具先用实际 Zod schema 解析输入，未知字段或畸形参数不会进入模型访问。`run_scenario_replay` 已删除；旧方法到达 handler 会收到 `UNSUPPORTED_METHOD`，不会伪造空成功。验收来自实体 `examples[].test` 导出的 Step CI/Hurl，而不是内存回放。
+补丁工具和四个算子由 `evidence-tools` 的统一 registry 提供，Pi 和 MCP 共用 schema、描述与执行路径；这些写工具标为非幂等（idempotentHint=false），并标为 `readOnlyHint: false`、`destructiveHint: true`。所有工具先用实际 Zod schema 解析输入，未知字段或畸形参数不会进入模型访问。`run_scenario_replay` 已删除；旧方法到达 handler 会收到 `UNSUPPORTED_METHOD`，不会伪造空成功。验收来自实体 `examples[].test` 导出的 Step CI/Hurl，而不是内存回放。
 
 `SERVER_INSTRUCTIONS` 要求先读应用状态、再读选区或模型；优先用领域算子，其他变更走 `{ rationale, patches }`，禁止直接写 `.evidence/fm`。位置索引编辑应先 `test` 预期对象 ID，避免过期快照改错对象；改后复查台账和阶段门禁。生产阻塞漂移应修后端，不应修改模型迁就实现。
 
@@ -83,7 +87,7 @@ generated: { by: "pi", at: "2026-11-15T14:07:58.904Z" }
 
 ## 单一事务写通道
 
-算子先 `getDomainModel({ includeRules: true })`，在本地用 `createModelPatch` 运行 guarded draft mutator，再把生成的标准 JSON Patch 交给 `applyModelPatch`；算子拒绝时不发送任何写入。不存在旧 typed-command/`dispatchAll` 写路径。
+共享 registry 通过宿主端口先 `getDomainModel({ includeRules: true })`，在本地用 `createModelPatch` 运行 guarded draft mutator，再把生成的标准 JSON Patch 交给 `applyModelPatch`；算子拒绝时不发送任何写入。不存在旧 typed-command/`dispatchAll` 写路径。
 
 渲染端解析 `ModelPatchRequestSchema`，调用一次 `session.applyPatchBatch(patches, label)`，整批成功只形成一个撤销步骤；中途 `test`、路径或结构检查失败则不提交。随后执行 `session.validate()`：严格 FM 诊断会返回 blocking diagnostics，但默认的渐进式会话不会因此回滚已接受的补丁。失败结果保留原 revision，成功只有文档引用真正改变才递增 revision；桥读取当前 session，连续调用不必等待 React 重渲染。
 
@@ -102,7 +106,7 @@ Unix 启动前清理旧 socket，监听后收紧权限到 `0600`，关闭后删�
 `createMcpRequestHandler` 将实时会话方法转发 renderer。传感器、交付和漂移仍先用 `get_app_state` 查询 active project root；没有项目就抛 `NO_ACTIVE_PROJECT`。MCP 选择的是 `listEditorWindows()` 返回的首个窗口（Map 插入顺序），不是当前焦点窗口；截图测量和模型访问共用这个 WebContents。
 
 - 传感器引擎按 root 缓存；无法读取时台账为 `producedBy: unavailable`，门禁为 `passed: false`、退出码 1，不能显示空绿灯。MCP 台账的 `derived` 当前固定为空，不能代表完整派生明细。
-- 交付服务复用 `readDelivery`（`loadFm` + `buildProjection`），统计各服务路由并返回 OpenAPI、pathCount 和 limitations。读取或投影失败传播为工具错误，而不是部分契约。
+- 交付服务复用 `readDelivery`（`loadFm` + `buildProjection`），统计各服务路由，返回 routePrefixes、精确 routes、OpenAPI、pathCount 和 limitations。读取或投影失败传播为工具错误，而不是部分契约。
 - `createDriftService` 把调用者 trace 交给 `runNativeDriftAudit`，返回计数、严重级别、证据/上下文和修复建议；读取失败转成 `passed: false` 与 errors。
 - 原生传感器明确拒绝直接的 `*.evidence.json` root。交付会先处理 bundle 所在目录；漂移走 `modelSourceOf(rootPath)`。不要把旧“交付和仿真总能读取 Bundle”的描述当作保证。
 
@@ -124,7 +128,7 @@ renderer 测量可见画布或目标节点裁剪矩形；无布局/节点在屏�
 | bridge 启动失败 | stderr 记录，桌面继续但没有 MCP |
 | 模型/门禁不可用 | 显式 unavailable/失败；漂移在 errors 中说明原因 |
 
-`bridge/bridge.spec.ts` 覆盖真实 socket 往返、0600、超时和端点复用；`toolset.spec.ts` 覆盖输入先验拒绝、13 工具及四个写工具、PNG、算子提交与拒绝。桌面 `mcpBridgeRuntime.spec.ts` 验证调用计数、renderer 错误、截图恢复和无窗口；`mcpRequestHandler.spec.ts` 验证路由、active root、空截图、移除 replay 和计数。传感器/交付/漂移及客户端注册各有独立测试。
+`bridge/bridge.spec.ts` 覆盖真实 socket 往返、0600、超时和端点复用；`toolset.spec.ts` 覆盖输入先验拒绝、14 工具及五个写工具、PNG、算子提交与拒绝。桌面 `mcpBridgeRuntime.spec.ts` 验证调用计数、renderer 错误、截图恢复和无窗口；`mcpRequestHandler.spec.ts` 验证路由、active root、空截图、移除 replay 和计数。传感器/交付/漂移及客户端注册各有独立测试。
 
 ## 相关页面
 

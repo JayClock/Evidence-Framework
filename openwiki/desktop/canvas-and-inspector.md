@@ -5,7 +5,7 @@ description: headless ELK 的 compound 图与正交线路如何异步投影到 R
 tags: [canvas, layout, elk, react-flow, inspector, cel, renderer]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-15T14:07:58.904Z
+    at: 2026-11-17T06:43:02.055Z
 sources:
   - id: openwiki-source-2ff5ad29deef1166ab3731d6
     resource: repo://apps/desktop/src/renderer/components/canvas/CanvasFloatingHud.tsx
@@ -67,6 +67,8 @@ sources:
     resource: repo://libs/evidence-canvas-interaction/src/engine/layoutEngine.spec.ts
   - id: openwiki-source-848e24844e664baadc8329eb
     resource: repo://libs/evidence-canvas-interaction/src/engine/layoutEngine.ts
+  - id: openwiki-source-abc633034c7c8d642614f964
+    resource: repo://libs/evidence-canvas-interaction/src/engine/swimlaneLayout.ts
   - id: openwiki-source-0ae760ad3a5c96a106b90cc0
     resource: repo://libs/evidence-canvas-interaction/src/layout/serializable.ts
   - id: openwiki-source-3b8cee887561dc24e2e125cf
@@ -79,30 +81,32 @@ sources:
     resource: repo://libs/evidence-schema/src/inspector/groups.ts
   - id: openwiki-source-f7425e64fedf4f34deb929e7
     resource: repo://libs/evidence-schema/src/inspector/registry.ts
-generated: { by: "pi", at: "2026-11-15T14:07:58.904Z" }
+generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
 ---
 
 # ELK 画布与属性检查器
 
 职责分四层：canvas-interaction 负责无 DOM/React 的 ELK 适配和几何；desktop feature-canvas 渲染 React Flow；feature-inspector 负责模型编辑；schema/inspector 注册字段与参考约束。app 组合它们，不直接进口 React Flow/CodeMirror。
 
-## 异步 ELK 取代手工泳道
+## 拓扑与业务泳道布局
 
-`computeGraphLayout(graph,{viewMode})` 返回 Promise：domainToElk 构 compound tree → bundled headless elk.layout → elkToLayout。layered/RIGHT、INCLUDE_CHILDREN、ORTHOGONAL、NETWORK_SIMPLEX、LAYER_SWEEP、固定 randomSeed=1；输入只读，不需 DOM/text measurement。
+`computeGraphLayout(graph,{viewMode,layoutMode})` 返回 Promise；默认 topology 模式：domainToElk 构 compound tree → bundled headless elk.layout → elkToLayout。layered/RIGHT、INCLUDE_CHILDREN、ORTHOGONAL、NETWORK_SIMPLEX、LAYER_SWEEP、固定 randomSeed=1；输入只读，不需 DOM/text measurement。
 
 卡片固定密度：simplified220×82、standard220×156、expanded240×200。Context children 按 contextRef/parentContextRef 嵌套，未知父引用留 root；**空 Context 仍有260×84边界**。父层次循环显式抛 Cyclic Context hierarchy，不再静默停止/省略。内部 root/edge ID 避免和业务 ID 冲突。
 
-所有有效 relationship，以及每 fulfillment request→confirmation/proof 成对边交给 ELK；无端点引用交由 schema 报错，布局跳过它让有效草稿仍可见。已移除旧 fulfillment row/frame、reserved lifecycle lanes、shared band 与 sharedResultIds 算法；同一实体只建一个 compound node。
+topology 模式把所有有效 relationship，以及每 fulfillment request→confirmation/proof 成对边交给 ELK；无端点引用交由 schema 报错，布局跳过它让有效草稿仍可见。已移除旧 fulfillment row/frame、reserved lifecycle lanes、shared band 与 sharedResultIds 算法；同一实体只建一个 compound node。
+
+独立 swimlane 模式按七个业务里程碑、局部责任角色泳道和补偿轨道布置，共享 Context 所有权与相同 layout DTO；引用关系确定因果次序，环用稳定排序保持可见。useGraphLayout 同时按 graph/viewMode/layoutMode 丢弃过期结果。
 
 elkToLayout 保留 local box 和累积 worldBox，把 edge.container（或所在 node）的坐标加到 ELK sections 上，按 incoming/outgoing 链连接、去重相接点；缺 route、未知 container、断开的 section 显式拒绝，不用手写 midpoint 猜线。返回节点/Context 的索引、关系正交 routes、独立 fulfillmentPairs、显式 roleRefs/responsibleRoleRef 的责任 links、bounds。
 
-跨 Context 或 plays_role 虚线，plays_role 才有箭头；旧 moment_trace/role_inversion/shared_thing 私有跨界分类已撤除。toSerializableLayout 只复制命名几何/ID/路由，不携实体和 Map，供离线 HTML 消费相同结果。
+跨 Context 或 plays_role 虚线，plays_role 才有箭头；旧 moment_trace/role_inversion/shared_thing 私有跨界分类已撤除。toSerializableLayout 只复制命名几何/ID/路由，不携实体和 Map，供需要纯几何的消费者使用。
 
 ## React Flow 只管理视口
 
 adapter 父 Context 先列，使用 **local box + parentId/extent=parent**，free node 是 root 坐标；另存 worldBox 供范围/诊断。显式 initialWidth/Height 与 invisible source/target handles 让首次测量前边就能渲染。关系保留世界坐标 polyline；pairLink 直接使用 ELK fulfillmentPairs，不再从旧 frame 合成线。
 
-CanvasViewport 经 ReactFlowProvider 管理 pan、pinch、marquee/fit animation，非业务模型拖拽编辑器：不可 draggable/connectable，wheel zoom 关闭，pane click 清选区。范围0.25–4现在在 renderer 配置，旧 viewport math/fit/boxSelection 模块不再是库 API。partial marquee 只回报首个 entity，Context 是不可交互底纸。
+CanvasViewport 经 ReactFlowProvider 管理 pan、pinch、marquee/fit animation，非业务模型拖拽编辑器：不可 draggable/connectable，wheel zoom 关闭，pane click 清选区。范围0.1–2现在在 renderer 配置，旧 viewport math/fit/boxSelection 模块不再是库 API。partial marquee 只回报首个 entity，Context 是不可交互底纸。
 
 fit/scope/density/focus/zoom 由 token 驱动，避免重渲染重放快捷键，bounds 至少1×1；scope 或密度变化清 hover 并重框。HUD render prop 只暴露 zoom/fit/reset/grid/minimap，app 叠加视图/密度/分屏。controls 带 capture-hide，层级低于 activity drawer；三种背景 dots/lines/none、折叠 radar 与业务 legend 不修改模型。
 
@@ -110,9 +114,9 @@ scope 是 canonical layout 的 mask：目标 Context subtree、拥有对象与�
 
 ## 节点、边、补丁与诊断
 
-NodeCard 用 category spine 和 interval/moment/card 表现时段/时刻，显示 party/responsibility/API badges；standard 更多 ID、时间、属性和计数。API 待刷新不伪装覆盖成功。out-of-scope 不可点击/键盘进入。
+NodeCard 用 category spine 和 interval/moment/card 表现时段/时刻，domainRole participant 为 capability 形状，显示 party/responsibility/API badges；standard 更多 ID、时间、属性和计数。API 待刷新不伪装覆盖成功。out-of-scope 不可点击/键盘进入。
 
-FulfillmentEdge 绘制 ELK polyline、diagnostic halo、plays_role arrow、cardinality chips 和 hover label；simplified 隐藏未 hover/highlight 的 plays_role。pairLink 是细虚线无箭头，语义为履约声明而非虚构关系。ChangeRing 只标当前模型新增/删除/修改，不改对象颜色。
+FulfillmentEdge 绘制布局提供的 polyline，flowKind 用独立颜色/线型区分主流程、违约补偿和升级；其余包括、diagnostic halo、plays_role arrow、cardinality chips 和 hover label；simplified 隐藏未 hover/highlight 的 plays_role。pairLink 是细虚线无箭头，语义为履约声明而非虚构关系。ChangeRing 只标当前模型新增/删除/修改，不改对象颜色。
 
 DiagnosticIndex 只用已知 target（#前实体/关系）或真实 Context fallback，不解析消息猜引用；按 issueId 去重、保留最高 severity。Markers 画 outline/count，忽略 out-of-scope，点击把原 issues 交 app 定位。报告过期时 app 丢弃整个 index，见[renderer 状态](./renderer-state.md)。
 
@@ -134,6 +138,6 @@ completion 从 rule aliases/实体属性/many 宏上下文生成；blur/Mod+Ente
 
 ## 测试地图
 
-engine/layoutEngine 与 adapter/elkToLayout specs 覆盖密度、嵌套/空 Context、cycle 拒绝、cross-boundary sections、容器坐标、pair edges、序列化和不改源。feature-canvas adapter/CanvasViewport specs 覆盖父前子、local/world 对齐、早期 handles、scope/diagnostic/token/overlay。Inspector/registry/CEL specs 覆盖字段约束、单次事务撤销、来源与 native 作用域诊断；离线 browser suite 验证同一 ELK 线路离线可绘制。
+engine/layoutEngine 与 adapter/elkToLayout specs 覆盖密度、嵌套/空 Context、cycle 拒绝、cross-boundary sections、容器坐标、pair edges、序列化和不改源。feature-canvas adapter/CanvasViewport specs 覆盖父前子、local/world 对齐、早期 handles、scope/diagnostic/token/overlay。Inspector/registry/CEL specs 覆盖字段约束、单次事务撤销、来源与 native 作用域诊断；故事与泳道测试保护阶段、责任与镜头定位。
 
-相关：[模型事务](../model/commands-and-session.md) · [关键数据](../language/key-data-and-provenance.md) · [离线页](../contracts/offline-workbench.md) · [补丁审查](./ingestion-and-patch-review.md)
+相关：[模型事务](../model/commands-and-session.md) · [关键数据](../language/key-data-and-provenance.md) · [补丁审查](./ingestion-and-patch-review.md)

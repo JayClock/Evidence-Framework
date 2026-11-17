@@ -5,7 +5,7 @@ description: FM check v6 如何分开一致性与scope完整性，native cel-js�
 tags: [validation, check, cel, examples, traceability, drift]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-15T14:07:58.904Z
+    at: 2026-11-17T06:43:02.055Z
 sources:
   - id: openwiki-source-52a825b501b0001cef1b2ecc
     resource: repo://apps/cli/src/commands/check.ts
@@ -13,6 +13,8 @@ sources:
     resource: repo://apps/desktop/src/main/driftIpc.ts
   - id: openwiki-source-01b85019316bb82ac088e1fd
     resource: repo://apps/desktop/src/main/mcpDriftService.ts
+  - id: openwiki-source-74d7b554a01c3f371dc93772
+    resource: repo://libs/desktop/feature-story/src/state/journeyPreview.ts
   - id: openwiki-source-5570b1437846809479c60f79
     resource: repo://libs/evidence-agent/src/sensors/native/driftSensor.ts
   - id: openwiki-source-701227b6d41a5cbdfe79bcbf
@@ -21,6 +23,12 @@ sources:
     resource: repo://libs/evidence-agent/src/sensors/sensorReport.ts
   - id: openwiki-source-4e8476923f1a3d656f3339cf
     resource: repo://libs/evidence-model-core/src/cel/transientSandbox.ts
+  - id: openwiki-source-7f610f2a7e2a332dd6249f23
+    resource: repo://libs/evidence-model-core/src/scenario/scenarioStudio.ts
+  - id: openwiki-source-39aee7c17098a6b50b3614f9
+    resource: repo://libs/evidence-model-core/src/trace/flowAggregator.ts
+  - id: openwiki-source-1375ef32da94e5a47494a6c0
+    resource: repo://libs/evidence-model-core/src/validation/breachFlow.ts
   - id: openwiki-source-65aecc4d0c320b921968555c
     resource: repo://libs/evidence-model-core/src/validation/fmCheck.spec.ts
   - id: openwiki-source-9008514a60858ff717f539ab
@@ -33,7 +41,7 @@ sources:
     resource: repo://libs/evidence-model-io/src/commands.ts
   - id: openwiki-source-5827654ee488871fab61b1a1
     resource: repo://libs/evidence-model-io/src/legacyRemoval.spec.ts
-generated: { by: "pi", at: "2026-11-15T14:07:58.904Z" }
+generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
 ---
 
 # 静态门禁、CEL 与样例求值
@@ -54,6 +62,8 @@ selectScope只收独立Context，拒绝非Context、child slice、重复scope。
 
 completeness要求每属性valueType/required、业务时间、请求有confirmation/evidence-role、confirmation有request引用、contract context存在primary request、双方都作primary履约权利人等；已经是static error的不重复成gap。**不再要求scope有内存scenario覆盖**。
 
+flowKind 的完整性检查要求补偿请求/升级记录显式 references 被违约请求；补偿源须为新请求且链不得循环，升级须 other_evidence、责任角色及交接端点 notes。它只证明结构，不判法律终局，不能绕过请求自身的确认闭环。
+
 readyScope重建同一scope并校验v6报告的一致/完整/有效、无errors/gaps、输入未变以及scope/context边界匹配；不验证已移除的replay/count字段。正式下游还有API projection/coverage门禁，见[传感器](../agents/sensor-orchestration.md)。
 
 ## 原生CEL是解析与求值权威
@@ -70,7 +80,11 @@ evaluateRuleOnExample(model,rule,{bindings,asOf})无Node I/O，不读环境时�
 
 按模型属性类型转换独立clone的输入，compile/evaluate后celValueToJson，再验证resultType与JSON可表示性；拒绝undefined/non-finite/private runtime泄漏，失败保留rule ID与cause。它是**编译期预期生成器，不是backend simulator**。
 
-API acceptance projector从examples[].test解析flow依赖，先清asserted derived值、用upstream facts求规则，再对显式期望核对，冲突拒绝而非覆盖；标准Step CI/Hurl对真实HTTP后端才执行状态/字段/schema验收。int64/uint64精确string可保留到OpenAPI/测试literal，避免舍入制造伪绿。
+evidence-acceptance projector 从 examples[].test解析flow依赖，先清asserted derived值、用upstream facts求规则，再对显式期望核对，冲突拒绝而非覆盖；标准Step CI/Hurl对真实HTTP后端才执行状态/字段/schema验收。int64/uint64精确string可保留到OpenAPI/测试literal，避免舍入制造伪绿。
+
+## 故事与本地预演
+
+当前 scenarioStudio 编辑的是实体 examples[].test 的 flow，不创建独立 Scenario/Instance 文件。flowAggregator 按显式 basedOn 与时点构造只读轨迹，供故事投影。桌面 journey preview 仅对当前可见前缀与唯一非 test 示例求规则，缺绑定保持未知，求值错误可见；它不执行 HTTP，也不形成持久化 replay 结论。
 
 ## CLI和桌面当前入口
 

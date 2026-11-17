@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:f92ded178dfb712a630605a8d795b714224b09db4c299d064b94364bb8af1cae",
+  "pageVersion": "sha256:a0723bc813bf9cacc3d6bbd166eab2839d753f4bc7160caa19ebada4d36e1602",
   "claims": [
     {
       "id": "claim_43d00c9569fe434d960f89fac57a8acd",
@@ -12,11 +12,11 @@
         },
         {
           "resource": "repo://apps/desktop/vitest.config.mts",
-          "version": "repo-file-v1:sha256:29bc777c9392dfd3daa2ff2c1f4a221bc7d1520520930e1395492d102113bcd5"
+          "version": "repo-file-v1:sha256:9ef7099f8d73124acc5ccd82ede873d034a7700d7f0ce432e17f57510d9dd00e"
         },
         {
-          "resource": "repo://nx.json#L52-L65",
-          "version": "repo-lines-v1:sha256:5d6653e0a7d816278b991d67c67ef86c7373b5e32a57781d744f4012fabbffb4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZmZjFlOWViOGExZWZjNDJlNmExOGRlYWQwY2Q2YWI2ZThjNGYwMmUwNzkzZmZkMWVlYjUzYjBmNGUxNWY5NDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhmNWNlZDkzZDM4YjYwMWQ0YWQ0ZGZkZDgwY2I1YzAxMzc1YWI4NDA2NmMxMTJiMTg4NjUyYzA2YTA4Mjg5N2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI5ZTRiZTI4NzdmMzE5MGM0MzE0YTJhNGZiMWE0OTE0ODk4MjM3M2Y2NmIxYzIzYjVmMGMyMDc0ZTMzMzRlZjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU2NzAxM2I2N2ViYTdlYzA5MjQxNjE1MzFkZDBhZDZlZDAyNzExY2I1YmIyMGU0NjAzNGJhM2QyYWU5ZGQ3ZDEifQ"
+          "resource": "repo://nx.json",
+          "version": "repo-file-v1:sha256:ae45f790404894fd91cd4be145325cb2ec0870c09f5753a05e7b8c64d76c2e25"
         },
         {
           "resource": "repo://vitest.config.mts",
@@ -26,19 +26,23 @@
     },
     {
       "id": "claim_3b74ee517c6c4d9c9f81fbdee3d87f17",
-      "statement": "注入Pi/runtime/transport/review依赖以测试自身合同，不需真实模型/OS对话框。",
+      "statement": "Pi SDK/session/runtime/transport、AI runtime 和 delivery/dialog 可注入，测试自身合同无需真实模型或 OS 对话框；renderer 用 desktop-testing 窄端口 fixture。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/agentRuntime.ts#L32-L58",
-          "version": "repo-lines-v1:sha256:12deaf42fedafcd4ab29a97d7f92a308788e7d66caabd691d1fc17bd506d9d18:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM2NzgwZjY0MjQwYTFmNGQyOWM2MTBiZTI0N2Y2NWY4NzYxNzhmZGJmN2JhNmFkMmU4YTFlYmM1MDI3ZDc0ZTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBmODY0NjhkYTI4NWZmMmM1NGNhODBmZmIyMDdjMmVmMDY1ZDA2Nzk2NDMyZDkwYzkxNjJmNjI0ZDE5YmJkNzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYxZjY2MjUzZDgxZTdhNDY5NGFmZjhhYjU1NjkyNzQyZDU2NDFiNDVjN2I0MTY2ZmQwMDBmODZlZDQ0NzAzZTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM2N2ZhMTNlYmE2NzcxYzAzNGI5ZDY5ZWEzZDJjYzVlNjI5NWYwODQ0ZjJlZmQ3MTAzMGVkMmEzZTFlZWU1NmUifQ"
+          "resource": "repo://apps/desktop/src/main/agentRuntime.ts",
+          "version": "repo-file-v1:sha256:03e3b8aacc5423729bbdb69484256ea40902a252ddef58a4f959ee53f90713cc"
         },
         {
-          "resource": "repo://apps/desktop/src/main/reviewIpc.ts#L29-L41",
-          "version": "repo-lines-v1:sha256:5ec2219cd977372c7d7a761ad52245bf6ca42743ab493963475d2c36a404528e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5YzU2ZDdlYjY4YzFhNTEzM2Q2M2QxMGIxN2NlODdiMTI0NzMyZTZkY2JjMzg0MjE4YTM0Nzk5ZmExYjRkOGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRhNDVkMTUyMDQ3OWE5ODliMTI5NDk1M2ExMGM0OWI4NDlkNmM4MjQ3ZDQ3NWFjY2Y3OWQyMmE5MDFkNzVjYWYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlhZTgzYmQ3MGRjOGUwMWQ1YTY0NGJjOThhNGYyZGE2MTVlZjU3ODI5MWE5YTU3Yjk2N2I1YTNlYzQ5OGIwNzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBmNDg0MDUyOTg5ODAxZTZkMzRlM2NjMmFiYzdlYTczMzcyYzVmZDZiZGUzMGY5ZjMzMmVhOTllOWY4ODQ5MWUifQ"
+          "resource": "repo://apps/desktop/src/main/deliveryIpc.ts",
+          "version": "repo-file-v1:sha256:dbabd79c6015dd3705b481aae965093212321f728e29118579a14a2a2f7dceb4"
         },
         {
-          "resource": "repo://libs/evidence-agent/src/session/evidenceAgentSession.ts#L13-L33",
-          "version": "repo-lines-v1:sha256:428388251c6730b2490b240cd5dbd4e2e2f6d1877442074ff8961dfb374880ef:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1NzRmMTMwMmFjOTdjM2RkYTdlMjNjNzIxNzBmMjBiZjY0NmMxZjg5MGZiYmY3ZmYyYzA0ZTYyZDk5YjI1YWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgwMzgyZmVhZjRiZDlhMjUzZWYwMmM3ZDU1NWE4N2UzMTYzNGI5NThiZDM0MTk3Y2Q3ZTUwNTdmMDQ0OTg2ZjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3MDJiYjQ4ZWIxNzI3ZjQ0ZjdlNTE5MGYzODA2NzExODkwMjk5M2IwMWE1ZTRkMTJhZjZmMWMxOTFlZjE2ZTIifQ"
+          "resource": "repo://libs/desktop/testing/src/desktopApi.ts",
+          "version": "repo-file-v1:sha256:93188c2c511c68805b1b916302f76a6c937c9e8f9d339f02e48bf5a1b5be7583"
+        },
+        {
+          "resource": "repo://libs/evidence-agent/src/session/evidenceAgentSession.ts",
+          "version": "repo-file-v1:sha256:601abbf629d88688424b3e5d3d4baa1015b053985f9877454556f8a44ed1a6b2"
         }
       ]
     },
@@ -48,17 +52,17 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-model-core/tests/fixtures/README.md",
-          "version": "repo-file-v1:sha256:5b960a1a417e818d06073e8638e542bbfb4c0014accd344d18ce6cce384f7afd"
+          "version": "repo-file-v1:sha256:debc4e916584ec40933119df6aa2a8685304961ca99a4692788829e3e1c56fcf"
         }
       ]
     },
     {
       "id": "claim_eb318bc76ccc4f1d96d471ebb4806089",
-      "statement": "subscription静态模型两派生链一待决，无旧实例场景；HTTP examples在examples/acceptance。",
+      "statement": "subscription fixture 是两派生链一待决的静态模型；可执行验收示例在 examples/b2b-escrow，独立 Fastify 需独立 frozen install/build。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/tests/fixtures/README.md#L7-L12",
-          "version": "repo-lines-v1:sha256:97a60460b6c1a8c1dcc06d8a5ea851c006afc9b65b4d7b86f4082d4883d29d49:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjYxYjc3NmE3MjE0MGNlNjQ3Zjg2OWRmNDk2Mzg1YTVhYTI0MjNiNzViZjIxYTNlYWE3YjM5ZmQ3YWQ2MzZhNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjk2ZjA5YjcxMjI2YjdkZmE0ZjczYTg4Y2UwM2ZjNGU0ZDRkMmMwZTU0MjFhYzA1MGZiMmMzMDcwY2YxZDNlMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTZhMTc2MDM5MDFmMTFlNTY3ZmMwNTY3NTMyMzlkM2JmYzE5NDEyMjk1ZTU0NmVkYjY3NDYxZTJiMDBhZGI0YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjRjOGQ1ODkxYTYzYjg3MWY1NTc2NzI3MTk1NjMxZGNlYzM3NWU4MmNiNzdjYTQyOGNkNTgxN2MzMDM1MDcwMCJ9"
+          "resource": "repo://libs/evidence-model-core/tests/fixtures/README.md",
+          "version": "repo-file-v1:sha256:debc4e916584ec40933119df6aa2a8685304961ca99a4692788829e3e1c56fcf"
         }
       ]
     },
@@ -97,22 +101,26 @@
       "statement": "phase3保护in-process full sensors，renderer用scripted API不需Electron，旧frontier移除。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/test-support/desktopApi.ts",
-          "version": "repo-file-v1:sha256:565aea9ce4a0a7861636796ab9d337fb776a436d2fd3c81c9f1c234854c8a8c5"
+          "resource": "repo://apps/desktop/tests/phase-3-loop.spec.ts",
+          "version": "repo-file-v1:sha256:7c571f522f05e3a1235ab031a43a2fd83780f8e2fbc490a4f5dce36463c05b5b"
         },
         {
-          "resource": "repo://apps/desktop/tests/phase-3-loop.spec.ts#L195-L205",
-          "version": "repo-lines-v1:sha256:3b34077f6b9c4fd6bbb49c289801e691a9b5cb36a505283a7626ea1435269428:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJkOGM0YzhkNjQ0MDc1YWNkNjY3OTJhYTM0NDAxNjZmNzZkMjRlZjliYTM2ZjNhZTI5NmQ4Zjk0YjBhMmZmZWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFmNGQ1NTYwYjNkZDY0OThhMjhhNmYwZmY3YzFjNWRhNjIyNWU3OGRlZTZkN2ExNDRlOTE2MWQ5ZTlkYWU4NTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://libs/desktop/testing/src/desktopApi.ts",
+          "version": "repo-file-v1:sha256:93188c2c511c68805b1b916302f76a6c937c9e8f9d339f02e48bf5a1b5be7583"
         }
       ]
     },
     {
       "id": "claim_d9424c530d5542e3acc771bb55f4dbdd",
-      "statement": "API support用真实FM管线生成check而不伪造报告。",
+      "statement": "evidence-api/testing 的共享 fixture builder 经真实 FM 静态管线生成 check，acceptance tests 不复制或导入私有 fixtures。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-api/tests/support/fixtures.ts",
-          "version": "repo-file-v1:sha256:60d0dd2b178115eaee40532f4aae0e80f67922e3a76260f10bf991d4da83438d"
+          "resource": "repo://libs/evidence-api/package.json",
+          "version": "repo-file-v1:sha256:32b3b8a5230e3efd33023a7c408f657e1e1d2ad697b804680099cddc25073500"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/testing/fixtures.ts",
+          "version": "repo-file-v1:sha256:886a3d575dd0fe00bf9f73098b97bb643aabc0a817ce6ff8940863c1026a1175"
         }
       ]
     },
@@ -129,10 +137,50 @@
           "version": "repo-lines-v1:sha256:3f68e85f1e0e7c2183848dfdb5a0cadb82ffd321723b64c0d425d728bd49c84b:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM4MjdjZGZkZmMyNDkwY2YyODliN2NmYmRiMDNhZmIzMTRjNWZhNmIxMTgzYjI1NmViMzM0YzFhMjg0ZTIxYjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMxNzlhYzRjZjMwMjAyZGQ5YzIwMmVjZWE4NmFjNWI5ZWY5MmU4ZmVkYTE5M2FhNjUyMjdiZTM5OWI4MDcxMzgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVkMDZhNGQ5M2Y4MjgzNjM2ZjY2ZTUyYThhNzY3Mjg3NGU1ZTkxZTZmMDIzNzRiMjU3MzBhNzY0ZjMwYTNiZmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc1YTA1N2I2ZDQ5MjkzZjI1YmJiZGY0MDA0M2EwOTlmY2E4YWNmYzljMDVkZDNmNzgyODg5NjI3MTViZTAyYmIifQ"
         }
       ]
+    },
+    {
+      "id": "claim_89885858d86c4b429fd598ac02e86f39",
+      "statement": "API/acceptance 分包测试保护业务根 URI、HAL 主 GET、overlay、schema/消费者类型与真实 oasdiff；边界 drill 证明 API 不反依 acceptance。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-acceptance/README.md",
+          "version": "repo-file-v1:sha256:7d8624f2ef72092b89b9193954cce55d3ffa79cc1d42152cd68de606b04e4ff3"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/delivery/routes.spec.ts",
+          "version": "repo-file-v1:sha256:210f32f54417312b00e8bad3708c2859eead5db95a35227a155627e3aac91dff"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/openapi/openapi.spec.ts",
+          "version": "repo-file-v1:sha256:7c2e9eeed7b5fa1e77a021c1278ce56b2f9d2d8b9272e6bf79bc11486253f3fc"
+        },
+        {
+          "resource": "repo://tools/workspace-rules/boundary-drill.mjs",
+          "version": "repo-file-v1:sha256:ba5e79dcdcb03ef2b8bd00a9c24d761f81769cd7d3de6a1320f9aee1bc77291a"
+        }
+      ]
+    },
+    {
+      "id": "claim_763d7f2d33f1425c9fc023a66a14149f",
+      "statement": "CI 显式安装构建独立 Fastify 并跑 native tests；真实 HTTP 验收与故障注入检验服务实现而非仅编译出的期望。",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/ci.yml",
+          "version": "repo-file-v1:sha256:f232d9dcc406b7269168f33b7f9e594858e646752ebf956113dd4e1b71be32d9"
+        },
+        {
+          "resource": "repo://examples/b2b-escrow/implementations/ts-fastify/test/app.test.mjs",
+          "version": "repo-file-v1:sha256:e51c37c43bc5ea0106fd63d6f03ddd66ff3d732713c87b453936519817f3575e"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/README.md",
+          "version": "repo-file-v1:sha256:7d8624f2ef72092b89b9193954cce55d3ffa79cc1d42152cd68de606b04e4ff3"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-15T14:07:58.904Z"
+    "at": "2026-11-17T07:06:17.114Z"
   }
 }

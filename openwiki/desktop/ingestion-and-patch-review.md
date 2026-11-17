@@ -5,16 +5,12 @@ description: 业务文本、协议和蓝图如何先变成可修正草稿再创�
 tags: [ingestion, draft, blueprint, contract-clauses, patch-review, desktop]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-15T14:07:58.904Z
+    at: 2026-11-17T07:06:17.114Z
 sources:
   - id: openwiki-source-71f7c0262d5ba642c71843ea
     resource: repo://apps/desktop/src/main/ingestionIpc.ts
   - id: openwiki-source-1c1b4203dc4b1050778717b6
     resource: repo://apps/desktop/src/main/ingestionModelReader.ts
-  - id: openwiki-source-a2d8805f95329d5915e04d1a
-    resource: repo://apps/desktop/src/renderer/components/agent/InlinePatchCard.tsx
-  - id: openwiki-source-d79cdd745e8c94680663fc45
-    resource: repo://apps/desktop/src/renderer/components/agent/InlinePatchCopilot.tsx
   - id: openwiki-source-994f4cca911f6ec646914d74
     resource: repo://apps/desktop/src/renderer/components/ingestion/DraftReviewPanel.tsx
   - id: openwiki-source-b1e4b88f095ce314032a1b95
@@ -23,18 +19,22 @@ sources:
     resource: repo://apps/desktop/src/renderer/screens/EditorScreen.spec.tsx
   - id: openwiki-source-9459ee1a8fc917f2d94619ce
     resource: repo://apps/desktop/src/renderer/screens/EditorScreen.tsx
-  - id: openwiki-source-4847134dd2de8026fd1ac93f
-    resource: repo://apps/desktop/src/renderer/state/useAgentPatchBridge.ts
   - id: openwiki-source-e4eff0404180d86ccc5c9300
     resource: repo://apps/desktop/src/renderer/state/useEditorShortcuts.ts
-  - id: openwiki-source-25a3bd2528146d698a0f8ff5
-    resource: repo://apps/desktop/src/renderer/state/usePatchReview.spec.tsx
-  - id: openwiki-source-ef46d50ae45e81fdfe3ff913
-    resource: repo://apps/desktop/src/renderer/state/usePatchReview.ts
-  - id: openwiki-source-43ee45e81e063c943dd7522a
-    resource: repo://apps/desktop/src/shared/ingestion.ts
-  - id: openwiki-source-9907bd51adc4e23040fa45e9
-    resource: repo://apps/desktop/src/shared/ipc.ts
+  - id: openwiki-source-0f694a4fe59aaac32febf5b9
+    resource: repo://libs/desktop/contracts/src/ingestion.ts
+  - id: openwiki-source-a4f2cbe0bac1324ce81a947e
+    resource: repo://libs/desktop/contracts/src/ipc.ts
+  - id: openwiki-source-ac27b1bc49832883eb3ab2c2
+    resource: repo://libs/desktop/feature-agent/src/components/agent/InlinePatchCard.tsx
+  - id: openwiki-source-ae2af3e0409175806d2572fb
+    resource: repo://libs/desktop/feature-agent/src/components/agent/InlinePatchCopilot.tsx
+  - id: openwiki-source-8a3964422b76faf8b78c4915
+    resource: repo://libs/desktop/feature-agent/src/state/useAgentPatchBridge.ts
+  - id: openwiki-source-af477b8a3e3d3695b6300a12
+    resource: repo://libs/desktop/feature-agent/src/state/usePatchReview.spec.tsx
+  - id: openwiki-source-0c662531e68a2db936eccc7f
+    resource: repo://libs/desktop/feature-agent/src/state/usePatchReview.ts
   - id: openwiki-source-3b4892a0d4698c5c4f9afc2f
     resource: repo://libs/evidence-agent/src/prompts/ingestion.ts
   - id: openwiki-source-bf13ded6fe2f54bd89054e61
@@ -67,7 +67,7 @@ sources:
     resource: repo://libs/evidence-model-core/src/session/createModelSession.ts
   - id: openwiki-source-8527abf116e660a4c6e52d8a
     resource: repo://libs/evidence-schema/src/ingestion/draft.ts
-generated: { by: "pi", at: "2026-11-15T14:07:58.904Z" }
+generated: { by: "codex", at: "2026-11-17T07:06:17.114Z" }
 ---
 
 # 资料摄取与补丁审查
@@ -78,9 +78,9 @@ generated: { by: "pi", at: "2026-11-15T14:07:58.904Z" }
 
 main 的 ingestion:draft/compile 承担模型调用与落盘，renderer 无文件系统。kind=contract 先分句离线阅读；blueprint 用确定性表格解析；text 优先配置模型，不可用或返回不可读结果时回退本地规则。结果显式 reader=contract/blueprint/text-model/text-rules，fallback 带原因与原/新问题，不能把失败说成“业务没有内容”。
 
-协议 annotator 按程序/风险分配 → 业务动作 → 计算的优先级分类 business/domain/boilerplate，防“提交仲裁”被误当履约。annotation 保留原句、1-based locator、原因、computesValue。模糊或程序/义务混合条款报告待人判断，法律文字仍可展开阅读，不默默丢弃。contract reader 对业务句复用 row reader，计算条款生成有名称的 domain calculator/checker thing，去重并附“第N句”来源；不能命名则留缺口，不编一个公式。完全无业务句明确报告。
+协议 annotator 按程序/风险分配 → 业务动作 → 计算的优先级分类 business/domain/boilerplate，防“提交仲裁”被误当履约。annotation 保留原句、1-based locator、原因、computesValue 与 charStart/charEnd 字符偏移。模糊或程序/义务混合条款报告待人判断，法律文字仍可展开阅读，不默默丢弃。contract reader 对业务句复用 row reader，计算条款生成有名称的 domain calculator/checker thing，去重并附“第N句”来源；不能命名则留缺口，不编一个公式。草稿 sourceDocument 保留协议全文及条款切片；仅唯一精确匹配才把对象 provenance 连接到 clauseIndex/字符范围，重复句子不猜位置，编译后保留为 manifest.sourceDocument 与 entity.sourceSnippet。完全无业务句明确报告。
 
-模型 reader 是 tool-less 读法，不是项目 Agent：临时目录、noTools=all、120秒、只收 text deltas、agent-error 转失败、finally 清会话/临时目录。随包 prompt 要求合同/双方角色、签约时点、前合同 rfp/proposal、请求时段/确认时刻、补偿新履约、domain thing/计算与逐句来源，禁止补造配对或把法律条款改义务，JSON-only。
+模型 reader 是 tool-less 读法，不是项目 Agent：使用主进程统一 AI 配置的显式模型依赖，临时目录、noTools=all、120秒、只收 text deltas、agent-error 转失败、finally 清会话/临时目录。随包 prompt 要求合同/双方角色、签约时点、前合同 rfp/proposal、请求时段/确认时刻、补偿新履约、domain thing/计算与逐句来源，禁止补造配对或把法律条款改义务，JSON-only。
 
 readIngestionDraftJson 从 fence/文本取对象，缺集合补空、错误类型报告，短 kind 规范化；未知 evidence 保留 other_evidence 并告知，未知 domainRole 丢弃并告知。无法解析、非对象或元素缺 ID 全体拒绝。draft 的 contexts/participants/roles/things/evidences/fulfillmentPairs/breachCompensations/relationships 共八数组，ID 暂定、可附 ProvenanceSnippet，shape guard 仅检查容器和 ID。
 

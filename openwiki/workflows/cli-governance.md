@@ -5,25 +5,31 @@ description: evidence统一命令如何将FM模型编译为OpenAPI/标准HTTP验
 tags: [cli, acceptance, governance, stepci, hurl, oasdiff, drift, ci]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-15T14:07:58.904Z
+    at: 2026-11-17T06:43:02.055Z
 sources:
   - id: openwiki-source-17a7254439d5e92a919764bb
     resource: repo://.github/workflows/evidence-governance.yml
+  - id: openwiki-source-4c0b31aad45d3c1bd1d286ce
+    resource: repo://apps/cli/src/commands/api.ts
   - id: openwiki-source-0665c978968bd863d445c79a
     resource: repo://apps/cli/src/commands/export.ts
+  - id: openwiki-source-fbc96cb4b0e8dd1af286891a
+    resource: repo://apps/cli/src/commands/story.ts
   - id: openwiki-source-97029bfc63aaa8f0d97e713c
     resource: repo://apps/cli/src/commands/test.ts
   - id: openwiki-source-69d58f985d20203ea0c2f899
     resource: repo://apps/cli/src/router.ts
-  - id: openwiki-source-0739c894c3d7de4d72985eac
-    resource: repo://libs/evidence-api/src/renderDeliverables.ts
-  - id: openwiki-source-fb0ff09bfb1c85fa271a6b49
-    resource: repo://libs/evidence-api/src/runner/acceptanceRunner.ts
-  - id: openwiki-source-201e0d7cf12304d6fb8e347d
-    resource: repo://libs/evidence-api/src/runner/driftInspector.ts
-  - id: openwiki-source-1a4e1329e6cba15c461cd3b7
-    resource: repo://libs/evidence-api/src/runner/suiteSelection.ts
-generated: { by: "pi", at: "2026-11-15T14:07:58.904Z" }
+  - id: openwiki-source-4f4956186309f29a9271894d
+    resource: repo://libs/evidence-acceptance/src/renderDeliverables.ts
+  - id: openwiki-source-cfb863e81258afec257b30c8
+    resource: repo://libs/evidence-acceptance/src/runner/acceptanceRunner.ts
+  - id: openwiki-source-706dba0858eef2721b63a216
+    resource: repo://libs/evidence-acceptance/src/runner/driftInspector.ts
+  - id: openwiki-source-a2d80ddb56c0c51c2eb2ba47
+    resource: repo://libs/evidence-acceptance/src/runner/suiteSelection.ts
+  - id: openwiki-source-a8ee2373695bb6cdbd087639
+    resource: repo://libs/evidence-api/src/loader/migrateOverlay.ts
+generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
 ---
 
 # 统一 CLI 与双门禁验收工作流
@@ -39,18 +45,20 @@ pnpm evidence --help
 
 ## 一入口与共享执行层
 
-router注册check/test/export/diff、pack/unpack/compile/inspect/lineage、review及兼容api <command>。context注入cwd/stdout/stderr/color；路径按调用方cwd解析，不写死repository root。重复非repeatable参数、混用alias、未知flag、多余positionals/--尾参数明确usage失败。scope/tag可重复，help/version不执行业务；JSON模式错误保持机器可读，非JSON错误stderr。
+router注册check/test/export/diff、pack/unpack/compile/inspect/lineage、story 及兼容 api <command>。context注入cwd/stdout/stderr/color；路径按调用方cwd解析，不写死repository root。重复非repeatable参数、混用alias、未知flag、多余positionals/--尾参数明确usage失败。scope/tag可重复，help/version不执行业务；JSON模式错误保持机器可读，非JSON错误stderr。
 
-旧evidence-model/api/workbench可执行入口暂保，弃用提示仅stderr、不污染JSON stdout；它们与统一app引用库commands，不反向import app。根model:*和api:*脚本已走apps/cli。旧timeline/simulate/role-play和Scenario/Instance格式移除，不能用兼容shim复活。
+旧 evidence-model/api可执行入口暂保，弃用提示仅stderr、不污染JSON stdout；它们与统一app引用库commands，不反向import app。根model:*和api:*脚本已走apps/cli。旧timeline/simulate/role-play和Scenario/Instance格式移除，不能用兼容shim复活。
+
+`evidence api migrate-overlay --in old.json --out new.json [--model model.evidence.json]` 根据实际模型迁移 v5 路径、旧 ledger 与 journey 引用，输出新 6.0 overlay，不覆盖旧文件。未知路由/歧义参数拒绝。`evidence story [model] --no-ai` 离线生成声明 flow 的事实卡片，可按 flow/format 筛选和导出。
 
 ## 从模型到产物
 
-loadModel按树或Bundle加载，parse issues导致FM_INVALID，不修补源。`check [model] --scope ... --json`输出静态FM v6（testExampleCount只是声明数）；compile/lineage有checkable约束，pack/unpack/inspect见[源格式](../model/source-formats.md)。review生成单文件离线HTML，不运行后端。
+loadModel按树或Bundle加载，parse issues导致FM_INVALID，不修补源。`check [model] --scope ... --json`输出静态FM v6（testExampleCount只是声明数）；compile/lineage有checkable约束，pack/unpack/inspect见[源格式](../model/source-formats.md)。旧 review/workbench 已删除；story 从声明 flow 生成事实卡片或可选 AI 故事，不运行后端。
 
 ```bash
-pnpm evidence check examples/acceptance/procurement.evidence.json --json
-pnpm evidence export --model examples/acceptance/procurement.evidence.json --out dist/acceptance
-pnpm evidence export --model examples/acceptance/procurement.evidence.json --out dist/acceptance --verify
+pnpm evidence check examples/b2b-escrow/model/b2b-escrow.evidence.json --json
+pnpm evidence export --model examples/b2b-escrow/model/b2b-escrow.evidence.json --out dist/acceptance
+pnpm evidence export --model examples/b2b-escrow/model/b2b-escrow.evidence.json --out dist/acceptance --verify
 ```
 
 export默认同时OpenAPI3.1+Step CI，--openapi/--tests可选子集，--format stepci|hurl决定suite格式。renderDeliverables先buildDelivery、拒error、校验OpenAPI，再把examples[].test编成标准suite；全部成功之前**不写任何文件**。out必须专用目录：realpath既有祖先，拒与model双向包含或替换cwd；writer sibling temp/backup rename整树原子替换，旧额外文件会删除，勿放手写文件。
@@ -60,7 +68,8 @@ export默认同时OpenAPI3.1+Step CI，--openapi/--tests可选子集，--format 
 ## 对真实后端执行标准HTTP
 
 ```bash
-node examples/dogfood-backend/server.mjs --port 8085 --mode v2
+pnpm example:setup
+node examples/b2b-escrow/implementations/ts-fastify/dist/server.js --test-mode --port 8085
 # 另一个终端
 pnpm evidence test --target http://127.0.0.1:8085 --scenarios dist/acceptance --verbose
 ```
@@ -106,10 +115,10 @@ baseline-model需gate且当前只有一个generated Step CI suite，baseline模�
 
 diff比较最终valid OpenAPI，固定oasdiff1.38.0，level≥2 breaking；默认Markdown，旧diff api写法默认JSON。api:setup显式准备cache，compare绝不联网下载，无tool/版本错失败闭合并保stdout/stderr。
 
-Evidence Governance先check→export --verify→从PR base/push before不可变SHA物化baseline→diff；base commit/path不存在只允许明确bootstrap策略，git show失败不能退HEAD。契约卫生成功后regression/dod独立矩阵启动隔离v2 backend，strict-drift，上传同次JSON/MD/JUnit+backend log；trap清SUT。GitLab模板复用这套纪律，见templates/ci。
+Evidence Governance先check→export --verify→从PR base/push before不可变SHA物化baseline→diff；base commit/path不存在只允许明确bootstrap策略，git show失败不能退HEAD。契约卫生成功后按 golang-gin/java-spring/python-fastapi/ts-fastify 四种独立实现矩阵，make prepare 跑各自 native tests，再跑预期红绿 conformance，随后 strict regression 和 DoD；上传 native/conformance/各 gate 的 JSON/MD/JUnit 与 backend log。这些外部实现工具链由对应 matrix job 单独安装，仓库 TypeScript 开发与 Fastify 验证仍只需 Node/pnpm。GitLab模板复用这套纪律，见templates/ci。
 
 ## 代表测试与边界
 
-router/commands specs保护cac严格参数与cwd；legacy-shims e2e保护stderr-only警告/库依赖；export specs保护both-before-write/atomic/verify missing-stale-extra/symlinks；runner/suiteSelection保护官方执行、完整flow/基线语义/空DoD；governance/cli e2e对独立v1/v2/fault后端验证兼容、旧回归/新DoD、pending与strict drift，不靠mock SUT推断业务成功。
+router/commands specs保护cac严格参数与cwd；legacy-shims e2e保护stderr-only警告/库依赖；export specs保护both-before-write/atomic/verify missing-stale-extra/symlinks；runner/suiteSelection保护官方执行、完整flow/基线语义/空DoD；governance/cli e2e对独立 Fastify/fault 后端验证兼容、旧回归/新DoD、pending与strict drift，不靠mock SUT推断业务成功。
 
 相关：[快速开始](../quickstart.md) · [API投影](../contracts/api-projection.md) · [交付差异](../contracts/delivery-routes-and-diff.md) · [测试地图](../testing/verification-strategy.md)

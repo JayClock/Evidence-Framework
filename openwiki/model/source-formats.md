@@ -5,7 +5,7 @@ description: .evidence/fm树与单文件Bundle的纯格式/Node I/O分界、非�
 tags: [adapters, files, bundle, serialization, digest, churn, model-io, cli]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-15T14:07:58.904Z
+    at: 2026-11-17T06:43:02.055Z
 sources:
   - id: openwiki-source-934367cee5dc2ef07c9fb835
     resource: repo://apps/desktop/src/main/modelWatcher.ts
@@ -13,8 +13,6 @@ sources:
     resource: repo://apps/desktop/src/main/projectStore.spec.ts
   - id: openwiki-source-7d6301f8bedb09df7ce20329
     resource: repo://apps/desktop/src/main/projectStore.ts
-  - id: openwiki-source-c72ee53c66b83fbe248c4854
-    resource: repo://apps/desktop/src/main/reviewPreview.ts
   - id: openwiki-source-eb29c98cfa71901c2675a7e4
     resource: repo://libs/evidence-agent/src/sensors/native/modelSources.ts
   - id: openwiki-source-83f9ee9177192af59a8fc434
@@ -41,20 +39,18 @@ sources:
     resource: repo://libs/evidence-model-io/src/legacyRemoval.spec.ts
   - id: openwiki-source-7e8a4154b74359d73d641f4c
     resource: repo://libs/evidence-model-io/src/modelCli.ts
-  - id: openwiki-source-3ae8adf574661c7d35742fbe
-    resource: repo://libs/evidence-visualization/src/generate/collectWorkbench.ts
   - id: openwiki-source-5b54a58d1b51cd490b0e7162
     resource: repo://package.json
-generated: { by: "pi", at: "2026-11-15T14:07:58.904Z" }
+generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
 ---
 
 # 源模型、Bundle 与持久化
 
-一份DomainModelDocument有两种载体：Git友好的`.evidence/fm/`（model.json + entities/relationships/rules），便携`*.evidence.json`（fm_bundle envelope+manifest+三数组+可选readme）。内联examples随实体往返；旧validation/scenarios/instances**拒绝而非兼容读取**。
+一份DomainModelDocument有两种载体：Git友好的`.evidence/fm/`（model.json + entities/relationships/rules），便携`*.evidence.json`（fm_bundle envelope+manifest+三数组+可选readme）。内联 examples、实体 sourceSnippet 与 manifest.sourceDocument 随树/Bundle 往返；旧validation/scenarios/instances**拒绝而非兼容读取**。
 
 ## 格式代码不碰磁盘
 
-model-core/adapters的modelSourceFiles/modelBundle负责命名、parse/stringify、pack/unpack投影，browser-safe；model-io/adapters的diskAdapter/modelRoot/modelFileAdapter负责node:fs。main/sensors/API/viz/cli可引用io，renderer只引用core。purity.spec通过浏览器bundle禁止core解析Node builtins；测试reader不成为production runtime。
+model-core/adapters的modelSourceFiles/modelBundle负责命名、parse/stringify、pack/unpack投影，browser-safe；model-io/adapters的diskAdapter/modelRoot/modelFileAdapter负责node:fs。main/sensors/API/acceptance/cli可引用io，renderer只引用core。purity.spec通过浏览器bundle禁止core解析Node builtins；测试reader不成为production runtime。
 
 ## 树与Bundle契约
 
@@ -78,7 +74,7 @@ readModelDirectory读manifest+三模型树。readModelRootFiles为checks读同�
 
 modelDigestOf为排序path→sha256(bytes) map再sha256并加sha256:前缀，位置无关、路径/字节敏感。不能声称Bundle字节摘要一定等于解包源树摘要：载体/路径/format不同就不同。pack若默认把Bundle放模型目录内，新文件加入bytes摘要但不成为三树模型，建议显式-o放源树外。
 
-FM check currentDigest与sensor rereadDigest能在检查期间识别源变化，报告inputChanged/error/consistent=false。API loadFm前后比源snapshot；review generator另有project+overlay fingerprint，输入动则拒绝发布。
+FM check currentDigest与sensor rereadDigest能在检查期间识别源变化，报告inputChanged/error/consistent=false。API loadFm前后比源snapshot；旧 review generator 已删除。
 
 ProjectStore fingerprint是另一个sha1（树仅模型源paths/content或Bundle字节），不是artifact digest，空/缺失null；renderer不轮询它，外部变化依Chokidar通知。
 
@@ -86,11 +82,11 @@ ProjectStore fingerprint是另一个sha1（树仅模型源paths/content或Bundle
 
 create拒绝已有Bundle/manifest；**save无baseline compare/lock/merge**，renderer document最后写入获胜，外部新加三树JSON可能被stale scan删除。幂等少churn不是冲突保护；watcher banner只是提示，用户必须reload或自行解决。
 
-Chokidar从存在祖先监目标，初始静默、150ms稳定后200ms合批，树支持nested JSON与根重建，Bundle只关注目标文件且支持atomic rename；无关/validation/generated不触发，close取消pending。reload显式重新open并resetHistory，不静默丢未保存编辑。
+Chokidar从存在祖先监目标，初始静默、150ms稳定后200ms合批，树支持nested JSON与根重建，Bundle只关注目标文件且支持atomic rename；无关/validation/generated不触发，close取消pending。显式 reload 重新 open 并 resetHistory；story 来源 invalidation 仅在读前后均 clean 时自动刷新，相等内容保留历史，不能丢未保存编辑。
 
 ## 推荐命令与兼容入口
 
-先build cli，使用`evidence pack/unpack/inspect/check/compile/lineage/review`；model:pack/unpack/inspect根脚本已转apps/cli。旧evidence-model bin为stderr弃用shim，调用共享modelCli/commands而不import app。保留六模型verbs，timeline/simulate/role-play明确removed，不能空成功。
+先build cli，使用`evidence pack/unpack/inspect/check/compile/lineage`；model:pack/unpack/inspect根脚本已转apps/cli。旧evidence-model bin为stderr弃用shim，调用共享modelCli/commands而不import app。保留六模型verbs，timeline/simulate/role-play明确removed，不能空成功。
 
 pack默认模型目录内manifest ID命名Bundle，unpack默认./.evidence/fm；compile/lineage需out并先checkable；inspect可JSON，pack/unpack会报告issues而非悄修。共享legacy workflow约定0成功、1findings/拒绝、2usage，统一check/tree或Bundle参数行为由app router适配；静态check不再打印执行scenario数。
 

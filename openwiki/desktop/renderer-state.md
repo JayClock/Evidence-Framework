@@ -5,7 +5,7 @@ description: 一个编辑窗口如何保持单一 ModelSession、异步 ELK 几�
 tags: [desktop, renderer, state, model-session, ipc, mcp, react]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-15T14:55:15.403Z
+    at: 2026-11-17T06:43:02.055Z
 sources:
   - id: openwiki-source-55138c775f581f8c989ca7dc
     resource: repo://apps/desktop/src/main/agentRuntime.ts
@@ -23,20 +23,12 @@ sources:
     resource: repo://apps/desktop/src/renderer/state/commandRegistry.ts
   - id: openwiki-source-691a65e70d0a88e8032e0166
     resource: repo://apps/desktop/src/renderer/state/mcpCapture.ts
-  - id: openwiki-source-4847134dd2de8026fd1ac93f
-    resource: repo://apps/desktop/src/renderer/state/useAgentPatchBridge.ts
-  - id: openwiki-source-7c028cbe724a140944eca5d1
-    resource: repo://apps/desktop/src/renderer/state/useAgentSession.ts
   - id: openwiki-source-e8c506a8d05cddb8e6415b6b
     resource: repo://apps/desktop/src/renderer/state/useBilateralSync.spec.tsx
   - id: openwiki-source-64e02f46b7978332dd710c41
     resource: repo://apps/desktop/src/renderer/state/useBilateralSync.ts
   - id: openwiki-source-d4fc84c37b0edfd16ffd121b
     resource: repo://apps/desktop/src/renderer/state/useCommandRegistry.ts
-  - id: openwiki-source-c919289fc6afaab5804152ac
-    resource: repo://apps/desktop/src/renderer/state/useDeliveryHub.spec.tsx
-  - id: openwiki-source-a6788f27362fa4c6195f1a93
-    resource: repo://apps/desktop/src/renderer/state/useDeliveryHub.ts
   - id: openwiki-source-f0f06a0981a7ca97c510b44d
     resource: repo://apps/desktop/src/renderer/state/useEditorSession.ts
   - id: openwiki-source-50f41d92dd610018f85692d8
@@ -45,8 +37,6 @@ sources:
     resource: repo://apps/desktop/src/renderer/state/useLiveModelBridge.ts
   - id: openwiki-source-034a304691f6c1f77f682d25
     resource: repo://apps/desktop/src/renderer/state/useMcpBridge.ts
-  - id: openwiki-source-ef46d50ae45e81fdfe3ff913
-    resource: repo://apps/desktop/src/renderer/state/usePatchReview.ts
   - id: openwiki-source-694f14a9d64dcf9f23bb8a3b
     resource: repo://apps/desktop/src/renderer/state/useSensorsState.ts
   - id: openwiki-source-07d3a3a523a823055d2c6b41
@@ -61,11 +51,23 @@ sources:
     resource: repo://apps/desktop/src/renderer/state/useWorkspaceViewMode.spec.tsx
   - id: openwiki-source-cd0c9b3dd84e3af20289b703
     resource: repo://apps/desktop/src/renderer/state/useWorkspaceViewMode.ts
-  - id: openwiki-source-4ec1ced453a5afcf3c286d9b
-    resource: repo://apps/desktop/src/renderer/test-support/desktopApi.ts
-  - id: openwiki-source-25f64c8e5d94b447bfe67308
-    resource: repo://apps/desktop/src/shared/delivery.ts
-generated: { by: "pi", at: "2026-11-15T14:55:15.403Z" }
+  - id: openwiki-source-55662d405492cfd3a6e7e1bd
+    resource: repo://libs/desktop/contracts/src/delivery.ts
+  - id: openwiki-source-8a3964422b76faf8b78c4915
+    resource: repo://libs/desktop/feature-agent/src/state/useAgentPatchBridge.ts
+  - id: openwiki-source-120084d825f111cc158d4202
+    resource: repo://libs/desktop/feature-agent/src/state/useAgentSession.ts
+  - id: openwiki-source-0c662531e68a2db936eccc7f
+    resource: repo://libs/desktop/feature-agent/src/state/usePatchReview.ts
+  - id: openwiki-source-effa8775635d4ee2d4bfa795
+    resource: repo://libs/desktop/feature-delivery/src/state/useDeliveryHub.spec.tsx
+  - id: openwiki-source-32df59b611c02b85d275991a
+    resource: repo://libs/desktop/feature-delivery/src/state/useDeliveryHub.ts
+  - id: openwiki-source-245f4a200cbde2a0d89ec4b6
+    resource: repo://libs/desktop/feature-story/src/state/useStoryPlayback.ts
+  - id: openwiki-source-29536c90f762c67d4e41b9c9
+    resource: repo://libs/desktop/testing/src/desktopApi.ts
+generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
 ---
 
 # 渲染会话、异步布局与实时同步
@@ -74,11 +76,11 @@ EditorWorkspace 组合 controllers 而非复制模型：useEditorSession 持会�
 
 ## 单会话与异步几何
 
-useEditorSession 在 ref 创建一份 ModelSession，layout effect 在 paint 前订阅所有 session 事件，避免首个 Agent/MCP 写入漏更新。readState 同步读取 document/graph/selection/history/validation；**布局不在 readState 同步重建**，交 useGraphLayout(graph,viewMode) 等待 ELK。
+useEditorSession 在 ref 创建一份 ModelSession，layout effect 在 paint 前订阅所有 session 事件，避免首个 Agent/MCP 写入漏更新。readState 同步读取 document/graph/selection/history/validation；**布局不在 readState 同步重建**，交 useGraphLayout(graph,viewMode,layoutMode) 等待 topology ELK 或业务 swimlane。
 
-useGraphLayout 为每次 effect 建 cancellation 标记，只有未清理的请求能发布结果；result 的 graph 引用和 viewMode 还须等于当前输入。新图/密度立即返回 EMPTY_LAYOUT、layoutPending=true，而不是绘制旧模型几何；失败返回空布局和 layoutError。迟到旧成功/失败均不能污染新结果，unmount 使回调失效。
+useGraphLayout 为每次 effect 建 cancellation 标记，只有未清理的请求能发布结果；result 的 graph 引用、viewMode 与 layoutMode 还须等于当前输入。新图/密度立即返回 EMPTY_LAYOUT、layoutPending=true，而不是绘制旧模型几何；失败返回空布局和 layoutError。迟到旧成功/失败均不能污染新结果，unmount 使回调失效。
 
-任何 document-changed 置 dirty，selection/history 也刷新快照但不凭空编辑。save 读取当前 session document 发 projects.save，失败保留 dirty 并显 saveError，成功记录 savedAt/清 dirty；reload 显式 projects.open 并 replaceDocument(resetHistory=true)，清错误/外部提示。磁盘 watcher 只标 externalChangeAt，不能静默覆写。
+任何 document-changed 置 dirty，selection/history 也刷新快照但不凭空编辑。save 读取当前 session document 发 projects.save，失败保留 dirty 并显 saveError，成功记录 savedAt，且保存期间没有新编辑才清 dirty；reload 显式 projects.open 并 replaceDocument(resetHistory=true)，清错误/外部提示。磁盘 watcher 先标 externalChangeAt。显式 reload 可替换文档；story invalidation 的 reloadFromDiskIfClean 只有读前读后都无编辑才自动更新，相等内容不重置历史，避免自身保存通知抹掉 undo。
 
 所有 Inspector、键盘、Agent、MCP 编辑使用 mutate/applyPatchBatch，共享历史；baseline 是 initialDocument，保存不接受变更、不重置 baseline。
 
@@ -108,18 +110,18 @@ MCP RFC 6902 batch 以 mcp:rationale 一步历史，失败保持 revision；成�
 
 useDeliveryHub 在整个 editor 生命周期订阅，150ms debounce；新 change 立即使旧 generation 失效，包括下一请求尚在 debounce 时。主进程 reply revision 须匹配，失败清 analysis/error/stale；accepted input+analysis 才能 export，携 expectedModelDigest，busy/stale/block 时不写。打开 hub 不重新定义 baseline 或另订阅模型。
 
-useSensorsState 先 latestReport，只有空才触发 fresh，push 按 root 过滤；refresh 绕 debounce。useAgentSession 折叠五事件，transcript 最末8000字符，toolCallId 状态表，运行中 submit=steer、finally 清 running，root 变化重置。useReviewExport 以 pending ref 单飞，saved/failed 显 notice，取消静默；都不成为第二模型源。
+useSensorsState 先 latestReport，只有空才触发 fresh，push 按 root 过滤；refresh 绕 debounce。useAgentSession 折叠五事件，transcript 最末8000字符，toolCallId 状态表，运行中 submit=steer、finally 清 running，root 变化重置。story playback 按启用状态接收 debounced 快照，管理故事播放/What-If 与画布 focus；保存来源 invalidation 通过 clean reload 保护新编辑。各 controller 都不成为第二模型源。
 
 ## Chrome 与命令能力
 
-useWorkspaceLayoutState 一对象持 rail tab/pinned、problems/activeIssue、inline copilot 与 exclusive hub（delivery/drift/review）；diagnostics tab 特别开底部 problems，DriftRadar 可作为 rail drawer、split pane 或独立 hub，不再 simulation/replay。Mod+1..4 切 rail，尊重 editable/defaultPrevented 和修饰键。
+useWorkspaceLayoutState 一对象持 rail tab/pinned、problems/activeIssue、inline copilot 与 exclusive hub（delivery/drift）；diagnostics tab 特别开底部 problems，DriftRadar 可作为 rail drawer、split pane 或独立 hub，不再 simulation/replay。Mod+1..6 切 topology/diagnostics/drift/copilot/clauses/workshop rail，尊重 editable/defaultPrevented 和修饰键。
 
-useWorkspaceViewMode 的 graph/table/split 不进模型/历史/保存；V 切 graph/table，Alt+1/2/3 用 event.code（避 macOS符号），输入/CodeMirror/已消费事件退让。Split state 从 mode 派生 isSplit，无第二 boolean，关闭保留 pane/direction/size。
+useWorkspaceViewMode 的 journey/topology/table/split 不进模型/历史/保存，默认 journey（业务泳道）；V 切图/表，Alt+1/2/3/4 用 event.code（避 macOS符号）直选；已消费事件退让，裸字母尊重输入/CodeMirror。Split state 从 mode 派生 isSplit，无第二 boolean，关闭保留 pane/direction/size。
 
 buildCommands 是 capabilities+handlers 的纯函数，disabled rows 保留解释；CHORDS 是显示键帽唯一源，groupCommands 固定分类，useCommandRegistry 依 caller memo 对象稳定结果。palette 和 header 复用 handler，不复制业务逻辑。
 
 ## 测试 seam
 
-installDesktopApi 提供 channel call log、agentMock 的 stream/report/patch 与 mcpMock 的 request/response/capture/status，UI 无需 Electron/socket/真实模型。useGraphLayout specs 覆盖旧结果、错误、unmount；bridge specs 覆盖 mount/selection区分、rapid calls、test-only/失败 revision；delivery/sensors/patchReview specs 覆盖 debounce竞态和后续编辑保护；BilateralSync/workspace/command registry specs 保护 token、意图、typing guards 与非模型状态。
+desktop-testing 的 installDesktopApi 提供 channel call log、agentMock 的 stream/report/patch 与 mcpMock 的 request/response/capture/status，UI 无需 Electron/socket/真实模型。useGraphLayout specs 覆盖旧结果、错误、unmount；bridge specs 覆盖 mount/selection区分、rapid calls、test-only/失败 revision；delivery/sensors/patchReview specs 覆盖 debounce竞态和后续编辑保护；BilateralSync/workspace/command registry specs 保护 token、意图、typing guards 与非模型状态。
 
 相关：[会话事务](../model/commands-and-session.md) · [画布](./canvas-and-inspector.md) · [MCP](../agents/mcp-integration.md) · [传感器](../agents/sensor-orchestration.md)

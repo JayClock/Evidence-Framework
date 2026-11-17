@@ -5,7 +5,7 @@ description: 桌面内置 Pi 会话的 SDK 适配、代码随包提示词、Zod 
 tags: [agent, pi-sdk, session, tools, prompts, desktop]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-15T14:07:58.904Z
+    at: 2026-11-17T06:43:02.055Z
 sources:
   - id: openwiki-source-f85ce0e3a462797434d822a8
     resource: repo://apps/desktop/src/main/agentIpcHandlers.ts
@@ -13,22 +13,26 @@ sources:
     resource: repo://apps/desktop/src/main/agentRuntime.spec.ts
   - id: openwiki-source-55138c775f581f8c989ca7dc
     resource: repo://apps/desktop/src/main/agentRuntime.ts
+  - id: openwiki-source-db59d33fa24fde2a30d85df7
+    resource: repo://apps/desktop/src/main/ai/aiConfigIpc.ts
+  - id: openwiki-source-bac6e4737fa193d3a8a82a82
+    resource: repo://apps/desktop/src/main/ai/aiConfigService.ts
   - id: openwiki-source-75fef9367be5e52e08590eac
     resource: repo://apps/desktop/src/main/ingestionModelReader.spec.ts
   - id: openwiki-source-1c1b4203dc4b1050778717b6
     resource: repo://apps/desktop/src/main/ingestionModelReader.ts
-  - id: openwiki-source-00e302c4654ec72e92eb4e03
-    resource: repo://apps/desktop/src/renderer/components/agent/AgentCopilot.tsx
-  - id: openwiki-source-d79cdd745e8c94680663fc45
-    resource: repo://apps/desktop/src/renderer/components/agent/InlinePatchCopilot.tsx
   - id: openwiki-source-9459ee1a8fc917f2d94619ce
     resource: repo://apps/desktop/src/renderer/screens/EditorScreen.tsx
-  - id: openwiki-source-4847134dd2de8026fd1ac93f
-    resource: repo://apps/desktop/src/renderer/state/useAgentPatchBridge.ts
-  - id: openwiki-source-7c028cbe724a140944eca5d1
-    resource: repo://apps/desktop/src/renderer/state/useAgentSession.ts
-  - id: openwiki-source-ef46d50ae45e81fdfe3ff913
-    resource: repo://apps/desktop/src/renderer/state/usePatchReview.ts
+  - id: openwiki-source-39112fa2dcba304148e956e8
+    resource: repo://libs/desktop/feature-agent/src/components/agent/AgentCopilot.tsx
+  - id: openwiki-source-ae2af3e0409175806d2572fb
+    resource: repo://libs/desktop/feature-agent/src/components/agent/InlinePatchCopilot.tsx
+  - id: openwiki-source-8a3964422b76faf8b78c4915
+    resource: repo://libs/desktop/feature-agent/src/state/useAgentPatchBridge.ts
+  - id: openwiki-source-120084d825f111cc158d4202
+    resource: repo://libs/desktop/feature-agent/src/state/useAgentSession.ts
+  - id: openwiki-source-0c662531e68a2db936eccc7f
+    resource: repo://libs/desktop/feature-agent/src/state/usePatchReview.ts
   - id: openwiki-source-100de7a731086244071952a9
     resource: repo://libs/evidence-agent/package.json
   - id: openwiki-source-9d54a30ae7fe8603951dd3dd
@@ -61,7 +65,9 @@ sources:
     resource: repo://libs/evidence-agent/src/tools/evidenceTools.ts
   - id: openwiki-source-61df2059d9e39c9d1980ffbf
     resource: repo://libs/evidence-agent/src/tools/registerZodTool.ts
-generated: { by: "pi", at: "2026-11-15T14:07:58.904Z" }
+  - id: openwiki-source-4c008c3497d98e90590e5286
+    resource: repo://libs/evidence-tools/README.md
+generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
 ---
 
 # Pi 建模 Agent 与受控工具
@@ -75,6 +81,10 @@ generated: { by: "pi", at: "2026-11-15T14:07:58.904Z" }
 资源加载器设置 `noSkills: true`，以 appendSystemPromptOverride 追加随包指令，不扫描项目 skill 树。customTools、tools、noTools、sessionDirectory 和 sessionFile 按需传给 SDK；sessionFile 打开既有 transcript，否则创建会话，getSessionFile 在启动前为空。桌面接受 sessionFile 但当前 IPC 不传它。注意桌面 `customTools: []` **不是沙箱**：未禁用 Pi 默认工具，禁止直接写模型还依赖指令与受审查的补丁通道。
 
 摄取 reader 复用工厂，在临时目录做 tool-less 单轮（noTools: all），拼接流式输出，120 秒超时，agent-error 转失败，finally 释放会话，避免项目尚不存在时写出模型。
+
+## 桌面 AI 配置
+
+Agent 和摄取 reader 共用主进程 AiConfigService 的 getModelOptions，显式传入 modelRuntime/model/thinkingLevel/agentDir；启动时不自动读取 CLI 凭证。配置位于 userData，模型设置与加密凭证分开，只有显式导入才读取本机 Pi CLI auth。支持厂商预设和自定义 OpenAI 兼容端点；测试连接有超时，配置变更会使旧 Agent session 失效后重新创建。
 
 ## 指令、事件与界面
 
@@ -91,7 +101,7 @@ Pi 事件投影成五种纯数据：text-delta、tool-call-started、tool-call-c
 - `get_canvas_selection` 读取当前画布上下文。
 - `annotate_contract_clauses` 将协议分成业务、领域、法务；`read_service_blueprint` 从表格解析草稿。两者不写模型，蓝图读不出返回 isError 而不是空草稿。
 - `apply_model_patch` 接收共享 `ModelPatchRequestSchema` 的 `{ rationale, patches }`，不再接受 typed commands。成功文本列 op；renderer 拒绝转 isError，便于下一轮修正。
-- 四个算子：introduce_fulfillment_pair、add_breach_compensation、roleify_and_invert_dependency、isolate_domain_calculator。每次重新 loadDocument，用 createModelPatch 执行 guarded mutator，再共用补丁 handler；引用不合法则给出“算子未执行”，不发送部分修改。
+- 四个算子：introduce_fulfillment_pair、add_breach_compensation、roleify_and_invert_dependency、isolate_domain_calculator。它们与 apply_model_patch 一起复用 evidence-tools registry 的 schema、描述、非幂等写注解与执行路径；每次重新 loadDocument，用 guarded recipe 生成标准补丁，再共用宿主 handler；引用不合法则给出“算子未执行”，不发送部分修改。
 
 `registerZodTool.ts` 只把 Zod 转为无引用 JSON Schema 给 Pi 1.5.2 ABI，执行时仍 `schema.parse(input)`。无法表达在 JSON Schema 的 refinement 不会丢失；TypeBox 仅兼容类型标记，没有 TypeBox runtime。
 

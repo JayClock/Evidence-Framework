@@ -5,12 +5,12 @@ description: Zod 定义的 FM v5 AST、跨对象语义约束和稳定诊断，�
 tags: [fm, dsl, schema, entities, rules, validation, vocabulary, zod]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-15T14:55:15.403Z
+    at: 2026-11-17T06:43:02.055Z
 sources:
-  - id: openwiki-source-00e302c4654ec72e92eb4e03
-    resource: repo://apps/desktop/src/renderer/components/agent/AgentCopilot.tsx
-  - id: openwiki-source-d50af13687ca3e2709155692
-    resource: repo://libs/evidence-model-core/src/ingestion/contractAnnotator.ts
+  - id: openwiki-source-39112fa2dcba304148e956e8
+    resource: repo://libs/desktop/feature-agent/src/components/agent/AgentCopilot.tsx
+  - id: openwiki-source-848e24844e664baadc8329eb
+    resource: repo://libs/evidence-canvas-interaction/src/engine/layoutEngine.ts
   - id: openwiki-source-b4abb2821db0f045818014a1
     resource: repo://libs/evidence-model-core/src/session/createModelSession.ts
   - id: openwiki-source-88a3cc6d22f70a1b93ada22f
@@ -29,6 +29,10 @@ sources:
     resource: repo://libs/evidence-schema/src/ast/id.ts
   - id: openwiki-source-33794ec4dbf0b0b8815e5e81
     resource: repo://libs/evidence-schema/src/ast/lifecycle.ts
+  - id: openwiki-source-6dd8352adfce201b404ea1bf
+    resource: repo://libs/evidence-schema/src/ast/provenance.ts
+  - id: openwiki-source-88797fd20ee6b84a485fa4c7
+    resource: repo://libs/evidence-schema/src/ast/relationship.ts
   - id: openwiki-source-e32f800f7852b379dbe14855
     resource: repo://libs/evidence-schema/src/ast/rule.ts
   - id: openwiki-source-81352b1a378745cf2308d10d
@@ -41,7 +45,7 @@ sources:
     resource: repo://libs/evidence-schema/src/validation/strictValidate.ts
   - id: openwiki-source-976e28bc7b01588161a1f7bd
     resource: repo://libs/evidence-schema/src/vocabulary.ts
-generated: { by: "pi", at: "2026-11-15T14:07:58.904Z" }
+generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
 ---
 
 # FM v5 语言与严格契约
@@ -50,7 +54,7 @@ FM 以权责、请求/确认、事实与边界建模，不是 CRUD 表清单。`
 
 ## 文档与标识符
 
-DomainModelDocument 是 manifest + entities/relationships/rules 三平集合，可携 portable envelope 的 type=fm_bundle/schemaVersion=5.0/readme。manifest strict：type=fm_model、schemaVersion=5.0、ruleLanguage=CEL、非空 name、semver、非空且唯一 entryContextRefs，每项必须是 Context；可选 description。旧 validation/scenario/instance 顶层不是兼容扩展，拒绝。
+DomainModelDocument 是 manifest + entities/relationships/rules 三平集合，可携 portable envelope 的 type=fm_bundle/schemaVersion=5.0/readme。manifest strict：type=fm_model、schemaVersion=5.0、ruleLanguage=CEL、非空 name、semver、非空且唯一 entryContextRefs，每项必须是 Context；可选 description 与私有 sourceDocument（协议全文及条款字符范围）。旧 validation/scenario/instance 顶层不是兼容扩展，拒绝。
 
 ID 为小写字母开头的点/横线分段；属性 lower_snake_case；CEL alias为字母/下划线开头；version按semver grammar。ID跨实体/关系/规则全局唯一，重复对象报id.duplicate且不替换首次索引。VALUE_TYPES 包含CEL scalar和decimal/date/money/enum/id/list/map/dynamic等业务便利类型。
 
@@ -75,7 +79,7 @@ attribute要求name/label/meaning、可选合法valueType、boolean required/key
 
 ## 两类关系与跨界白名单
 
-关系只有plays_role/references，端点须存在，不允许self或Contract-Contract；cardinality min≥0整数、max正整数或many、min≤max。
+关系只有plays_role/references，端点须存在，不允许self或Contract-Contract；cardinality min≥0整数、max正整数或many、min≤max。可选 flowKind 为 primary/breach_compensation/escalation；缺省按 primary 阅读，不把默认值物化到源文件。
 
 plays_role允许party→party/third_party role、thing→domain role、Context→context role，以及跨Context moment Evidence→evidence role。moment是contract/confirmation/other_evidence，rfp/proposal/request时段不够资格，给relationship.playsRole.momentOnly。
 
@@ -87,7 +91,7 @@ derivation可产生任意合法resultType且必须target；precondition/invarian
 
 ## 内联 examples 是验收输入
 
-实体examples可带test：flow、tags、actingRoleRef、显式offset RFC3339 asOf、basedOn、expectedStatus、inputs、pathParameters(exampleRef/jsonpath)、expect(JSONPath→期望)。对象strict、JSON值须真实可序列化，tags/basedOn唯一；**inputs覆盖只允许显式>=400负向测试**。静态图级检查补充示例标签/引用等约束；唯一POST映射、角色、依赖隔离/排序、捕获和CEL oracle属于API projector，不把投影条件塞进schema。
+实体examples可带test：flow、tags、actingRoleRef、显式offset RFC3339 asOf、basedOn、expectedStatus、inputs、pathParameters(exampleRef/jsonpath)、expect(JSONPath→期望)。对象strict、JSON值须真实可序列化，tags/basedOn唯一；**inputs覆盖只允许显式>=400负向测试**。静态图级检查补充示例标签/引用等约束；创建入口映射、角色、依赖隔离/排序、捕获和CEL oracle属于 evidence-acceptance projector，不把投影条件塞进schema。
 
 没有test的example仍是示例，不臆造业务流程。AcceptanceFlow是临时编译IR，非旧Scenario文件复活；Step CI/Hurl运行时HTTP验收另见[CLI](../workflows/cli-governance.md)。
 
@@ -99,15 +103,15 @@ derivation可产生任意合法resultType且必须target；precondition/invarian
 
 旧ENTITY_KEYS/validateNonContextEntity大函数已移除，category-specific结构键限制直接在Zod branch表达，再由documentSemantics补跨引用检查。语法错误时不保证继续遍历所有不安全图对象；不要要求旧手写validator的执行顺序作为公开契约。
 
-静态gate被FM check、compile/lineage、API projection、review preview、可选validateOnDispatch复用。渐进会话默认不强制静态全有效，projectStore.save也不等同门禁；用户可以保存半建模型，但正式交付拒绝。scope完整性、key-data provider、CEL、HTTP实现为独立问题。
+静态gate被FM check、compile/lineage、API projection、可选validateOnDispatch复用。渐进会话默认不强制静态全有效，projectStore.save也不等同门禁；用户可以保存半建模型，但正式交付拒绝。scope完整性、key-data provider、CEL、HTTP实现为独立问题。
 
 ## 阅读词汇不是新实体
 
-lifecycle stages=rfp/proposal/contract/fulfillment，schema helpers按kind/Context内容推导；角色/参与者无自己的stage，other_evidence继承Context。当前ELK不再调用旧swimlane模块。clause分business→evidence、domain→domain-thing、boilerplate→none；annotation保留原句/理由，计算可另标computesValue。
+lifecycle stages=rfp/proposal/contract/fulfillment，schema helpers按kind/Context内容推导；角色/参与者无自己的stage，other_evidence继承Context。topology 使用 ELK，另有独立七阶段业务泳道模式；布局不改变实体语义。clause分business→evidence、domain→domain-thing、boilerplate→none；annotation保留原句/理由，计算可另标computesValue。
 
 WORKSHOP_STEPS七步：anchor-contract、pair-fulfillment、name-things、invert-dependency、close-breach、trace-key-data、connect-flow。rank是1-based，focus给Agent步骤前缀；REVERSE_CONTRACT_MODE从需要留存事实反推。它们都不作为FM落盘状态。
 
-sourceSnippet可选保存text/locator/inputKind(contract/prd/interview/blueprint/unknown)，供人复核来源，非运行时授权或key-data provider证据。
+sourceSnippet 可选保存 text/locator/source(contract/prd/interview/blueprint/unknown)、clauseIndex 与成对 charStart/charEnd；范围必须与 UTF-16 snippet 长度一致。manifest.sourceDocument 的条款须顺序连续且精确匹配原文切片。它们供作者本地审计，不是运行时授权或 key-data provider 证据，也不进入公开 API/故事模型投影。
 
 ## 验证入口
 

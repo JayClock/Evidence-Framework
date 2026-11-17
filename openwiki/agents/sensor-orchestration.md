@@ -5,7 +5,7 @@ description: 共享 SensorReport 如何承载 FM 静态检查、关键数据和 
 tags: [sensors, stage-gate, governance, drift, diagnostics]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-15T14:07:58.904Z
+    at: 2026-11-17T06:43:02.055Z
 sources:
   - id: openwiki-source-f85ce0e3a462797434d822a8
     resource: repo://apps/desktop/src/main/agentIpcHandlers.ts
@@ -15,8 +15,6 @@ sources:
     resource: repo://apps/desktop/src/main/agentRuntime.ts
   - id: openwiki-source-f278221a7db6307920fce03f
     resource: repo://apps/desktop/src/main/mcpRequestHandler.ts
-  - id: openwiki-source-c72ee53c66b83fbe248c4854
-    resource: repo://apps/desktop/src/main/reviewPreview.ts
   - id: openwiki-source-bc335f19a22e1758f9ecea1e
     resource: repo://apps/desktop/src/main/sensorRuntime.ts
   - id: openwiki-source-34616781ee43c94607ccca92
@@ -27,8 +25,6 @@ sources:
     resource: repo://apps/desktop/src/renderer/components/console/ProblemsPanel.spec.tsx
   - id: openwiki-source-54bfa14340461b5df12c5a93
     resource: repo://apps/desktop/src/renderer/components/console/ProblemsPanel.tsx
-  - id: openwiki-source-e0008b039e09cb0ae867a401
-    resource: repo://apps/desktop/src/renderer/components/drift/DriftRadar.tsx
   - id: openwiki-source-9459ee1a8fc917f2d94619ce
     resource: repo://apps/desktop/src/renderer/screens/EditorScreen.tsx
   - id: openwiki-source-694f14a9d64dcf9f23bb8a3b
@@ -37,6 +33,8 @@ sources:
     resource: repo://libs/desktop/feature-canvas/src/diagnosticIndex.spec.tsx
   - id: openwiki-source-f172557f5294fb7b6d40b660
     resource: repo://libs/desktop/feature-canvas/src/diagnosticIndex.ts
+  - id: openwiki-source-072343668e3623c3bbde4c30
+    resource: repo://libs/desktop/feature-drift/src/components/drift/DriftRadar.tsx
   - id: openwiki-source-172b58a8c9ee4fcc3b2b3daa
     resource: repo://libs/evidence-agent/src/governance/governanceLoop.ts
   - id: openwiki-source-5570b1437846809479c60f79
@@ -61,7 +59,7 @@ sources:
     resource: repo://libs/evidence-agent/src/sensors/sensorsEngine.spec.ts
   - id: openwiki-source-ebeef9d445379fe3773732df
     resource: repo://libs/evidence-agent/src/sensors/sensorsEngine.ts
-generated: { by: "pi", at: "2026-11-15T14:07:58.904Z" }
+generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
 ---
 
 # 原生传感器与治理闭环
@@ -76,7 +74,7 @@ SensorIssue 有五类 source（check_fm、audit_key_data、audit_api、audit_dri
 
 关键数据待决是 warn/KEY_DATA_DECISION_OWED，定位 entity#attribute。最多输出 40 条，summary 仍统计全量；无待决输出 info/KEY_DATA_RESOLVED（包括空台账）。resolvedCount=max(0,total-owed)。
 
-`isStageGateReady` 还要求显式 passing stageGate、零待决、零 blocking，以及存在 apiSummary 时零缺口/破坏变更。普通 native run 和 review preview 不传 stageGate，因此其 false 不代表新增故障，不能把 status bar 当作自动批准。
+`isStageGateReady` 还要求显式 passing stageGate、零待决、零 blocking，以及存在 apiSummary 时零缺口/破坏变更。普通 native run 不传 stageGate，因此其 false 不代表新增故障，不能把 status bar 当作自动批准。
 
 ## 传感器机制
 
@@ -89,7 +87,7 @@ SensorIssue 有五类 source（check_fm、audit_key_data、audit_api、audit_dri
 
 `nativeStageGate` 消费已有 FM 报告而不重建模型：要求 **checkVersion=6**、consistent/complete/valid=true、inputChanged=false、无 errors/gaps、所有请求 scope 在报告 scopeRefs 内。空 scope 明确拒绝“无边界下游”；所有拒绝原因累积返回，不使用人工闭环标记。`isGateReadyReport` 是去掉空 scope 检查的同一谓词。
 
-engine 在 target=api 或未提供 saved report 时跑 fresh sensors，给 API 使用 release 模式。API gate 收集所有高于 info 的 audit_api 诊断，并比较 saved/fresh modelDigest，摘要不同必须重查；visualization gate 保持 FM-only，不因 API 覆盖缺口拒绝审查页。MCP 投影 passed、exitCode、driftDetected、blockingReasons；异常关闭门禁而不伪造退出码 0。
+engine 的 target 仅 api，每次都跑 fresh sensors，并使用 release 模式。API gate 收集所有高于 info 的 audit_api 诊断，并比较 saved/fresh modelDigest，摘要不同必须重查；旧 visualization gate 已删除。MCP 投影 passed、exitCode、driftDetected、blockingReasons；异常关闭门禁而不伪造退出码 0。
 
 ## 独立漂移与治理
 
@@ -110,10 +108,10 @@ engine 在 target=api 或未提供 saved report 时跑 fresh sensors，给 API �
 
 editor 在 loading/error、live bridge 错误或 report revision 不等于当前 revision 时，给画布空报告，防旧诊断污染。`createDiagnosticIndex` 仅接受明确引用：targetNodeId 的 # 前缀须存在，否则 contextRef 必须真是 context；不从消息猜 ID。每节点去重并取最高 severity。
 
-ProblemsPanel 展示严重级别 tabs、报告计数、过期标记、active row、code/target/建议和定位动作；filterIssues 在组件外可独立测试。定位支持 entity#attribute、context 或关系。空状态明确“机器检查不等于业务批准”。reviewPreview 复用未保存 document 的 FM/台账报告，追加 validation: 前缀的严格诊断及 objectId，不从 prose 猜目标；预览期间磁盘摘要变化则拒绝。
+ProblemsPanel 展示严重级别 tabs、报告计数、过期标记、active row、code/target/建议和定位动作；filterIssues 在组件外可独立测试。定位支持 entity#attribute、context 或关系。空状态明确“机器检查不等于业务批准”。旧 reviewPreview/离线审查入口已移除。
 
 ## 验证与邻接
 
-sensorReport/nativeSensors/sensorsEngine specs 保护严重性、计数、台账上限、不可用失败、v6/空 scope 门禁和 API/visualization 非对称；nativeApiSensor specs 保护草稿/发布差异与 API 故障隔离。driftSensor/governanceLoop specs 覆盖五种漂移、真实验收门槛和行动优先级。diagnosticIndex 与 ProblemsPanel specs 覆盖引用定位、去重、tabs、过期与定位。
+sensorReport/nativeSensors/sensorsEngine specs 保护严重性、计数、台账上限、不可用失败、v6/空 scope 门禁和 API release 检查；nativeApiSensor specs 保护草稿/发布差异与 API 故障隔离。driftSensor/governanceLoop specs 覆盖五种漂移、真实验收门槛和行动优先级。diagnosticIndex 与 ProblemsPanel specs 覆盖引用定位、去重、tabs、过期与定位。
 
 参见[静态检查](../model/checks-and-simulation.md)、[关键数据](../language/key-data-and-provenance.md)、[Pi 工具](./pi-harness.md)、[CLI 双门禁](../workflows/cli-governance.md)。

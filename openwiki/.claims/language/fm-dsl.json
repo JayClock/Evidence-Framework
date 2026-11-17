@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:0dffc4d74b23c4a5396753ba98536c2acfbbda700858e972b39b61e4aa6a24c0",
+  "pageVersion": "sha256:20e4a76b624e27c30f88752fb99da614103b14592d65db73b0b3faaf89e6a695",
   "claims": [
     {
       "id": "claim_16f83966cd85429c854a0516c9100549",
       "statement": "FM v5文档含strict manifest和三平集合，Zod允许明确portable envelope/readme，拒绝未知及旧validation字段。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/ast/document.ts#L13-L51",
-          "version": "repo-lines-v1:sha256:9ce2ff088cb7f76c208eb00204449bb2e8f9f5cf8eb598e937efcfea64fe8b7a:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMwYzBkMTY2ODc0NjNkMmZhZTgwY2VmNTgyMDRmZjQyMmRhMjQ1MTk2NWUyMzJjM2E4M2MzMThiOTFhMTUxOTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhkMTIxZWYxMGVhNWJkZjk1ZjBhYTU5NzhkYTU4YTljYzNiZTYzZjBmOTYxOGNjMjQ5ZjVmZGRiOWFlYWQ0YjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUzY2MwZDFlYTk4Y2E2MjQxZjBiMGJmMDFiZGFkNjAxNWFiODI5NGNmZWQ4ODNkNTY4MTc1ZTlhN2U5YjQ2ZjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI0MGEzODIxN2Q5NzljZDEyOTA0ZTBmYTU2NDcyZmU4ZjM3MjY3ZjNlNjdmZGJkNWJjNmRlZGJhNTk1N2EwNTkifQ"
+          "resource": "repo://libs/evidence-schema/src/ast/document.ts",
+          "version": "repo-file-v1:sha256:f390474d5859895f22084afde3930f42e7955b3c8db09c39914034c70a4020a5"
         }
       ]
     },
@@ -153,12 +153,12 @@
       "statement": "closed vocabulary按落盘key单源定义，ID/label/field/guard派生，声明顺序是阅读顺序而非ELK泳道布局。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/ast/entity.ts#L15-L30",
-          "version": "repo-lines-v1:sha256:fd26bbe4a85db922b229a504e934f924da4e553d21bad488044ab7517d7bc96c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkYzZmNDVhOGU5NTI4MWU4NjA3MzQ1MWUwYWRlNGQ5M2ViMGI4NzZhMDljNzc5ODM5NDlhNGYxMTBmOTM1NTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5OTY3ZWMxZWQzODM2ZjhlYjE3YWZmMTcyYjViZmVmN2RlNjA0ODVhNDM5YzZjYTExYzU5MWUxNzU1NzM5YWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE5OThiYWE3YTJjZGE5ZjNmN2NlODFhNTkzNjQwMzNkN2U0MTI5ZmI3NTQ2ZGU2MzJkZDE4YWE0YTczNWU2YTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRkNWVkZTllYTIwMGUwNDZkYzIxOWFlNDE5NGM3M2JhNGMzZGU5YWQ0MDQ2N2M1ZTZjZTYwZDc3YTdiMjQ1N2EifQ"
+          "resource": "repo://libs/evidence-schema/src/ast/entity.ts",
+          "version": "repo-file-v1:sha256:d6f792b144eeec4b2742db06ccc48fc962303843c073b434d496e4f284681e7d"
         },
         {
           "resource": "repo://libs/evidence-schema/src/vocabulary.ts",
-          "version": "repo-file-v1:sha256:67327fb19239e11ac81f3ccc49396d0af9d287210aba48184a6a1af2bcc4e1fb"
+          "version": "repo-file-v1:sha256:13b3548d915997e6fe672e42150aaf774bdf263a75960563b6b1a9b92fe816eb"
         }
       ]
     },
@@ -171,7 +171,7 @@
           "version": "repo-lines-v1:sha256:356a0fe5e8f4c7209c895d6acbcaf244bdc93eb91c7c684532f3959b7b4ade1c:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmEzYjQ2OWQ5ZTA5NzU3MjI0NjY2NzM0YzllZjdiMjU0ZDg4NTM0ZjVkNWJiNzA5ODk2MDgwNWM1NTNkYzMwNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODZiOWQ0NTJhMGNjMjhiNmZkYWE2Y2RlZmNkNGJjZDRhMzdhOTFlNTFhNzAwM2NmYWVjNzdlOGQzOTcwMjA4NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
         },
         {
-          "resource": "repo://libs/evidence-schema/src/ast/document.ts#L26-L51",
+          "resource": "repo://libs/evidence-schema/src/ast/document.ts#L29-L54",
           "version": "repo-lines-v1:sha256:7bf573c1ec2d4b1c56c77577f9b40ed2fa1c953f0a5ce24ff43a66c4511d4d55:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYxNjQzZjQ0ZGYxYWY2ZDU3ODUyZDBiMWZlMGUyOTlhYjY4ODY3MjMzNmI3YjA2NjA5MmQyOWIyY2Q3ZDk2ODMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhkMTIxZWYxMGVhNWJkZjk1ZjBhYTU5NzhkYTU4YTljYzNiZTYzZjBmOTYxOGNjMjQ5ZjVmZGRiOWFlYWQ0YjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZkMzRjZWYxOTg0NDJhMzViZjM5NDU2ZTdlNTA3NTFiOGE5YjlhZDU2ZjQ0ZTRhY2VmMjcxYzdlYzIwNjdjOWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI0MGEzODIxN2Q5NzljZDEyOTA0ZTBmYTU2NDcyZmU4ZjM3MjY3ZjNlNjdmZGJkNWJjNmRlZGJhNTk1N2EwNTkifQ"
         },
         {
@@ -210,25 +210,37 @@
     },
     {
       "id": "claim_975f763ed21c4ea9a45c85428551a6c2",
-      "statement": "lifecycle stages是kind/Context推导的阅读词表，不存实体stage字段，也不再意味着存在手工泳道引擎。",
+      "statement": "lifecycle 的四阶段按 kind/Context 推导，不落盘 stage；当前拓扑与七阶段业务泳道是独立布局模式，共享 FM 语义。",
       "evidence": [
         {
+          "resource": "repo://libs/evidence-canvas-interaction/src/engine/layoutEngine.ts",
+          "version": "repo-file-v1:sha256:d18682c6a97f6ee08d62b6406c4d377184f05d4c39cdb43dea7cc0a7cc5278e8"
+        },
+        {
           "resource": "repo://libs/evidence-schema/src/ast/lifecycle.ts",
-          "version": "repo-file-v1:sha256:3436c53c867312f6faf9979fce0b5f52cbd70a3af3b5c02ea486b6d0ad95db55"
+          "version": "repo-file-v1:sha256:576c8b790ed2de2749b1e6499456e48a50760618013330f2eaff482d76c8eb72"
         }
       ]
     },
     {
       "id": "claim_f293382704ee45a8be1bc01aa42c3383",
-      "statement": "Clause reading is a separate three-bucket vocabulary — business, domain, boilerplate — each with a display label, a hint and a fixed destination (evidence, domain-thing, none), used by contract annotation and review so a sentence cannot land in an invented fourth bucket; it is not a field of DomainModelDocument.",
+      "statement": "clause 分 business/domain/boilerplate 三类；manifest.sourceDocument 可保存协议全文/条款/字符范围，实体 sourceSnippet 连接局部来源，均为作者私有材料。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/ingestion/contractAnnotator.ts#L1-L18",
-          "version": "repo-lines-v1:sha256:eae853098e6609ccffdef6188db573a98efcc2cf1256067c8551aa7c6d41359c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM1ODA5ZGFiMGNjNGQ0NGQyZDkwZjU0YWVlOWQ3OGEwYjYzMDQ2MTdjZTgyZjQ1MTBlNmNlNmNkM2QxYmE5MjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE5MWIyNWJkZTE5Yjk5NmI2ZjExYjFlYTgxMTM4ODEwMDIwMmFkYjBkNTBhOTNhNTcxZGVmNzc4ODE2ZGVmMjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM5YjBiMTQ1NDgwYTMzMmRhYmYyNDdlMDMxZjhkYjVhNmUzZWM1YTdjYTlhMzQ2NGI5YWY5MThiMDZiM2Y2YmQifQ"
+          "resource": "repo://libs/evidence-schema/src/ast/clause.ts",
+          "version": "repo-file-v1:sha256:9f42fc0c7bf1ce98e6fea87beccedbf25f8870554ac9022a1f98fee3fb533238"
         },
         {
-          "resource": "repo://libs/evidence-schema/src/ast/clause.ts#L1-L135",
-          "version": "repo-lines-v1:sha256:9f42fc0c7bf1ce98e6fea87beccedbf25f8870554ac9022a1f98fee3fb533238:eyJzZWxlY3RlZExpbmVDb3VudCI6MTM1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlODIwMDk2NGE5Nzg2MzU1MjJiMmFiMDkwYzY1MDY1ZDhlZjhlODVjNDczMGJiMmViMDQ2MGQzNGM2NzdkZGJiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MCwicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+          "resource": "repo://libs/evidence-schema/src/ast/document.ts",
+          "version": "repo-file-v1:sha256:f390474d5859895f22084afde3930f42e7955b3c8db09c39914034c70a4020a5"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/entity.ts",
+          "version": "repo-file-v1:sha256:d6f792b144eeec4b2742db06ccc48fc962303843c073b434d496e4f284681e7d"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/provenance.ts",
+          "version": "repo-file-v1:sha256:10f922d80736813fc7c63c71886a70dcd59a384aaa82f2819b994c7e55ecae3e"
         }
       ]
     },
@@ -237,12 +249,12 @@
       "statement": "The workshop order is a seven-step vocabulary (anchor-contract through connect-flow) plus a reverse-contract mode, exposed through workshopStepRank and workshopStepFocus so the desktop selector and the agent prompt agree; no step is recorded on disk.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/components/agent/AgentCopilot.tsx#L107-L120",
-          "version": "repo-lines-v1:sha256:64642aed16076b8388f7bd9be18f365140c0dd26b7c0d87d7f01732689f767a8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjMDYzMTE2NDZkMjhiYWQ0M2ZjZDk3YTAwNDlhZDI2Nzg2YjJhOTRmNDJjMGM5OGU3NzQwN2IyZTU2NTRjZDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE4N2Q3NzYzZTI0Y2EzMzFiZDJmODgxZjEzNDExMmUxMGEzN2NmNmIxYThkZDc0YWFmZGViYzViZWYwYjU3MWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU1MWZlOTA1NzY1MTY5ODViOTJhNjlkNjg4MTFhM2RkYzg5Y2JiNWU4YjZkNGI2ZGMzODY3M2FhMmQyMzBiYjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIzOGI4OTM4MTM1OGQyYWEzNjVhMWE4OWVlN2ExZGU0N2M0YzIyMDkyMzkxOGU1NGU0NWJmMDNhYzg5NTkwZTQifQ"
+          "resource": "repo://libs/desktop/feature-agent/src/components/agent/AgentCopilot.tsx",
+          "version": "repo-file-v1:sha256:988b04e6a31408246af3c886e696693d5f73f9891323e8415259d57762912209"
         },
         {
-          "resource": "repo://libs/evidence-schema/src/ast/workshop.ts#L1-L100",
-          "version": "repo-lines-v1:sha256:97261f0d1004df8f86ebd18efe0936abf6fda6320a7fe5f96439fb2809d07efa:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlYWYyMmNmMDczMjU5MmMyNDcxNDFjYmU2MWVmYTExMDEyNjEyZjVhMzEyMmI5YWY5YmJhZjUyZjU3MjRkMTk0IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIzN2UwYjBkNjAxMTI3YzkwMzRjNzdlMzRlYjc0ODJkMGQyYjgwNjI4NzdiYzViYjk4ZWI3ZDdmYmUyOWRiNDE4IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MCwicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+          "resource": "repo://libs/evidence-schema/src/ast/workshop.ts",
+          "version": "repo-file-v1:sha256:b3def3fffd9af80cf7c6690809564165770c4adb1935a2ff62ee070174a2c8f7"
         }
       ]
     },
@@ -291,10 +303,24 @@
           "version": "repo-lines-v1:sha256:58a487409e749f3f2ea4d94b2a066902fe961f6c9e38ad113f5fb3ea33914c57:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYxMmYyYmViZGY2MmY3YzVjMjlkMDQ2YmYwMjk5YTI4NDljOTFhNDQ1NDhkNzk5NjRhOTYyOWQ1MmQwYmE1MmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3OTI1YzJiMTg0OWJhZTcwNjVjZDM2Y2Y5NzYwZWVjOGMyODY0N2NlMDc3MmU1NTU3NWY3OWU3NDdiY2I2NzIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA3ODk1NTIxYTQ2NWUzZjNlNWQyMzkyNTZmM2JlZTdkODZjYzljODVjY2IzOTU4ZmM3MWZlMTJiNDYyMmZiNmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI0YmI3YTEwMWRkN2IxYmUwZTMyMjhkNjBjZWM3NGI1OWIyZmNhMmNjYzE1NTNmNmYzYTFjYWVhZTNmZjg4ZmIifQ"
         }
       ]
+    },
+    {
+      "id": "claim_4d158ea63638407ba47d8f0e96dd5610",
+      "statement": "relationship 可选 flowKind 三值，缺省按 primary 读取且不物化默认值；sourceDocument/snippet 的字符范围由 strict schemas 验证。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/provenance.ts",
+          "version": "repo-file-v1:sha256:10f922d80736813fc7c63c71886a70dcd59a384aaa82f2819b994c7e55ecae3e"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/relationship.ts",
+          "version": "repo-file-v1:sha256:80651107208737bbd762c7ec68397c4ce74c809f3c68ddceda8a9f550faaf6ab"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-15T14:55:15.403Z"
+    "at": "2026-11-17T06:43:02.055Z"
   }
 }

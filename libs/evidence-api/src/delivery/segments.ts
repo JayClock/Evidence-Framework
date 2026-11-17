@@ -3,7 +3,7 @@
  *
  * A business id is dotted (`request.payment`), and a URL segment cannot be. The
  * last dotted part is the business name the modeler already uses, so folding it
- * into a path keeps the address readable: `/procurement/contracts/payment`.
+ * into a path keeps the address readable: `/procurements/{contractId}/payment`.
  */
 
 /** Alias map id → segment, so two objects never answer to one path. */

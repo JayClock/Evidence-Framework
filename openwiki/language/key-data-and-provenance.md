@@ -5,7 +5,7 @@ description: 八类来源分类、关键数据台账与 native CEL 属性依赖�
 tags: [key-data, provider, provenance, ledger, lineage, business-time, sensors]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-15T14:55:15.403Z
+    at: 2026-11-17T06:43:02.055Z
 sources:
   - id: openwiki-source-14c1bd0ebaba9f1349ef58a4
     resource: repo://libs/desktop/feature-inspector/src/inspector/AttributeDataGrid.spec.tsx
@@ -29,8 +29,18 @@ sources:
     resource: repo://libs/evidence-agent/src/sensors/sensorReport.spec.ts
   - id: openwiki-source-9ad3f46aa18e9c002bf6f482
     resource: repo://libs/evidence-agent/src/sensors/sensorReport.ts
+  - id: openwiki-source-ece7f3389ee03e6d65881863
+    resource: repo://libs/evidence-agent/src/story/flowStoryProjector.ts
+  - id: openwiki-source-484dbf9c991f78fe31f89b8f
+    resource: repo://libs/evidence-agent/src/story/storyAgent.ts
+  - id: openwiki-source-e2bfe2b62dac07a26ade079e
+    resource: repo://libs/evidence-api/src/delivery/modelDelivery.ts
   - id: openwiki-source-bab9cd022cd0c06c4edacf32
     resource: repo://libs/evidence-model-core/src/diff/modelDiff.ts
+  - id: openwiki-source-b58a1e28682d01780d2726d1
+    resource: repo://libs/evidence-model-core/src/ingestion/clauseTrace.spec.ts
+  - id: openwiki-source-4968069c33b9958841bbecb5
+    resource: repo://libs/evidence-model-core/src/ingestion/clauseTrace.ts
   - id: openwiki-source-f02b234edea2573a78a178f1
     resource: repo://libs/evidence-model-core/src/ingestion/compileDraft.ts
   - id: openwiki-source-f4983b717b76eb5f0cfd69e1
@@ -53,11 +63,7 @@ sources:
     resource: repo://libs/evidence-schema/src/ast/keyData.ts
   - id: openwiki-source-6dd8352adfce201b404ea1bf
     resource: repo://libs/evidence-schema/src/ast/provenance.ts
-  - id: openwiki-source-addb7f530e7184b8278871b4
-    resource: repo://libs/evidence-visualization/src/projection/workbenchProjection.spec.ts
-  - id: openwiki-source-1424b0cd227894b90f6674f4
-    resource: repo://libs/evidence-visualization/src/projection/workbenchProjection.ts
-generated: { by: "pi", at: "2026-11-15T14:55:15.403Z" }
+generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
 ---
 
 # 关键数据、派生与来源追溯
@@ -109,9 +115,9 @@ cel-js运行时int/uint用bigint精确运算。JSON输入允许safe number或CEL
 
 ## 文本来源是元素级记录
 
-draft element.provenance的text/locator/source(kind contract/prd/interview/blueprint/unknown)经compileDraft复制到entity.sourceSnippet；Zod EntityBase明确允许ProvenanceSnippetSchema，DraftAttribute没有独立来源字段。手写模型可以省略；annotation的分类/理由不等于强制证明每对象都由该句导出。
+draft element.provenance的text/locator/source(kind contract/prd/interview/blueprint/unknown)经compileDraft复制到entity.sourceSnippet；Zod EntityBase明确允许ProvenanceSnippetSchema，DraftAttribute没有独立来源字段。手写模型可以省略；协议全文和条款精确切片存于 manifest.sourceDocument，sourceSnippet 可用 clauseIndex/charStart/charEnd 关联，但原句仍须一致。collectClauseTrace 先核精确范围、再核 index、最后只接受唯一原句匹配，歧义进入 unmatched，不做模糊法律引用。annotation 的分类/理由不等于强制证明每对象都由该句导出。
 
-native sensors不对照访谈记录，模型是唯一输入；interview仅是来源kind。对话里说过但未落成模型不算验证证据。离线workbench白名单不输出sourceSnippet/材料路径/访谈文本，作者可以看模型不等于有权看来源材料。
+native sensors不对照访谈记录，模型是唯一输入；interview仅是来源kind。对话里说过但未落成模型不算验证证据。公开 API 与 flow story 投影不输出 sourceDocument/sourceSnippet；旧离线 workbench 已撤除，作者可以看模型不等于有权看来源材料。
 
 ## 邻接与验证
 

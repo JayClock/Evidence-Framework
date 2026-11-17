@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:b4de76a852fde09cfb31f397bc26b5d6fa5cbd91a439b38a38bcb15873156056",
+  "pageVersion": "sha256:a7c0bdfec3e350c59074b7a6d235d23f12f5aefd3dc9b53878cb71393391a35b",
   "claims": [
     {
       "id": "claim_bda93da0553b4aee8e3362edf44058c2",
@@ -185,24 +185,6 @@
       ]
     },
     {
-      "id": "claim_39b7a4fbd573466abec3ea2a8d924821",
-      "statement": "`workbenchFingerprint` (sha256 over the model tree files plus `.evidence/api/api.json`, excluding `generated/` and `__pycache__`) brackets review-page generation, and the desktop preview throws `预览期间磁盘输入变化，请重新预览` instead of returning data for a model that changed while it was being read.",
-      "evidence": [
-        {
-          "resource": "repo://apps/desktop/src/main/reviewPreview.ts#L107-L108",
-          "version": "repo-lines-v1:sha256:7db826a8489396df3a65b9dcca28752889e276e3a67c943a5b3c8e0c95f5cef6:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzAxYThkYTA3MzYwYjc0MTgwZTg3YTIwY2Y5MTQwN2QwMjE3M2FkYzQ4ZWY5MTdmOTFmNTg1MDFiNjExMzdhYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWNkZDAxMDI4NDVhYzk0MzgzODhmMGM3ZjM3YTk3NTVhNjU2ZDdlNTg0Y2E3Yjc2NDMzMWYxNzE5YmNhMjcxZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2UwMmQ3ZWI2YmE1MDEyNTg2ZjBmODQ4M2UwODI5ZGEyYzhhM2Y3ZDQyNDdmMmNkYzhmZDY5ZGU5MTk2MjQ0NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWU5ODAwNDE4N2U4NTYyNjI0N2QyOGUxNWNjMzkwZWMxMjA1YzEyMDkxY2VlM2RkM2UwNWIyYzFiYmE2YmFmMCJ9"
-        },
-        {
-          "resource": "repo://apps/desktop/src/main/reviewPreview.ts#L36-L40",
-          "version": "repo-lines-v1:sha256:4460b806a3d23699808946e1f15ccb35b305401c5201ccc76b4acd03b09b8539:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTlkMjY3OTIyNjA5ODdiZTdkODE0YTcxNTExNjFjZTAyNjQ3NDI2NDAwNDFhOTAyM2I3YjE0ZTA3YzMxNGRmNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTdiY2U2NWE1NWQ3NjhkZTljZjNhNTkxZmQyNzExNDZiNzY4Yjk2MTQ1MTUyNjE2NjI1YjcxYWJhNjgwMGZlNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmZlODQ1MjNlMjdiMjkxM2YzNWViYWJhOWQ2MTVmMTdhNjVjMzMwYzU4YjNiZjE0MjI0NDllODZlMDlmMTJjYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTQ2ZWVmZjA4ZWM4NTE4YzdkMWMwNDVlYTBlZTkxYjVjZjJlMTk5NTg0YmVhZjFiODdhZmEyYzQ1N2FiMmExNSJ9"
-        },
-        {
-          "resource": "repo://libs/evidence-visualization/src/generate/collectWorkbench.ts#L148-L193",
-          "version": "repo-lines-v1:sha256:c13f75949761dee559ac3372a163ebfdc0f78d79307d3b51892cb72255416e6a:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyMTI5YzI3MzUyYjQ5NTU0OGIwNzFhZTM0YWI5MDgxMTcyODczNDI4ZjZmODdmNTRiNTgwZTUxNTNjOWFhMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZlNTNlNDMwNmY5MjkyMjQ0OTE2NGQ0MmU0MTQ5MjFmZDY3MDZkZTQzZjYzN2VkMTU4MTUzZWMxNDQ5YzFlOTkifQ"
-        }
-      ]
-    },
-    {
       "id": "claim_f1b2ba42098f4b26b8b967fd2679f3d9",
       "statement": "The desktop store's `fingerprint` is a sha1 over the manifest and three source trees (sorted, each fed as path, NUL, content, NUL) or over the bundle file's text, returning null when nothing is there; it does not cover `validation/` or `README.md`, and only `projectStore.spec.ts` exercises it today, so external-edit detection in the app is the watcher rather than a fingerprint poll.",
       "evidence": [
@@ -273,8 +255,8 @@
           "version": "repo-file-v1:sha256:55e44306dae7830743c0c013b7034f2ecbc7afcbaddbd95dd5df4e56d5dc7cb4"
         },
         {
-          "resource": "repo://package.json#L15-L19",
-          "version": "repo-lines-v1:sha256:36c27cbb836113b8aaf2525d9a684941101529884a56b9de595b71c228a59fa7:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2JjMWE5OThiYjIxZDNiYjczYjBhZGFkNzY4Y2RhM2RiMjYxYzUwNjVhNzIzMDY4NmIyNGEwZjhiNTc5MmU4NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzNhOTY4Mjk2MWNjYmI0YzM5ZTRlOTliMGI1YTNhZDAyOGYzODYzNjc1ODE1YTExODNjNzIxMjhiOWI1MzY0MiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzRkMzZlNzUwYjkxMTk1YmU3YzkxMDk0MDgzYWYxYTI5MjUxNzNiMTg4MzkxNmIyMzYyN2YyMGQzZTI5OThiYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzM1MmJiZDRmMTA5MTY5YTBjMWUzYTE0N2VhNGQ2YWRiZGIwOGU0MzkzMGQ1MDM0MTM2MzEzOTk0YzE5OGEyMiJ9"
+          "resource": "repo://package.json",
+          "version": "repo-file-v1:sha256:4b1b9596b78b202b81e917f1c2522240e76da6f2e8c3bf7aa26db4628f3e071e"
         }
       ]
     },
@@ -291,8 +273,8 @@
           "version": "repo-file-v1:sha256:1b4901e48faee154df09effd03f8f0ad6c99414891daf446dd129e568c108e20"
         },
         {
-          "resource": "repo://package.json#L15-L19",
-          "version": "repo-lines-v1:sha256:36c27cbb836113b8aaf2525d9a684941101529884a56b9de595b71c228a59fa7:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2JjMWE5OThiYjIxZDNiYjczYjBhZGFkNzY4Y2RhM2RiMjYxYzUwNjVhNzIzMDY4NmIyNGEwZjhiNTc5MmU4NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzNhOTY4Mjk2MWNjYmI0YzM5ZTRlOTliMGI1YTNhZDAyOGYzODYzNjc1ODE1YTExODNjNzIxMjhiOWI1MzY0MiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzRkMzZlNzUwYjkxMTk1YmU3YzkxMDk0MDgzYWYxYTI5MjUxNzNiMTg4MzkxNmIyMzYyN2YyMGQzZTI5OThiYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzM1MmJiZDRmMTA5MTY5YTBjMWUzYTE0N2VhNGQ2YWRiZGIwOGU0MzkzMGQ1MDM0MTM2MzEzOTk0YzE5OGEyMiJ9"
+          "resource": "repo://package.json",
+          "version": "repo-file-v1:sha256:4b1b9596b78b202b81e917f1c2522240e76da6f2e8c3bf7aa26db4628f3e071e"
         }
       ]
     },
@@ -323,6 +305,6 @@
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-15T14:07:58.904Z"
+    "at": "2026-11-17T06:43:02.055Z"
   }
 }

@@ -1,18 +1,22 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:11aee9db66f5ab22db2dfbae16400e03e3cb1ff18d703e6574d5427f9518a33d",
+  "pageVersion": "sha256:235c69b7f19b576ce89785dbadd171c15ad5096ff8e39d9731edaa1323448abf",
   "claims": [
     {
       "id": "claim_268478c2f76e469a8fa21a385f68eec1",
-      "statement": "布局为 headless bundled ELK 的 async computeGraphLayout，固定 layered/RIGHT/compound/orthogonal/seed，无 DOM 或手写泳道求解。",
+      "statement": "computeGraphLayout 是 headless async API；默认 topology 用 bundled ELK 的固定 layered/RIGHT/compound/orthogonal/seed，swimlane 分支用七阶段/责任泳道布局，无 DOM。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-canvas-interaction/src/adapter/domainToElk.ts#L5-L23",
-          "version": "repo-lines-v1:sha256:6ac586f09584a07a77b492794cf1f3844b71e71da8e8293dbff7f99d8954b7d9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc1YmJlYjQ4YzcyZGM2YzAwNjQ5NjYxMjA1NWQ1Yjk3MDk1NzVlMjY3YzhmM2JmOTBhZDY3MTg2MDhlN2NlZTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJiYzkzZTM2MTkwYTBmMTI3MWIyMDdlM2I1ZDc3MmVhNDBkMmJhNDVhY2UwZGViOTJjMjBiMjM4ZDQwMzU0ZDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI2MjVjYjczYTgxM2QwMjdlMGNlM2QwOGVlODRkZjRiNGNiYTYyYTViMjM5NGNjYWJiMTRjNjM2ZjM3YWU4N2EifQ"
+          "resource": "repo://libs/evidence-canvas-interaction/src/adapter/domainToElk.ts",
+          "version": "repo-file-v1:sha256:397a319708f78bb179634d63f6ed06baee1f657b2fd7f48471cfb74bdccbbb1d"
         },
         {
           "resource": "repo://libs/evidence-canvas-interaction/src/engine/layoutEngine.ts",
-          "version": "repo-file-v1:sha256:62de69698eed9b42ae0181100ebbcb6f816cbe718ea36024c5cc6aadb1af0bf0"
+          "version": "repo-file-v1:sha256:d18682c6a97f6ee08d62b6406c4d377184f05d4c39cdb43dea7cc0a7cc5278e8"
+        },
+        {
+          "resource": "repo://libs/evidence-canvas-interaction/src/engine/swimlaneLayout.ts",
+          "version": "repo-file-v1:sha256:4419877e76aac907a96282e1bc623460845088b922d839092cdb03f944bfa340"
         }
       ]
     },
@@ -41,8 +45,8 @@
       "statement": "跨 Context 或 plays_role 边为 dashed，plays_role 有箭头；责任 links 仅来自显式 roleRefs/responsibleRoleRef，旧 crossing kind 分类已删除。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-canvas-interaction/src/adapter/elkToLayout.ts#L108-L177",
-          "version": "repo-lines-v1:sha256:1a43bfe5eea2a33728cf0705ee6f2a45ada8e59ed27b1c09275c48fba7332b2f:eyJzZWxlY3RlZExpbmVDb3VudCI6NzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIzOTU1NDg3NzNiYzVhZjA0M2JmOTk0ZjMxOWNkYjIyYmFkZDExNmY0ODdjMTFlNmU5NzUxZWMzYjE3ZWYyMDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI4NGExZDIzMWE1ZDhjYjdkMDVkZjc4NTA5ZTA0YmUzNWViOWM5ZjBkMTkwMjk0Yzc0NzFhMDBlYzljMmFiN2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJkZjEyYzkyMmFiOTIzZjYzNjNkMTFkZTM5ODQ5YTVmNmQzZTBmZWZjYWIyM2FiZmEzNGQ0ZGY1NTUwMWRlYzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgyMDFlOTc4ZDJhNTI3YTUxNzYwZTBhMmUxYjcwOTU2MWI4YjZmMGU1M2NhMjQ2YzhiODNmNWMyZjgzZmQ1YWMifQ"
+          "resource": "repo://libs/evidence-canvas-interaction/src/adapter/elkToLayout.ts",
+          "version": "repo-file-v1:sha256:366bf3f1951b0010e7e3415fcd5dbc0eaed1f5f7cbf6ce747bff29e43fafb81e"
         }
       ]
     },
@@ -78,15 +82,15 @@
     },
     {
       "id": "claim_f119e31896a64934870a8752399082c9",
-      "statement": "editor 持一份 ModelSession，事件读取状态后异步求图，reload 重置历史，不再同步算生命周期泳道。",
+      "statement": "editor 持一份 ModelSession，useGraphLayout 按 graph/density/layoutMode 异步求图，只发布当前请求的 geometry；reload 重置历史。",
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/renderer/state/useEditorSession.ts",
-          "version": "repo-file-v1:sha256:309e59cdb34b418feeaad8c653d5ac78fabb0dd69f485c25006352d36352baaf"
+          "version": "repo-file-v1:sha256:1c370ef02de7e823f8f917263addbe788c56313c6b140e44b726aa7937aab347"
         },
         {
           "resource": "repo://apps/desktop/src/renderer/state/useGraphLayout.ts",
-          "version": "repo-file-v1:sha256:2fa0c689d7668cbf1821d9419c4ccbb6589f63bf25c30dc8a9a98ee4ea32ee4c"
+          "version": "repo-file-v1:sha256:35a26da5fa7435c176d0fc6571cae2995f9ea12c901c8a83e8c9a20bad5d4d6d"
         }
       ]
     },
@@ -142,11 +146,11 @@
     },
     {
       "id": "claim_ec010b2882bc41729679105cc95e0ee5",
-      "statement": "React Flow 管视口、partial marquee/fit，非模型拖拽编辑，缩放范围在 renderer 为0.25–4，pane click 清选区。",
+      "statement": "React Flow 管视口、partial marquee/fit，节点不可拖拽/连线，缩放范围 0.1–2，pane click 清选区。",
       "evidence": [
         {
           "resource": "repo://libs/desktop/feature-canvas/src/CanvasViewport.tsx",
-          "version": "repo-file-v1:sha256:2fac7bb934a71a9675e021ef50defb230f43bbfcc5c300aadccfd3fde9866044"
+          "version": "repo-file-v1:sha256:3e1003959f9205c6291376a4098fcabfbed4f0fdba0b245043f65c0e32b6b94e"
         }
       ]
     },
@@ -155,11 +159,11 @@
       "statement": "adapter 父前子、local box+parentId，显式尺寸和 handles；关系/pairLink 直接消费 ELK 世界坐标路由。",
       "evidence": [
         {
-          "resource": "repo://libs/desktop/feature-canvas/src/useReactFlowAdapter.ts#L121-L191",
+          "resource": "repo://libs/desktop/feature-canvas/src/useReactFlowAdapter.ts#L133-L203",
           "version": "repo-lines-v1:sha256:7a96d29848f03520ef217e0bdcdc2002a4182920eec453aae7ff190f5626b384:eyJzZWxlY3RlZExpbmVDb3VudCI6NzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5YmMyZjIwNmExOWQ0YmM3NTJlNDIxMDhmMjdjZGQxNGE4OTcyZGNhYjc2YmRkODc0MDg4MWE0Y2RhMDExYWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlmOGExOGE4ZmJlMjIyMzdlMTg1OGRkZWNiODc3NzI2NWYwYTgwYzlhN2RiYTY4Y2Y5Y2Q1NjMwMjZkMGM2OWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ0NzhlODA5NTE1Mzg0MTk0ZDg0YTJjOWNiOThlNTc5MGNkZGYyODZlYTJmMzZiZjMwOWJhOTdiZTVhOTI1NGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUyOTAzMjA5ODdhNzg3ZTBhMGM5YWFiMDI3YWNkMThhMWE2M2RmMzAyMGM4MDg4NzMyNWEyNmE5MjhlZTc5YzYifQ"
         },
         {
-          "resource": "repo://libs/desktop/feature-canvas/src/useReactFlowAdapter.ts#L265-L291",
+          "resource": "repo://libs/desktop/feature-canvas/src/useReactFlowAdapter.ts#L277-L303",
           "version": "repo-lines-v1:sha256:a24165608828a6e7b77e7783ca30452f2ad76ed3faf5bacb3f37fb1ee9075ae7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1Mjk1NzMxYWJmZDJjNmEyMWEzZmMzMjBlZmM4MTBhY2U5OTM3MzY4YjgzZTk2N2Q5OWJkMzQxNjkyNDdlNjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhYjBhMDQwNDA5YzYzN2MwYWZiNmVmODI4YzdhYTY1NzE0NTAxNmUxNGRmNGVmODQ5MDNjNGI1Yzc1YTgxNDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZhZDVjZjQ2M2JkNjUxZTQ3OGQ3MTg4NTVlYjU4NTMxZmY5ZTM2OWY4MTg1Y2IwMmJhYmUyMGQ2NTcwYWRlMGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg2NzI0YWUzYWJlMjgwMTMyODM4NGFlYTlhZGUwMThmNzZkZGZiYzg5ODAyNTc2MDhiMmMzNzIyZmY3MThmZmEifQ"
         }
       ]
@@ -169,12 +173,12 @@
       "statement": "Framing is token-driven: fitToContent fits boundsOf(layout, scope) with padding, a change of scope or density refits and clears every hover mark, zoomCommand and focusRequest are deduplicated by monotonic tokens so a re-render cannot replay a key press, and boundsOf falls back to the scope bounds or the layout bounds with a 1 px minimum.",
       "evidence": [
         {
-          "resource": "repo://libs/desktop/feature-canvas/src/CanvasViewport.tsx#L270-L394",
-          "version": "repo-lines-v1:sha256:b4300b03585f3222a7f2367b8086defa062910e90ab3876c201ac5eb078d2c55:eyJzZWxlY3RlZExpbmVDb3VudCI6MTI1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJkYzMzZWFiYjA2NmJmNDg1NDc0Njg2MzhkY2YwOGYxMjY2NmJhNmUzMDhmYjIyODcwYmRhMGZmYmZiYzExNDA4IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIxMWJhMzNkYzU2YzRmZjk3Mzg4YmMwZmRkYjBmNDRhOTAzNWY5YzE5OGZlYzU4M2E3NDVkZmI0MzgyNWY2YTAwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyODJkZDJlMTkwOWYyZjRlODllMWFkOWE2ZGVhODdkMTgzZjBmZWI0MDQ4NzA1YmUyZWRjODY2ZWVmMWQzZjQ3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI0YTQ5YWRlYTMxOTJkMDdkYTQ3OGNmZmZlZWI5MjYxOTJkMWQ4OTNiN2MwZTUzODcyZWY1YmJmZTBkZmI5NTRmIn0"
+          "resource": "repo://libs/desktop/feature-canvas/src/CanvasViewport.tsx",
+          "version": "repo-file-v1:sha256:3e1003959f9205c6291376a4098fcabfbed4f0fdba0b245043f65c0e32b6b94e"
         },
         {
-          "resource": "repo://libs/desktop/feature-canvas/src/useReactFlowAdapter.ts#L315-L327",
-          "version": "repo-lines-v1:sha256:d5df7b8b6a8b73b0b8e2aef20b91ed447e95f4735b08d0d83906141361c66768:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5ODJmNzI2NTI4OWZlNmUzZGI4ZmE1ZTBkZjUxZmY5YzQyNmNjMDY2ZDJiMDE0MjI2YjgwNjFmMjY3OTdkODUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRjN2FmNjU2Y2Y0YjkwNDlmOTFiYjhiYmMxMDE3ZmM4ZWIzMjE5MTczOTljYzQxZDM4YTcyZjU4N2IwMjMwMjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://libs/desktop/feature-canvas/src/useReactFlowAdapter.ts",
+          "version": "repo-file-v1:sha256:88e5828e161155425199b060141328d381211fc4087df4f1886d044867b31666"
         }
       ]
     },
@@ -183,44 +187,44 @@
       "statement": "The viewport hands its floating island a CanvasHudControls contract (zoom, zoom in/out, reset to 1:1, fit to content, grid style, minimap toggle), and the app's CanvasFloatingHud adds workspace concerns on top — view mode, card density, split target, clear selection — while object creation is deliberately absent because a Context and role bindings must exist first.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/components/canvas/CanvasFloatingHud.tsx#L75-L121",
-          "version": "repo-lines-v1:sha256:25a36e170130efea90fefa8fe2d3598e6dfc750cef8b955e008b60c9ff8f048c:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAwNjQ0YzkzZmMwNDg5NGFiZDk0MjcxN2MzNzQ1MjYzN2JlYjkxYjc0ZWVjN2NhODg3YjFhNTg1MTgwNWU3MTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MzY2MmQ4NDUxNmY2OGE4NWYyYzYyMWVjNDAxZTBkYWYzMDUxODM1ZTNhZTdmMzQxMGQwMTU3NzJiMDlmNmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3YjFkNTRkZTExYjY2ODVjOTMzYTI4ZmEzYzg5YmM3MmI5YWE2ZmQzZDgxM2EyNjM0NzA4YzRiYTgxNjQ1MDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJkNzc4OWZhOTI4YzRlODQxNTg0ZDRiZThhN2VlNmRmYjExN2MyNjBhODFjNjNhMWI5ZThhOTViZjQ4NTczZGYifQ"
+          "resource": "repo://apps/desktop/src/renderer/components/canvas/CanvasFloatingHud.tsx",
+          "version": "repo-file-v1:sha256:9e9d7ecb8b4c7662f8cb7c78777d27188c637d6336383846da1949cdd2df06ae"
         },
         {
-          "resource": "repo://libs/desktop/feature-canvas/src/CanvasViewport.tsx#L93-L125",
-          "version": "repo-lines-v1:sha256:f8d52d9d10ad43cb33676546fe6520b59c00a6dc4256e0a6efa5db38767d9186:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5Yjc2NmJhYmU5NzcyY2EzNzE4YTk2ZDE2NzNkMmY0YzhjMDkyY2FhZTQxYmEzN2NmOTc1YThiYmNjZmRlZGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiZTkzNTU3YmE5MDE4Zjg3Njg4MmQ5M2JiMTNiMzA5NmZlYWQ3ODVmYTg3NjI2MDMxY2RhYzljNThjZWMxMjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcxNWM2YzJiODg1ZDhiNDAyODc3ODFmZTNhODcwY2Q4NzM0Njg4YzY2NTdhZjA0YTcyZTlmNjdmYjA0ZGVmZTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI0N2MzNzkyMzNmMmU2NDhjNWNjZTE1YTNlNmFmN2Y1MWQzMTBiZWJlNDE5ZDliOTUzMzAxMzYyMTZjZDIwYTYifQ"
+          "resource": "repo://libs/desktop/feature-canvas/src/CanvasViewport.tsx",
+          "version": "repo-file-v1:sha256:3e1003959f9205c6291376a4098fcabfbed4f0fdba0b245043f65c0e32b6b94e"
         }
       ]
     },
     {
       "id": "claim_71d69c108dcf4e8f84870029667bcd3d",
-      "statement": "NodeCard draws a business object as a sticky note with a category spine and a clock shape (interval for rfp, proposal and fulfillment_request; moment for contract and fulfillment_confirmation; card otherwise) plus party, responsibility and API-route badges and standard-density metadata, and makes out-of-scope objects non-interactive; EntityNode adds only the measured box and invisible handles, and ContextGroupNode is non-interactive paper.",
+      "statement": "NodeCard 按 interval/moment/card 表现 Evidence 时间，domainRole participant 用 capability 外形；包含 party/责任/API badges，out-of-scope 不交互，Context 为底纸。",
       "evidence": [
         {
-          "resource": "repo://libs/desktop/feature-canvas/src/EntityNode.tsx#L17-L63",
-          "version": "repo-lines-v1:sha256:a6788b6125b841427b11a91b67351020460901a2687ba874cb8ff76610d0654b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhmMzdjNzczZGEzMWQ0NTI2OGNlNGQ5MmVhYWQxMmZmMDI4Mzg3MTUyN2NlMjU2ZjY0NDlhNTIwMjIxMzYwYzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdmNTM3ZGJhZTY5MTQxMDdkZTU2MWViNGNiMGM2M2VlMWZiNWNiYTJkODZjYmIzNTI1YTc2MjA2ZTNhODY2MDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU4OTg4MzFiN2NmMWI5ZmE1NTYxYjVkM2VkZjAyOGI5OTcwYmE0NGQ0ODQyNjY1YWE5NzQzNjBkMDFiYWI3MDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk2YWMyZGIwNTkwZjlmZmExMGY5ODBhNzY3NTIwNDZjNzViMTY3M2NiMTJhZjA5N2NjMGNmYmEzZTMxZWYyNTMifQ"
+          "resource": "repo://libs/desktop/feature-canvas/src/EntityNode.tsx",
+          "version": "repo-file-v1:sha256:66dd64b0bdba48fe97e5eadd43f465680c7992cb676d0845d5fd67d5b7e2953c"
         },
         {
-          "resource": "repo://libs/desktop/feature-canvas/src/NodeCard.tsx#L114-L215",
-          "version": "repo-lines-v1:sha256:1ee0e29d51c10bcf6aa0ef7316b8536d7e145cfdf15cf290cd26588dc7cacac6:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJmMDVjNGRkMzQyNTFjM2NlMjA0MDM4ZjM0OTY1ZTEyMWYyNTI0OTMyMjJkZGYxNmM0ODUxZTRhNzk1YmE4YzliIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIxYjAyNTM1NzkwYWM1Zjc2Mzc3MWYxM2I2ZTNmMzVlOTIwODVkNDcwZDE1NzkyNGM1ZWQ4MTQyOTllNTdiNjkyIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIwZmZmYzNmZjc4ZDViNjZkYWEzNDQ0NTUzYmZkYmQwZWQ0ZjVlNTVmNDQwZDY0OWFmZWE1ODdkZDZhMTY0M2ZkIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIxNzFiNmJmNmZlZDc0YTcwMzQyOTk3ZDkzYjkyMGM2M2I4OTVlOTY4ODkxNTgwN2NkODk5NGI5OWVmMWZmZDIzIn0"
+          "resource": "repo://libs/desktop/feature-canvas/src/NodeCard.tsx",
+          "version": "repo-file-v1:sha256:81849baf250ecd4f1c1143418ec2d157459caafd7e1ff8e4adff433a884df2cc"
         },
         {
-          "resource": "repo://libs/desktop/feature-canvas/src/colors.ts#L73-L125",
-          "version": "repo-lines-v1:sha256:1ae48d88ee9f3219ea15ee26934b907d671387e32049bbc6fbe9fb338503af39:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNhZDY0ZDI1MTRhNmY1NDY5Yzk3MjQ5YzE2ZDM4NTVkYTIwMzVjNjhlZWFmNGFkMWQ3NWQ0MjMwYjk1NGZmZjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://libs/desktop/feature-canvas/src/colors.ts",
+          "version": "repo-file-v1:sha256:def1a12c21d089fd522ad6f9549c62eaf4dfe168ca802b290ef2bad2f1a47db3"
         }
       ]
     },
     {
       "id": "claim_91446fad50bb4864ba5a75ffb8050f6e",
-      "statement": "关系边绘 ELK polyline、halo/cardinality/hover label，plays_role 箭头且简化密度默认 muted；pairLink 是细虚线不再私造 midpoint。",
+      "statement": "关系绘 layout routed polyline、诊断/cardinality/hover，flowKind 区分 primary、breach_compensation、escalation 的颜色/线型，plays_role 有箭头；pairLink 为细虚线。",
       "evidence": [
         {
           "resource": "repo://libs/desktop/feature-canvas/src/FulfillmentEdge.tsx",
-          "version": "repo-file-v1:sha256:e132061022c1d3504444682c15480896c31004f401e87538714a2e3fa4f8ae22"
+          "version": "repo-file-v1:sha256:55c34c1a30283ac7dc5bd30e201479ff720265fcf181d9ab870554031c6a37e7"
         },
         {
-          "resource": "repo://libs/desktop/feature-canvas/src/useReactFlowAdapter.ts#L211-L245",
-          "version": "repo-lines-v1:sha256:7ff4d017f17191da3ca3a678d7559925af2074e4e6d188c60d1c4f0b68cd29ae:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYwMDE2OWI3MmUyNjk4ZGZkMWY0OTUyODg1N2Q0ZDhjYTAyYjkzNjY1NjIxMzQ2ZjA2NDZmZTRjZGM1MWI2NTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhhMjk1OWVjODgzNTJkMzk1ZWUxNWRlNWMyM2RhYzNmYmQzZDllNDcxYWQ4YWVjZWE3NDYzNDNmZjI2ZjdhMTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBiYmJlMTNiMWU4YTY2YTQzZTJkZDU5ZDY4OGNlMzExMWEwYmI2ZTYxNGIzZDAyMWJmY2JjMTc3NTIzNGNkMTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYyY2QzMmNjZjNjZmJlZDI0MDY4Yzg5NmYzZGVkYWY5OGFjYzE3MWUyOGEzZTYzZjE2ZWRlZmE3OGMzMzA3YTgifQ"
+          "resource": "repo://libs/desktop/feature-canvas/src/useReactFlowAdapter.ts",
+          "version": "repo-file-v1:sha256:88e5828e161155425199b060141328d381211fc4087df4f1886d044867b31666"
         }
       ]
     },
@@ -285,12 +289,12 @@
       "statement": "KeyDataLedgerSheet is the wide ledger, opened from the attribute grid, the inspector footer or Alt+L; it edits the same session, states the field and decision-owed counts, edits the active row's expression from a CelFormulaBar, and captures Escape on window with stopPropagation so closing it does not clear the canvas selection.",
       "evidence": [
         {
-          "resource": "repo://libs/desktop/feature-inspector/src/RightInspector.tsx#L68-L100",
-          "version": "repo-lines-v1:sha256:b5deda235e46ce57f2fde2e122c01588c2f95f8ca905f33aede3aa13a11702c1:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ0NTk0MzQwOWRhYTU4ZDE3NjhiMGM4NzczMTRkMzVjMzAwNTQwM2VjY2FlNDFkOWJhZjE5NDg1NjE1MjY1NTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM3ZWVjNTVmMmJhZjIwYjEzODY5ZDM1Y2M4M2Y1OTFkZmI2M2U0NzE1NTA4OTJhNzgwODQ0ZWEzM2YzMDEyOTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJjZGNlMmE2ZWQyMjNkMTM1ODU2M2MwMGI3ZDZmODcxNGE4NzY2YjMxNGRlNGFiNzIyN2RjY2E3NDc4MWQ4YmMifQ"
+          "resource": "repo://libs/desktop/feature-inspector/src/RightInspector.tsx",
+          "version": "repo-file-v1:sha256:0ad7256b35a46b8b9ffe52d02264c7b142e7c1afcc8e6f941ff2eb67dfaba149"
         },
         {
-          "resource": "repo://libs/desktop/feature-inspector/src/inspector/KeyDataLedgerSheet.tsx#L30-L160",
-          "version": "repo-lines-v1:sha256:d6b6e5216a3687be17e76ffd90c6ba278d511891d2afc29979178c050bb64b48:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2ZDAxZmYxNDhiMDQwOTZlMjcxY2FkNjJjZWYwZjgxZTFkMGJlZDQ5NjE3MzNmMzlhZDQ3MmU2MmU3NGY1ZWFiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIxYmUwNDI0ZWIwNDAyMjRkMjBlNDZjOGVkZTgzZjkzMWRkNTI0MDBmMWNmZGY2MGYxZTE3NDM4ZTM1MjkwZjY4IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJiY2EyM2VjMGRjYWJkNThiNzVkNjg5ODFkNTE5NzM1YjZhYmYzOTk3ZGI5M2Y4MTM0OTBlMDgxZTdmNmJiZmIzIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI3ZGUxM2RlMDA0MWRjZGMzZGE3ODZlZmExMGYxNjQ0OTI5NjJjMWM4ZjZmODZkZDc3ODkwMTllOGQxY2ExMjAzIn0"
+          "resource": "repo://libs/desktop/feature-inspector/src/inspector/KeyDataLedgerSheet.tsx",
+          "version": "repo-file-v1:sha256:c63cb60762ae68036d7cc8ba05df0d732947fa42eb0917b775a8e45a61bb21ce"
         }
       ]
     },
@@ -333,6 +337,6 @@
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-15T14:07:58.904Z"
+    "at": "2026-11-17T06:43:02.055Z"
   }
 }
