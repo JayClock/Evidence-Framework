@@ -23,10 +23,10 @@ describe('buildDeliveryRoutes', () => {
 
     expect(paymentRequest?.method).toBe('POST');
     expect(paymentRequest?.path).toBe(
-      '/product-procurement/product-procurement/{contractId}/payment/request',
+      '/product-procurements/{contractId}/payment',
     );
     expect(paymentConfirm?.path).toBe(
-      '/product-procurement/product-procurement/{contractId}/payment/request/confirmation',
+      '/product-procurements/{contractId}/payment/confirmation',
     );
     expect(paymentConfirm?.requestRef).toBe('request.payment');
     expect(paymentConfirm?.serviceId).toBe('service.product-procurement');
@@ -45,17 +45,13 @@ describe('buildDeliveryRoutes', () => {
     const routes = buildDeliveryRoutes(await model());
     const open = routes.find((route) => route.purpose === 'open');
 
-    expect(open?.path).toBe('/product-sourcing/product-inquiry');
+    expect(open?.path).toBe('/product-inquiries');
     expect(open?.serviceId).toBe('service.product-sourcing');
     expect(
       routes
         .filter((route) => route.contextRef === 'context.product-sourcing')
-        .map((route) => route.serviceId),
-    ).toEqual([
-      'service.product-sourcing',
-      'service.product-sourcing',
-      'service.product-sourcing',
-    ]);
+        .every((route) => route.serviceId === 'service.product-sourcing'),
+    ).toBe(true);
   });
 
   it('reads a domain Context instead of writing it', async () => {
@@ -72,12 +68,12 @@ describe('buildDeliveryRoutes', () => {
     const propose = routes.find((route) => route.purpose === 'propose');
 
     expect(propose?.path).toBe(
-      '/product-sourcing/product-inquiry/{rfpId}/product-quotation',
+      '/product-inquiries/{inquiryId}/product-quotation',
     );
     expect(propose?.summary).toContain('回应商品询价');
   });
 
-  it('leaves a quote at the lane root when the model ties it to no enquiry', async () => {
+  it('leaves a quote at its business root when the model ties it to no enquiry', async () => {
     const document = await model();
     const orphaned = {
       ...document,
@@ -90,7 +86,7 @@ describe('buildDeliveryRoutes', () => {
       (route) => route.purpose === 'propose',
     );
 
-    expect(propose?.path).toBe('/product-sourcing/product-quotation');
+    expect(propose?.path).toBe('/product-quotations');
     expect(propose?.summary).toContain('模型未声明所属征询');
   });
 
@@ -109,15 +105,14 @@ describe('buildDeliveryRoutes', () => {
       routes.find((route) => route.id === 'route.request.request.payment'),
     ).toMatchObject({
       shape: 'collection',
-      itemPath:
-        '/product-procurement/product-procurement/{contractId}/payment/request/{requestId}',
+      itemPath: '/product-procurements/{contractId}/payments/{paymentId}',
       allowedPartyRoleRefs: ['role.seller'],
       exposure: 'external',
     });
     expect(
       routes.find((route) => route.id === 'route.confirm.confirmation.payment')
         ?.path,
-    ).toContain('/request/{requestId}/confirmation');
+    ).toContain('/payments/{paymentId}/confirmation');
     expect(
       routes.find(
         (route) => route.id === 'route.request.request.wechat-payment',
@@ -141,6 +136,57 @@ describe('buildDeliveryRoutes', () => {
         (route) => route.id === 'route.request.request.payment',
       )?.shape,
     ).toBe('collection');
+  });
+
+  it('gives every created resource a canonical GET, including proposal signing', async () => {
+    const routes = buildDeliveryRoutes(await model());
+    for (const route of routes.filter((route) => route.method === 'POST')) {
+      expect(
+        routes.some(
+          (read) =>
+            read.method === 'GET' &&
+            read.path === route.itemPath &&
+            read.entityRef === route.entityRef,
+        ),
+      ).toBe(true);
+    }
+    const sign = routes.find(
+      (route) =>
+        route.id ===
+        'route.sign-from-proposal.product-quotation.contract.product-procurement',
+    );
+    expect(sign).toMatchObject({
+      path: '/product-inquiries/{inquiryId}/product-quotation/product-procurements',
+      itemPath: '/product-procurements/{contractId}',
+      serviceId: 'service.product-procurement',
+    });
+  });
+
+  it('keeps addresses when contexts move or a projection is scoped', async () => {
+    const document = await model();
+    const paths = (routes: ReturnType<typeof buildDeliveryRoutes>) =>
+      routes
+        .map(({ id, path, itemPath }) => ({ id, path, itemPath }))
+        .sort((a, b) => a.id.localeCompare(b.id));
+    const original = buildDeliveryRoutes(document);
+    const moved = JSON.parse(
+      JSON.stringify(document).replaceAll(
+        'context.product-procurement',
+        'context.new-deployment',
+      ),
+    );
+    expect(paths(buildDeliveryRoutes(moved))).toEqual(paths(original));
+    expect(
+      paths(
+        buildDeliveryRoutes(document, new Set(['context.product-procurement'])),
+      ),
+    ).toEqual(
+      paths(
+        original.filter(
+          (route) => route.contextRef === 'context.product-procurement',
+        ),
+      ),
+    );
   });
 
   it('states the derivations a service owns instead of exposing them as inputs', async () => {

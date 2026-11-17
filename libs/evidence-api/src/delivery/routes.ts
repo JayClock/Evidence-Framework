@@ -18,7 +18,8 @@ import {
 import {
   createSegmentAllocator,
   operationIdFor,
-  rawSegmentOf,
+  pluralSegmentOf,
+  itemParameterOf,
   serviceIdOf,
 } from './segments.js';
 
@@ -93,6 +94,10 @@ export interface DeliveryRoute {
   stamped: readonly DeliveryField[];
   responses: readonly DeliveryRouteResponse[];
   shape: 'singleton' | 'collection';
+  /** A collection read returns HAL summaries rather than one entity. */
+  responseShape: 'item' | 'collection';
+  /** Path variables retain their modeled identity for acceptance captures. */
+  parameterEntityRefs: Readonly<Record<string, string>>;
   itemPath: string;
   allowedPartyRoleRefs: readonly string[];
   exposure: 'external' | 'internal';
@@ -167,398 +172,393 @@ const answeredRfpOf = (graph: DomainGraph): Map<string, string> => {
   return answered;
 };
 
-/**
- * Every route one model implies, in Context order.
- *
- * The order is derived from the model (Contexts sorted by id, each Context's
- * objects sorted by id) so two projections diff cleanly and a reviewer can match
- * a line to an object.
- */
+/** Business addresses are independent of the Context that deploys them. */
 export const buildDeliveryRoutes = (
   document: DomainModelDocument,
   contextRefs?: ReadonlySet<string>,
 ): DeliveryRoute[] => {
   const graph = createDomainGraph(document);
-  const segments = createSegmentAllocator(
-    graph.entities().map((entity) => entity.id),
-  );
-  const routes: UnaddressedRoute[] = [];
-  const contexts = graph
+  const answeredBy = answeredRfpOf(graph);
+  const roots = graph
     .entities()
     .filter(
       (entity) =>
-        entity.category === 'context' &&
-        (contextRefs === undefined || contextRefs.has(entity.id)),
-    )
-    .sort((left, right) => left.id.localeCompare(right.id));
-
+        (entity.category === 'evidence' &&
+          (entity.kind === 'contract' ||
+            entity.kind === 'rfp' ||
+            (entity.kind === 'proposal' && !answeredBy.has(entity.id)) ||
+            (entity.kind === 'other_evidence' &&
+              entity.attributes?.some((field) => field.valueType === 'id')))) ||
+        (entity.category === 'participant' && entity.kind === 'thing'),
+    );
+  const rootSegments = createSegmentAllocator(
+    roots.map((entity) => entity.id),
+    pluralSegmentOf,
+  );
+  const routes: DeliveryRoute[] = [];
+  type Address = {
+    path: string;
+    itemPath: string;
+    shape: DeliveryRoute['shape'];
+    parameterEntityRefs: Record<string, string>;
+  };
+  const address = (
+    path: string,
+    entityRef: string,
+    shape: DeliveryRoute['shape'],
+    parent?: Address,
+  ): Address => {
+    let parameter = itemParameterOf(entityRef);
+    if (parent?.parameterEntityRefs[parameter] !== undefined)
+      parameter = operationIdFor('item', entityRef) + 'Id';
+    return {
+      path,
+      itemPath: shape === 'singleton' ? path : path + '/{' + parameter + '}',
+      shape,
+      parameterEntityRefs: {
+        ...parent?.parameterEntityRefs,
+        ...(shape === 'collection' ? { [parameter]: entityRef } : {}),
+      },
+    };
+  };
+  const add = (
+    entityRef: string,
+    contextRef: string,
+    location: Address,
+    purpose: DeliveryRoutePurpose,
+    summary: string,
+    refs: {
+      contractRef?: string;
+      requestRef?: string;
+      confirmationRef?: string;
+    } = {},
+    suffix?: string,
+    primary?: Address,
+  ): void => {
+    const classified = fieldsOf(entityRef, graph);
+    const reading = purpose === 'read';
+    const item = primary ?? location;
+    const route: UnaddressedRoute = {
+      id: 'route.' + (suffix ?? purpose) + '.' + entityRef,
+      operationId: operationIdFor(suffix ?? purpose, entityRef),
+      method: reading ? 'GET' : 'POST',
+      path:
+        reading && suffix !== 'list' && suffix !== 'ledger'
+          ? location.itemPath
+          : location.path,
+      purpose,
+      serviceId: serviceIdOf(contextRef),
+      contextRef,
+      entityRef,
+      contractRef: refs.contractRef ?? null,
+      requestRef: refs.requestRef ?? null,
+      confirmationRef: refs.confirmationRef ?? null,
+      summary,
+      ...classified,
+      fields: reading ? [] : classified.fields,
+      responses: [
+        { status: reading ? 200 : 201, description: summary, entityRef },
+        ...(reading
+          ? [{ status: 404, description: '资源不存在' }]
+          : purpose === 'open'
+            ? []
+            : [
+                { status: 409, description: '业务窗口已关闭或资源状态冲突' },
+                { status: 422, description: '输入内容或业务角色不成立' },
+              ]),
+      ],
+    };
+    const allowedPartyRoleRefs = callerRoles(graph, route);
+    const responseShape =
+      reading &&
+      (suffix === 'list' || suffix === 'ledger') &&
+      location.shape === 'collection'
+        ? 'collection'
+        : 'item';
+    routes.push({
+      ...route,
+      shape: item.shape,
+      itemPath: item.itemPath,
+      responseShape,
+      parameterEntityRefs: {
+        ...location.parameterEntityRefs,
+        ...item.parameterEntityRefs,
+      },
+      allowedPartyRoleRefs,
+      exposure: allowedPartyRoleRefs.length === 0 ? 'internal' : 'external',
+      rules: graph
+        .rules()
+        .filter(
+          (rule) =>
+            rule.target?.entityRef === entityRef ||
+            Object.values(rule.bindings).some(
+              (binding) => 'ref' in binding && binding.ref === entityRef,
+            ),
+        )
+        .map(({ id, kind, expression, bindings, target, resultType }) => ({
+          id,
+          kind,
+          expression,
+          bindings,
+          ...(target === undefined ? {} : { target }),
+          resultType,
+        }))
+        .sort((a, b) => a.id.localeCompare(b.id)),
+      outputFields: graph
+        .attributesOf(entityRef)
+        .map((attribute) => fieldFor(attribute, graph, entityRef)),
+      examples: examplesOf(graph, entityRef),
+    });
+  };
+  const reads = (
+    entityRef: string,
+    contextRef: string,
+    location: Address,
+    refs: Parameters<typeof add>[5] = {},
+    listId = 'list',
+  ) => {
+    add(entityRef, contextRef, location, 'read', '读取资源详情', refs);
+    if (location.shape === 'collection')
+      add(
+        entityRef,
+        contextRef,
+        location,
+        'read',
+        '读取资源集合',
+        refs,
+        listId,
+      );
+  };
+  const contexts = graph
+    .entities()
+    .filter((entity) => entity.category === 'context')
+    .sort((a, b) => a.id.localeCompare(b.id));
+  // Allocate all addresses before scope filtering; a scoped export must keep the same URIs.
   for (const context of contexts) {
-    const serviceId = serviceIdOf(context.id);
-    const lane = rawSegmentOf(context.id);
-
     if (context.kind === 'contract') {
       const contract = graph.rootContractOf(context.id);
-
-      if (contract !== undefined) {
-        const contractSegment = segments.segmentOf(contract.id);
-        const contractFields = fieldsOf(contract.id, graph);
-
-        routes.push({
-          id: `route.sign.${contract.id}`,
-          operationId: operationIdFor('sign', contract.id),
-          method: 'POST',
-          path: `/${lane}/${contractSegment}`,
-          purpose: 'sign',
-          serviceId,
-          contextRef: context.id,
-          entityRef: contract.id,
-          contractRef: contract.id,
-          requestRef: null,
-          confirmationRef: null,
-          summary: `签署${contract.label}，双方权责自此成立`,
-          ...contractFields,
-          responses: [
-            {
-              status: 201,
-              description: '协议已签署',
-              entityRef: contract.id,
-            },
-            { status: 422, description: '条款缺失或双方角色不成立' },
-          ],
-        });
-
-        routes.push({
-          id: `route.read.${contract.id}`,
-          operationId: operationIdFor('read', contract.id),
-          method: 'GET',
-          path: `/${lane}/${contractSegment}/{contractId}`,
-          purpose: 'read',
-          serviceId,
-          contextRef: context.id,
-          entityRef: contract.id,
-          contractRef: contract.id,
-          requestRef: null,
-          confirmationRef: null,
-          summary: `读取${contract.label}及其全部履约状态`,
-          fields: [],
-          derived: contractFields.derived,
-          stamped: contractFields.stamped,
-          responses: [
-            {
-              status: 200,
-              description: '协议与履约全貌',
-              entityRef: contract.id,
-            },
-            { status: 404, description: '协议不存在' },
-          ],
-        });
-      }
-
-      for (const pair of graph.fulfillmentPairs()) {
-        if (pair.request.contextRef !== context.id) {
-          continue;
-        }
-
-        const requestSegment = segments.segmentOf(pair.request.id);
-        const contractRef = contract?.id ?? null;
-        const contractPart =
-          contractRef === null
-            ? `/${lane}`
-            : `/${lane}/${segments.segmentOf(contractRef)}/{contractId}`;
-        const requestFields = fieldsOf(pair.request.id, graph);
-
-        routes.push({
-          id: `route.request.${pair.request.id}`,
-          operationId: operationIdFor('request', pair.request.id),
-          method: 'POST',
-          path: `${contractPart}/${requestSegment}/requests`,
-          purpose: 'request',
-          serviceId,
-          contextRef: context.id,
-          entityRef: pair.request.id,
-          contractRef,
-          requestRef: pair.request.id,
-          confirmationRef: null,
-          summary: `发起${pair.request.label}，开启一个有截止时间的履约窗口`,
-          ...requestFields,
-          responses: [
-            {
-              status: 201,
-              description: '履约请求已登记，等待确认',
-              entityRef: pair.request.id,
-            },
-            { status: 409, description: '同一合同已有未关闭的同类请求' },
-          ],
-        });
-
-        routes.push({
-          id: `route.ledger.${pair.request.id}`,
-          operationId: operationIdFor('read', `${pair.request.id}.ledger`),
-          method: 'GET',
-          path: `${contractPart}/${requestSegment}`,
-          purpose: 'read',
-          serviceId,
-          contextRef: context.id,
-          entityRef: pair.request.id,
-          contractRef,
-          requestRef: pair.request.id,
-          confirmationRef: null,
-          summary: `读取${pair.request.label}的请求与确认账本`,
-          fields: [],
-          derived: requestFields.derived,
-          stamped: requestFields.stamped,
-          responses: [
-            {
-              status: 200,
-              description: '履约请求、确认与证明',
-              entityRef: pair.request.id,
-            },
-            { status: 404, description: '合同或履约项不存在' },
-          ],
-        });
-
+      if (contract === undefined) continue;
+      const root = address(
+        '/' + rootSegments.segmentOf(contract.id),
+        contract.id,
+        'collection',
+      );
+      const contractRefs = { contractRef: contract.id };
+      add(
+        contract.id,
+        context.id,
+        root,
+        'sign',
+        '签署' + contract.label + '，双方权责自此成立',
+        contractRefs,
+      );
+      reads(contract.id, context.id, root, contractRefs);
+      const pairs = graph
+        .fulfillmentPairs()
+        .filter((pair) => pair.request.contextRef === context.id);
+      const segments = createSegmentAllocator(
+        pairs.map((pair) => pair.request.id),
+      );
+      for (const pair of pairs) {
+        const shape = childShape(graph, contract.id, pair.request.id);
+        const segment = segments.segmentOf(pair.request.id);
+        const child = address(
+          root.itemPath +
+            '/' +
+            (shape === 'collection' ? pluralSegmentOf(segment) : segment),
+          pair.request.id,
+          shape,
+          root,
+        );
+        const refs = { ...contractRefs, requestRef: pair.request.id };
+        add(
+          pair.request.id,
+          context.id,
+          child,
+          'request',
+          '发起' + pair.request.label + '，开启一个有截止时间的履约窗口',
+          refs,
+        );
+        reads(pair.request.id, context.id, child, refs, 'ledger');
+        const confirmations = createSegmentAllocator(
+          pair.confirmations.map((entity) => entity.id),
+        );
         for (const confirmation of pair.confirmations) {
-          const confirmationFields = fieldsOf(confirmation.id, graph);
-
-          routes.push({
-            id: `route.confirm.${confirmation.id}`,
-            operationId: operationIdFor('confirm', confirmation.id),
-            method: 'POST',
-            path: `${contractPart}/${requestSegment}/requests/{requestId}/confirmations/${segments.segmentOf(confirmation.id)}`,
-            purpose: 'confirm',
-            serviceId,
-            contextRef: context.id,
-            entityRef: confirmation.id,
-            contractRef,
-            requestRef: pair.request.id,
+          const confirmationShape = childShape(
+            graph,
+            pair.request.id,
+            confirmation.id,
+          );
+          const base =
+            child.itemPath +
+            '/confirmation' +
+            (pair.confirmations.length > 1
+              ? '/' + confirmations.segmentOf(confirmation.id)
+              : '');
+          const confirmed = address(
+            base +
+              (confirmationShape === 'collection' &&
+              pair.confirmations.length === 1
+                ? 's'
+                : ''),
+            confirmation.id,
+            confirmationShape,
+            child,
+          );
+          const confirmationRefs = {
+            ...refs,
             confirmationRef: confirmation.id,
-            summary: `登记${confirmation.label}，关闭对应的履约请求`,
-            ...confirmationFields,
-            responses: [
-              {
-                status: 201,
-                description: '确认已登记，请求关闭',
-                entityRef: confirmation.id,
-              },
-              { status: 409, description: '请求已过期或已由其他确认关闭' },
-              { status: 422, description: '确认内容与请求不匹配' },
-            ],
-          });
+          };
+          add(
+            confirmation.id,
+            context.id,
+            confirmed,
+            'confirm',
+            '登记' + confirmation.label + '，关闭对应的履约请求',
+            confirmationRefs,
+          );
+          reads(confirmation.id, context.id, confirmed, confirmationRefs);
         }
       }
-
       continue;
     }
-
     if (context.kind === 'pre_contract') {
       const members = graph
         .entitiesInContext(context.id)
-        .filter(
-          (entity) =>
-            entity.category === 'evidence' &&
-            (entity.kind === 'rfp' || entity.kind === 'proposal'),
-        )
-        .sort((left, right) => left.id.localeCompare(right.id));
-      const rfps = members.filter((entity) => entity.kind === 'rfp');
-      const proposals = members.filter((entity) => entity.kind === 'proposal');
-      const answeredBy = answeredRfpOf(graph);
-
+        .filter((entity) => entity.category === 'evidence');
+      const rfps = members.filter(
+        (entity) =>
+          entity.kind === 'rfp' &&
+          (context.rootRefs === undefined ||
+            context.rootRefs.includes(entity.id)),
+      );
+      const rfpAddresses = new Map<string, Address>();
       for (const rfp of rfps) {
-        const rfpSegment = segments.segmentOf(rfp.id);
-        const rfpFields = fieldsOf(rfp.id, graph);
-
-        routes.push({
-          id: `route.open.${rfp.id}`,
-          operationId: operationIdFor('open', rfp.id),
-          method: 'POST',
-          path: `/${lane}/${rfpSegment}`,
-          purpose: 'open',
-          serviceId,
-          contextRef: context.id,
-          entityRef: rfp.id,
-          contractRef: null,
-          requestRef: null,
-          confirmationRef: null,
-          summary: `发起${rfp.label}，向对方征询方案`,
-          ...rfpFields,
-          responses: [
-            {
-              status: 201,
-              description: '征询已登记',
-              entityRef: rfp.id,
-            },
-          ],
-        });
-
-        routes.push({
-          id: `route.read.${rfp.id}`,
-          operationId: operationIdFor('read', rfp.id),
-          method: 'GET',
-          path: `/${lane}/${rfpSegment}/{rfpId}`,
-          purpose: 'read',
-          serviceId,
-          contextRef: context.id,
-          entityRef: rfp.id,
-          contractRef: null,
-          requestRef: null,
-          confirmationRef: null,
-          summary: `读取${rfp.label}及其收到的方案`,
-          fields: [],
-          derived: rfpFields.derived,
-          stamped: rfpFields.stamped,
-          responses: [
-            { status: 200, description: '征询与方案', entityRef: rfp.id },
-            { status: 404, description: '征询不存在' },
-          ],
-        });
-      }
-
-      for (const proposal of proposals) {
-        const proposalFields = fieldsOf(proposal.id, graph);
-        const rfp = rfps.find(
-          (candidate) => candidate.id === answeredBy.get(proposal.id),
+        const root = address(
+          '/' + rootSegments.segmentOf(rfp.id),
+          rfp.id,
+          'collection',
         );
-        // A proposal the model does not tie to an enquiry still has a business
-        // moment; it answers no particular window, so it sits at the lane root
-        // rather than being nested under a guess.
-        const path =
-          rfp === undefined
-            ? `/${lane}/${segments.segmentOf(proposal.id)}`
-            : `/${lane}/${segments.segmentOf(rfp.id)}/{rfpId}/${segments.segmentOf(proposal.id)}`;
-
-        routes.push({
-          id: `route.propose.${proposal.id}`,
-          operationId: operationIdFor('propose', proposal.id),
-          method: 'POST',
-          path,
-          purpose: 'propose',
-          serviceId,
-          contextRef: context.id,
-          entityRef: proposal.id,
-          contractRef: null,
-          requestRef: null,
-          confirmationRef: null,
-          summary:
-            rfp === undefined
-              ? `提交${proposal.label}（模型未声明所属征询）`
-              : `提交${proposal.label}，回应${rfp.label}`,
-          ...proposalFields,
-          responses: [
-            {
-              status: 201,
-              description: '方案已登记',
-              entityRef: proposal.id,
-            },
-            { status: 409, description: '征询已关闭' },
-          ],
-        });
+        rfpAddresses.set(rfp.id, root);
+        add(
+          rfp.id,
+          context.id,
+          root,
+          'open',
+          '发起' + rfp.label + '，向对方征询方案',
+        );
+        reads(rfp.id, context.id, root);
       }
-
+      const proposals = members.filter((entity) => entity.kind === 'proposal');
+      const segments = createSegmentAllocator(
+        proposals.map((entity) => entity.id),
+      );
+      for (const proposal of proposals) {
+        const rfpRef = answeredBy.get(proposal.id);
+        const parent = rfpAddresses.get(rfpRef ?? '');
+        if (rfpRef !== undefined && parent === undefined) continue;
+        const shape =
+          parent === undefined
+            ? 'collection'
+            : childShape(graph, rfpRef!, proposal.id);
+        const segment = segments.segmentOf(proposal.id);
+        const child =
+          parent === undefined
+            ? address(
+                '/' + rootSegments.segmentOf(proposal.id),
+                proposal.id,
+                shape,
+              )
+            : address(
+                parent.itemPath +
+                  '/' +
+                  (shape === 'collection' ? pluralSegmentOf(segment) : segment),
+                proposal.id,
+                shape,
+                parent,
+              );
+        add(
+          proposal.id,
+          context.id,
+          child,
+          'propose',
+          parent === undefined
+            ? '提交' + proposal.label + '（模型未声明所属征询）'
+            : '提交' +
+                proposal.label +
+                '，回应' +
+                graph.getEntity(rfpRef!)!.label,
+        );
+        reads(proposal.id, context.id, child);
+        for (const edge of graph
+          .outgoing(proposal.id)
+          .concat(graph.incoming(proposal.id))) {
+          if (edge.kind !== 'references' || edge.targetRef !== proposal.id)
+            continue;
+          const contract = graph.getEntity(edge.sourceRef);
+          if (contract?.category !== 'evidence' || contract.kind !== 'contract')
+            continue;
+          const primary = address(
+            '/' + rootSegments.segmentOf(contract.id),
+            contract.id,
+            'collection',
+          );
+          const sign = address(
+            child.itemPath + '/' + rootSegments.segmentOf(contract.id),
+            contract.id,
+            'collection',
+            child,
+          );
+          // Signing executes in the contract service while retaining the proposal URI.
+          add(
+            contract.id,
+            contract.contextRef,
+            sign,
+            'sign',
+            '接受' + proposal.label + '并签署' + contract.label,
+            { contractRef: contract.id },
+            'sign-from-' + proposal.id,
+            primary,
+          );
+        }
+      }
       continue;
     }
-
-    // A Domain Context is where a question is answered, so it is read, never
-    // written: a caller asks for the current answer instead of setting one.
     for (const thing of graph
       .entitiesInContext(context.id)
       .filter(
         (entity) =>
-          entity.category === 'participant' && entity.kind === 'thing',
-      )
-      .sort((left, right) => left.id.localeCompare(right.id))) {
-      const thingFields = fieldsOf(thing.id, graph);
-
-      routes.push({
-        id: `route.read.${thing.id}`,
-        operationId: operationIdFor('read', thing.id),
-        method: 'GET',
-        path: `/${lane}/${segments.segmentOf(thing.id)}`,
-        purpose: 'read',
-        serviceId,
-        contextRef: context.id,
-        entityRef: thing.id,
-        contractRef: null,
-        requestRef: null,
-        confirmationRef: null,
-        summary: `读取${thing.label}的当前结论`,
-        fields: [],
-        derived: thingFields.derived,
-        stamped: thingFields.stamped,
-        responses: [
-          { status: 200, description: '领域结论', entityRef: thing.id },
-        ],
-      });
+          entity.category === 'participant' &&
+          entity.kind === 'thing' &&
+          (context.rootRefs === undefined ||
+            context.rootRefs.includes(entity.id)),
+      )) {
+      reads(
+        thing.id,
+        context.id,
+        address('/' + rootSegments.segmentOf(thing.id), thing.id, 'collection'),
+      );
     }
   }
-
-  const requestPaths = new Map<string, { path: string; itemPath: string }>();
-  for (const route of routes.filter((item) => item.purpose === 'request')) {
-    const shape =
-      route.contractRef === null
-        ? 'collection'
-        : childShape(graph, route.contractRef, route.entityRef);
-    const path = route.path.replace(/\/requests$/, '/request');
-    requestPaths.set(route.entityRef, {
-      path,
-      itemPath: shape === 'singleton' ? path : `${path}/{requestId}`,
-    });
+  for (const entity of roots.filter(
+    (entity) =>
+      entity.category === 'evidence' && entity.kind === 'other_evidence',
+  )) {
+    if (entity.category === 'evidence')
+      reads(
+        entity.id,
+        entity.contextRef,
+        address(
+          '/' + rootSegments.segmentOf(entity.id),
+          entity.id,
+          'collection',
+        ),
+      );
   }
   return routes
-    .map<DeliveryRoute>((route) => {
-      let path = route.path;
-      let shape: DeliveryRoute['shape'] = 'collection';
-      let itemPath = route.method === 'GET' ? path : `${path}/{evidenceId}`;
-      const request = requestPaths.get(route.requestRef ?? '');
-      if (route.purpose === 'request' && request !== undefined) {
-        path = request.path;
-        itemPath = request.itemPath;
-        shape = path === itemPath ? 'singleton' : 'collection';
-      } else if (route.purpose === 'confirm' && request !== undefined) {
-        const confirmations =
-          graph.fulfillmentPair(route.requestRef!)?.confirmations ?? [];
-        path = `${request.itemPath}/confirmation${confirmations.length > 1 ? `/${segments.segmentOf(route.entityRef)}` : ''}`;
-        shape = childShape(graph, route.requestRef!, route.entityRef);
-        itemPath = shape === 'singleton' ? path : `${path}/{confirmationId}`;
-      } else if (route.purpose === 'propose') {
-        const parent = answeredRfpOf(graph).get(route.entityRef);
-        if (parent !== undefined)
-          shape = childShape(graph, parent, route.entityRef);
-        itemPath = shape === 'singleton' ? path : `${path}/{proposalId}`;
-      } else if (route.purpose === 'sign') itemPath = `${path}/{contractId}`;
-      else if (route.purpose === 'open') itemPath = `${path}/{rfpId}`;
-      const allowedPartyRoleRefs = callerRoles(graph, route);
-      return {
-        ...route,
-        path,
-        itemPath,
-        shape,
-        allowedPartyRoleRefs,
-        exposure: allowedPartyRoleRefs.length === 0 ? 'internal' : 'external',
-        rules: graph
-          .rules()
-          .filter(
-            (rule) =>
-              rule.target?.entityRef === route.entityRef ||
-              Object.values(rule.bindings).some(
-                (binding) =>
-                  'ref' in binding && binding.ref === route.entityRef,
-              ),
-          )
-          .map(({ id, kind, expression, bindings, target, resultType }) => ({
-            id,
-            kind,
-            expression,
-            bindings,
-            ...(target === undefined ? {} : { target }),
-            resultType,
-          }))
-          .sort((a, b) => a.id.localeCompare(b.id)),
-        outputFields: graph
-          .attributesOf(route.entityRef)
-          .map((attribute) => fieldFor(attribute, graph, route.entityRef)),
-        examples: examplesOf(graph, route.entityRef),
-      };
-    })
+    .filter(
+      (route) => contextRefs === undefined || contextRefs.has(route.contextRef),
+    )
     .sort(compareRoutes);
 };
 

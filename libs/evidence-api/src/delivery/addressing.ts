@@ -3,6 +3,8 @@ import type { DeliveryRoute } from './routes.js';
 
 export type UnaddressedRoute = Omit<
   DeliveryRoute,
+  | 'responseShape'
+  | 'parameterEntityRefs'
   | 'shape'
   | 'itemPath'
   | 'allowedPartyRoleRefs'

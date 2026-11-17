@@ -23,40 +23,68 @@ export const rawSegmentOf = (id: string): string => {
   return folded === '' ? 'resource' : folded;
 };
 
-/**
- * Allocates one segment per id, inside each id category.
- *
- * Two categories may share a word without sharing an address: `request.payment`
- * and `confirmation.payment` are both `payment` under different parents, so the
- * category is the namespace rather than a prefix on every segment. Only a clash
- * inside one category needs a suffix, and then the full id keeps it readable.
- */
+/** English business nouns keep their model spelling, with only the final word pluralized. */
+export const pluralSegmentOf = (id: string): string => {
+  const segment = rawSegmentOf(id);
+  const irregular: Record<string, string> = {
+    person: 'people',
+    child: 'children',
+    analysis: 'analyses',
+    status: 'statuses',
+  };
+  const words = segment.split('-');
+  const word = words.pop()!;
+  words.push(
+    irregular[word] ??
+      (/[^aeiou]y$/.test(word)
+        ? word.slice(0, -1) + 'ies'
+        : /(?:s|x|z|ch|sh)$/.test(word)
+          ? word + 'es'
+          : word + 's'),
+  );
+  return words.join('-');
+};
+
+/** Instance parameter names follow the business noun; contracts retain their common root key. */
+export const itemParameterOf = (id: string): string => {
+  const category = id.split('.')[0];
+  if (category === 'contract') return 'contractId';
+  if (category === 'confirmation') return 'confirmationId';
+  return (rawSegmentOf(id).split('-').at(-1) ?? 'item') + 'Id';
+};
+
+/** A deterministic suffix depends on identity, never enumeration order or a counter. */
+const identitySuffix = (id: string): string => {
+  let hash = 2166136261;
+  for (const character of id)
+    hash = Math.imul(hash ^ character.charCodeAt(0), 16777619);
+  return (hash >>> 0).toString(36);
+};
+
+/** Allocate within one real URI namespace; callers pass roots or siblings, never metamodel categories. */
 export const createSegmentAllocator = (
   ids: readonly string[],
+  segmentFor: (id: string) => string = rawSegmentOf,
 ): SegmentAllocator => {
-  const taken = new Map<string, string>();
-  const assignment = new Map<string, string>();
-
-  for (const id of [...ids].sort()) {
-    const category = id.split('.')[0] ?? 'resource';
-    const base = rawSegmentOf(id);
-    const addressOf = (segment: string): string => `${category}\u0000${segment}`;
-    let candidate = base;
-    let attempt = 0;
-
-    while (taken.has(addressOf(candidate)) && taken.get(addressOf(candidate)) !== id) {
-      candidate =
-        attempt === 0 ? `${base}-${category}` : `${base}-${category}-${attempt}`;
-      attempt += 1;
-    }
-
-    taken.set(addressOf(candidate), id);
-    assignment.set(id, candidate);
+  const groups = new Map<string, Set<string>>();
+  for (const id of ids) {
+    const base = segmentFor(id);
+    const group = groups.get(base) ?? new Set<string>();
+    group.add(id);
+    groups.set(base, group);
   }
-
-  return {
-    segmentOf: (id) => assignment.get(id) ?? rawSegmentOf(id),
-  };
+  const assignment = new Map<string, string>();
+  for (const [base, group] of groups) {
+    for (const id of group)
+      assignment.set(
+        id,
+        group.size === 1 ? base : base + '-' + identitySuffix(id),
+      );
+  }
+  // Reject even a hash collision instead of silently publishing overlapping addresses.
+  if (new Set(assignment.values()).size !== assignment.size)
+    throw new Error('API segment allocation collision');
+  return { segmentOf: (id) => assignment.get(id) ?? segmentFor(id) };
 };
 
 /**
