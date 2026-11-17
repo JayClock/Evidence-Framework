@@ -120,6 +120,9 @@
       "domainRole": "calculator",
       "contextRef": "ctx-fintech-domain",
       "label": "跨境税费与逾期违约罚息阶梯测算器",
+      "examples": [
+        { "label": "合同日费率", "value": { "penalty_daily_rate": 0.0005 } }
+      ],
       "attributes": [
         {
           "name": "penalty_daily_rate",
@@ -139,6 +142,9 @@
       "domainRole": "checker",
       "contextRef": "ctx-inspection-domain",
       "label": "工业母机技术标准与进出口合规核验器",
+      "examples": [
+        { "label": "执行标准", "value": { "iso_standard_code": "ISO-10218" } }
+      ],
       "attributes": [
         {
           "name": "iso_standard_code",
@@ -221,6 +227,56 @@
       "contextRef": "ctx-sourcing",
       "responsibleRoleRef": "role-buyer",
       "label": "智能装备全球采购招标建议书（Global Procurement RFP）",
+      "examples": [
+        {
+          "label": "顺畅履约",
+          "value": {
+            "rfp_budget_ceiling": {
+              "minorUnits": 120000000,
+              "currency": "CNY"
+            },
+            "started_at": "2026-01-01T09:00:00Z",
+            "expired_at": "2026-01-02T18:00:00Z"
+          },
+          "test": {
+            "flow": "happy-path",
+            "actingRoleRef": "role-buyer",
+            "asOf": "2026-01-01T09:00:00Z"
+          }
+        },
+        {
+          "label": "逾期交货",
+          "value": {
+            "rfp_budget_ceiling": {
+              "minorUnits": 120000000,
+              "currency": "CNY"
+            },
+            "started_at": "2026-01-01T09:00:00Z",
+            "expired_at": "2026-01-02T18:00:00Z"
+          },
+          "test": {
+            "flow": "late-delivery",
+            "actingRoleRef": "role-buyer",
+            "asOf": "2026-01-01T09:00:00Z"
+          }
+        },
+        {
+          "label": "质检争议",
+          "value": {
+            "rfp_budget_ceiling": {
+              "minorUnits": 120000000,
+              "currency": "CNY"
+            },
+            "started_at": "2026-01-01T09:00:00Z",
+            "expired_at": "2026-01-02T18:00:00Z"
+          },
+          "test": {
+            "flow": "defect-escalation",
+            "actingRoleRef": "role-buyer",
+            "asOf": "2026-01-01T09:00:00Z"
+          }
+        }
+      ],
       "attributes": [
         {
           "name": "rfp_budget_ceiling",
@@ -256,6 +312,59 @@
       "contextRef": "ctx-sourcing",
       "responsibleRoleRef": "role-seller",
       "label": "顶峰数控智能制造装备竞标技术报价单（Apex Bid Proposal）",
+      "examples": [
+        {
+          "label": "顺畅履约",
+          "value": {
+            "quoted_total_price": {
+              "minorUnits": 100000000,
+              "currency": "CNY"
+            },
+            "started_at": "2026-01-02T09:00:00Z",
+            "expired_at": "2026-01-04T18:00:00Z"
+          },
+          "test": {
+            "flow": "happy-path",
+            "actingRoleRef": "role-seller",
+            "asOf": "2026-01-02T09:00:00Z",
+            "basedOn": ["doc-sourcing-rfp#顺畅履约"]
+          }
+        },
+        {
+          "label": "逾期交货",
+          "value": {
+            "quoted_total_price": {
+              "minorUnits": 100000000,
+              "currency": "CNY"
+            },
+            "started_at": "2026-01-02T09:00:00Z",
+            "expired_at": "2026-01-04T18:00:00Z"
+          },
+          "test": {
+            "flow": "late-delivery",
+            "actingRoleRef": "role-seller",
+            "asOf": "2026-01-02T09:00:00Z",
+            "basedOn": ["doc-sourcing-rfp#逾期交货"]
+          }
+        },
+        {
+          "label": "质检争议",
+          "value": {
+            "quoted_total_price": {
+              "minorUnits": 100000000,
+              "currency": "CNY"
+            },
+            "started_at": "2026-01-02T09:00:00Z",
+            "expired_at": "2026-01-04T18:00:00Z"
+          },
+          "test": {
+            "flow": "defect-escalation",
+            "actingRoleRef": "role-seller",
+            "asOf": "2026-01-02T09:00:00Z",
+            "basedOn": ["doc-sourcing-rfp#质检争议"]
+          }
+        }
+      ],
       "attributes": [
         {
           "name": "quoted_total_price",
@@ -291,6 +400,62 @@
       "contextRef": "ctx-main-procurement",
       "roleRefs": ["role-buyer", "role-seller"],
       "label": "高端智能装备国际采购主买卖契约（Master Equipment Procurement Agreement）",
+      "examples": [
+        {
+          "label": "顺畅履约",
+          "value": {
+            "contract_total_amount": {
+              "minorUnits": 100000000,
+              "currency": "CNY"
+            },
+            "down_payment_rate": 0.3,
+            "delivery_deadline_days": 35,
+            "signed_at": "2026-01-03T09:00:00Z"
+          },
+          "test": {
+            "flow": "happy-path",
+            "actingRoleRef": "role-buyer",
+            "asOf": "2026-01-03T09:00:00Z",
+            "basedOn": ["doc-supplier-proposal#顺畅履约"]
+          }
+        },
+        {
+          "label": "逾期交货",
+          "value": {
+            "contract_total_amount": {
+              "minorUnits": 100000000,
+              "currency": "CNY"
+            },
+            "down_payment_rate": 0.3,
+            "delivery_deadline_days": 35,
+            "signed_at": "2026-01-03T09:00:00Z"
+          },
+          "test": {
+            "flow": "late-delivery",
+            "actingRoleRef": "role-buyer",
+            "asOf": "2026-01-03T09:00:00Z",
+            "basedOn": ["doc-supplier-proposal#逾期交货"]
+          }
+        },
+        {
+          "label": "质检争议",
+          "value": {
+            "contract_total_amount": {
+              "minorUnits": 100000000,
+              "currency": "CNY"
+            },
+            "down_payment_rate": 0.3,
+            "delivery_deadline_days": 35,
+            "signed_at": "2026-01-03T09:00:00Z"
+          },
+          "test": {
+            "flow": "defect-escalation",
+            "actingRoleRef": "role-buyer",
+            "asOf": "2026-01-03T09:00:00Z",
+            "basedOn": ["doc-supplier-proposal#质检争议"]
+          }
+        }
+      ],
       "attributes": [
         {
           "name": "contract_total_amount",
@@ -332,6 +497,56 @@
       "contextRef": "ctx-escrow-settlement",
       "roleRefs": ["role-escrow-depositor", "role-escrow-agent"],
       "label": "买方与托管行三方资金托管监管协议（Tripartite Escrow Agreement）",
+      "examples": [
+        {
+          "label": "顺畅履约",
+          "value": {
+            "escrow_locked_amount": {
+              "minorUnits": 100000000,
+              "currency": "CNY"
+            },
+            "signed_at": "2026-01-04T09:00:00Z"
+          },
+          "test": {
+            "flow": "happy-path",
+            "actingRoleRef": "role-escrow-depositor",
+            "asOf": "2026-01-04T09:00:00Z",
+            "basedOn": ["doc-procurement-contract#顺畅履约"]
+          }
+        },
+        {
+          "label": "逾期交货",
+          "value": {
+            "escrow_locked_amount": {
+              "minorUnits": 100000000,
+              "currency": "CNY"
+            },
+            "signed_at": "2026-01-04T09:00:00Z"
+          },
+          "test": {
+            "flow": "late-delivery",
+            "actingRoleRef": "role-escrow-depositor",
+            "asOf": "2026-01-04T09:00:00Z",
+            "basedOn": ["doc-procurement-contract#逾期交货"]
+          }
+        },
+        {
+          "label": "质检争议",
+          "value": {
+            "escrow_locked_amount": {
+              "minorUnits": 100000000,
+              "currency": "CNY"
+            },
+            "signed_at": "2026-01-04T09:00:00Z"
+          },
+          "test": {
+            "flow": "defect-escalation",
+            "actingRoleRef": "role-escrow-depositor",
+            "asOf": "2026-01-04T09:00:00Z",
+            "basedOn": ["doc-procurement-contract#质检争议"]
+          }
+        }
+      ],
       "attributes": [
         {
           "name": "escrow_locked_amount",
@@ -359,6 +574,59 @@
       "contextRef": "ctx-main-procurement",
       "responsibleRoleRef": "role-seller",
       "label": "首期生产预付款支付请求（Advance Down Payment Request）",
+      "examples": [
+        {
+          "label": "顺畅履约",
+          "value": {
+            "advance_amount": { "minorUnits": 30000000, "currency": "CNY" },
+            "started_at": "2026-01-05T09:00:00Z",
+            "expired_at": "2026-01-07T18:00:00Z"
+          },
+          "test": {
+            "flow": "happy-path",
+            "actingRoleRef": "role-seller",
+            "asOf": "2026-01-05T09:00:00Z",
+            "basedOn": [
+              "doc-procurement-contract#顺畅履约",
+              "doc-escrow-agreement#顺畅履约"
+            ]
+          }
+        },
+        {
+          "label": "逾期交货",
+          "value": {
+            "advance_amount": { "minorUnits": 30000000, "currency": "CNY" },
+            "started_at": "2026-01-05T09:00:00Z",
+            "expired_at": "2026-01-07T18:00:00Z"
+          },
+          "test": {
+            "flow": "late-delivery",
+            "actingRoleRef": "role-seller",
+            "asOf": "2026-01-05T09:00:00Z",
+            "basedOn": [
+              "doc-procurement-contract#逾期交货",
+              "doc-escrow-agreement#逾期交货"
+            ]
+          }
+        },
+        {
+          "label": "质检争议",
+          "value": {
+            "advance_amount": { "minorUnits": 30000000, "currency": "CNY" },
+            "started_at": "2026-01-05T09:00:00Z",
+            "expired_at": "2026-01-07T18:00:00Z"
+          },
+          "test": {
+            "flow": "defect-escalation",
+            "actingRoleRef": "role-seller",
+            "asOf": "2026-01-05T09:00:00Z",
+            "basedOn": [
+              "doc-procurement-contract#质检争议",
+              "doc-escrow-agreement#质检争议"
+            ]
+          }
+        }
+      ],
       "attributes": [
         {
           "name": "advance_amount",
@@ -394,6 +662,47 @@
       "contextRef": "ctx-main-procurement",
       "responsibleRoleRef": "role-buyer",
       "label": "首期预付款到账确认书（Advance Payment Bank Confirmation）",
+      "examples": [
+        {
+          "label": "顺畅履约",
+          "value": {
+            "confirmed_amount": { "minorUnits": 30000000, "currency": "CNY" },
+            "confirmed_at": "2026-01-06T09:00:00Z"
+          },
+          "test": {
+            "flow": "happy-path",
+            "actingRoleRef": "role-buyer",
+            "asOf": "2026-01-06T09:00:00Z",
+            "basedOn": ["req-advance-payment#顺畅履约"]
+          }
+        },
+        {
+          "label": "逾期交货",
+          "value": {
+            "confirmed_amount": { "minorUnits": 30000000, "currency": "CNY" },
+            "confirmed_at": "2026-01-06T09:00:00Z"
+          },
+          "test": {
+            "flow": "late-delivery",
+            "actingRoleRef": "role-buyer",
+            "asOf": "2026-01-06T09:00:00Z",
+            "basedOn": ["req-advance-payment#逾期交货"]
+          }
+        },
+        {
+          "label": "质检争议",
+          "value": {
+            "confirmed_amount": { "minorUnits": 30000000, "currency": "CNY" },
+            "confirmed_at": "2026-01-06T09:00:00Z"
+          },
+          "test": {
+            "flow": "defect-escalation",
+            "actingRoleRef": "role-buyer",
+            "asOf": "2026-01-06T09:00:00Z",
+            "basedOn": ["req-advance-payment#质检争议"]
+          }
+        }
+      ],
       "attributes": [
         {
           "name": "confirmed_amount",
@@ -421,6 +730,50 @@
       "contextRef": "ctx-main-procurement",
       "responsibleRoleRef": "role-buyer",
       "label": "整机出厂及航运交付催告请求（Equipment Factory Dispatch Request）",
+      "examples": [
+        {
+          "label": "顺畅履约",
+          "value": {
+            "shipped_units_count": 2,
+            "started_at": "2026-01-07T09:00:00Z",
+            "expired_at": "2026-02-10T09:00:00Z"
+          },
+          "test": {
+            "flow": "happy-path",
+            "actingRoleRef": "role-buyer",
+            "asOf": "2026-01-07T09:00:00Z",
+            "basedOn": ["conf-advance-payment#顺畅履约"]
+          }
+        },
+        {
+          "label": "逾期交货",
+          "value": {
+            "shipped_units_count": 2,
+            "started_at": "2026-01-07T09:00:00Z",
+            "expired_at": "2026-02-10T09:00:00Z"
+          },
+          "test": {
+            "flow": "late-delivery",
+            "actingRoleRef": "role-buyer",
+            "asOf": "2026-01-07T09:00:00Z",
+            "basedOn": ["conf-advance-payment#逾期交货"]
+          }
+        },
+        {
+          "label": "质检争议",
+          "value": {
+            "shipped_units_count": 2,
+            "started_at": "2026-01-07T09:00:00Z",
+            "expired_at": "2026-02-10T09:00:00Z"
+          },
+          "test": {
+            "flow": "defect-escalation",
+            "actingRoleRef": "role-buyer",
+            "asOf": "2026-01-07T09:00:00Z",
+            "basedOn": ["conf-advance-payment#质检争议"]
+          }
+        }
+      ],
       "attributes": [
         {
           "name": "shipped_units_count",
@@ -456,6 +809,47 @@
       "contextRef": "ctx-main-procurement",
       "responsibleRoleRef": "role-seller",
       "label": "国际海运多式联运提单签收确认（Multimodal Delivery Confirmation）",
+      "examples": [
+        {
+          "label": "顺畅履约",
+          "value": {
+            "port_arrival_status": "已到港",
+            "confirmed_at": "2026-02-09T09:00:00Z"
+          },
+          "test": {
+            "flow": "happy-path",
+            "actingRoleRef": "role-seller",
+            "asOf": "2026-02-09T09:00:00Z",
+            "basedOn": ["req-equipment-delivery#顺畅履约"]
+          }
+        },
+        {
+          "label": "逾期交货",
+          "value": {
+            "port_arrival_status": "逾期到港",
+            "confirmed_at": "2026-02-12T09:00:00Z"
+          },
+          "test": {
+            "flow": "late-delivery",
+            "actingRoleRef": "role-seller",
+            "asOf": "2026-02-12T09:00:00Z",
+            "basedOn": ["req-equipment-delivery#逾期交货"]
+          }
+        },
+        {
+          "label": "质检争议",
+          "value": {
+            "port_arrival_status": "待技术核验",
+            "confirmed_at": "2026-02-09T09:00:00Z"
+          },
+          "test": {
+            "flow": "defect-escalation",
+            "actingRoleRef": "role-seller",
+            "asOf": "2026-02-09T09:00:00Z",
+            "basedOn": ["req-equipment-delivery#质检争议"]
+          }
+        }
+      ],
       "attributes": [
         {
           "name": "port_arrival_status",
@@ -482,6 +876,30 @@
       "contextRef": "ctx-main-procurement",
       "responsibleRoleRef": "role-buyer",
       "label": "交货逾期违约赔偿与滞纳金索赔请求（Late Delivery Penalty Request）",
+      "examples": [
+        {
+          "label": "逾期交货",
+          "value": {
+            "overdue_days": 2,
+            "claimed_penalty_amount": {
+              "minorUnits": 100000,
+              "currency": "CNY"
+            },
+            "started_at": "2026-02-12T10:00:00Z",
+            "expired_at": "2026-02-15T18:00:00Z"
+          },
+          "test": {
+            "flow": "late-delivery",
+            "actingRoleRef": "role-buyer",
+            "asOf": "2026-02-12T10:00:00Z",
+            "basedOn": [
+              "conf-equipment-delivery#逾期交货",
+              "req-equipment-delivery#逾期交货"
+            ],
+            "expect": { "$.claimed_penalty_amount.minorUnits": 100000 }
+          }
+        }
+      ],
       "attributes": [
         {
           "name": "overdue_days",
@@ -526,6 +944,24 @@
       "contextRef": "ctx-main-procurement",
       "responsibleRoleRef": "role-seller",
       "label": "违约金抵扣与赔偿结清确认凭据（Penalty Compensation Settlement Receipt）",
+      "examples": [
+        {
+          "label": "逾期交货",
+          "value": {
+            "settled_penalty_amount": {
+              "minorUnits": 100000,
+              "currency": "CNY"
+            },
+            "confirmed_at": "2026-02-13T10:00:00Z"
+          },
+          "test": {
+            "flow": "late-delivery",
+            "actingRoleRef": "role-seller",
+            "asOf": "2026-02-13T10:00:00Z",
+            "basedOn": ["req-breach-penalty#逾期交货"]
+          }
+        }
+      ],
       "attributes": [
         {
           "name": "settled_penalty_amount",
@@ -553,6 +989,47 @@
       "contextRef": "ctx-main-procurement",
       "responsibleRoleRef": "role-seller",
       "label": "SGS中立国际技术质量公证证书（SGS Technical Inspection Certificate）",
+      "examples": [
+        {
+          "label": "顺畅履约",
+          "value": {
+            "passed_safety_checks": true,
+            "created_at": "2026-02-10T10:00:00Z"
+          },
+          "test": {
+            "flow": "happy-path",
+            "actingRoleRef": "role-seller",
+            "asOf": "2026-02-10T10:00:00Z",
+            "basedOn": ["conf-equipment-delivery#顺畅履约"]
+          }
+        },
+        {
+          "label": "逾期交货",
+          "value": {
+            "passed_safety_checks": true,
+            "created_at": "2026-02-13T09:00:00Z"
+          },
+          "test": {
+            "flow": "late-delivery",
+            "actingRoleRef": "role-seller",
+            "asOf": "2026-02-13T09:00:00Z",
+            "basedOn": ["conf-equipment-delivery#逾期交货"]
+          }
+        },
+        {
+          "label": "质检争议",
+          "value": {
+            "passed_safety_checks": false,
+            "created_at": "2026-02-12T09:00:00Z"
+          },
+          "test": {
+            "flow": "defect-escalation",
+            "actingRoleRef": "role-seller",
+            "asOf": "2026-02-12T09:00:00Z",
+            "basedOn": ["conf-equipment-delivery#质检争议"]
+          }
+        }
+      ],
       "attributes": [
         {
           "name": "passed_safety_checks",
@@ -580,6 +1057,43 @@
       "contextRef": "ctx-escrow-settlement",
       "responsibleRoleRef": "role-escrow-depositor",
       "label": "验收合格后托管尾款放款请求（Final Escrow Release Request）",
+      "examples": [
+        {
+          "label": "顺畅履约",
+          "value": {
+            "release_amount": { "minorUnits": 70000000, "currency": "CNY" },
+            "started_at": "2026-02-11T09:00:00Z",
+            "expired_at": "2026-02-15T18:00:00Z"
+          },
+          "test": {
+            "flow": "happy-path",
+            "actingRoleRef": "role-escrow-depositor",
+            "asOf": "2026-02-11T09:00:00Z",
+            "basedOn": [
+              "doc-sgs-inspection-cert#顺畅履约",
+              "doc-escrow-agreement#顺畅履约"
+            ]
+          }
+        },
+        {
+          "label": "逾期交货",
+          "value": {
+            "release_amount": { "minorUnits": 69900000, "currency": "CNY" },
+            "started_at": "2026-02-14T09:00:00Z",
+            "expired_at": "2026-02-17T18:00:00Z"
+          },
+          "test": {
+            "flow": "late-delivery",
+            "actingRoleRef": "role-escrow-depositor",
+            "asOf": "2026-02-14T09:00:00Z",
+            "basedOn": [
+              "doc-sgs-inspection-cert#逾期交货",
+              "conf-breach-settlement#逾期交货",
+              "doc-escrow-agreement#逾期交货"
+            ]
+          }
+        }
+      ],
       "attributes": [
         {
           "name": "release_amount",
@@ -615,6 +1129,34 @@
       "contextRef": "ctx-escrow-settlement",
       "responsibleRoleRef": "role-escrow-agent",
       "label": "托管尾款清算放款确认（Final Escrow Release Confirmation）",
+      "examples": [
+        {
+          "label": "顺畅履约",
+          "value": {
+            "released_amount": { "minorUnits": 70000000, "currency": "CNY" },
+            "confirmed_at": "2026-02-11T10:00:00Z"
+          },
+          "test": {
+            "flow": "happy-path",
+            "actingRoleRef": "role-escrow-agent",
+            "asOf": "2026-02-11T10:00:00Z",
+            "basedOn": ["req-escrow-release#顺畅履约"]
+          }
+        },
+        {
+          "label": "逾期交货",
+          "value": {
+            "released_amount": { "minorUnits": 69900000, "currency": "CNY" },
+            "confirmed_at": "2026-02-14T10:00:00Z"
+          },
+          "test": {
+            "flow": "late-delivery",
+            "actingRoleRef": "role-escrow-agent",
+            "asOf": "2026-02-14T10:00:00Z",
+            "basedOn": ["req-escrow-release#逾期交货"]
+          }
+        }
+      ],
       "attributes": [
         {
           "name": "released_amount",
@@ -631,6 +1173,91 @@
           "valueType": "timestamp",
           "required": true,
           "keyData": true
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "req-escrow-freeze",
+      "category": "evidence",
+      "kind": "fulfillment_request",
+      "contextRef": "ctx-escrow-settlement",
+      "responsibleRoleRef": "role-escrow-depositor",
+      "label": "质检不合格后凭证质押冻结仲裁请求",
+      "attributes": [
+        {
+          "name": "started_at",
+          "label": "冻结申请开始",
+          "meaning": "收到不合格证书后申请冻结托管资金的时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "expired_at",
+          "label": "仲裁受理期限",
+          "meaning": "独立托管代理应受理冻结请求的截止时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        }
+      ],
+      "examples": [
+        {
+          "label": "质检争议",
+          "value": {
+            "started_at": "2026-02-12T10:00:00Z",
+            "expired_at": "2026-02-15T10:00:00Z"
+          },
+          "test": {
+            "flow": "defect-escalation",
+            "actingRoleRef": "role-escrow-depositor",
+            "asOf": "2026-02-12T10:00:00Z",
+            "basedOn": [
+              "doc-sgs-inspection-cert#质检争议",
+              "doc-escrow-agreement#质检争议",
+              "conf-equipment-delivery#质检争议"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "conf-escrow-freeze",
+      "category": "evidence",
+      "kind": "fulfillment_confirmation",
+      "contextRef": "ctx-escrow-settlement",
+      "responsibleRoleRef": "role-escrow-agent",
+      "label": "独立托管行冻结受理与仲裁介入确认",
+      "attributes": [
+        {
+          "name": "frozen",
+          "label": "资金冻结标志",
+          "meaning": "托管银行已停止尾款划付并移交独立争议解决程序",
+          "valueType": "bool",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "confirmed_at",
+          "label": "冻结受理时刻",
+          "meaning": "托管行正式确认冻结并出具仲裁受理凭据的时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        }
+      ],
+      "examples": [
+        {
+          "label": "质检争议",
+          "value": { "frozen": true, "confirmed_at": "2026-02-12T11:00:00Z" },
+          "test": {
+            "flow": "defect-escalation",
+            "actingRoleRef": "role-escrow-agent",
+            "asOf": "2026-02-12T11:00:00Z",
+            "basedOn": ["req-escrow-freeze#质检争议"]
+          }
         }
       ]
     }
@@ -871,9 +1498,9 @@
       "id": "rel-delivery-requires-inspection",
       "kind": "references",
       "flowKind": "primary",
-      "sourceRef": "conf-equipment-delivery",
-      "targetRef": "doc-sgs-inspection-cert",
-      "label": "设备交付验收核验SGS国际合格证书",
+      "sourceRef": "doc-sgs-inspection-cert",
+      "targetRef": "conf-equipment-delivery",
+      "label": "到港签收后签发SGS国际技术质量核验证书",
       "sourceCardinality": {
         "min": 1,
         "max": 1
@@ -1005,6 +1632,50 @@
       "label": "托管尾款放款闭环",
       "sourceCardinality": { "min": 1, "max": 1 },
       "targetCardinality": { "min": 1, "max": 1 }
+    },
+    {
+      "type": "relationship",
+      "id": "rel-freeze-references-cert",
+      "kind": "references",
+      "flowKind": "escalation",
+      "sourceRef": "req-escrow-freeze",
+      "targetRef": "doc-sgs-inspection-cert",
+      "label": "质检不合格触发独立仲裁",
+      "sourceCardinality": { "min": 1, "max": 1 },
+      "targetCardinality": { "min": 1, "max": 1 }
+    },
+    {
+      "type": "relationship",
+      "id": "rel-freeze-references-voucher",
+      "kind": "references",
+      "flowKind": "escalation",
+      "sourceRef": "req-escrow-freeze",
+      "targetRef": "role-collateral-voucher",
+      "label": "以跨合同提单质押冻结托管账户",
+      "sourceCardinality": { "min": 1, "max": 1 },
+      "targetCardinality": { "min": 1, "max": 1 }
+    },
+    {
+      "type": "relationship",
+      "id": "rel-freeze-references-agreement",
+      "kind": "references",
+      "flowKind": "escalation",
+      "sourceRef": "req-escrow-freeze",
+      "targetRef": "doc-escrow-agreement",
+      "label": "托管协议提供独立争议管辖依据",
+      "sourceCardinality": { "min": 1, "max": 1 },
+      "targetCardinality": { "min": 1, "max": 1 }
+    },
+    {
+      "type": "relationship",
+      "id": "rel-freeze-conf-pairs-req",
+      "kind": "references",
+      "flowKind": "escalation",
+      "sourceRef": "conf-escrow-freeze",
+      "targetRef": "req-escrow-freeze",
+      "label": "独立托管机构受理资金冻结仲裁请求",
+      "sourceCardinality": { "min": 1, "max": 1 },
+      "targetCardinality": { "min": 1, "max": 1 }
     }
   ],
   "rules": [
@@ -1021,7 +1692,7 @@
           "cardinality": "one"
         }
       },
-      "expression": "proposal.quoted_total_price.amount > 0",
+      "expression": "proposal.quoted_total_price.minorUnits > 0",
       "resultType": "bool"
     },
     {
@@ -1041,7 +1712,7 @@
           "cardinality": "one"
         }
       },
-      "expression": "adv_conf.confirmed_amount.amount >= adv_req.advance_amount.amount",
+      "expression": "adv_conf.confirmed_amount.minorUnits >= adv_req.advance_amount.minorUnits",
       "resultType": "bool"
     },
     {
@@ -1065,7 +1736,7 @@
           "cardinality": "one"
         }
       },
-      "expression": "{\"amount\": int(double(contract.contract_total_amount.amount) * calculator.penalty_daily_rate * double(req.overdue_days)), \"currency\": contract.contract_total_amount.currency}",
+      "expression": "{\"minorUnits\": dyn(int(double(contract.contract_total_amount.minorUnits) * calculator.penalty_daily_rate * double(req.overdue_days))), \"currency\": contract.contract_total_amount.currency}",
       "resultType": "money",
       "target": {
         "entityRef": "req-breach-penalty",
@@ -1085,7 +1756,7 @@
           "cardinality": "one"
         }
       },
-      "expression": "escrow.escrow_locked_amount.amount > 0",
+      "expression": "escrow.escrow_locked_amount.minorUnits > 0",
       "resultType": "bool"
     },
     {
@@ -1125,7 +1796,20 @@
           "cardinality": "one"
         }
       },
-      "expression": "adv_conf.confirmed_amount.amount >= adv_req.advance_amount.amount && adv_conf.confirmed_at <= adv_req.expired_at",
+      "expression": "adv_conf.confirmed_amount.minorUnits >= adv_req.advance_amount.minorUnits && adv_conf.confirmed_at <= adv_req.expired_at",
+      "resultType": "bool"
+    },
+    {
+      "type": "rule",
+      "id": "rule-defect-escalation",
+      "kind": "breach",
+      "label": "技术质检不合格升级独立仲裁",
+      "description": "SGS安全合规核验失败后冻结托管尾款，不自动判定司法结果。",
+      "contextRef": "ctx-main-procurement",
+      "bindings": {
+        "cert": { "ref": "doc-sgs-inspection-cert", "cardinality": "one" }
+      },
+      "expression": "!cert.passed_safety_checks",
       "resultType": "bool"
     }
   ]

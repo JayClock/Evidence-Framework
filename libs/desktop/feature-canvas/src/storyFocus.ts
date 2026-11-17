@@ -1,3 +1,4 @@
+import type { RelationshipFlowKind } from '@evidence-poc/evidence-schema';
 import type { CanvasFlowEdge, CanvasFlowNode } from './useReactFlowAdapter';
 
 /** Renderer-independent camera/highlight contract; no agent runtime in canvas. */
@@ -5,6 +6,10 @@ export interface CanvasStoryFocus {
   readonly activeEntityId: string;
   readonly dependencyEntityIds: readonly string[];
   readonly relatedEntityIds?: readonly string[];
+  readonly activeRelationshipIds?: readonly string[];
+  readonly flowKind?: RelationshipFlowKind;
+  readonly triggeredRuleIds?: readonly string[];
+  readonly activeValues?: Readonly<Record<string, unknown>>;
   /** Flow + example identity, including two steps on the same entity. */
   readonly focusKey: string;
 }
@@ -24,6 +29,16 @@ export const applyStoryFocus = (
     ...focus.dependencyEntityIds,
     ...(focus.relatedEntityIds ?? []),
   ]);
+  const explicitEdges = new Set(focus.activeRelationshipIds ?? []);
+  for (const edge of canvas.edges)
+    if (
+      edge.type === 'fulfillmentEdge' &&
+      edge.data &&
+      explicitEdges.has(edge.data.edge.relationshipId)
+    ) {
+      involved.add(edge.source);
+      involved.add(edge.target);
+    }
   const dependencies = new Set(focus.dependencyEntityIds);
   const byId = new Map(canvas.nodes.map((node) => [node.id, node]));
   const contexts = new Set<string>();
@@ -48,7 +63,9 @@ export const applyStoryFocus = (
         };
       return {
         ...node,
-        className: active ? 'evidence-story-active' : undefined,
+        className: active
+          ? `evidence-story-active${focus.flowKind === 'breach_compensation' ? ' evidence-story-breach' : focus.flowKind === 'escalation' ? ' evidence-story-escalation' : ''}`
+          : undefined,
         style: {
           ...node.style,
           opacity: involved.has(node.id) ? 1 : 0.35,
@@ -58,15 +75,32 @@ export const applyStoryFocus = (
           ...node.data,
           highlighted: involved.has(node.id),
           dimmed: false,
+          storyValues: active ? focus.activeValues : undefined,
+          triggeredRuleIds: involved.has(node.id)
+            ? focus.triggeredRuleIds
+            : undefined,
         },
       };
     }),
     edges: canvas.edges.map((edge): CanvasFlowEdge => {
+      const modeledFlow =
+        edge.type === 'fulfillmentEdge' ? edge.data?.edge.flowKind : undefined;
+      const allowed =
+        focus.flowKind === undefined ||
+        modeledFlow === undefined ||
+        modeledFlow === 'primary' ||
+        modeledFlow === focus.flowKind;
       const active =
-        (edge.source === focus.activeEntityId &&
-          dependencies.has(edge.target)) ||
-        (edge.target === focus.activeEntityId && dependencies.has(edge.source));
-      const relevant = involved.has(edge.source) && involved.has(edge.target);
+        allowed &&
+        ((edge.type === 'fulfillmentEdge' &&
+          edge.data &&
+          explicitEdges.has(edge.data.edge.relationshipId)) ||
+          (edge.source === focus.activeEntityId &&
+            dependencies.has(edge.target)) ||
+          (edge.target === focus.activeEntityId &&
+            dependencies.has(edge.source)));
+      const relevant =
+        allowed && involved.has(edge.source) && involved.has(edge.target);
       const story = {
         storyActive: active,
         storyReversed: edge.source === focus.activeEntityId,

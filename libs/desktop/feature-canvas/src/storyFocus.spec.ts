@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { computeGraphLayout } from '@evidence-poc/evidence-canvas-interaction';
 import { createDomainGraph } from '@evidence-poc/evidence-model-core';
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
+import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
+import modelText from '../../../../examples/full-spectrum-procurement/model/full-spectrum-procurement.evidence.json?raw';
 import { summarizeCards } from './cardSummary';
 import { convertLayoutToReactFlow } from './useReactFlowAdapter';
 import { applyStoryFocus, type CanvasStoryFocus } from './storyFocus';
@@ -74,6 +76,81 @@ describe('story canvas projection', () => {
       result.edges.find((edge) => edge.id === 'relation.buyer-plays-role')?.data
         ?.storyActive,
     ).not.toBe(true);
+  });
+
+  it('activates compensation capabilities and collateral roles without leaking the opposite branch', async () => {
+    const model = JSON.parse(modelText) as DomainModelDocument;
+    const journey = await computeGraphLayout(createDomainGraph(model), {
+      layoutMode: 'swimlane',
+    });
+    const original = convertLayoutToReactFlow({
+      layout: journey,
+      document: model,
+      selection: { nodeId: null, attributeName: null },
+      highlightedNodeIds: new Set(),
+      highlightedContextIds: new Set(),
+      highlightedEdgeIds: new Set(),
+      dimmed: false,
+      scope: null,
+      overlay: null,
+      summaries: summarizeCards(model),
+      hoveredEdgeId: null,
+      viewMode: 'standard',
+    });
+    const compensation = applyStoryFocus(original, {
+      activeEntityId: 'req-breach-penalty',
+      dependencyEntityIds: ['req-equipment-delivery'],
+      relatedEntityIds: ['thing-tariff-calculator'],
+      activeRelationshipIds: ['rel-breach-uses-calculator'],
+      flowKind: 'breach_compensation',
+      triggeredRuleIds: ['rule-breach-detection-overdue'],
+      activeValues: { overdue_days: 2 },
+      focusKey: 'late:claim',
+    });
+    expect(
+      compensation.nodes.find((n) => n.id === 'req-breach-penalty')?.className,
+    ).toContain('evidence-story-breach');
+    expect(
+      compensation.nodes.find((n) => n.id === 'thing-tariff-calculator')?.style
+        ?.opacity,
+    ).toBe(1);
+    expect(
+      compensation.edges.find((e) => e.id === 'rel-breach-uses-calculator')
+        ?.data?.storyActive,
+    ).toBe(true);
+    expect(
+      compensation.edges.find((e) => e.id === 'rel-freeze-references-voucher')
+        ?.data?.storyActive,
+    ).not.toBe(true);
+    const escalation = applyStoryFocus(original, {
+      activeEntityId: 'req-escrow-freeze',
+      dependencyEntityIds: ['doc-sgs-inspection-cert'],
+      relatedEntityIds: ['role-collateral-voucher', 'conf-equipment-delivery'],
+      activeRelationshipIds: [
+        'rel-freeze-references-voucher',
+        'rel-freeze-references-cert',
+      ],
+      flowKind: 'escalation',
+      focusKey: 'defect:freeze',
+    });
+    expect(
+      escalation.nodes.find((n) => n.id === 'req-escrow-freeze')?.className,
+    ).toContain('evidence-story-escalation');
+    expect(
+      escalation.nodes.find((n) => n.id === 'ctx-main-procurement')?.data
+        .highlighted,
+    ).toBe(true);
+    expect(
+      escalation.nodes.find((n) => n.id === 'ctx-escrow-settlement')?.data
+        .highlighted,
+    ).toBe(true);
+    expect(
+      escalation.edges.find((e) => e.id === 'rel-freeze-references-voucher')
+        ?.data?.storyActive,
+    ).toBe(true);
+    expect(escalation.nodes.map((n) => n.position)).toEqual(
+      original.nodes.map((n) => n.position),
+    );
   });
 
   it('does not mutate the topology projection and is a no-op when inactive or the entity disappeared', () => {

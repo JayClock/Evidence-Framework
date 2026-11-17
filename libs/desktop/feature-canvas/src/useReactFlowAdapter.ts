@@ -21,6 +21,8 @@ export interface EntityNodeData extends Record<string, unknown> {
   node: LayoutNode;
   /** Precomputed so the card does not scan the document while panning. */
   summary: CardSummary;
+  storyValues?: Readonly<Record<string, unknown>>;
+  triggeredRuleIds?: readonly string[];
   selected: boolean;
   highlighted: boolean;
   dimmed: boolean;

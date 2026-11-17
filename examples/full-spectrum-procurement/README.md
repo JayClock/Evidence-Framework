@@ -61,3 +61,15 @@ pnpm exec vitest run --project evidence-model-core libs/evidence-model-core/src/
 ```
 
 Schema 全覆盖与 fmCheck / CEL 编译分别位于 schema 和 model-core 测试中，以保持依赖方向。静态有效不等于后端 HTTP 验收或人工业务批准。
+
+## 三条可放映的业务场景
+
+模型以标准 `entities[].examples[].test` 声明三个独立场景，`basedOn` 使用同一场景内的完整样例引用，不增加文件格式字段：
+
+- `happy-path`：寻源 → 签约与托管 → 预付 → 到港交付 → SGS 合格 → 尾款放款。
+- `late-delivery`：签收逾期两天触发 `rule-breach-detection-overdue`，按合同总额 × 日费率 0.05% × 2 派生违约金，索赔结清后扣减尾款。
+- `defect-escalation`：SGS 核验失败，凭证角色化的提单注入托管合同，发起冻结并由独立托管行确认受理；不假设仲裁结果。
+
+打开桌面项目后选择“业务流放映”，在“选择业务流”中切换。播放器只对当前已展示的样例前缀做本地 CEL 预演：未发生的步骤不会提前满足绑定，规则错误显示为未知，退出或切换场景不会写回模型。放映不是 HTTP 测试。金额采用规范的 `minorUnits` / `currency`，而非自定义 `amount` 字段。
+
+领域能力挂件显示声明的示例参数，仍保留其原始领域 Context 归属；泳道推导与高亮都是临时展示状态。

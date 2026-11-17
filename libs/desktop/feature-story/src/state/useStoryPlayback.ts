@@ -4,6 +4,7 @@ import type {
   FlowStepTrace,
 } from '@evidence-poc/evidence-model-core';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
+import { previewJourneyStep } from './journeyPreview';
 import type { WhatIfResult } from '@evidence-poc/evidence-agent/browser';
 import type { EvidenceStoryApi } from '@evidence-poc/desktop-contracts/story';
 import type { StoryProjectResult } from '@evidence-poc/desktop-contracts/story';
@@ -99,8 +100,14 @@ export const useStoryPlayback = ({
   );
   const ready = enabled && !loading && !error && !stale && step !== undefined;
 
+  const journeyPreview = useMemo(
+    () =>
+      ready && flow && step ? previewJourneyStep(document, flow, step) : null,
+    [ready, document, flow, step],
+  );
+
   const canvasFocus = useMemo(() => {
-    if (!enabled || !flow || !step) return null;
+    if (!ready || !flow || !step || !journeyPreview) return null;
     const dependencyEntityIds = step.basedOn.flatMap((ref) => {
       // Canonical example refs take precedence over declared id/ref aliases.
       const dependency =
@@ -114,12 +121,14 @@ export const useStoryPlayback = ({
     return {
       activeEntityId: step.entityId,
       dependencyEntityIds: [...new Set(dependencyEntityIds)],
-      relatedEntityIds: [step.actingRoleRef, step.responsibleRoleRef].filter(
-        (id): id is string => id !== undefined,
-      ),
+      relatedEntityIds: journeyPreview.relatedEntityIds,
+      activeRelationshipIds: journeyPreview.activeRelationshipIds,
+      flowKind: journeyPreview.flowKind,
+      triggeredRuleIds: journeyPreview.triggeredRuleIds,
+      activeValues: step.values,
       focusKey: `${flow.flowId}:${stepRef(step)}:${step.sequence}:${step.stepHash}`,
     };
-  }, [enabled, flow, step]);
+  }, [ready, flow, step, journeyPreview]);
 
   const projectedFlowId = useRef<string | undefined>(undefined);
   useEffect(() => {
@@ -311,6 +320,7 @@ export const useStoryPlayback = ({
     step,
     scene,
     canvasFocus,
+    journeyPreview,
     projection,
     loading,
     error,

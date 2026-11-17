@@ -153,6 +153,40 @@ describe('CanvasViewport', () => {
       '6 4',
     );
   });
+  it('lights the remedy corridor and renders the active scenario timestamp without changing geometry', async () => {
+    const model = structuredClone(document);
+    model.relationships.find(
+      (r) => r.sourceRef === 'evidence.confirmation' && r.kind === 'references',
+    )!.flowKind = 'breach_compensation';
+    const journeyGraph = createDomainGraph(model);
+    const journey = await computeGraphLayout(journeyGraph, {
+      layoutMode: 'swimlane',
+    });
+    const before = JSON.stringify(journey.nodes);
+    const { container } = setup({
+      document: model,
+      graph: journeyGraph,
+      layout: journey,
+      storyFocus: {
+        activeEntityId: 'evidence.confirmation',
+        dependencyEntityIds: ['evidence.request'],
+        flowKind: 'breach_compensation',
+        activeValues: { confirmed_at: '2026-02-12T09:00:00Z' },
+        focusKey: 'late:confirmation',
+      },
+    });
+    expect(
+      container.querySelector('[data-story-corridor="breach_compensation"]'),
+    ).not.toBeNull();
+    expect(
+      container.querySelector('[data-id="evidence.confirmation"]'),
+    ).toHaveClass('evidence-story-breach');
+    expect(
+      screen.getByLabelText('盖章确认：2026-02-12T09:00:00Z'),
+    ).toBeInTheDocument();
+    expect(JSON.stringify(journey.nodes)).toBe(before);
+  });
+
   it('draws primary green progression and escalation as independent purple rails', () => {
     const { container, rerender } = setup();
     const line = container.querySelector(

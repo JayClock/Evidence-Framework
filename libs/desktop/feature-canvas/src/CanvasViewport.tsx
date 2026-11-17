@@ -599,7 +599,16 @@ const CanvasSurface = ({
               style={{ zIndex: 0, left: 0, top: 0 }}
             >
               {layout.swimlaneRegions ? (
-                <SwimlaneOverlay regions={layout.swimlaneRegions} />
+                <SwimlaneOverlay
+                  regions={layout.swimlaneRegions}
+                  activeStage={
+                    storyFocus
+                      ? layout.nodeById.get(storyFocus.activeEntityId)?.journey
+                          ?.stage
+                      : undefined
+                  }
+                  activeFlowKind={storyFocus?.flowKind}
+                />
               ) : null}
               <div
                 data-region="canvas-stage"

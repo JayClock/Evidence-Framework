@@ -3,13 +3,13 @@
   0%,
   100% {
     box-shadow:
-      0 0 0 3px rgb(47 93 143 / 30%),
-      0 0 14px rgb(47 93 143 / 22%);
+      0 0 0 3px rgb(var(--evidence-story-color, 47 93 143) / 30%),
+      0 0 14px rgb(var(--evidence-story-color, 47 93 143) / 22%);
   }
   50% {
     box-shadow:
-      0 0 0 7px rgb(47 93 143 / 10%),
-      0 0 26px rgb(47 93 143 / 32%);
+      0 0 0 7px rgb(var(--evidence-story-color, 47 93 143) / 10%),
+      0 0 26px rgb(var(--evidence-story-color, 47 93 143) / 32%);
   }
 }
 
@@ -27,6 +27,19 @@
   animation: evidence-story-pulse 1.8s ease-in-out infinite;
 }
 
+.evidence-story-breach {
+  --evidence-story-color: 180 35 24;
+}
+.evidence-story-escalation {
+  --evidence-story-color: 126 34 206;
+}
+[data-story-corridor='breach_compensation'] {
+  background-color: rgb(217 119 6 / 12%);
+}
+[data-story-corridor='escalation'] {
+  background-color: rgb(126 34 206 / 12%);
+}
+
 .evidence-story-flow {
   animation: evidence-story-flow 0.9s linear infinite;
 }
@@ -42,6 +55,6 @@
     animation: none;
   }
   .evidence-story-active {
-    box-shadow: 0 0 0 3px rgb(47 93 143 / 35%);
+    box-shadow: 0 0 0 3px rgb(var(--evidence-story-color, 47 93 143) / 35%);
   }
 }

@@ -25,6 +25,8 @@ interface NodeCardProps {
   highlighted: boolean;
   viewMode: CanvasViewMode;
   summary: CardSummary;
+  storyValues?: Readonly<Record<string, unknown>>;
+  triggeredRuleIds?: readonly string[];
   outOfScope?: boolean;
   onHover: (nodeId: string | null) => void;
   onSelect: (nodeId: string) => void;
@@ -36,17 +38,20 @@ const timeAttributes = (entity: EntityAST): string[] =>
       entity.attributes?.some((candidate) => candidate.name === name) === true,
   );
 
-const businessTime = (entity: EntityAST): string | null => {
+const businessTime = (
+  entity: EntityAST,
+  values?: Readonly<Record<string, unknown>>,
+): string | null => {
   const present = timeAttributes(entity);
 
   if (present.length === 0) {
     return null;
   }
 
-  return formatBusinessTimeWindow(
-    present,
-    (name) =>
-      entity.attributes?.find((attribute) => attribute.name === name)?.label,
+  return formatBusinessTimeWindow(present, (name) =>
+    typeof values?.[name] === 'string'
+      ? (values[name] as string)
+      : entity.attributes?.find((attribute) => attribute.name === name)?.label,
   );
 };
 
@@ -185,6 +190,8 @@ export const NodeCard = ({
   highlighted,
   viewMode,
   summary,
+  storyValues,
+  triggeredRuleIds,
   outOfScope = false,
   onHover,
   onSelect,
@@ -195,7 +202,7 @@ export const NodeCard = ({
   const primary = routes.find((route) => route.method === 'POST') ?? routes[0];
   const color = entityColor(entity);
   const token = CATEGORY_TOKENS[entity.category];
-  const time = businessTime(entity);
+  const time = businessTime(entity, storyValues);
   const shape = entityShape(entity);
   const standard = viewMode !== 'simplified';
 
@@ -376,12 +383,25 @@ export const NodeCard = ({
               ? ` +${summary.remainingAttributes}`
               : ''}
           </div>
-          {(summary.ruleFormulas ?? [])
+          {[...(summary.ruleFormulas ?? [])]
+            .sort(
+              (a, b) =>
+                Number(triggeredRuleIds?.includes(b.id)) -
+                Number(triggeredRuleIds?.includes(a.id)),
+            )
             .slice(0, viewMode === 'expanded' ? 2 : 1)
             .map((rule) => (
               <div
                 key={rule.id}
                 data-card-rule={rule.id}
+                data-rule-triggered={
+                  triggeredRuleIds?.includes(rule.id) ? 'true' : undefined
+                }
+                style={{
+                  color: triggeredRuleIds?.includes(rule.id)
+                    ? '#b42318'
+                    : undefined,
+                }}
                 className="truncate font-mono text-[8px] text-[#8d6200]"
                 title={`${rule.label} (${rule.kind})\n${rule.expression}`}
                 aria-label={`CEL ${rule.kind}：${rule.expression}`}

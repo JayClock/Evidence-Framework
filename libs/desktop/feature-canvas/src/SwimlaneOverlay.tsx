@@ -1,10 +1,18 @@
-import type { SwimlaneRegion } from '@evidence-poc/evidence-canvas-interaction';
+import type {
+  BusinessMilestoneStage,
+  SwimlaneRegion,
+} from '@evidence-poc/evidence-canvas-interaction';
+import type { RelationshipFlowKind } from '@evidence-poc/evidence-schema';
 
 /** World-space paper beneath the cards, never an interactive model object. */
 export const SwimlaneOverlay = ({
   regions,
+  activeStage,
+  activeFlowKind,
 }: {
   regions: readonly SwimlaneRegion[];
+  activeStage?: BusinessMilestoneStage;
+  activeFlowKind?: RelationshipFlowKind;
 }) => (
   <div aria-label="业务旅程、权责泳道与违约走廊">
     {[...regions]
@@ -18,6 +26,17 @@ export const SwimlaneOverlay = ({
           data-milestone-stage={stage}
           data-responsible-role={roleId}
           data-corridor-kind={corridorKind}
+          data-story-corridor={
+            kind === 'corridor' &&
+            corridorKind === 'remedy_corridor' &&
+            activeFlowKind &&
+            activeFlowKind !== 'primary'
+              ? activeFlowKind
+              : undefined
+          }
+          data-story-milestone={
+            kind === 'phase' && stage === activeStage ? stage : undefined
+          }
           className={
             kind === 'phase'
               ? 'absolute border-b border-evidence-line bg-[#eef2f7] px-3 py-2 text-[12px] font-medium'
@@ -26,6 +45,16 @@ export const SwimlaneOverlay = ({
                 : 'absolute border-y border-evidence-line bg-[#f2f6fb]/40 px-3 py-2 text-[11px] text-evidence-muted'
           }
           style={{
+            boxShadow:
+              kind === 'phase' && stage === activeStage
+                ? 'inset 0 -3px #21835b'
+                : undefined,
+            borderColor:
+              kind === 'corridor' &&
+              corridorKind === 'remedy_corridor' &&
+              activeFlowKind === 'escalation'
+                ? '#7e22ce'
+                : undefined,
             left: box.x,
             top: box.y,
             width: box.width,
