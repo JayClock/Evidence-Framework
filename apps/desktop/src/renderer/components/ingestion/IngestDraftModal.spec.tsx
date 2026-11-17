@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import { IngestDraftModal } from './IngestDraftModal';
-import { installDesktopApi, projectSummary } from '../../test-support/desktopApi';
+import { installDesktopApi, projectSummary } from '@evidence-poc/desktop-testing/desktopApi';
 import type { IngestionDraft } from '@evidence-poc/evidence-schema';
 
 const draft = (): IngestionDraft => ({

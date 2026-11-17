@@ -17,12 +17,26 @@
     "src/preload/**/*.ts",
     "src/renderer/**/*.ts",
     "src/renderer/**/*.tsx",
-    "src/shared/**/*.ts",
     "forge.env.d.ts"
   ],
   "references": [
     {
-      "path": "../../libs/evidence-visualization/tsconfig.lib.json"
+      "path": "../../libs/evidence-acceptance/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libs/desktop/feature-agent/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libs/desktop/feature-drift/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libs/desktop/feature-delivery/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libs/desktop/feature-story/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libs/desktop/contracts/tsconfig.lib.json"
     },
     {
       "path": "../../libs/evidence-schema/tsconfig.lib.json"

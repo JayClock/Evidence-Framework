@@ -5,26 +5,9 @@
   "sourceRoot": "apps/desktop",
   "tags": ["type:app", "layer:app", "platform:node", "scope:desktop"],
   "targets": {
-    "prepare-resources": {
-      "executor": "nx:run-commands",
-      "cache": true,
-      "inputs": [
-        "{workspaceRoot}/libs/evidence-visualization/assets/**/*",
-        "{workspaceRoot}/scripts/prepare-desktop-resources.mjs"
-      ],
-      "outputs": ["{projectRoot}/resources"],
-      "options": {
-        "command": "node scripts/prepare-desktop-resources.mjs",
-        "cwd": "."
-      },
-      "metadata": {
-        "description": "Copy the review page assets into apps/desktop/resources"
-      }
-    },
     "build": {
       "executor": "nx:run-commands",
       "cache": true,
-      "dependsOn": ["prepare-resources"],
       "inputs": ["production", "^production"],
       "outputs": ["{projectRoot}/.vite", "{projectRoot}/out"],
       "options": {

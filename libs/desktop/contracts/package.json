@@ -1,0 +1,85 @@
+{
+  "name": "@evidence-poc/desktop-contracts",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "@evidence-poc/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./projects": {
+      "@evidence-poc/source": "./src/projects.ts",
+      "types": "./dist/projects.d.ts",
+      "import": "./dist/projects.js",
+      "default": "./dist/projects.js"
+    },
+    "./mcpIpc": {
+      "@evidence-poc/source": "./src/mcpIpc.ts",
+      "types": "./dist/mcpIpc.d.ts",
+      "import": "./dist/mcpIpc.js",
+      "default": "./dist/mcpIpc.js"
+    },
+    "./drift": {
+      "@evidence-poc/source": "./src/drift.ts",
+      "types": "./dist/drift.d.ts",
+      "import": "./dist/drift.js",
+      "default": "./dist/drift.js"
+    },
+    "./ipc": {
+      "@evidence-poc/source": "./src/ipc.ts",
+      "types": "./dist/ipc.d.ts",
+      "import": "./dist/ipc.js",
+      "default": "./dist/ipc.js"
+    },
+    "./agentIpc": {
+      "@evidence-poc/source": "./src/agentIpc.ts",
+      "types": "./dist/agentIpc.d.ts",
+      "import": "./dist/agentIpc.js",
+      "default": "./dist/agentIpc.js"
+    },
+    "./story": {
+      "@evidence-poc/source": "./src/story.ts",
+      "types": "./dist/story.d.ts",
+      "import": "./dist/story.js",
+      "default": "./dist/story.js"
+    },
+    "./ingestion": {
+      "@evidence-poc/source": "./src/ingestion.ts",
+      "types": "./dist/ingestion.d.ts",
+      "import": "./dist/ingestion.js",
+      "default": "./dist/ingestion.js"
+    },
+    "./delivery": {
+      "@evidence-poc/source": "./src/delivery.ts",
+      "types": "./dist/delivery.d.ts",
+      "import": "./dist/delivery.js",
+      "default": "./dist/delivery.js"
+    }
+  },
+  "nx": {
+    "name": "desktop-contracts",
+    "tags": [
+      "type:lib",
+      "layer:contract",
+      "platform:node",
+      "surface:browser-safe",
+      "scope:desktop"
+    ]
+  },
+  "dependencies": {
+    "tslib": "^2.3.0",
+    "@evidence-poc/evidence-agent": "workspace:*",
+    "@evidence-poc/evidence-api": "workspace:*",
+    "@evidence-poc/evidence-mcp": "workspace:*",
+    "@evidence-poc/evidence-model-core": "workspace:*",
+    "@evidence-poc/evidence-schema": "workspace:*",
+    "@evidence-poc/evidence-acceptance": "workspace:*"
+  }
+}

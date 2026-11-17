@@ -25,9 +25,6 @@
       "path": "./libs/evidence-api"
     },
     {
-      "path": "./libs/evidence-visualization"
-    },
-    {
       "path": "./libs/desktop/ui-kit"
     },
     {
@@ -41,6 +38,27 @@
     },
     {
       "path": "./libs/evidence-model-io"
+    },
+    {
+      "path": "./libs/desktop/contracts"
+    },
+    {
+      "path": "./libs/desktop/feature-delivery"
+    },
+    {
+      "path": "./libs/desktop/feature-story"
+    },
+    {
+      "path": "./libs/desktop/feature-agent"
+    },
+    {
+      "path": "./libs/desktop/feature-drift"
+    },
+    {
+      "path": "./libs/evidence-tools"
+    },
+    {
+      "path": "./libs/evidence-acceptance"
     }
   ]
 }

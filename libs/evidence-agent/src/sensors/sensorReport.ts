@@ -41,7 +41,7 @@ export interface KeyDataSummary {
 }
 
 export interface StageGateSummary {
-  target: 'api' | 'visualization';
+  target: 'api';
   passed: boolean;
   scopeRefs: readonly string[];
   errors: readonly string[];
@@ -132,7 +132,7 @@ export interface KeyDataAuditReport {
 /** The stage gate report. */
 export interface StageGateReport {
   passed?: boolean;
-  target?: 'api' | 'visualization';
+  target?: 'api';
   scopeRefs?: readonly string[];
   errors?: readonly string[];
 }

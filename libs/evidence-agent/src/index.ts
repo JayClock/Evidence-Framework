@@ -1,3 +1,31 @@
+// ─── Incremental business story projection ─────────────────────────────────
+export {
+  createFlowStoryProjector,
+  type FlowStoryProjector,
+  type FlowStoryProjectorOptions,
+} from './story/flowStoryProjector.js';
+export { createStoryAgent } from './story/storyAgent.js';
+export { StorySceneCache } from './story/storyCache.js';
+export {
+  simulateWhatIf,
+  type WhatIfSimulatorOptions,
+} from './story/whatIfSimulator.js';
+export {
+  STORY_SYSTEM_PROMPT,
+  WHAT_IF_EXPLANATION_PROMPT,
+  WHAT_IF_EXTRACTION_PROMPT,
+} from './story/prompts.js';
+export type {
+  BusinessStoryProjection,
+  DocumentCardField,
+  StoryAgent,
+  StoryScene,
+  WhatIfHypothesis,
+  WhatIfInput,
+  WhatIfResult,
+  WhatIfRuleOutcome,
+} from './story/types.js';
+
 // ─── Agent session, prompts and governance ────────────────────────────────
 export { GOVERNANCE_PROMPT } from './prompts/governance.js';
 

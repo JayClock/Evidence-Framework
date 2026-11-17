@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 
 interface ShortcutHandlers {
-  openReview?: () => void;
   undo: () => void;
   redo: () => void;
   save: () => void;
@@ -14,8 +13,6 @@ interface ShortcutHandlers {
    * and the header does not need a button per feature.
    */
   openCommandPalette?: () => void;
-  /** Writes the offline review page, the same action as the palette row. */
-  exportReview?: () => void;
   /** Re-runs the AST gate and the sensors. */
   rerunSensors?: () => void;
   openDelivery?: () => void;
@@ -84,17 +81,6 @@ export const useEditorShortcuts = (handlers: ShortcutHandlers): void => {
 
       const mod = event.metaKey || event.ctrlKey;
       const typing = isEditable(event.target);
-      if (
-        event.altKey &&
-        event.code === 'KeyR' &&
-        !typing &&
-        handlers.openReview
-      ) {
-        event.preventDefault();
-        handlers.openReview();
-        return;
-      }
-
       if (mod && event.key.toLowerCase() === 's') {
         event.preventDefault();
         handlers.save();
@@ -122,11 +108,7 @@ export const useEditorShortcuts = (handlers: ShortcutHandlers): void => {
       if (mod && event.shiftKey) {
         const shifted = event.key.toLowerCase();
         const shiftedAction =
-          shifted === 'e'
-            ? handlers.exportReview
-            : shifted === 'r'
-              ? handlers.rerunSensors
-              : undefined;
+          shifted === 'r' ? handlers.rerunSensors : undefined;
 
         if (shiftedAction !== undefined) {
           event.preventDefault();

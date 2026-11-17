@@ -40,12 +40,14 @@
     }
   },
   "dependencies": {
+    "@evidence-poc/evidence-agent": "workspace:*",
     "@evidence-poc/evidence-api": "workspace:*",
     "@evidence-poc/evidence-model-core": "workspace:*",
     "@evidence-poc/evidence-model-io": "workspace:*",
-    "@evidence-poc/evidence-visualization": "workspace:*",
+    "@evidence-poc/evidence-schema": "workspace:*",
     "cac": "^6.7.14",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "@evidence-poc/evidence-acceptance": "workspace:*"
   },
   "devDependencies": {
     "vitest": "~4.1.0"

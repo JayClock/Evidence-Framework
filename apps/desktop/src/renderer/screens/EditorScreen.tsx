@@ -9,14 +9,17 @@ import {
 
 import type { ImperativePanelHandle } from 'react-resizable-panels';
 
-import { computeContextScope } from '@evidence-poc/evidence-canvas-interaction';
+import {
+  computeContextScope,
+  type CanvasLayoutMode,
+} from '@evidence-poc/evidence-canvas-interaction';
 import type { SensorIssue } from '@evidence-poc/evidence-agent/browser';
 import {
   ENTITY_CATEGORY_LABELS,
   type DomainModelDocument,
 } from '@evidence-poc/evidence-schema';
 
-import type { EvidenceProjectSummary } from '../../shared/projects';
+import type { EvidenceProjectSummary } from '@evidence-poc/desktop-contracts/projects';
 import { BottomStatusBar } from '../components/BottomStatusBar';
 import { ProblemsPanel } from '../components/console/ProblemsPanel';
 import {
@@ -26,16 +29,31 @@ import {
 import { DomainLedgerTable } from '../components/ledger/DomainLedgerTable';
 import { CanvasFloatingHud } from '../components/canvas/CanvasFloatingHud';
 import { ActivityDrawer } from '../components/layout/ActivityDrawer';
+import { ClauseTraceDrawer } from '../components/clauses/ClauseTraceDrawer';
 import { ActivityRail } from '../components/layout/ActivityRail';
 import { TopologyDrawer } from '../components/layout/TopologyDrawer';
-import { AgentCopilot } from '../components/agent/AgentCopilot';
-import { InlinePatchCopilot } from '../components/agent/InlinePatchCopilot';
+import {
+  AgentCopilot,
+  InlinePatchCopilot,
+  useAgentPatchBridge,
+  useAgentSession,
+  usePatchReview,
+} from '@evidence-poc/desktop-feature-agent';
 import { CelRulesPane } from '../components/split/CelRulesPane';
 import { OpenApiSpecViewer } from '../components/split/OpenApiSpecViewer';
+import { ScenarioStudioModal } from '../components/scenario/ScenarioStudioModal';
+import { WorkshopWizardDrawer } from '../components/wizard/WorkshopWizardDrawer';
+import {
+  StoryPlayerBar,
+  StoryDrawer,
+  useStoryPlayback,
+} from '@evidence-poc/desktop-feature-story';
 import { SecondaryStage } from '../components/split/SecondaryStage';
-import { DriftRadar } from '../components/drift/DriftRadar';
-import { DeliveryHub } from '../components/delivery/DeliveryHub';
-import { ReviewHubModal } from '../components/review/ReviewHubModal';
+import { DriftRadar } from '@evidence-poc/desktop-feature-drift';
+import {
+  DeliveryHub,
+  useDeliveryHub,
+} from '@evidence-poc/desktop-feature-delivery';
 import { TopHeader } from '../components/TopHeader';
 import {
   CanvasViewport,
@@ -50,22 +68,16 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
   Toaster,
-  toast,
 } from '@evidence-poc/desktop-ui-kit';
-import { useAgentPatchBridge } from '../state/useAgentPatchBridge';
 import type {
   CommandCapabilities,
   CommandHandlers,
 } from '../state/commandRegistry';
 import { useCommandRegistry } from '../state/useCommandRegistry';
-import { useAgentSession } from '../state/useAgentSession';
-import { useDeliveryHub } from '../state/useDeliveryHub';
 import { useLiveModelBridge } from '../state/useLiveModelBridge';
 import { useEditorSession } from '../state/useEditorSession';
 import { useEditorShortcuts } from '../state/useEditorShortcuts';
 import { useMcpBridge } from '../state/useMcpBridge';
-import { usePatchReview } from '../state/usePatchReview';
-import { useReviewExport } from '../state/useReviewExport';
 import { useSensorsState } from '../state/useSensorsState';
 import {
   type RailTabId,
@@ -162,12 +174,16 @@ const RAIL_TITLES: Record<RailTabId, string> = {
   diagnostics: '门禁与诊断',
   drift: '生产漂移',
   copilot: 'AI 协同',
+  clauses: '条款审计',
+  workshop: '共创工作坊',
 };
 
 const EditorWorkspace = ({
   project,
   initialDocument,
 }: EditorWorkspaceProps) => {
+  const [scenarioOpen, setScenarioOpen] = useState(false);
+  const [layoutMode, setLayoutMode] = useState<CanvasLayoutMode>('topology');
   const [viewMode, setViewMode] = useState<CanvasViewMode>('simplified');
   const workspaceView = useWorkspaceViewMode();
   // The split stage shares the view mode: "分屏" is one more mode, not a second
@@ -179,10 +195,23 @@ const EditorWorkspace = ({
   // Every drawer, sheet and overlay is one object, so the shell renders a
   // projection instead of coordinating four independent booleans.
   const layout = useWorkspaceLayoutState();
-  const reviewExport = useReviewExport(project.rootPath);
-  const { state, save, reloadFromDisk, dismissExternalChange } =
-    useEditorSession(project, initialDocument, viewMode);
-  const agent = useAgentSession(project.rootPath);
+  const {
+    state,
+    save,
+    reloadFromDisk,
+    reloadFromDiskIfClean,
+    dismissExternalChange,
+  } = useEditorSession(project, initialDocument, viewMode, layoutMode);
+  const storyActive = split.isSplit && split.activePane === 'story';
+  const story = useStoryPlayback({
+    api: window.evidenceAPI.story,
+    rootPath: project.rootPath,
+    document: state.document,
+    enabled: storyActive,
+    refreshSavedSources: state.externalChangeAt !== null,
+    onInvalidated: reloadFromDiskIfClean,
+  });
+  const agent = useAgentSession(window.evidenceAPI.agent, project.rootPath);
   const sensors = useSensorsState(project.rootPath);
   const liveModel = useLiveModelBridge(
     project.rootPath,
@@ -190,6 +219,7 @@ const EditorWorkspace = ({
     initialDocument,
   );
   const delivery = useDeliveryHub(
+    window.evidenceAPI.projects,
     project.rootPath,
     state.session,
     initialDocument,
@@ -250,26 +280,18 @@ const EditorWorkspace = ({
   useEffect(() => {
     if (state.savedAt !== null) void sensors.refresh();
   }, [state.savedAt, sensors.refresh]);
-  const [reviewRevision, setReviewRevision] = useState(0);
-  const [reviewPrompt, setReviewPrompt] = useState<{
+  const [copilotPrefill, setCopilotPrefill] = useState<{
     token: number;
     text: string;
   } | null>(null);
-  useEffect(() => {
-    setReviewRevision((current) => current + 1);
-  }, [state.document, state.externalChangeAt]);
-  const reviewInput = useMemo(
-    () => ({
-      rootPath: project.rootPath,
-      document: state.document,
-      revision: reviewRevision,
-    }),
-    [project.rootPath, state.document, reviewRevision],
-  );
 
   const patchReview = usePatchReview(state.session, state.document);
 
-  useAgentPatchBridge(state.session, patchReview.record);
+  useAgentPatchBridge(
+    window.evidenceAPI.agent,
+    state.session,
+    patchReview.record,
+  );
 
   // Monotonic document revision so an external agent can tell whether the model
   // it read is still the model on screen.
@@ -478,19 +500,10 @@ const EditorWorkspace = ({
     () => ({
       canUndo: state.canUndo,
       canRedo: state.canRedo,
-      dirty: state.dirty,
-      busy: reviewExport.busy,
       viewMode: workspaceView.mode,
       hasSelection: state.selection.nodeId !== null,
     }),
-    [
-      state.canUndo,
-      state.canRedo,
-      state.dirty,
-      state.selection.nodeId,
-      reviewExport.busy,
-      workspaceView.mode,
-    ],
+    [state.canUndo, state.canRedo, state.selection.nodeId, workspaceView.mode],
   );
 
   const commandHandlers = useMemo<CommandHandlers>(
@@ -507,9 +520,6 @@ const EditorWorkspace = ({
       rotateSplit: split.rotateSplitDirection,
       zoomToSelection: () => requestZoom('selection'),
       focusSearch,
-      openReview: () => layout.openHub('review'),
-      exportReview: () => void reviewExport.exportPage(),
-      exportDiff: () => void reviewExport.exportPage(true),
       openDelivery: () => layout.openHub('delivery'),
       openSandbox: () => layout.openHub('drift'),
       rerunSensors: () => void sensors.refresh(),
@@ -524,7 +534,6 @@ const EditorWorkspace = ({
       focusSearch,
       layout.setActiveRailTab,
       layout.openHub,
-      reviewExport.exportPage,
       save,
       sensors.refresh,
       split.openSplit,
@@ -536,30 +545,10 @@ const EditorWorkspace = ({
 
   const commands = useCommandRegistry(commandCapabilities, commandHandlers);
 
-  /*
-   * Export outcomes arrive here whichever entry point started them — the header,
-   * a chord or a palette row — so the report is bound to the controller's notice
-   * rather than to the control that was pressed. A cancelled save dialog resolves
-   * with no notice and therefore says nothing.
-   */
-  const { notice: exportNotice, dismissNotice } = reviewExport;
-  useEffect(() => {
-    if (exportNotice === null) return;
-
-    if (exportNotice.tone === 'saved') {
-      toast.success(exportNotice.message);
-    } else {
-      toast.error(exportNotice.message);
-    }
-
-    dismissNotice();
-  }, [exportNotice, dismissNotice]);
-
   const { accept: acceptPatch, revert: revertPatch } = patchReview;
 
   const shortcuts = useMemo(
     () => ({
-      openReview: () => layout.openHub('review'),
       undo: () => {
         state.session.undo();
       },
@@ -569,7 +558,6 @@ const EditorWorkspace = ({
       save: () => void save(),
       focusSearch,
       openCommandPalette: () => setPaletteOpen(true),
-      exportReview: () => void reviewExport.exportPage(),
       rerunSensors: () => void sensors.refresh(),
       openDelivery: () => layout.openHub('delivery'),
       openSandbox: () => layout.openHub('drift'),
@@ -607,7 +595,6 @@ const EditorWorkspace = ({
       layout.toggleProblemsPanel,
       layout.toggleRailTab,
       layout.setActiveRailTab,
-      reviewExport.exportPage,
       save,
       sensors.refresh,
       split.openSplit,
@@ -692,12 +679,16 @@ const EditorWorkspace = ({
         selection={state.selection}
         focusRequest={focusRequest}
         zoomCommand={zoomCommand}
+        storyFocus={story.canvasFocus}
         hud={(controls) => (
           <CanvasFloatingHud
             {...controls}
             viewMode={workspaceView.mode}
             onViewModeChange={workspaceView.setMode}
             density={viewMode}
+            layoutMode={layoutMode}
+            onLayoutModeChange={setLayoutMode}
+            onOpenScenarios={() => setScenarioOpen(true)}
             onDensityChange={setViewMode}
             hasSelection={state.selection.nodeId !== null}
             onClearSelection={() => state.session.clearSelection()}
@@ -714,8 +705,8 @@ const EditorWorkspace = ({
           focusIssue(issues[0]);
         }}
         overlay={patchReview.review?.overlay ?? null}
-        scope={scope}
-        onScopeChange={changeScope}
+        scope={storyActive ? null : scope}
+        onScopeChange={storyActive ? undefined : changeScope}
         onSelect={(nodeId) => state.session.select(nodeId)}
         onClearSelection={() => state.session.clearSelection()}
       />
@@ -742,6 +733,13 @@ const EditorWorkspace = ({
         cel: state.document.rules.length,
       }}
       panes={{
+        story: (
+          <StoryDrawer
+            playback={story}
+            dirty={state.dirty}
+            externalConflict={state.dirty && state.externalChangeAt !== null}
+          />
+        ),
         ledger: ledgerStage,
         openapi: (
           <OpenApiSpecViewer
@@ -754,6 +752,7 @@ const EditorWorkspace = ({
         cel: <CelRulesPane document={state.document} />,
         drift: (
           <DriftRadar
+            api={window.evidenceAPI.drift}
             embedded
             rootPath={project.rootPath}
             onClose={split.closeSplit}
@@ -795,20 +794,6 @@ const EditorWorkspace = ({
       </ResizablePanelGroup>
     );
 
-  const canLocateIssue = useCallback(
-    (issue: SensorIssue) => {
-      const id = issue.targetNodeId?.split('#')[0] ?? issue.contextRef;
-
-      return (
-        !!id &&
-        (state.layout.nodeById.has(id) ||
-          state.layout.contextGroups.some((group) => group.contextId === id) ||
-          state.layout.edges.some((edge) => edge.relationshipId === id))
-      );
-    },
-    [state.layout],
-  );
-
   return (
     <LiveApiProvider analysis={delivery.analysis} stale={delivery.stale}>
       <div className="flex h-full flex-col bg-evidence-surface">
@@ -818,10 +803,40 @@ const EditorWorkspace = ({
           graph={state.graph}
           selection={state.selection}
           onSave={() => void save()}
-          onExportReview={() => void reviewExport.exportPage()}
-          exportReviewBusy={reviewExport.busy}
           onOpenCommandPalette={() => setPaletteOpen(true)}
         />
+
+        <div
+          data-canvas-control=""
+          data-evidence-capture-hide=""
+          className="flex flex-wrap items-center gap-3 border-b border-evidence-line bg-white px-4 py-2"
+        >
+          <div
+            role="group"
+            aria-label="画布放映模式"
+            className="flex shrink-0 gap-1 text-[11px]"
+          >
+            <button
+              type="button"
+              aria-pressed={!storyActive}
+              onClick={() => workspaceView.setMode('graph')}
+              className="rounded border border-evidence-line px-2 py-1 aria-pressed:bg-evidence-active"
+            >
+              📐 拓扑视图
+            </button>
+            <button
+              type="button"
+              aria-pressed={storyActive}
+              onClick={() => split.openSplit('story')}
+              className="rounded border border-evidence-line px-2 py-1 aria-pressed:bg-evidence-active"
+            >
+              🎬 业务流放映
+            </button>
+          </div>
+          {storyActive ? (
+            <StoryPlayerBar playback={story} onExit={split.closeSplit} />
+          ) : null}
+        </div>
 
         {liveModel.error === null ? null : (
           <p role="alert">实时诊断同步失败：{liveModel.error}</p>
@@ -831,7 +846,7 @@ const EditorWorkspace = ({
           The studio is the canvas plus one inspector: outline, diagnostics,
           sandbox and copilot are drawers the 48px activity rail opens, so the
           canvas owns every pixel the modeler is not actively using. Findings
-          and the delivery/review hubs slide over that canvas only while open.
+          and the delivery/drift hubs slide over that canvas only while open.
         */}
         <div className="relative flex min-h-0 flex-1">
           <ActivityRail
@@ -891,8 +906,30 @@ const EditorWorkspace = ({
                   />
                 ) : null}
 
+                {layout.activeRailTab === 'workshop' ? (
+                  <WorkshopWizardDrawer
+                    session={state.session}
+                    onFocus={focusNode}
+                    onReview={(text) => {
+                      setCopilotPrefill({ token: Date.now(), text });
+                      layout.setActiveRailTab('copilot');
+                    }}
+                  />
+                ) : null}
+                {layout.activeRailTab === 'clauses' ? (
+                  <ClauseTraceDrawer
+                    model={state.document}
+                    selectedNodeId={state.selection.nodeId}
+                    onFocusEntity={(id) => {
+                      workspaceView.setMode('graph');
+                      focusNode(id);
+                    }}
+                  />
+                ) : null}
+
                 {layout.activeRailTab === 'drift' ? (
                   <DriftRadar
+                    api={window.evidenceAPI.drift}
                     embedded
                     rootPath={project.rootPath}
                     onClose={() => layout.setActiveRailTab(null)}
@@ -906,8 +943,8 @@ const EditorWorkspace = ({
                     focus={promptFocus}
                     onClearFocus={() => state.session.clearSelection()}
                     focusToken={agentFocusToken}
-                    prefill={reviewPrompt}
-                    onPrefillConsumed={() => setReviewPrompt(null)}
+                    prefill={copilotPrefill}
+                    onPrefillConsumed={() => setCopilotPrefill(null)}
                   />
                 ) : null}
               </ActivityDrawer>
@@ -943,6 +980,7 @@ const EditorWorkspace = ({
                   graph={state.graph}
                   session={state.session}
                   selection={state.selection}
+                  onOpenSource={() => layout.setActiveRailTab('clauses')}
                 />
               </ResizablePanel>
             </ResizablePanelGroup>
@@ -995,25 +1033,10 @@ const EditorWorkspace = ({
         ) : null}
 
         {layout.activeHub === 'drift' ? (
-          <DriftRadar rootPath={project.rootPath} onClose={layout.closeHub} />
-        ) : null}
-
-        {layout.activeHub === 'review' && reviewInput !== null ? (
-          <ReviewHubModal
-            input={reviewInput}
+          <DriftRadar
+            api={window.evidenceAPI.drift}
+            rootPath={project.rootPath}
             onClose={layout.closeHub}
-            canLocate={canLocateIssue}
-            onLocate={focusIssue}
-            onPrompt={(issue) => {
-              layout.closeHub();
-              layout.setActiveRailTab('copilot');
-              focusIssue(issue);
-              tokenRef.current += 1;
-              setReviewPrompt({
-                token: tokenRef.current,
-                text: `请协助分析以下模型审查发现，先说明修改建议，不要假定业务决策：\n[${issue.code}] ${issue.message}\n${issue.targetNodeId ?? issue.contextRef ?? ''}\n${issue.suggestion ?? ''}`,
-              });
-            }}
           />
         ) : null}
 
@@ -1042,6 +1065,18 @@ const EditorWorkspace = ({
           targets={commandTargets}
           onFocusTarget={focusNode}
         />
+        {scenarioOpen ? (
+          <ScenarioStudioModal
+            session={state.session}
+            onClose={() => setScenarioOpen(false)}
+            onPlay={(flow) => {
+              story.selectFlow(flow);
+              story.setSkipAi(true);
+              split.openSplit('story');
+              setScenarioOpen(false);
+            }}
+          />
+        ) : null}
         <Toaster />
       </div>
     </LiveApiProvider>

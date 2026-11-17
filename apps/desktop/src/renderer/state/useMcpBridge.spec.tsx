@@ -2,14 +2,14 @@ import { render, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import { createModelSession } from '@evidence-poc/evidence-model-core';
-import type { McpRendererRequest } from '../../shared/mcpIpc';
+import type { McpRendererRequest } from '@evidence-poc/desktop-contracts/mcpIpc';
 
 import { useMcpBridge } from './useMcpBridge';
 import {
   healthyReport,
   installDesktopApi,
   projectSummary,
-} from '../test-support/desktopApi';
+} from '@evidence-poc/desktop-testing/desktopApi';
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 
 const BridgeHarness = ({

@@ -1,3 +1,4 @@
+import { RELATIONSHIP_FLOW_LABELS } from '@evidence-poc/evidence-schema';
 import type { EdgeProps } from '@xyflow/react';
 
 import { useCanvasInteraction } from './CanvasInteractionContext';
@@ -48,15 +49,48 @@ export const FulfillmentEdge = ({ data }: EdgeProps<FulfillmentFlowEdge>) => {
   const points = relationship.points
     .map((point) => `${point.x},${point.y}`)
     .join(' ');
-  const stroke = highlighted ? EDGE_HIGHLIGHT : EDGE_COLOR;
+  const flowKind = relationship.flowKind ?? 'primary';
+  const breach = flowKind !== 'primary';
+  const flowColor = flowKind === 'breach_compensation' ? '#d97706' : '#7e22ce';
+  const stroke = breach ? flowColor : highlighted ? EDGE_HIGHLIGHT : EDGE_COLOR;
   const strokeWidth = highlighted ? EDGE_STYLES.activeWidth : EDGE_STYLES.width;
-  const strokeDasharray = relationship.dashed ? EDGE_STYLES.dashed : undefined;
+  const strokeDasharray = breach
+    ? flowKind === 'escalation'
+      ? '6 3 1 3'
+      : '6 4'
+    : relationship.dashed
+      ? EDGE_STYLES.dashed
+      : undefined;
 
   const opacity = outOfScope ? 0.15 : muted ? 0 : dimmed ? 0.16 : 1;
   const interactive = !outOfScope && !muted;
 
   return (
-    <g data-edge-id={relationship.relationshipId} opacity={opacity}>
+    <g
+      data-edge-id={relationship.relationshipId}
+      data-flow-kind={flowKind}
+      opacity={opacity}
+    >
+      <title>{`${RELATIONSHIP_FLOW_LABELS[flowKind]}：${label}`}</title>
+      {breach ? (
+        <g
+          transform={`translate(${midpoint.x}, ${midpoint.y - 14})`}
+          style={{ pointerEvents: 'none' }}
+        >
+          <rect
+            x={-34}
+            y={-10}
+            width={68}
+            height={18}
+            rx={4}
+            fill="white"
+            stroke={flowColor}
+          />
+          <text textAnchor="middle" y={2} fontSize={10} fill={flowColor}>
+            {RELATIONSHIP_FLOW_LABELS[flowKind]}
+          </text>
+        </g>
+      ) : null}
       {diagnosticSeverity === null ? null : (
         <polyline
           points={points}
@@ -72,8 +106,11 @@ export const FulfillmentEdge = ({ data }: EdgeProps<FulfillmentFlowEdge>) => {
         fill="none"
         stroke={stroke}
         strokeWidth={strokeWidth}
-        strokeDasharray={strokeDasharray}
+        strokeDasharray={data.storyActive ? '8 5' : strokeDasharray}
+        className={data.storyActive ? 'evidence-story-flow' : undefined}
+        data-story-edge={data.storyActive ? '' : undefined}
         style={{
+          animationDirection: data.storyReversed ? 'reverse' : 'normal',
           pointerEvents: interactive ? 'stroke' : 'none',
           strokeLinecap: 'round',
           strokeLinejoin: 'round',
@@ -113,7 +150,7 @@ export const FulfillmentEdge = ({ data }: EdgeProps<FulfillmentFlowEdge>) => {
               />
             ),
           )}
-      {hovered ? (
+      {hovered && !breach ? (
         <text
           x={midpoint.x}
           y={midpoint.y - 14}
@@ -193,10 +230,15 @@ export const PairLinkEdge = ({ data }: EdgeProps<PairLinkFlowEdge>) => {
       data-pair-link=""
       fill="none"
       stroke={PAIR_LINK_COLOR}
-      strokeWidth={1}
-      strokeDasharray="3 3"
-      opacity={data.outOfScope ? 0.15 : 1}
-      style={{ pointerEvents: 'none' }}
+      strokeWidth={data.storyActive ? 2 : 1}
+      strokeDasharray={data.storyActive ? '8 5' : '3 3'}
+      className={data.storyActive ? 'evidence-story-flow' : undefined}
+      data-story-edge={data.storyActive ? '' : undefined}
+      opacity={data.outOfScope ? 0.15 : data.storyDimmed ? 0.16 : 1}
+      style={{
+        pointerEvents: 'none',
+        animationDirection: data.storyReversed ? 'reverse' : 'normal',
+      }}
     />
   );
 };

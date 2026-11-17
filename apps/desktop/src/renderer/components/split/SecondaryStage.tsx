@@ -67,7 +67,7 @@ export const SecondaryStage = ({
         <div
           role="tablist"
           aria-label="副视口视图"
-          className="flex min-w-0 items-center gap-0.5"
+          className="flex min-w-0 items-center gap-0.5 overflow-x-auto"
         >
           {SPLIT_PANES.map((pane) => {
             const badge = badges[pane] ?? 0;

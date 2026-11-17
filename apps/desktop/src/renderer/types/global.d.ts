@@ -1,4 +1,4 @@
-import type { EvidenceDesktopApi } from '../../shared/ipc';
+import type { EvidenceDesktopApi } from '@evidence-poc/desktop-contracts/ipc';
 
 declare global {
   interface Window {

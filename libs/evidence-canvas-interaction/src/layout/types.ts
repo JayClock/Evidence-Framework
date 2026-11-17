@@ -40,6 +40,7 @@ export type LayoutEdgeKind = 'plays_role' | 'references';
 export interface LayoutEdge {
   relationshipId: string;
   kind: LayoutEdgeKind;
+  flowKind?: import('@evidence-poc/evidence-schema').RelationshipFlowKind;
   sourceRef: string;
   targetRef: string;
   /** Absolute orthogonal route, including the endpoints. */
@@ -66,7 +67,18 @@ export interface ResponsibilityLink {
   kind: 'contract_party' | 'responsibility';
 }
 
+export type CanvasLayoutMode = 'topology' | 'swimlane';
+
+export interface SwimlaneRegion {
+  id: string;
+  kind: 'phase' | 'lane';
+  label: string;
+  /** Absolute coordinates; never written into the business model. */
+  box: Rect;
+}
+
 export interface DomainGraphLayout {
+  swimlaneRegions?: readonly SwimlaneRegion[];
   bounds: Rect;
   nodes: readonly LayoutNode[];
   nodeById: ReadonlyMap<string, LayoutNode>;

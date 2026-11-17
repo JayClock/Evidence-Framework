@@ -118,6 +118,9 @@ export const extractElkResultToLayout = (
         sourceRef: relationship.sourceRef,
         targetRef: relationship.targetRef,
         kind: relationship.kind,
+        ...(relationship.flowKind === undefined
+          ? {}
+          : { flowKind: relationship.flowKind }),
         label: relationship.label,
         points,
         route: {

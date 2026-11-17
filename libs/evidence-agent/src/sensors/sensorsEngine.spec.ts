@@ -69,18 +69,12 @@ describe('createSensorsEngine', () => {
     expect(stale.errors).toContain('FM 检查与当前模型摘要不一致，请重新检查。');
   });
 
-  it('keeps API coverage gaps out of the FM-only visualization gate', async () => {
+  it('keeps API coverage gaps blocking release authorization', async () => {
     const engine = createSensorsEngine();
     const input = {
       modelRoot: goldenModel,
       scopeRefs: ['context.content-subscription'],
     };
-    const summary = await engine.checkStageGate({
-      ...input,
-      target: 'visualization',
-    });
-    expect(summary.passed).toBe(true);
-    expect(summary.errors).toEqual([]);
     const apiGate = await engine.checkStageGate({ ...input, target: 'api' });
     expect(apiGate.passed).toBe(false);
     expect(

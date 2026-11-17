@@ -15,12 +15,12 @@ import type {
   LiveDeliveryInput,
   LiveDeliveryResult,
   ExportLiveDeliveryInput,
-} from '../shared/delivery';
-import { EVIDENCE_IPC_CHANNELS } from '../shared/ipc';
+} from '@evidence-poc/desktop-contracts/delivery';
+import { EVIDENCE_IPC_CHANNELS } from '@evidence-poc/desktop-contracts/ipc';
 import type {
   DeliveryPreviewResult,
   ExportDeliveryResult,
-} from '../shared/projects';
+} from '@evidence-poc/desktop-contracts/projects';
 
 import {
   livePreviewOf,

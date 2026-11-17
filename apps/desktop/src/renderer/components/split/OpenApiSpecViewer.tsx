@@ -5,7 +5,7 @@ import * as YAML from 'yaml';
 import { CodeEditor } from '@evidence-poc/desktop-ui-kit';
 import type { DeliveryContract } from '@evidence-poc/evidence-api';
 
-import type { LiveDeliveryPreview } from '../../../shared/delivery';
+import type { LiveDeliveryPreview } from '@evidence-poc/desktop-contracts/delivery';
 import {
   requestFocusEntity,
   useBilateralSync,

@@ -13,7 +13,7 @@ import {
 import type {
   ProjectTemplateId,
   ProjectTemplateMeta,
-} from '../../shared/projects';
+} from '@evidence-poc/desktop-contracts/projects';
 
 /** Manifest fields a caller supplies when a project is created. */
 export interface StarterContext {

@@ -66,16 +66,14 @@ const idAllocator = () => {
   };
 };
 
-const attributeOf = (
-  draftAttribute: {
-    name: string;
-    label: string;
-    meaning: string;
-    valueType?: ValueType;
-    required?: boolean;
-    keyData?: boolean;
-  },
-): AttributeAST => ({
+const attributeOf = (draftAttribute: {
+  name: string;
+  label: string;
+  meaning: string;
+  valueType?: ValueType;
+  required?: boolean;
+  keyData?: boolean;
+}): AttributeAST => ({
   name: draftAttribute.name,
   label: draftAttribute.label,
   meaning: draftAttribute.meaning,
@@ -116,7 +114,10 @@ export const compileIngestionDraft = (
   const writtenIds: Record<string, string> = {};
 
   for (const context of draft.contexts) {
-    contextIds.set(context.id, allocate.allocate(context.id, 'context', context.label));
+    contextIds.set(
+      context.id,
+      allocate.allocate(context.id, 'context', context.label),
+    );
   }
 
   for (const role of draft.roles) {
@@ -141,7 +142,11 @@ export const compileIngestionDraft = (
   for (const evidence of draft.evidences) {
     evidenceIds.set(
       evidence.id,
-      allocate.allocate(evidence.id, evidenceIdPrefix(evidence.kind), evidence.label),
+      allocate.allocate(
+        evidence.id,
+        evidenceIdPrefix(evidence.kind),
+        evidence.label,
+      ),
     );
   }
 
@@ -177,10 +182,13 @@ export const compileIngestionDraft = (
   const rootsWritable = (context: (typeof draft.contexts)[number]): boolean => {
     const roots = context.rootRefs ?? [];
 
-    return roots.length > 0 && roots.every((rootRef) =>
-      context.kind === 'domain'
-        ? writableThing.has(rootRef)
-        : writableEvidence.has(rootRef),
+    return (
+      roots.length > 0 &&
+      roots.every((rootRef) =>
+        context.kind === 'domain'
+          ? writableThing.has(rootRef)
+          : writableEvidence.has(rootRef),
+      )
     );
   };
 
@@ -220,7 +228,10 @@ export const compileIngestionDraft = (
 
       if (!writableContext.has(role.contextRef)) {
         writableRole.delete(role.id);
-        drop(role.id, `角色「${role.label}」所在的上下文没有落地，角色已跳过。`);
+        drop(
+          role.id,
+          `角色「${role.label}」所在的上下文没有落地，角色已跳过。`,
+        );
       }
     }
 
@@ -234,15 +245,15 @@ export const compileIngestionDraft = (
         !writableContext.has(thing.contextRef)
       ) {
         writableThing.delete(thing.id);
-        drop(thing.id, `标的物「${thing.label}」没有可落地的领域上下文，已跳过。`);
+        drop(
+          thing.id,
+          `标的物「${thing.label}」没有可落地的领域上下文，已跳过。`,
+        );
       }
     }
 
     for (const participant of draft.participants) {
-      if (
-        participant.kind !== 'thing' ||
-        !writableThing.has(participant.id)
-      ) {
+      if (participant.kind !== 'thing' || !writableThing.has(participant.id)) {
         continue;
       }
 
@@ -370,7 +381,9 @@ export const compileIngestionDraft = (
       kind: role.kind,
       label: role.label,
       contextRef,
-      ...(role.provenance === undefined ? {} : { sourceSnippet: role.provenance }),
+      ...(role.provenance === undefined
+        ? {}
+        : { sourceSnippet: role.provenance }),
     };
 
     entities.push(entity);
@@ -416,7 +429,9 @@ export const compileIngestionDraft = (
   for (const thing of draft.things) {
     const id = thingIds.get(thing.id);
     const contextRef =
-      thing.contextRef === undefined ? undefined : contextIds.get(thing.contextRef);
+      thing.contextRef === undefined
+        ? undefined
+        : contextIds.get(thing.contextRef);
 
     if (id === undefined) {
       continue;
@@ -438,7 +453,9 @@ export const compileIngestionDraft = (
       kind: 'thing',
       label: thing.label,
       contextRef,
-      ...(thing.domainRole === undefined ? {} : { domainRole: thing.domainRole }),
+      ...(thing.domainRole === undefined
+        ? {}
+        : { domainRole: thing.domainRole }),
       ...(thing.meaning === undefined
         ? {}
         : {
@@ -580,7 +597,11 @@ export const compileIngestionDraft = (
 
     relationships.push({
       type: 'relationship',
-      id: uniqueId('relation', `${sourceRef}-plays-${targetRef}`, relationshipIds),
+      id: uniqueId(
+        'relation',
+        `${sourceRef}-plays-${targetRef}`,
+        relationshipIds,
+      ),
       kind: 'plays_role',
       sourceRef,
       targetRef,
@@ -611,7 +632,10 @@ export const compileIngestionDraft = (
 
     const contextRef = contextOf.get(pair.requestRef);
 
-    if (contextRef === undefined || contextRef !== contextOf.get(pair.confirmationRef)) {
+    if (
+      contextRef === undefined ||
+      contextRef !== contextOf.get(pair.confirmationRef)
+    ) {
       issues.push({
         draftId: pair.id,
         message: `履约对「${pair.label}」的两端不在同一个合约上下文，完成规则已跳过。`,
@@ -646,8 +670,8 @@ export const compileIngestionDraft = (
     }
 
     const requestLabel =
-      draft.evidences.find((evidence) => evidence.id === pair.requestRef)?.label ??
-      requestRef;
+      draft.evidences.find((evidence) => evidence.id === pair.requestRef)
+        ?.label ?? requestRef;
     const confirmationLabel =
       draft.evidences.find((evidence) => evidence.id === pair.confirmationRef)
         ?.label ?? confirmationRef;
@@ -674,7 +698,8 @@ export const compileIngestionDraft = (
 
   const contractContextRefs = draft.contexts
     .filter(
-      (context) => context.kind === 'contract' && writableContext.has(context.id),
+      (context) =>
+        context.kind === 'contract' && writableContext.has(context.id),
     )
     .map((context) => contextIds.get(context.id))
     .filter((ref): ref is string => ref !== undefined);
@@ -687,6 +712,9 @@ export const compileIngestionDraft = (
       name: draft.modelName,
       version: options.modelVersion ?? DEFAULT_VERSION,
       ruleLanguage: 'CEL',
+      ...(draft.sourceDocument === undefined
+        ? {}
+        : { sourceDocument: draft.sourceDocument }),
       entryContextRefs: contractContextRefs,
       ...(options.description === undefined && draft.description === undefined
         ? {}

@@ -1,4 +1,7 @@
-import type { ClauseAnnotation, ClauseCategory } from '@evidence-poc/evidence-schema';
+import type {
+  ClauseAnnotation,
+  ClauseCategory,
+} from '@evidence-poc/evidence-schema';
 
 /**
  * One clause of an agreement, as the workshop reads it.
@@ -11,6 +14,9 @@ import type { ClauseAnnotation, ClauseCategory } from '@evidence-poc/evidence-sc
 export interface ClauseReading extends ClauseAnnotation {
   /** True when the clause names a value the domain has to compute. */
   computesValue: boolean;
+  /** UTF-16 offsets into the unmodified contract text. */
+  charStart: number;
+  charEnd: number;
 }
 
 export interface ClauseReadingResult {
@@ -50,7 +56,10 @@ const BUSINESS_ACTIONS =
 
 /** Vocabulary that names a computed value rather than an act. */
 const COMPUTATION: readonly { pattern: RegExp; label: string }[] = [
-  { pattern: /计算|折算|核算|公式|算法|按比例|比例|系数|费率|税率|汇率/, label: '计算口径' },
+  {
+    pattern: /计算|折算|核算|公式|算法|按比例|比例|系数|费率|税率|汇率/,
+    label: '计算口径',
+  },
   { pattern: /百分之|\d+(?:\.\d+)?\s*%|乘以|除以|乘上/, label: '数值换算' },
   { pattern: /四舍五入|取整|进位|精度/, label: '取整规则' },
   { pattern: /阶梯|档位|区间|分段/, label: '阶梯规则' },
@@ -79,7 +88,11 @@ const DOMAIN_NOUNS: readonly {
   { pattern: /折扣|优惠|减免|抵扣/, label: '优惠金额', role: 'calculator' },
   { pattern: /有效期|失效|到期|顺延/, label: '有效期', role: 'calculator' },
   { pattern: /配额|额度|上限|封顶|保底/, label: '额度', role: 'calculator' },
-  { pattern: /费率|税率|汇率|分成比例|佣金/, label: '费率', role: 'calculator' },
+  {
+    pattern: /费率|税率|汇率|分成比例|佣金/,
+    label: '费率',
+    role: 'calculator',
+  },
   { pattern: /校验|判定|资格|退订条件/, label: '资格', role: 'checker' },
 ];
 
@@ -107,13 +120,15 @@ const firstMatch = (
  * not understand is visible instead of silently dropped or turned into a made-up
  * duty.
  */
-export const annotateContractClauses = (
-  text: string,
-): ClauseReadingResult => {
+export const annotateContractClauses = (text: string): ClauseReadingResult => {
   const clauses: ClauseReading[] = [];
   const issues: string[] = [];
 
+  let cursor = 0;
   splitContractClauses(text).forEach((clause, position) => {
+    const charStart = text.indexOf(clause, cursor);
+    const charEnd = charStart + clause.length;
+    cursor = charEnd;
     const index = position + 1;
     const legal = firstMatch(BOILERPLATE, clause);
     const computesValue = COMPUTATION.some(({ pattern }) =>
@@ -150,7 +165,15 @@ export const annotateContractClauses = (
       );
     }
 
-    clauses.push({ index, text: clause, category, reason, computesValue });
+    clauses.push({
+      index,
+      text: clause,
+      category,
+      reason,
+      computesValue,
+      charStart,
+      charEnd,
+    });
   });
 
   return { clauses, issues };

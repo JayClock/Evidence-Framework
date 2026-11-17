@@ -23,7 +23,7 @@ import {
   partyRolesPlayedByParticipants,
 } from './adapter/fmAdapter.js';
 import { inspectSummary } from './inspect.js';
-import { createAcceptanceModel } from '../tests/support/acceptance.js';
+import { createAcceptanceModel } from './testing/acceptance.js';
 
 const fmRoot = fileURLToPath(
   new URL('../tests/fixtures/full-lifecycle/fm', import.meta.url),

@@ -1,29 +1,27 @@
+import {
+  createModelTools,
+  MODEL_TOOL_NAMES,
+  type ModelPatchRequest,
+  type ModelPatchResult,
+} from '@evidence-poc/evidence-tools';
+export type {
+  ModelPatchRequest,
+  ModelPatchResult,
+} from '@evidence-poc/evidence-tools';
 import type {
   ExtensionAPI,
   ToolDefinition,
 } from '@earendil-works/pi-coding-agent';
 import {
-  BreachCompensationIntentSchema,
-  DomainCalculatorIntentSchema,
   DomainIdSchema,
-  FulfillmentPairIntentSchema,
-  RoleInversionIntentSchema,
-  ModelPatchRequestSchema,
   JsonPatchSchema,
-  type JsonPatchOperation,
   type DomainModelDocument,
 } from '@evidence-poc/evidence-schema';
 import {
   applyModelPatches,
-  createModelPatch,
-  addBreachCompensationMutator,
   annotateContractClauses,
   domainNounOf,
-  introduceFulfillmentPairMutator,
-  isolateDomainCalculatorMutator,
   parseBlueprint,
-  roleifyAndInvertDependencyMutator,
-  type OperatorResult,
 } from '@evidence-poc/evidence-model-core';
 import { z } from 'zod';
 import { registerZodTool } from './registerZodTool.js';
@@ -50,7 +48,6 @@ const sensorParameters = z
     ).optional(),
   })
   .strict();
-const applyPatchParameters = ModelPatchRequestSchema;
 const emptyParameters = z.object({}).strict();
 const clauseParameters = z
   .object({
@@ -80,16 +77,6 @@ export interface CanvasContext {
   };
 }
 
-/** One RFC 6902 change set, validated again at the renderer boundary. */
-export interface ModelPatchRequest {
-  rationale: string;
-  patches: readonly JsonPatchOperation[];
-}
-
-export type ModelPatchResult =
-  | { success: true; appliedCommands: readonly string[] }
-  | { success: false; error: string };
-
 export interface EvidenceToolsHandlers {
   /** Runs the sensors and returns their verdict. */
   runSensors: (input: {
@@ -118,14 +105,14 @@ export const TOOL_NAMES = {
   getApiDiff: 'get_api_diff',
   syncApiProjection: 'sync_api_projection',
   runSensors: 'run_sensors',
-  applyModelPatch: 'apply_model_patch',
+  applyModelPatch: MODEL_TOOL_NAMES.applyModelPatch,
   getCanvasSelection: 'get_canvas_selection',
-  introduceFulfillmentPair: 'introduce_fulfillment_pair',
-  addBreachCompensation: 'add_breach_compensation',
-  roleifyAndInvertDependency: 'roleify_and_invert_dependency',
+  introduceFulfillmentPair: MODEL_TOOL_NAMES.introduceFulfillmentPair,
+  addBreachCompensation: MODEL_TOOL_NAMES.addBreachCompensation,
+  roleifyAndInvertDependency: MODEL_TOOL_NAMES.roleifyAndInvertDependency,
   annotateContractClauses: 'annotate_contract_clauses',
   readServiceBlueprint: 'read_service_blueprint',
-  isolateDomainCalculator: 'isolate_domain_calculator',
+  isolateDomainCalculator: MODEL_TOOL_NAMES.isolateDomainCalculator,
 } as const;
 
 const textResult = <T>(value: T, text: string) => ({
@@ -143,6 +130,25 @@ const textResult = <T>(value: T, text: string) => ({
 export const createEvidenceToolsExtension =
   (handlers: EvidenceToolsHandlers) =>
   (pi: ExtensionAPI): void => {
+    const modelTools = createModelTools(handlers);
+    const registerModelTool = (name: string): void => {
+      const tool = modelTools.find((candidate) => candidate.name === name);
+      if (!tool) throw new Error(`Unknown model tool: ${name}`);
+      registerZodTool(pi, {
+        name: tool.name,
+        label: tool.label,
+        description: tool.description,
+        parameters: tool.parameters,
+        execute: async (_id, input) => {
+          const result = await tool.run(input);
+          return {
+            ...textResult(result.value, result.text),
+            ...(result.isError ? { isError: true } : {}),
+          };
+        },
+      });
+    };
+
     registerZodTool(pi, {
       name: TOOL_NAMES.getApiDiff,
       label: '查看 API 增量',
@@ -222,30 +228,7 @@ export const createEvidenceToolsExtension =
       },
     });
 
-    registerZodTool(pi, {
-      name: TOOL_NAMES.applyModelPatch,
-      label: '应用模型补丁',
-      description:
-        '把 RFC 6902 JSON Patch 提交给桌面端内存模型，path/from 使用 JSON Pointer（如 /entities/0/label）；支持 add/remove/replace/move/copy/test，画布立即更新且用户可按 Cmd+Z 撤销。不要直接改 .evidence/fm 文件。',
-      parameters: applyPatchParameters,
-      execute: async (_toolCallId, params) => {
-        const types = params.patches.map((patch) => patch.op);
-        const result = await handlers.applyModelPatch(params);
-
-        return result.success
-          ? textResult<ModelPatchResult>(
-              result,
-              `补丁已应用（${types.join(', ')}）：${params.rationale}`,
-            )
-          : {
-              ...textResult<ModelPatchResult>(
-                result,
-                `补丁被拒绝：${result.error}`,
-              ),
-              isError: true,
-            };
-      },
-    });
+    registerModelTool(TOOL_NAMES.applyModelPatch);
 
     registerZodTool(pi, {
       name: TOOL_NAMES.getCanvasSelection,
@@ -348,108 +331,10 @@ export const createEvidenceToolsExtension =
       },
     });
 
-    /** Shape every operator tool answers with, so the three stay uniform. */
-    type OperatorToolResult = {
-      content: { type: 'text'; text: string }[];
-      details: unknown;
-      isError?: boolean;
-    };
-
-    const operatorResult = (
-      details: unknown,
-      text: string,
-      isError = false,
-    ): OperatorToolResult => ({
-      content: [{ type: 'text' as const, text }],
-      details,
-      ...(isError ? { isError: true } : {}),
-    });
-
-    /**
-     * Runs guarded domain recipes locally and sends standard patches through
-     * the shared channel. A builder refusal is a readable tool error, not a
-     * partial write; the renderer owns the actual document and undo history.
-     */
-    const runOperator = async (
-      rationale: string,
-      build: (document: DomainModelDocument) => OperatorResult,
-    ): Promise<OperatorToolResult> => {
-      let patch: ReturnType<typeof createModelPatch<OperatorResult>>;
-
-      try {
-        patch = createModelPatch(await handlers.loadDocument(), build);
-      } catch (error) {
-        const message = error instanceof Error ? error.message : '未知原因';
-
-        return operatorResult(
-          { error: message },
-          `算子未执行：${message}`,
-          true,
-        );
-      }
-
-      const result = await handlers.applyModelPatch({
-        rationale,
-        patches: patch.patches,
-      });
-
-      return result.success
-        ? operatorResult(
-            { ...result, createdIds: patch.result.createdIds },
-            `已写入：${patch.result.createdIds.join(', ')}。`,
-          )
-        : operatorResult(result, `补丁被拒绝：${result.error}`, true);
-    };
-
-    registerZodTool(pi, {
-      name: TOOL_NAMES.introduceFulfillmentPair,
-      label: '新增成对履约项',
-      description:
-        '在一个合同上下文里新增一组履约请求（时段）与履约确认（时刻），自动补齐业务时间、引用根合同并装配完成判断规则。有请求就必须有确认，不要分两次建。',
-      parameters: FulfillmentPairIntentSchema,
-      execute: async (_toolCallId, params) =>
-        runOperator(
-          `新增履约项：${params.request.label} / ${params.confirmation.label}`,
-          (document) => introduceFulfillmentPairMutator(document, params),
-        ),
-    });
-
-    registerZodTool(pi, {
-      name: TOOL_NAMES.addBreachCompensation,
-      label: '新增违约补偿分支',
-      description:
-        '为一个已有履约请求声明违约条件，并同时新增该违约触发的补偿履约对。违约不是回滚，而是在同一合同上下文中触发新的履约项。',
-      parameters: BreachCompensationIntentSchema,
-      execute: async (_toolCallId, params) =>
-        runOperator(`违约补偿：${params.condition}`, (document) =>
-          addBreachCompensationMutator(document, params),
-        ),
-    });
-
-    registerZodTool(pi, {
-      name: TOOL_NAMES.roleifyAndInvertDependency,
-      label: '反转依赖并隔离变化点',
-      description:
-        '把核心合同依赖的履约确认抽象为能力角色，并新增独立的支撑合同上下文，让外部履约确认扮演该角色。用于引入支付渠道、物流或其它第三方能力时隔离变化点。',
-      parameters: RoleInversionIntentSchema,
-      execute: async (_toolCallId, params) =>
-        runOperator(
-          `反转依赖：${params.socket.label} 交由 ${params.supporting.contract.label} 履约`,
-          (document) => roleifyAndInvertDependencyMutator(document, params),
-        ),
-    });
-
-    registerZodTool(pi, {
-      name: TOOL_NAMES.isolateDomainCalculator,
-      label: '抽出领域计算器',
-      description:
-        '把合同里「按比例算、按阶梯算、按条件判定」的部分抽成领域上下文里的计算器或检查器，并同时写入读取它的派生规则。计价、折扣、等级、有效期、资格校验都走这条路径，不要把它们留成合同参数或前端入参。',
-      parameters: DomainCalculatorIntentSchema,
-      execute: async (_toolCallId, params) =>
-        runOperator(`抽出领域计算：${params.calculator.label}`, (document) =>
-          isolateDomainCalculatorMutator(document, params),
-        ),
-    });
+    registerModelTool(TOOL_NAMES.introduceFulfillmentPair);
+    registerModelTool(TOOL_NAMES.addBreachCompensation);
+    registerModelTool(TOOL_NAMES.roleifyAndInvertDependency);
+    registerModelTool(TOOL_NAMES.isolateDomainCalculator);
   };
 
 /** The tool definitions the extension registers, for list-based registration. */

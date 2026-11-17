@@ -6,7 +6,7 @@ import {
   runEvidenceMcpStdio,
 } from '@evidence-poc/evidence-mcp';
 
-import { EVIDENCE_MCP_IPC_CHANNELS } from '../shared/mcpIpc';
+import { EVIDENCE_MCP_IPC_CHANNELS } from '@evidence-poc/desktop-contracts/mcpIpc';
 import { registerAgentIpc } from './agentIpcHandlers';
 import { startMcpBridgeRuntime } from './mcpBridgeRuntime';
 import { registerMcpIpc } from './mcpIpcHandlers';
@@ -23,7 +23,7 @@ import { registerIngestionIpc } from './ingestionIpc';
 import { createModelIngestionReader } from './ingestionModelReader';
 import { registerDeliveryIpc } from './deliveryIpc';
 import { registerProjectIpc } from './projectIpc';
-import { registerReviewIpc } from './reviewIpc';
+import { registerStoryIpc } from './storyIpc';
 import { createProjectStore, RECENT_PROJECTS_FILE } from './projectStore';
 import {
   createDashboardWindow,
@@ -75,7 +75,8 @@ const startApplication = async (): Promise<void> => {
     generate: createModelIngestionReader(),
     openEditorWindow,
   });
-  registerReviewIpc();
+  const storyIpc = registerStoryIpc();
+  app.once('before-quit', () => storyIpc.dispose());
   registerDriftIpc();
   registerDeliveryIpc();
   app.once('before-quit', () => agentIpc.dispose());

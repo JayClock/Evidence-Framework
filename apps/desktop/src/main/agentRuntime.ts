@@ -1,4 +1,4 @@
-import type { LiveDeliveryInput } from '../shared/delivery';
+import type { LiveDeliveryInput } from '@evidence-poc/desktop-contracts/delivery';
 import { validateLiveDeliveryInput } from './deliveryProjection';
 import path from 'node:path';
 

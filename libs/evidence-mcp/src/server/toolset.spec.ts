@@ -1,3 +1,4 @@
+import { createModelTools } from '@evidence-poc/evidence-tools';
 import { describe, expect, it, vi } from 'vitest';
 
 import {
@@ -244,6 +245,24 @@ const toolOf = (name: string) => {
 };
 
 describe('createEvidenceTools', () => {
+  it('adapts every shared model tool without replacing its schema or safety annotations', () => {
+    const client = createClient();
+    const registry = createModelTools({
+      loadDocument: async () =>
+        (await client.getDomainModel({ includeRules: true })).document,
+      applyModelPatch: async () => {
+        throw new Error('not invoked');
+      },
+    });
+    const exposed = createEvidenceTools(client);
+    for (const definition of registry) {
+      const tool = exposed.find(({ name }) => name === definition.name);
+      expect(tool?.inputSchema).toBe(definition.parameters);
+      expect(tool?.annotations).toEqual(definition.annotations);
+      expect(tool?.description).toBe(definition.description);
+    }
+  });
+
   it('registers the read, patch and operator tools', () => {
     expect(evidenceToolNames).toEqual([
       TOOL_NAMES.appState,
@@ -256,11 +275,12 @@ describe('createEvidenceTools', () => {
       TOOL_NAMES.introduceFulfillmentPair,
       TOOL_NAMES.addBreachCompensation,
       TOOL_NAMES.roleifyAndInvertDependency,
+      TOOL_NAMES.isolateDomainCalculator,
       TOOL_NAMES.deliveryTopology,
       TOOL_NAMES.openApiContract,
       TOOL_NAMES.productionDrift,
     ]);
-    expect(createEvidenceTools(createClient())).toHaveLength(13);
+    expect(createEvidenceTools(createClient())).toHaveLength(14);
   });
 
   it('hands an outside agent the delivery boundaries and the contract', async () => {
@@ -290,6 +310,7 @@ describe('createEvidenceTools', () => {
       TOOL_NAMES.introduceFulfillmentPair,
       TOOL_NAMES.addBreachCompensation,
       TOOL_NAMES.roleifyAndInvertDependency,
+      TOOL_NAMES.isolateDomainCalculator,
     ]);
   });
 
@@ -371,10 +392,10 @@ describe('createEvidenceTools', () => {
   it('passes the stage gate target through', async () => {
     const { client, tool } = toolOf(TOOL_NAMES.stageGate);
 
-    await tool.run({ target: 'visualization' });
+    await tool.run({ target: 'api' });
 
     expect(client.runStageGate).toHaveBeenCalledWith({
-      target: 'visualization',
+      target: 'api',
     });
   });
 

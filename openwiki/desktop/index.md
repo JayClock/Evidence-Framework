@@ -1,7 +1,7 @@
-# Files
+# 文件
 
-- [Desktop shell, windows and project lifecycle](app-shell.md) - The Electron main process of the desktop app — startup order, the dashboard plus one editor window per project, the typed preload EvidenceDesktopApi as the only renderer surface, file-backed project storage with create/save/fingerprint/watch semantics, and the review, delivery, simulation, ingestion, agent and MCP IPC groups.
-- [Canvas and inspector](canvas-and-inspector.md) - How a domain model becomes a deterministic picture — nested Context placement, lifecycle swimlane lanes, orthogonal routes, React Flow delegation, HUD and scoped highlighting — and how the declarative right inspector turns a field edit into one session command.
-- [Ingestion and agent patch review](ingestion-and-patch-review.md) - How business prose, a contract or a blueprint table becomes a reviewable draft and then a saved project, and how an agent patch that was already applied to the live session becomes a visible, one-step-revertable review.
-- [Renderer state and cross-pane sync](renderer-state.md) - How one editor window organises its state — the useEditorSession owner of the live ModelSession, the token-stamped bilateral focus bus that keeps canvas, ledger, contract and rules pointed at one object, and the bridges that publish or absorb edits from the Pi agent, MCP tools, the delivery preview and the sensors, plus workspace layout, split and view-mode state.
-- [Workspace surfaces, navigation and chords](workspace-surfaces.md) - How the editor window is composed from a header, a 48px activity rail with one drawer, a single canvas stage with its floating HUD, a secondary stage, blocking delivery/simulation/review hubs, the problems strip, the inspector sheet and the command palette — plus the chord map and the precedence rules that decide which surface owns a key.
+- [桌面宿主与项目生命周期](app-shell.md) - Electron 启动、窗口/IPC、安全边界、树与 Bundle 项目持久化，以及 Chokidar 发现、重建、去抖和释放生命周期。
+- [ELK 画布与属性检查器](canvas-and-inspector.md) - headless ELK 的 compound 图与正交线路如何异步投影到 React Flow，以及声明式 Inspector、来源台账与原生 CEL 诊断如何通过同一模型事务编辑。
+- [资料摄取与补丁审查](ingestion-and-patch-review.md) - 业务文本、协议和蓝图如何先变成可修正草稿再创建项目，以及已提交 Agent JSON Patch 如何在保持后续编辑安全的前提下一步撤销。
+- [渲染会话、异步布局与实时同步](renderer-state.md) - 一个编辑窗口如何保持单一 ModelSession、异步 ELK 几何、递增实时 revision、跨面板定位，以及 Agent/MCP/交付/传感器的竞态隔离。
+- [工作区、台账、交付与漂移](workspace-surfaces.md) - EditorWorkspace 的 rail/drawer、画布/台账/分屏、review/delivery/drift hubs、问题条和命令键盘的所有权、定位与过期状态。

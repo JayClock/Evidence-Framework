@@ -19,6 +19,7 @@ export type MutationErrorCode =
   | 'participant.contextRef'
   | 'relationship.notFound'
   | 'relationship.endpoint'
+  | 'relationship.flowKind'
   | 'relationship.self'
   | 'rule.notFound'
   | 'rule.duplicate'

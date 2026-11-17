@@ -185,7 +185,7 @@ export type EvidenceMcpAppRequest =
   | { method: 'get_key_data_audit' }
   | { method: 'get_canvas_screenshot'; targetNodeId?: string }
   | { method: 'apply_model_patch'; patch: McpPatchInput }
-  | { method: 'run_stage_gate'; target: 'api' | 'visualization' }
+  | { method: 'run_stage_gate'; target: 'api' }
   | { method: 'get_delivery_topology' }
   | { method: 'export_openapi_contract' }
   | { method: 'audit_production_drift'; document: unknown };
@@ -219,9 +219,7 @@ export interface EvidenceMcpAppClient {
   getKeyDataAudit(): Promise<McpKeyDataAudit>;
   getScreenshot(input: { targetNodeId?: string }): Promise<McpScreenshot>;
   applyModelPatch(patch: McpPatchInput): Promise<McpPatchResult>;
-  runStageGate(input: {
-    target: 'api' | 'visualization';
-  }): Promise<McpStageGateResult>;
+  runStageGate(input: { target: 'api' }): Promise<McpStageGateResult>;
   /** Services, boundary crossings and open questions, from the saved model. */
   getDeliveryTopology(): Promise<McpDeliveryTopology>;
   /** The OpenAPI 3.1 contract the saved model implies. */

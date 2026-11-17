@@ -1,19 +1,10 @@
 import type { ToolAnnotations } from '@modelcontextprotocol/sdk/types.js';
 import {
-  createModelPatch,
-  addBreachCompensationMutator,
-  introduceFulfillmentPairMutator,
-  roleifyAndInvertDependencyMutator,
-  type OperatorResult,
-} from '@evidence-poc/evidence-model-core';
+  createModelTools,
+  MODEL_TOOL_NAMES,
+} from '@evidence-poc/evidence-tools';
 import { z } from 'zod';
-import {
-  ModelPatchRequestSchema,
-  BreachCompensationIntentSchema,
-  DomainIdSchema,
-  FulfillmentPairIntentSchema,
-  RoleInversionIntentSchema,
-} from '@evidence-poc/evidence-schema';
+import { DomainIdSchema } from '@evidence-poc/evidence-schema';
 
 import type { EvidenceMcpAppClient } from '../types.js';
 
@@ -21,13 +12,6 @@ const READ_ONLY: ToolAnnotations = {
   readOnlyHint: true,
   destructiveHint: false,
   idempotentHint: true,
-  openWorldHint: false,
-};
-
-const WRITES_MODEL: ToolAnnotations = {
-  readOnlyHint: false,
-  destructiveHint: true,
-  idempotentHint: false,
   openWorldHint: false,
 };
 
@@ -68,11 +52,12 @@ export const TOOL_NAMES = {
   selectedEntity: 'get_selected_entity',
   keyDataAudit: 'get_key_data_audit',
   screenshot: 'get_canvas_screenshot',
-  applyPatch: 'apply_model_patch',
+  applyPatch: MODEL_TOOL_NAMES.applyModelPatch,
   stageGate: 'run_stage_gate',
-  introduceFulfillmentPair: 'introduce_fulfillment_pair',
-  addBreachCompensation: 'add_breach_compensation',
-  roleifyAndInvertDependency: 'roleify_and_invert_dependency',
+  introduceFulfillmentPair: MODEL_TOOL_NAMES.introduceFulfillmentPair,
+  addBreachCompensation: MODEL_TOOL_NAMES.addBreachCompensation,
+  roleifyAndInvertDependency: MODEL_TOOL_NAMES.roleifyAndInvertDependency,
+  isolateDomainCalculator: MODEL_TOOL_NAMES.isolateDomainCalculator,
   deliveryTopology: 'get_delivery_topology',
   openApiContract: 'export_openapi_contract',
   productionDrift: 'audit_production_drift',
@@ -82,50 +67,6 @@ const json = (value: unknown): EvidenceToolResult => ({
   text: JSON.stringify(value, null, 2),
   value,
 });
-
-/**
- * Runs a guarded draft operator against the live model, then sends its standard
- * patches through the same transactional channel as hand-written JSON Patch.
- * A builder refusal becomes a readable error instead of a partial write.
- */
-const runOperator = async (
-  client: EvidenceMcpAppClient,
-  rationale: string,
-  build: (
-    document: Awaited<
-      ReturnType<EvidenceMcpAppClient['getDomainModel']>
-    >['document'],
-  ) => OperatorResult,
-): Promise<EvidenceToolResult> => {
-  let patch: ReturnType<typeof createModelPatch<OperatorResult>>;
-
-  try {
-    const model = await client.getDomainModel({ includeRules: true });
-
-    patch = createModelPatch(model.document, build);
-  } catch (error) {
-    const message = error instanceof Error ? error.message : '未知原因';
-
-    return {
-      text: `算子未执行：${message}`,
-      value: { error: message },
-      isError: true,
-    };
-  }
-
-  const result = await client.applyModelPatch({
-    rationale,
-    patches: patch.patches,
-  });
-
-  return result.success
-    ? json({ ...result, createdIds: patch.result.createdIds })
-    : {
-        text: JSON.stringify(result, null, 2),
-        value: result,
-        isError: true,
-      };
-};
 
 /**
  * The tools the desktop exposes to external agents.
@@ -228,72 +169,38 @@ export const createEvidenceTools = (
       };
     },
   }),
-  defineTool({
-    name: TOOL_NAMES.applyPatch,
-    title: '提交模型补丁',
-    description:
-      '把 RFC 6902 JSON Patch 提交给桌面端内存模型，path/from 使用 JSON Pointer（例如 /entities/0/label），支持 add/remove/replace/move/copy/test；整批原子应用，用户可 Cmd+Z 撤销。',
-    inputSchema: ModelPatchRequestSchema,
-    annotations: WRITES_MODEL,
-    run: async (input) => {
-      const result = await client.applyModelPatch(input);
-
-      return {
-        text: JSON.stringify(result, null, 2),
-        value: result,
-        ...(result.success ? {} : { isError: true }),
-      };
+  ...createModelTools({
+    loadDocument: async () =>
+      (await client.getDomainModel({ includeRules: true })).document,
+    applyModelPatch: async (patch) => {
+      const result = await client.applyModelPatch(patch);
+      return result.success
+        ? { ...result, success: true as const }
+        : {
+            ...result,
+            success: false as const,
+            error: result.error ?? '模型补丁被拒绝。',
+          };
     },
-  }),
-  defineTool({
-    name: TOOL_NAMES.introduceFulfillmentPair,
-    title: '新增成对履约项',
-    description:
-      '在一个合同上下文里新增一组履约请求（时段）与履约确认（时刻），自动补齐业务时间、引用根合同并装配完成判断规则。有请求就必须有确认，不要分两次建。',
-    inputSchema: FulfillmentPairIntentSchema,
-    annotations: WRITES_MODEL,
-    run: async (input) => {
-      const intent = input;
-
-      return runOperator(
-        client,
-        `新增履约项：${intent.request.label} / ${intent.confirmation.label}`,
-        (document) => introduceFulfillmentPairMutator(document, intent),
-      );
-    },
-  }),
-  defineTool({
-    name: TOOL_NAMES.addBreachCompensation,
-    title: '新增违约补偿分支',
-    description:
-      '为一个已有履约请求声明违约条件，并同时新增该违约触发的补偿履约对。违约不是回滚，而是在同一合同上下文中触发新的履约项。',
-    inputSchema: BreachCompensationIntentSchema,
-    annotations: WRITES_MODEL,
-    run: async (input) => {
-      const intent = input;
-
-      return runOperator(client, `违约补偿：${intent.condition}`, (document) =>
-        addBreachCompensationMutator(document, intent),
-      );
-    },
-  }),
-  defineTool({
-    name: TOOL_NAMES.roleifyAndInvertDependency,
-    title: '反转依赖并隔离变化点',
-    description:
-      '把核心合同依赖的履约确认抽象为能力角色，并新增独立的支撑合同上下文，让外部履约确认扮演该角色。用于引入支付渠道、物流或其它第三方能力时隔离变化点。',
-    inputSchema: RoleInversionIntentSchema,
-    annotations: WRITES_MODEL,
-    run: async (input) => {
-      const intent = input;
-
-      return runOperator(
-        client,
-        `反转依赖：${intent.socket.label} 交由 ${intent.supporting.contract.label} 履约`,
-        (document) => roleifyAndInvertDependencyMutator(document, intent),
-      );
-    },
-  }),
+  }).map(
+    (tool): EvidenceTool => ({
+      name: tool.name,
+      title: tool.label,
+      description: tool.description,
+      inputSchema: tool.parameters,
+      annotations: tool.annotations,
+      run: async (input) => {
+        const result = await tool.run(input);
+        return {
+          value: result.value,
+          text: result.isError
+            ? result.text
+            : JSON.stringify(result.value, null, 2),
+          ...(result.isError ? { isError: true } : {}),
+        };
+      },
+    }),
+  ),
   defineTool({
     name: TOOL_NAMES.deliveryTopology,
     title: '读取交付拓扑',
@@ -332,12 +239,10 @@ export const createEvidenceTools = (
     name: TOOL_NAMES.stageGate,
     title: '执行阶段门禁',
     description:
-      '运行阶段门禁判定，说明当前模型是否满足下游 API 契约或联合审核页的交付条件。',
+      '运行 API 阶段门禁判定，说明当前模型是否满足下游 API 契约的交付条件。',
     inputSchema: z
       .object({
-        target: z
-          .enum(['api', 'visualization'])
-          .describe('下游阶段：api 或 visualization。'),
+        target: z.literal('api').describe('下游阶段：api。'),
       })
       .strict(),
     annotations: READ_ONLY,

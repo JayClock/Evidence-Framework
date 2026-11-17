@@ -3,16 +3,18 @@
 The repository is one pnpm workspace driven by Nx. Two directories carry code;
 each answers a different question.
 
-| Directory | Holds                                                                                                                                                                                   | Listed in `pnpm-workspace.yaml` |
-| --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
-| `apps/`   | Runnable entry points: `desktop` (Electron Forge)                                                                                                                                       | yes (`apps/*`)                  |
-| `libs/`   | TypeScript libraries the app composes: `evidence-schema`, `evidence-model-core`, `evidence-canvas-interaction`, `evidence-agent-core`, `evidence-modeling-orchestrator`, `evidence-api`, `evidence-visualization`, `evidence-mcp` | yes (`libs/*`)                  |
+| Directory       | Holds                                                                                                | Listed in `pnpm-workspace.yaml` |
+| --------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------- |
+| `apps/`         | Runnable entry points: `desktop` (Electron Forge) and `cli` (the unified `evidence` command)         | yes (`apps/*`)                  |
+| `libs/`         | Model/schema/interaction engines, model I/O, shared tools, API projection, acceptance, Agent and MCP | yes (`libs/*`)                  |
+| `libs/desktop/` | Desktop contracts, UI kit, canvas/inspector/story/delivery/drift/agent features and test support     | yes (`libs/desktop/*`)          |
 
 Nothing is a library in two toolchains: every `libs/*` entry is a TypeScript
 package consumed through pnpm, and no Java or Gradle module lives in this
 repository. A new workspace library goes under `libs/`, never under `apps/`.
-`apps/desktop` is the only application; the modeling CLI and the MCP server are
-libraries with a `bin`/`cli` entry rather than separate apps.
+`apps/desktop` and `apps/cli` compose libraries. Deprecated library CLIs remain
+thin adapters; the legacy `evidence-api` binary is owned by `evidence-acceptance`
+because it includes diff and acceptance export commands.
 
 ## Dependency declarations
 
@@ -96,9 +98,41 @@ Tags drive `@nx/enforce-module-boundaries` in `eslint.config.mjs`:
 
 - `type:app` may depend on `type:lib`, never on another app.
 - `type:lib` may depend on `type:lib`.
-- `scope:*` records the owner (`scope:desktop`, `scope:evidence`) so a future
-  rule can separate the desktop shell from the modeling libraries without
-  touching the linter config.
+- `layer:*` enforces dependency direction: schema → domain → I/O/projection →
+  orchestration; UI controls, desktop contracts and features have explicit
+  allowed inputs. Apps compose the layers; libraries cannot import apps.
+- `platform:universal` cannot import Node/browser projects; browser features
+  may consume Node libraries only through declared browser-safe surfaces.
+  `tools/eslint/browser-platform.mjs` also prohibits Node builtins and the
+  unsafe package roots.
+- `scope:*` records business ownership and disallows reverse edges (for example,
+  acceptance may consume API projection but may not consume Agent or desktop).
+- `pnpm boundaries:drill` proves seven forbidden imports still fail lint.
+
+## Current extraction boundaries
+
+- `desktop-contracts` owns desktop IPC channels and DTOs. Its runtime consists
+  of constants; dependencies on Node libraries are type-only. It is not a new
+  general-purpose RPC protocol. Feature hooks take narrow API ports as arguments;
+  only the application shell reads `window.evidenceAPI`.
+- `desktop-feature-story`, `desktop-feature-delivery`, `desktop-feature-drift`
+  and `desktop-feature-agent` own their UI, hooks and colocated tests. Cross-feature
+  coordination, window handling and project services stay in `apps/desktop`.
+  Shared renderer fixtures live in `desktop-testing`, never in an app import.
+- `evidence-tools` is a universal domain library: one registry of validated
+  patch/recipe operations and write-safety metadata. Pi and MCP adapt it, while
+  the host still owns atomic application, static guards and undo. These tools
+  are **not** idempotent. Transport-specific read/sensor tools remain in their
+  respective adapters.
+- `evidence-api` owns contract projection; it has no acceptance dependency and
+  does not load Step CI or spawn `oasdiff`. `evidence-acceptance` depends on it
+  and owns test compilation, HTTP execution, drift and native contract diff.
+  Browser scenario editors use `evidence-acceptance/projection`; Node callers
+  use its root, `/runner` or `/commands`. API fixtures are shared through the
+  test-only `evidence-api/testing` export.
+- Public API imports moved: `renderDeliverables`, renderers, contract comparison
+  and the old API command adapter now come from `evidence-acceptance`, not
+  `evidence-api`. Unified CLI command names and exit codes are unchanged.
 
 ## Common commands
 
@@ -129,10 +163,22 @@ second definition silently wins and loses the per-file `test-ci--*` targets.
 ## Adding a library
 
 ```bash
-nx g @nx/js:lib evidence-foo --directory=libs/evidence-foo
+pnpm exec nx g @nx/js:library libs/evidence-foo \
+  --name=evidence-foo --importPath=@evidence-poc/evidence-foo \
+  --bundler=tsc --unitTestRunner=vitest --linter=eslint \
+  --tags=type:lib,layer:domain,platform:universal,scope:model
+pnpm exec nx g @nx/react:library libs/desktop/feature-foo \
+  --name=desktop-feature-foo --importPath=@evidence-poc/desktop-feature-foo \
+  --bundler=none --unitTestRunner=vitest --component=false \
+  --tags=type:lib,layer:feature,platform:browser,scope:desktop
+pnpm exec nx sync
+pnpm exec nx sync:check
 ```
 
-Then check the five places a new package must appear: the `exports` block with
-the source condition, `"@evidence-poc/foo": "workspace:*"` in each consumer's
-`dependencies`, the `references` array of the consuming `tsconfig*.json`, the
-`references` list in the root `tsconfig.json`, and its `nx.tags`.
+`pnpm install` links the new workspace package and updates the lockfile. Nx's
+TypeScript sync generator manages project references; do not hand-maintain a
+second dependency graph. Check the `exports` source condition, `workspace:*`
+dependencies in each consumer, the generated references, and the new project's
+`nx.tags`. React library configs must repeat the source export condition and
+apply `tools/eslint/browser-platform.mjs`; copy the established Feature config
+rather than relying on the generator's generic Vite defaults.

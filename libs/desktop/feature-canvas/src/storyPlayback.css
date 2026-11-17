@@ -1,0 +1,42 @@
+/* Playback is a view projection; the model's original edge styles return on exit. */
+@keyframes evidence-story-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 3px rgb(47 93 143 / 30%),
+      0 0 14px rgb(47 93 143 / 22%);
+  }
+  50% {
+    box-shadow:
+      0 0 0 7px rgb(47 93 143 / 10%),
+      0 0 26px rgb(47 93 143 / 32%);
+  }
+}
+
+@keyframes evidence-story-flow {
+  from {
+    stroke-dashoffset: 26;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.evidence-story-active {
+  border-radius: 4px;
+  animation: evidence-story-pulse 1.8s ease-in-out infinite;
+}
+
+.evidence-story-flow {
+  animation: evidence-story-flow 0.9s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .evidence-story-active,
+  .evidence-story-flow {
+    animation: none;
+  }
+  .evidence-story-active {
+    box-shadow: 0 0 0 3px rgb(47 93 143 / 35%);
+  }
+}

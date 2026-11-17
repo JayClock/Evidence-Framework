@@ -3,7 +3,7 @@ import { ipcMain } from 'electron';
 import {
   EVIDENCE_MCP_IPC_CHANNELS,
   type McpRendererResponse,
-} from '../shared/mcpIpc';
+} from '@evidence-poc/desktop-contracts/mcpIpc';
 
 import type { McpBridgeRuntime } from './mcpBridgeRuntime';
 

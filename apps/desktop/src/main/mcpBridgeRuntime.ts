@@ -14,7 +14,7 @@ import {
   type McpRendererRequest,
   type McpRendererResponse,
   type McpStatus,
-} from '../shared/mcpIpc';
+} from '@evidence-poc/desktop-contracts/mcpIpc';
 
 import type { McpRendererChannel } from './mcpRequestHandler';
 import { imageToPng } from './mcpCapture';

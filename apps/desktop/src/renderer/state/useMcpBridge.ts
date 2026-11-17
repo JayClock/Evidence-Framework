@@ -12,11 +12,11 @@ import type {
 } from '@evidence-poc/evidence-schema';
 import type { SensorReport } from '@evidence-poc/evidence-agent/browser';
 
-import type { EvidenceProjectSummary } from '../../shared/projects';
+import type { EvidenceProjectSummary } from '@evidence-poc/desktop-contracts/projects';
 import type {
   McpRendererRequest,
   McpRendererResponse,
-} from '../../shared/mcpIpc';
+} from '@evidence-poc/desktop-contracts/mcpIpc';
 
 import { resolveCaptureRect, type CaptureRect } from './mcpCapture';
 

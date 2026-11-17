@@ -1,5 +1,5 @@
 import { readModelRoot } from '@evidence-poc/evidence-model-io';
-import { API_FIXTURES } from '../../tests/support/fixtures.js';
+import { API_FIXTURES } from '../testing/fixtures.js';
 import { buildDeliveryContract } from './modelDelivery.js';
 import { buildDeliveryRoutes } from './routes.js';
 

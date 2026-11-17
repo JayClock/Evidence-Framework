@@ -1,86 +1,61 @@
-# Evidence API
+# API contract projection
 
-Projects FM models into OpenAPI 3.1 contracts and compares their HTTP compatibility with oasdiff 1.38.0.
+Nx project: `evidence-api`; package: `@evidence-poc/evidence-api`.
 
-## Setup
+Projects an FM model into delivery routes, service topology, OpenAPI 3.1 and HTTP
+journeys, validates overlays and examples, and publishes deterministic contract
+artifacts. This package does **not** execute HTTP acceptance, generate Step CI /
+Hurl suites or spawn `oasdiff`. Those concerns live in
+[`evidence-acceptance`](../evidence-acceptance/README.md).
 
-```sh
-pnpm install
-pnpm api:setup
-pnpm nx build evidence-api
-```
+## Entry points
 
-`pnpm install` installs package dependencies; it does **not** provision `oasdiff`.
-Run `pnpm api:setup` before API comparisons or their tests, and again after deleting
-`node_modules` or the tool cache. Setup downloads the official release for macOS,
-Linux or Windows (x64/arm64), verifies a pinned SHA-256 digest and executable
-version, and stores it under `node_modules/.cache/evidence/oasdiff/`. A matching
-cached binary is reused. Extraction uses the operating system's `tar`; network
-access is needed only when downloading the release. Export and comparison run
-offline. No Go toolchain or Docker is required.
+- Root: Node projection/loading/publishing APIs such as `buildDelivery`,
+  `buildProjection`, `loadFm`, `renderOutputs` and `writeOutput`.
+- `/delivery`: browser-safe field/route/contract helpers, with no filesystem or
+  acceptance runner imports.
+- `/testing`: shared fixture builders for cross-library tests only. Fixtures
+  remain in `tests/fixtures/`; consumers should not import private source paths.
 
-The runner selects `EVIDENCE_OASDIFF_BIN` first, then the cache found above the
-installed Evidence package (not the caller's working directory), then `oasdiff`
-on `PATH`. In environments without that cache, including a packaged desktop
-installation, configure an absolute executable path or install the pinned version
-on `PATH`. The desktop and Agent report an unavailable comparison rather than a
-compatible contract when the tool cannot run. No binary is downloaded during
-analysis.
+The `evidence-api` legacy binary and the old `/commands`, `/cli` and `/runner`
+APIs moved to `evidence-acceptance` to avoid a projection → runtime dependency.
+`renderDeliverables`, acceptance renderers, `compareContracts` and `OasdiffRunner`
+also moved there. The unified CLI's user-facing commands and exit codes did not
+change.
 
-## Commands
+## Usage
 
-All model, overlay and output paths must be absolute. Export must remain inside the project root and cannot overlap inputs.
-
-```sh
+```bash
+pnpm exec nx build cli
+pnpm evidence export --model .evidence/fm --out dist/contracts --openapi
 pnpm api:export --project-root "$PWD" --fm "$PWD/.evidence/fm" --out "$PWD/dist/api"
-pnpm api:diff --base /absolute/v1.evidence.json --target /absolute/v2.evidence.json --format json
-pnpm api:diff --base /absolute/v1.evidence.json --target /absolute/v2.evidence.json --format markdown
-pnpm api:diff --help
+pnpm exec nx run evidence-api:export-openapi -- --help
 ```
 
-`--base-api` and `--api` apply validated route overlays to the base and target respectively. The comparison uses the final contracts, not estimated model edits. Nx also exposes `evidence-api:export-openapi` and `evidence-api:diff`, with build dependencies and caching disabled.
-
-Export validates the OpenAPI meta-schema before publishing `openapi.json` alongside the delivery projection and manifest. Comparison returns native oasdiff findings, a Markdown changelog and the full JSON diff. The JSON envelope also carries both model digests. Findings retain native numeric severity (`1=INFO`, `2=WARN`, `3=ERR`). Both WARN and ERR block the compatibility gate.
-
-CLI `diff` exit codes:
-
-- `0`: no WARN/ERR contract findings;
-- `1`: contract findings at WARN/ERR;
-- `2`: invalid arguments, model/contract errors, missing/wrong-version tool, timeout or tool failure. This is **not** a compatibility verdict.
-
-JSON is written to stdout; execution failures preserve stdout/stderr diagnostics on stderr. Nx may normalize a nonzero command status, so use the direct CLI scripts when distinguishing exit codes.
+The legacy projection command validates the OpenAPI meta-schema before publishing
+`openapi.json` alongside the delivery projection and manifest. Explicit overlays
+may adjust routes/journeys but cannot invent model semantics or hide errors.
 
 ## Inline examples
 
-An entity's optional `examples` contains named **complete entity facts**, not workflow steps:
+An entity's optional `examples` contains named **complete entity facts**, not
+workflow steps. Values must satisfy its response payload schema. The projection
+adds an empty HAL `_links` map to response examples; request examples contain only
+caller-owned fields, never derived values or service timestamps. Invalid examples
+block export instead of being silently turned into passing tests.
 
-```json
-{
-  "examples": [
-    {
-      "label": "standard",
-      "description": "One confirmed payment",
-      "value": {
-        "id": "payment-1",
-        "proof_id": "proof-1",
-        "total_amount": 42,
-        "confirmed_at": "2026-01-01T00:00:00Z"
-      }
-    }
-  ]
-}
+Test metadata in `examples[].test` is compiled by
+`evidence-acceptance/projection`, which the desktop scenario editor may import
+without loading Node I/O, the HTTP runner or a native executable.
+
+## Verification
+
+```bash
+pnpm exec nx run-many -t lint,typecheck,test -p evidence-api
+pnpm boundaries:drill
 ```
 
-Values must satisfy the entity's response payload schema. The projection adds an empty HAL `_links` map for response examples. Request examples contain only caller-owned fields: derived values and service timestamps never enter request bodies. Examples do not execute CEL or assert complete business behavior. Invalid values block export; they are not silently turned into passing tests.
-
-## Scope and verification
-
-OpenAPI compatibility covers the declared HTTP surface. CEL expressions, business role authorization and fulfillment semantics need separate model review and behavioral acceptance tests; a zero exit status is not release authorization. Extensions and documentation edits remain visible in the full diff even when they produce no compatibility findings. Model digests identify model changes outside that surface.
-
-```sh
-pnpm nx test evidence-api
-pnpm nx typecheck evidence-api
-pnpm nx lint evidence-api --quiet
-```
-
-Tests invoke the pinned executable for contract evolution and use process mocks for failure handling. API, Agent and desktop test targets are uncached so an unavailable executable cannot be hidden by a cached passing test run.
+Projection-only tests do not need `pnpm api:setup`. Native compatibility and HTTP
+acceptance tests belong to `evidence-acceptance`; provision the pinned executable
+before running that project's tests. Nx boundaries reject an API dependency on
+the acceptance runtime.

@@ -1,4 +1,26 @@
+export {
+  inspectWorkshop,
+  type WorkshopProgress,
+} from './workshop/workshopProgress.js';
+export {
+  anchorWorkshopContract,
+  addWorkshopFulfillment,
+} from './workshop/workshopMutators.js';
+export {
+  scenarioExamples,
+  cloneScenarioExamples,
+  replaceScenarioExamples,
+  evaluateScenario,
+  type ScenarioExample,
+  type ScenarioEvaluation,
+} from './scenario/scenarioStudio.js';
 export * from './ingestion/index.js';
+export {
+  translateBusinessFormula,
+  replaceBusinessFormulaToken,
+  type BusinessFormula,
+  type BusinessFormulaToken,
+} from './cel/celFormulaTranslator.js';
 export {
   evaluateRuleOnExample,
   type ExampleRuleInputs,
@@ -96,6 +118,18 @@ export {
 } from './validation/typedValues.js';
 
 export { digestOf } from './validation/modelDigest.js';
+
+export {
+  collectFlowScenarios,
+  computeStepHash,
+  FlowScenarioError,
+  type FlowScenarioErrorCode,
+} from './trace/flowAggregator.js';
+export type {
+  FlowScenarioTrace,
+  FlowStepTrace,
+  StepFingerprintInput,
+} from './trace/types.js';
 
 export {
   compiledDocument,

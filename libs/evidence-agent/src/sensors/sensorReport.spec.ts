@@ -210,12 +210,12 @@ describe('stageGateSummaryOf', () => {
   it('keeps the target and scopes from the saved report', () => {
     expect(
       stageGateSummaryOf({
-        target: 'visualization',
+        target: 'api',
         passed: true,
         scopeRefs: ['ctx.purchase'],
       }),
     ).toEqual({
-      target: 'visualization',
+      target: 'api',
       passed: true,
       scopeRefs: ['ctx.purchase'],
       errors: [],

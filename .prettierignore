@@ -4,10 +4,6 @@
 /.nx/cache
 /.nx/workspace-data
 package-lock.json
-# Offline snapshots contain CSP-hashed inline scripts; regenerate, never format.
-/.evidence/views/
-# 页面资产按浏览器字节交付；regenerate, never format.
-/libs/evidence-visualization/assets/
 # 派生交付按权威字节核对 manifest 摘要；regenerate, never format.
 /.evidence/api/generated/
 /.evidence/fm/generated/

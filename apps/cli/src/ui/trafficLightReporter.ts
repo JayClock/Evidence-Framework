@@ -1,7 +1,7 @@
 import type {
   AcceptanceRunReport,
   StepExecutionResult,
-} from '@evidence-poc/evidence-api/runner';
+} from '@evidence-poc/evidence-acceptance/runner';
 
 export interface AcceptanceReport {
   readonly passed: boolean;

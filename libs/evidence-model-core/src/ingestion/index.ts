@@ -1,3 +1,4 @@
+export { collectClauseTrace, type ClauseTraceRow } from './clauseTrace.js';
 export {
   assembleDraftFromRows,
   inferContractSide,

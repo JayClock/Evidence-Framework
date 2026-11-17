@@ -28,7 +28,38 @@
       "items": { "$ref": "#/$defs/id" },
       "uniqueItems": true
     },
-    "description": { "type": "string", "minLength": 1 }
+    "description": { "type": "string", "minLength": 1 },
+    "sourceDocument": {
+      "type": "object",
+      "required": ["text", "clauses"],
+      "properties": {
+        "text": { "type": "string", "minLength": 1 },
+        "clauses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "index",
+              "text",
+              "category",
+              "reason",
+              "charStart",
+              "charEnd"
+            ],
+            "properties": {
+              "index": { "type": "integer", "minimum": 1 },
+              "text": { "type": "string", "minLength": 1 },
+              "category": { "enum": ["business", "domain", "boilerplate"] },
+              "reason": { "type": "string" },
+              "charStart": { "type": "integer", "minimum": 0 },
+              "charEnd": { "type": "integer", "minimum": 1 }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
   },
   "additionalProperties": false,
   "$defs": {

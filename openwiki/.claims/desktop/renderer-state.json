@@ -1,22 +1,18 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:a4fd3893266dc950d41061635635622c041a245afb3c2026c1811d2eb28f9373",
+  "pageVersion": "sha256:58f62a8fce5aff921b26200d466678e51bb8c88e38b547526e052028c29efbbe",
   "claims": [
     {
       "id": "claim_5bc15eddd9434496a5f9aae91810a602",
-      "statement": "`useEditorSession` creates exactly one `ModelSession` per editor window in a ref and rebuilds the whole editor snapshot — `document`, `graph`, lifecycle swimlane `layout`, `selection`, undo/redo flags and `validation` — from that session on every commit; every edit path (inspector, keyboard, Pi agent patch, MCP patch) dispatches through the same session, so all of them share one undo history.",
+      "statement": "editor 每窗一个 ModelSession，事件同步取快照但 layout 独立 async ELK，旧 graph/mode 结果不发布，新输入 pending 返回空布局，失败显 layoutError。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useAgentPatchBridge.ts#L38-L56",
-          "version": "repo-lines-v1:sha256:2a49845ea9332752ad406ccb2dc4bf8a72af8c61b5f3fff00297555d20f35078:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhMzdlM2MwOTQxZDE1NzdjMDM5OGUzYjY3ODRlZjNiM2YwMTI4OGJjZGVjOWE0YmJhMWFiZmFhNzQwYWI2ZjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwOGNjZDUwMzg0MDg2ZGJjNzA2NzQxYjYxYzZlZGY4N2M2MmMwODkyNGRmYjBjYzM3Y2E2NTExOGU3NzI0YmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJiZWZiZWFhMjNhMTk3NTMyYzg2YmZlYTE5NDhhZWYxMzYxNzVkODE3ZjVlNzI3YWMzMjQzMjJjNTUyYzYwZjcifQ"
+          "resource": "repo://apps/desktop/src/renderer/state/useEditorSession.ts#L85-L138",
+          "version": "repo-lines-v1:sha256:fb4a597794a7d562db1723bf695801578a3d97c8073d5778a4c8f1c4a09e777e:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVlNzg2ZjMzYzZlNGJkMjEzZDJkZmM2ZjA0MmFmNWU4OTVmYmE5ZGM2YTA5OTJiM2ViYjA1NzQ3Mjg4M2YyYmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY2Njg3YzE1OTVmMzI4Mzc5ODZiMzc4NmMzOWVkMjY4Mjk3YmZmMGUzODZiNzBjMDE4MjIxZGViNWI4N2YzZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMxZjFlNDBlMzMzOTQyMDljMjFlZmUxZmViYjYxODcxMmU2MWRmMjNiNTY0ZDMyN2VjOTgzN2IwNzQxY2ZkZWMifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useEditorSession.ts#L36-L135",
-          "version": "repo-lines-v1:sha256:b370cf37ee711e4cd2242922052cd675bf4d9b243811b8648e254af63a66a49a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJiMjc4YzdmMzkyNzdiMTQxMWMxZDA2NmNkOWMyZTM2OTEyMmQ5OTNjN2VlODRjOTVlNzFmMGM5YmRiZDJlNjM4IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI4ZjEzNDc4ZDVkOGRlNjEwN2Q1NmUzNWE3OWMwZWNlYWMyOGFhNWRhNTg4ZjQ4NjBmMDhiNjczYTQ2NjI1MmVhIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI2M2IzM2Y3N2M2MzM0OGNmODNhYjAwMzU2N2RlMjJhZmU0OGQ0N2EzOTEzMzVhYzE3NzFkMTZkNzFlNzhkMjI4In0"
-        },
-        {
-          "resource": "repo://apps/desktop/src/renderer/state/useMcpBridge.ts#L302-L318",
-          "version": "repo-lines-v1:sha256:50b7ad6be79e82d1694fc8c3a9a1282f9122a366f027d45118035d47f5269bfe:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3NDNhOGEyOWY4ZjYyNGEwYzYzYzhmMjM3MDNjNzIxMzc4ODFlMzcyNDVlZmU2OWMwMTU1NzM0Yjc3MTI5OTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlmNzk4MWQ4MzYwYzdkMDk3OWIxZDAwNzdhZjliMmZjNmY5Y2E1Zjc5MDc2YTJmNGM3ZGI1MTI1MGQxYjQ4ZTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRlNTgzNDRjNWE2NWEzNjNmNmM5Y2Y2YmNhMjM1ZTlhYjI4MWE3NTI4ZmJlNWUxY2JjZTk2YzdlYzU4ZTY0YzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdjMzRkZjEwYjIwNDA2NmQxODQwNjA5NWRkOTdhN2Y0MjIyNTZmMjYzMDBhYzA5ZWJmNDFmOTY4NTMyMTM2NmYifQ"
+          "resource": "repo://apps/desktop/src/renderer/state/useGraphLayout.ts#L19-L57",
+          "version": "repo-lines-v1:sha256:b29fedd044590d829b19ea97f4e29493fd7075c9ee56a6af2b0e294fdd3f0200:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI1YzU3MDU0YjIxMGYwZGNiN2JlNjQ5YTRiMWYwZjQzNzM3NzBlN2U2NjMwYTE0ZjgzY2M0NzE0ODZkNGQ5YzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFkZTVjZTVhZGJmOTY5YzJkNGM3NGI5YTNiM2U5NzQ5YTIxZGQ4YzIzYWZlNDA3NDc4Y2M4ODBhODE1ZTFlMDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -32,11 +28,11 @@
     },
     {
       "id": "claim_2295b69ab1a6404c85cff48a12c4f94b",
-      "statement": "Saving writes `session.getDocument()` through `projects.save` and clears `dirty` only on success, while `reloadFromDisk` re-opens the tree and calls `session.replaceDocument(document, { resetHistory: true })`, clearing the dirty flag, the save error and the external-change mark.",
+      "statement": "save 成功才清 dirty，reload 显式 open 并 resetHistory，清外部提示/错误。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useEditorSession.ts#L141-L176",
-          "version": "repo-lines-v1:sha256:fa789ec8ac10d164fc2b97f792ab66a09ff33f64db4543f6463752fc049e9018:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVlNDk4NjM5MzVhYjQ1ODhhNzBjNGQzOTNkZTk0N2Y5NTRmNzE2OWMwNmQ0OWUzZmIyNWU1YWNiZWUxMTRkMjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdlMDI1NjkwZTk4ZTU3Njg5ZTk0NWU5OWNlMjBjY2I1YjA3YzJkZmU3ZDhkMGUwOTNjZDEyZGRiMWJkMjBkM2MiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI4NjA3OGU1NTFhOTMwNGRjMjBlY2IzZTU5ZDBiODY1Mzk2YTUyNmMxYTJiNTRlNjAwY2NkZjcxYTZkMGZhNjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ5MWIyZWE1ZjgyYTExMmM1YmRmNDNiM2JkNTVhNTMxNTgzMGUzYmFkMzk0ZTk0N2YzMTY1MzU5MzJlMzQ2ZjEifQ"
+          "resource": "repo://apps/desktop/src/renderer/state/useEditorSession.ts#L139-L172",
+          "version": "repo-lines-v1:sha256:5957d52f65a777fc7b9c5e7e32f032916d60b92c794df343f4c1b2bb97878e4b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4NTg4MzIwMTEzMWYyOTJjYzQxOWU4MDUxNjExOWI2ZGU1NTZhMGNmMDJmMzc2YmNiZmIxNWEyNzkzYmJjODIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk4OTQ3MjQ0OTczMzNkNTc2NWIxNjc2NTEwYWM5MzBjNWM0YTQyNmM0ZDU3NTAyOWNhOGZhNjhmY2E3NTc3MzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAifQ"
         }
       ]
     },
@@ -73,7 +69,7 @@
       "statement": "Focus events carry their `source` so each pane ignores its own requests — the ledger drops `table`, the contract viewer and rules pane drop `code`, and the editor screen drops `canvas` — which is why cross-pane sync needs no prop-drilled callback chain from the shell.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/components/ledger/DomainLedgerTable.tsx#L166-L175",
+          "resource": "repo://apps/desktop/src/renderer/components/ledger/DomainLedgerTable.tsx#L168-L177",
           "version": "repo-lines-v1:sha256:fd88521ab6f36b043b20ee0ac530c20d266715d0913a51daa8371c1e8ae9e208:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjYWNkY2QxOWJmOWE5ZDNkYjA1NjRhYmFkM2M5Y2ExMmEyMzU5ZTQzMWE2NzlkOWJjZmJjMjc4ZWJhMjNkMTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEyN2QzMTVkNzJiNmE3Mzk3MGYwMzkzMDA3NjRkODU4Yzc1YWMwNzI0MWVlNmZlOWM2ZjlkZDljM2UyMTAyNDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFjNTViZmVjMTkwNDA5M2IyMjY0MjhjMWYzYjI0YzE0MmExOTU5NzczMGQwMmEzYzZkMjg0MGI0Y2EwNDMwZmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcxMzMyMGNkODg4YmY5MmNjZDk4OWZiYTkzOGRjMjQzNDViYzM4MDRkNjFjZjc5YWI2YWE5NmEwYmQyNzViYTgifQ"
         },
         {
@@ -85,7 +81,7 @@
           "version": "repo-lines-v1:sha256:84a0e710920451c554929d1a116fdc0ff4ccf2c41e89cba91d808dcde94a3e37:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUwOTQ5NWM0YTgwN2I0YjUwYzE4YWI4YTBhMGFjNzQ4ZDA2NjZiM2QyZjBmMDkyZTdmYmEzMzJmZWQ4OGNiYWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkNDgyNTNhNDljMzE2OTY3ZjMyYjdlZGNkN2NmNGJlMTE2Zjg5OTZlOTJkNGVhOWUzYjM1YmU0NGFkZTI5YTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE5OWEyMTQwM2U0ODI0YzVhNDg4MjUwYzI4ZTZjOTczNjFhOGRhZGM0N2YxMTliODY3ZDYzNzk4YTE2YTFjNTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYyMDEyYTkzOTk3YTFmYzE3YTE5YzgxMWEzZTNmOWIyYzNiMDNkOTkyNzMyNjU3OTUzYzkwZWQ0MDBjMzk2ZDMifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L423-L453",
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L430-L460",
           "version": "repo-lines-v1:sha256:693e33d79c6f4beb75a650f000fb666b091b174f509a878792aec7c6b23d9be7:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdlM2YwOGQyYzA0OWRjYThjZTAzYmQ3NDYzNGFlMmI5NzJmNTIyY2RlMDI2ZWM2MTgzNTA2Mzc1MjE0YzI1YWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRhYjc0YWJjODcyZTI5NTMzZjRjOGNjOWE0NGNjODdmNmVlZDU0ZGRlNmUxNGE4MTU2YWUyYTNjNTJiOWQyNDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE3NjA1YWQzOWZjMWI4Y2RlMzYxYzA0N2QxMzZhMGUzZmI3YTlkNDA1MTY0YzFmMGIxNzk4NjM5ZTU4ODkzMGUifQ"
         },
         {
@@ -99,26 +95,22 @@
       "statement": "The editor screen announces the workspace selection as a `canvas` focus request from an effect keyed on the selected node id and attribute, so panes follow any selection change; the returning direction is resolved in one place that ignores the canvas's own announcement, rejects objects missing from the layout, clears a scope that would hide the target and pans to it.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L404-L453",
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L411-L460",
           "version": "repo-lines-v1:sha256:6ee4b2098edc469286b1b3d73c68881ad7df97a0c1d74c19c141bfccd184c556:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg0ZTQyMDhjZDZmZmI4YzRhMzU0N2IyZjU0YWRhMTk5NzhjM2YzNjVlNzhmOTUwMmVmNTE0NWNkZDJhYTg1NDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA4YjE0OTk2MGJkYzJjZjE3M2U2ZWJjNzJiYzNkZmI3MTkwMDJlYTY4ZmVlYTEyNzVlYWFlODFkYzRmNDIzZmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE3NjA1YWQzOWZjMWI4Y2RlMzYxYzA0N2QxMzZhMGUzZmI3YTlkNDA1MTY0YzFmMGIxNzk4NjM5ZTU4ODkzMGUifQ"
         }
       ]
     },
     {
       "id": "claim_d415d3fe23654f0c839a745bd880e86e",
-      "statement": "`useLiveModelBridge` publishes `notifyModelChanged { rootPath, revision, document, baseDocument }` once on mount and once per `document-changed` (never for selection changes); because the publish runs inside the session's synchronous notification during `dispatchAll` and the patch acknowledgement is sent only after `dispatchAll` returns, the main process receives the new revision before the agent's tool call can resolve.",
+      "statement": "live bridge mount/document-changed 同步发布 revision/document/base，applyPatchBatch 返回前已通知，Agent ack 在其后；selection 不发模型。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useAgentPatchBridge.ts#L38-L56",
-          "version": "repo-lines-v1:sha256:2a49845ea9332752ad406ccb2dc4bf8a72af8c61b5f3fff00297555d20f35078:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhMzdlM2MwOTQxZDE1NzdjMDM5OGUzYjY3ODRlZjNiM2YwMTI4OGJjZGVjOWE0YmJhMWFiZmFhNzQwYWI2ZjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwOGNjZDUwMzg0MDg2ZGJjNzA2NzQxYjYxYzZlZGY4N2M2MmMwODkyNGRmYjBjYzM3Y2E2NTExOGU3NzI0YmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJiZWZiZWFhMjNhMTk3NTMyYzg2YmZlYTE5NDhhZWYxMzYxNzVkODE3ZjVlNzI3YWMzMjQzMjJjNTUyYzYwZjcifQ"
+          "resource": "repo://apps/desktop/src/renderer/state/useAgentPatchBridge.ts#L35-L56",
+          "version": "repo-lines-v1:sha256:7b69e9106ef41f37155fea4d82a63e0f8fa5c481cf782280950e9faaf08a4725:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjZTRmNTdhYmU4N2IxZTBjMzk3NjRjZmJiYzYyZmU0YjYzMWRlM2ZjYWNhZTJiNTRmOGUzNjcyOTIyMWY1NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI2YzczZTM4MmJhZTM3OGJmNzEzNGNiOGU1ZDBjZmU2MGMxM2JiM2QxY2E4ZDI0ODU0NjFmNTE4YjFhMTU5ZGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNmNTYwNWViN2Y5ZGE0NDM0ZmZmMmEzMjg4MGI0NWEyYzg0NmFhYmYzYmU0MzVlNjU1YmQ2NGMzMDQ2Mzg5Y2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc5NzY1MGFkOWFiMmU0NzU4ZDI2NTM3NTRlODVlYTJhOTUyMDRhNDA4MTYyNzgzODQ1ZTkzMDRiNTFmNGUxOTQifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useLiveModelBridge.spec.tsx#L14-L36",
-          "version": "repo-lines-v1:sha256:f4143686b506a2d87707cbd08ce9a4a3a415757c6006833f1e61f922ff04bd22:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ3NGZkOWQ0NzNkMTUxOTlhOTk0MDczOTI0OWRiNTk3NmFmMGViNzZiY2U3ZWRlNWI3MjQ3NTRmMjhjYzJhMGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlkMzkzMWViYzBhODc0NWMyODNiNmI3YzI1YzU3MDlkMDRkNWEyNmYzMjAwMTQzYTgyNjk1MGIzYmM5OWYwNWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFkMDU0ODlmNTc5YWQ0MjgyY2JlNWY2N2RjYmYyY2E2YTczNGRjYzc2NjEwZWM5MDAyMjk2NGJhNDQwZjNmYjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQwOGZkYzdmMTg3MzBkNWRjNzYzZjg0NzEwODJiNDI3NDk1NDM1MTk5YzYyYmM5NDAxOTc4OThkZThjYzJhODgifQ"
-        },
-        {
-          "resource": "repo://apps/desktop/src/renderer/state/useLiveModelBridge.ts#L1-L45",
-          "version": "repo-lines-v1:sha256:a4eadc00b8dc0b86b1b2cf02f32b5724b6f7d1d8e4148b8e20c339087bd68b25:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmNDhhZGU3MDZlYzA3MjY4NDBiNTU3ZWVkOTMxNDFhY2ExZjhmZDYxODc4NjVkMTQyM2E4M2VjM2E1ZmIyOTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://apps/desktop/src/renderer/state/useLiveModelBridge.ts",
+          "version": "repo-file-v1:sha256:a4eadc00b8dc0b86b1b2cf02f32b5724b6f7d1d8e4148b8e20c339087bd68b25"
         }
       ]
     },
@@ -141,22 +133,18 @@
       "statement": "The editor marks sensor findings stale and hands the canvas no diagnostics whenever the live bridge reported an error, the sensors are loading or errored, or `report.documentRevision` differs from the live bridge revision — so findings can never be attributed to a different edit than the one on screen.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L228-L244",
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L235-L251",
           "version": "repo-lines-v1:sha256:d37670551359005081df16958d48491b2c7869075cc1fe46d722323c9be7a992:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdhYjEyMGYyY2E4NTZhNGY4MmJlOTQ3NjE1Njk3MDlmNzVhNjIwNDlmZTc5YjJjY2I5MDVhN2E0ZDQzZDgzMWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1ZmI0ZjI1MjAzNTFlMzBjZTlkYTJjMDY0NTc3ODY2ZmQzYjhjOTFjMjQyNDA2OWJiYmEzN2JjM2EwYmQzNTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZhNDEwZTgwYzcxYWY1MzdhOWFiNGJhNjgxMDc1MGMwMzQ0ZjQ0ZWE4MmJhODgyNjA1MGU4ZDIxNTBhMDllMjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM0MDE3MDZhM2JhMmJmMDkzYzllZDA3NmFmNmI3NDliYWMwYjY4N2EwNjViYzZhOTIxMjhlZGQ0ODY1MzYxMWQifQ"
         }
       ]
     },
     {
       "id": "claim_9a4224022ff047a8a60603867c140b03",
-      "statement": "`useAgentPatchBridge` applies one agent patch as snapshot-before → `decodeModelPatch` → `dispatchAll(commands, 'agent:<rationale>')` as a single history entry → `respondPatch` with the applied command types → `onApplied({ rationale, commands, before, after })`, and a decode or guard failure answers `{ success: false, error }` without calling `onApplied` or changing the document.",
+      "statement": "Agent bridge 再解析 Zod，单批 JSON Patch 后回复 op，真变更才交 before/after review，失败/no-op 不建审查。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useAgentPatchBridge.spec.tsx#L32-L160",
-          "version": "repo-lines-v1:sha256:b797a158a59697bed6c5084463722ca3be7e6270db649617aa6c2e31b028f2af:eyJzZWxlY3RlZExpbmVDb3VudCI6MTI5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxZWVhZjM5Yzk5ZGU0YmFiMjE2ZGE4ZjdkMDI1YWUyNzc1ZjA2N2YwYWUzZDU1ODQ2YzBmNjgwZjczYTkzNjYxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0OTRiNGEzY2FhYjk5ZWViMDc2ZmE0OTA4ZmRjYzQ0MDMxY2YyNjU0MWJiN2JjYzM2YWMzYmZhYzIwY2E5MDMzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI4ZWQ0MzNiYzk3NWFmOGVmN2I4Y2NjODU0YTE2YTUyMjg3MGMyYzk2YTE0OGQ3YzQ1NDdjMzkwODA3OTBmZmNkIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlNmY5YTVmYjYyMTgzYzZkNmFmYTU1OTU0YzEwMGNkOTI1MWI0NzBiNzlkZWRmMjg1OTRlMjUzNWNmNDU4ZmRkIn0"
-        },
-        {
-          "resource": "repo://apps/desktop/src/renderer/state/useAgentPatchBridge.ts#L20-L72",
-          "version": "repo-lines-v1:sha256:4c49367f1fc9de011dfffb293e102cda005bfc7bbd52607db554f60b94aadabc:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJlNTI1Y2I0ZjdiYzk4ZTBmOGViNWRmOTdmOWE5YjQ2NWEzY2ZkMWFhN2E1ZGVkY2VjNjM4MGQ0YWFiNmQ2YzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://apps/desktop/src/renderer/state/useAgentPatchBridge.ts#L35-L75",
+          "version": "repo-lines-v1:sha256:9a7743475722a35ee0087accdc01230b51ab92ad351b829a46a9d49a9b155ca9:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjZTRmNTdhYmU4N2IxZTBjMzk3NjRjZmJiYzYyZmU0YjYzMWRlM2ZjYWNhZTJiNTRmOGUzNjcyOTIyMWY1NjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNmNTYwNWViN2Y5ZGE0NDM0ZmZmMmEzMjg4MGI0NWEyYzg0NmFhYmYzYmU0MzVlNjU1YmQ2NGMzMDQ2Mzg5Y2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -172,51 +160,39 @@
     },
     {
       "id": "claim_90cea94cc0554b7996f9813087c59844",
-      "statement": "`useMcpBridge` registers a single `mcp.onRequest` subscription that answers from a ref refreshed on every render, serving `get_app_state`, `get_domain_model`, `get_selected_entity`, `get_capture_rect` and `apply_model_patch`, and answering any other method with an `INTERNAL_ERROR` response rather than leaving the caller waiting.",
+      "statement": "MCP 单订阅每次直接从 session 取最新 doc/graph，session 事件同步计 revision，支持五 renderer 方法并显式拒绝未知方法。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useMcpBridge.spec.tsx#L57-L243",
-          "version": "repo-lines-v1:sha256:ad7f887809e8cf6751dd307e3d0e91e0a365854513cb84e2aa16f9c4f063960b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTg3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI4Y2RiZTIzMDZkMjEwN2MzOGIzN2FmZGRmOTNlNDI3NTZmMDkwZTFhZDRiZGE2ZmYzNGEyMmNlMDUxZGFiYjljIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmNmY1YjQwYjE1ODQ1N2QxNzg2NGYyMTc5MDc4NmRkNWEyZWNkYjY0YjY2YTY1MWY3ODhkNGUyNWNkMzMwM2QyIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0MTNhN2NmNTM4MGZkYTdkNjk3OTgzZmZjZGU2M2E1NDVkNzkwYTMxYTY0YjU3NmI3MmZkMzA2MzhlNzQ5MjViIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
-        },
-        {
-          "resource": "repo://apps/desktop/src/renderer/state/useMcpBridge.ts#L202-L285",
-          "version": "repo-lines-v1:sha256:be15b4679f3feceb8e37823b074276a8acdf3c0efd8d0f350584de7e338b74e3:eyJzZWxlY3RlZExpbmVDb3VudCI6ODQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmNGE0NGM1NmRkMzkxYmZhODFjYTA1YjhlNTY3Mzg3ZDZjNzIzODkyNzhmZDc1YmZiMzM2ZTFlNjMwNmE5ZWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5YzEzNTkwNjY1NjMyM2QxYzVlYTQxNjU0ZWU2NmFmYjU4NWFjZGNmYWVhY2ExMjFkNWUzMGJmMTkzZWVkZDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM2M2RhZTExNjMxZjRkZTVkYzJmZDIwOTk0NjgxNWFkZTQ3Yjc1YThkMjhiMjBmNjU5MmZjNGViZmEyYTI0NGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM0NWJjNWMxNTJiNGZlOGQyYTFhNzQ5MGE0YmE1YWJmOGRiMDRmZDA0ZGY4YmU3ZDQ0ZWZlOTE0MzA4ZDUzMTAifQ"
+          "resource": "repo://apps/desktop/src/renderer/state/useMcpBridge.ts#L199-L315",
+          "version": "repo-lines-v1:sha256:5789dd1ee8c66426d97acf4ce9fe6e0bc314f0926b32092a75964c1db0169e52:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIwYjE3NDIyYTc2YzJlYzQ0OTM1OTJkMGRiNTg2ZjI4ZmRkZjY4ZGQ4NDI4N2UxZDAxN2NmZmY3OTg2YTEwMmUwIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwMWJhNDcxOWM4MGI2ZmU5MTFiMDkxYTdjMDUxMjRiNjRlZWVjZTk2NGUwOWMwNThlZjhmOTgwNWRhY2E1NDZiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI4NWViMzNjOGI2NWMwNjFjYTFhOGJlN2ExNDJiY2ZjNzcxZDk2NjMzNTIzMTEyODQzOTg5MzdlYjdiZTJlOTFlIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJhNGRjYTRiNjA2MzhjMzE0MDc1NWQ0M2QxZDNhYWIwNzQ0ODEzNTliMzdjMzRmN2MzZjE5NzBjMjkwZDRjMTM1In0"
         }
       ]
     },
     {
       "id": "claim_2ff77d1721f34dd1a97480866a086ea1",
-      "statement": "An MCP patch is decoded and dispatched as one `mcp-patch` history entry and validated afterwards: a decode or guard violation returns `success: false` with the guard code and dispatches nothing, while validation issues come back as blocking diagnostics without rolling the patch back.",
+      "statement": "MCP 一次 applyPatchBatch 原子应用 RFC 6902，真变更才增 revision，之后校验返回 block 诊断而默认不回滚。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useMcpBridge.spec.tsx#L138-L200",
-          "version": "repo-lines-v1:sha256:6b2e495cfc65605e0032bbc7806650817e83ca6905b1deed8dd6de9561bc95fc:eyJzZWxlY3RlZExpbmVDb3VudCI6NjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5OTg2ODBiZmUxOWQxMjMyOTFjOWVlNGY2ZjUzOGQ4NTJmZDZiODAyZTUxNWU1ZjRhNzExYTA2ZTA5MDliNTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBjYjU4Zjg0MWZiYTVhMDZjYzYyM2NmMzZiMjhmNWZiMGM3ZDdiNGJlMWFlZGNkOTY2ZGE5Y2U5YTNhODY2ZDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY0ODAxMjY2NTQwZGNjY2ZjZmIxOWVlNzYzOWRjOGFjOTg0ZjQ1YThjNTEzOTEwYmNlOTkwODI0MTc4MWI0OWUifQ"
-        },
-        {
-          "resource": "repo://apps/desktop/src/renderer/state/useMcpBridge.ts#L302-L352",
-          "version": "repo-lines-v1:sha256:5927659eb8dd0f2fbc44df41e595b3e3ab7768ed633cf820f65489cb4706c611:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3NDNhOGEyOWY4ZjYyNGEwYzYzYzhmMjM3MDNjNzIxMzc4ODFlMzcyNDVlZmU2OWMwMTU1NzM0Yjc3MTI5OTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRlNTgzNDRjNWE2NWEzNjNmNmM5Y2Y2YmNhMjM1ZTlhYjI4MWE3NTI4ZmJlNWUxY2JjZTk2YzdlYzU4ZTY0YzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjljYzgxMDk3MmM2ODc1ZjI2Y2ZjOTUxZjU2YjRiYjQ3MWIxZWM0MGM3NWJlNjk1MWEzMTBmMTUwYTQ5M2RhNWYifQ"
+          "resource": "repo://apps/desktop/src/renderer/state/useMcpBridge.ts#L325-L368",
+          "version": "repo-lines-v1:sha256:c1db51263fa644b730840c48efc851de59c1d171f24235bfa3e47a916adde588:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI4ZWIzMTYyNmI2MjlmYjBjYWVkMzM4YzEyYzZmOTAyZjRhZWNiZGEwZDA0ZWE2Y2RmMmZkOWRjMWNiY2M5ZmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRlNTgzNDRjNWE2NWEzNjNmNmM5Y2Y2YmNhMjM1ZTlhYjI4MWE3NTI4ZmJlNWUxY2JjZTk2YzdlYzU4ZTY0YzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjljYzgxMDk3MmM2ODc1ZjI2Y2ZjOTUxZjU2YjRiYjQ3MWIxZWM0MGM3NWJlNjk1MWEzMTBmMTUwYTQ5M2RhNWYifQ"
         }
       ]
     },
     {
       "id": "claim_9891ae4dbde145e09ca54ede8fc9148b",
-      "statement": "The renderer computes the MCP screenshot rectangle by intersecting the target node (or the stage) with the visible canvas viewport and clamping to integer pixels, returning `null` when no canvas viewport exists; `VIEWPORT_INSET` is 0 because the rulers are gone, capture itself stays in the main process, and the main process toggles capture mode on before `capturePage` and off in a `finally`.",
+      "statement": "renderer 截取 visible viewport 与 stage/target 交集，整数像素、无布局返回 null、inset0；main capture 前后 finally 切模式。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/mcpBridgeRuntime.ts#L126-L136",
-          "version": "repo-lines-v1:sha256:72cff27b554bd9f8df24f2a06d818f5a4b40ae98c7dbbf59e11ae0edae457850:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE3YmYyYTE0ZjFiZjM3ZTdlZTIxZDNlYjUyYzkxNDJhOWRkN2RmNTQ2ZDEwOGNjYmFlMWFkMTU3NzE3Y2Q2ZjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxNGU0Mzg3ZGJmZDY3MGVlZWUzM2QxMjllZDFkNzc4MzYwOTcwYmY1ZjJkMGJjOTdmOGRhYzY0ODJjYTQ5ZmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgzYjgzNTQzOTFkMDFhYTEyODEyNjhlYWZhZjkzNzU5OWJlYzU2ODgzYTUxYWZjMmI2NzlmMDRiMzRkZGI4NWQifQ"
+          "resource": "repo://apps/desktop/src/main/mcpBridgeRuntime.ts#L112-L136",
+          "version": "repo-lines-v1:sha256:68fffc75debe99f7c3ee9f21e7afeebae0b81c98c64cb3480339b12f02601f78:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkxNmM2ODhiZjI0YTIyMThlODMyZDQyZmUxZTFlODdiNzYyZTdjNWI3MDIyMzI0MjMxNmI3ZDM0ODFlNTI5OWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE3YmYyYTE0ZjFiZjM3ZTdlZTIxZDNlYjUyYzkxNDJhOWRkN2RmNTQ2ZDEwOGNjYmFlMWFkMTU3NzE3Y2Q2ZjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEyZGZjZmMyZWUzZjg1NDUyODU3ZDk1OWIwMTJmNzU5Y2ZkOWE5NTc2NzJhNWZjMGEyYTQ0NmE0ZWQ2NjUwOWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgzYjgzNTQzOTFkMDFhYTEyODEyNjhlYWZhZjkzNzU5OWJlYzU2ODgzYTUxYWZjMmI2NzlmMDRiMzRkZGI4NWQifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/mcpCapture.ts#L11-L73",
-          "version": "repo-lines-v1:sha256:0b2590201b8b9c88bcaf29fc4dae19d65e216e01d062d4dd887bc522c17f7b85:eyJzZWxlY3RlZExpbmVDb3VudCI6NjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjMDAxYWQ1NjI1ODc2ODliMGE2MGVkZGMxY2ZkMTE0NTk4NDNmZWYxZTQzZmJkMTU2YTAxNTY1NTg3NjlmMjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBlMjU4MTg4ZmQyZTUxZjQ5YTQ5ZjhhM2ZlNTE1ZGQ5Y2RjMzY5MzI0NmQwMWIxY2ZmZWFlYzk1Yjk0YjkzMmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAyM2I2ZmQ5YjI5ZTI3YWU1ZDNlZjZjZTFlOWY4MjQ4NjExNjdiOWQ2MjA3ODQ0MDE4MmVhMTM1Y2M2ZDM4ZmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhhYmI1ZGVkMjM2OWYwYmUyZjIwMzM5YTUxODI5NmVkMDgxZTY1MTFmYWNjZmVlMGZhYmMxNzM0NWI3NDk0NWIifQ"
+          "resource": "repo://apps/desktop/src/renderer/state/mcpCapture.ts",
+          "version": "repo-file-v1:sha256:a73b1d8feeb3a6799e5d99cef1fc12684764a28c0daa9ffc6f85129e4024256b"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useMcpBridge.ts#L161-L200",
-          "version": "repo-lines-v1:sha256:2b9027ef3cd63e76529383df7e11ebf05f13813e1b8af64ef5acee0c7eb4fca5:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU0ZmQ4ZmVkMDZjZTdlNWE4YmVhNjRhNGRkNzVkNDMyNGJkODFjNDgwYzdlZDRlNjRmNGJjNzY0N2U5NzQ5ZDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUyYzA0NTJhMDdiOWZkZDlmMmY5YTU0YWY0Zjk3OWUyMGExZDdjNjlkOTg1OTc0NjM1MzRmOGYyODVlZjE3OWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg4NThjZWM5NjEzZWY0N2YyNjc0M2M3YWU4ODRiNDFlMGM2ODRjMGQ5OGJjNTJkOTdlMjBiM2FjZDBjNmMyMmQifQ"
-        },
-        {
-          "resource": "repo://apps/desktop/src/renderer/state/useMcpBridge.ts#L25-L31",
-          "version": "repo-lines-v1:sha256:34c3ebe59293586e16ae93c2c5e98f280358b43cbe88967dfce6978bf0c75b11:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjIzY2I0YzEzZDY3NzU5ZDU0Zjc2NzFkNDQwMzQ5NzJkMDkwM2EzOWQwOGFmYWU3M2JiOTgxZWI5YWIwZGNmMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjc0ZWUyYTQwMDhjNzRjOWY5MmU2YmU4OWFkODQ1MmJhMjg0ZjIwOTczM2NmOGZkOTg3NGZkYmJkMjMwYzI3MiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDU4Mjk4Y2Q0YmQ0YjUwNjQ4NWRmMDZlMDkxYTMyYWEyZjBiNGIzNjUwNTgxZjQzMDA4MWZmMTZhN2Q1ZjBhNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2M5YjcyZDI0N2E1NWMxNjcxZDM5YjU5OTA5MmE0MjljNDkxYTcyYzUyYTYyNTJiYzQ0ZDU1MTkyNWU0OGJjNiJ9"
+          "resource": "repo://apps/desktop/src/renderer/state/useMcpBridge.ts#L162-L190",
+          "version": "repo-lines-v1:sha256:c2d107ed9b1056e759bb91bc8034596af1330b8e080a733ceed068a54a2b1c46:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU5NzM5NmUwOGYzZDc5NjMwMmYzYzJlYTYzZTFmMjgzZmE3MjQ0ZGVmMjIzNWZjYWNkNDQ4YTM0YzZjYmMzOWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVlZWNhOWFmY2U1ZjIwMzVkOTdjYjgwNGEwNjI4MmE0YTEyMjM5ZWM1YTI0YWJiNmFlZmVlNzAzZTQ4YjhjODIifQ"
         }
       ]
     },
@@ -225,7 +201,7 @@
       "statement": "`useDeliveryHub` keeps one session subscription for the editor's lifetime, debounces 150 ms, drops replies from a superseded generation and rejects an `analysis.revision` that does not match the request, leaves `stale` true and clears `analysis` on failure, and exports the retained accepted input plus its `expectedModelDigest` so exactly the previewed revision is written.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useDeliveryHub.spec.tsx#L37-L114",
+          "resource": "repo://apps/desktop/src/renderer/state/useDeliveryHub.spec.tsx#L40-L117",
           "version": "repo-lines-v1:sha256:a49f199c481479274879779b93dd2adadb32ff2cf46e06a45824b0e642bd180c:eyJzZWxlY3RlZExpbmVDb3VudCI6NzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI0YzFlMWQ5NzQ0ODNiOGIwZWQ3N2MyOTViMWU3MzZiYWMzZTM3NjhkYzMwOGNiZDUxMmM5Y2I1MzNkNzc4YjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         },
         {
@@ -288,7 +264,7 @@
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceSplitState.spec.ts#L17-L86",
-          "version": "repo-lines-v1:sha256:1fb4f0c81fc06f9f8aacfde9d9d0be81bbf587ad251b5d58c7897014ebd4c2e0:eyJzZWxlY3RlZExpbmVDb3VudCI6NzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc3MGZhYzdkZmQ0MTZlNTdjZGQxM2M3Yzg1Yzk0NjhiNzdmMWFjNjgzNjFhYzcyOTcxZmRkYzJlMGYyYmFjODciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQyMzc5OWQ3MzViZTNkOWY0Y2FhMWNiOWY4ZjIxOTlhNmVkZjNhZmE4NmEzOWZiNDRiM2I0YmRjNGE2OTFhZTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "version": "repo-lines-v1:sha256:66be12b9c7c6c9d6dee318502a08158106c566d33e476a9513cf31c2003d7416:eyJzZWxlY3RlZExpbmVDb3VudCI6NzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc3MGZhYzdkZmQ0MTZlNTdjZGQxM2M3Yzg1Yzk0NjhiNzdmMWFjNjgzNjFhYzcyOTcxZmRkYzJlMGYyYmFjODciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQyMzc5OWQ3MzViZTNkOWY0Y2FhMWNiOWY4ZjIxOTlhNmVkZjNhZmE4NmEzOWZiNDRiM2I0YmRjNGE2OTFhZTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         },
         {
           "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceSplitState.ts#L59-L112",
@@ -306,7 +282,7 @@
         },
         {
           "resource": "repo://apps/desktop/src/renderer/state/commandRegistry.ts#L79-L170",
-          "version": "repo-lines-v1:sha256:6ae561751d35611a03463d8006203f460ed96805798fa4c1648e2a92bff53c2e:eyJzZWxlY3RlZExpbmVDb3VudCI6OTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE2YzUyMDQ1MDViNzYyYWM4NWY2NDRlYjcwOTBhZDJjMGE3MjdjM2Q1NmNmM2Y2MmEyOWZhNDNiMWU1OGIzZDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1OTQ5ZTU5ZDEwMTk0ZGZlZTkxNTJkMzIyYmQ3NTIwY2NmYTMxNDdlODUxMDRjYzEzYjc1ZTkyZTdjMjY1YzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNjMzAwMzUyYWUyZjI3NGRlOTU0MWNiYzAxYmI0MTJlZWViMmM4NzdiYzg4MDFhZjhjYjI2MDFlZDA2ZDk3M2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI3MDZlMTRkNmY2YWY5NGE5YjE4YjI3NTFlNGY1ZDM4NGE0MWEwZTVkMzU5ZjdiY2ZjNjAxNzczNGRkZWZkMzUifQ"
+          "version": "repo-lines-v1:sha256:b3416861d145e3606fc94f4d02f4a65dadbb43e3415ec688f4712af9093949e9:eyJzZWxlY3RlZExpbmVDb3VudCI6OTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE2YzUyMDQ1MDViNzYyYWM4NWY2NDRlYjcwOTBhZDJjMGE3MjdjM2Q1NmNmM2Y2MmEyOWZhNDNiMWU1OGIzZDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1OTQ5ZTU5ZDEwMTk0ZGZlZTkxNTJkMzIyYmQ3NTIwY2NmYTMxNDdlODUxMDRjYzEzYjc1ZTkyZTdjMjY1YzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNjMzAwMzUyYWUyZjI3NGRlOTU0MWNiYzAxYmI0MTJlZWViMmM4NzdiYzg4MDFhZjhjYjI2MDFlZDA2ZDk3M2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI3MDZlMTRkNmY2YWY5NGE5YjE4YjI3NTFlNGY1ZDM4NGE0MWEwZTVkMzU5ZjdiY2ZjNjAxNzczNGRkZWZkMzUifQ"
         },
         {
           "resource": "repo://apps/desktop/src/renderer/state/useCommandRegistry.ts#L8-L25",
@@ -316,21 +292,17 @@
     },
     {
       "id": "claim_e5df887db0a745609dc0e6363e52da6e",
-      "statement": "`installDesktopApi` installs a scripted `window.evidenceAPI` with a per-channel call log plus `agentMock` and `mcpMock` controllers — stream events/reports, request a patch, collect patch responses and canvas contexts, request MCP calls, collect responses, toggle capture mode and broadcast status — so renderer state hooks are tested without Electron IPC or a real model.",
+      "statement": "installDesktopApi 为 renderer 提供 scripted channel log、Agent/MCP 控制器，无需真实 Electron/模型运行。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/test-support/desktopApi.ts#L407-L499",
-          "version": "repo-lines-v1:sha256:8b9d6392fa0be99511e6aa7239ff0fb83dddf22abc611128c2bba0cdaf319a4e:eyJzZWxlY3RlZExpbmVDb3VudCI6OTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0M2Q5MDcyYzEzYjZkZDM1MWMzYmE4MWIzZmE2ZTY1ZGNkNzNlZTE3YjIxMTE0MjU1NGE5Yjc3Y2YwMzU0ZDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM4MTVhNDM3NzVkYTAxNjMyNjNiMWNkZTdhY2FhNmJjMTNmNjNhMDdiMWUxYTMyYTgyMDdjMjQ1MmM2NWMzMjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhiOGYyZWM5NGVjY2IyYjkzNzA3Y2E5NmFjYzhkMDFhZTE2N2JhNThlYzU1MzI2NmYxM2Q1MzhjZWI3YzcxMGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg3ZGY2YjVkOTgzYWJhNDQzODlkNGFlOGNjMjE1Zjc1ZTAzYjU0NTFlMjQwYWYyMWFiNzY5MDIxZjVjMGYwODgifQ"
-        },
-        {
-          "resource": "repo://apps/desktop/src/renderer/test-support/desktopApi.ts#L99-L171",
-          "version": "repo-lines-v1:sha256:d9c930daf153df887f17dc46b762bedb8a08cf17e6ce65cdbf6035d3927fbb79:eyJzZWxlY3RlZExpbmVDb3VudCI6NzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYxZDY4YmMzOWRmZGM2N2FmMzNiOGJhOGRjMjNmNjU4MjI4YWRhODM2Yzg1ZWE4MWUyNjFhM2UwNWJmODkyOWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzN2E4NDk4ZTQ0NDdkYWFjYjk1Mjk0MWNmMDI2YWMyZjlhNTkyM2Y1NDgwMDRkZDI1YmRiN2NmMzA4Y2Q1NTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVjMjFjNDU1OGQ4MGRmYTA3OWU3MTJkNDQ3M2VlOWJjMTliNTMxMDk4NGViMjdlZmNjYjkyMmM1MzdmODAzODYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc0M2Q5NGRmMDVkODQ5Nzc4NGNmNTZkZTcwYmU3OWJkMzkwOTk3YzIwZGY5YTYwNDFjMTY2YzIwZDJhODA2YzgifQ"
+          "resource": "repo://apps/desktop/src/renderer/test-support/desktopApi.ts",
+          "version": "repo-file-v1:sha256:565aea9ce4a0a7861636796ab9d337fb776a436d2fd3c81c9f1c234854c8a8c5"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-14T20:15:23.211Z"
+    "at": "2026-11-15T14:55:15.403Z"
   }
 }

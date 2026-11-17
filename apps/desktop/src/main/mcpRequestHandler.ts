@@ -7,7 +7,7 @@ import type {
   McpStageGateResult,
 } from '@evidence-poc/evidence-mcp';
 
-import type { McpRendererMethod } from '../shared/mcpIpc';
+import type { McpRendererMethod } from '@evidence-poc/desktop-contracts/mcpIpc';
 
 import type { McpDeliveryService } from './mcpDeliveryService';
 import type { DriftService } from './mcpDriftService';
@@ -34,7 +34,7 @@ export interface McpSensorService {
   readKeyDataAudit: (rootPath: string) => Promise<McpKeyDataAudit>;
   checkStageGate: (input: {
     rootPath: string;
-    target: 'api' | 'visualization';
+    target: 'api';
   }) => Promise<McpStageGateResult>;
 }
 

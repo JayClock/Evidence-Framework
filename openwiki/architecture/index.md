@@ -1,3 +1,3 @@
-# Files
+# 文件
 
-- [System map and dependency direction](overview.md) - The package map of the Evidence workspace, the direction its dependencies may point, how the @evidence-poc/source condition lets one app consume libraries from src, and the end-to-end paths from a model document to checks, contracts, delivery and the review page.
+- [系统架构与依赖边界](overview.md) - 两个应用宿主与十二个共享库如何围绕 FM 文档协作，以及 Zod、原生 CEL、Immer、ELK 和 Node I/O 的职责与依赖方向。

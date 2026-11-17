@@ -19,7 +19,8 @@ export interface ContractDraftResult {
 const componentLabel = (noun: {
   label: string;
   role: 'calculator' | 'checker';
-}): string => `${noun.label}${noun.role === 'calculator' ? '计算器' : '检查器'}`;
+}): string =>
+  `${noun.label}${noun.role === 'calculator' ? '计算器' : '检查器'}`;
 
 /**
  * Reads an agreement into a draft, after splitting it three ways.
@@ -42,7 +43,9 @@ export const draftFromContract = (
   const { clauses, issues: annotationIssues } = annotateContractClauses(text);
   const business = clauses.filter((clause) => clause.category === 'business');
   const computing = clauses.filter((clause) => clause.computesValue);
-  const boilerplate = clauses.filter((clause) => clause.category === 'boilerplate');
+  const boilerplate = clauses.filter(
+    (clause) => clause.category === 'boilerplate',
+  );
 
   if (business.length === 0) {
     const empty = draftFromBusinessText('', {
@@ -64,10 +67,52 @@ export const draftFromContract = (
     {
       ...options,
       source: 'contract',
-      ...(options.modelName === undefined ? {} : { modelName: options.modelName }),
+      ...(options.modelName === undefined
+        ? {}
+        : { modelName: options.modelName }),
     },
   );
   const draft = read.draft;
+  draft.sourceDocument = {
+    text,
+    clauses: clauses.map(
+      ({ index, text: clauseText, category, reason, charStart, charEnd }) => ({
+        index,
+        text: clauseText,
+        category,
+        reason,
+        charStart,
+        charEnd,
+      }),
+    ),
+  };
+  // The row reader retains the verbatim sentence inside its summary. Link only
+  // unique exact matches; repeated text is ambiguous, never guessed by offset.
+  for (const element of [
+    ...draft.contexts,
+    ...draft.participants,
+    ...draft.roles,
+    ...draft.things,
+    ...draft.evidences,
+    ...draft.fulfillmentPairs,
+    ...draft.breachCompensations,
+  ]) {
+    const snippet = element.provenance;
+    if (snippet === undefined) continue;
+    const matches = business.filter((clause) =>
+      snippet.text.includes(clause.text),
+    );
+    if (matches.length !== 1) continue;
+    const clause = matches[0]!;
+    element.provenance = {
+      text: clause.text,
+      locator: `第 ${clause.index} 句`,
+      source: 'contract',
+      clauseIndex: clause.index,
+      charStart: clause.charStart,
+      charEnd: clause.charEnd,
+    };
+  }
   const issues: string[] = [...annotationIssues, ...read.issues];
 
   const domainContextId = 'context.domain';
@@ -100,6 +145,9 @@ export const draftFromContract = (
         text: clause.text,
         locator: `第 ${clause.index} 句`,
         source: 'contract' satisfies IngestionSourceKind,
+        clauseIndex: clause.index,
+        charStart: clause.charStart,
+        charEnd: clause.charEnd,
       },
     });
     added.push(label);
@@ -120,7 +168,10 @@ export const draftFromContract = (
     );
 
     if (existing >= 0) {
-      draft.contexts[existing] = { ...draft.contexts[existing], ...domainContext };
+      draft.contexts[existing] = {
+        ...draft.contexts[existing],
+        ...domainContext,
+      };
     } else {
       draft.contexts.push(domainContext);
     }
@@ -130,7 +181,9 @@ export const draftFromContract = (
     '由合同条款导入：条款先分成业务 / 领域 / 法务三类，业务条款落成成对履约，领域条款抽成领域计算器与检查器。';
 
   if (added.length > 0) {
-    issues.push(`已抽成领域组件：${added.join('、')}。请为它们补齐派生规则与输入来源。`);
+    issues.push(
+      `已抽成领域组件：${added.join('、')}。请为它们补齐派生规则与输入来源。`,
+    );
   }
 
   if (boilerplate.length > 0) {

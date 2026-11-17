@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { McpRendererResponse, McpStatus } from '../shared/mcpIpc';
+import type { McpRendererResponse, McpStatus } from '@evidence-poc/desktop-contracts/mcpIpc';
 
 import type { McpBridgeRuntime } from './mcpBridgeRuntime';
 

@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 import path from 'node:path';
 import { readModelRoot } from '@evidence-poc/evidence-model-io';
-import type { LiveDeliveryInput } from '../shared/delivery';
-import { EVIDENCE_IPC_CHANNELS } from '../shared/ipc';
+import type { LiveDeliveryInput } from '@evidence-poc/desktop-contracts/delivery';
+import { EVIDENCE_IPC_CHANNELS } from '@evidence-poc/desktop-contracts/ipc';
 
 const handlers = new Map<string, (...args: unknown[]) => unknown>();
 vi.mock('electron', () => ({

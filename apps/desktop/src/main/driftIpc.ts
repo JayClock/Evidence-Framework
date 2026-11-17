@@ -9,7 +9,7 @@ import {
   EVIDENCE_DRIFT_IPC_CHANNELS,
   type DriftRequest,
   type TraceDialogResult,
-} from '../shared/drift';
+} from '@evidence-poc/desktop-contracts/drift';
 
 import type { DriftService } from './mcpDriftService';
 

@@ -1,6 +1,7 @@
 import { mkdirSync, realpathSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
-import { renderDeliverables, writeOutput } from '@evidence-poc/evidence-api';
+import { renderDeliverables } from '@evidence-poc/evidence-acceptance';
+import { writeOutput } from '@evidence-poc/evidence-api';
 import {
   stringOption,
   type CommandContext,

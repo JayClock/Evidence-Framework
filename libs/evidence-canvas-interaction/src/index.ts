@@ -40,6 +40,8 @@ export {
   type SerializableGraphLayout,
 } from './layout/serializable.js';
 export type {
+  CanvasLayoutMode,
+  SwimlaneRegion,
   CanvasViewMode,
   ContextLayoutGroup,
   DomainGraphLayout,

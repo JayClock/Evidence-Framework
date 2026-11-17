@@ -21,21 +21,16 @@ interface TopHeaderProps {
   graph: DomainGraph;
   selection: ModelSelection;
   onSave: () => void;
-  onExportReview: () => void;
-  exportReviewBusy: boolean;
-  /** Opens the command hub, which now owns every action this row dropped. */
+  /** Opens the command hub for editor actions and navigation. */
   onOpenCommandPalette: () => void;
 }
 
 /**
  * The window's title row.
  *
- * It used to be a toolbar: search, undo, redo, review, two exports, delivery,
- * sandbox and save all competed for the same strip, and each new capability made
- * the breadcrumb narrower. Those actions now live in the command hub behind one
- * chord, so the row keeps only what a modeler reads at a glance — where they
- * are, what state the document is in, and the three controls they press without
- * thinking about it.
+ * Shows the project, selection breadcrumb and document state alongside save,
+ * MCP status and the command hub. Search, history, delivery and other editor
+ * actions are available through the command hub rather than separate buttons.
  */
 export const TopHeader = ({
   projectName,
@@ -43,8 +38,6 @@ export const TopHeader = ({
   graph,
   selection,
   onSave,
-  onExportReview,
-  exportReviewBusy,
   onOpenCommandPalette,
 }: TopHeaderProps) => {
   const breadcrumb = useMemo(() => {
@@ -115,23 +108,6 @@ export const TopHeader = ({
 
         <McpStatusPill />
 
-        {/*
-          These two keep their own buttons: they are disabled while the model is
-          dirty, and a disabled control cannot raise a tooltip, so the reason has
-          to live in the native `title` the pointer still reads.
-        */}
-        <Button
-          variant="outline"
-          onClick={onExportReview}
-          disabled={exportReviewBusy || dirty}
-          title={
-            dirty
-              ? '请先保存；正式审查导出只读取磁盘快照'
-              : '导出单文件离线审查页（HTML）'
-          }
-        >
-          {exportReviewBusy ? '导出中…' : '导出审查页'}
-        </Button>
         <Button
           variant="default"
           onClick={onSave}

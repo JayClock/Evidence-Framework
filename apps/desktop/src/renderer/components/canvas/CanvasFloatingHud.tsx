@@ -21,7 +21,10 @@ import {
   type WorkspaceViewMode,
 } from '@evidence-poc/desktop-ui-kit';
 
-import type { CanvasViewMode } from '@evidence-poc/desktop-feature-canvas';
+import type {
+  CanvasLayoutMode,
+  CanvasViewMode,
+} from '@evidence-poc/evidence-canvas-interaction';
 import {
   SPLIT_PANES,
   SPLIT_PANE_LABELS,
@@ -35,6 +38,9 @@ export interface CanvasFloatingHudProps extends CanvasHudControls {
   /** Card density inside the graph. */
   density: CanvasViewMode;
   onDensityChange: (mode: CanvasViewMode) => void;
+  layoutMode?: CanvasLayoutMode;
+  onLayoutModeChange?: (mode: CanvasLayoutMode) => void;
+  onOpenScenarios?: () => void;
   /** True while an object is selected, so "pointer" can mean "deselect". */
   hasSelection: boolean;
   onClearSelection: () => void;
@@ -77,6 +83,9 @@ export const CanvasFloatingHud = ({
   onViewModeChange,
   density,
   onDensityChange,
+  layoutMode = 'topology',
+  onLayoutModeChange,
+  onOpenScenarios,
   hasSelection,
   onClearSelection,
   zoom,
@@ -135,6 +144,30 @@ export const CanvasFloatingHud = ({
 
     <span aria-hidden="true" className="mx-1 h-4 w-px bg-evidence-line" />
 
+    {onLayoutModeChange ? (
+      <button
+        type="button"
+        aria-label="权责泳道"
+        aria-pressed={layoutMode === 'swimlane'}
+        className="rounded border border-evidence-line px-2 py-1 text-[10px]"
+        onClick={() =>
+          onLayoutModeChange(
+            layoutMode === 'swimlane' ? 'topology' : 'swimlane',
+          )
+        }
+      >
+        {layoutMode === 'swimlane' ? '权责泳道' : '拓扑布局'}
+      </button>
+    ) : null}
+    {onOpenScenarios ? (
+      <button
+        type="button"
+        className="rounded border border-evidence-line px-2 py-1 text-[10px]"
+        onClick={onOpenScenarios}
+      >
+        业务场景推演
+      </button>
+    ) : null}
     <ViewModeSegmentedControl mode={viewMode} onChange={onViewModeChange} />
 
     {/*

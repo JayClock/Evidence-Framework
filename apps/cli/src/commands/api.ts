@@ -2,7 +2,7 @@ import path from 'node:path';
 import {
   runApiCommand,
   type Command,
-} from '@evidence-poc/evidence-api/commands';
+} from '@evidence-poc/evidence-acceptance/commands';
 import {
   stringOption,
   type CommandOptions,

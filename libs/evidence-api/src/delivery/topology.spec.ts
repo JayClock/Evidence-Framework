@@ -1,7 +1,7 @@
 import { readModelRoot } from '@evidence-poc/evidence-model-io';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
-import { API_FIXTURES } from '../../tests/support/fixtures.js';
+import { API_FIXTURES } from '../testing/fixtures.js';
 
 import { buildDeliveryTopology } from './topology.js';
 
@@ -40,7 +40,9 @@ describe('buildDeliveryTopology', () => {
 
   it('marks the Context that answers a capability socket as a capability service', async () => {
     const { services, links } = buildDeliveryTopology(await model());
-    const wechat = services.find((service) => service.id === 'service.wechat-payment');
+    const wechat = services.find(
+      (service) => service.id === 'service.wechat-payment',
+    );
     const capability = links.filter((link) => link.kind === 'capability');
 
     expect(wechat?.kind).toBe('capability');

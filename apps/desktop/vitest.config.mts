@@ -30,7 +30,6 @@ export default defineConfig({
     environment: 'jsdom',
     include: [
       'src/renderer/**/*.spec.{ts,tsx}',
-      'src/shared/**/*.spec.ts',
       'src/main/**/*.spec.ts',
       'tests/**/*.spec.ts',
     ],

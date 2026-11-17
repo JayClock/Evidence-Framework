@@ -16,6 +16,7 @@ const setup = (
   const handlers = {
     onViewModeChange: vi.fn(),
     onDensityChange: vi.fn(),
+    onLayoutModeChange: vi.fn(),
     onClearSelection: vi.fn(),
     zoomIn: vi.fn(),
     zoomOut: vi.fn(),
@@ -45,6 +46,13 @@ const setup = (
 };
 
 describe('CanvasFloatingHud', () => {
+  it('switches layout independently of card density and workspace surface', () => {
+    const handlers = setup();
+    fireEvent.click(screen.getByRole('button', { name: '权责泳道' }));
+    expect(handlers.onLayoutModeChange).toHaveBeenCalledWith('swimlane');
+    expect(handlers.onDensityChange).not.toHaveBeenCalled();
+    expect(handlers.onViewModeChange).not.toHaveBeenCalled();
+  });
   it('names the stage the modeler is looking at', () => {
     setup({ viewMode: 'table' });
 

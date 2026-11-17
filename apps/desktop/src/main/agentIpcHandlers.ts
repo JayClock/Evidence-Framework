@@ -1,4 +1,4 @@
-import type { LiveDeliveryInput } from '../shared/delivery';
+import type { LiveDeliveryInput } from '@evidence-poc/desktop-contracts/delivery';
 import { randomUUID } from 'node:crypto';
 
 import { ipcMain, type WebContents } from 'electron';
@@ -18,7 +18,7 @@ import {
   type ApplyPatchResponse,
   type CanvasContextRegistration,
   type SensorTriggerInput,
-} from '../shared/agentIpc';
+} from '@evidence-poc/desktop-contracts/agentIpc';
 
 import { createAgentRuntime, type AgentRuntime } from './agentRuntime';
 

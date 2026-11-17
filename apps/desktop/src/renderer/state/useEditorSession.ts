@@ -6,17 +6,19 @@ import {
   type ModelSession,
   createModelSession,
 } from '@evidence-poc/evidence-model-core';
-import type {
-  DomainModelDocument,
-  ValidationResult,
+import {
+  compactCanonicalJson,
+  type DomainModelDocument,
+  type ValidationResult,
 } from '@evidence-poc/evidence-schema';
 import {
+  type CanvasLayoutMode,
   type CanvasViewMode,
   type DomainGraphLayout,
 } from '@evidence-poc/evidence-canvas-interaction';
 
 import { useGraphLayout } from './useGraphLayout';
-import type { EvidenceProjectSummary } from '../../shared/projects';
+import type { EvidenceProjectSummary } from '@evidence-poc/desktop-contracts/projects';
 
 export interface EditorSessionState {
   project: EvidenceProjectSummary;
@@ -41,6 +43,8 @@ export interface EditorSessionController {
   state: EditorSessionState;
   save: () => Promise<void>;
   reloadFromDisk: () => Promise<void>;
+  /** Silent watcher refresh, refused if edits exist or arrive during the read. */
+  reloadFromDiskIfClean: () => Promise<void>;
   dismissExternalChange: () => void;
 }
 
@@ -82,6 +86,7 @@ export const useEditorSession = (
   project: EvidenceProjectSummary,
   initialDocument: DomainModelDocument,
   viewMode: CanvasViewMode = 'simplified',
+  layoutMode: CanvasLayoutMode = 'topology',
 ): EditorSessionController => {
   const sessionRef = useRef<ModelSession | null>(null);
 
@@ -94,12 +99,14 @@ export const useEditorSession = (
   const [saveError, setSaveError] = useState<string | null>(null);
   const [externalChangeAt, setExternalChangeAt] = useState<string | null>(null);
   const [dirty, setDirty] = useState(false);
+  const dirtyRef = useRef(false);
   const [version, forceRender] = useState(0);
 
   // Subscribe during commit, before paint or an incoming agent patch can edit the session.
   useLayoutEffect(() => {
     const unsubscribe = session.subscribe((event) => {
       if (event.type === 'document-changed') {
+        dirtyRef.current = true;
         setDirty(true);
       }
 
@@ -128,12 +135,13 @@ export const useEditorSession = (
       dirty,
     });
   }, [project, session, version, savedAt, saveError, externalChangeAt, dirty]);
-  const placement = useGraphLayout(state.graph, viewMode);
+  const placement = useGraphLayout(state.graph, viewMode, layoutMode);
 
   const save = useCallback(async () => {
+    const document = session.getDocument();
     const result = await window.evidenceAPI.projects.save({
       rootPath: project.rootPath,
-      document: session.getDocument(),
+      document,
     });
 
     if (!result.success) {
@@ -143,7 +151,10 @@ export const useEditorSession = (
 
     setSaveError(null);
     setSavedAt(result.savedAt);
-    setDirty(false);
+    if (session.getDocument() === document) {
+      dirtyRef.current = false;
+      setDirty(false);
+    }
   }, [project.rootPath, session]);
 
   const reloadFromDisk = useCallback(async () => {
@@ -157,7 +168,24 @@ export const useEditorSession = (
     session.replaceDocument(result.document, { resetHistory: true });
     setExternalChangeAt(null);
     setSaveError(null);
+    dirtyRef.current = false;
     setDirty(false);
+  }, [project.rootPath, session]);
+
+  const reloadFromDiskIfClean = useCallback(async () => {
+    if (dirtyRef.current) return;
+    const before = session.getDocument();
+    const result = await window.evidenceAPI.projects.open(project.rootPath);
+    // The inspector may have changed the model while the filesystem was read.
+    if (dirtyRef.current || session.getDocument() !== before) return;
+    if (!result.success) throw new Error(result.error);
+    // A save also notifies the watcher: equal content must retain undo history.
+    if (compactCanonicalJson(result.document) !== compactCanonicalJson(before))
+      session.replaceDocument(result.document, { resetHistory: true });
+    dirtyRef.current = false;
+    setDirty(false);
+    setExternalChangeAt(null);
+    setSaveError(null);
   }, [project.rootPath, session]);
 
   const dismissExternalChange = useCallback(() => {
@@ -168,6 +196,7 @@ export const useEditorSession = (
     state: { ...state, ...placement },
     save,
     reloadFromDisk,
+    reloadFromDiskIfClean,
     dismissExternalChange,
   };
 };

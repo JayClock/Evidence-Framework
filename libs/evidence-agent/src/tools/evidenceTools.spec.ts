@@ -1,3 +1,5 @@
+import { createModelTools } from '@evidence-poc/evidence-tools';
+import { zodToJsonSchema } from 'zod-to-json-schema';
 import { describe, expect, it } from 'vitest';
 
 import type {
@@ -204,6 +206,21 @@ const invoke = async <TParams>(
     undefined,
     {} as never,
   )) as never;
+
+describe('shared model tool adapter', () => {
+  it('publishes the registry schemas and descriptions through Pi', () => {
+    const { handlers } = createHandlers();
+    const fake = createFakePi();
+    createEvidenceToolsExtension(handlers)(fake.pi);
+    for (const definition of createModelTools(handlers)) {
+      const tool = fake.tool(definition.name);
+      expect(tool.parameters).toEqual(
+        zodToJsonSchema(definition.parameters, { $refStrategy: 'none' }),
+      );
+      expect(tool.description).toBe(definition.description);
+    }
+  });
+});
 
 describe('API projection tools', () => {
   it('previews hypothetical commands without dispatching them', async () => {

@@ -19,8 +19,8 @@ import {
  * no legal force; everything to its right is obligated delivery. That is why the
  * stage of a Context is derived from the evidence it holds rather than declared.
  *
- * Each stage carries the label, caption and English name the workshop board and
- * the review page print, so text cannot drift away from the lane it names.
+ * Each stage carries the label, caption and English name the workshop board
+ * prints, so text cannot drift away from the lane it names.
  */
 export interface LifecycleStageDefinition {
   readonly label: string;
@@ -61,7 +61,7 @@ export const LIFECYCLE_STAGES = vocabularyIds(LIFECYCLE_STAGE_DEFINITIONS);
 export const LIFECYCLE_STAGE_ORDER: readonly LifecycleStage[] =
   LIFECYCLE_STAGES;
 
-/** Human labels the workshop board and the review page both show. */
+/** Human labels the workshop board shows. */
 export const LIFECYCLE_STAGE_LABELS = vocabularyLabels(
   LIFECYCLE_STAGE_DEFINITIONS,
 );

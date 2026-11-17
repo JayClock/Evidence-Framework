@@ -7,6 +7,7 @@ import type {
 import type { ValueType } from '../ast/values.js';
 import type {
   IngestionSourceKind,
+  ContractSourceDocument,
   ProvenanceSnippet,
 } from '../ast/provenance.js';
 
@@ -27,6 +28,7 @@ export interface IngestionDraft {
   description?: string;
   /** Which input form produced this draft. */
   source: IngestionSourceKind;
+  sourceDocument?: ContractSourceDocument;
   contexts: DraftContext[];
   participants: DraftParticipant[];
   roles: DraftRole[];
@@ -165,7 +167,10 @@ export function normalizeDraftEvidenceKind(
     return undefined;
   }
 
-  const key = value.trim().toLowerCase().replaceAll(/[\s-]+/g, '_');
+  const key = value
+    .trim()
+    .toLowerCase()
+    .replaceAll(/[\s-]+/g, '_');
 
   return EVIDENCE_KIND_ALIASES[key];
 }

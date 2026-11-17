@@ -1,0 +1,526 @@
+{
+  "type": "fm_bundle",
+  "schemaVersion": "5.0",
+  "manifest": {
+    "type": "fm_model",
+    "schemaVersion": "5.0",
+    "id": "procurement-breach",
+    "name": "采购履约与违约补偿示例",
+    "version": "1.0.0",
+    "ruleLanguage": "CEL",
+    "entryContextRefs": ["context.sourcing", "context.procurement"]
+  },
+  "entities": [
+    {
+      "type": "entity",
+      "id": "confirmation.payment",
+      "category": "evidence",
+      "kind": "fulfillment_confirmation",
+      "contextRef": "context.procurement",
+      "label": "payment confirmation",
+      "responsibleRoleRef": "role.buyer",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "id",
+          "meaning": "id",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "confirmed_at",
+          "label": "confirmed_at",
+          "meaning": "confirmed_at",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "total_amount",
+          "label": "total_amount",
+          "meaning": "total_amount",
+          "valueType": "decimal",
+          "required": true,
+          "derivedByRuleRef": "rule.total-amount"
+        },
+        {
+          "name": "note",
+          "label": "note",
+          "meaning": "note",
+          "valueType": "string",
+          "required": false
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "context.procurement",
+      "category": "context",
+      "kind": "contract",
+      "label": "Procurement",
+      "rootRefs": ["contract.agreement"]
+    },
+    {
+      "type": "entity",
+      "id": "context.sourcing",
+      "category": "context",
+      "kind": "pre_contract",
+      "label": "Sourcing",
+      "parentContextRef": "context.procurement"
+    },
+    {
+      "type": "entity",
+      "id": "contract.agreement",
+      "category": "evidence",
+      "kind": "contract",
+      "contextRef": "context.procurement",
+      "label": "Agreement",
+      "roleRefs": ["role.buyer", "role.seller"],
+      "attributes": [
+        {
+          "name": "id",
+          "label": "id",
+          "meaning": "id",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "signed_at",
+          "label": "signed_at",
+          "meaning": "signed_at",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "party.buyer",
+      "category": "participant",
+      "kind": "party",
+      "label": "buyer"
+    },
+    {
+      "type": "entity",
+      "id": "party.seller",
+      "category": "participant",
+      "kind": "party",
+      "label": "seller"
+    },
+    {
+      "type": "entity",
+      "id": "proposal.quotation",
+      "category": "evidence",
+      "kind": "proposal",
+      "contextRef": "context.sourcing",
+      "label": "Quotation",
+      "responsibleRoleRef": "role.seller",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "id",
+          "meaning": "id",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "started_at",
+          "label": "started_at",
+          "meaning": "started_at",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "expired_at",
+          "label": "expired_at",
+          "meaning": "expired_at",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "request.payment",
+      "category": "evidence",
+      "kind": "fulfillment_request",
+      "contextRef": "context.procurement",
+      "label": "payment request",
+      "responsibleRoleRef": "role.seller",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "id",
+          "meaning": "id",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "started_at",
+          "label": "started_at",
+          "meaning": "started_at",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "expired_at",
+          "label": "expired_at",
+          "meaning": "expired_at",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "quantity",
+          "label": "quantity",
+          "meaning": "quantity",
+          "valueType": "int",
+          "required": true
+        },
+        {
+          "name": "unit_price",
+          "label": "unit_price",
+          "meaning": "unit_price",
+          "valueType": "decimal",
+          "required": true
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "rfp.inquiry",
+      "category": "evidence",
+      "kind": "rfp",
+      "contextRef": "context.sourcing",
+      "label": "Inquiry",
+      "responsibleRoleRef": "role.buyer",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "id",
+          "meaning": "id",
+          "valueType": "id",
+          "required": true
+        },
+        {
+          "name": "started_at",
+          "label": "started_at",
+          "meaning": "started_at",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "expired_at",
+          "label": "expired_at",
+          "meaning": "expired_at",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "role.buyer",
+      "category": "role",
+      "kind": "party",
+      "label": "buyer",
+      "contextRef": "context.procurement"
+    },
+    {
+      "type": "entity",
+      "id": "role.seller",
+      "category": "role",
+      "kind": "party",
+      "label": "seller",
+      "contextRef": "context.procurement"
+    },
+    {
+      "type": "entity",
+      "id": "request.delivery",
+      "category": "evidence",
+      "kind": "fulfillment_request",
+      "contextRef": "context.procurement",
+      "label": "交货请求",
+      "responsibleRoleRef": "role.buyer",
+      "attributes": [
+        {
+          "name": "started_at",
+          "label": "started_at",
+          "meaning": "业务发生时间",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "expired_at",
+          "label": "expired_at",
+          "meaning": "业务发生时间",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "confirmation.delivery",
+      "category": "evidence",
+      "kind": "fulfillment_confirmation",
+      "contextRef": "context.procurement",
+      "label": "交货确认",
+      "responsibleRoleRef": "role.seller",
+      "attributes": [
+        {
+          "name": "confirmed_at",
+          "label": "confirmed_at",
+          "meaning": "业务发生时间",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "request.refund",
+      "category": "evidence",
+      "kind": "fulfillment_request",
+      "contextRef": "context.procurement",
+      "label": "未交货退款请求",
+      "responsibleRoleRef": "role.buyer",
+      "attributes": [
+        {
+          "name": "started_at",
+          "label": "started_at",
+          "meaning": "业务发生时间",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        },
+        {
+          "name": "expired_at",
+          "label": "expired_at",
+          "meaning": "业务发生时间",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "confirmation.refund",
+      "category": "evidence",
+      "kind": "fulfillment_confirmation",
+      "contextRef": "context.procurement",
+      "label": "退款确认",
+      "responsibleRoleRef": "role.seller",
+      "attributes": [
+        {
+          "name": "confirmed_at",
+          "label": "confirmed_at",
+          "meaning": "业务发生时间",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "evidence.dispute",
+      "category": "evidence",
+      "kind": "other_evidence",
+      "contextRef": "context.procurement",
+      "label": "争议移交受理记录",
+      "responsibleRoleRef": "role.buyer",
+      "attributes": [
+        {
+          "name": "created_at",
+          "label": "created_at",
+          "meaning": "业务发生时间",
+          "valueType": "timestamp",
+          "required": true,
+          "keyData": true
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "type": "relationship",
+      "id": "relation.confirmation.payment-request.payment",
+      "kind": "references",
+      "sourceRef": "confirmation.payment",
+      "targetRef": "request.payment",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.contract.agreement-proposal.quotation",
+      "kind": "references",
+      "sourceRef": "contract.agreement",
+      "targetRef": "proposal.quotation",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.party.buyer-role.buyer",
+      "kind": "plays_role",
+      "sourceRef": "party.buyer",
+      "targetRef": "role.buyer",
+      "label": "plays_role",
+      "sourceCardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.party.seller-role.seller",
+      "kind": "plays_role",
+      "sourceRef": "party.seller",
+      "targetRef": "role.seller",
+      "label": "plays_role",
+      "sourceCardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.proposal.quotation-rfp.inquiry",
+      "kind": "references",
+      "sourceRef": "proposal.quotation",
+      "targetRef": "rfp.inquiry",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 1,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.request.payment-contract.agreement",
+      "kind": "references",
+      "sourceRef": "request.payment",
+      "targetRef": "contract.agreement",
+      "label": "references",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.delivery-contract",
+      "kind": "references",
+      "sourceRef": "request.delivery",
+      "targetRef": "contract.agreement",
+      "label": "交货依据"
+    },
+    {
+      "type": "relationship",
+      "id": "relation.delivery-confirmation",
+      "kind": "references",
+      "sourceRef": "confirmation.delivery",
+      "targetRef": "request.delivery",
+      "label": "交货确认所属请求"
+    },
+    {
+      "type": "relationship",
+      "id": "relation.refund-contract",
+      "kind": "references",
+      "sourceRef": "request.refund",
+      "targetRef": "contract.agreement",
+      "label": "退款依据"
+    },
+    {
+      "type": "relationship",
+      "id": "relation.refund-delivery",
+      "kind": "references",
+      "sourceRef": "request.refund",
+      "targetRef": "request.delivery",
+      "label": "未按约交货触发退款",
+      "flowKind": "breach_compensation",
+      "notes": "仅描述补偿路径；超时触发规则与退款金额需由实际协议补齐。"
+    },
+    {
+      "type": "relationship",
+      "id": "relation.refund-confirmation",
+      "kind": "references",
+      "sourceRef": "confirmation.refund",
+      "targetRef": "request.refund",
+      "label": "退款确认所属请求"
+    },
+    {
+      "type": "relationship",
+      "id": "relation.dispute-refund",
+      "kind": "references",
+      "sourceRef": "evidence.dispute",
+      "targetRef": "request.refund",
+      "label": "退款争议移交",
+      "flowKind": "escalation",
+      "notes": "移交买方争议处理专员，以受理记录为边界，不声称司法终局。"
+    }
+  ],
+  "rules": [
+    {
+      "type": "rule",
+      "id": "rule.total-amount",
+      "kind": "derivation",
+      "label": "Total amount",
+      "description": "Calculate the confirmed amount",
+      "contextRef": "context.procurement",
+      "bindings": {
+        "request": {
+          "ref": "request.payment"
+        }
+      },
+      "expression": "double(request.quantity) * request.unit_price",
+      "resultType": "decimal",
+      "target": {
+        "entityRef": "confirmation.payment",
+        "attribute": "total_amount"
+      }
+    }
+  ]
+}

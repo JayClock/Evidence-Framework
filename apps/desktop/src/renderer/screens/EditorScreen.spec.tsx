@@ -5,14 +5,17 @@ import {
   screen,
   waitFor,
 } from '@testing-library/react';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+import type { StoryInvalidatedEvent } from '@evidence-poc/desktop-contracts/story';
+import { storyFlow, storyResult } from '@evidence-poc/desktop-testing/story';
 
+import { collectFlowScenarios } from '@evidence-poc/evidence-model-core';
 import { EditorScreen } from './EditorScreen';
 import {
   healthyReport,
   installDesktopApi,
   projectSummary,
-} from '../test-support/desktopApi';
+} from '@evidence-poc/desktop-testing/desktopApi';
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 
 const readyProject = () =>
@@ -34,6 +37,132 @@ const readyCanvas = async () => {
 };
 
 describe('EditorScreen', () => {
+  it('opens swimlanes and the workshop, then saves a scenario into the existing story pipeline', async () => {
+    const api = readyProject();
+    api.projects.save = vi.fn(api.projects.save);
+    api.story.listFlows = vi.fn(async ({ document }) =>
+      collectFlowScenarios(document!),
+    );
+    api.story.project = vi.fn(async ({ document, flowId }) => ({
+      ...storyResult(),
+      flow: collectFlowScenarios(document!).find((f) => f.flowId === flowId)!,
+    }));
+    const { container } = render(
+      <EditorScreen rootPath="/models/procurement" />,
+    );
+    await readyCanvas();
+    fireEvent.click(screen.getByRole('button', { name: '权责泳道' }));
+    await waitFor(() =>
+      expect(
+        container.querySelector('[data-swimlane-kind="lane"]'),
+      ).not.toBeNull(),
+    );
+    fireEvent.click(screen.getByRole('button', { name: '共创工作坊' }));
+    expect(screen.getByLabelText('工作坊步骤')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: '业务场景推演' }));
+    fireEvent.change(screen.getByLabelText('新场景名称'), {
+      target: { value: '正常签约案例' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: '创建空白场景' }));
+    fireEvent.change(screen.getByLabelText('添加业务操作'), {
+      target: { value: 'evidence.contract' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: '添加步骤' }));
+    fireEvent.change(screen.getByLabelText('业务时刻'), {
+      target: { value: '2026-01-01T00:00:00Z' },
+    });
+    fireEvent.change(screen.getByLabelText('签署时间'), {
+      target: { value: '2026-01-01T00:00:00Z' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: '保存并放映' }));
+    await waitFor(() =>
+      expect(api.story.project).toHaveBeenCalledWith(
+        expect.objectContaining({ flowId: '正常签约案例', skipAi: true }),
+      ),
+    );
+    expect(screen.queryByRole('dialog', { name: '业务场景推演' })).toBeNull();
+    expect(screen.getByLabelText('选择业务流')).toHaveValue('正常签约案例');
+    expect(api.projects.save).not.toHaveBeenCalled();
+  });
+  it('prefills the Copilot composer from the workshop without submitting or saving', async () => {
+    const api = readyProject();
+    render(<EditorScreen rootPath="/models/procurement" />);
+    await readyCanvas();
+
+    fireEvent.click(screen.getByRole('button', { name: '共创工作坊' }));
+    fireEvent.click(
+      screen.getByRole('button', { name: /5. 给违约一条补偿路径/ }),
+    );
+    fireEvent.click(
+      screen.getByRole('button', { name: /带着当前问题进入 AI 协同/ }),
+    );
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('访谈内容')).toHaveValue(
+        '给违约一条补偿路径：超时、断供、拒付后如何补偿？继续违约最终由谁处理？',
+      );
+    });
+    expect(api.calls.prompt).toEqual([]);
+    expect(api.calls.save).toEqual([]);
+  });
+
+  it('navigates in both directions between persisted clauses and canvas objects', async () => {
+    const document = createDesktopFixture();
+    document.manifest.sourceDocument = {
+      text: '交货条款。',
+      clauses: [
+        {
+          index: 1,
+          text: '交货条款',
+          category: 'business',
+          reason: '约定交货',
+          charStart: 0,
+          charEnd: 4,
+        },
+      ],
+    };
+    document.entities.find(
+      (entity) => entity.id === 'evidence.request',
+    )!.sourceSnippet = {
+      text: '交货条款',
+      source: 'contract',
+      clauseIndex: 1,
+      charStart: 0,
+      charEnd: 4,
+    };
+    installDesktopApi({
+      openResult: {
+        success: true,
+        project: projectSummary({ name: '桌面端夹具（Desktop Fixture）' }),
+        document,
+        issues: [],
+      },
+    });
+    const { container } = render(
+      <EditorScreen rootPath="/models/procurement" />,
+    );
+    await readyCanvas();
+    fireEvent.click(screen.getByRole('button', { name: '条款审计' }));
+    fireEvent.click(screen.getByRole('button', { name: /定位 交付请求/ }));
+    await waitFor(() =>
+      expect(
+        container.querySelector('[data-clause-id="clause-1"]'),
+      ).toHaveAttribute('data-clause-selected', 'true'),
+    );
+    expect(screen.getByLabelText('依据条款原文')).toHaveTextContent('交货条款');
+    fireEvent.click(
+      container.querySelector('[data-node-id="evidence.contract"]')!,
+    );
+    expect(
+      container.querySelector('[data-clause-id="clause-1"]'),
+    ).toHaveAttribute('data-clause-selected', 'false');
+    fireEvent.click(
+      container.querySelector('[data-node-id="evidence.request"]')!,
+    );
+    expect(
+      container.querySelector('[data-clause-id="clause-1"]'),
+    ).toHaveAttribute('data-clause-selected', 'true');
+  });
   it('explains a missing project path instead of rendering an empty canvas', async () => {
     installDesktopApi();
 
@@ -64,6 +193,102 @@ describe('EditorScreen', () => {
     expect(screen.getByLabelText('访谈内容')).toBeInTheDocument();
     expect(screen.getByText('履约连线 1')).toBeInTheDocument();
     expect(screen.getByText('上下文 2')).toBeInTheDocument();
+  });
+
+  it('opens walkthrough beside the canvas, follows steps and silently refreshes clean models', async () => {
+    const api = readyProject();
+    api.story.listFlows = vi.fn(async () => [storyFlow()]);
+    api.story.project = vi.fn(async () => storyResult());
+    let invalidate: (event: StoryInvalidatedEvent) => void = () => undefined;
+    const unsubscribe = vi.fn();
+    api.story.onInvalidated = (listener) => {
+      invalidate = listener;
+      return unsubscribe;
+    };
+    const { container } = render(
+      <EditorScreen rootPath="/models/procurement" />,
+    );
+    await readyCanvas();
+    expect(api.story.project).not.toHaveBeenCalled();
+    fireEvent.change(screen.getByLabelText('聚焦范围'), {
+      target: { value: 'context.catalog' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /业务流放映/ }));
+    expect(screen.getByRole('tab', { name: '业务故事' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    expect(await screen.findByText('采购方办理采购协议。')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /下一步/ }));
+    expect(screen.getByText('采购方办理交付请求。')).toBeInTheDocument();
+    expect(container.querySelector('[data-id="evidence.request"]')).toHaveClass(
+      'evidence-story-active',
+    );
+    expect(
+      container.querySelector('[data-node-id="evidence.request"]'),
+    ).not.toHaveAttribute('aria-disabled');
+    const document = createDesktopFixture();
+    document.entities.find(({ id }) => id === 'evidence.contract')!.label =
+      '外部更新采购协议';
+    api.projects.open = vi.fn(async () => ({
+      success: true as const,
+      project: projectSummary(),
+      document,
+      issues: [],
+    }));
+    act(() => invalidate({ rootPath: '/models/procurement' }));
+    await waitFor(() =>
+      expect(
+        container.querySelector('[data-node-id="evidence.contract"]'),
+      ).toHaveTextContent('外部更新采购协议'),
+    );
+    await waitFor(() =>
+      expect(screen.getByText('步骤 2/3：办理交付请求')).toBeInTheDocument(),
+    );
+    expect(api.story.project).toHaveBeenLastCalledWith(
+      expect.objectContaining({ document }),
+    );
+    fireEvent.click(screen.getByRole('button', { name: '退出放映' }));
+    expect(screen.queryByLabelText('业务流放映控制')).toBeNull();
+    expect(screen.queryByLabelText('副视口')).toBeNull();
+    expect(unsubscribe).toHaveBeenCalled();
+    expect(container.querySelector('.evidence-story-active')).toBeNull();
+    expect(screen.getByLabelText('聚焦范围')).toHaveValue('context.catalog');
+  });
+
+  it('reads pending disk changes before starting a walkthrough from topology mode', async () => {
+    const api = readyProject();
+    let changed: Parameters<typeof api.projects.onChanged>[0] = () => undefined;
+    api.projects.onChanged = (listener) => {
+      changed = listener;
+      return () => undefined;
+    };
+    api.story.listFlows = vi.fn(async () => [storyFlow()]);
+    api.story.project = vi.fn(async () => storyResult());
+    render(<EditorScreen rootPath="/models/procurement" />);
+    await readyCanvas();
+    const document = createDesktopFixture();
+    document.entities.find(({ id }) => id === 'evidence.contract')!.label =
+      '进入前的外部修改';
+    api.projects.open = vi.fn(async () => ({
+      success: true as const,
+      project: projectSummary(),
+      document,
+      issues: [],
+    }));
+    act(() =>
+      changed({
+        rootPath: '/models/procurement',
+        paths: ['entities/contract.json'],
+        changedAt: '2026-11-11T09:00:00Z',
+      }),
+    );
+    fireEvent.click(screen.getByRole('button', { name: /业务流放映/ }));
+    await screen.findByText('采购方办理采购协议。');
+    expect(api.story.project).toHaveBeenCalledOnce();
+    expect(api.story.project).toHaveBeenCalledWith(
+      expect.objectContaining({ document }),
+    );
   });
 
   it('slides the problems panel over the canvas with Alt+X', async () => {
@@ -261,35 +486,15 @@ describe('EditorScreen', () => {
     expect(await screen.findByText(/已保存/)).toBeInTheDocument();
   });
 
-  it('reports a finished export as a toast, not as a strip under the header', async () => {
-    const api = installDesktopApi({
-      openResult: {
-        success: true,
-        project: projectSummary({ name: '桌面端夹具（Desktop Fixture）' }),
-        document: createDesktopFixture(),
-        issues: [],
-      },
-      exportReviewResult: {
-        status: 'saved',
-        path: '/models/procurement/review.html',
-        counts: {
-          contracts: 1,
-          entities: 8,
-          rules: 2,
-          capabilities: 0,
-        },
-      },
-    });
-
+  it('opens command navigation from the header', async () => {
+    readyProject();
     render(<EditorScreen rootPath="/models/procurement" />);
     await readyCanvas();
 
-    fireEvent.click(screen.getByRole('button', { name: '导出审查页' }));
-
-    expect(await screen.findByText(/已导出审查页/)).toBeInTheDocument();
-    expect(api.calls.exportReview).toEqual(['/models/procurement']);
-    // The result is transient: it must not occupy a row of the layout.
-    expect(screen.queryByRole('status')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: '打开快速命令' }));
+    expect(
+      await screen.findByRole('dialog', { name: '快速命令' }),
+    ).toBeInTheDocument();
   });
 
   it('opens the delivery hub from its chord', async () => {

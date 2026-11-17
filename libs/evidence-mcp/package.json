@@ -31,10 +31,10 @@
     ]
   },
   "dependencies": {
-    "@evidence-poc/evidence-model-core": "workspace:*",
     "@evidence-poc/evidence-schema": "workspace:*",
     "@modelcontextprotocol/sdk": "1.32.2",
     "tslib": "^2.3.0",
-    "zod": "3.25.76"
+    "zod": "3.25.76",
+    "@evidence-poc/evidence-tools": "workspace:*"
   }
 }

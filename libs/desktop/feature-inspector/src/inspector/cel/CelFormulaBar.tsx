@@ -1,5 +1,10 @@
+import { useState } from 'react';
 import type { AttributeAST } from '@evidence-poc/evidence-schema';
-import type { CelCandidate } from '@evidence-poc/evidence-model-core';
+import {
+  translateBusinessFormula,
+  type CelCandidate,
+} from '@evidence-poc/evidence-model-core';
+import { BusinessFormulaView } from './BusinessFormulaView';
 
 import { CelCodeMirrorEditor } from './CelCodeMirrorEditor';
 
@@ -27,6 +32,11 @@ export const CelFormulaBar = ({
   candidates,
   onCommitExpression,
 }: CelFormulaBarProps) => {
+  const [sourceMode, setSourceMode] = useState(false);
+  const formula =
+    ruleExpression === null
+      ? null
+      : translateBusinessFormula(ruleExpression, candidates);
   if (attribute === null) {
     return (
       <div className="flex h-9 items-center gap-2 border-b border-evidence-line bg-[#f6f8fa] px-3 text-[11px] text-[#6e7781]">
@@ -44,22 +54,56 @@ export const CelFormulaBar = ({
             fx
           </span>
           <span className="rounded bg-[#eef2f7] px-1.5 py-0.5 font-mono text-[10px] font-medium text-evidence-ink">
-            {entityLabel}.{attribute.name}
+            {entityLabel}.{attribute.label}
           </span>
           <span className="text-[11px] text-[#8c959f]">=</span>
         </div>
 
         <div className="min-w-0 flex-1">
           {ruleExpression !== null ? (
-            <CelCodeMirrorEditor
-              key={attribute.name}
-              value={ruleExpression}
-              candidates={candidates}
-              ariaLabel={`${attribute.name} 公式栏`}
-              onCommit={onCommitExpression}
-              minHeight="30px"
-              maxHeight="140px"
-            />
+            <>
+              <div className="mb-1 flex gap-2 text-[11px]">
+                <button
+                  type="button"
+                  aria-pressed={!sourceMode && formula?.supported === true}
+                  disabled={formula?.supported !== true}
+                  onClick={() => setSourceMode(false)}
+                >
+                  业务公式
+                </button>
+                <button
+                  type="button"
+                  aria-pressed={sourceMode || formula?.supported !== true}
+                  onClick={() => setSourceMode(true)}
+                >
+                  CEL 源码
+                </button>
+              </div>
+              {formula?.supported === false ? (
+                <p className="text-[11px] text-evidence-muted">
+                  {formula.reason}
+                </p>
+              ) : null}
+              {!sourceMode && formula?.supported === true ? (
+                <BusinessFormulaView
+                  key={`${attribute.name}:${ruleExpression}`}
+                  expression={ruleExpression}
+                  tokens={formula.tokens}
+                  candidates={candidates}
+                  onCommit={onCommitExpression}
+                />
+              ) : (
+                <CelCodeMirrorEditor
+                  key={attribute.name}
+                  value={ruleExpression}
+                  candidates={candidates}
+                  ariaLabel={`${attribute.name} 公式栏`}
+                  onCommit={onCommitExpression}
+                  minHeight="30px"
+                  maxHeight="140px"
+                />
+              )}
+            </>
           ) : (
             <p className="rounded border border-dashed border-evidence-line bg-[#fbfbfc] px-2 py-1 text-[10px] text-[#8c959f]">
               {attribute.name}{' '}

@@ -94,18 +94,24 @@
 │   └── desktop/                         # 桌面可视化工作台宿主 (Electron Forge)
 ├── libs/
 │   ├── desktop/                         # 桌面端下沉的 UI 与功能库
+│   │   ├── contracts/                   # Desktop IPC 通道与强类型契约，供壳与 Feature 共享
 │   │   ├── ui-kit/                      # 基础呈现组件库 (Button, Panel, Modal 等)
 │   │   ├── feature-canvas/              # 画布视图、节点渲染与连线交互
 │   │   ├── feature-inspector/           # 属性审查面板、CEL 代码高亮与自动补全
+│   │   ├── feature-story/               # 故事回放、事实卡片与 What-If 交互
+│   │   ├── feature-delivery/            # 交付中心、增量预览与导出状态
+│   │   ├── feature-drift/               # 生产漂移雷达与 trace 选择
+│   │   ├── feature-agent/               # Copilot 会话、补丁桥接与审查
 │   │   └── testing/                     # 桌面端渲染测试夹具与 Mock 容器
 │   ├── evidence-schema/                 # 领域模型 AST 定义与严格语法校验基石
 │   ├── evidence-model-core/             # 纯内存图引擎、命令总线 (Undo/Redo)、CEL 仿真执行器 (Universal)
 │   ├── evidence-model-io/               # 领域模型文件与便携 Bundle 序列化适配 (Node.js I/O)
 │   ├── evidence-canvas-interaction/     # 纯数学画布交互计算（视口变换、泳道布局、框选）
+│   ├── evidence-tools/                  # Universal 模型工具注册表：统一 Pi/MCP 算子与受控补丁入口
 │   ├── evidence-agent/                  # AI Agent 运行时：会话、提示词、治理闭环、原生传感器与 Tool 扩展
 │   ├── evidence-mcp/                    # Model Context Protocol (MCP) 工具与桥接协议
-│   ├── evidence-api/                    # API 契约投影与 OpenAPI 3.1 规格导出
-│   └── evidence-visualization/          # 离线单文件 Review 工作台构建与 CSP 签名发布
+│   ├── evidence-api/                    # API 契约投影与 OpenAPI 3.1 规格导出（不执行验收）
+│   └── evidence-acceptance/             # Step CI/Hurl 生成、HTTP 验收、漂移与 oasdiff 兼容性门禁
 └── docs/                                # 架构设计 RFC 与工作区规范
 ```
 
@@ -147,10 +153,9 @@ pnpm evidence pack .evidence/fm -o procurement.evidence.json
 pnpm evidence unpack procurement.evidence.json --out .evidence/fm
 pnpm evidence inspect procurement.evidence.json --json
 
-# 编译通过静态检查的模型、导出属性追溯与离线审查页
+# 编译通过静态检查的模型、导出属性追溯
 pnpm evidence compile .evidence/fm --out compiled.json --compact
 pnpm evidence lineage .evidence/fm --out lineage.json
-pnpm evidence review --project-root . --out review.html
 
 # 导出 OpenAPI 3.1 与 Step CI / Hurl（默认 Step CI）
 pnpm evidence export --model procurement.evidence.json --out dist/contracts
@@ -161,12 +166,11 @@ pnpm evidence test --target http://localhost:8080 --scenarios dist/contracts --j
 pnpm evidence diff baseline.evidence.json procurement.evidence.json --format json
 ```
 
-旧的 `evidence-model`、`evidence-api`、`evidence-workbench` 可执行入口暂时保留，执行时只向 **stderr** 输出弃用提示，不污染 JSON stdout。它们与统一入口复用库内执行逻辑，不反向依赖应用包。
+旧的 `evidence-model`、`evidence-api` 可执行入口暂时保留，执行时只向 **stderr** 输出弃用提示，不污染 JSON stdout。它们与统一入口复用库内执行逻辑，不反向依赖应用包。
 
 | 旧入口                                                                                      | 推荐入口                                                         |
 | ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | `evidence-model pack/unpack/inspect/check/compile/lineage`                                  | `evidence pack/unpack/inspect/check/compile/lineage`             |
-| `evidence-workbench generate`                                                               | `evidence review`                                                |
 | 常规契约与验收导出                                                                          | `evidence export`                                                |
 | `evidence-api inspect/check/project/deliver/export-tests/diff`（含 overlay 与固定检查报告） | `evidence api <command>`（兼容原参数，也支持 `--model` 与 `-o`） |
 | `evidence diff api <base> <target>`                                                         | `evidence diff <base> <target>`；旧写法保留 JSON 默认值          |
@@ -182,13 +186,12 @@ pnpm evidence diff baseline.evidence.json procurement.evidence.json --format jso
 ### 1. 下游投影与交付契约（Downstream Projections）
 
 - [x] **API 契约投影与 OpenAPI 导出**：严格遵守出入参隔离纪律，自动派生出标准 OpenAPI 3.1 交付契约（已在 `libs/evidence-api` 实现）。
-- [x] **单文件离线审查工作台**：编译生成包含图谱投影、内联资产与 CSP 安全签名的独立审查 HTML（已在 `libs/evidence-visualization` 实现）。
 - [ ] **Database Projection (SQL DDL)**：基于不可逆证据事实时间线与因果外键拓扑，自动派生标准关系型数据库（如 PostgreSQL）DDL 与版本化 Migration 迁移脚本。
 - [ ] **多语言路由骨架代码生成（Code Generators）**：基于派生的 OpenAPI 契约，自动生成各后端主流语言/框架（如 Node.js / Go / Spring Boot）的强类型路由与 Controller 接口骨架。
 
 ### 2. 独立运行容器与入口收敛（Apps & Packaging）
 
-- [x] **统一命令行工具容器 (`apps/cli`)**：基于 `cac` 提供 `evidence check/test/export/diff/pack/unpack/compile/review`；保留 `inspect/lineage` 与 `api` 兼容工作流，旧 Libs `bin` 入口作为弃用适配器过渡。
+- [x] **统一命令行工具容器 (`apps/cli`)**：基于 `cac` 提供 `evidence check/test/export/diff/pack/unpack/compile`；保留 `inspect/lineage` 与 `api` 兼容工作流，旧 Libs `bin` 入口作为弃用适配器过渡。
 - [ ] **独立 MCP 服务端应用 (`apps/mcp-server`)**：将 MCP 协议服务从纯 Libs 提升为可脱离桌面端、独立以 stdio/SSE 启动的长周期服务容器。
 
 ### 3. 生产语义漂移与闭环治理（Drift & Governance）

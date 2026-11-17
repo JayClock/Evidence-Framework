@@ -3,6 +3,8 @@ import {
   Bot,
   FlaskConical,
   FolderTree,
+  FileText,
+  ListChecks,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -61,6 +63,18 @@ const RAIL_ITEMS: readonly {
     label: 'AI 协同',
     hint: '多轮访谈、工具调用与补丁复核',
     icon: Bot,
+  },
+  {
+    id: 'clauses',
+    label: '条款审计',
+    hint: '合同原文与模型对象双向定位（仅本地）',
+    icon: FileText,
+  },
+  {
+    id: 'workshop',
+    label: '共创工作坊',
+    hint: '七步业务提问与成对履约创建',
+    icon: ListChecks,
   },
 ];
 

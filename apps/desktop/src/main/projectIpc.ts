@@ -7,13 +7,14 @@ import {
   type WebContents,
 } from 'electron';
 
-import { EVIDENCE_IPC_CHANNELS } from '../shared/ipc';
+import { STORY_IPC_CHANNELS } from '@evidence-poc/desktop-contracts/story';
+import { EVIDENCE_IPC_CHANNELS } from '@evidence-poc/desktop-contracts/ipc';
 import type {
   CreateProjectDialogInput,
   CreateProjectDialogResult,
   CreateProjectInput,
   SaveProjectInput,
-} from '../shared/projects';
+} from '@evidence-poc/desktop-contracts/projects';
 
 import { watchModelSource, type ModelWatcher } from './modelWatcher';
 import { modelSourceOf } from './modelSource';
@@ -55,6 +56,7 @@ export const registerProjectIpc = ({
         return;
       }
 
+      sender.send(STORY_IPC_CHANNELS.INVALIDATED, { rootPath });
       sender.send(EVIDENCE_IPC_CHANNELS.changed, {
         rootPath,
         changedAt: new Date().toISOString(),

@@ -5,7 +5,7 @@ import type { DomainGraphLayout } from '@evidence-poc/evidence-canvas-interactio
 import type { ValidationResult } from '@evidence-poc/evidence-schema';
 
 import { BottomStatusBar } from './BottomStatusBar';
-import { healthyReport } from '../test-support/desktopApi';
+import { healthyReport } from '@evidence-poc/desktop-testing/desktopApi';
 
 const layout = {
   nodes: [],

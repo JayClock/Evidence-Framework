@@ -81,7 +81,7 @@ describe('createMcpSensorService', () => {
     });
 
     await expect(
-      failing.checkStageGate({ rootPath: '/repo', target: 'visualization' }),
+      failing.checkStageGate({ rootPath: '/repo', target: 'api' }),
     ).resolves.toMatchObject({
       passed: false,
       exitCode: 1,

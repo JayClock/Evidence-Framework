@@ -1,17 +1,19 @@
 import { useCallback, useEffect, useState } from 'react';
 
-/** The four things the activity rail can put beside the canvas. */
+/** The surfaces the activity rail can put beside the canvas. */
 export const RAIL_TABS = [
   'topology',
   'diagnostics',
   'drift',
   'copilot',
+  'clauses',
+  'workshop',
 ] as const;
 
 export type RailTabId = (typeof RAIL_TABS)[number];
 
 /** Large surfaces that cover the workspace instead of sharing its width. */
-export type HubSurface = 'delivery' | 'drift' | 'review';
+export type HubSurface = 'delivery' | 'drift';
 
 export interface WorkspaceLayoutState {
   /** Open drawer; null leaves the rail as the only rail-width chrome. */
@@ -21,7 +23,7 @@ export interface WorkspaceLayoutState {
   readonly isProblemsPanelOpen: boolean;
   readonly activeIssueId: string | null;
   readonly isInlineCopilotOpen: boolean;
-  /** Blocking hub (delivery, drift, review), or null. */
+  /** Blocking hub (delivery or drift), or null. */
   readonly activeHub: HubSurface | null;
 }
 
@@ -53,6 +55,8 @@ export const RAIL_TAB_CHORDS: Record<RailTabId, string> = {
   diagnostics: '⌘+2',
   drift: '⌘+3',
   copilot: '⌘+4',
+  clauses: '⌘+5',
+  workshop: '⌘+6',
 };
 
 const isEditable = (target: EventTarget | null): boolean => {

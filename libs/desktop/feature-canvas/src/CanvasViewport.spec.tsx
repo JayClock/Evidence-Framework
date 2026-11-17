@@ -91,6 +91,68 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllGlobals());
 
 describe('CanvasViewport', () => {
+  it('refits and draws responsibility regions when layout mode changes at the same density', async () => {
+    const swimlane = await computeGraphLayout(graph, {
+      viewMode: 'standard',
+      layoutMode: 'swimlane',
+    });
+    const Harness = () => {
+      const [lanes, setLanes] = useState(false);
+      return (
+        <>
+          <button type="button" onClick={() => setLanes(true)}>
+            切换泳道布局
+          </button>
+          <CanvasViewport
+            document={document}
+            graph={graph}
+            layout={lanes ? swimlane : layout}
+            viewMode="standard"
+            selection={{ nodeId: null, attributeName: null }}
+            focusRequest={null}
+            zoomCommand={null}
+            onSelect={vi.fn()}
+            onClearSelection={vi.fn()}
+          />
+        </>
+      );
+    };
+    const { container } = render(<Harness />);
+    await waitFor(() =>
+      expect(viewportTransform(container)).not.toBe(
+        'translate(0px,0px) scale(1)',
+      ),
+    );
+    const before = viewportTransform(container);
+    fireEvent.click(screen.getByRole('button', { name: '切换泳道布局' }));
+    await waitFor(() => expect(viewportTransform(container)).not.toBe(before));
+    expect(
+      container.querySelector('[data-swimlane-kind="phase"]'),
+    ).not.toBeNull();
+  });
+  it('keeps breach markers visible without hover and alongside diagnostics', () => {
+    const marked = {
+      ...layout,
+      edges: layout.edges.map((edge) => ({
+        ...edge,
+        flowKind: 'breach_compensation' as const,
+      })),
+    };
+    const { container } = setup({ layout: marked });
+    const edge = container.querySelector(
+      '[data-edge-id="relation.confirmation-references-request"]',
+    )!;
+    expect(edge).toHaveAttribute('data-flow-kind', 'breach_compensation');
+    expect(edge.textContent).toContain('违约补偿');
+    expect(edge.querySelector('[data-edge-line]')).toHaveAttribute(
+      'stroke',
+      '#d97706',
+    );
+    expect(edge.querySelector('[data-edge-line]')).toHaveAttribute(
+      'stroke-dasharray',
+      '6 4',
+    );
+  });
   it('draws the placed objects, their Contexts and the routed relationships', () => {
     const { container } = setup();
 
@@ -160,6 +222,61 @@ describe('CanvasViewport', () => {
     fireEvent.click(screen.getByRole('button', { name: /缩放 \d+%/ }));
 
     expect(onClearSelection).not.toHaveBeenCalled();
+  });
+
+  it('centres story documents at 1.15 zoom, overrides hover dimming and restores normal rendering on exit', async () => {
+    vi.stubGlobal('matchMedia', () => ({ matches: true }));
+    const props = {
+      document,
+      graph,
+      layout,
+      viewMode: 'standard' as const,
+      selection: { nodeId: null, attributeName: null },
+      focusRequest: null,
+      zoomCommand: null,
+      onSelect: vi.fn(),
+      onClearSelection: vi.fn(),
+    };
+    const focus = {
+      activeEntityId: 'evidence.confirmation',
+      dependencyEntityIds: ['evidence.request'],
+      focusKey: 'flow:confirmation',
+    };
+    const { container, rerender } = render(
+      <CanvasViewport {...props} storyFocus={focus} />,
+    );
+    const wrapper = container.querySelector(
+      '[data-id="evidence.confirmation"]',
+    );
+    expect(wrapper).toHaveClass('evidence-story-active');
+    expect(container.querySelector('[data-id="role.inventory"]')).toHaveStyle({
+      opacity: '0.35',
+    });
+    expect(container.querySelectorAll('[data-story-edge]')).toHaveLength(2);
+    await waitFor(() =>
+      expect(viewportTransform(container)).toContain('scale(1.15)'),
+    );
+    const before = viewportTransform(container);
+    rerender(
+      <CanvasViewport
+        {...props}
+        storyFocus={{
+          activeEntityId: 'evidence.request',
+          dependencyEntityIds: [],
+          focusKey: 'flow:request',
+        }}
+      />,
+    );
+    await waitFor(() => expect(viewportTransform(container)).not.toBe(before));
+    expect(container.querySelector('[data-id="evidence.request"]')).toHaveClass(
+      'evidence-story-active',
+    );
+    rerender(<CanvasViewport {...props} storyFocus={null} />);
+    expect(container.querySelector('.evidence-story-active')).toBeNull();
+    expect(container.querySelector('[data-story-edge]')).toBeNull();
+    expect(
+      container.querySelector('[data-id="role.inventory"]'),
+    ).not.toHaveStyle({ opacity: '0.35' });
   });
 
   it('reveals a target the sidebar or a finding asked for', async () => {

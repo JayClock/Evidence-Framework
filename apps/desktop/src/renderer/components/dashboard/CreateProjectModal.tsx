@@ -6,7 +6,7 @@ import type {
   ProjectStorageKind,
   ProjectTemplateId,
   ProjectTemplateMeta,
-} from '../../../shared/projects';
+} from '@evidence-poc/desktop-contracts/projects';
 
 export interface CreateProjectModalProps {
   templates: readonly ProjectTemplateMeta[];

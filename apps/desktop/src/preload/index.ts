@@ -12,22 +12,23 @@ import {
   type CanvasContextRegistration,
   type SensorReportPayload,
   type SensorTriggerInput,
-} from '../shared/agentIpc';
+} from '@evidence-poc/desktop-contracts/agentIpc';
 import {
   EVIDENCE_INGESTION_IPC_CHANNELS,
   EVIDENCE_IPC_CHANNELS,
   type EvidenceDesktopApi,
-} from '../shared/ipc';
+} from '@evidence-poc/desktop-contracts/ipc';
+import { STORY_IPC_CHANNELS } from '@evidence-poc/desktop-contracts/story';
 import {
   EVIDENCE_DRIFT_IPC_CHANNELS,
   type DriftRequest,
-} from '../shared/drift';
+} from '@evidence-poc/desktop-contracts/drift';
 import {
   EVIDENCE_MCP_IPC_CHANNELS,
   type McpRendererRequest,
   type McpRendererResponse,
   type McpStatus,
-} from '../shared/mcpIpc';
+} from '@evidence-poc/desktop-contracts/mcpIpc';
 
 /**
  * Minimal, typed bridge: the renderer never sees `ipcRenderer`, `fs` or any
@@ -47,12 +48,6 @@ const api: EvidenceDesktopApi = {
     listRecent: () => ipcRenderer.invoke(EVIDENCE_IPC_CHANNELS.recent),
     openEditorWindow: (rootPath) =>
       ipcRenderer.invoke(EVIDENCE_IPC_CHANNELS.openEditorWindow, rootPath),
-    previewReview: (input) =>
-      ipcRenderer.invoke(EVIDENCE_IPC_CHANNELS.previewReview, input),
-    exportDiffReview: (rootPath: string) =>
-      ipcRenderer.invoke(EVIDENCE_IPC_CHANNELS.exportDiffReview, rootPath),
-    exportReview: (rootPath: string) =>
-      ipcRenderer.invoke(EVIDENCE_IPC_CHANNELS.exportReview, rootPath),
     deliveryLivePreview: (input) =>
       ipcRenderer.invoke(EVIDENCE_IPC_CHANNELS.deliveryLivePreview, input),
     exportLiveDelivery: (input) =>
@@ -72,6 +67,21 @@ const api: EvidenceDesktopApi = {
       return () => {
         ipcRenderer.removeListener(EVIDENCE_IPC_CHANNELS.changed, handler);
       };
+    },
+  },
+  story: {
+    listFlows: (input) =>
+      ipcRenderer.invoke(STORY_IPC_CHANNELS.LIST_FLOWS, input),
+    project: (input) => ipcRenderer.invoke(STORY_IPC_CHANNELS.PROJECT, input),
+    whatIf: (input) => ipcRenderer.invoke(STORY_IPC_CHANNELS.WHAT_IF, input),
+    onInvalidated: (listener) => {
+      const handler = (
+        _event: Electron.IpcRendererEvent,
+        payload: Parameters<typeof listener>[0],
+      ) => listener(payload);
+      ipcRenderer.on(STORY_IPC_CHANNELS.INVALIDATED, handler);
+      return () =>
+        ipcRenderer.removeListener(STORY_IPC_CHANNELS.INVALIDATED, handler);
     },
   },
   agent: {

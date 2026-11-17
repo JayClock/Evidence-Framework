@@ -16,36 +16,44 @@
 export const WORKSHOP_STEPS = [
   {
     id: 'anchor-contract',
+    businessPrompt: '这份业务以哪份协议或订单为依据？约定的双方分别是谁？',
     label: '锚定合约与双方',
     hint: '先确定哪一份合约约束双方，甲乙方分别是谁',
   },
   {
     id: 'pair-fulfillment',
+    businessPrompt: '谁要求谁交付什么？何时截止？完成后由谁出具哪张凭证？',
     label: '成对挖掘履约项',
     hint: '权利方的请求是时段，义务方的确认是时刻',
   },
   {
     id: 'name-things',
+    businessPrompt:
+      '交易的货物、服务或资产是什么？计价与资格判定是否需要独立组件？',
     label: '补上标的物与领域组件',
     hint: '交易对象归领域；计价与判定抽成计算器或检查器',
   },
   {
     id: 'invert-dependency',
+    businessPrompt: '更换支付、物流或开票供应商，会不会迫使主合约改变？',
     label: '反转易变依赖',
     hint: '支付渠道、物流、开票换供应商时不该改主合约',
   },
   {
     id: 'close-breach',
+    businessPrompt: '超时、断供、拒付后如何补偿？继续违约最终由谁处理？',
     label: '给违约一条补偿路径',
     hint: '超时、断供、拒付各自触发新的履约对',
   },
   {
     id: 'trace-key-data',
+    businessPrompt: '每个金额、数量、期限由谁提供，或按哪条规则计算？',
     label: '让每个数字有来源',
     hint: '合同参数、前序凭证或派生规则，三者之外没有第四种',
   },
   {
     id: 'connect-flow',
+    businessPrompt: '签约前从哪些渠道形成合同？履约后有哪些结算或补充协议？',
     label: '串起业务宏流程',
     hint: '渠道、主合约、补充协议连成一条业务脊梁',
   },

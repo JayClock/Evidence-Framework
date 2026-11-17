@@ -4,7 +4,7 @@ import type {
   EvidenceProjectSummary,
   ProjectTemplateId,
   ProjectTemplateMeta,
-} from '../../shared/projects';
+} from '@evidence-poc/desktop-contracts/projects';
 import { CreateProjectModal } from '../components/dashboard/CreateProjectModal';
 import { IngestDraftModal } from '../components/ingestion/IngestDraftModal';
 

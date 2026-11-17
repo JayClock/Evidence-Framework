@@ -5,8 +5,8 @@ import {
   type AcceptanceGate,
   validateAsOf,
   validateTargetUrl,
-} from '@evidence-poc/evidence-api/runner';
-import { renderDeliverables } from '@evidence-poc/evidence-api';
+} from '@evidence-poc/evidence-acceptance/runner';
+import { renderDeliverables } from '@evidence-poc/evidence-acceptance';
 import { loadModel } from '../model.js';
 import { markdownReport, junitReport } from '../ui/markdownReporter.js';
 import {

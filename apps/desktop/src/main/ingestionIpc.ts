@@ -12,13 +12,13 @@ import {
 import { buildIngestionPrompt } from '@evidence-poc/evidence-agent';
 import type { IngestionDraft } from '@evidence-poc/evidence-schema';
 
-import { EVIDENCE_INGESTION_IPC_CHANNELS } from '../shared/ipc';
+import { EVIDENCE_INGESTION_IPC_CHANNELS } from '@evidence-poc/desktop-contracts/ipc';
 import type {
   CompileDraftInput,
   CompileDraftOutcome,
   IngestDraftInput,
   IngestDraftResult,
-} from '../shared/ingestion';
+} from '@evidence-poc/desktop-contracts/ingestion';
 import type { ProjectStore } from './projectStore';
 
 /**
