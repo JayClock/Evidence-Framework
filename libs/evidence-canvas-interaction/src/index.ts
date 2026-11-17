@@ -32,6 +32,7 @@ export {
   computeGraphLayout,
   type ComputeLayoutOptions,
 } from './engine/layoutEngine.js';
+export { computeSwimlaneLayout } from './engine/swimlaneLayout.js';
 export {
   EMPTY_GRAPH_LAYOUT,
   toSerializableLayout,
@@ -41,6 +42,10 @@ export {
 } from './layout/serializable.js';
 export type {
   CanvasLayoutMode,
+  BusinessMilestoneStage,
+  JourneyMilestone,
+  JourneyNodePlacement,
+  SwimlaneCorridor,
   SwimlaneRegion,
   CanvasViewMode,
   ContextLayoutGroup,

@@ -14,6 +14,7 @@ export interface LayoutNode {
   /** Absolute canvas coordinates for SVG, focus, overlays and scope bounds. */
   worldBox: Rect;
   contextId: string | null;
+  journey?: JourneyNodePlacement;
 }
 
 export interface ContextLayoutGroup {
@@ -69,15 +70,52 @@ export interface ResponsibilityLink {
 
 export type CanvasLayoutMode = 'topology' | 'swimlane';
 
+export type BusinessMilestoneStage =
+  | 'sourcing'
+  | 'agreement'
+  | 'advance'
+  | 'dispatch'
+  | 'inspection'
+  | 'breach_remedy'
+  | 'clearing';
+
+export interface JourneyMilestone {
+  readonly id: string;
+  readonly stage: BusinessMilestoneStage;
+  readonly label: string;
+  readonly order: number;
+  readonly x: number;
+  readonly width: number;
+}
+
+export interface SwimlaneCorridor {
+  readonly kind: 'primary_track' | 'remedy_corridor';
+  readonly y: number;
+  readonly height: number;
+}
+
+export interface JourneyNodePlacement {
+  readonly stage: BusinessMilestoneStage;
+  readonly corridor: SwimlaneCorridor['kind'];
+  readonly roleId?: string;
+  /** Capability attachment without changing the entity's Context ownership. */
+  readonly auxiliaryFor?: string;
+}
+
 export interface SwimlaneRegion {
   id: string;
-  kind: 'phase' | 'lane';
+  kind: 'phase' | 'lane' | 'corridor';
   label: string;
+  contextId: string | null;
+  stage?: BusinessMilestoneStage;
+  roleId?: string;
+  corridorKind?: SwimlaneCorridor['kind'];
   /** Absolute coordinates; never written into the business model. */
   box: Rect;
 }
 
 export interface DomainGraphLayout {
+  journeyMilestones?: readonly JourneyMilestone[];
   swimlaneRegions?: readonly SwimlaneRegion[];
   bounds: Rect;
   nodes: readonly LayoutNode[];
