@@ -46,7 +46,11 @@ const model = () =>
       ),
     ),
   );
-const sender = () => ({ isDestroyed: () => false, once: vi.fn() });
+const sender = () => ({
+  isDestroyed: () => false,
+  once: vi.fn(),
+  send: vi.fn(),
+});
 const invoke = <T = unknown>(
   channel: string,
   input: unknown,
@@ -60,6 +64,47 @@ afterEach(() => {
 });
 
 describe('story IPC', () => {
+  it('keeps offline playback credential-free and invalidates AI projectors on configuration changes', async () => {
+    const getModelOptions = vi.fn(async () => {
+      throw new Error('AI_NOT_CONFIGURED');
+    });
+    const ipc = register({ getModelOptions });
+    const window = sender();
+    const flowId = collectFlowScenarios(model())[0].flowId;
+    const input = { rootPath: '/models/p', flowId, skipAi: true };
+    await invoke(STORY_IPC_CHANNELS.PROJECT, input, window);
+    expect(getModelOptions).not.toHaveBeenCalled();
+    await expect(
+      invoke(STORY_IPC_CHANNELS.PROJECT, { ...input, skipAi: false }, window),
+    ).rejects.toThrow('AI_NOT_CONFIGURED');
+    ipc.resetModels();
+    expect(window.send).toHaveBeenCalledWith(STORY_IPC_CHANNELS.INVALIDATED, {
+      rootPath: '/models/p',
+    });
+    await invoke(STORY_IPC_CHANNELS.PROJECT, input, window);
+    expect(getModelOptions).toHaveBeenCalledOnce();
+  });
+  it('does not cache a model acquired before a concurrent configuration change', async () => {
+    let finish: (value: { agentDir: string }) => void = () => undefined;
+    const getModelOptions = vi.fn(
+      () =>
+        new Promise<{ agentDir: string }>((resolve) => {
+          finish = resolve;
+        }),
+    );
+    const ipc = register({ getModelOptions });
+    const window = sender();
+    const flowId = collectFlowScenarios(model())[0].flowId;
+    const projection = invoke(
+      STORY_IPC_CHANNELS.PROJECT,
+      { rootPath: '/models/p', flowId },
+      window,
+    );
+    await vi.waitFor(() => expect(getModelOptions).toHaveBeenCalled());
+    ipc.resetModels();
+    finish({ agentDir: '/obsolete' });
+    await expect(projection).rejects.toThrow('模型配置已变化');
+  });
   it('lists aggregated flows and includes completeness gaps', async () => {
     const readModel = vi.fn(async () => model());
     register({ readModel });

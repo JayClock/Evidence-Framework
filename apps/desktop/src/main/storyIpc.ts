@@ -69,6 +69,7 @@ export const registerStoryIpc = ({
     }
   >();
   const tracked = new Set<WebContents>();
+  let modelGeneration = 0;
 
   const load = async (input: StoryModelInput) => {
     if (
@@ -102,6 +103,7 @@ export const registerStoryIpc = ({
     async (event, input: StoryProjectInput): Promise<StoryProjectResult> => {
       if (input?.skipAi !== undefined && typeof input.skipAi !== 'boolean')
         throw new Error('无效的业务流放映模式。');
+      const generation = modelGeneration;
       const { model, flow } = await loadFlow(input);
       const sender = event.sender;
       if (sender.isDestroyed()) throw new Error('业务流窗口已关闭。');
@@ -133,6 +135,8 @@ export const registerStoryIpc = ({
               }
             : {}),
         });
+        if (!skipAi && generation !== modelGeneration)
+          throw new Error('模型配置已变化，请重试放映。');
         cache.modes.set(skipAi, projector);
       }
       return { flow, projection: await projector.project(flow, model) };
@@ -177,6 +181,7 @@ export const registerStoryIpc = ({
 
   return {
     resetModels: () => {
+      ++modelGeneration;
       for (const [sender, cache] of projectors) {
         cache.modes.delete(false);
         if (!sender.isDestroyed())

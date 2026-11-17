@@ -111,7 +111,9 @@ export const isCredential = (value: unknown): value is Credential => {
   if (!value || typeof value !== 'object') return false;
   const c = value as Record<string, unknown>;
   return c.type === 'api_key'
-    ? typeof c.key === 'string' && !!c.key.trim() && !c.key.startsWith('!')
+    ? typeof c.key === 'string' &&
+        !!c.key.trim() &&
+        !c.key.trim().startsWith('!')
     : c.type === 'oauth' &&
         typeof c.access === 'string' &&
         typeof c.refresh === 'string' &&

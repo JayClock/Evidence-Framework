@@ -43,7 +43,9 @@ export const ModelSettingsModal = ({
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState('');
   const [failed, setFailed] = useState(false);
-  const preset = AI_PROVIDER_PRESETS.find((p) => p.id === providerId)!;
+  const preset =
+    AI_PROVIDER_PRESETS.find((p) => p.id === providerId) ??
+    AI_PROVIDER_PRESETS[0];
   const models = [
     ...new Map(
       [
@@ -54,7 +56,8 @@ export const ModelSettingsModal = ({
     ).values(),
   ];
   const selectProvider = (id: SupportedProviderId) => {
-    const next = AI_PROVIDER_PRESETS.find((p) => p.id === id)!;
+    const next =
+      AI_PROVIDER_PRESETS.find((p) => p.id === id) ?? AI_PROVIDER_PRESETS[0];
     setProviderId(id);
     setModelId(next.recommendedModels[0]?.id ?? '');
     setBaseUrl(next.defaultBaseUrl ?? '');

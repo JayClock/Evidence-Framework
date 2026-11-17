@@ -48,9 +48,49 @@ const scriptedSession = (
 };
 
 describe('reading prose with the configured model', () => {
+  it('injects the same explicit model dependencies as other desktop entry points', async () => {
+    const log: EvidenceAgentSessionOptions[] = [];
+    const modelOptions = {
+      agentDir: '/desktop/ai',
+      modelRuntime: {} as never,
+      model: { id: 'private' } as never,
+      thinkingLevel: 'medium' as const,
+    };
+    const read = createModelIngestionReader({
+      sessionFactory: scriptedSession(
+        [{ type: 'text-delta', delta: 'ok' }],
+        log,
+      ),
+      workingDirectory: async () => '/tmp/scratch',
+      getModelOptions: async () => modelOptions,
+    });
+    expect(await read({ systemPrompt: 's', userPrompt: 'u' })).toBe('ok');
+    expect(log[0]).toMatchObject(modelOptions);
+  });
+  it('does not create scratch directories or sessions when AI is unconfigured', async () => {
+    const log: EvidenceAgentSessionOptions[] = [];
+    let scratchCreated = false;
+    const read = createModelIngestionReader({
+      sessionFactory: scriptedSession([], log),
+      workingDirectory: async () => {
+        scratchCreated = true;
+        return '/tmp/scratch';
+      },
+      getModelOptions: async () => {
+        throw new Error('AI_NOT_CONFIGURED');
+      },
+    });
+    await expect(read({ systemPrompt: 's', userPrompt: 'u' })).rejects.toThrow(
+      'AI_NOT_CONFIGURED',
+    );
+    expect(scratchCreated).toBe(false);
+    expect(log).toEqual([]);
+  });
   it('returns the streamed reply as one string', async () => {
     const log: EvidenceAgentSessionOptions[] = [];
-    const workingDirectory = await mkdtemp(path.join(tmpdir(), 'ingestion-test-'));
+    const workingDirectory = await mkdtemp(
+      path.join(tmpdir(), 'ingestion-test-'),
+    );
 
     const read = createModelIngestionReader({
       sessionFactory: scriptedSession(
@@ -78,7 +118,10 @@ describe('reading prose with the configured model', () => {
     const log: EvidenceAgentSessionOptions[] = [];
 
     const read = createModelIngestionReader({
-      sessionFactory: scriptedSession([{ type: 'agent-settled', aborted: false }], log),
+      sessionFactory: scriptedSession(
+        [{ type: 'agent-settled', aborted: false }],
+        log,
+      ),
       workingDirectory: async () => '/tmp/scratch',
     });
 

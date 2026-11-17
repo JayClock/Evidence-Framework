@@ -40,6 +40,7 @@ const setup = (enabled = true) => {
       document: DomainModelDocument;
       enabled: boolean;
       refreshSavedSources?: boolean;
+      aiConfigured?: boolean;
     }) =>
       useStoryPlayback({
         api: api.story,
@@ -52,6 +53,7 @@ const setup = (enabled = true) => {
         document: DomainModelDocument;
         enabled: boolean;
         refreshSavedSources?: boolean;
+        aiConfigured?: boolean;
       },
     },
   );
@@ -77,6 +79,24 @@ const tick = async (ms = STORY_REFRESH_DELAY) => {
 afterEach(() => vi.useRealTimers());
 
 describe('story playback', () => {
+  it('forces offline projection without credentials and upgrades after configuration', async () => {
+    const { hook, project } = setup();
+    const document = createDesktopFixture();
+    hook.rerender({ document, enabled: true, aiConfigured: false });
+    await tick();
+    expect(project).toHaveBeenLastCalledWith(
+      expect.objectContaining({ skipAi: true }),
+    );
+    expect(hook.result.current.skipAi).toBe(true);
+    act(() => hook.result.current.setSkipAi(false));
+    await tick();
+    expect(hook.result.current.skipAi).toBe(true);
+    hook.rerender({ document, enabled: true, aiConfigured: true });
+    await tick();
+    expect(project).toHaveBeenLastCalledWith(
+      expect.objectContaining({ skipAi: false }),
+    );
+  });
   it('uses the injected transport without a desktop global', async () => {
     const { project, hook } = setup();
     Reflect.deleteProperty(window, 'evidenceAPI');

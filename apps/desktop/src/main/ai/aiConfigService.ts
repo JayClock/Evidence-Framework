@@ -25,6 +25,7 @@ export const validateAiRequest = (input: unknown): SaveAiConfigRequest => {
     r.modelId.length > 200 ||
     typeof r.apiKey !== 'string' ||
     r.apiKey.length > 16384 ||
+    r.apiKey.trim().startsWith('!') ||
     (r.thinkingLevel !== undefined &&
       !['off', 'low', 'medium', 'high'].includes(r.thinkingLevel))
   )
@@ -144,42 +145,72 @@ export class AiConfigService {
       ),
       allowModelNetwork: false,
     });
-    if (settings) {
-      const id = settings.activeProviderId;
-      const existing = runtime.getModel(id, settings.activeModelId);
-      if (id === 'qwen' || id === 'custom-openai-compatible') {
-        runtime.registerProvider(id, {
-          api: 'openai-completions',
-          baseUrl:
-            settings.baseUrl ??
-            AI_PROVIDER_PRESETS.find((p) => p.id === id)?.defaultBaseUrl,
-          authHeader: true,
-          models: [
-            {
-              id: settings.activeModelId,
-              name: settings.activeModelId,
-              reasoning: false,
-              input: ['text'],
-              cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
-              contextWindow: 32768,
-              maxTokens: 4096,
-            },
-          ],
-        });
-        if (!(await store.read(id))) {
-          const envKey =
-            id === 'qwen' ? process.env.DASHSCOPE_API_KEY : undefined;
-          const local =
-            settings.baseUrl &&
-            ['localhost', '127.0.0.1', '[::1]'].includes(
-              new URL(settings.baseUrl).hostname,
-            );
-          if (envKey || local)
-            await runtime.setRuntimeApiKey(id, envKey ?? 'local-keyless');
-        }
-      } else if (existing && settings.baseUrl) {
-        runtime.registerProvider(id, { baseUrl: settings.baseUrl });
+    // The pinned SDK has Qwen subscription plans, but no generic DashScope
+    // pay-as-you-go provider. Register its OpenAI-compatible preset explicitly.
+    const qwen = AI_PROVIDER_PRESETS.find((p) => p.id === 'qwen');
+    const compatible = [
+      {
+        providerId: 'qwen',
+        baseUrl:
+          settings?.activeProviderId === 'qwen'
+            ? (settings.baseUrl ?? qwen?.defaultBaseUrl)
+            : qwen?.defaultBaseUrl,
+        modelIds: [
+          ...new Set([
+            ...(qwen?.recommendedModels.map((m) => m.id) ?? []),
+            ...(settings?.activeProviderId === 'qwen'
+              ? [settings.activeModelId]
+              : []),
+          ]),
+        ],
+      },
+    ];
+    if (settings?.activeProviderId === 'custom-openai-compatible') {
+      compatible.push({
+        providerId: settings.activeProviderId,
+        baseUrl: settings.baseUrl,
+        modelIds: [settings.activeModelId],
+      });
+    }
+    for (const { providerId, baseUrl, modelIds } of compatible) {
+      runtime.registerProvider(providerId, {
+        api: 'openai-completions',
+        baseUrl,
+        authHeader: true,
+        models: modelIds.map((id) => ({
+          id,
+          name: id,
+          reasoning: false,
+          input: ['text'],
+          cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
+          contextWindow: 32768,
+          maxTokens: 4096,
+        })),
+      });
+      if (!(await store.read(providerId))) {
+        const envKey =
+          providerId === 'qwen'
+            ? (process.env.DASHSCOPE_API_KEY ?? process.env.QWEN_API_KEY)
+            : undefined;
+        const local =
+          providerId === 'custom-openai-compatible' &&
+          baseUrl &&
+          ['localhost', '127.0.0.1', '[::1]'].includes(
+            new URL(baseUrl).hostname,
+          );
+        if (envKey || local)
+          await runtime.setRuntimeApiKey(providerId, envKey ?? 'local-keyless');
       }
+    }
+    if (
+      settings &&
+      !compatible.some((p) => p.providerId === settings.activeProviderId) &&
+      runtime.getModel(settings.activeProviderId, settings.activeModelId) &&
+      settings.baseUrl
+    ) {
+      runtime.registerProvider(settings.activeProviderId, {
+        baseUrl: settings.baseUrl,
+      });
     }
     return runtime;
   }
@@ -211,7 +242,10 @@ export class AiConfigService {
             p.id === m.provider &&
             p.recommendedModels.some((r) => r.id === m.id),
         ),
-      ) ?? available[0]
+      ) ??
+      available.find((m) =>
+        AI_PROVIDER_PRESETS.some((p) => p.id === m.provider),
+      )
     );
   }
   async getModelOptions(): Promise<EvidenceModelOptions> {
@@ -329,20 +363,27 @@ export class AiConfigService {
           error: '模型不可用，请检查模型名称与 API Key。',
         };
       const controller = new AbortController();
-      const timer = setTimeout(
-        () => controller.abort(),
-        this.options.connectionTimeoutMs ?? 15000,
-      );
+      let timer: ReturnType<typeof setTimeout> | undefined;
       try {
-        const response = await runtime.completeSimple(
-          model,
-          {
-            messages: [
-              { role: 'user', content: 'Reply OK.', timestamp: Date.now() },
-            ],
-          },
-          { maxTokens: 8, signal: controller.signal },
-        );
+        // Abort the SDK request and bound the UI even if a provider ignores it.
+        const deadline = new Promise<never>((_resolve, reject) => {
+          timer = setTimeout(() => {
+            controller.abort();
+            reject(new Error('AI connection timed out'));
+          }, this.options.connectionTimeoutMs ?? 15000);
+        });
+        const response = await Promise.race([
+          runtime.completeSimple(
+            model,
+            {
+              messages: [
+                { role: 'user', content: 'Reply OK.', timestamp: Date.now() },
+              ],
+            },
+            { maxTokens: 8, signal: controller.signal },
+          ),
+          deadline,
+        ]);
         if (
           response.stopReason === 'error' ||
           response.stopReason === 'aborted'

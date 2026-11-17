@@ -193,7 +193,13 @@ export const createEvidenceAgentSession = (
         resourceLoader,
         sessionManager:
           options.sessionFile === undefined
-            ? sdk.createSessionManager(projectRoot, options.sessionDirectory)
+            ? sdk.createSessionManager(
+                projectRoot,
+                options.sessionDirectory ??
+                  (options.agentDir === undefined
+                    ? undefined
+                    : path.join(agentDir, 'sessions')),
+              )
             : sdk.openSessionManager(options.sessionFile),
         ...(options.customTools === undefined
           ? {}

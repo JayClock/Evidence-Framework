@@ -195,6 +195,7 @@ describe('createEvidenceAgentSession', () => {
       modelRuntime,
       model,
       thinkingLevel: 'low',
+      sessionManager: { sessionDirectory: '/desktop/ai/sessions' },
     });
   });
   it('starts with the built-in instructions and no discovered skill tree', async () => {

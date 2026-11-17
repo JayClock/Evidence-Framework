@@ -48,6 +48,26 @@ const type = (value: string): HTMLTextAreaElement => {
 };
 
 describe('AgentCopilot composer', () => {
+  it('guides unconfigured users and blocks send, steer and keyboard shortcuts', () => {
+    const agent = controller({ running: true });
+    const configure = vi.fn();
+    render(
+      <AgentCopilot
+        controller={agent}
+        aiConfigured={false}
+        onConfigureAi={configure}
+      />,
+    );
+    expect(
+      screen.getByText('欢迎使用 Evidence 智能建模助理'),
+    ).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('请先配置 API Key')).toBeDisabled();
+    expect(screen.getByRole('button', { name: /插话/ })).toBeDisabled();
+    fireEvent.keyDown(type('must not send'), { key: 'Enter', metaKey: true });
+    expect(agent.submit).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: '立刻配置 API Key' }));
+    expect(configure).toHaveBeenCalledOnce();
+  });
   it('sends the trimmed text and clears the composer', () => {
     const agent = controller();
 

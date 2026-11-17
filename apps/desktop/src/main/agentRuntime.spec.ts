@@ -160,6 +160,78 @@ const runtimeWith = (options: {
   });
 
 describe('live agent analysis', () => {
+  it('retries missing configuration, resets only the AI session and preserves transcript/canvas state', async () => {
+    const first = createFakeSession();
+    first.session.getSessionFile = () => '/desktop/session.jsonl';
+    const second = createFakeSession();
+    const created: EvidenceAgentSessionOptions[] = [];
+    const getModelOptions = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('AI_NOT_CONFIGURED'))
+      .mockResolvedValue({
+        agentDir: '/desktop/ai',
+        modelRuntime: {},
+        model: { id: 'configured' },
+      });
+    const runtime = createAgentRuntime({
+      rootPath: '/models/procurement',
+      transport: createTransport().transport,
+      sensors: sensorEngine(),
+      getModelOptions,
+      sessionFactory: (options) => {
+        created.push(options);
+        return created.length === 1 ? first.session : second.session;
+      },
+    });
+    await expect(runtime.prompt('before setup')).rejects.toThrow(
+      'AI_NOT_CONFIGURED',
+    );
+    await runtime.prompt('after setup');
+    expect(created[0]).toMatchObject({
+      agentDir: '/desktop/ai',
+      model: { id: 'configured' },
+    });
+    const context = {
+      projectRoot: '/models/procurement',
+      selection: { nodeId: 'contract', attributeName: null },
+    };
+    runtime.setCanvasContext(context);
+    await runtime.resetModel();
+    expect(first.aborts).toBe(1);
+    expect(first.disposed).toBe(1);
+    expect(runtime.getCanvasContext()).toEqual(context);
+    await runtime.prompt('new model');
+    expect(created[1]?.sessionFile).toBe('/desktop/session.jsonl');
+    expect(second.prompts).toEqual(['new model']);
+    runtime.dispose();
+  });
+  it('disposes an obsolete session whose startup finishes after a model switch', async () => {
+    const fake = createFakeSession();
+    let finish: () => void = () => undefined;
+    const started = new Promise<void>((resolve) => {
+      finish = resolve;
+    });
+    const entered = vi.fn();
+    fake.session.start = async () => {
+      entered();
+      await started;
+    };
+    const runtime = createAgentRuntime({
+      rootPath: '/models/procurement',
+      transport: createTransport().transport,
+      sensors: sensorEngine(),
+      sessionFactory: () => fake.session,
+    });
+    const prompt = runtime.prompt('obsolete');
+    await vi.waitFor(() => expect(entered).toHaveBeenCalled());
+    await runtime.resetModel();
+    finish();
+    await expect(prompt).rejects.toThrow('模型配置已变化');
+    expect(fake.disposed).toBe(1);
+    expect(fake.prompts).toEqual([]);
+    expect(runtime.getSession()).toBeNull();
+    runtime.dispose();
+  });
   it('uses the latest unsaved document, preserves the first baseline and discards obsolete runs', async () => {
     const { transport, reports } = createTransport();
     const resolvers: ((outcome: SensorOutcome) => void)[] = [];

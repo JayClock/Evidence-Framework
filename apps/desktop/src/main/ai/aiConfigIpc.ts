@@ -7,11 +7,25 @@ export const registerAiConfigIpc = (
   resetModels: () => Promise<void>,
 ) => {
   ipcMain.handle(AI.getStatus, () => service.getStatus());
-  ipcMain.handle(AI.save, (_event, request: unknown) => service.save(request));
+  ipcMain.handle(AI.save, async (_event, request: unknown) => {
+    try {
+      return await service.save(request);
+    } catch {
+      throw new Error(
+        '无法保存 AI 配置。请检查模型名称、端点、API Key 和系统密钥环。',
+      );
+    }
+  });
   ipcMain.handle(AI.testConnection, (_event, request: unknown) =>
     service.testConnection(request),
   );
-  ipcMain.handle(AI.importCli, () => service.importFromLocalPiCli());
+  ipcMain.handle(AI.importCli, async () => {
+    try {
+      return await service.importFromLocalPiCli();
+    } catch {
+      throw new Error('无法导入 Pi CLI 配置，请检查凭证文件和系统密钥环。');
+    }
+  });
   const unsubscribe = service.onChanged(() => {
     void (async () => {
       await resetModels();

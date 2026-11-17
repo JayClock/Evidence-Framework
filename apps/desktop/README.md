@@ -22,6 +22,61 @@ nx make desktop         # installers in apps/desktop/out/make
 
 `electron-forge start` needs a display; the test targets do not.
 
+## AI configuration (no Pi CLI required)
+
+Use the **AI** badge on the dashboard/editor, **Cmd/Ctrl+,**, or search for
+**配置大模型 / AI Settings** in the editor's **Cmd/Ctrl+K** command palette.
+Select a provider, enter its API key and model, optionally customize Base URL
+and thinking level, then **测试连通性** or **保存并生效**. Testing sends a small
+completion request (possibly billable), uses a temporary runtime and times out
+after 15 seconds; it does not save the draft key or change the active model.
+
+- Presets cover DeepSeek, Qwen/DashScope, Anthropic, OpenAI, Gemini, OpenRouter,
+  MiniMax, Kimi and custom OpenAI-compatible gateways. Built-in model metadata
+  and wire protocols come from the pinned Pi SDK. DashScope and custom model
+  IDs use an explicit OpenAI-completions provider with conservative text-only
+  metadata (32K context / 4K output); they do not discover server capabilities.
+- For Ollama, choose the custom endpoint, enter an installed model ID and
+  `http://localhost:11434/v1`. Loopback custom endpoints can be keyless;
+  remote endpoints require a key. Blank API-key input retains the stored key;
+  **清空输入** clears only the form, not the saved credential.
+- Without configuration, Copilot offers setup instead of sending. Story mode
+  uses **仅模型事实** offline; AI narration and What-If offer setup. Contract,
+  blueprint and rule-based text import remain available without a model.
+- Saving replaces the shared runtime, aborts/disposes old Copilot sessions and
+  resumes their persisted transcript on the next prompt. Canvas edits, undo
+  history and sensor state stay intact. Story AI projectors are invalidated;
+  already-running one-shot ingestion requests keep their captured runtime.
+- The app never automatically reads or writes `~/.pi/agent/auth.json` or
+  `models.json`. When an auth file exists, settings offers **一键导入现有配置**:
+  explicit, read-only credential import, no overwrite of existing desktop keys,
+  no execution of shell-backed API keys. CLI model definitions are not imported.
+  SDK environment credentials are supported without importing; DashScope accepts
+  `DASHSCOPE_API_KEY` / `QWEN_API_KEY`. Launch the app from the appropriate
+  environment when using this developer path.
+
+All desktop AI state lives beneath Electron's `app.getPath('userData')`:
+
+| Path                   | Contents                                                             |
+| ---------------------- | -------------------------------------------------------------------- |
+| `ai-auth.bin`          | OS `safeStorage` encrypted credentials; atomic writes with mode 0600 |
+| `ai-settings.json`     | Provider, model, Base URL and thinking level; **no API keys**        |
+| `ai-models.json`       | Optional app-private SDK model definitions, not the CLI file         |
+| `ai-models-store.json` | SDK catalog cache                                                    |
+| `ai-agent/`            | SDK settings/resources and persisted Copilot transcripts             |
+
+The renderer only receives public model/status data, never saved keys. Keys are
+password-masked, submitted via the restricted preload API and cleared from the
+form after save/provider change/close. Only send credentials to trusted Base
+URLs. On Linux, unavailable keyrings or the insecure `basic_text` backend **do
+not fall back to plaintext**: enable a system keyring or use environment
+credentials. Corrupt/undecryptable auth files fail closed and are preserved;
+there is no silent reset that could overwrite them.
+
+This intentionally tightens two contradictory examples in the original plan:
+CLI auth is explicit import rather than a hidden runtime fallback, and lack of
+OS encryption is an actionable error rather than plaintext persistence.
+
 ## Bundled instructions, no interpreter
 
 The sensors run in-process, so the installer works on a machine with no Python
@@ -150,7 +205,8 @@ AgentCopilot ──IPC: agent:prompt──▶ agentRuntime (main)
                      IPC: sensor:report ──▶ status bar + docked console
 ```
 
-- The renderer holds no model credentials and never runs Python; it asks the
+- The renderer never receives saved model credentials (only transient settings
+  form input) and never runs Python; it asks the
   main process and applies patches through its live session.
 - A patch is plain JSON (`ModelPatchCommand`), decoded into real commands by
   `evidence-model-core` so guards and `Cmd/Ctrl+Z` behave exactly as for a human
