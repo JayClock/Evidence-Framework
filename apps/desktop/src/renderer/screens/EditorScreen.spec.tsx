@@ -37,6 +37,59 @@ const readyCanvas = async () => {
 };
 
 describe('EditorScreen', () => {
+  it('defaults to journey and retains the selected object and camera across topology and ledger switches', async () => {
+    vi.stubGlobal('matchMedia', (query: string) => ({
+      matches: query.includes('prefers-reduced-motion'),
+      addListener: () => undefined,
+      removeListener: () => undefined,
+    }));
+    const api = readyProject();
+    const { container } = render(
+      <EditorScreen rootPath="/models/procurement" />,
+    );
+    await readyCanvas();
+    expect(
+      container.querySelector('[data-swimlane-kind="phase"]'),
+    ).not.toBeNull();
+    const world = () =>
+      container.querySelector('.react-flow__viewport') as HTMLElement;
+    fireEvent.keyDown(window, { key: '0', metaKey: true });
+    await waitFor(() => expect(world().style.transform).toContain('scale(1)'));
+    fireEvent.click(
+      container.querySelector('[data-node-id="evidence.request"]')!,
+    );
+    fireEvent.keyDown(window, { code: 'Digit2', altKey: true });
+    await waitFor(() =>
+      expect(
+        container.querySelector('[data-swimlane-kind="phase"]'),
+      ).toBeNull(),
+    );
+    expect(screen.getByRole('button', { name: /拓扑图/ })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    await waitFor(() =>
+      expect(
+        container.querySelector('[data-node-id="evidence.request"]'),
+      ).toHaveClass('ring-2'),
+    );
+    expect(world().style.transform).toContain('scale(1)');
+    fireEvent.keyDown(window, { code: 'Digit3', altKey: true });
+    await screen.findByLabelText('领域模型总台账');
+    fireEvent.keyDown(window, { code: 'Digit1', altKey: true });
+    await waitFor(() =>
+      expect(
+        container.querySelector('[data-swimlane-kind="phase"]'),
+      ).not.toBeNull(),
+    );
+    await waitFor(() => expect(world().style.transform).toContain('scale(1)'));
+    expect(
+      container.querySelector('[data-node-id="evidence.request"]'),
+    ).toHaveClass('ring-2');
+    expect(api.calls.save).toEqual([]);
+    vi.unstubAllGlobals();
+  });
+
   it('opens swimlanes and the workshop, then saves a scenario into the existing story pipeline', async () => {
     const api = readyProject();
     api.projects.save = vi.fn(api.projects.save);
@@ -51,7 +104,10 @@ describe('EditorScreen', () => {
       <EditorScreen rootPath="/models/procurement" />,
     );
     await readyCanvas();
-    fireEvent.click(screen.getByRole('button', { name: '权责泳道' }));
+    expect(screen.getByRole('button', { name: /业务旅程⌥1/ })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
     await waitFor(() =>
       expect(
         container.querySelector('[data-swimlane-kind="lane"]'),
@@ -318,7 +374,7 @@ describe('EditorScreen', () => {
     );
   });
 
-  it.each(['graph', 'split'] as const)(
+  it.each(['journey', 'split'] as const)(
     'contains canvas control layers below floating drawers in %s mode',
     async (mode) => {
       readyProject();
@@ -328,7 +384,7 @@ describe('EditorScreen', () => {
       await readyCanvas();
 
       if (mode === 'split') {
-        fireEvent.keyDown(window, { code: 'Digit3', altKey: true });
+        fireEvent.keyDown(window, { code: 'Digit4', altKey: true });
         await screen.findByLabelText('副视口');
       }
 
@@ -893,14 +949,14 @@ describe('EditorScreen dual-mode stage', () => {
     expect(screen.getAllByRole('button', { name: /拓扑图/ })).toHaveLength(1);
   });
 
-  it('opens the whole ledger with Alt+2 and returns to the graph with Alt+1', async () => {
+  it('opens the whole ledger with Alt+3 and returns to the journey with Alt+1', async () => {
     readyProject();
     const { container } = render(
       <EditorScreen rootPath="/models/procurement" />,
     );
     await readyCanvas();
 
-    fireEvent.keyDown(window, { code: 'Digit2', altKey: true });
+    fireEvent.keyDown(window, { code: 'Digit3', altKey: true });
 
     expect(await screen.findByLabelText('领域模型总台账')).toBeInTheDocument();
     expect(
@@ -943,7 +999,7 @@ describe('EditorScreen dual-mode stage', () => {
     );
     await readyCanvas();
 
-    fireEvent.keyDown(window, { code: 'Digit3', altKey: true });
+    fireEvent.keyDown(window, { code: 'Digit4', altKey: true });
 
     expect(await screen.findByLabelText('领域模型总台账')).toBeInTheDocument();
     expect(
@@ -987,7 +1043,7 @@ describe('EditorScreen dual-mode stage', () => {
     );
     await readyCanvas();
 
-    fireEvent.keyDown(window, { code: 'Digit3', altKey: true });
+    fireEvent.keyDown(window, { code: 'Digit4', altKey: true });
 
     expect(await screen.findByLabelText('副视口')).toBeInTheDocument();
     // The stage opens on the ledger, the projection the split always had.
@@ -1019,14 +1075,14 @@ describe('EditorScreen dual-mode stage', () => {
     ).not.toBeNull();
   });
 
-  it('opens the contract comparison with Alt+4 and flips its direction with Alt+S', async () => {
+  it('opens the contract comparison with Alt+5 and flips its direction with Alt+S', async () => {
     readyProject();
     const { container } = render(
       <EditorScreen rootPath="/models/procurement" />,
     );
     await readyCanvas();
 
-    fireEvent.keyDown(window, { code: 'Digit4', altKey: true });
+    fireEvent.keyDown(window, { code: 'Digit5', altKey: true });
 
     const stage = await screen.findByLabelText('副视口');
     expect(stage).toHaveAttribute('data-pane', 'openapi');
@@ -1056,7 +1112,7 @@ describe('EditorScreen dual-mode stage', () => {
       <EditorScreen rootPath="/models/procurement" />,
     );
     await readyCanvas();
-    fireEvent.keyDown(window, { code: 'Digit3', altKey: true });
+    fireEvent.keyDown(window, { code: 'Digit4', altKey: true });
     await screen.findByLabelText('领域模型总台账');
 
     // React Flow keeps the pan/zoom transform on its viewport element.
@@ -1080,7 +1136,7 @@ describe('EditorScreen dual-mode stage', () => {
       <EditorScreen rootPath="/models/procurement" />,
     );
     await readyCanvas();
-    fireEvent.keyDown(window, { code: 'Digit2', altKey: true });
+    fireEvent.keyDown(window, { code: 'Digit3', altKey: true });
     await screen.findByLabelText('领域模型总台账');
 
     fireEvent.click(
@@ -1092,7 +1148,7 @@ describe('EditorScreen dual-mode stage', () => {
         container.querySelector('[data-region="canvas-viewport"]'),
       ).not.toBeNull(),
     );
-    expect(screen.getByRole('button', { name: /拓扑图/ })).toHaveAttribute(
+    expect(screen.getByRole('button', { name: /业务旅程⌥1/ })).toHaveAttribute(
       'aria-pressed',
       'true',
     );

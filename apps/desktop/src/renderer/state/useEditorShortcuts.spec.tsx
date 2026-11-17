@@ -136,8 +136,8 @@ describe('useEditorShortcuts', () => {
       zoomToSelection: vi.fn(),
     });
 
-    fireEvent.keyDown(window, { code: 'Digit3', altKey: true });
     fireEvent.keyDown(window, { code: 'Digit4', altKey: true });
+    fireEvent.keyDown(window, { code: 'Digit5', altKey: true });
     fireEvent.keyDown(window, { code: 'KeyS', altKey: true });
     fireEvent.keyDown(window, { code: 'Digit2', shiftKey: true });
 

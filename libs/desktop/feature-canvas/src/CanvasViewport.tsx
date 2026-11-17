@@ -69,7 +69,13 @@ import {
 } from './useReactFlowAdapter';
 export type { CanvasViewMode } from '@evidence-poc/evidence-canvas-interaction';
 
+export interface CanvasViewportMemory {
+  current: { nodeId: string; zoom: number; scopeId: string | null } | null;
+}
+
 interface CanvasViewportProps {
+  /** App-owned transient camera, retained when a table/split remounts the canvas. */
+  viewportMemory?: CanvasViewportMemory;
   graph: DomainGraph;
   layout: DomainGraphLayout;
   document: DomainModelDocument;
@@ -136,6 +142,22 @@ const EDGE_TYPES = {
   pairLink: PairLinkEdge,
 } satisfies EdgeTypes;
 
+const nearestNodeId = (layout: DomainGraphLayout, x: number, y: number) => {
+  let nearest: string | undefined;
+  let distance = Infinity;
+  for (const node of layout.nodes) {
+    const next = Math.hypot(
+      node.worldBox.x + node.worldBox.width / 2 - x,
+      node.worldBox.y + node.worldBox.height / 2 - y,
+    );
+    if (next < distance) {
+      nearest = node.nodeId;
+      distance = next;
+    }
+  }
+  return nearest;
+};
+
 const reducedMotion = (): boolean =>
   globalThis.window?.matchMedia?.('(prefers-reduced-motion: reduce)')
     .matches === true;
@@ -191,6 +213,7 @@ const CanvasSurface = ({
   zoomCommand = null,
   hud,
   storyFocus = null,
+  viewportMemory,
   overlay = null,
   diagnostics,
   onOpenIssues,
@@ -206,12 +229,15 @@ const CanvasSurface = ({
     zoomOut,
     zoomTo,
     getZoom,
+    getViewport,
     viewportInitialized,
   } = useReactFlow<CanvasFlowNode, CanvasFlowEdge>();
   const { zoom } = useViewport();
   const viewportSized = useStore(
     (state) => state.width > 0 && state.height > 0,
   );
+  const viewportWidth = useStore((state) => state.width);
+  const viewportHeight = useStore((state) => state.height);
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
   const [hoveredEdgeId, setHoveredEdgeId] = useState<string | null>(null);
   const [hoveredContextId, setHoveredContextId] = useState<string | null>(null);
@@ -287,7 +313,11 @@ const CanvasSurface = ({
 
   // A scope change is a new stage: the fit follows it, and so do the hover
   // marks, because the object under the pointer may no longer be on screen.
-  const previousFitKey = useRef<string | null>(null);
+  const previousFit = useRef<{
+    key: string;
+    scopeId: string | null;
+    layout: DomainGraphLayout;
+  } | null>(null);
   useEffect(() => {
     if (
       !viewportInitialized ||
@@ -295,9 +325,49 @@ const CanvasSurface = ({
       (layout.nodes.length === 0 && layout.contextGroups.length === 0)
     )
       return;
-    const key = `${scope?.contextId ?? ''}:${viewMode}:${layout.swimlaneRegions ? 'swimlane' : 'topology'}`;
-    if (previousFitKey.current === key) return;
-    previousFitKey.current = key;
+    const scopeId = scope?.contextId ?? null;
+    const key = JSON.stringify([
+      scopeId,
+      viewMode,
+      Boolean(layout.swimlaneRegions),
+    ]);
+    const previous = previousFit.current;
+    previousFit.current = { key, scopeId, layout };
+    if (previous?.key === key) return;
+    if (!previous && viewportMemory?.current?.scopeId === scopeId) {
+      const remembered = selectedBox(layout, {
+        nodeId: selection.nodeId ?? viewportMemory.current.nodeId,
+        attributeName: null,
+      });
+      if (remembered) {
+        void setCenter(
+          remembered.x + remembered.width / 2,
+          remembered.y + remembered.height / 2,
+          { zoom: viewportMemory.current.zoom, duration: 0 },
+        );
+        return;
+      }
+    }
+    if (previous && previous.scopeId === scopeId) {
+      const viewport = getViewport();
+      const center = {
+        x: (viewportWidth / 2 - viewport.x) / viewport.zoom,
+        y: (viewportHeight / 2 - viewport.y) / viewport.zoom,
+      };
+      const nearest = nearestNodeId(previous.layout, center.x, center.y);
+      const anchorId = selection.nodeId ?? hoveredNodeId ?? nearest;
+      const anchor = anchorId
+        ? selectedBox(layout, { nodeId: anchorId, attributeName: null })
+        : null;
+      if (anchor) {
+        void setCenter(
+          anchor.x + anchor.width / 2,
+          anchor.y + anchor.height / 2,
+          { zoom: viewport.zoom, duration: reducedMotion() ? 0 : 180 },
+        );
+        return;
+      }
+    }
     fitToContent();
     setHoveredNodeId(null);
     setHoveredEdgeId(null);
@@ -309,6 +379,13 @@ const CanvasSurface = ({
     viewMode,
     viewportInitialized,
     viewportSized,
+    getViewport,
+    setCenter,
+    selection.nodeId,
+    hoveredNodeId,
+    viewportWidth,
+    viewportHeight,
+    viewportMemory,
   ]);
 
   const lastZoomToken = useRef<number | null>(null);
@@ -463,6 +540,22 @@ const CanvasSurface = ({
           zoomOnPinch
           zoomOnDoubleClick={false}
           preventScrolling
+          onMoveEnd={(_, viewport) => {
+            if (!viewportMemory) return;
+            const nodeId =
+              selection.nodeId ??
+              nearestNodeId(
+                layout,
+                (viewportWidth / 2 - viewport.x) / viewport.zoom,
+                (viewportHeight / 2 - viewport.y) / viewport.zoom,
+              );
+            if (nodeId)
+              viewportMemory.current = {
+                nodeId,
+                zoom: viewport.zoom,
+                scopeId: scope?.contextId ?? null,
+              };
+          }}
           onPaneClick={onClearSelection}
           onNodeMouseEnter={(_, node) => {
             if (node.type === 'contextGroup') setHoveredContextId(node.id);

@@ -20,7 +20,14 @@ describe('ViewModeSegmentedControl', () => {
   it('reports the surface the modeler picked', () => {
     const onChange = vi.fn();
 
-    render(<ViewModeSegmentedControl mode="graph" onChange={onChange} />);
+    render(<ViewModeSegmentedControl mode="journey" onChange={onChange} />);
+    expect(screen.getByRole('button', { name: /业务旅程/ })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    expect(screen.getByRole('button', { name: /拓扑图/ })).toHaveTextContent(
+      '⌥2',
+    );
     fireEvent.click(screen.getByRole('button', { name: /分屏/ }));
 
     expect(onChange).toHaveBeenCalledWith('split');

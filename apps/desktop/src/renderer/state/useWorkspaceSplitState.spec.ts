@@ -33,7 +33,7 @@ describe('useWorkspaceSplitState', () => {
     act(() => result.current.split.openSplit('cel'));
     act(() => result.current.split.closeSplit());
 
-    expect(result.current.view.mode).toBe('graph');
+    expect(result.current.view.mode).toBe('journey');
     expect(result.current.split.isSplit).toBe(false);
     // The pane survives closing, so reopening lands where the modeler left.
     expect(result.current.split.activePane).toBe('cel');
@@ -53,12 +53,12 @@ describe('useWorkspaceSplitState', () => {
     expect(result.current.split.activePane).toBe('drift');
   });
 
-  it('follows Alt+3 from the view-mode chords', () => {
+  it('follows Alt+4 from the view-mode chords', () => {
     const { result } = setup();
 
     act(() => {
       window.dispatchEvent(
-        new KeyboardEvent('keydown', { code: 'Digit3', altKey: true }),
+        new KeyboardEvent('keydown', { code: 'Digit4', altKey: true }),
       );
     });
 

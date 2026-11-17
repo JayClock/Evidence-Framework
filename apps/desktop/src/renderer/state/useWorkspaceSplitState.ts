@@ -82,13 +82,13 @@ export const useWorkspaceSplitState = (
   );
 
   const closeSplit = useCallback(() => {
-    setMode('graph');
+    setMode('journey');
   }, [setMode]);
 
   const toggleSplit = useCallback(
     (pane?: SplitPaneMode) => {
       if (mode === 'split') {
-        setMode('graph');
+        setMode('journey');
         return;
       }
 

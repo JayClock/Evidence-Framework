@@ -9,10 +9,7 @@ import {
 
 import type { ImperativePanelHandle } from 'react-resizable-panels';
 
-import {
-  computeContextScope,
-  type CanvasLayoutMode,
-} from '@evidence-poc/evidence-canvas-interaction';
+import { computeContextScope } from '@evidence-poc/evidence-canvas-interaction';
 import type { SensorIssue } from '@evidence-poc/evidence-agent/browser';
 import {
   ENTITY_CATEGORY_LABELS,
@@ -60,6 +57,7 @@ import {
   LiveApiProvider,
   createDiagnosticIndex,
   type CanvasViewMode,
+  type CanvasViewportMemory,
   type ZoomDirection,
 } from '@evidence-poc/desktop-feature-canvas';
 import { RightInspector } from '@evidence-poc/desktop-feature-inspector';
@@ -185,9 +183,11 @@ const EditorWorkspace = ({
 }: EditorWorkspaceProps) => {
   const ai = useAiConfiguration();
   const [scenarioOpen, setScenarioOpen] = useState(false);
-  const [layoutMode, setLayoutMode] = useState<CanvasLayoutMode>('topology');
-  const [viewMode, setViewMode] = useState<CanvasViewMode>('simplified');
+  const [viewMode, setViewMode] = useState<CanvasViewMode>('standard');
+  const canvasMemory = useRef<CanvasViewportMemory['current']>(null);
   const workspaceView = useWorkspaceViewMode();
+  const layoutMode =
+    workspaceView.mode === 'topology' ? 'topology' : 'swimlane';
   // The split stage shares the view mode: "分屏" is one more mode, not a second
   // boolean that could disagree with the segmented control.
   const split = useWorkspaceSplitState(
@@ -344,7 +344,7 @@ const EditorWorkspace = ({
     const previous = previousWorkspaceView.current;
     previousWorkspaceView.current = workspaceView.mode;
 
-    if (previous === 'graph' || workspaceView.mode === 'table') return;
+    if (previous !== 'table' || workspaceView.mode === 'table') return;
 
     const nodeId = state.selection.nodeId;
     if (nodeId === null) return;
@@ -674,7 +674,7 @@ const EditorWorkspace = ({
       focusNodeId={state.selection.nodeId}
       onRevealOnGraph={(nodeId) => {
         focusNode(nodeId);
-        workspaceView.setMode('graph');
+        workspaceView.setMode('journey');
       }}
     />
   );
@@ -702,6 +702,7 @@ const EditorWorkspace = ({
         selection={state.selection}
         focusRequest={focusRequest}
         zoomCommand={zoomCommand}
+        viewportMemory={canvasMemory}
         storyFocus={story.canvasFocus}
         hud={(controls) => (
           <CanvasFloatingHud
@@ -709,8 +710,6 @@ const EditorWorkspace = ({
             viewMode={workspaceView.mode}
             onViewModeChange={workspaceView.setMode}
             density={viewMode}
-            layoutMode={layoutMode}
-            onLayoutModeChange={setLayoutMode}
             onOpenScenarios={() => setScenarioOpen(true)}
             onDensityChange={setViewMode}
             hasSelection={state.selection.nodeId !== null}
@@ -790,7 +789,7 @@ const EditorWorkspace = ({
   // One model, four projections: the graph alone, one document alone, or the
   // graph beside whichever document is being compared against it.
   const canvasStage =
-    workspaceView.mode === 'graph' ? (
+    workspaceView.mode === 'journey' || workspaceView.mode === 'topology' ? (
       graphStage
     ) : workspaceView.mode === 'table' ? (
       ledgerStage
@@ -843,11 +842,11 @@ const EditorWorkspace = ({
           >
             <button
               type="button"
-              aria-pressed={!storyActive}
-              onClick={() => workspaceView.setMode('graph')}
+              aria-pressed={workspaceView.mode === 'journey'}
+              onClick={() => workspaceView.setMode('journey')}
               className="rounded border border-evidence-line px-2 py-1 aria-pressed:bg-evidence-active"
             >
-              📐 拓扑视图
+              🧭 业务旅程
             </button>
             <button
               type="button"
@@ -951,7 +950,7 @@ const EditorWorkspace = ({
                     model={state.document}
                     selectedNodeId={state.selection.nodeId}
                     onFocusEntity={(id) => {
-                      workspaceView.setMode('graph');
+                      workspaceView.setMode('journey');
                       focusNode(id);
                     }}
                   />

@@ -21,10 +21,7 @@ import {
   type WorkspaceViewMode,
 } from '@evidence-poc/desktop-ui-kit';
 
-import type {
-  CanvasLayoutMode,
-  CanvasViewMode,
-} from '@evidence-poc/evidence-canvas-interaction';
+import type { CanvasViewMode } from '@evidence-poc/evidence-canvas-interaction';
 import {
   SPLIT_PANES,
   SPLIT_PANE_LABELS,
@@ -38,8 +35,6 @@ export interface CanvasFloatingHudProps extends CanvasHudControls {
   /** Card density inside the graph. */
   density: CanvasViewMode;
   onDensityChange: (mode: CanvasViewMode) => void;
-  layoutMode?: CanvasLayoutMode;
-  onLayoutModeChange?: (mode: CanvasLayoutMode) => void;
   onOpenScenarios?: () => void;
   /** True while an object is selected, so "pointer" can mean "deselect". */
   hasSelection: boolean;
@@ -83,8 +78,6 @@ export const CanvasFloatingHud = ({
   onViewModeChange,
   density,
   onDensityChange,
-  layoutMode = 'topology',
-  onLayoutModeChange,
   onOpenScenarios,
   hasSelection,
   onClearSelection,
@@ -144,21 +137,6 @@ export const CanvasFloatingHud = ({
 
     <span aria-hidden="true" className="mx-1 h-4 w-px bg-evidence-line" />
 
-    {onLayoutModeChange ? (
-      <button
-        type="button"
-        aria-label="权责泳道"
-        aria-pressed={layoutMode === 'swimlane'}
-        className="rounded border border-evidence-line px-2 py-1 text-[10px]"
-        onClick={() =>
-          onLayoutModeChange(
-            layoutMode === 'swimlane' ? 'topology' : 'swimlane',
-          )
-        }
-      >
-        {layoutMode === 'swimlane' ? '权责泳道' : '拓扑布局'}
-      </button>
-    ) : null}
     {onOpenScenarios ? (
       <button
         type="button"
@@ -179,7 +157,7 @@ export const CanvasFloatingHud = ({
         <button
           type="button"
           aria-label="选择分屏对照"
-          title="选择分屏对照（⌥3 图+表、⌥4 图+码）"
+          title="选择分屏对照（⌥4 旅程+表、⌥5 旅程+码）"
           className={cn(
             'flex h-6 items-center gap-1 rounded border px-1.5 text-[10px] transition-colors',
             viewMode === 'split'
@@ -210,7 +188,7 @@ export const CanvasFloatingHud = ({
           >
             <span>{SPLIT_PANE_LABELS[pane]}</span>
             <span className="text-[9px] text-evidence-muted">
-              {pane === 'ledger' ? '⌥3' : pane === 'openapi' ? '⌥4' : ''}
+              {pane === 'ledger' ? '⌥4' : pane === 'openapi' ? '⌥5' : ''}
             </span>
           </button>
         ))}

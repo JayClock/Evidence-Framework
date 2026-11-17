@@ -2,6 +2,7 @@ export {
   CanvasViewport,
   type CanvasGridStyle,
   type CanvasHudControls,
+  type CanvasViewportMemory,
   type ZoomDirection,
 } from './CanvasViewport.js';
 export type { CanvasStoryFocus } from './storyFocus.js';

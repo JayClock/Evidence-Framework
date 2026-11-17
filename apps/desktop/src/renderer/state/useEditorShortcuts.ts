@@ -133,9 +133,9 @@ export const useEditorShortcuts = (handlers: ShortcutHandlers): void => {
               ? handlers.toggleProblems
               : event.code === 'KeyS'
                 ? handlers.rotateSplit
-                : event.code === 'Digit3'
+                : event.code === 'Digit4'
                   ? handlers.openLedgerSplit
-                  : event.code === 'Digit4'
+                  : event.code === 'Digit5'
                     ? handlers.openContractSplit
                     : undefined;
 

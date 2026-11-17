@@ -37,19 +37,21 @@ const isEditable = (target: EventTarget | null): boolean => {
  *
  * The mode is view state, not document state: it never enters the model, the
  * undo history or a saved file, so flipping to the ledger and back costs the
- * modeler nothing. `V` flips, `Alt+1/2/3` names a mode outright; a modifier key
+ * modeler nothing. `V` flips, `Alt+1/2/3/4` names a mode outright; a modifier key
  * combination is allowed while typing, a bare letter is not.
  *
  * The digits are read from `event.code` because macOS turns `Alt+2` into `™`:
  * the letter a layout produces is not what the chord means.
  */
 export const useWorkspaceViewMode = (
-  initialMode: WorkspaceViewMode = 'graph',
+  initialMode: WorkspaceViewMode = 'journey',
 ): WorkspaceViewModeController => {
   const [mode, setMode] = useState<WorkspaceViewMode>(initialMode);
 
   const toggleViewMode = useCallback(() => {
-    setMode((current) => (current === 'graph' ? 'table' : 'graph'));
+    setMode((current) =>
+      current === 'journey' || current === 'topology' ? 'table' : 'journey',
+    );
   }, []);
 
   useEffect(() => {
@@ -62,15 +64,17 @@ export const useWorkspaceViewMode = (
 
       // `Mod+1..4` belongs to the activity rail, so the view modes sit one
       // modifier further out and never fight it for a digit.
-      if (event.altKey) {
+      if (event.altKey && !event.metaKey && !event.ctrlKey && !event.shiftKey) {
         const target =
           event.code === 'Digit1'
-            ? 'graph'
+            ? 'journey'
             : event.code === 'Digit2'
-              ? 'table'
+              ? 'topology'
               : event.code === 'Digit3'
-                ? 'split'
-                : undefined;
+                ? 'table'
+                : event.code === 'Digit4'
+                  ? 'split'
+                  : undefined;
 
         if (target !== undefined) {
           event.preventDefault();

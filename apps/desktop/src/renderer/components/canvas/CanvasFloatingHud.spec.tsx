@@ -16,7 +16,6 @@ const setup = (
   const handlers = {
     onViewModeChange: vi.fn(),
     onDensityChange: vi.fn(),
-    onLayoutModeChange: vi.fn(),
     onClearSelection: vi.fn(),
     zoomIn: vi.fn(),
     zoomOut: vi.fn(),
@@ -31,7 +30,7 @@ const setup = (
   render(
     <CanvasFloatingHud
       {...handlers}
-      viewMode={overrides.viewMode ?? 'graph'}
+      viewMode={overrides.viewMode ?? 'journey'}
       density={overrides.density ?? 'standard'}
       hasSelection={overrides.hasSelection ?? false}
       zoom={overrides.zoom ?? 1}
@@ -46,12 +45,15 @@ const setup = (
 };
 
 describe('CanvasFloatingHud', () => {
-  it('switches layout independently of card density and workspace surface', () => {
+  it('promotes journey and keeps the topology fallback separate from density', () => {
     const handlers = setup();
-    fireEvent.click(screen.getByRole('button', { name: '权责泳道' }));
-    expect(handlers.onLayoutModeChange).toHaveBeenCalledWith('swimlane');
+    expect(screen.getByRole('button', { name: /业务旅程/ })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    fireEvent.click(screen.getByRole('button', { name: /拓扑图/ }));
+    expect(handlers.onViewModeChange).toHaveBeenCalledWith('topology');
     expect(handlers.onDensityChange).not.toHaveBeenCalled();
-    expect(handlers.onViewModeChange).not.toHaveBeenCalled();
   });
   it('names the stage the modeler is looking at', () => {
     setup({ viewMode: 'table' });
@@ -75,7 +77,7 @@ describe('CanvasFloatingHud', () => {
     );
 
     // The segmented control prints its chord beside the label.
-    fireEvent.click(screen.getByRole('button', { name: /分屏⌥3/ }));
+    fireEvent.click(screen.getByRole('button', { name: /分屏⌥4/ }));
     expect(handlers.onViewModeChange).toHaveBeenCalledWith('split');
 
     fireEvent.click(screen.getByRole('button', { name: '简化图' }));

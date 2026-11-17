@@ -14,7 +14,7 @@ const capabilities = (
 ): CommandCapabilities => ({
   canUndo: true,
   canRedo: false,
-  viewMode: 'graph',
+  viewMode: 'topology',
   hasSelection: false,
   ...overrides,
 });

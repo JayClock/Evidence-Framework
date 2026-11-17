@@ -7,30 +7,36 @@ const MODES: readonly {
   shortcut: string;
 }[] = [
   {
-    id: 'graph',
-    label: '拓扑图',
-    hint: '按因果与泳道阅读模型（V / ⌥1）',
+    id: 'journey',
+    label: '业务旅程',
+    hint: '按业务阶段与权责泳道阅读模型（V / ⌥1）',
     shortcut: '⌥1',
+  },
+  {
+    id: 'topology',
+    label: '拓扑图',
+    hint: 'ELK 因果拓扑与技术分析（⌥2）',
+    shortcut: '⌥2',
   },
   {
     id: 'table',
     label: '总台账',
-    hint: '逐字段阅读与编辑整个模型（⌥2）',
-    shortcut: '⌥2',
+    hint: '逐字段阅读与编辑整个模型（⌥3）',
+    shortcut: '⌥3',
   },
   {
     id: 'split',
     label: '分屏',
-    hint: '左边看图、右边改字段（⌥3）',
-    shortcut: '⌥3',
+    hint: '左边看旅程、右边读台账或规则（⌥4）',
+    shortcut: '⌥4',
   },
 ];
 
 /**
  * Names the surface the centre stage shows.
  *
- * It is a segmented control rather than a menu because there are exactly three
- * states and the modeler flips between them constantly; the shortcut is printed
+ * It is a segmented control rather than a menu because these four
+ * states are used constantly; the shortcut is printed
  * on the control itself so the keyboard is discoverable without a help screen.
  */
 export const ViewModeSegmentedControl = ({
@@ -60,9 +66,7 @@ export const ViewModeSegmentedControl = ({
         ].join(' ')}
       >
         <span>{item.label}</span>
-        <kbd className="text-[9px] text-evidence-muted/80">
-          {item.shortcut}
-        </kbd>
+        <kbd className="text-[9px] text-evidence-muted/80">{item.shortcut}</kbd>
       </button>
     ))}
   </div>
