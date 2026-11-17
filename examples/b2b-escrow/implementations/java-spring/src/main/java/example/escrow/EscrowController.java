@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,16 +27,29 @@ public class EscrowController {
       throw new IllegalArgumentException("Unknown fault");
   }
 
-  private EscrowService.Definition definition(String lane, String name, String action) {
+  private static final Map<String, String> LANES =
+      EscrowService.DEFINITIONS.entrySet().stream()
+          .collect(
+              Collectors.toUnmodifiableMap(
+                  e -> EscrowService.collectionOf(e.getValue().name()), Map.Entry::getKey));
+
+  private record Route(String lane, EscrowService.Definition definition, String action) {}
+
+  private Route route(String collection, String actionCollection) {
+    String lane = LANES.get(collection);
+    if (lane == null) throw new BusinessError(404, "NOT_FOUND", "Unknown route");
     var d = EscrowService.DEFINITIONS.get(lane);
-    if (d == null
-        || !d.name().equals(name)
-        || action != null
-            && (!d.actions().containsKey(action)
-                || env.getProperty("escrow.mode", "v2").equals("v1")
-                    && action.contains("milestone")))
-      throw new BusinessError(404, "NOT_FOUND", "Unknown route");
-    return d;
+    String action = null;
+    if (actionCollection != null) {
+      action =
+          d.actions().keySet().stream()
+              .filter(a -> EscrowService.collectionOf(a).equals(actionCollection))
+              .findFirst()
+              .orElseThrow(() -> new BusinessError(404, "NOT_FOUND", "Unknown route"));
+      if (env.getProperty("escrow.mode", "v2").equals("v1") && action.contains("milestone"))
+        throw new BusinessError(404, "NOT_FOUND", "Unknown route");
+    }
+    return new Route(lane, d, action);
   }
 
   private Instant authorize(String lane, List<String> roles) {
@@ -57,79 +71,127 @@ public class EscrowController {
     }
   }
 
-  private ResponseEntity<Object> response(EscrowService.Fact fact, int status) {
+  private Object representation(EscrowService.Fact fact) {
     Map<String, Object> d = new LinkedHashMap<>(fact.data());
-    if (env.getProperty("escrow.fault", "none").equals("extra-field"))
-      d.put("unmodeled", true);
+    if (env.getProperty("escrow.fault", "none").equals("extra-field")) d.put("unmodeled", true);
     if (env.getProperty("escrow.fault", "none").equals("precision"))
       // Test-only bug: lose exact integer precision at the serialization boundary.
-      d.replaceAll((key, value) -> value instanceof BigInteger n
-          ? new BigDecimal(n.doubleValue()).toBigInteger() : value);
+      d.replaceAll(
+          (key, value) ->
+              value instanceof BigInteger n
+                  ? new BigDecimal(n.doubleValue()).toBigInteger()
+                  : value);
     d.put("_links", Map.of("self", Map.of("href", fact.href())));
+    return Money.wire(d);
+  }
+
+  private ResponseEntity<Object> response(EscrowService.Fact fact, int status) {
     var builder = ResponseEntity.status(status).header("Content-Type", "application/hal+json");
     if (status == 201) builder.header("Location", fact.href());
-    return builder.body(Money.wire(d));
+    return builder.body(representation(fact));
   }
 
-  @PostMapping("/{lane}/{name}")
-  public ResponseEntity<Object> sign(
-      @PathVariable String lane, @PathVariable String name, HttpServletRequest request)
+  private ResponseEntity<Object> collection(
+      String href, String name, List<EscrowService.Fact> facts) {
+    return ResponseEntity.ok()
+        .header("Content-Type", "application/hal+json")
+        .body(
+            Map.of(
+                "_links", Map.of("self", Map.of("href", href)),
+                "_embedded", Map.of(name, facts.stream().map(this::representation).toList()),
+                "total", facts.size()));
+  }
+
+  @GetMapping("/{collection}")
+  public ResponseEntity<Object> listContracts(@PathVariable String collection) {
+    var r = route(collection, null);
+    authorize(r.lane(), r.definition().roles());
+    return collection(
+        "/" + collection, collection, service.list("contract." + r.definition().name(), null));
+  }
+
+  @PostMapping("/{collection}")
+  public ResponseEntity<Object> sign(@PathVariable String collection, HttpServletRequest request)
       throws IOException {
-    var d = definition(lane, name, null);
-    Instant now = authorize(lane, d.roles());
-    return response(service.sign(lane, body(request), now), 201);
+    var r = route(collection, null);
+    Instant now = authorize(r.lane(), r.definition().roles());
+    return response(service.sign(r.lane(), body(request), now), 201);
   }
 
-  @GetMapping("/{lane}/{name}/{contractId}")
+  @GetMapping("/{collection}/{contractId}")
   public ResponseEntity<Object> get(
-      @PathVariable String lane, @PathVariable String name, @PathVariable String contractId) {
-    var d = definition(lane, name, null);
-    authorize(lane, d.roles());
-    return response(service.get(contractId, "contract." + d.name()), 200);
+      @PathVariable String collection, @PathVariable String contractId) {
+    var r = route(collection, null);
+    authorize(r.lane(), r.definition().roles());
+    return response(service.get(contractId, "contract." + r.definition().name()), 200);
   }
 
-  @GetMapping("/{lane}/{name}/{contractId}/{action}")
-  public ResponseEntity<Object> ledger(
-      @PathVariable String lane,
-      @PathVariable String name,
+  @GetMapping("/{collection}/{contractId}/{actionCollection}")
+  public ResponseEntity<Object> listRequests(
+      @PathVariable String collection,
       @PathVariable String contractId,
-      @PathVariable String action) {
-    var d = definition(lane, name, action);
-    authorize(lane, List.of(d.actions().get(action).getFirst()));
-    return response(service.ledger(lane, contractId, action), 200);
+      @PathVariable String actionCollection) {
+    var r = route(collection, actionCollection);
+    authorize(r.lane(), List.of(r.definition().actions().get(r.action()).getFirst()));
+    var contract = service.get(contractId, "contract." + r.definition().name());
+    return collection(
+        contract.href() + "/" + actionCollection,
+        actionCollection,
+        service.list("request." + r.action(), contractId));
   }
 
-  @PostMapping("/{lane}/{name}/{contractId}/{action}/request")
+  @GetMapping("/{collection}/{contractId}/{actionCollection}/{requestId}")
+  public ResponseEntity<Object> getRequest(
+      @PathVariable String collection,
+      @PathVariable String contractId,
+      @PathVariable String actionCollection,
+      @PathVariable String requestId) {
+    var r = route(collection, actionCollection);
+    authorize(r.lane(), List.of(r.definition().actions().get(r.action()).getFirst()));
+    return response(service.requestFact(r.lane(), contractId, r.action(), requestId), 200);
+  }
+
+  @GetMapping("/{collection}/{contractId}/{actionCollection}/{requestId}/confirmation")
+  public ResponseEntity<Object> getConfirmation(
+      @PathVariable String collection,
+      @PathVariable String contractId,
+      @PathVariable String actionCollection,
+      @PathVariable String requestId) {
+    var r = route(collection, actionCollection);
+    authorize(r.lane(), List.of(r.definition().actions().get(r.action()).get(1)));
+    service.requestFact(r.lane(), contractId, r.action(), requestId);
+    return response(service.confirmation(requestId), 200);
+  }
+
+  @PostMapping("/{collection}/{contractId}/{actionCollection}")
   public ResponseEntity<Object> request(
-      @PathVariable String lane,
-      @PathVariable String name,
+      @PathVariable String collection,
       @PathVariable String contractId,
-      @PathVariable String action,
+      @PathVariable String actionCollection,
       HttpServletRequest request)
       throws IOException {
-    var d = definition(lane, name, action);
-    Instant now = authorize(lane, List.of(d.actions().get(action).getFirst()));
-    return response(service.request(lane, action, contractId, body(request), now), 201);
+    var r = route(collection, actionCollection);
+    Instant now = authorize(r.lane(), List.of(r.definition().actions().get(r.action()).getFirst()));
+    return response(service.request(r.lane(), r.action(), contractId, body(request), now), 201);
   }
 
-  @PostMapping("/{lane}/{name}/{contractId}/{action}/request/{requestId}/confirmation")
+  @PostMapping("/{collection}/{contractId}/{actionCollection}/{requestId}/confirmation")
   public ResponseEntity<Object> confirm(
-      @PathVariable String lane,
-      @PathVariable String name,
+      @PathVariable String collection,
       @PathVariable String contractId,
-      @PathVariable String action,
+      @PathVariable String actionCollection,
       @PathVariable String requestId,
       HttpServletRequest request)
       throws IOException {
-    var d = definition(lane, name, action);
-    Instant now = authorize(lane, List.of(d.actions().get(action).get(1)));
+    var r = route(collection, actionCollection);
+    Instant now = authorize(r.lane(), List.of(r.definition().actions().get(r.action()).get(1)));
     Map<String, Object> input = body(request);
     if (env.getProperty("escrow.fault", "none").equals("accept-derived")
-        && Set.of("release", "milestone-release").contains(action)
+        && Set.of("release", "milestone-release").contains(r.action())
         && input.containsKey("payout_minor"))
       // Test-only bug: trust caller data, without committing a confirmation.
       return ResponseEntity.status(201).body(input);
-    return response(service.confirm(lane, action, contractId, requestId, input, now), 201);
+    return response(service.confirm(r.lane(), r.action(), contractId, requestId, input, now), 201);
   }
 
   @ExceptionHandler(BusinessError.class)

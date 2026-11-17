@@ -3,7 +3,9 @@ package example.escrow;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.net.URI;
 import java.util.*;
 import java.util.concurrent.*;
 import org.junit.jupiter.api.Test;
@@ -46,7 +48,7 @@ class HttpTest {
 
   MvcResult call(String method, String path, String role, String clock, Object body)
       throws Exception {
-    var r = method.equals("GET") ? get(path) : post(path);
+    var r = method.equals("GET") ? get(URI.create(path)) : post(URI.create(path));
     r.contentType("application/json");
     if (role != null) r.header("x-evidence-role", role);
     if (clock != null) r.header("x-evidence-asof", clock);
@@ -54,43 +56,49 @@ class HttpTest {
     return mvc.perform(r).andReturn();
   }
 
-  void postOk(String path, String role, Object body) throws Exception {
+  JsonNode postOk(String path, String role, Object body) throws Exception {
     var r = call("POST", path, role, WHEN, body);
     assertEquals(201, r.getResponse().getStatus(), r.getResponse().getContentAsString());
     assertEquals("application/hal+json", r.getResponse().getContentType());
-    assertNotNull(r.getResponse().getHeader("Location"));
+    var location = r.getResponse().getHeader("Location");
+    assertNotNull(location);
+    var data = json.readTree(r.getResponse().getContentAsString());
+    assertEquals(location, data.path("_links").path("self").path("href").asText());
+    var read = call("GET", location, role, WHEN, null).getResponse();
+    assertEquals(200, read.getStatus(), read.getContentAsString());
+    assertEquals(data, json.readTree(read.getContentAsString()));
+    return data;
   }
 
   void order(String id) throws Exception {
-    postOk("/procurement/agreement", "role.procurement-buyer", terms(id));
-    String root = "/procurement/agreement/" + id;
-    postOk(root + "/order/request", "role.procurement-buyer", Map.of("id", id + "-request"));
+    postOk("/agreements", "role.procurement-buyer", terms(id));
+    String root = "/agreements/" + id;
+    postOk(root + "/orders", "role.procurement-buyer", Map.of("id", id + "-request"));
     postOk(
-        root + "/order/request/" + id + "-request/confirmation",
+        root + "/orders/" + id + "-request/confirmation",
         "role.procurement-seller",
         Map.of("id", id + "-order"));
-    postOk(root + "/commitment/request", "role.procurement-seller", Map.of("id", id + "-commit"));
+    postOk(root + "/commitments", "role.procurement-seller", Map.of("id", id + "-commit"));
     postOk(
-        root + "/commitment/request/" + id + "-commit/confirmation",
+        root + "/commitments/" + id + "-commit/confirmation",
         "role.procurement-buyer",
         Map.of("id", id + "-committed", "acknowledged", true));
   }
 
   void deposit(String id) throws Exception {
     postOk(
-        "/escrow/escrow",
+        "/escrows",
         "role.escrow-buyer",
         Map.of("id", id + "-escrow", "order_confirmation_id", id + "-order"));
-    String root = "/escrow/escrow/" + id + "-escrow";
-    postOk(root + "/deposit-lock/request", "role.escrow-buyer", Map.of("id", id + "-lock"));
+    String root = "/escrows/" + id + "-escrow";
+    postOk(root + "/deposit-locks", "role.escrow-buyer", Map.of("id", id + "-lock"));
     postOk(
-        root + "/deposit-lock/request/" + id + "-lock/confirmation",
+        root + "/deposit-locks/" + id + "-lock/confirmation",
         "role.escrow-escrow",
         Map.of("id", id + "-deposit"));
+    postOk(root + "/custody-statements", "role.escrow-escrow", Map.of("id", id + "-statement"));
     postOk(
-        root + "/custody-statement/request", "role.escrow-escrow", Map.of("id", id + "-statement"));
-    postOk(
-        root + "/custody-statement/request/" + id + "-statement/confirmation",
+        root + "/custody-statements/" + id + "-statement/confirmation",
         "role.escrow-buyer",
         Map.of("id", id + "-custody", "acknowledged", true));
   }
@@ -98,15 +106,12 @@ class HttpTest {
   @Test
   void identityStrictInputGetAndExpiry() throws Exception {
     assertEquals(
-        401,
-        call("POST", "/procurement/agreement", null, WHEN, terms("security"))
-            .getResponse()
-            .getStatus());
+        401, call("POST", "/agreements", null, WHEN, terms("security")).getResponse().getStatus());
     assertEquals(
         400,
         call(
                 "POST",
-                "/procurement/agreement",
+                "/agreements",
                 "role.procurement-buyer",
                 "2026-02-30T00:00:00Z",
                 terms("security"))
@@ -114,14 +119,14 @@ class HttpTest {
             .getStatus());
     assertEquals(
         403,
-        call("POST", "/procurement/agreement", "role.escrow-buyer", WHEN, terms("security"))
+        call("POST", "/agreements", "role.escrow-buyer", WHEN, terms("security"))
             .getResponse()
             .getStatus());
     var body = terms("security");
     body.put("signed_at", WHEN);
     assertEquals(
         422,
-        call("POST", "/procurement/agreement", "role.procurement-buyer", WHEN, body)
+        call("POST", "/agreements", "role.procurement-buyer", WHEN, body)
             .getResponse()
             .getStatus());
     for (Object invalid : List.of(true, 9007199254740992L, "9223372036854775808", 0)) {
@@ -129,40 +134,37 @@ class HttpTest {
       body.put("quantity", invalid);
       assertEquals(
           422,
-          call("POST", "/procurement/agreement", "role.procurement-buyer", WHEN, body)
+          call("POST", "/agreements", "role.procurement-buyer", WHEN, body)
               .getResponse()
               .getStatus());
     }
-    postOk("/procurement/agreement", "role.procurement-buyer", terms("security"));
+    postOk("/agreements", "role.procurement-buyer", terms("security"));
     assertEquals(
         200,
-        call("GET", "/procurement/agreement/security", "role.procurement-seller", WHEN, null)
+        call("GET", "/agreements/security", "role.procurement-seller", WHEN, null)
             .getResponse()
             .getStatus());
     assertEquals(
         409,
-        call("POST", "/procurement/agreement", "role.procurement-buyer", WHEN, terms("security"))
+        call("POST", "/agreements", "role.procurement-buyer", WHEN, terms("security"))
             .getResponse()
             .getStatus());
     assertEquals(
         422,
         call(
                 "POST",
-                "/procurement/agreement/security/order/request",
+                "/agreements/security/orders",
                 "role.procurement-buyer",
                 "2026-05-31T00:00:00Z",
                 Map.of("id", "early"))
             .getResponse()
             .getStatus());
-    postOk(
-        "/procurement/agreement/security/order/request",
-        "role.procurement-buyer",
-        Map.of("id", "expiry"));
+    postOk("/agreements/security/orders", "role.procurement-buyer", Map.of("id", "expiry"));
     assertEquals(
         422,
         call(
                 "POST",
-                "/procurement/agreement/security/order/request/expiry/confirmation",
+                "/agreements/security/orders/expiry/confirmation",
                 "role.procurement-seller",
                 "2026-06-03T00:00:01Z",
                 Map.of("id", "expired"))
@@ -180,12 +182,7 @@ class HttpTest {
             () -> {
               String clock = "2026-06-01T00:00:%02dZ".formatted(n);
               var r =
-                  call(
-                      "POST",
-                      "/procurement/agreement",
-                      "role.procurement-buyer",
-                      clock,
-                      terms("clock-" + n));
+                  call("POST", "/agreements", "role.procurement-buyer", clock, terms("clock-" + n));
               assertEquals(201, r.getResponse().getStatus());
               assertEquals(
                   clock,
@@ -215,24 +212,24 @@ class HttpTest {
                 "b-deposit"));
     assertEquals(
         422,
-        call("POST", "/fulfillment/fulfillment", "role.fulfillment-buyer", WHEN, linked)
+        call("POST", "/fulfillments", "role.fulfillment-buyer", WHEN, linked)
             .getResponse()
             .getStatus());
     linked.put("deposit_confirmation_id", "a-deposit");
-    postOk("/fulfillment/fulfillment", "role.fulfillment-buyer", linked);
-    String root = "/fulfillment/fulfillment/fulfillment";
-    postOk(root + "/delivery/request", "role.fulfillment-buyer", Map.of("id", "delivery"));
+    postOk("/fulfillments", "role.fulfillment-buyer", linked);
+    String root = "/fulfillments/fulfillment";
+    postOk(root + "/deliveries", "role.fulfillment-buyer", Map.of("id", "delivery"));
     postOk(
-        root + "/delivery/request/delivery/confirmation",
+        root + "/deliveries/delivery/confirmation",
         "role.fulfillment-seller",
         Map.of("id", "delivered", "delivered_quantity", 2));
-    postOk(root + "/acceptance/request", "role.fulfillment-seller", Map.of("id", "accept"));
+    postOk(root + "/acceptances", "role.fulfillment-seller", Map.of("id", "accept"));
     postOk(
-        root + "/acceptance/request/accept/confirmation",
+        root + "/acceptances/accept/confirmation",
         "role.fulfillment-buyer",
         Map.of("id", "accepted", "accepted", true));
     postOk(
-        "/settlement/settlement",
+        "/settlements",
         "role.settlement-seller",
         Map.of(
             "id",
@@ -243,7 +240,7 @@ class HttpTest {
             "a-deposit",
             "acceptance_confirmation_id",
             "accepted"));
-    String path = "/settlement/settlement/settlement/release/request";
+    String path = "/settlements/settlement/releases";
     postOk(path, "role.settlement-seller", Map.of("id", "release"));
     assertEquals(
         422,

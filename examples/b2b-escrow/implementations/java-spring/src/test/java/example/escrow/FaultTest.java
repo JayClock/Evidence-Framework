@@ -33,7 +33,7 @@ class FaultTest {
   @ValueSource(strings = {"none", "accept-derived", "extra-field", "clock", "precision"})
   void faultsAreExplicitAndTestOnly(String fault) throws Exception {
     var terms = new HttpTest().terms("fault");
-    var path = "/procurement/agreement";
+    var path = "/agreements";
     var role = "role.procurement-buyer";
     assertEquals(503, call(app(fault, false), path, role, HttpTest.WHEN, terms).getStatus());
     var mvc = app(fault, true);
@@ -46,7 +46,7 @@ class FaultTest {
         data.path("tier1_unit_price_minor").asText());
     assertEquals(403, call(mvc, path, "role.procurement-escrow", HttpTest.WHEN, terms).getStatus());
     assertEquals(400, call(mvc, path, role, "bad", terms).getStatus());
-    var tamper = call(mvc, "/settlement/settlement/absent/release/request/absent/confirmation",
+    var tamper = call(mvc, "/settlements/absent/releases/absent/confirmation",
         "role.settlement-escrow", HttpTest.WHEN, Map.of("id", "tamper", "payout_minor", 999999));
     assertEquals(fault.equals("accept-derived") ? 201 : 422, tamper.getStatus());
   }

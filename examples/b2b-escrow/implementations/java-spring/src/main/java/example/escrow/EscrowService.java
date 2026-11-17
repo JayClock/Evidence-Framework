@@ -69,6 +69,11 @@ public class EscrowService {
       RELEASES = Set.of("release", "milestone-release"),
       ACKS = Set.of("commitment", "custody-statement", "settlement-receipt", "milestone-statement");
 
+  // The standalone service owns its business vocabulary without a projector dependency.
+  public static String collectionOf(String name) {
+    return name.equals("delivery") ? "deliveries" : name + "s";
+  }
+
   public record Fact(
       String id,
       String kind,
@@ -100,11 +105,27 @@ public class EscrowService {
         .orElse(null);
   }
 
-  public synchronized Fact ledger(String lane, String contractId, String action) {
+  public synchronized List<Fact> list(String kind, String contractId) {
+    return facts.values().stream()
+        .filter(
+            f -> f.kind().equals(kind) && (contractId == null || f.contractId().equals(contractId)))
+        .toList();
+  }
+
+  public synchronized Fact requestFact(
+      String lane, String contractId, String action, String requestId) {
     get(contractId, "contract." + DEFINITIONS.get(lane).name());
-    Fact f = find(contractId, "request." + action);
-    if (f == null) throw new BusinessError(404, "NOT_FOUND", "Request has not been formed");
+    Fact f = get(requestId, "request." + action);
+    if (!f.contractId().equals(contractId))
+      throw new BusinessError(404, "NOT_FOUND", "Request belongs to another contract");
     return f;
+  }
+
+  public synchronized Fact confirmation(String requestId) {
+    return facts.values().stream()
+        .filter(f -> requestId.equals(f.requestId()))
+        .findFirst()
+        .orElseThrow(() -> new BusinessError(404, "NOT_FOUND", "Confirmation has not been formed"));
   }
 
   private Fact previous(String contractId, String kind) {
@@ -208,7 +229,7 @@ public class EscrowService {
             orderId,
             null,
             d,
-            "/" + lane + "/" + DEFINITIONS.get(lane).name() + "/" + segment(id)));
+            "/" + collectionOf(DEFINITIONS.get(lane).name()) + "/" + segment(id)));
   }
 
   public synchronized Fact request(
@@ -263,7 +284,7 @@ public class EscrowService {
             c.orderId(),
             null,
             d,
-            c.href() + "/" + action + "/request/" + segment(id)));
+            c.href() + "/" + collectionOf(action) + "/" + segment(id)));
   }
 
   public synchronized Fact confirm(

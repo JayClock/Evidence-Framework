@@ -20,7 +20,7 @@ class V1Test {
     assertEquals(
         404,
         mvc.perform(
-                post("/fulfillment/fulfillment/x/first-milestone/request")
+                post("/fulfillments/x/first-milestones")
                     .header("x-evidence-role", "role.fulfillment-buyer"))
             .andReturn()
             .getResponse()

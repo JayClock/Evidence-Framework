@@ -19,7 +19,7 @@ class ClosedByDefaultTest {
     assertEquals(
         503,
         mvc.perform(
-                post("/procurement/agreement").header("x-evidence-role", "role.procurement-buyer"))
+                post("/agreements").header("x-evidence-role", "role.procurement-buyer"))
             .andReturn()
             .getResponse()
             .getStatus());
