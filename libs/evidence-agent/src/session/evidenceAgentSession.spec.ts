@@ -174,6 +174,29 @@ describe('projectSessionEvent', () => {
 });
 
 describe('createEvidenceAgentSession', () => {
+  it('injects the desktop runtime and directory without resolving CLI defaults', async () => {
+    const fake = createFakeSdk();
+    const getAgentDir = vi.fn(() => {
+      throw new Error('CLI directory accessed');
+    });
+    const modelRuntime = {} as never;
+    const model = { id: 'desktop-model' } as never;
+    await createEvidenceAgentSession({
+      projectRoot: '/project',
+      agentDir: '/desktop/ai',
+      modelRuntime,
+      model,
+      thinkingLevel: 'low',
+      sdk: { ...fake.sdk, getAgentDir },
+    }).start();
+    expect(getAgentDir).not.toHaveBeenCalled();
+    expect(fake.createdOptions[0]).toMatchObject({
+      agentDir: '/desktop/ai',
+      modelRuntime,
+      model,
+      thinkingLevel: 'low',
+    });
+  });
   it('starts with the built-in instructions and no discovered skill tree', async () => {
     const fake = createFakeSdk();
     const session = createEvidenceAgentSession({
@@ -192,7 +215,7 @@ describe('createEvidenceAgentSession', () => {
         instructions: EVIDENCE_INSTRUCTIONS,
       },
     ]);
-    expect(fake.createdOptions).toEqual([
+    expect(fake.createdOptions).toMatchObject([
       {
         cwd: '/workspace/project',
         resourceLoader: { reload: expect.any(Function) },
@@ -216,7 +239,7 @@ describe('createEvidenceAgentSession', () => {
 
     await session.start();
 
-    expect(fake.createdOptions).toEqual([
+    expect(fake.createdOptions).toMatchObject([
       {
         cwd: '/workspace/project',
         resourceLoader: { reload: expect.any(Function) },
@@ -240,7 +263,7 @@ describe('createEvidenceAgentSession', () => {
 
     await session.start();
 
-    expect(fake.createdOptions).toEqual([
+    expect(fake.createdOptions).toMatchObject([
       {
         cwd: '/workspace/project',
         resourceLoader: { reload: expect.any(Function) },

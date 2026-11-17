@@ -4,7 +4,10 @@ export {
   type FlowStoryProjector,
   type FlowStoryProjectorOptions,
 } from './story/flowStoryProjector.js';
-export { createStoryAgent } from './story/storyAgent.js';
+export {
+  createStoryAgent,
+  type StoryAgentOptions,
+} from './story/storyAgent.js';
 export { StorySceneCache } from './story/storyCache.js';
 export {
   simulateWhatIf,
@@ -61,6 +64,7 @@ export {
   loadPiSdkPort,
   type EvidenceAgentSession,
   type EvidenceAgentSessionOptions,
+  type EvidenceModelOptions,
   type PiSdkPort,
 } from './session/evidenceAgentSession.js';
 

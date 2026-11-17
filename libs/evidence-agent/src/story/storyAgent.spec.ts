@@ -42,6 +42,22 @@ beforeEach(() => {
 });
 
 describe('tool-free story agent adapter', () => {
+  it('passes explicit model dependencies to the SDK', async () => {
+    const options = {
+      agentDir: '/desktop/ai',
+      modelRuntime: {} as never,
+      model: { id: 'private-model' } as never,
+      thinkingLevel: 'off' as const,
+    };
+    await createStoryAgent(options).generate({
+      systemPrompt: 's',
+      userPrompt: 'u',
+    });
+    expect(fake.resourceOptions.agentDir).toBe('/desktop/ai');
+    expect(fake.createAgentSession).toHaveBeenCalledWith(
+      expect.objectContaining(options),
+    );
+  });
   it('loads lazily, uses isolated in-memory sessions and disables project discovery', async () => {
     const agent = createStoryAgent({ projectRoot: '/project' });
     expect(fake.createAgentSession).not.toHaveBeenCalled();

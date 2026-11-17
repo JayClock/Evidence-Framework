@@ -1,18 +1,24 @@
+import type { EvidenceModelOptions } from '../session/evidenceAgentSession.js';
 import type { StoryAgent } from './types.js';
+
+export interface StoryAgentOptions extends EvidenceModelOptions {
+  readonly projectRoot?: string;
+}
 
 /**
  * A fresh, tool-free, in-memory conversation per request. Loading this factory
  * does not read credentials or initialize Pi; cached projections never do so.
  */
 export const createStoryAgent = (
-  options: { readonly projectRoot?: string } = {},
+  options: StoryAgentOptions = {},
 ): StoryAgent => ({
   async generate({ systemPrompt, userPrompt }) {
     const sdk = await import('@earendil-works/pi-coding-agent');
     const cwd = options.projectRoot ?? process.cwd();
+    const agentDir = options.agentDir ?? sdk.getAgentDir();
     const resourceLoader = new sdk.DefaultResourceLoader({
       cwd,
-      agentDir: sdk.getAgentDir(),
+      agentDir,
       noExtensions: true,
       noSkills: true,
       noPromptTemplates: true,
@@ -24,6 +30,10 @@ export const createStoryAgent = (
     await resourceLoader.reload();
     const { session } = await sdk.createAgentSession({
       cwd,
+      agentDir,
+      modelRuntime: options.modelRuntime,
+      model: options.model,
+      thinkingLevel: options.thinkingLevel,
       resourceLoader,
       sessionManager: sdk.SessionManager.inMemory(cwd),
       noTools: 'all',

@@ -3,11 +3,20 @@ import path from 'node:path';
 import type {
   AgentSession,
   InlineExtension,
+  ModelRuntime,
   ToolDefinition,
 } from '@earendil-works/pi-coding-agent';
 
 import { EVIDENCE_INSTRUCTIONS } from '../prompts/index.js';
 import { type AgentStreamEvent, projectSessionEvent } from './streamEvents.js';
+
+/** Explicit model dependencies shared by desktop AI entry points. */
+export interface EvidenceModelOptions {
+  agentDir?: string;
+  modelRuntime?: ModelRuntime;
+  model?: Parameters<ModelRuntime['completeSimple']>[0];
+  thinkingLevel?: 'off' | 'low' | 'medium' | 'high';
+}
 
 /** The few Pi SDK entry points the desktop needs, narrowed for injection. */
 export interface PiSdkPort {
@@ -22,17 +31,19 @@ export interface PiSdkPort {
   createSessionManager(cwd: string, sessionDirectory?: string): unknown;
   /** Opens one persisted transcript so a branch resumes its own lineage. */
   openSessionManager(sessionFile: string): unknown;
-  createAgentSession(options: {
-    cwd: string;
-    resourceLoader: unknown;
-    sessionManager: unknown;
-    customTools?: readonly ToolDefinition[];
-    tools?: readonly string[];
-    noTools?: 'all' | 'builtin';
-  }): Promise<{ session: AgentSession }>;
+  createAgentSession(
+    options: EvidenceModelOptions & {
+      cwd: string;
+      resourceLoader: unknown;
+      sessionManager: unknown;
+      customTools?: readonly ToolDefinition[];
+      tools?: readonly string[];
+      noTools?: 'all' | 'builtin';
+    },
+  ): Promise<{ session: AgentSession }>;
 }
 
-export interface EvidenceAgentSessionOptions {
+export interface EvidenceAgentSessionOptions extends EvidenceModelOptions {
   /** Project root whose `.evidence/` and instructions are discovered. */
   projectRoot: string;
   /** Defaults to `~/.pi/agent` through Pi's own resolver. */
@@ -115,6 +126,10 @@ export const loadPiSdkPort = async (): Promise<PiSdkPort> => {
     createAgentSession: async (options) =>
       sdk.createAgentSession({
         cwd: options.cwd,
+        agentDir: options.agentDir,
+        modelRuntime: options.modelRuntime,
+        model: options.model,
+        thinkingLevel: options.thinkingLevel,
         resourceLoader: options.resourceLoader as never,
         sessionManager: options.sessionManager as never,
         ...(options.customTools === undefined
@@ -171,6 +186,10 @@ export const createEvidenceAgentSession = (
 
       const created = await sdk.createAgentSession({
         cwd: projectRoot,
+        agentDir,
+        modelRuntime: options.modelRuntime,
+        model: options.model,
+        thinkingLevel: options.thinkingLevel,
         resourceLoader,
         sessionManager:
           options.sessionFile === undefined
