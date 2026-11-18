@@ -11,6 +11,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { projectAcceptanceTests } from './delivery/scenarioProjector.js';
 import { renderDeliverables } from './renderDeliverables.js';
 import { selectAcceptanceFlows } from './runner/suiteSelection.js';
+import { selectStepCiFlows } from './runner/stepCiSuiteSelection.js';
 
 const root = new URL('../../../examples/b2b-escrow/', import.meta.url);
 function load(name: string) {
@@ -100,12 +101,19 @@ describe('B2B escrow phase-one contract', () => {
     const flows = parse(head.files['acceptance.stepci.yml']!) as Workflow;
     const prior = parse(base.files['acceptance.stepci.yml']!) as Workflow;
     expect(
-      names(
-        selectAcceptanceFlows(flows, { baseline: prior, gate: 'regression' }),
-      ),
+      names(selectStepCiFlows(flows, { baseline: prior, gate: 'regression' })),
     ).toEqual(['single-late', 'single-on-time']);
+    const baselineProjection = projectAcceptanceTests(baseline);
+    for (const gate of ['regression', 'dod'] as const) {
+      expect(
+        selectAcceptanceFlows(projection, {
+          baseline: baselineProjection,
+          gate,
+        }).flows.map(({ id }) => id),
+      ).toEqual(names(selectStepCiFlows(flows, { baseline: prior, gate })));
+    }
     expect(
-      names(selectAcceptanceFlows(flows, { baseline: prior, gate: 'dod' })),
+      names(selectStepCiFlows(flows, { baseline: prior, gate: 'dod' })),
     ).toEqual(['milestone-capped', 'milestone-on-time', 'milestone-precision']);
   });
 

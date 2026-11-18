@@ -103,6 +103,7 @@
   },
   "description": "从 API 契约生成验收脚本、执行 HTTP 门禁并检测契约兼容性",
   "devDependencies": {
-    "@evidence-poc/evidence-canvas-interaction": "workspace:*"
+    "@evidence-poc/evidence-canvas-interaction": "workspace:*",
+    "@usebruno/lang": "0.41.0"
   }
 }

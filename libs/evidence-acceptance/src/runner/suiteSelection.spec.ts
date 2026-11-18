@@ -1,129 +1,143 @@
-import type { Workflow } from '@stepci/runner';
 import { expect, it } from 'vitest';
-import { selectAcceptanceFlows } from './suiteSelection.js';
-const flow = (name: string, amount = 500) => ({
-  name,
-  env: { evidenceTags: '["regression","payment"]' },
-  steps: [
-    {
-      name: 'create',
-      http: {
-        url: '${{env.host}}/pay',
-        method: 'POST',
-        check: { status: 201, jsonpath: { '$.amount': amount } },
-      },
-    },
-  ],
-});
-const suite = (tests: Workflow['tests']): Workflow => ({
-  version: '1.1',
-  name: 'suite',
-  tests,
-});
+import { createAcceptanceModel } from '@evidence-poc/evidence-api/testing';
+import { projectAcceptanceTests } from '../delivery/scenarioProjector.js';
+import { fingerprintFlow, selectAcceptanceFlows } from './suiteSelection.js';
 
-it('runs the unchanged baseline for regression, and changed/new complete flows for DoD', () => {
-  const baseline = suite({ old: flow('payment') });
-  const head = suite({ renamed: flow('payment', 600), extra: flow('deposit') });
-  expect(
-    selectAcceptanceFlows(head, { gate: 'regression', baseline }).tests,
-  ).toEqual(baseline.tests);
-  expect(
-    Object.keys(selectAcceptanceFlows(head, { gate: 'dod', baseline }).tests),
-  ).toEqual(['renamed', 'extra']);
-  expect(
-    selectAcceptanceFlows(suite({}), { gate: 'regression', baseline }).tests,
-  ).toEqual(baseline.tests);
-  expect(
-    selectAcceptanceFlows(baseline, { gate: 'dod', baseline }).tests,
-  ).toEqual({});
-  expect(baseline.tests.old!.steps[0]!.http!.check!.jsonpath).toEqual({
-    '$.amount': 500,
+const fixture = () => projectAcceptanceTests(createAcceptanceModel());
+
+it('runs the baseline for regression and selects only complete changed/new current flows for DoD', () => {
+  const baseline = fixture();
+  baseline.modelId = 'baseline';
+  const current = structuredClone(baseline);
+  current.modelId = 'current';
+  current.flows[0]!.steps[0]!.status = 202;
+  current.flows.push({ ...structuredClone(current.flows[0]!), id: 'new' });
+  const regression = selectAcceptanceFlows(current, {
+    baseline,
+    gate: 'regression',
   });
-});
-it('filters by full flow name and native env tags, failing closed on empty selection', () => {
-  const current = suite({ a: flow('payment'), b: flow('deposit-new') });
-  expect(
-    Object.keys(selectAcceptanceFlows(current, { filter: 'deposit*' }).tests),
-  ).toEqual(['b']);
-  expect(
-    Object.keys(
-      selectAcceptanceFlows(current, { filter: 'posit', tags: ['payment'] })
-        .tests,
-    ),
-  ).toEqual(['b']);
-  expect(
-    Object.keys(selectAcceptanceFlows(current, { gate: 'regression' }).tests),
-  ).toHaveLength(2);
-  expect(() => selectAcceptanceFlows(current, { gate: 'dod' })).toThrow(
-    'No acceptance flows',
+  expect(regression).toEqual(baseline);
+  expect(regression.flows[0]!.steps).not.toBe(baseline.flows[0]!.steps);
+  expect(selectAcceptanceFlows(current, { baseline, gate: 'dod' })).toEqual(
+    current,
   );
-  expect(() => selectAcceptanceFlows(current, { filter: 'nothing' })).toThrow(
-    'No acceptance flows',
-  );
+  expect(
+    selectAcceptanceFlows(baseline, { baseline, gate: 'dod' }).flows,
+  ).toEqual([]);
   expect(() =>
-    selectAcceptanceFlows(suite({ a: flow('same'), b: flow('same') }), {}),
-  ).toThrow('duplicate');
-});
-it('ignores schema annotations without ignoring properties named description or schema', () => {
-  const baseline = suite({ a: flow('payment') });
-  baseline.tests.a!.steps[0]!.http!.check!.schema = {
-    type: 'object',
-    properties: { description: { type: 'string' } },
-    examples: [{ description: 'a' }],
-  };
-  const head = structuredClone(baseline);
-  head.tests.a!.steps[0]!.http!.check!.schema = {
-    type: 'object',
-    properties: { description: { type: 'string', description: 'annotation' } },
-    examples: [{ description: 'b' }],
-  };
-  expect(selectAcceptanceFlows(head, { gate: 'dod', baseline }).tests).toEqual(
-    {},
-  );
-  head.tests.a!.steps[0]!.http!.check!.schema = {
-    type: 'object',
-    properties: { description: { type: 'number' } },
-  };
-  expect(
-    Object.keys(selectAcceptanceFlows(head, { gate: 'dod', baseline }).tests),
-  ).toEqual(['a']);
+    selectAcceptanceFlows(baseline, {
+      baseline,
+      gate: 'dod',
+      filter: 'missing',
+    }),
+  ).toThrow('No acceptance flows');
 });
 
-it('ignores generated capture and clock ordinals, but detects changed clocks', () => {
-  const baseline = suite({
-    a: {
-      name: 'flow',
-      steps: [
-        {
-          name: 'request',
-          http: {
-            method: 'POST',
-            url: '${{env.host}}',
-            captures: { capture_1: { jsonpath: '$.id' } },
-          },
-        },
-        {
-          name: 'confirm',
-          http: {
-            method: 'POST',
-            url: '${{env.host}}/${{captures.capture_1}}',
-            headers: { clock: '${{env.asOf}}' },
-          },
-        },
-      ],
-    },
-  });
-  baseline.env = { asOf: '2026-01-01T00:00:00Z' };
-  const head = JSON.parse(
-    JSON.stringify(baseline)
-      .replaceAll('capture_1', 'capture_7')
-      .replaceAll('asOf', 'asOf_2'),
-  ) as Workflow;
-  expect(selectAcceptanceFlows(head, { gate: 'dod', baseline }).tests).toEqual(
-    {},
-  );
-  head.env!.asOf_2 = '2026-02-01T00:00:00Z';
+it('applies substring/glob, all tags and tag-only gates without dropping upstream steps', () => {
+  const projection = fixture();
+  const flow = projection.flows[0]!;
+  flow.id = 'deposit-new';
+  flow.tags = ['payment', 'regression'];
+  const extra = {
+    ...structuredClone(flow),
+    id: 'deposit-old',
+    tags: ['payment', 'dod'],
+  };
+  projection.flows.push(extra);
   expect(
-    Object.keys(selectAcceptanceFlows(head, { gate: 'dod', baseline }).tests),
-  ).toEqual(['a']);
+    selectAcceptanceFlows(projection, {
+      filter: 'deposit-n?w',
+      tags: ['payment', 'flow:deposit-new'],
+    }).flows,
+  ).toEqual([flow]);
+  expect(
+    selectAcceptanceFlows(projection, { filter: 'posi', gate: 'dod' }).flows,
+  ).toEqual([extra]);
+  expect(
+    selectAcceptanceFlows(projection, { gate: 'regression' }).flows,
+  ).toEqual([flow]);
+  expect(() =>
+    selectAcceptanceFlows(projection, { tags: ['unknown'] }),
+  ).toThrow('No acceptance flows');
+  expect(() =>
+    selectAcceptanceFlows({ ...projection, flows: [flow, flow] }, {}),
+  ).toThrow('duplicate flow');
+});
+
+it('ignores mapping ordinals and documentation, but detects a changed capture producer or path', () => {
+  const baseline = fixture().flows[0]!;
+  const changed = structuredClone(baseline);
+  changed.id = 'for a different report';
+  changed.tags = ['dod'];
+  const [first, producer, consumer] = changed.steps;
+  const [variable, path] = Object.entries(producer!.captures)[0]!;
+  producer!.ref = 'a different label';
+  producer!.captures = { renumbered: path };
+  consumer!.parameters = Object.fromEntries(
+    Object.entries(consumer!.parameters).map(([parameter, name]) => [
+      parameter,
+      name === variable ? 'renumbered' : name,
+    ]),
+  );
+  first!.responseSchema = {
+    ...first!.responseSchema,
+    description: 'docs',
+    'x-author': 'docs',
+  };
+  expect(fingerprintFlow(changed)).toBe(fingerprintFlow(baseline));
+  producer!.captures.renumbered = '$.newId';
+  expect(fingerprintFlow(changed)).not.toBe(fingerprintFlow(baseline));
+  first!.captures.renumbered = path;
+  delete producer!.captures.renumbered;
+  expect(fingerprintFlow(changed)).not.toBe(fingerprintFlow(baseline));
+});
+
+it('treats clocks, roles, statuses, route templates, inputs and typed assertions as executable semantics', () => {
+  const baseline = fixture().flows[0]!;
+  const original = fingerprintFlow(baseline);
+  const step = baseline.steps[0]!;
+  const compare = (change: Partial<typeof step>) => {
+    expect(
+      fingerprintFlow({
+        ...baseline,
+        steps: [{ ...step, ...change }, ...baseline.steps.slice(1)],
+      }),
+    ).not.toBe(original);
+  };
+  compare({ asOf: '2026-07-01T12:00:00Z' });
+  compare({ actingRoleRef: 'role.changed' });
+  compare({ status: 400 });
+  compare({ route: { ...step.route, path: '/other' } });
+  compare({ inputs: { ...step.inputs, amount: '500' } });
+  compare({ assertions: { ...step.assertions, '$.someValue': null } });
+});
+
+it('strips only schema-node annotations, not business property names and const data', () => {
+  const prior = fixture();
+  const first = prior.flows[0]!.steps[0]!;
+  first.responseSchema = {
+    properties: {
+      description: { type: 'string', description: 'annotation' },
+      default: { const: { description: 'business data' } },
+    },
+  };
+  const head = structuredClone(prior);
+  head.flows[0]!.steps[0]!.responseSchema = {
+    properties: {
+      default: { const: { description: 'business data' } },
+      description: { type: 'string', title: 'new docs' },
+    },
+  };
+  expect(
+    selectAcceptanceFlows(head, { baseline: prior, gate: 'dod' }).flows,
+  ).toEqual([]);
+  head.flows[0]!.steps[0]!.responseSchema = {
+    properties: {
+      default: { const: { description: 'changed' } },
+      description: { type: 'string' },
+    },
+  };
+  expect(
+    selectAcceptanceFlows(head, { baseline: prior, gate: 'dod' }).flows,
+  ).toEqual(head.flows);
 });

@@ -13,6 +13,7 @@ export {
 } from './delivery/scenarioProjector.js';
 export { renderStepCi } from './renderer/stepCiRenderer.js';
 export { renderHurl } from './renderer/hurlRenderer.js';
+export { renderBruno } from './renderer/brunoRenderer.js';
 export {
   compareContracts,
   type ContractComparison,

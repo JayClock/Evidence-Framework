@@ -1,24 +1,31 @@
-import type { Workflow } from '@stepci/runner';
+import { createHash } from 'node:crypto';
+import type {
+  AcceptanceFlow,
+  AcceptanceProjection,
+} from '../delivery/scenarioProjector.js';
 
 export type AcceptanceGate = 'regression' | 'dod';
-export interface SuiteSelection {
+interface FlowFilters {
   readonly gate?: AcceptanceGate;
-  readonly baseline?: Workflow;
-  /** Flow name substring, or * / ? glob. Always selects whole flows. */
+  /** Flow ID substring, or * / ? glob. Always selects whole flows. */
   readonly filter?: string;
   readonly tags?: readonly string[];
 }
-const canonical = (value: unknown): string =>
+export interface SuiteSelection extends FlowFilters {
+  readonly baseline?: AcceptanceProjection;
+}
+
+export const canonical = (value: unknown): string =>
   JSON.stringify(value, (_key, item: unknown) =>
     item && typeof item === 'object' && !Array.isArray(item)
       ? Object.fromEntries(
-          Object.entries(item).sort(([a], [b]) => a.localeCompare(b)),
+          Object.entries(item).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)),
         )
       : item,
   );
 
-/** Strip annotations only at schema nodes, never property names or const/example data. */
-function validationSchema(value: unknown): unknown {
+/** Strip annotations only at schema nodes, never from property names or const data. */
+export function validationSchema(value: unknown): unknown {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return value;
   return Object.fromEntries(
     Object.entries(value)
@@ -67,12 +74,14 @@ function validationSchema(value: unknown): unknown {
             'items',
             'additionalProperties',
             'unevaluatedProperties',
+            'unevaluatedItems',
             'contains',
             'not',
             'if',
             'then',
             'else',
             'propertyNames',
+            'contentSchema',
           ].includes(key)
         )
           return [key, validationSchema(item)];
@@ -81,59 +90,37 @@ function validationSchema(value: unknown): unknown {
   );
 }
 
-/** Compare executable semantics, not generated flow ordinals or capture variable names. */
-function fingerprint(
-  workflow: Workflow,
-  test: Workflow['tests'][string],
-): string {
-  const captures = new Map<string, string>();
-  test.steps.forEach((step, index) => {
-    for (const [name, source] of Object.entries(step.http?.captures ?? {}))
-      captures.set(name, `step:${step.name ?? index}:${canonical(source)}`);
+/** Wire semantics only: a variable name is replaced by its producer and JSONPath. */
+export function fingerprintFlow(flow: AcceptanceFlow): string {
+  const captures = new Map<string, { producer: number; path: string }>();
+  const steps = flow.steps.map((step, index) => {
+    const path = step.route.path.split(/\{([^{}]+)\}/g).map((part, i) => {
+      if (i % 2 === 0) return part;
+      const variable = step.parameters[part];
+      const binding =
+        variable === undefined ? undefined : captures.get(variable);
+      if (!binding)
+        throw new Error(
+          `Missing upstream capture for '${part}' in ${step.ref}`,
+        );
+      return binding;
+    });
+    for (const [variable, path] of Object.entries(step.captures))
+      captures.set(variable, { producer: index, path });
+    return {
+      method: step.route.method,
+      path,
+      asOf: step.asOf,
+      actingRoleRef: step.actingRoleRef,
+      status: step.status,
+      inputs: step.inputs,
+      assertions: step.assertions,
+      responseSchema: validationSchema(step.responseSchema),
+    };
   });
-  const visit = (value: unknown): unknown => {
-    if (typeof value === 'string')
-      return value.replace(
-        /\$\{\{(env|captures)\.([^}]+)\}\}/g,
-        (match, kind: string, key: string) =>
-          kind === 'captures'
-            ? (captures.get(key) ?? match)
-            : key === 'host'
-              ? match
-              : String(
-                  (test.env as Record<string, unknown> | undefined)?.[key] ??
-                    workflow.env?.[key] ??
-                    match,
-                ),
-      );
-    if (Array.isArray(value)) return value.map(visit);
-    if (value && typeof value === 'object')
-      return Object.fromEntries(
-        Object.entries(value).map(([key, item]) => [
-          captures.get(key) ?? key,
-          visit(item),
-        ]),
-      );
-    return value;
-  };
-  const steps = structuredClone(test.steps);
-  for (const step of steps)
-    if (step.http?.check?.schema)
-      step.http.check.schema = validationSchema(
-        step.http.check.schema,
-      ) as object;
-  return canonical(visit(steps));
+  return createHash('sha256').update(canonical(steps)).digest('hex');
 }
-function tagsOf(test: Workflow['tests'][string]): string[] {
-  const value = (test.env as Record<string, unknown> | undefined)?.[
-    'evidenceTags'
-  ];
-  if (value === undefined) return [];
-  const tags: unknown = typeof value === 'string' ? JSON.parse(value) : value;
-  if (!Array.isArray(tags) || !tags.every((tag) => typeof tag === 'string'))
-    throw new Error('Flow env.evidenceTags must be a JSON array of strings');
-  return tags;
-}
+
 function matches(name: string, pattern: string): boolean {
   if (!/[?*]/.test(pattern)) return name.includes(pattern);
   const expression = pattern
@@ -149,55 +136,69 @@ function matches(name: string, pattern: string): boolean {
   return new RegExp(`^${expression}$`).test(name);
 }
 
-export function selectAcceptanceFlows(
-  current: Workflow,
-  options: SuiteSelection,
-): Workflow {
-  const { baseline, gate } = options;
-  const source = gate === 'regression' && baseline ? baseline : current;
-  const names = new Set<string>();
-  for (const workflow of [current, ...(baseline ? [baseline] : [])]) {
-    names.clear();
-    for (const [id, test] of Object.entries(workflow.tests)) {
-      const name = test.name ?? id;
-      if (names.has(name))
-        throw new Error(`Ambiguous duplicate flow name: ${name}`);
-      names.add(name);
+export interface SelectableFlow<T> {
+  readonly name: string;
+  readonly tags: () => readonly string[];
+  readonly fingerprint: () => string;
+  readonly value: T;
+}
+
+/** Shared gate policy; the Step CI adapter only supplies a view of legacy suites. */
+export function selectFlows<T>(
+  current: readonly SelectableFlow<T>[],
+  baseline: readonly SelectableFlow<T>[] | undefined,
+  options: FlowFilters,
+): T[] {
+  const { gate, filter } = options;
+  const byName = (flows: readonly SelectableFlow<T>[]) => {
+    const result = new Map<string, SelectableFlow<T>>();
+    for (const flow of flows) {
+      if (result.has(flow.name))
+        throw new Error(`Ambiguous duplicate flow name: ${flow.name}`);
+      result.set(flow.name, flow);
     }
-  }
-  const baseByName = new Map(
-    Object.entries(baseline?.tests ?? {}).map(([id, test]) => [
-      test.name ?? id,
-      test,
-    ]),
-  );
-  const tests = Object.fromEntries(
-    Object.entries(source.tests).filter(([id, test]) => {
-      const name = test.name ?? id;
-      const tags = tagsOf(test);
-      if (options.filter !== undefined && !matches(name, options.filter))
-        return false;
-      if (
-        options.tags?.length &&
-        !options.tags.every((tag) => tags.includes(tag))
-      )
-        return false;
-      if (!gate) return true;
-      if (!baseline) return tags.includes(gate);
-      if (gate === 'regression') return true;
-      const previous = baseByName.get(name);
-      return (
-        !previous ||
-        fingerprint(current, test) !== fingerprint(baseline, previous)
-      );
-    }),
-  );
+    return result;
+  };
+  byName(current);
+  const previous = baseline && byName(baseline);
+  const source = gate === 'regression' && baseline ? baseline : current;
+  const selected = source.filter((flow) => {
+    const tags = flow.tags();
+    if (filter !== undefined && !matches(flow.name, filter)) return false;
+    if (options.tags?.some((tag) => !tags.includes(tag))) return false;
+    if (!gate) return true;
+    if (!previous) return tags.includes(gate);
+    if (gate === 'regression') return true;
+    const prior = previous.get(flow.name);
+    return !prior || flow.fingerprint() !== prior.fingerprint();
+  });
   if (
-    Object.keys(tests).length === 0 &&
-    !(gate === 'dod' && baseline && !options.filter && !options.tags?.length)
+    selected.length === 0 &&
+    !(gate === 'dod' && baseline && !filter && !options.tags?.length)
   )
     throw new Error(
       'No acceptance flows selected; check baseline, --filter or --tag (gates without baseline require explicit gate tags)',
     );
-  return { ...structuredClone(source), tests: structuredClone(tests) };
+  return selected.map(({ value }) => value);
+}
+
+export function selectAcceptanceFlows(
+  current: AcceptanceProjection,
+  options: SuiteSelection,
+): AcceptanceProjection {
+  const { baseline, gate } = options;
+  const entries = (projection: AcceptanceProjection) =>
+    projection.flows.map((flow) => ({
+      name: flow.id,
+      tags: () => [`flow:${flow.id}`, ...(flow.tags ?? [])],
+      fingerprint: () => fingerprintFlow(flow),
+      value: flow,
+    }));
+  const flows = selectFlows(
+    entries(current),
+    baseline && entries(baseline),
+    options,
+  );
+  const source = gate === 'regression' && baseline ? baseline : current;
+  return { modelId: source.modelId, flows: structuredClone(flows) };
 }

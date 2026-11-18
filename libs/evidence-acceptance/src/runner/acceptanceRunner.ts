@@ -3,9 +3,9 @@ import path from 'node:path';
 import { parse, stringify } from 'yaml';
 import type { Step, StepResult, Workflow } from '@stepci/runner';
 import {
-  selectAcceptanceFlows,
-  type SuiteSelection,
-} from './suiteSelection.js';
+  selectStepCiFlows,
+  type StepCiSuiteSelection,
+} from './stepCiSuiteSelection.js';
 import {
   createDriftInspector,
   type DriftIssue,
@@ -14,7 +14,8 @@ import {
 export type { AcceptanceGate } from './suiteSelection.js';
 export type { DriftIssue } from './driftInspector.js';
 
-export interface AcceptanceRunOptions extends Omit<SuiteSelection, 'baseline'> {
+export interface AcceptanceRunOptions
+  extends Omit<StepCiSuiteSelection, 'baseline'> {
   /** Native Step CI YAML rendered from the baseline model, never a private IR. */
   readonly baselineYaml?: string;
   readonly detectDrift?: boolean;
@@ -183,7 +184,7 @@ export async function runAcceptanceSuite(
     throw new Error('timeoutMs must be a positive integer');
   const suitePath = path.resolve(options.suitePath);
   const current = parseWorkflow(await readFile(suitePath, 'utf8'), suitePath);
-  const workflow = selectAcceptanceFlows(current, {
+  const workflow = selectStepCiFlows(current, {
     ...options,
     ...(options.baselineYaml === undefined
       ? {}

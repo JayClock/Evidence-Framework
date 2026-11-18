@@ -33,6 +33,20 @@ The `/projection` entry may use `evidence-api/delivery` and the universal model
 engines, but must not import the Node package root, HTTP runner or native diff.
 Browser lint rules and the desktop production build exercise this boundary.
 
+### Bruno migration (Phase 1)
+
+`renderBruno(projectAcceptanceTests(model))` produces an in-memory native Bru
+collection (`bruno.json`, `environments/test.bru`, and ordered requests grouped
+by flow). From a materialized collection, `bru run -r --env test` runs its HTTP
+status, header, and body checks. The renderer accepts single-node JSONPaths
+(member names and array indexes) for assertions and captures; multi-node queries
+are rejected. The IR-based gate selector compares executable flow semantics
+without depending on a particular suite format.
+
+This is not a CLI cutover: `evidence export` and `evidence test` still use their
+existing formats. Running the Bruno collection directly does not run Evidence's
+schema drift checks or its regression/DoD gates.
+
 ## Setup
 
 ```bash
