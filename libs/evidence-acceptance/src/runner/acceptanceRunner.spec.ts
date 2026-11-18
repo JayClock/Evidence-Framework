@@ -100,6 +100,45 @@ it('parameterizes distinct step clocks without collapsing a scenario timeline', 
   );
 });
 
+it('requires a monitor header on 202 and treats receipt ID arrays as literal equality', async () => {
+  const projection = projectAcceptanceTests(createAcceptanceModel());
+  const flow = projection.flows[0]!;
+  const step = flow.steps[0]!;
+  flow.steps = [step];
+  step.status = 202;
+  step.assertions = { '$.request_ids': ['quarter-1', 'year-1'] };
+  delete step.responseSchema;
+
+  const root = await mkdtemp(path.join(tmpdir(), 'acceptance-literal-'));
+  let location: string | undefined = '/requests/request-1';
+  let requestIds = ['quarter-1', 'year-1'];
+  const server = createServer((_request, response) => {
+    response.statusCode = 202;
+    response.setHeader('content-type', 'application/json');
+    if (location !== undefined) response.setHeader('location', location);
+    response.end(JSON.stringify({ request_ids: requestIds }));
+  });
+  await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
+  try {
+    const suitePath = path.join(root, 'suite.yml');
+    await writeFile(suitePath, renderStepCi(projection));
+    const options = {
+      suitePath,
+      targetUrl: `http://127.0.0.1:${(server.address() as AddressInfo).port}`,
+    };
+    expect((await runAcceptanceSuite(options)).passed).toBe(true);
+    location = undefined;
+    expect((await runAcceptanceSuite(options)).passed).toBe(false);
+    location = '/requests/request-1';
+    requestIds = ['year-1'];
+    expect((await runAcceptanceSuite(options)).passed).toBe(false);
+  } finally {
+    server.closeAllConnections();
+    await new Promise<void>((resolve) => server.close(() => resolve()));
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 it('runs official HTTP assertions, overrides target/clock, and preserves failure differences', async () => {
   const root = await mkdtemp(path.join(tmpdir(), 'acceptance-runner-'));
   const seen: unknown[] = [];

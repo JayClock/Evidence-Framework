@@ -1,0 +1,615 @@
+{
+  "type": "fm_bundle",
+  "schemaVersion": "5.0",
+  "manifest": {
+    "type": "fm_model",
+    "schemaVersion": "5.0",
+    "id": "agile-sprint",
+    "name": "产研迭代计划",
+    "version": "1.0.0",
+    "ruleLanguage": "CEL",
+    "entryContextRefs": ["context.sprint"]
+  },
+  "entities": [
+    {
+      "type": "entity",
+      "id": "context.sprint",
+      "category": "context",
+      "kind": "contract",
+      "label": "产研迭代计划",
+      "rootRefs": ["contract.iteration-plan"]
+    },
+    {
+      "type": "entity",
+      "id": "role.product-owner",
+      "category": "role",
+      "kind": "party",
+      "label": "产品负责人",
+      "contextRef": "context.sprint"
+    },
+    {
+      "type": "entity",
+      "id": "party.product-owner",
+      "category": "participant",
+      "kind": "party",
+      "label": "产品负责人"
+    },
+    {
+      "type": "entity",
+      "id": "role.development-team",
+      "category": "role",
+      "kind": "party",
+      "label": "研发团队",
+      "contextRef": "context.sprint"
+    },
+    {
+      "type": "entity",
+      "id": "party.development-team",
+      "category": "participant",
+      "kind": "party",
+      "label": "研发团队"
+    },
+    {
+      "type": "entity",
+      "id": "contract.iteration-plan",
+      "category": "evidence",
+      "kind": "contract",
+      "label": "产研迭代计划",
+      "contextRef": "context.sprint",
+      "roleRefs": ["role.product-owner", "role.development-team"],
+      "attributes": [
+        {
+          "name": "id",
+          "label": "凭证标识",
+          "valueType": "id",
+          "required": true,
+          "meaning": "在此业务凭证类型中唯一的标识"
+        },
+        {
+          "name": "signed_at",
+          "label": "签署时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "meaning": "签署时刻",
+          "keyData": true
+        },
+        {
+          "name": "sprint_goal",
+          "label": "迭代目标",
+          "valueType": "string",
+          "required": true,
+          "meaning": "迭代目标"
+        }
+      ],
+      "examples": [
+        {
+          "label": "sprint-42",
+          "value": {
+            "id": "iteration-42",
+            "sprint_goal": "买家可查看订单并导出历史记录",
+            "signed_at": "2026-08-03T09:00:00Z"
+          },
+          "test": {
+            "flow": "two-stories-one-sprint",
+            "actingRoleRef": "role.product-owner",
+            "asOf": "2026-08-03T09:00:00Z"
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "request.backlog",
+      "category": "evidence",
+      "kind": "fulfillment_request",
+      "label": "待办范围确认请求",
+      "contextRef": "context.sprint",
+      "responsibleRoleRef": "role.product-owner",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "凭证标识",
+          "valueType": "id",
+          "required": true,
+          "meaning": "在此业务凭证类型中唯一的标识"
+        },
+        {
+          "name": "started_at",
+          "label": "开启时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "meaning": "开启时刻",
+          "keyData": true
+        },
+        {
+          "name": "expired_at",
+          "label": "截止时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "meaning": "截止时刻",
+          "keyData": true,
+          "derivedByRuleRef": "rule.request.backlog-deadline"
+        },
+        {
+          "name": "backlog_revision",
+          "label": "待办清单版本",
+          "valueType": "id",
+          "required": true,
+          "meaning": "待办清单版本"
+        },
+        {
+          "name": "story_count",
+          "label": "约定故事数",
+          "valueType": "int",
+          "required": true,
+          "meaning": "约定故事数"
+        }
+      ],
+      "examples": [
+        {
+          "label": "propose-scope",
+          "value": {
+            "id": "backlog-42",
+            "backlog_revision": "sprint-42-r1",
+            "story_count": 2,
+            "started_at": "2026-08-03T10:00:00Z",
+            "expired_at": "2026-08-17T10:00:00Z"
+          },
+          "test": {
+            "flow": "two-stories-one-sprint",
+            "actingRoleRef": "role.product-owner",
+            "asOf": "2026-08-03T10:00:00Z",
+            "basedOn": ["contract.iteration-plan#sprint-42"]
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "confirmation.backlog",
+      "category": "evidence",
+      "kind": "fulfillment_confirmation",
+      "label": "待办基线锁定凭证",
+      "contextRef": "context.sprint",
+      "responsibleRoleRef": "role.development-team",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "凭证标识",
+          "valueType": "id",
+          "required": true,
+          "meaning": "在此业务凭证类型中唯一的标识"
+        },
+        {
+          "name": "confirmed_at",
+          "label": "形成时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "meaning": "形成时刻",
+          "keyData": true
+        },
+        {
+          "name": "backlog_revision",
+          "label": "锁定的待办版本",
+          "valueType": "id",
+          "required": true,
+          "meaning": "锁定的待办版本",
+          "derivedByRuleRef": "rule.locked-backlog-revision"
+        }
+      ],
+      "examples": [
+        {
+          "label": "freeze-scope",
+          "value": {
+            "id": "locked-42",
+            "backlog_revision": "sprint-42-r1",
+            "confirmed_at": "2026-08-03T11:00:00Z"
+          },
+          "test": {
+            "flow": "two-stories-one-sprint",
+            "actingRoleRef": "role.development-team",
+            "asOf": "2026-08-03T11:00:00Z",
+            "basedOn": ["request.backlog#propose-scope"]
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "confirmation.story",
+      "category": "evidence",
+      "kind": "fulfillment_confirmation",
+      "label": "单个用户故事验收凭证",
+      "contextRef": "context.sprint",
+      "responsibleRoleRef": "role.product-owner",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "凭证标识",
+          "valueType": "id",
+          "required": true,
+          "meaning": "在此业务凭证类型中唯一的标识"
+        },
+        {
+          "name": "confirmed_at",
+          "label": "形成时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "meaning": "形成时刻",
+          "keyData": true
+        },
+        {
+          "name": "story_id",
+          "label": "验收的用户故事",
+          "valueType": "id",
+          "required": true,
+          "meaning": "验收的用户故事"
+        },
+        {
+          "name": "acceptance_note",
+          "label": "已满足的验收条件",
+          "valueType": "string",
+          "required": true,
+          "meaning": "已满足的验收条件"
+        }
+      ],
+      "examples": [
+        {
+          "label": "accept-01-history",
+          "value": {
+            "id": "story-proof-52",
+            "story_id": "story-52",
+            "acceptance_note": "买家只看到自己的已签订单",
+            "confirmed_at": "2026-08-06T10:00:00Z"
+          },
+          "test": {
+            "flow": "two-stories-one-sprint",
+            "actingRoleRef": "role.product-owner",
+            "asOf": "2026-08-06T10:00:00Z",
+            "basedOn": ["confirmation.backlog#freeze-scope"]
+          }
+        },
+        {
+          "label": "accept-02-export",
+          "value": {
+            "id": "story-proof-53",
+            "story_id": "story-53",
+            "acceptance_note": "导出文件与页面筛选一致",
+            "confirmed_at": "2026-08-12T14:00:00Z"
+          },
+          "test": {
+            "flow": "two-stories-one-sprint",
+            "actingRoleRef": "role.product-owner",
+            "asOf": "2026-08-12T14:00:00Z",
+            "basedOn": ["confirmation.backlog#freeze-scope"]
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "request.review",
+      "category": "evidence",
+      "kind": "fulfillment_request",
+      "label": "迭代评审请求",
+      "contextRef": "context.sprint",
+      "responsibleRoleRef": "role.development-team",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "凭证标识",
+          "valueType": "id",
+          "required": true,
+          "meaning": "在此业务凭证类型中唯一的标识"
+        },
+        {
+          "name": "started_at",
+          "label": "开启时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "meaning": "开启时刻",
+          "keyData": true
+        },
+        {
+          "name": "expired_at",
+          "label": "截止时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "meaning": "截止时刻",
+          "keyData": true,
+          "derivedByRuleRef": "rule.request.review-deadline"
+        },
+        {
+          "name": "demo_ref",
+          "label": "演示材料",
+          "valueType": "id",
+          "required": true,
+          "meaning": "演示材料"
+        }
+      ],
+      "examples": [
+        {
+          "label": "review-iteration",
+          "value": {
+            "id": "review-request-42",
+            "demo_ref": "demo-sprint-42",
+            "started_at": "2026-08-14T09:00:00Z",
+            "expired_at": "2026-08-16T09:00:00Z"
+          },
+          "test": {
+            "flow": "two-stories-one-sprint",
+            "actingRoleRef": "role.development-team",
+            "asOf": "2026-08-14T09:00:00Z",
+            "basedOn": [
+              "confirmation.story#accept-01-history",
+              "confirmation.story#accept-02-export"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "confirmation.review",
+      "category": "evidence",
+      "kind": "fulfillment_confirmation",
+      "label": "迭代评审纪要",
+      "contextRef": "context.sprint",
+      "responsibleRoleRef": "role.product-owner",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "凭证标识",
+          "valueType": "id",
+          "required": true,
+          "meaning": "在此业务凭证类型中唯一的标识"
+        },
+        {
+          "name": "confirmed_at",
+          "label": "形成时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "meaning": "形成时刻",
+          "keyData": true
+        },
+        {
+          "name": "outcome",
+          "label": "评审结论",
+          "valueType": "string",
+          "required": true,
+          "meaning": "评审结论"
+        }
+      ],
+      "examples": [
+        {
+          "label": "complete-review",
+          "value": {
+            "id": "review-minutes-42",
+            "outcome": "同意验收结果并归档",
+            "confirmed_at": "2026-08-14T13:00:00Z"
+          },
+          "test": {
+            "flow": "two-stories-one-sprint",
+            "actingRoleRef": "role.product-owner",
+            "asOf": "2026-08-14T13:00:00Z",
+            "basedOn": ["request.review#review-iteration"]
+          }
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "type": "relationship",
+      "id": "relation.party.product-owner-role.product-owner",
+      "kind": "plays_role",
+      "sourceRef": "party.product-owner",
+      "targetRef": "role.product-owner",
+      "label": "扮演产品负责人"
+    },
+    {
+      "type": "relationship",
+      "id": "relation.party.development-team-role.development-team",
+      "kind": "plays_role",
+      "sourceRef": "party.development-team",
+      "targetRef": "role.development-team",
+      "label": "扮演研发团队"
+    },
+    {
+      "type": "relationship",
+      "id": "relation.request.backlog-contract.iteration-plan",
+      "kind": "references",
+      "sourceRef": "request.backlog",
+      "targetRef": "contract.iteration-plan",
+      "label": "在协议约定范围内发起履约",
+      "sourceCardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.confirmation.backlog-request.backlog",
+      "kind": "references",
+      "sourceRef": "confirmation.backlog",
+      "targetRef": "request.backlog",
+      "label": "待办范围只锁定一次",
+      "sourceCardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.confirmation.story-request.backlog",
+      "kind": "references",
+      "sourceRef": "confirmation.story",
+      "targetRef": "request.backlog",
+      "label": "同一迭代窗口内可追加多笔故事验收",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.confirmation.story-confirmation.backlog",
+      "kind": "references",
+      "sourceRef": "confirmation.story",
+      "targetRef": "confirmation.backlog",
+      "label": "先锁定迭代基线再验收故事",
+      "sourceCardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.request.review-contract.iteration-plan",
+      "kind": "references",
+      "sourceRef": "request.review",
+      "targetRef": "contract.iteration-plan",
+      "label": "在协议约定范围内发起履约",
+      "sourceCardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.confirmation.review-request.review",
+      "kind": "references",
+      "sourceRef": "confirmation.review",
+      "targetRef": "request.review",
+      "label": "评审结束后形成一份纪要",
+      "sourceCardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    }
+  ],
+  "rules": [
+    {
+      "type": "rule",
+      "id": "rule.request.backlog-deadline",
+      "kind": "derivation",
+      "label": "待办范围确认请求窗口为 336 小时",
+      "description": "待办范围确认请求窗口为 336 小时",
+      "contextRef": "context.sprint",
+      "bindings": {
+        "self": {
+          "ref": "request.backlog"
+        }
+      },
+      "expression": "self.started_at + duration(\"336h\")",
+      "resultType": "timestamp",
+      "target": {
+        "entityRef": "request.backlog",
+        "attribute": "expired_at"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule.locked-backlog-revision",
+      "kind": "derivation",
+      "label": "锁定请求中的待办版本",
+      "description": "锁定请求中的待办版本",
+      "contextRef": "context.sprint",
+      "bindings": {
+        "backlog": {
+          "ref": "request.backlog"
+        }
+      },
+      "expression": "backlog.backlog_revision",
+      "resultType": "id",
+      "target": {
+        "entityRef": "confirmation.backlog",
+        "attribute": "backlog_revision"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule.backlog-completed",
+      "kind": "completion",
+      "label": "锁定后，时窗内验收的不同故事达到约定数量才完成",
+      "description": "锁定后，时窗内验收的不同故事达到约定数量才完成",
+      "contextRef": "context.sprint",
+      "bindings": {
+        "backlog": {
+          "ref": "request.backlog"
+        },
+        "baseline": {
+          "ref": "confirmation.backlog"
+        },
+        "stories": {
+          "ref": "confirmation.story",
+          "cardinality": "many"
+        }
+      },
+      "expression": "size(stories.filter(s, s.confirmed_at >= baseline.confirmed_at && s.confirmed_at <= backlog.expired_at)) == backlog.story_count && stories.all(s, size(stories.filter(t, t.story_id == s.story_id)) == 1)",
+      "resultType": "bool"
+    },
+    {
+      "type": "rule",
+      "id": "rule.request.review-deadline",
+      "kind": "derivation",
+      "label": "迭代评审请求窗口为 48 小时",
+      "description": "迭代评审请求窗口为 48 小时",
+      "contextRef": "context.sprint",
+      "bindings": {
+        "self": {
+          "ref": "request.review"
+        }
+      },
+      "expression": "self.started_at + duration(\"48h\")",
+      "resultType": "timestamp",
+      "target": {
+        "entityRef": "request.review",
+        "attribute": "expired_at"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule.request.review-completed",
+      "kind": "completion",
+      "label": "在评审窗口内确认纪要",
+      "description": "在评审窗口内确认纪要",
+      "contextRef": "context.sprint",
+      "bindings": {
+        "request": {
+          "ref": "request.review"
+        },
+        "results": {
+          "ref": "confirmation.review",
+          "cardinality": "many"
+        }
+      },
+      "expression": "results.exists(c, c.confirmed_at >= request.started_at && c.confirmed_at <= request.expired_at)",
+      "resultType": "bool"
+    }
+  ]
+}

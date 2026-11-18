@@ -75,12 +75,31 @@ export function renderStepCi(projection: AcceptanceProjection): string {
                 }),
             check: {
               status: step.status,
+              ...(step.status === 202
+                ? {
+                    headers: {
+                      location: [{ isString: true }, { match: '\\S' }],
+                    },
+                  }
+                : {}),
               ...(step.responseSchema === undefined
                 ? {}
                 : { schema: step.responseSchema }),
               ...(Object.keys(step.assertions).length === 0
                 ? {}
-                : { jsonpath: step.assertions }),
+                : {
+                    jsonpath: Object.fromEntries(
+                      Object.entries(step.assertions).map(
+                        ([path, expected]) => [
+                          path,
+                          // Step CI treats arrays as matcher lists, not literal expectations.
+                          Array.isArray(expected)
+                            ? [{ eq: expected }]
+                            : expected,
+                        ],
+                      ),
+                    ),
+                  }),
             },
           },
         })),

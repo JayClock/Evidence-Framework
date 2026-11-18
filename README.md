@@ -54,6 +54,14 @@
 
 ---
 
+## 可运行的契约示例
+
+- [数字广告投放](examples/digital-advertising/README.md)：单次支付确认、磋商后签署独立订单、日报异步受理。
+- [产研迭代计划](examples/agile-sprint/README.md)：一个迭代窗口内追加多份故事验收凭证。
+- [共享结算](examples/shared-settlement/README.md)：一笔收入核销季度及年度指标，支持从两处反向追溯。
+
+三个示例各自包含 FM Bundle、OpenAPI 和 Step CI 资产，不附带服务实现。运行 `pnpm nx build cli && pnpm examples:verify` 可只读核验。
+
 ## 🛠️ DSL 示例：语言无关的履约事实表达
 
 以下是 Evidence 表达的一段采购履约片段（保存为 `*.evidence.json` 或 `.evidence/fm/`）：

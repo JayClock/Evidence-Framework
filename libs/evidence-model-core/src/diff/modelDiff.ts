@@ -116,6 +116,7 @@ const ENTITY_FIELDS = [
   'notes',
   'contextRef',
   'responsibleRoleRef',
+  'asyncAcceptance',
   'roleRefs',
   'parentContextRef',
   'rootRefs',

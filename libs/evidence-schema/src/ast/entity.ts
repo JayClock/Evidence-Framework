@@ -187,6 +187,8 @@ export const EvidenceEntitySchema = EntityBaseSchema.extend({
   responsibleRoleRef: DomainIdSchema.optional(),
   /** Explicit delegates for recording this confirmation; they do not own the obligation. */
   callbackRoleRefs: z.array(DomainIdSchema).min(1).optional(),
+  /** Accept processing now; record the outcome separately as a confirmation. */
+  asyncAcceptance: z.literal(true).optional(),
   roleRefs: z.array(DomainIdSchema).optional(),
 }).strict();
 

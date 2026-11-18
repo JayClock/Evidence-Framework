@@ -371,11 +371,13 @@ const operationOf = (
       String(response.status),
       {
         description: response.description,
-        ...(response.status === 201
+        ...(response.status === 201 || response.status === 202
           ? {
               headers: {
                 Location: {
-                  description: '新凭证地址',
+                  ...(response.status === 202
+                    ? { description: '已受理请求的查询地址', required: true }
+                    : { description: '新凭证地址' }),
                   schema: { type: 'string', format: 'uri-reference' },
                   'x-evidence-uri-template': route.itemPath,
                 },

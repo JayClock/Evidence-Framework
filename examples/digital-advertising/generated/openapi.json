@@ -1,0 +1,4196 @@
+{
+  "components": {
+    "examples": {
+      "route_read_confirmation_advertising_campaign-live_1": {
+        "summary": "campaign-live",
+        "value": {
+          "_links": {
+            "self": {
+              "href": "/advertising-confirmations/{advertisingConfirmationId}"
+            }
+          },
+          "confirmed_at": "2026-07-02T00:00:00Z",
+          "id": "launch-proof-summer",
+          "placement": "首页推荐位"
+        }
+      },
+      "route_read_confirmation_daily-report_report-published_1": {
+        "summary": "report-published",
+        "value": {
+          "_links": {
+            "self": {
+              "href": "/daily-report-confirmations/{dailyReportConfirmationId}"
+            }
+          },
+          "confirmed_at": "2026-07-03T00:20:00Z",
+          "id": "daily-report-summer",
+          "impressions": 12904,
+          "report_ref": "archive-summer-20260702"
+        }
+      },
+      "route_read_confirmation_payment_gateway-paid_1": {
+        "summary": "gateway-paid",
+        "value": {
+          "_links": {
+            "self": {
+              "href": "/payment-confirmations/{paymentConfirmationId}"
+            }
+          },
+          "confirmed_at": "2026-06-01T10:00:00Z",
+          "gateway_reference": "gateway-txn-01",
+          "id": "payment-proof-one",
+          "paid_amount_minor": 250000
+        }
+      },
+      "route_read_confirmation_payment_summer-payment-proof_2": {
+        "summary": "summer-payment-proof",
+        "value": {
+          "_links": {
+            "self": {
+              "href": "/payment-confirmations/{paymentConfirmationId}"
+            }
+          },
+          "confirmed_at": "2026-07-01T12:00:00Z",
+          "gateway_reference": "gateway-txn-02",
+          "id": "payment-proof-summer",
+          "paid_amount_minor": 720000
+        }
+      },
+      "route_read_contract_ads-promotion-order_payment-order_1": {
+        "summary": "payment-order",
+        "value": {
+          "_links": {
+            "self": {
+              "href": "/ads-promotion-orders/{contractId}"
+            }
+          },
+          "agreed_amount_minor": 250000,
+          "campaign_id": "campaign-pay",
+          "id": "ads-order-pay",
+          "signed_at": "2026-06-01T09:00:00Z"
+        }
+      },
+      "route_read_contract_ads-promotion-order_sign-campaign-order_2": {
+        "summary": "sign-campaign-order",
+        "value": {
+          "_links": {
+            "self": {
+              "href": "/ads-promotion-orders/{contractId}"
+            }
+          },
+          "agreed_amount_minor": 720000,
+          "campaign_id": "campaign-summer",
+          "id": "ads-order-summer",
+          "signed_at": "2026-07-01T11:00:00Z"
+        }
+      },
+      "route_read_proposal_ads-promotion-proposal_return-quote_1": {
+        "summary": "return-quote",
+        "value": {
+          "_links": {
+            "self": {
+              "href": "/ads-promotion-inquiries/{inquiryId}/ads-promotion-proposal"
+            }
+          },
+          "expired_at": "2026-07-03T10:00:00Z",
+          "id": "quote-summer",
+          "placement": "首页推荐位",
+          "quoted_amount_minor": 720000,
+          "started_at": "2026-07-01T10:00:00Z"
+        }
+      },
+      "route_read_request_advertising_request-launch_1": {
+        "summary": "request-launch",
+        "value": {
+          "_links": {
+            "self": {
+              "href": "/ads-promotion-orders/{contractId}/advertising"
+            }
+          },
+          "expired_at": "2026-07-03T13:00:00Z",
+          "id": "launch-request-summer",
+          "placement": "首页推荐位",
+          "started_at": "2026-07-01T13:00:00Z"
+        }
+      },
+      "route_read_request_daily-report_report-accepted_1": {
+        "summary": "report-accepted",
+        "value": {
+          "_links": {
+            "self": {
+              "href": "/ads-promotion-orders/{contractId}/daily-reports/{reportId}"
+            }
+          },
+          "expired_at": "2026-07-04T00:10:00Z",
+          "id": "report-request-summer",
+          "report_date": "2026-07-02",
+          "started_at": "2026-07-03T00:10:00Z"
+        }
+      },
+      "route_read_request_payment_payment-window_1": {
+        "summary": "payment-window",
+        "value": {
+          "_links": {
+            "self": {
+              "href": "/ads-promotion-orders/{contractId}/payment"
+            }
+          },
+          "expired_at": "2026-06-02T09:15:00Z",
+          "id": "pay-request-one",
+          "started_at": "2026-06-01T09:15:00Z"
+        }
+      },
+      "route_read_request_payment_summer-payment-window_2": {
+        "summary": "summer-payment-window",
+        "value": {
+          "_links": {
+            "self": {
+              "href": "/ads-promotion-orders/{contractId}/payment"
+            }
+          },
+          "expired_at": "2026-07-02T11:05:00Z",
+          "id": "pay-request-summer",
+          "started_at": "2026-07-01T11:05:00Z"
+        }
+      },
+      "route_read_rfp_ads-promotion-inquiry_request-campaign-plan_1": {
+        "summary": "request-campaign-plan",
+        "value": {
+          "_links": {
+            "self": {
+              "href": "/ads-promotion-inquiries/{inquiryId}"
+            }
+          },
+          "budget_minor": 800000,
+          "expired_at": "2026-07-04T09:00:00Z",
+          "id": "inquiry-summer",
+          "objective": "推广夏季新品",
+          "started_at": "2026-07-01T09:00:00Z"
+        }
+      }
+    },
+    "schemas": {
+      "confirmation_advertising": {
+        "additionalProperties": false,
+        "description": "读取资源详情",
+        "examples": [
+          {
+            "_links": {
+              "self": {
+                "href": "/advertising-confirmations/{advertisingConfirmationId}"
+              }
+            },
+            "confirmed_at": "2026-07-02T00:00:00Z",
+            "id": "launch-proof-summer",
+            "placement": "首页推荐位"
+          }
+        ],
+        "properties": {
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "confirmed_at": {
+            "description": "形成时刻",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-origin": "service-time"
+          },
+          "id": {
+            "description": "在此业务凭证类型中唯一的标识",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "placement": {
+            "description": "实际投放版位",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          }
+        },
+        "required": [
+          "id",
+          "confirmed_at",
+          "placement",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "confirmation_daily-report": {
+        "additionalProperties": false,
+        "description": "读取资源详情",
+        "examples": [
+          {
+            "_links": {
+              "self": {
+                "href": "/daily-report-confirmations/{dailyReportConfirmationId}"
+              }
+            },
+            "confirmed_at": "2026-07-03T00:20:00Z",
+            "id": "daily-report-summer",
+            "impressions": 12904,
+            "report_ref": "archive-summer-20260702"
+          }
+        ],
+        "properties": {
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "confirmed_at": {
+            "description": "形成时刻",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-origin": "service-time"
+          },
+          "id": {
+            "description": "在此业务凭证类型中唯一的标识",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "impressions": {
+            "anyOf": [
+              {
+                "maximum": 9007199254740991,
+                "minimum": -9007199254740991,
+                "type": "integer"
+              },
+              {
+                "pattern": "^(?:0|-?[1-9][0-9]*)$",
+                "type": "string"
+              }
+            ],
+            "description": "展示次数",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "report_ref": {
+            "description": "归档报表标识",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          }
+        },
+        "required": [
+          "id",
+          "confirmed_at",
+          "impressions",
+          "report_ref",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "confirmation_payment": {
+        "additionalProperties": false,
+        "description": "读取资源详情",
+        "examples": [
+          {
+            "_links": {
+              "self": {
+                "href": "/payment-confirmations/{paymentConfirmationId}"
+              }
+            },
+            "confirmed_at": "2026-06-01T10:00:00Z",
+            "gateway_reference": "gateway-txn-01",
+            "id": "payment-proof-one",
+            "paid_amount_minor": 250000
+          },
+          {
+            "_links": {
+              "self": {
+                "href": "/payment-confirmations/{paymentConfirmationId}"
+              }
+            },
+            "confirmed_at": "2026-07-01T12:00:00Z",
+            "gateway_reference": "gateway-txn-02",
+            "id": "payment-proof-summer",
+            "paid_amount_minor": 720000
+          }
+        ],
+        "properties": {
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "confirmed_at": {
+            "description": "形成时刻",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-origin": "service-time"
+          },
+          "gateway_reference": {
+            "description": "支付渠道流水号",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "id": {
+            "description": "在此业务凭证类型中唯一的标识",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "paid_amount_minor": {
+            "anyOf": [
+              {
+                "maximum": 9007199254740991,
+                "minimum": -9007199254740991,
+                "type": "integer"
+              },
+              {
+                "pattern": "^(?:0|-?[1-9][0-9]*)$",
+                "type": "string"
+              }
+            ],
+            "description": "核对后到账金额，单位为 CNY 分",
+            "readOnly": true,
+            "x-evidence-caller-input": false,
+            "x-evidence-derived-by-rule": "rule.payment-amount",
+            "x-evidence-origin": "derived",
+            "x-evidence-rule": "rule.payment-amount"
+          }
+        },
+        "required": [
+          "id",
+          "confirmed_at",
+          "paid_amount_minor",
+          "gateway_reference",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "contract_ads-promotion-order": {
+        "additionalProperties": false,
+        "description": "签署数字广告投放，双方权责自此成立",
+        "examples": [
+          {
+            "_links": {
+              "self": {
+                "href": "/ads-promotion-orders/{contractId}"
+              }
+            },
+            "agreed_amount_minor": 250000,
+            "campaign_id": "campaign-pay",
+            "id": "ads-order-pay",
+            "signed_at": "2026-06-01T09:00:00Z"
+          },
+          {
+            "_links": {
+              "self": {
+                "href": "/ads-promotion-orders/{contractId}"
+              }
+            },
+            "agreed_amount_minor": 720000,
+            "campaign_id": "campaign-summer",
+            "id": "ads-order-summer",
+            "signed_at": "2026-07-01T11:00:00Z"
+          }
+        ],
+        "properties": {
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "agreed_amount_minor": {
+            "anyOf": [
+              {
+                "maximum": 9007199254740991,
+                "minimum": -9007199254740991,
+                "type": "integer"
+              },
+              {
+                "pattern": "^(?:0|-?[1-9][0-9]*)$",
+                "type": "string"
+              }
+            ],
+            "description": "约定投放总价，单位为 CNY 分",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "campaign_id": {
+            "description": "广告活动",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "id": {
+            "description": "在此业务凭证类型中唯一的标识",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "signed_at": {
+            "description": "签署时刻",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-origin": "service-time"
+          }
+        },
+        "required": [
+          "id",
+          "signed_at",
+          "campaign_id",
+          "agreed_amount_minor",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "contract_ads-promotion-orderCollection": {
+        "additionalProperties": false,
+        "properties": {
+          "_embedded": {
+            "additionalProperties": false,
+            "properties": {
+              "ads-promotion-orders": {
+                "items": {
+                  "$ref": "#/components/schemas/contract_ads-promotion-orderSummary"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "ads-promotion-orders"
+            ],
+            "type": "object"
+          },
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "total": {
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "_links",
+          "_embedded",
+          "total"
+        ],
+        "type": "object"
+      },
+      "contract_ads-promotion-orderSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "agreed_amount_minor": {
+            "anyOf": [
+              {
+                "maximum": 9007199254740991,
+                "minimum": -9007199254740991,
+                "type": "integer"
+              },
+              {
+                "pattern": "^(?:0|-?[1-9][0-9]*)$",
+                "type": "string"
+              }
+            ],
+            "description": "约定投放总价，单位为 CNY 分",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "campaign_id": {
+            "description": "广告活动",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "id": {
+            "description": "在此业务凭证类型中唯一的标识",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "signed_at": {
+            "description": "签署时刻",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-origin": "service-time"
+          }
+        },
+        "required": [
+          "_links",
+          "id",
+          "campaign_id"
+        ],
+        "type": "object"
+      },
+      "proposal_ads-promotion-proposal": {
+        "additionalProperties": false,
+        "description": "读取资源详情",
+        "examples": [
+          {
+            "_links": {
+              "self": {
+                "href": "/ads-promotion-inquiries/{inquiryId}/ads-promotion-proposal"
+              }
+            },
+            "expired_at": "2026-07-03T10:00:00Z",
+            "id": "quote-summer",
+            "placement": "首页推荐位",
+            "quoted_amount_minor": 720000,
+            "started_at": "2026-07-01T10:00:00Z"
+          }
+        ],
+        "properties": {
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "expired_at": {
+            "description": "截止时刻",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-derived-by-rule": "rule.proposal.ads-promotion-proposal-deadline",
+            "x-evidence-origin": "derived",
+            "x-evidence-rule": "rule.proposal.ads-promotion-proposal-deadline"
+          },
+          "id": {
+            "description": "在此业务凭证类型中唯一的标识",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "placement": {
+            "description": "版位",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "quoted_amount_minor": {
+            "anyOf": [
+              {
+                "maximum": 9007199254740991,
+                "minimum": -9007199254740991,
+                "type": "integer"
+              },
+              {
+                "pattern": "^(?:0|-?[1-9][0-9]*)$",
+                "type": "string"
+              }
+            ],
+            "description": "报价，单位为 CNY 分",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "started_at": {
+            "description": "开启时刻",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-origin": "service-time"
+          }
+        },
+        "required": [
+          "id",
+          "started_at",
+          "expired_at",
+          "quoted_amount_minor",
+          "placement",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "request_advertising": {
+        "additionalProperties": false,
+        "description": "发起广告上线申请，开启一个有截止时间的履约窗口",
+        "examples": [
+          {
+            "_links": {
+              "self": {
+                "href": "/ads-promotion-orders/{contractId}/advertising"
+              }
+            },
+            "expired_at": "2026-07-03T13:00:00Z",
+            "id": "launch-request-summer",
+            "placement": "首页推荐位",
+            "started_at": "2026-07-01T13:00:00Z"
+          }
+        ],
+        "properties": {
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "expired_at": {
+            "description": "截止时刻",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-derived-by-rule": "rule.request.advertising-deadline",
+            "x-evidence-origin": "derived",
+            "x-evidence-rule": "rule.request.advertising-deadline"
+          },
+          "id": {
+            "description": "在此业务凭证类型中唯一的标识",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "placement": {
+            "description": "投放版位",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "started_at": {
+            "description": "开启时刻",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-origin": "service-time"
+          }
+        },
+        "required": [
+          "id",
+          "started_at",
+          "expired_at",
+          "placement",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "request_daily-report": {
+        "additionalProperties": false,
+        "description": "发起日报生成请求，开启一个有截止时间的履约窗口",
+        "examples": [
+          {
+            "_links": {
+              "self": {
+                "href": "/ads-promotion-orders/{contractId}/daily-reports/{reportId}"
+              }
+            },
+            "expired_at": "2026-07-04T00:10:00Z",
+            "id": "report-request-summer",
+            "report_date": "2026-07-02",
+            "started_at": "2026-07-03T00:10:00Z"
+          }
+        ],
+        "properties": {
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "expired_at": {
+            "description": "截止时刻",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-derived-by-rule": "rule.request.daily-report-deadline",
+            "x-evidence-origin": "derived",
+            "x-evidence-rule": "rule.request.daily-report-deadline"
+          },
+          "id": {
+            "description": "在此业务凭证类型中唯一的标识",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "report_date": {
+            "description": "广告主业务时区中的 YYYY-MM-DD",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "started_at": {
+            "description": "开启时刻",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-origin": "service-time"
+          }
+        },
+        "required": [
+          "id",
+          "started_at",
+          "expired_at",
+          "report_date",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "request_daily-reportCollection": {
+        "additionalProperties": false,
+        "properties": {
+          "_embedded": {
+            "additionalProperties": false,
+            "properties": {
+              "daily-reports": {
+                "items": {
+                  "$ref": "#/components/schemas/request_daily-reportSummary"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "daily-reports"
+            ],
+            "type": "object"
+          },
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "total": {
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "_links",
+          "_embedded",
+          "total"
+        ],
+        "type": "object"
+      },
+      "request_daily-reportSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "expired_at": {
+            "description": "截止时刻",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-derived-by-rule": "rule.request.daily-report-deadline",
+            "x-evidence-origin": "derived",
+            "x-evidence-rule": "rule.request.daily-report-deadline"
+          },
+          "id": {
+            "description": "在此业务凭证类型中唯一的标识",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "report_date": {
+            "description": "广告主业务时区中的 YYYY-MM-DD",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "started_at": {
+            "description": "开启时刻",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-origin": "service-time"
+          }
+        },
+        "required": [
+          "_links",
+          "id"
+        ],
+        "type": "object"
+      },
+      "request_payment": {
+        "additionalProperties": false,
+        "description": "发起预付款申请，开启一个有截止时间的履约窗口",
+        "examples": [
+          {
+            "_links": {
+              "self": {
+                "href": "/ads-promotion-orders/{contractId}/payment"
+              }
+            },
+            "expired_at": "2026-06-02T09:15:00Z",
+            "id": "pay-request-one",
+            "started_at": "2026-06-01T09:15:00Z"
+          },
+          {
+            "_links": {
+              "self": {
+                "href": "/ads-promotion-orders/{contractId}/payment"
+              }
+            },
+            "expired_at": "2026-07-02T11:05:00Z",
+            "id": "pay-request-summer",
+            "started_at": "2026-07-01T11:05:00Z"
+          }
+        ],
+        "properties": {
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "expired_at": {
+            "description": "截止时刻",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-derived-by-rule": "rule.request.payment-deadline",
+            "x-evidence-origin": "derived",
+            "x-evidence-rule": "rule.request.payment-deadline"
+          },
+          "id": {
+            "description": "在此业务凭证类型中唯一的标识",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "started_at": {
+            "description": "开启时刻",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-origin": "service-time"
+          }
+        },
+        "required": [
+          "id",
+          "started_at",
+          "expired_at",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "rfp_ads-promotion-inquiry": {
+        "additionalProperties": false,
+        "description": "读取资源详情",
+        "examples": [
+          {
+            "_links": {
+              "self": {
+                "href": "/ads-promotion-inquiries/{inquiryId}"
+              }
+            },
+            "budget_minor": 800000,
+            "expired_at": "2026-07-04T09:00:00Z",
+            "id": "inquiry-summer",
+            "objective": "推广夏季新品",
+            "started_at": "2026-07-01T09:00:00Z"
+          }
+        ],
+        "properties": {
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "budget_minor": {
+            "anyOf": [
+              {
+                "maximum": 9007199254740991,
+                "minimum": -9007199254740991,
+                "type": "integer"
+              },
+              {
+                "pattern": "^(?:0|-?[1-9][0-9]*)$",
+                "type": "string"
+              }
+            ],
+            "description": "预算上限，单位为 CNY 分",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "expired_at": {
+            "description": "截止时刻",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-derived-by-rule": "rule.rfp.ads-promotion-inquiry-deadline",
+            "x-evidence-origin": "derived",
+            "x-evidence-rule": "rule.rfp.ads-promotion-inquiry-deadline"
+          },
+          "id": {
+            "description": "在此业务凭证类型中唯一的标识",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "objective": {
+            "description": "投放目标",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "started_at": {
+            "description": "开启时刻",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-origin": "service-time"
+          }
+        },
+        "required": [
+          "id",
+          "started_at",
+          "expired_at",
+          "objective",
+          "budget_minor",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "rfp_ads-promotion-inquiryCollection": {
+        "additionalProperties": false,
+        "properties": {
+          "_embedded": {
+            "additionalProperties": false,
+            "properties": {
+              "ads-promotion-inquiries": {
+                "items": {
+                  "$ref": "#/components/schemas/rfp_ads-promotion-inquirySummary"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "ads-promotion-inquiries"
+            ],
+            "type": "object"
+          },
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "total": {
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "_links",
+          "_embedded",
+          "total"
+        ],
+        "type": "object"
+      },
+      "rfp_ads-promotion-inquirySummary": {
+        "additionalProperties": false,
+        "properties": {
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "budget_minor": {
+            "anyOf": [
+              {
+                "maximum": 9007199254740991,
+                "minimum": -9007199254740991,
+                "type": "integer"
+              },
+              {
+                "pattern": "^(?:0|-?[1-9][0-9]*)$",
+                "type": "string"
+              }
+            ],
+            "description": "预算上限，单位为 CNY 分",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "expired_at": {
+            "description": "截止时刻",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-derived-by-rule": "rule.rfp.ads-promotion-inquiry-deadline",
+            "x-evidence-origin": "derived",
+            "x-evidence-rule": "rule.rfp.ads-promotion-inquiry-deadline"
+          },
+          "id": {
+            "description": "在此业务凭证类型中唯一的标识",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "objective": {
+            "description": "投放目标",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "started_at": {
+            "description": "开启时刻",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-origin": "service-time"
+          }
+        },
+        "required": [
+          "_links",
+          "id"
+        ],
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "由履约模型直接投影的契约：每个路径对应一个业务凭证时刻。\n派生值由服务端计算，业务时间由服务端打点，调用方不能提交或回填。",
+    "title": "数字广告投放",
+    "version": "6.0.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/ads-promotion-inquiries": {
+      "get": {
+        "operationId": "listRfpAdsPromotionInquiry",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_list_rfp_ads-promotion-inquiry_request-campaign-plan_1": {
+                    "summary": "request-campaign-plan",
+                    "value": {
+                      "_embedded": {
+                        "ads-promotion-inquiries": [
+                          {
+                            "_links": {
+                              "self": {
+                                "href": "/ads-promotion-inquiries/{inquiryId}",
+                                "templated": true
+                              }
+                            },
+                            "budget_minor": 800000,
+                            "expired_at": "2026-07-04T09:00:00Z",
+                            "id": "inquiry-summer",
+                            "objective": "推广夏季新品",
+                            "started_at": "2026-07-01T09:00:00Z"
+                          }
+                        ]
+                      },
+                      "_links": {
+                        "next:proposal.ads-promotion-proposal": {
+                          "href": "/ads-promotion-inquiries/{inquiryId}/ads-promotion-proposal",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/ads-promotion-inquiries",
+                          "templated": false
+                        }
+                      },
+                      "total": 1
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/rfp_ads-promotion-inquiryCollection"
+                },
+                "x-evidence-link-templates": {
+                  "next:proposal.ads-promotion-proposal": {
+                    "href": "/ads-promotion-inquiries/{inquiryId}/ads-promotion-proposal",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/ads-promotion-inquiries",
+                    "templated": false
+                  }
+                }
+              }
+            },
+            "description": "读取资源集合"
+          },
+          "404": {
+            "description": "资源不存在"
+          }
+        },
+        "summary": "读取资源集合",
+        "tags": [
+          "context:context.advertising-negotiation"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.advertiser"
+        ],
+        "x-evidence-context": "context.advertising-negotiation",
+        "x-evidence-derived": [
+          {
+            "name": "expired_at",
+            "ruleRef": "rule.rfp.ads-promotion-inquiry-deadline"
+          }
+        ],
+        "x-evidence-entity": "rfp.ads-promotion-inquiry",
+        "x-evidence-exposure": "external",
+        "x-evidence-purpose": "read",
+        "x-evidence-service": "service.advertising-negotiation",
+        "x-evidence-stamped": [
+          "started_at"
+        ]
+      },
+      "post": {
+        "operationId": "openRfpAdsPromotionInquiry",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "route_open_rfp_ads-promotion-inquiry_request-campaign-plan_1": {
+                  "summary": "request-campaign-plan",
+                  "value": {
+                    "budget_minor": 800000,
+                    "id": "inquiry-summer",
+                    "objective": "推广夏季新品"
+                  }
+                }
+              },
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "budget_minor": {
+                    "anyOf": [
+                      {
+                        "maximum": 9007199254740991,
+                        "minimum": -9007199254740991,
+                        "type": "integer"
+                      },
+                      {
+                        "pattern": "^(?:0|-?[1-9][0-9]*)$",
+                        "type": "string"
+                      }
+                    ],
+                    "description": "预算上限，单位为 CNY 分",
+                    "x-evidence-caller-input": true
+                  },
+                  "id": {
+                    "description": "在此业务凭证类型中唯一的标识",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  },
+                  "objective": {
+                    "description": "投放目标",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  }
+                },
+                "required": [
+                  "id",
+                  "objective",
+                  "budget_minor"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_open_rfp_ads-promotion-inquiry_request-campaign-plan_1": {
+                    "summary": "request-campaign-plan",
+                    "value": {
+                      "_links": {
+                        "next:proposal.ads-promotion-proposal": {
+                          "href": "/ads-promotion-inquiries/{inquiryId}/ads-promotion-proposal",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/ads-promotion-inquiries/{inquiryId}",
+                          "templated": true
+                        }
+                      },
+                      "budget_minor": 800000,
+                      "expired_at": "2026-07-04T09:00:00Z",
+                      "id": "inquiry-summer",
+                      "objective": "推广夏季新品",
+                      "started_at": "2026-07-01T09:00:00Z"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/rfp_ads-promotion-inquiry"
+                },
+                "x-evidence-link-templates": {
+                  "next:proposal.ads-promotion-proposal": {
+                    "href": "/ads-promotion-inquiries/{inquiryId}/ads-promotion-proposal",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/ads-promotion-inquiries/{inquiryId}",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "发起投放需求征询，向对方征询方案",
+            "headers": {
+              "Location": {
+                "description": "新凭证地址",
+                "schema": {
+                  "format": "uri-reference",
+                  "type": "string"
+                },
+                "x-evidence-uri-template": "/ads-promotion-inquiries/{inquiryId}"
+              }
+            }
+          }
+        },
+        "summary": "发起投放需求征询，向对方征询方案",
+        "tags": [
+          "context:context.advertising-negotiation"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.advertiser"
+        ],
+        "x-evidence-context": "context.advertising-negotiation",
+        "x-evidence-derived": [
+          {
+            "name": "expired_at",
+            "ruleRef": "rule.rfp.ads-promotion-inquiry-deadline"
+          }
+        ],
+        "x-evidence-entity": "rfp.ads-promotion-inquiry",
+        "x-evidence-exposure": "external",
+        "x-evidence-purpose": "open",
+        "x-evidence-service": "service.advertising-negotiation",
+        "x-evidence-stamped": [
+          "started_at"
+        ]
+      }
+    },
+    "/ads-promotion-inquiries/{inquiryId}": {
+      "get": {
+        "operationId": "readRfpAdsPromotionInquiry",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "inquiryId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_read_rfp_ads-promotion-inquiry_request-campaign-plan_1": {
+                    "summary": "request-campaign-plan",
+                    "value": {
+                      "_links": {
+                        "next:proposal.ads-promotion-proposal": {
+                          "href": "/ads-promotion-inquiries/{inquiryId}/ads-promotion-proposal",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/ads-promotion-inquiries/{inquiryId}",
+                          "templated": true
+                        }
+                      },
+                      "budget_minor": 800000,
+                      "expired_at": "2026-07-04T09:00:00Z",
+                      "id": "inquiry-summer",
+                      "objective": "推广夏季新品",
+                      "started_at": "2026-07-01T09:00:00Z"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/rfp_ads-promotion-inquiry"
+                },
+                "x-evidence-link-templates": {
+                  "next:proposal.ads-promotion-proposal": {
+                    "href": "/ads-promotion-inquiries/{inquiryId}/ads-promotion-proposal",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/ads-promotion-inquiries/{inquiryId}",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "读取资源详情"
+          },
+          "404": {
+            "description": "资源不存在"
+          }
+        },
+        "summary": "读取资源详情",
+        "tags": [
+          "context:context.advertising-negotiation"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.advertiser"
+        ],
+        "x-evidence-context": "context.advertising-negotiation",
+        "x-evidence-derived": [
+          {
+            "name": "expired_at",
+            "ruleRef": "rule.rfp.ads-promotion-inquiry-deadline"
+          }
+        ],
+        "x-evidence-entity": "rfp.ads-promotion-inquiry",
+        "x-evidence-exposure": "external",
+        "x-evidence-purpose": "read",
+        "x-evidence-service": "service.advertising-negotiation",
+        "x-evidence-stamped": [
+          "started_at"
+        ]
+      }
+    },
+    "/ads-promotion-inquiries/{inquiryId}/ads-promotion-proposal": {
+      "get": {
+        "operationId": "readProposalAdsPromotionProposal",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "inquiryId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_read_proposal_ads-promotion-proposal_return-quote_1": {
+                    "summary": "return-quote",
+                    "value": {
+                      "_links": {
+                        "next:contract.ads-promotion-order": {
+                          "href": "/ads-promotion-inquiries/{inquiryId}/ads-promotion-proposal/ads-promotion-orders",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/ads-promotion-inquiries/{inquiryId}/ads-promotion-proposal",
+                          "templated": true
+                        }
+                      },
+                      "expired_at": "2026-07-03T10:00:00Z",
+                      "id": "quote-summer",
+                      "placement": "首页推荐位",
+                      "quoted_amount_minor": 720000,
+                      "started_at": "2026-07-01T10:00:00Z"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/proposal_ads-promotion-proposal"
+                },
+                "x-evidence-link-templates": {
+                  "next:contract.ads-promotion-order": {
+                    "href": "/ads-promotion-inquiries/{inquiryId}/ads-promotion-proposal/ads-promotion-orders",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/ads-promotion-inquiries/{inquiryId}/ads-promotion-proposal",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "读取资源详情"
+          },
+          "404": {
+            "description": "资源不存在"
+          }
+        },
+        "summary": "读取资源详情",
+        "tags": [
+          "context:context.advertising-negotiation"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.agency"
+        ],
+        "x-evidence-context": "context.advertising-negotiation",
+        "x-evidence-derived": [
+          {
+            "name": "expired_at",
+            "ruleRef": "rule.proposal.ads-promotion-proposal-deadline"
+          }
+        ],
+        "x-evidence-entity": "proposal.ads-promotion-proposal",
+        "x-evidence-exposure": "external",
+        "x-evidence-purpose": "read",
+        "x-evidence-service": "service.advertising-negotiation",
+        "x-evidence-stamped": [
+          "started_at"
+        ]
+      },
+      "post": {
+        "operationId": "proposeProposalAdsPromotionProposal",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "inquiryId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "route_propose_proposal_ads-promotion-proposal_return-quote_1": {
+                  "summary": "return-quote",
+                  "value": {
+                    "id": "quote-summer",
+                    "placement": "首页推荐位",
+                    "quoted_amount_minor": 720000
+                  }
+                }
+              },
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "description": "在此业务凭证类型中唯一的标识",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  },
+                  "placement": {
+                    "description": "版位",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  },
+                  "quoted_amount_minor": {
+                    "anyOf": [
+                      {
+                        "maximum": 9007199254740991,
+                        "minimum": -9007199254740991,
+                        "type": "integer"
+                      },
+                      {
+                        "pattern": "^(?:0|-?[1-9][0-9]*)$",
+                        "type": "string"
+                      }
+                    ],
+                    "description": "报价，单位为 CNY 分",
+                    "x-evidence-caller-input": true
+                  }
+                },
+                "required": [
+                  "id",
+                  "quoted_amount_minor",
+                  "placement"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_propose_proposal_ads-promotion-proposal_return-quote_1": {
+                    "summary": "return-quote",
+                    "value": {
+                      "_links": {
+                        "next:contract.ads-promotion-order": {
+                          "href": "/ads-promotion-inquiries/{inquiryId}/ads-promotion-proposal/ads-promotion-orders",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/ads-promotion-inquiries/{inquiryId}/ads-promotion-proposal",
+                          "templated": true
+                        }
+                      },
+                      "expired_at": "2026-07-03T10:00:00Z",
+                      "id": "quote-summer",
+                      "placement": "首页推荐位",
+                      "quoted_amount_minor": 720000,
+                      "started_at": "2026-07-01T10:00:00Z"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/proposal_ads-promotion-proposal"
+                },
+                "x-evidence-link-templates": {
+                  "next:contract.ads-promotion-order": {
+                    "href": "/ads-promotion-inquiries/{inquiryId}/ads-promotion-proposal/ads-promotion-orders",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/ads-promotion-inquiries/{inquiryId}/ads-promotion-proposal",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "提交广告投放报价，回应投放需求征询",
+            "headers": {
+              "Location": {
+                "description": "新凭证地址",
+                "schema": {
+                  "format": "uri-reference",
+                  "type": "string"
+                },
+                "x-evidence-uri-template": "/ads-promotion-inquiries/{inquiryId}/ads-promotion-proposal"
+              }
+            }
+          },
+          "409": {
+            "description": "业务窗口已关闭或资源状态冲突"
+          },
+          "422": {
+            "description": "输入内容或业务角色不成立"
+          }
+        },
+        "summary": "提交广告投放报价，回应投放需求征询",
+        "tags": [
+          "context:context.advertising-negotiation"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.agency"
+        ],
+        "x-evidence-context": "context.advertising-negotiation",
+        "x-evidence-derived": [
+          {
+            "name": "expired_at",
+            "ruleRef": "rule.proposal.ads-promotion-proposal-deadline"
+          }
+        ],
+        "x-evidence-entity": "proposal.ads-promotion-proposal",
+        "x-evidence-exposure": "external",
+        "x-evidence-purpose": "propose",
+        "x-evidence-service": "service.advertising-negotiation",
+        "x-evidence-stamped": [
+          "started_at"
+        ]
+      }
+    },
+    "/ads-promotion-inquiries/{inquiryId}/ads-promotion-proposal/ads-promotion-orders": {
+      "post": {
+        "operationId": "sign-from-proposal.ads-promotion-proposalContractAdsPromotionOrder",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "inquiryId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "route_sign-from-proposal_ads-promotion-proposal_contract_ads-promotion-order_payment-order_1": {
+                  "summary": "payment-order",
+                  "value": {
+                    "agreed_amount_minor": 250000,
+                    "campaign_id": "campaign-pay",
+                    "id": "ads-order-pay"
+                  }
+                },
+                "route_sign-from-proposal_ads-promotion-proposal_contract_ads-promotion-order_sign-campaign-order_2": {
+                  "summary": "sign-campaign-order",
+                  "value": {
+                    "agreed_amount_minor": 720000,
+                    "campaign_id": "campaign-summer",
+                    "id": "ads-order-summer"
+                  }
+                }
+              },
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "agreed_amount_minor": {
+                    "anyOf": [
+                      {
+                        "maximum": 9007199254740991,
+                        "minimum": -9007199254740991,
+                        "type": "integer"
+                      },
+                      {
+                        "pattern": "^(?:0|-?[1-9][0-9]*)$",
+                        "type": "string"
+                      }
+                    ],
+                    "description": "约定投放总价，单位为 CNY 分",
+                    "x-evidence-caller-input": true
+                  },
+                  "campaign_id": {
+                    "description": "广告活动",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  },
+                  "id": {
+                    "description": "在此业务凭证类型中唯一的标识",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  }
+                },
+                "required": [
+                  "id",
+                  "campaign_id",
+                  "agreed_amount_minor"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_sign-from-proposal_ads-promotion-proposal_contract_ads-promotion-order_payment-order_1": {
+                    "summary": "payment-order",
+                    "value": {
+                      "_links": {
+                        "next:request.advertising": {
+                          "href": "/ads-promotion-orders/{contractId}/advertising",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "next:request.daily-report": {
+                          "href": "/ads-promotion-orders/{contractId}/daily-reports",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "next:request.payment": {
+                          "href": "/ads-promotion-orders/{contractId}/payment",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/ads-promotion-orders/{contractId}",
+                          "templated": true
+                        }
+                      },
+                      "agreed_amount_minor": 250000,
+                      "campaign_id": "campaign-pay",
+                      "id": "ads-order-pay",
+                      "signed_at": "2026-06-01T09:00:00Z"
+                    }
+                  },
+                  "route_sign-from-proposal_ads-promotion-proposal_contract_ads-promotion-order_sign-campaign-order_2": {
+                    "summary": "sign-campaign-order",
+                    "value": {
+                      "_links": {
+                        "next:request.advertising": {
+                          "href": "/ads-promotion-orders/{contractId}/advertising",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "next:request.daily-report": {
+                          "href": "/ads-promotion-orders/{contractId}/daily-reports",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "next:request.payment": {
+                          "href": "/ads-promotion-orders/{contractId}/payment",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/ads-promotion-orders/{contractId}",
+                          "templated": true
+                        }
+                      },
+                      "agreed_amount_minor": 720000,
+                      "campaign_id": "campaign-summer",
+                      "id": "ads-order-summer",
+                      "signed_at": "2026-07-01T11:00:00Z"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/contract_ads-promotion-order"
+                },
+                "x-evidence-link-templates": {
+                  "next:request.advertising": {
+                    "href": "/ads-promotion-orders/{contractId}/advertising",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "next:request.daily-report": {
+                    "href": "/ads-promotion-orders/{contractId}/daily-reports",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "next:request.payment": {
+                    "href": "/ads-promotion-orders/{contractId}/payment",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/ads-promotion-orders/{contractId}",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "接受广告投放报价并签署数字广告投放",
+            "headers": {
+              "Location": {
+                "description": "新凭证地址",
+                "schema": {
+                  "format": "uri-reference",
+                  "type": "string"
+                },
+                "x-evidence-uri-template": "/ads-promotion-orders/{contractId}"
+              }
+            }
+          },
+          "409": {
+            "description": "业务窗口已关闭或资源状态冲突"
+          },
+          "422": {
+            "description": "输入内容或业务角色不成立"
+          }
+        },
+        "summary": "接受广告投放报价并签署数字广告投放",
+        "tags": [
+          "context:context.advertising-order"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.advertiser",
+          "role.agency"
+        ],
+        "x-evidence-context": "context.advertising-order",
+        "x-evidence-contract": "contract.ads-promotion-order",
+        "x-evidence-derived": [],
+        "x-evidence-entity": "contract.ads-promotion-order",
+        "x-evidence-exposure": "external",
+        "x-evidence-purpose": "sign",
+        "x-evidence-service": "service.advertising-order",
+        "x-evidence-stamped": [
+          "signed_at"
+        ]
+      }
+    },
+    "/ads-promotion-orders": {
+      "get": {
+        "operationId": "listContractAdsPromotionOrder",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_list_contract_ads-promotion-order_payment-order_1": {
+                    "summary": "payment-order",
+                    "value": {
+                      "_embedded": {
+                        "ads-promotion-orders": [
+                          {
+                            "_links": {
+                              "self": {
+                                "href": "/ads-promotion-orders/{contractId}",
+                                "templated": true
+                              }
+                            },
+                            "agreed_amount_minor": 250000,
+                            "campaign_id": "campaign-pay",
+                            "id": "ads-order-pay",
+                            "signed_at": "2026-06-01T09:00:00Z"
+                          }
+                        ]
+                      },
+                      "_links": {
+                        "next:request.advertising": {
+                          "href": "/ads-promotion-orders/{contractId}/advertising",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "next:request.daily-report": {
+                          "href": "/ads-promotion-orders/{contractId}/daily-reports",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "next:request.payment": {
+                          "href": "/ads-promotion-orders/{contractId}/payment",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/ads-promotion-orders",
+                          "templated": false
+                        }
+                      },
+                      "total": 1
+                    }
+                  },
+                  "route_list_contract_ads-promotion-order_sign-campaign-order_2": {
+                    "summary": "sign-campaign-order",
+                    "value": {
+                      "_embedded": {
+                        "ads-promotion-orders": [
+                          {
+                            "_links": {
+                              "self": {
+                                "href": "/ads-promotion-orders/{contractId}",
+                                "templated": true
+                              }
+                            },
+                            "agreed_amount_minor": 720000,
+                            "campaign_id": "campaign-summer",
+                            "id": "ads-order-summer",
+                            "signed_at": "2026-07-01T11:00:00Z"
+                          }
+                        ]
+                      },
+                      "_links": {
+                        "next:request.advertising": {
+                          "href": "/ads-promotion-orders/{contractId}/advertising",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "next:request.daily-report": {
+                          "href": "/ads-promotion-orders/{contractId}/daily-reports",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "next:request.payment": {
+                          "href": "/ads-promotion-orders/{contractId}/payment",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/ads-promotion-orders",
+                          "templated": false
+                        }
+                      },
+                      "total": 1
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/contract_ads-promotion-orderCollection"
+                },
+                "x-evidence-link-templates": {
+                  "next:request.advertising": {
+                    "href": "/ads-promotion-orders/{contractId}/advertising",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "next:request.daily-report": {
+                    "href": "/ads-promotion-orders/{contractId}/daily-reports",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "next:request.payment": {
+                    "href": "/ads-promotion-orders/{contractId}/payment",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/ads-promotion-orders",
+                    "templated": false
+                  }
+                }
+              }
+            },
+            "description": "读取资源集合"
+          },
+          "404": {
+            "description": "资源不存在"
+          }
+        },
+        "summary": "读取资源集合",
+        "tags": [
+          "context:context.advertising-order"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.advertiser",
+          "role.agency"
+        ],
+        "x-evidence-context": "context.advertising-order",
+        "x-evidence-contract": "contract.ads-promotion-order",
+        "x-evidence-derived": [],
+        "x-evidence-entity": "contract.ads-promotion-order",
+        "x-evidence-exposure": "external",
+        "x-evidence-purpose": "read",
+        "x-evidence-service": "service.advertising-order",
+        "x-evidence-stamped": [
+          "signed_at"
+        ]
+      },
+      "post": {
+        "operationId": "signContractAdsPromotionOrder",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "route_sign_contract_ads-promotion-order_payment-order_1": {
+                  "summary": "payment-order",
+                  "value": {
+                    "agreed_amount_minor": 250000,
+                    "campaign_id": "campaign-pay",
+                    "id": "ads-order-pay"
+                  }
+                },
+                "route_sign_contract_ads-promotion-order_sign-campaign-order_2": {
+                  "summary": "sign-campaign-order",
+                  "value": {
+                    "agreed_amount_minor": 720000,
+                    "campaign_id": "campaign-summer",
+                    "id": "ads-order-summer"
+                  }
+                }
+              },
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "agreed_amount_minor": {
+                    "anyOf": [
+                      {
+                        "maximum": 9007199254740991,
+                        "minimum": -9007199254740991,
+                        "type": "integer"
+                      },
+                      {
+                        "pattern": "^(?:0|-?[1-9][0-9]*)$",
+                        "type": "string"
+                      }
+                    ],
+                    "description": "约定投放总价，单位为 CNY 分",
+                    "x-evidence-caller-input": true
+                  },
+                  "campaign_id": {
+                    "description": "广告活动",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  },
+                  "id": {
+                    "description": "在此业务凭证类型中唯一的标识",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  }
+                },
+                "required": [
+                  "id",
+                  "campaign_id",
+                  "agreed_amount_minor"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_sign_contract_ads-promotion-order_payment-order_1": {
+                    "summary": "payment-order",
+                    "value": {
+                      "_links": {
+                        "next:request.advertising": {
+                          "href": "/ads-promotion-orders/{contractId}/advertising",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "next:request.daily-report": {
+                          "href": "/ads-promotion-orders/{contractId}/daily-reports",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "next:request.payment": {
+                          "href": "/ads-promotion-orders/{contractId}/payment",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/ads-promotion-orders/{contractId}",
+                          "templated": true
+                        }
+                      },
+                      "agreed_amount_minor": 250000,
+                      "campaign_id": "campaign-pay",
+                      "id": "ads-order-pay",
+                      "signed_at": "2026-06-01T09:00:00Z"
+                    }
+                  },
+                  "route_sign_contract_ads-promotion-order_sign-campaign-order_2": {
+                    "summary": "sign-campaign-order",
+                    "value": {
+                      "_links": {
+                        "next:request.advertising": {
+                          "href": "/ads-promotion-orders/{contractId}/advertising",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "next:request.daily-report": {
+                          "href": "/ads-promotion-orders/{contractId}/daily-reports",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "next:request.payment": {
+                          "href": "/ads-promotion-orders/{contractId}/payment",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/ads-promotion-orders/{contractId}",
+                          "templated": true
+                        }
+                      },
+                      "agreed_amount_minor": 720000,
+                      "campaign_id": "campaign-summer",
+                      "id": "ads-order-summer",
+                      "signed_at": "2026-07-01T11:00:00Z"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/contract_ads-promotion-order"
+                },
+                "x-evidence-link-templates": {
+                  "next:request.advertising": {
+                    "href": "/ads-promotion-orders/{contractId}/advertising",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "next:request.daily-report": {
+                    "href": "/ads-promotion-orders/{contractId}/daily-reports",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "next:request.payment": {
+                    "href": "/ads-promotion-orders/{contractId}/payment",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/ads-promotion-orders/{contractId}",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "签署数字广告投放，双方权责自此成立",
+            "headers": {
+              "Location": {
+                "description": "新凭证地址",
+                "schema": {
+                  "format": "uri-reference",
+                  "type": "string"
+                },
+                "x-evidence-uri-template": "/ads-promotion-orders/{contractId}"
+              }
+            }
+          },
+          "409": {
+            "description": "业务窗口已关闭或资源状态冲突"
+          },
+          "422": {
+            "description": "输入内容或业务角色不成立"
+          }
+        },
+        "summary": "签署数字广告投放，双方权责自此成立",
+        "tags": [
+          "context:context.advertising-order"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.advertiser",
+          "role.agency"
+        ],
+        "x-evidence-context": "context.advertising-order",
+        "x-evidence-contract": "contract.ads-promotion-order",
+        "x-evidence-derived": [],
+        "x-evidence-entity": "contract.ads-promotion-order",
+        "x-evidence-exposure": "external",
+        "x-evidence-purpose": "sign",
+        "x-evidence-service": "service.advertising-order",
+        "x-evidence-stamped": [
+          "signed_at"
+        ]
+      }
+    },
+    "/ads-promotion-orders/{contractId}": {
+      "get": {
+        "operationId": "readContractAdsPromotionOrder",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "contractId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_read_contract_ads-promotion-order_payment-order_1": {
+                    "summary": "payment-order",
+                    "value": {
+                      "_links": {
+                        "next:request.advertising": {
+                          "href": "/ads-promotion-orders/{contractId}/advertising",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "next:request.daily-report": {
+                          "href": "/ads-promotion-orders/{contractId}/daily-reports",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "next:request.payment": {
+                          "href": "/ads-promotion-orders/{contractId}/payment",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/ads-promotion-orders/{contractId}",
+                          "templated": true
+                        }
+                      },
+                      "agreed_amount_minor": 250000,
+                      "campaign_id": "campaign-pay",
+                      "id": "ads-order-pay",
+                      "signed_at": "2026-06-01T09:00:00Z"
+                    }
+                  },
+                  "route_read_contract_ads-promotion-order_sign-campaign-order_2": {
+                    "summary": "sign-campaign-order",
+                    "value": {
+                      "_links": {
+                        "next:request.advertising": {
+                          "href": "/ads-promotion-orders/{contractId}/advertising",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "next:request.daily-report": {
+                          "href": "/ads-promotion-orders/{contractId}/daily-reports",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "next:request.payment": {
+                          "href": "/ads-promotion-orders/{contractId}/payment",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/ads-promotion-orders/{contractId}",
+                          "templated": true
+                        }
+                      },
+                      "agreed_amount_minor": 720000,
+                      "campaign_id": "campaign-summer",
+                      "id": "ads-order-summer",
+                      "signed_at": "2026-07-01T11:00:00Z"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/contract_ads-promotion-order"
+                },
+                "x-evidence-link-templates": {
+                  "next:request.advertising": {
+                    "href": "/ads-promotion-orders/{contractId}/advertising",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "next:request.daily-report": {
+                    "href": "/ads-promotion-orders/{contractId}/daily-reports",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "next:request.payment": {
+                    "href": "/ads-promotion-orders/{contractId}/payment",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/ads-promotion-orders/{contractId}",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "读取资源详情"
+          },
+          "404": {
+            "description": "资源不存在"
+          }
+        },
+        "summary": "读取资源详情",
+        "tags": [
+          "context:context.advertising-order"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.advertiser",
+          "role.agency"
+        ],
+        "x-evidence-context": "context.advertising-order",
+        "x-evidence-contract": "contract.ads-promotion-order",
+        "x-evidence-derived": [],
+        "x-evidence-entity": "contract.ads-promotion-order",
+        "x-evidence-exposure": "external",
+        "x-evidence-purpose": "read",
+        "x-evidence-service": "service.advertising-order",
+        "x-evidence-stamped": [
+          "signed_at"
+        ]
+      }
+    },
+    "/ads-promotion-orders/{contractId}/advertising": {
+      "get": {
+        "operationId": "readRequestAdvertising",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "contractId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_read_request_advertising_request-launch_1": {
+                    "summary": "request-launch",
+                    "value": {
+                      "_links": {
+                        "next:confirmation.advertising": {
+                          "href": "/ads-promotion-orders/{contractId}/advertising/confirmation",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/ads-promotion-orders/{contractId}/advertising",
+                          "templated": true
+                        }
+                      },
+                      "expired_at": "2026-07-03T13:00:00Z",
+                      "id": "launch-request-summer",
+                      "placement": "首页推荐位",
+                      "started_at": "2026-07-01T13:00:00Z"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/request_advertising"
+                },
+                "x-evidence-link-templates": {
+                  "next:confirmation.advertising": {
+                    "href": "/ads-promotion-orders/{contractId}/advertising/confirmation",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/ads-promotion-orders/{contractId}/advertising",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "读取资源详情"
+          },
+          "404": {
+            "description": "资源不存在"
+          }
+        },
+        "summary": "读取资源详情",
+        "tags": [
+          "context:context.advertising-order"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.advertiser"
+        ],
+        "x-evidence-context": "context.advertising-order",
+        "x-evidence-contract": "contract.ads-promotion-order",
+        "x-evidence-derived": [
+          {
+            "name": "expired_at",
+            "ruleRef": "rule.request.advertising-deadline"
+          }
+        ],
+        "x-evidence-entity": "request.advertising",
+        "x-evidence-exposure": "external",
+        "x-evidence-fulfillment-request": "request.advertising",
+        "x-evidence-purpose": "read",
+        "x-evidence-service": "service.advertising-order",
+        "x-evidence-stamped": [
+          "started_at"
+        ]
+      },
+      "post": {
+        "operationId": "requestRequestAdvertising",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "contractId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "route_request_request_advertising_request-launch_1": {
+                  "summary": "request-launch",
+                  "value": {
+                    "id": "launch-request-summer",
+                    "placement": "首页推荐位"
+                  }
+                }
+              },
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "description": "在此业务凭证类型中唯一的标识",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  },
+                  "placement": {
+                    "description": "投放版位",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  }
+                },
+                "required": [
+                  "id",
+                  "placement"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_request_request_advertising_request-launch_1": {
+                    "summary": "request-launch",
+                    "value": {
+                      "_links": {
+                        "next:confirmation.advertising": {
+                          "href": "/ads-promotion-orders/{contractId}/advertising/confirmation",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/ads-promotion-orders/{contractId}/advertising",
+                          "templated": true
+                        }
+                      },
+                      "expired_at": "2026-07-03T13:00:00Z",
+                      "id": "launch-request-summer",
+                      "placement": "首页推荐位",
+                      "started_at": "2026-07-01T13:00:00Z"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/request_advertising"
+                },
+                "x-evidence-link-templates": {
+                  "next:confirmation.advertising": {
+                    "href": "/ads-promotion-orders/{contractId}/advertising/confirmation",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/ads-promotion-orders/{contractId}/advertising",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "发起广告上线申请，开启一个有截止时间的履约窗口",
+            "headers": {
+              "Location": {
+                "description": "新凭证地址",
+                "schema": {
+                  "format": "uri-reference",
+                  "type": "string"
+                },
+                "x-evidence-uri-template": "/ads-promotion-orders/{contractId}/advertising"
+              }
+            }
+          },
+          "409": {
+            "description": "业务窗口已关闭或资源状态冲突"
+          },
+          "422": {
+            "description": "输入内容或业务角色不成立"
+          }
+        },
+        "summary": "发起广告上线申请，开启一个有截止时间的履约窗口",
+        "tags": [
+          "context:context.advertising-order"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.advertiser"
+        ],
+        "x-evidence-context": "context.advertising-order",
+        "x-evidence-contract": "contract.ads-promotion-order",
+        "x-evidence-derived": [
+          {
+            "name": "expired_at",
+            "ruleRef": "rule.request.advertising-deadline"
+          }
+        ],
+        "x-evidence-entity": "request.advertising",
+        "x-evidence-exposure": "external",
+        "x-evidence-fulfillment-request": "request.advertising",
+        "x-evidence-purpose": "request",
+        "x-evidence-service": "service.advertising-order",
+        "x-evidence-stamped": [
+          "started_at"
+        ]
+      }
+    },
+    "/ads-promotion-orders/{contractId}/advertising/confirmation": {
+      "post": {
+        "operationId": "confirmConfirmationAdvertising",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "contractId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "route_confirm_confirmation_advertising_campaign-live_1": {
+                  "summary": "campaign-live",
+                  "value": {
+                    "id": "launch-proof-summer",
+                    "placement": "首页推荐位"
+                  }
+                }
+              },
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "description": "在此业务凭证类型中唯一的标识",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  },
+                  "placement": {
+                    "description": "实际投放版位",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  }
+                },
+                "required": [
+                  "id",
+                  "placement"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_confirm_confirmation_advertising_campaign-live_1": {
+                    "summary": "campaign-live",
+                    "value": {
+                      "_links": {
+                        "next:request.daily-report": {
+                          "href": "/ads-promotion-orders/{contractId}/daily-reports",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "request:request.advertising": {
+                          "href": "/ads-promotion-orders/{contractId}/advertising",
+                          "method": "GET",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/advertising-confirmations/{advertisingConfirmationId}",
+                          "templated": true
+                        }
+                      },
+                      "confirmed_at": "2026-07-02T00:00:00Z",
+                      "id": "launch-proof-summer",
+                      "placement": "首页推荐位"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/confirmation_advertising"
+                },
+                "x-evidence-link-templates": {
+                  "next:request.daily-report": {
+                    "href": "/ads-promotion-orders/{contractId}/daily-reports",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "request:request.advertising": {
+                    "href": "/ads-promotion-orders/{contractId}/advertising",
+                    "method": "GET",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/advertising-confirmations/{advertisingConfirmationId}",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "登记上线凭证",
+            "headers": {
+              "Location": {
+                "description": "新凭证地址",
+                "schema": {
+                  "format": "uri-reference",
+                  "type": "string"
+                },
+                "x-evidence-uri-template": "/advertising-confirmations/{advertisingConfirmationId}"
+              }
+            }
+          },
+          "409": {
+            "description": "业务窗口已关闭或资源状态冲突"
+          },
+          "422": {
+            "description": "输入内容或业务角色不成立"
+          }
+        },
+        "summary": "登记上线凭证",
+        "tags": [
+          "context:context.advertising-order"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.agency"
+        ],
+        "x-evidence-context": "context.advertising-order",
+        "x-evidence-contract": "contract.ads-promotion-order",
+        "x-evidence-derived": [],
+        "x-evidence-entity": "confirmation.advertising",
+        "x-evidence-exposure": "external",
+        "x-evidence-fulfillment-confirmation": "confirmation.advertising",
+        "x-evidence-fulfillment-request": "request.advertising",
+        "x-evidence-purpose": "confirm",
+        "x-evidence-service": "service.advertising-order",
+        "x-evidence-stamped": [
+          "confirmed_at"
+        ]
+      }
+    },
+    "/ads-promotion-orders/{contractId}/daily-reports": {
+      "get": {
+        "operationId": "ledgerRequestDailyReport",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "contractId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_ledger_request_daily-report_report-accepted_1": {
+                    "summary": "report-accepted",
+                    "value": {
+                      "_embedded": {
+                        "daily-reports": [
+                          {
+                            "_links": {
+                              "self": {
+                                "href": "/ads-promotion-orders/{contractId}/daily-reports/{reportId}",
+                                "templated": true
+                              }
+                            },
+                            "expired_at": "2026-07-04T00:10:00Z",
+                            "id": "report-request-summer",
+                            "report_date": "2026-07-02",
+                            "started_at": "2026-07-03T00:10:00Z"
+                          }
+                        ]
+                      },
+                      "_links": {
+                        "next:confirmation.daily-report": {
+                          "href": "/ads-promotion-orders/{contractId}/daily-reports/{reportId}/confirmation",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/ads-promotion-orders/{contractId}/daily-reports",
+                          "templated": true
+                        }
+                      },
+                      "total": 1
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/request_daily-reportCollection"
+                },
+                "x-evidence-link-templates": {
+                  "next:confirmation.daily-report": {
+                    "href": "/ads-promotion-orders/{contractId}/daily-reports/{reportId}/confirmation",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/ads-promotion-orders/{contractId}/daily-reports",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "读取资源集合"
+          },
+          "404": {
+            "description": "资源不存在"
+          }
+        },
+        "summary": "读取资源集合",
+        "tags": [
+          "context:context.advertising-order"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.advertiser"
+        ],
+        "x-evidence-context": "context.advertising-order",
+        "x-evidence-contract": "contract.ads-promotion-order",
+        "x-evidence-derived": [
+          {
+            "name": "expired_at",
+            "ruleRef": "rule.request.daily-report-deadline"
+          }
+        ],
+        "x-evidence-entity": "request.daily-report",
+        "x-evidence-exposure": "external",
+        "x-evidence-fulfillment-request": "request.daily-report",
+        "x-evidence-purpose": "read",
+        "x-evidence-service": "service.advertising-order",
+        "x-evidence-stamped": [
+          "started_at"
+        ]
+      },
+      "post": {
+        "operationId": "requestRequestDailyReport",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "contractId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "route_request_request_daily-report_report-accepted_1": {
+                  "summary": "report-accepted",
+                  "value": {
+                    "id": "report-request-summer",
+                    "report_date": "2026-07-02"
+                  }
+                }
+              },
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "description": "在此业务凭证类型中唯一的标识",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  },
+                  "report_date": {
+                    "description": "广告主业务时区中的 YYYY-MM-DD",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  }
+                },
+                "required": [
+                  "id",
+                  "report_date"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_request_request_daily-report_report-accepted_1": {
+                    "summary": "report-accepted",
+                    "value": {
+                      "_links": {
+                        "next:confirmation.daily-report": {
+                          "href": "/ads-promotion-orders/{contractId}/daily-reports/{reportId}/confirmation",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/ads-promotion-orders/{contractId}/daily-reports/{reportId}",
+                          "templated": true
+                        }
+                      },
+                      "expired_at": "2026-07-04T00:10:00Z",
+                      "id": "report-request-summer",
+                      "report_date": "2026-07-02",
+                      "started_at": "2026-07-03T00:10:00Z"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/request_daily-report"
+                },
+                "x-evidence-link-templates": {
+                  "next:confirmation.daily-report": {
+                    "href": "/ads-promotion-orders/{contractId}/daily-reports/{reportId}/confirmation",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/ads-promotion-orders/{contractId}/daily-reports/{reportId}",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "已受理处理；读取请求以跟踪结果",
+            "headers": {
+              "Location": {
+                "description": "已受理请求的查询地址",
+                "required": true,
+                "schema": {
+                  "format": "uri-reference",
+                  "type": "string"
+                },
+                "x-evidence-uri-template": "/ads-promotion-orders/{contractId}/daily-reports/{reportId}"
+              }
+            }
+          },
+          "409": {
+            "description": "业务窗口已关闭或资源状态冲突"
+          },
+          "422": {
+            "description": "输入内容或业务角色不成立"
+          }
+        },
+        "summary": "发起日报生成请求，开启一个有截止时间的履约窗口",
+        "tags": [
+          "context:context.advertising-order"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.advertiser"
+        ],
+        "x-evidence-context": "context.advertising-order",
+        "x-evidence-contract": "contract.ads-promotion-order",
+        "x-evidence-derived": [
+          {
+            "name": "expired_at",
+            "ruleRef": "rule.request.daily-report-deadline"
+          }
+        ],
+        "x-evidence-entity": "request.daily-report",
+        "x-evidence-exposure": "external",
+        "x-evidence-fulfillment-request": "request.daily-report",
+        "x-evidence-purpose": "request",
+        "x-evidence-service": "service.advertising-order",
+        "x-evidence-stamped": [
+          "started_at"
+        ]
+      }
+    },
+    "/ads-promotion-orders/{contractId}/daily-reports/{reportId}": {
+      "get": {
+        "operationId": "readRequestDailyReport",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "contractId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "reportId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_read_request_daily-report_report-accepted_1": {
+                    "summary": "report-accepted",
+                    "value": {
+                      "_links": {
+                        "next:confirmation.daily-report": {
+                          "href": "/ads-promotion-orders/{contractId}/daily-reports/{reportId}/confirmation",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "result:confirmation.daily-report": {
+                          "href": "/daily-report-confirmations/{dailyReportConfirmationId}",
+                          "method": "GET",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/ads-promotion-orders/{contractId}/daily-reports/{reportId}",
+                          "templated": true
+                        }
+                      },
+                      "expired_at": "2026-07-04T00:10:00Z",
+                      "id": "report-request-summer",
+                      "report_date": "2026-07-02",
+                      "started_at": "2026-07-03T00:10:00Z"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/request_daily-report"
+                },
+                "x-evidence-link-templates": {
+                  "next:confirmation.daily-report": {
+                    "href": "/ads-promotion-orders/{contractId}/daily-reports/{reportId}/confirmation",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "result:confirmation.daily-report": {
+                    "href": "/daily-report-confirmations/{dailyReportConfirmationId}",
+                    "method": "GET",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/ads-promotion-orders/{contractId}/daily-reports/{reportId}",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "读取资源详情"
+          },
+          "404": {
+            "description": "资源不存在"
+          }
+        },
+        "summary": "读取资源详情",
+        "tags": [
+          "context:context.advertising-order"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.advertiser"
+        ],
+        "x-evidence-context": "context.advertising-order",
+        "x-evidence-contract": "contract.ads-promotion-order",
+        "x-evidence-derived": [
+          {
+            "name": "expired_at",
+            "ruleRef": "rule.request.daily-report-deadline"
+          }
+        ],
+        "x-evidence-entity": "request.daily-report",
+        "x-evidence-exposure": "external",
+        "x-evidence-fulfillment-request": "request.daily-report",
+        "x-evidence-purpose": "read",
+        "x-evidence-service": "service.advertising-order",
+        "x-evidence-stamped": [
+          "started_at"
+        ]
+      }
+    },
+    "/ads-promotion-orders/{contractId}/daily-reports/{reportId}/confirmation": {
+      "post": {
+        "operationId": "confirmConfirmationDailyReport",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "contractId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "reportId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "route_confirm_confirmation_daily-report_report-published_1": {
+                  "summary": "report-published",
+                  "value": {
+                    "id": "daily-report-summer",
+                    "impressions": 12904,
+                    "report_ref": "archive-summer-20260702"
+                  }
+                }
+              },
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "description": "在此业务凭证类型中唯一的标识",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  },
+                  "impressions": {
+                    "anyOf": [
+                      {
+                        "maximum": 9007199254740991,
+                        "minimum": -9007199254740991,
+                        "type": "integer"
+                      },
+                      {
+                        "pattern": "^(?:0|-?[1-9][0-9]*)$",
+                        "type": "string"
+                      }
+                    ],
+                    "description": "展示次数",
+                    "x-evidence-caller-input": true
+                  },
+                  "report_ref": {
+                    "description": "归档报表标识",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  }
+                },
+                "required": [
+                  "id",
+                  "impressions",
+                  "report_ref"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_confirm_confirmation_daily-report_report-published_1": {
+                    "summary": "report-published",
+                    "value": {
+                      "_links": {
+                        "request:request.daily-report": {
+                          "href": "/ads-promotion-orders/{contractId}/daily-reports/{reportId}",
+                          "method": "GET",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/daily-report-confirmations/{dailyReportConfirmationId}",
+                          "templated": true
+                        }
+                      },
+                      "confirmed_at": "2026-07-03T00:20:00Z",
+                      "id": "daily-report-summer",
+                      "impressions": 12904,
+                      "report_ref": "archive-summer-20260702"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/confirmation_daily-report"
+                },
+                "x-evidence-link-templates": {
+                  "request:request.daily-report": {
+                    "href": "/ads-promotion-orders/{contractId}/daily-reports/{reportId}",
+                    "method": "GET",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/daily-report-confirmations/{dailyReportConfirmationId}",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "登记广告日报凭证",
+            "headers": {
+              "Location": {
+                "description": "新凭证地址",
+                "schema": {
+                  "format": "uri-reference",
+                  "type": "string"
+                },
+                "x-evidence-uri-template": "/daily-report-confirmations/{dailyReportConfirmationId}"
+              }
+            }
+          },
+          "409": {
+            "description": "业务窗口已关闭或资源状态冲突"
+          },
+          "422": {
+            "description": "输入内容或业务角色不成立"
+          }
+        },
+        "summary": "登记广告日报凭证",
+        "tags": [
+          "context:context.advertising-order"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.agency"
+        ],
+        "x-evidence-context": "context.advertising-order",
+        "x-evidence-contract": "contract.ads-promotion-order",
+        "x-evidence-derived": [],
+        "x-evidence-entity": "confirmation.daily-report",
+        "x-evidence-exposure": "external",
+        "x-evidence-fulfillment-confirmation": "confirmation.daily-report",
+        "x-evidence-fulfillment-request": "request.daily-report",
+        "x-evidence-purpose": "confirm",
+        "x-evidence-service": "service.advertising-order",
+        "x-evidence-stamped": [
+          "confirmed_at"
+        ]
+      }
+    },
+    "/ads-promotion-orders/{contractId}/payment": {
+      "get": {
+        "operationId": "readRequestPayment",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "contractId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_read_request_payment_payment-window_1": {
+                    "summary": "payment-window",
+                    "value": {
+                      "_links": {
+                        "next:confirmation.payment": {
+                          "href": "/ads-promotion-orders/{contractId}/payment/confirmation",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/ads-promotion-orders/{contractId}/payment",
+                          "templated": true
+                        }
+                      },
+                      "expired_at": "2026-06-02T09:15:00Z",
+                      "id": "pay-request-one",
+                      "started_at": "2026-06-01T09:15:00Z"
+                    }
+                  },
+                  "route_read_request_payment_summer-payment-window_2": {
+                    "summary": "summer-payment-window",
+                    "value": {
+                      "_links": {
+                        "next:confirmation.payment": {
+                          "href": "/ads-promotion-orders/{contractId}/payment/confirmation",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/ads-promotion-orders/{contractId}/payment",
+                          "templated": true
+                        }
+                      },
+                      "expired_at": "2026-07-02T11:05:00Z",
+                      "id": "pay-request-summer",
+                      "started_at": "2026-07-01T11:05:00Z"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/request_payment"
+                },
+                "x-evidence-link-templates": {
+                  "next:confirmation.payment": {
+                    "href": "/ads-promotion-orders/{contractId}/payment/confirmation",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/ads-promotion-orders/{contractId}/payment",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "读取资源详情"
+          },
+          "404": {
+            "description": "资源不存在"
+          }
+        },
+        "summary": "读取资源详情",
+        "tags": [
+          "context:context.advertising-order"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.agency"
+        ],
+        "x-evidence-context": "context.advertising-order",
+        "x-evidence-contract": "contract.ads-promotion-order",
+        "x-evidence-derived": [
+          {
+            "name": "expired_at",
+            "ruleRef": "rule.request.payment-deadline"
+          }
+        ],
+        "x-evidence-entity": "request.payment",
+        "x-evidence-exposure": "external",
+        "x-evidence-fulfillment-request": "request.payment",
+        "x-evidence-purpose": "read",
+        "x-evidence-service": "service.advertising-order",
+        "x-evidence-stamped": [
+          "started_at"
+        ]
+      },
+      "post": {
+        "operationId": "requestRequestPayment",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "contractId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "route_request_request_payment_payment-window_1": {
+                  "summary": "payment-window",
+                  "value": {
+                    "id": "pay-request-one"
+                  }
+                },
+                "route_request_request_payment_summer-payment-window_2": {
+                  "summary": "summer-payment-window",
+                  "value": {
+                    "id": "pay-request-summer"
+                  }
+                }
+              },
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "description": "在此业务凭证类型中唯一的标识",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_request_request_payment_payment-window_1": {
+                    "summary": "payment-window",
+                    "value": {
+                      "_links": {
+                        "next:confirmation.payment": {
+                          "href": "/ads-promotion-orders/{contractId}/payment/confirmation",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/ads-promotion-orders/{contractId}/payment",
+                          "templated": true
+                        }
+                      },
+                      "expired_at": "2026-06-02T09:15:00Z",
+                      "id": "pay-request-one",
+                      "started_at": "2026-06-01T09:15:00Z"
+                    }
+                  },
+                  "route_request_request_payment_summer-payment-window_2": {
+                    "summary": "summer-payment-window",
+                    "value": {
+                      "_links": {
+                        "next:confirmation.payment": {
+                          "href": "/ads-promotion-orders/{contractId}/payment/confirmation",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/ads-promotion-orders/{contractId}/payment",
+                          "templated": true
+                        }
+                      },
+                      "expired_at": "2026-07-02T11:05:00Z",
+                      "id": "pay-request-summer",
+                      "started_at": "2026-07-01T11:05:00Z"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/request_payment"
+                },
+                "x-evidence-link-templates": {
+                  "next:confirmation.payment": {
+                    "href": "/ads-promotion-orders/{contractId}/payment/confirmation",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/ads-promotion-orders/{contractId}/payment",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "发起预付款申请，开启一个有截止时间的履约窗口",
+            "headers": {
+              "Location": {
+                "description": "新凭证地址",
+                "schema": {
+                  "format": "uri-reference",
+                  "type": "string"
+                },
+                "x-evidence-uri-template": "/ads-promotion-orders/{contractId}/payment"
+              }
+            }
+          },
+          "409": {
+            "description": "业务窗口已关闭或资源状态冲突"
+          },
+          "422": {
+            "description": "输入内容或业务角色不成立"
+          }
+        },
+        "summary": "发起预付款申请，开启一个有截止时间的履约窗口",
+        "tags": [
+          "context:context.advertising-order"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.agency"
+        ],
+        "x-evidence-context": "context.advertising-order",
+        "x-evidence-contract": "contract.ads-promotion-order",
+        "x-evidence-derived": [
+          {
+            "name": "expired_at",
+            "ruleRef": "rule.request.payment-deadline"
+          }
+        ],
+        "x-evidence-entity": "request.payment",
+        "x-evidence-exposure": "external",
+        "x-evidence-fulfillment-request": "request.payment",
+        "x-evidence-purpose": "request",
+        "x-evidence-service": "service.advertising-order",
+        "x-evidence-stamped": [
+          "started_at"
+        ]
+      }
+    },
+    "/ads-promotion-orders/{contractId}/payment/confirmation": {
+      "post": {
+        "operationId": "confirmConfirmationPayment",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "contractId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "route_confirm_confirmation_payment_gateway-paid_1": {
+                  "summary": "gateway-paid",
+                  "value": {
+                    "gateway_reference": "gateway-txn-01",
+                    "id": "payment-proof-one"
+                  }
+                },
+                "route_confirm_confirmation_payment_summer-payment-proof_2": {
+                  "summary": "summer-payment-proof",
+                  "value": {
+                    "gateway_reference": "gateway-txn-02",
+                    "id": "payment-proof-summer"
+                  }
+                }
+              },
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "gateway_reference": {
+                    "description": "支付渠道流水号",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  },
+                  "id": {
+                    "description": "在此业务凭证类型中唯一的标识",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  }
+                },
+                "required": [
+                  "id",
+                  "gateway_reference"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_confirm_confirmation_payment_gateway-paid_1": {
+                    "summary": "gateway-paid",
+                    "value": {
+                      "_links": {
+                        "next:request.advertising": {
+                          "href": "/ads-promotion-orders/{contractId}/advertising",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "request:request.payment": {
+                          "href": "/ads-promotion-orders/{contractId}/payment",
+                          "method": "GET",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/payment-confirmations/{paymentConfirmationId}",
+                          "templated": true
+                        }
+                      },
+                      "confirmed_at": "2026-06-01T10:00:00Z",
+                      "gateway_reference": "gateway-txn-01",
+                      "id": "payment-proof-one",
+                      "paid_amount_minor": 250000
+                    }
+                  },
+                  "route_confirm_confirmation_payment_summer-payment-proof_2": {
+                    "summary": "summer-payment-proof",
+                    "value": {
+                      "_links": {
+                        "next:request.advertising": {
+                          "href": "/ads-promotion-orders/{contractId}/advertising",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "request:request.payment": {
+                          "href": "/ads-promotion-orders/{contractId}/payment",
+                          "method": "GET",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/payment-confirmations/{paymentConfirmationId}",
+                          "templated": true
+                        }
+                      },
+                      "confirmed_at": "2026-07-01T12:00:00Z",
+                      "gateway_reference": "gateway-txn-02",
+                      "id": "payment-proof-summer",
+                      "paid_amount_minor": 720000
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/confirmation_payment"
+                },
+                "x-evidence-link-templates": {
+                  "next:request.advertising": {
+                    "href": "/ads-promotion-orders/{contractId}/advertising",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "request:request.payment": {
+                    "href": "/ads-promotion-orders/{contractId}/payment",
+                    "method": "GET",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/payment-confirmations/{paymentConfirmationId}",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "登记到账凭证",
+            "headers": {
+              "Location": {
+                "description": "新凭证地址",
+                "schema": {
+                  "format": "uri-reference",
+                  "type": "string"
+                },
+                "x-evidence-uri-template": "/payment-confirmations/{paymentConfirmationId}"
+              }
+            }
+          },
+          "409": {
+            "description": "业务窗口已关闭或资源状态冲突"
+          },
+          "422": {
+            "description": "输入内容或业务角色不成立"
+          }
+        },
+        "summary": "登记到账凭证",
+        "tags": [
+          "context:context.advertising-order"
+        ],
+        "x-evidence-allowed-callback-roles": [
+          "role.payment-gateway"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.advertiser"
+        ],
+        "x-evidence-context": "context.advertising-order",
+        "x-evidence-contract": "contract.ads-promotion-order",
+        "x-evidence-derived": [
+          {
+            "name": "paid_amount_minor",
+            "ruleRef": "rule.payment-amount"
+          }
+        ],
+        "x-evidence-entity": "confirmation.payment",
+        "x-evidence-exposure": "external",
+        "x-evidence-fulfillment-confirmation": "confirmation.payment",
+        "x-evidence-fulfillment-request": "request.payment",
+        "x-evidence-purpose": "confirm",
+        "x-evidence-service": "service.advertising-order",
+        "x-evidence-stamped": [
+          "confirmed_at"
+        ]
+      }
+    },
+    "/advertising-confirmations/{advertisingConfirmationId}": {
+      "get": {
+        "operationId": "readConfirmationAdvertising",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "advertisingConfirmationId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_read_confirmation_advertising_campaign-live_1": {
+                    "summary": "campaign-live",
+                    "value": {
+                      "_links": {
+                        "next:request.daily-report": {
+                          "href": "/ads-promotion-orders/{contractId}/daily-reports",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "request:request.advertising": {
+                          "href": "/ads-promotion-orders/{contractId}/advertising",
+                          "method": "GET",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/advertising-confirmations/{advertisingConfirmationId}",
+                          "templated": true
+                        }
+                      },
+                      "confirmed_at": "2026-07-02T00:00:00Z",
+                      "id": "launch-proof-summer",
+                      "placement": "首页推荐位"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/confirmation_advertising"
+                },
+                "x-evidence-link-templates": {
+                  "next:request.daily-report": {
+                    "href": "/ads-promotion-orders/{contractId}/daily-reports",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "request:request.advertising": {
+                    "href": "/ads-promotion-orders/{contractId}/advertising",
+                    "method": "GET",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/advertising-confirmations/{advertisingConfirmationId}",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "读取资源详情"
+          },
+          "404": {
+            "description": "资源不存在"
+          }
+        },
+        "summary": "读取资源详情",
+        "tags": [
+          "context:context.advertising-order"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.agency"
+        ],
+        "x-evidence-context": "context.advertising-order",
+        "x-evidence-contract": "contract.ads-promotion-order",
+        "x-evidence-derived": [],
+        "x-evidence-entity": "confirmation.advertising",
+        "x-evidence-exposure": "external",
+        "x-evidence-fulfillment-confirmation": "confirmation.advertising",
+        "x-evidence-fulfillment-request": "request.advertising",
+        "x-evidence-purpose": "read",
+        "x-evidence-service": "service.advertising-order",
+        "x-evidence-stamped": [
+          "confirmed_at"
+        ]
+      }
+    },
+    "/daily-report-confirmations/{dailyReportConfirmationId}": {
+      "get": {
+        "operationId": "readConfirmationDailyReport",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dailyReportConfirmationId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_read_confirmation_daily-report_report-published_1": {
+                    "summary": "report-published",
+                    "value": {
+                      "_links": {
+                        "request:request.daily-report": {
+                          "href": "/ads-promotion-orders/{contractId}/daily-reports/{reportId}",
+                          "method": "GET",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/daily-report-confirmations/{dailyReportConfirmationId}",
+                          "templated": true
+                        }
+                      },
+                      "confirmed_at": "2026-07-03T00:20:00Z",
+                      "id": "daily-report-summer",
+                      "impressions": 12904,
+                      "report_ref": "archive-summer-20260702"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/confirmation_daily-report"
+                },
+                "x-evidence-link-templates": {
+                  "request:request.daily-report": {
+                    "href": "/ads-promotion-orders/{contractId}/daily-reports/{reportId}",
+                    "method": "GET",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/daily-report-confirmations/{dailyReportConfirmationId}",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "读取资源详情"
+          },
+          "404": {
+            "description": "资源不存在"
+          }
+        },
+        "summary": "读取资源详情",
+        "tags": [
+          "context:context.advertising-order"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.advertiser",
+          "role.agency"
+        ],
+        "x-evidence-context": "context.advertising-order",
+        "x-evidence-contract": "contract.ads-promotion-order",
+        "x-evidence-derived": [],
+        "x-evidence-entity": "confirmation.daily-report",
+        "x-evidence-exposure": "external",
+        "x-evidence-fulfillment-confirmation": "confirmation.daily-report",
+        "x-evidence-fulfillment-request": "request.daily-report",
+        "x-evidence-purpose": "read",
+        "x-evidence-service": "service.advertising-order",
+        "x-evidence-stamped": [
+          "confirmed_at"
+        ]
+      }
+    },
+    "/payment-confirmations/{paymentConfirmationId}": {
+      "get": {
+        "operationId": "readConfirmationPayment",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "paymentConfirmationId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_read_confirmation_payment_gateway-paid_1": {
+                    "summary": "gateway-paid",
+                    "value": {
+                      "_links": {
+                        "next:request.advertising": {
+                          "href": "/ads-promotion-orders/{contractId}/advertising",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "request:request.payment": {
+                          "href": "/ads-promotion-orders/{contractId}/payment",
+                          "method": "GET",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/payment-confirmations/{paymentConfirmationId}",
+                          "templated": true
+                        }
+                      },
+                      "confirmed_at": "2026-06-01T10:00:00Z",
+                      "gateway_reference": "gateway-txn-01",
+                      "id": "payment-proof-one",
+                      "paid_amount_minor": 250000
+                    }
+                  },
+                  "route_read_confirmation_payment_summer-payment-proof_2": {
+                    "summary": "summer-payment-proof",
+                    "value": {
+                      "_links": {
+                        "next:request.advertising": {
+                          "href": "/ads-promotion-orders/{contractId}/advertising",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "request:request.payment": {
+                          "href": "/ads-promotion-orders/{contractId}/payment",
+                          "method": "GET",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/payment-confirmations/{paymentConfirmationId}",
+                          "templated": true
+                        }
+                      },
+                      "confirmed_at": "2026-07-01T12:00:00Z",
+                      "gateway_reference": "gateway-txn-02",
+                      "id": "payment-proof-summer",
+                      "paid_amount_minor": 720000
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/confirmation_payment"
+                },
+                "x-evidence-link-templates": {
+                  "next:request.advertising": {
+                    "href": "/ads-promotion-orders/{contractId}/advertising",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "request:request.payment": {
+                    "href": "/ads-promotion-orders/{contractId}/payment",
+                    "method": "GET",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/payment-confirmations/{paymentConfirmationId}",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "读取资源详情"
+          },
+          "404": {
+            "description": "资源不存在"
+          }
+        },
+        "summary": "读取资源详情",
+        "tags": [
+          "context:context.advertising-order"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.advertiser"
+        ],
+        "x-evidence-context": "context.advertising-order",
+        "x-evidence-contract": "contract.ads-promotion-order",
+        "x-evidence-derived": [
+          {
+            "name": "paid_amount_minor",
+            "ruleRef": "rule.payment-amount"
+          }
+        ],
+        "x-evidence-entity": "confirmation.payment",
+        "x-evidence-exposure": "external",
+        "x-evidence-fulfillment-confirmation": "confirmation.payment",
+        "x-evidence-fulfillment-request": "request.payment",
+        "x-evidence-purpose": "read",
+        "x-evidence-service": "service.advertising-order",
+        "x-evidence-stamped": [
+          "confirmed_at"
+        ]
+      }
+    }
+  },
+  "x-evidence-model": "digital-advertising",
+  "x-evidence-model-version": "1.0.0",
+  "x-evidence-services": [
+    {
+      "contextRef": "context.advertising-negotiation",
+      "id": "service.advertising-negotiation",
+      "kind": "channel",
+      "routePrefixes": [
+        "/ads-promotion-inquiries"
+      ],
+      "routes": [
+        "route.list.rfp.ads-promotion-inquiry",
+        "route.open.rfp.ads-promotion-inquiry",
+        "route.propose.proposal.ads-promotion-proposal",
+        "route.read.proposal.ads-promotion-proposal",
+        "route.read.rfp.ads-promotion-inquiry"
+      ]
+    },
+    {
+      "contextRef": "context.advertising-order",
+      "id": "service.advertising-order",
+      "kind": "fulfillment",
+      "routePrefixes": [
+        "/ads-promotion-inquiries",
+        "/ads-promotion-orders",
+        "/advertising-confirmations",
+        "/daily-report-confirmations",
+        "/payment-confirmations"
+      ],
+      "routes": [
+        "route.confirm.confirmation.advertising",
+        "route.confirm.confirmation.daily-report",
+        "route.confirm.confirmation.payment",
+        "route.ledger.request.daily-report",
+        "route.list.contract.ads-promotion-order",
+        "route.read.confirmation.advertising",
+        "route.read.confirmation.daily-report",
+        "route.read.confirmation.payment",
+        "route.read.contract.ads-promotion-order",
+        "route.read.request.advertising",
+        "route.read.request.daily-report",
+        "route.read.request.payment",
+        "route.request.request.advertising",
+        "route.request.request.daily-report",
+        "route.request.request.payment",
+        "route.sign-from-proposal.ads-promotion-proposal.contract.ads-promotion-order",
+        "route.sign.contract.ads-promotion-order"
+      ]
+    }
+  ]
+}

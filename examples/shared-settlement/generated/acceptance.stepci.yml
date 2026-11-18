@@ -1,0 +1,449 @@
+# Generated from inline model examples. Do not edit. Test environment only.
+"version": "1.1"
+"name": "shared-settlement acceptance"
+"env":
+  "host": "http://localhost:8080"
+  "asOf": "2026-01-01T09:00:00Z"
+  "asOf_2": "2026-01-02T09:00:00Z"
+  "asOf_3": "2026-01-02T10:00:00Z"
+  "asOf_4": "2026-03-27T15:00:00Z"
+  "asOf_5": "2026-03-31T16:00:00Z"
+"config":
+  "concurrency": 1
+  "continueOnFail": false
+"tests":
+  "flow_1":
+    "name": "credit-quarter-and-year-once"
+    "env":
+      "evidenceTags": "[\"flow:credit-quarter-and-year-once\"]"
+    "steps":
+      - "name": "contract.performance-agreement#sign-fy26"
+        "http":
+          "url": "${{env.host}}/performance-agreements"
+          "method": "POST"
+          "followRedirects": false
+          "timeout": "5s"
+          "headers":
+            "Content-Type": "application/json"
+            "x-evidence-role": "role.account-owner"
+            "x-evidence-asof": "${{env.asOf}}"
+          "json":
+            "id": "agreement-fy26"
+            "fiscal_year": 2026
+          "captures":
+            "capture_1_0":
+              "jsonpath": "$.id"
+          "check":
+            "status": 201
+            "schema":
+              "type": "object"
+              "description": "签署季度与年度收入核销，双方权责自此成立"
+              "properties":
+                "id":
+                  "type": "string"
+                  "description": "在此业务凭证类型中唯一的标识"
+                  "x-evidence-origin": "caller"
+                  "x-evidence-caller-input": true
+                "signed_at":
+                  "type": "string"
+                  "format": "date-time"
+                  "description": "签署时刻"
+                  "x-evidence-origin": "service-time"
+                  "x-evidence-caller-input": false
+                  "readOnly": true
+                "fiscal_year":
+                  "anyOf":
+                    - "type": "integer"
+                      "minimum": -9007199254740991
+                      "maximum": 9007199254740991
+                    - "type": "string"
+                      "pattern": "^(?:0|-?[1-9][0-9]*)$"
+                  "description": "会计年度"
+                  "x-evidence-origin": "caller"
+                  "x-evidence-caller-input": true
+                "_links":
+                  "type": "object"
+                  "required":
+                    - "self"
+                  "additionalProperties":
+                    "type": "object"
+                    "required":
+                      - "href"
+                    "properties":
+                      "href":
+                        "type": "string"
+                      "templated":
+                        "type": "boolean"
+                      "method":
+                        "type": "string"
+              "required":
+                - "id"
+                - "signed_at"
+                - "fiscal_year"
+                - "_links"
+              "examples":
+                - "id": "agreement-fy26"
+                  "fiscal_year": 2026
+                  "signed_at": "2026-01-01T09:00:00Z"
+                  "_links":
+                    "self":
+                      "href": "/performance-agreements/{contractId}"
+              "additionalProperties": false
+            "jsonpath":
+              "$[\"id\"]": "agreement-fy26"
+              "$[\"fiscal_year\"]": 2026
+              "$[\"signed_at\"]": "2026-01-01T09:00:00Z"
+      - "name": "request.annual-target#open-year"
+        "http":
+          "url": "${{env.host}}/performance-agreements/${{captures.capture_1_0}}/annual-t\
+            arget"
+          "method": "POST"
+          "followRedirects": false
+          "timeout": "5s"
+          "headers":
+            "Content-Type": "application/json"
+            "x-evidence-role": "role.account-owner"
+            "x-evidence-asof": "${{env.asOf_2}}"
+          "json":
+            "id": "target-2026"
+            "target_amount_minor": 50000000
+          "check":
+            "status": 201
+            "schema":
+              "type": "object"
+              "description": "发起年度收入指标，开启一个有截止时间的履约窗口"
+              "properties":
+                "id":
+                  "type": "string"
+                  "description": "在此业务凭证类型中唯一的标识"
+                  "x-evidence-origin": "caller"
+                  "x-evidence-caller-input": true
+                "started_at":
+                  "type": "string"
+                  "format": "date-time"
+                  "description": "开启时刻"
+                  "x-evidence-origin": "service-time"
+                  "x-evidence-caller-input": false
+                  "readOnly": true
+                "expired_at":
+                  "type": "string"
+                  "format": "date-time"
+                  "description": "截止时刻"
+                  "x-evidence-origin": "derived"
+                  "x-evidence-caller-input": false
+                  "readOnly": true
+                  "x-evidence-rule": "rule.request.annual-target-deadline"
+                  "x-evidence-derived-by-rule": "rule.request.annual-target-deadline"
+                "target_amount_minor":
+                  "anyOf":
+                    - "type": "integer"
+                      "minimum": -9007199254740991
+                      "maximum": 9007199254740991
+                    - "type": "string"
+                      "pattern": "^(?:0|-?[1-9][0-9]*)$"
+                  "description": "年度指标金额，单位为 CNY 分"
+                  "x-evidence-origin": "caller"
+                  "x-evidence-caller-input": true
+                "_links":
+                  "type": "object"
+                  "required":
+                    - "self"
+                  "additionalProperties":
+                    "type": "object"
+                    "required":
+                      - "href"
+                    "properties":
+                      "href":
+                        "type": "string"
+                      "templated":
+                        "type": "boolean"
+                      "method":
+                        "type": "string"
+              "required":
+                - "id"
+                - "started_at"
+                - "expired_at"
+                - "target_amount_minor"
+                - "_links"
+              "examples":
+                - "id": "target-2026"
+                  "target_amount_minor": 50000000
+                  "started_at": "2026-01-02T09:00:00Z"
+                  "expired_at": "2027-01-02T09:00:00Z"
+                  "_links":
+                    "self":
+                      "href": "/performance-agreements/{contractId}/annual-target"
+              "additionalProperties": false
+            "jsonpath":
+              "$[\"id\"]": "target-2026"
+              "$[\"target_amount_minor\"]": 50000000
+              "$[\"started_at\"]": "2026-01-02T09:00:00Z"
+              "$[\"expired_at\"]": "2027-01-02T09:00:00Z"
+      - "name": "request.quarterly-target#open-q1"
+        "http":
+          "url": "${{env.host}}/performance-agreements/${{captures.capture_1_0}}/quarterl\
+            y-targets"
+          "method": "POST"
+          "followRedirects": false
+          "timeout": "5s"
+          "headers":
+            "Content-Type": "application/json"
+            "x-evidence-role": "role.finance"
+            "x-evidence-asof": "${{env.asOf_3}}"
+          "json":
+            "id": "target-2026-q1"
+            "quarter": "2026-Q1"
+            "target_amount_minor": 12000000
+          "captures":
+            "capture_4_0":
+              "jsonpath": "$.id"
+          "check":
+            "status": 201
+            "schema":
+              "type": "object"
+              "description": "发起季度收入指标，开启一个有截止时间的履约窗口"
+              "properties":
+                "id":
+                  "type": "string"
+                  "description": "在此业务凭证类型中唯一的标识"
+                  "x-evidence-origin": "caller"
+                  "x-evidence-caller-input": true
+                "started_at":
+                  "type": "string"
+                  "format": "date-time"
+                  "description": "开启时刻"
+                  "x-evidence-origin": "service-time"
+                  "x-evidence-caller-input": false
+                  "readOnly": true
+                "expired_at":
+                  "type": "string"
+                  "format": "date-time"
+                  "description": "截止时刻"
+                  "x-evidence-origin": "derived"
+                  "x-evidence-caller-input": false
+                  "readOnly": true
+                  "x-evidence-rule": "rule.request.quarterly-target-deadline"
+                  "x-evidence-derived-by-rule": "rule.request.quarterly-target-deadline"
+                "quarter":
+                  "type": "string"
+                  "description": "例如 2026-Q1"
+                  "x-evidence-origin": "caller"
+                  "x-evidence-caller-input": true
+                "target_amount_minor":
+                  "anyOf":
+                    - "type": "integer"
+                      "minimum": -9007199254740991
+                      "maximum": 9007199254740991
+                    - "type": "string"
+                      "pattern": "^(?:0|-?[1-9][0-9]*)$"
+                  "description": "季度指标金额，单位为 CNY 分"
+                  "x-evidence-origin": "caller"
+                  "x-evidence-caller-input": true
+                "_links":
+                  "type": "object"
+                  "required":
+                    - "self"
+                  "additionalProperties":
+                    "type": "object"
+                    "required":
+                      - "href"
+                    "properties":
+                      "href":
+                        "type": "string"
+                      "templated":
+                        "type": "boolean"
+                      "method":
+                        "type": "string"
+              "required":
+                - "id"
+                - "started_at"
+                - "expired_at"
+                - "quarter"
+                - "target_amount_minor"
+                - "_links"
+              "examples":
+                - "id": "target-2026-q1"
+                  "quarter": "2026-Q1"
+                  "target_amount_minor": 12000000
+                  "started_at": "2026-01-02T10:00:00Z"
+                  "expired_at": "2026-04-02T10:00:00Z"
+                  "_links":
+                    "self":
+                      "href": "/performance-agreements/{contractId}/quarterly-targets/{targetId}"
+              "additionalProperties": false
+            "jsonpath":
+              "$[\"id\"]": "target-2026-q1"
+              "$[\"quarter\"]": "2026-Q1"
+              "$[\"target_amount_minor\"]": 12000000
+              "$[\"started_at\"]": "2026-01-02T10:00:00Z"
+              "$[\"expired_at\"]": "2026-04-02T10:00:00Z"
+      - "name": "confirmation.revenue#post-revenue-once"
+        "http":
+          "url": "${{env.host}}/revenue-confirmations"
+          "method": "POST"
+          "followRedirects": false
+          "timeout": "5s"
+          "headers":
+            "Content-Type": "application/json"
+            "x-evidence-role": "role.finance"
+            "x-evidence-asof": "${{env.asOf_4}}"
+          "json":
+            "id": "revenue-001"
+            "booking_ref": "booking-928"
+            "amount_minor": 52000000
+            "request_ids":
+              - "target-2026-q1"
+              - "target-2026"
+          "check":
+            "status": 201
+            "schema":
+              "type": "object"
+              "description": "读取资源详情"
+              "properties":
+                "id":
+                  "type": "string"
+                  "description": "在此业务凭证类型中唯一的标识"
+                  "x-evidence-origin": "caller"
+                  "x-evidence-caller-input": true
+                "confirmed_at":
+                  "type": "string"
+                  "format": "date-time"
+                  "description": "形成时刻"
+                  "x-evidence-origin": "service-time"
+                  "x-evidence-caller-input": false
+                  "readOnly": true
+                "booking_ref":
+                  "type": "string"
+                  "description": "已入账业务流水"
+                  "x-evidence-origin": "caller"
+                  "x-evidence-caller-input": true
+                "amount_minor":
+                  "anyOf":
+                    - "type": "integer"
+                      "minimum": -9007199254740991
+                      "maximum": 9007199254740991
+                    - "type": "string"
+                      "pattern": "^(?:0|-?[1-9][0-9]*)$"
+                  "description": "入账收入金额，单位为 CNY 分"
+                  "x-evidence-origin": "caller"
+                  "x-evidence-caller-input": true
+                "request_ids":
+                  "type": "array"
+                  "items": {}
+                  "description": "精确记录本笔收入核销的季度与年度指标请求实例"
+                  "x-evidence-origin": "caller"
+                  "x-evidence-caller-input": true
+                "_links":
+                  "type": "object"
+                  "required":
+                    - "self"
+                  "additionalProperties":
+                    "type": "object"
+                    "required":
+                      - "href"
+                    "properties":
+                      "href":
+                        "type": "string"
+                      "templated":
+                        "type": "boolean"
+                      "method":
+                        "type": "string"
+              "required":
+                - "id"
+                - "confirmed_at"
+                - "booking_ref"
+                - "amount_minor"
+                - "request_ids"
+                - "_links"
+              "examples":
+                - "id": "revenue-001"
+                  "booking_ref": "booking-928"
+                  "amount_minor": 52000000
+                  "request_ids":
+                    - "target-2026-q1"
+                    - "target-2026"
+                  "confirmed_at": "2026-03-27T15:00:00Z"
+                  "_links":
+                    "self":
+                      "href": "/revenue-confirmations/{revenueConfirmationId}"
+              "additionalProperties": false
+            "jsonpath":
+              "$[\"id\"]": "revenue-001"
+              "$[\"booking_ref\"]": "booking-928"
+              "$[\"amount_minor\"]": 52000000
+              "$[\"request_ids\"]":
+                - "eq":
+                    - "target-2026-q1"
+                    - "target-2026"
+              "$[\"confirmed_at\"]": "2026-03-27T15:00:00Z"
+      - "name": "confirmation.quarter-close#lock-q1-ledger"
+        "http":
+          "url": "${{env.host}}/performance-agreements/${{captures.capture_1_0}}/quarterl\
+            y-targets/${{captures.capture_4_0}}/confirmation"
+          "method": "POST"
+          "followRedirects": false
+          "timeout": "5s"
+          "headers":
+            "Content-Type": "application/json"
+            "x-evidence-role": "role.account-owner"
+            "x-evidence-asof": "${{env.asOf_5}}"
+          "json":
+            "id": "quarter-close-001"
+          "check":
+            "status": 201
+            "schema":
+              "type": "object"
+              "description": "读取资源详情"
+              "properties":
+                "id":
+                  "type": "string"
+                  "description": "在此业务凭证类型中唯一的标识"
+                  "x-evidence-origin": "caller"
+                  "x-evidence-caller-input": true
+                "confirmed_at":
+                  "type": "string"
+                  "format": "date-time"
+                  "description": "形成时刻"
+                  "x-evidence-origin": "service-time"
+                  "x-evidence-caller-input": false
+                  "readOnly": true
+                "revenue_confirmation_id":
+                  "type": "string"
+                  "description": "作为本例锁账依据的收入凭证"
+                  "x-evidence-origin": "derived"
+                  "x-evidence-caller-input": false
+                  "readOnly": true
+                  "x-evidence-rule": "rule.quarter-close-proof"
+                  "x-evidence-derived-by-rule": "rule.quarter-close-proof"
+                "_links":
+                  "type": "object"
+                  "required":
+                    - "self"
+                  "additionalProperties":
+                    "type": "object"
+                    "required":
+                      - "href"
+                    "properties":
+                      "href":
+                        "type": "string"
+                      "templated":
+                        "type": "boolean"
+                      "method":
+                        "type": "string"
+              "required":
+                - "id"
+                - "confirmed_at"
+                - "revenue_confirmation_id"
+                - "_links"
+              "examples":
+                - "id": "quarter-close-001"
+                  "revenue_confirmation_id": "revenue-001"
+                  "confirmed_at": "2026-03-31T16:00:00Z"
+                  "_links":
+                    "self":
+                      "href": "/quarter-close-confirmations/{quarterCloseConfirmationId}"
+              "additionalProperties": false
+            "jsonpath":
+              "$[\"id\"]": "quarter-close-001"
+              "$[\"confirmed_at\"]": "2026-03-31T16:00:00Z"
+              "$[\"revenue_confirmation_id\"]": "revenue-001"

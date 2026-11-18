@@ -482,6 +482,19 @@ const validateEntities = (
 
     if (
       entity.category === 'evidence' &&
+      entity.asyncAcceptance === true &&
+      entity.kind !== 'fulfillment_request'
+    ) {
+      addIssue(
+        ctx,
+        'entity.shape',
+        [...path, 'asyncAcceptance'],
+        'Only a fulfillment request may be accepted for asynchronous processing.',
+        entity.id,
+      );
+    }
+    if (
+      entity.category === 'evidence' &&
       entity.callbackRoleRefs !== undefined
     ) {
       const seen = new Set<string>();

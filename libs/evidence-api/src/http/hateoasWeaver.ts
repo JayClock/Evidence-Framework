@@ -99,6 +99,19 @@ export const weaveHypermedia = (
           (route) => route.responseShape === 'item',
         ))
           add(source, request, `request:${prerequisite.id}`);
+        if (
+          prerequisite.asyncAcceptance === true &&
+          prerequisite.contextRef === dependent.contextRef
+        ) {
+          const primary = dependentRoutes.find(
+            (route) =>
+              route.method === 'GET' &&
+              route.responseShape === 'item' &&
+              route.path === route.itemPath,
+          );
+          if (primary !== undefined)
+            add(request, primary, `result:${dependent.id}`);
+        }
       }
     }
   }

@@ -264,6 +264,11 @@ export const buildDeliveryRoutes = (
       ];
     }
     const reading = purpose === 'read';
+    const entity = graph.getEntity(entityRef);
+    const accepted =
+      purpose === 'request' &&
+      entity?.category === 'evidence' &&
+      entity.asyncAcceptance === true;
     const collectionRead = reading && suffix !== undefined;
     const item = primary ?? location;
     const route: UnaddressedRoute = {
@@ -285,7 +290,13 @@ export const buildDeliveryRoutes = (
       ...classified,
       fields: reading ? [] : classified.fields,
       responses: [
-        { status: reading ? 200 : 201, description: summary, entityRef },
+        accepted
+          ? {
+              status: 202,
+              description: '已受理处理；读取请求以跟踪结果',
+              entityRef,
+            }
+          : { status: reading ? 200 : 201, description: summary, entityRef },
         ...(reading
           ? [{ status: 404, description: '资源不存在' }]
           : purpose === 'open'

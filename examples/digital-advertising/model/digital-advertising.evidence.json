@@ -1,0 +1,1012 @@
+{
+  "type": "fm_bundle",
+  "schemaVersion": "5.0",
+  "manifest": {
+    "type": "fm_model",
+    "schemaVersion": "5.0",
+    "id": "digital-advertising",
+    "name": "数字广告投放",
+    "version": "1.0.0",
+    "ruleLanguage": "CEL",
+    "entryContextRefs": ["context.advertising-order"]
+  },
+  "entities": [
+    {
+      "type": "entity",
+      "id": "context.advertising-order",
+      "category": "context",
+      "kind": "contract",
+      "label": "数字广告投放",
+      "rootRefs": ["contract.ads-promotion-order"]
+    },
+    {
+      "type": "entity",
+      "id": "role.advertiser",
+      "category": "role",
+      "kind": "party",
+      "label": "广告主",
+      "contextRef": "context.advertising-order"
+    },
+    {
+      "type": "entity",
+      "id": "party.advertiser",
+      "category": "participant",
+      "kind": "party",
+      "label": "广告主"
+    },
+    {
+      "type": "entity",
+      "id": "role.agency",
+      "category": "role",
+      "kind": "party",
+      "label": "广告代理",
+      "contextRef": "context.advertising-order"
+    },
+    {
+      "type": "entity",
+      "id": "party.agency",
+      "category": "participant",
+      "kind": "party",
+      "label": "广告代理"
+    },
+    {
+      "type": "entity",
+      "id": "contract.ads-promotion-order",
+      "category": "evidence",
+      "kind": "contract",
+      "label": "数字广告投放",
+      "contextRef": "context.advertising-order",
+      "roleRefs": ["role.advertiser", "role.agency"],
+      "attributes": [
+        {
+          "name": "id",
+          "label": "凭证标识",
+          "valueType": "id",
+          "required": true,
+          "meaning": "在此业务凭证类型中唯一的标识"
+        },
+        {
+          "name": "signed_at",
+          "label": "签署时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "meaning": "签署时刻",
+          "keyData": true
+        },
+        {
+          "name": "campaign_id",
+          "label": "广告活动",
+          "valueType": "id",
+          "required": true,
+          "meaning": "广告活动"
+        },
+        {
+          "name": "agreed_amount_minor",
+          "label": "约定投放总价",
+          "valueType": "int",
+          "required": true,
+          "meaning": "约定投放总价，单位为 CNY 分"
+        }
+      ],
+      "examples": [
+        {
+          "label": "payment-order",
+          "value": {
+            "id": "ads-order-pay",
+            "campaign_id": "campaign-pay",
+            "agreed_amount_minor": 250000,
+            "signed_at": "2026-06-01T09:00:00Z"
+          },
+          "test": {
+            "flow": "prepayment-only",
+            "actingRoleRef": "role.advertiser",
+            "asOf": "2026-06-01T09:00:00Z"
+          }
+        },
+        {
+          "label": "sign-campaign-order",
+          "value": {
+            "id": "ads-order-summer",
+            "campaign_id": "campaign-summer",
+            "agreed_amount_minor": 720000,
+            "signed_at": "2026-07-01T11:00:00Z"
+          },
+          "test": {
+            "flow": "negotiation-to-daily-report",
+            "actingRoleRef": "role.advertiser",
+            "asOf": "2026-07-01T11:00:00Z",
+            "basedOn": ["proposal.ads-promotion-proposal#return-quote"]
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "role.payment-gateway",
+      "category": "role",
+      "kind": "third_party",
+      "label": "支付对账系统",
+      "contextRef": "context.advertising-order"
+    },
+    {
+      "type": "entity",
+      "id": "party.payment-gateway",
+      "category": "participant",
+      "kind": "party",
+      "label": "支付对账系统"
+    },
+    {
+      "type": "entity",
+      "id": "context.advertising-negotiation",
+      "category": "context",
+      "kind": "pre_contract",
+      "label": "广告方案磋商",
+      "parentContextRef": "context.advertising-order",
+      "rootRefs": ["rfp.ads-promotion-inquiry"]
+    },
+    {
+      "type": "entity",
+      "id": "rfp.ads-promotion-inquiry",
+      "category": "evidence",
+      "kind": "rfp",
+      "label": "投放需求征询",
+      "contextRef": "context.advertising-negotiation",
+      "responsibleRoleRef": "role.advertiser",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "凭证标识",
+          "valueType": "id",
+          "required": true,
+          "meaning": "在此业务凭证类型中唯一的标识"
+        },
+        {
+          "name": "started_at",
+          "label": "开启时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "meaning": "开启时刻",
+          "keyData": true
+        },
+        {
+          "name": "expired_at",
+          "label": "截止时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "meaning": "截止时刻",
+          "keyData": true,
+          "derivedByRuleRef": "rule.rfp.ads-promotion-inquiry-deadline"
+        },
+        {
+          "name": "objective",
+          "label": "投放目标",
+          "valueType": "string",
+          "required": true,
+          "meaning": "投放目标"
+        },
+        {
+          "name": "budget_minor",
+          "label": "预算上限",
+          "valueType": "int",
+          "required": true,
+          "meaning": "预算上限，单位为 CNY 分"
+        }
+      ],
+      "examples": [
+        {
+          "label": "request-campaign-plan",
+          "value": {
+            "id": "inquiry-summer",
+            "objective": "推广夏季新品",
+            "budget_minor": 800000,
+            "started_at": "2026-07-01T09:00:00Z",
+            "expired_at": "2026-07-04T09:00:00Z"
+          },
+          "test": {
+            "flow": "negotiation-to-daily-report",
+            "actingRoleRef": "role.advertiser",
+            "asOf": "2026-07-01T09:00:00Z"
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "proposal.ads-promotion-proposal",
+      "category": "evidence",
+      "kind": "proposal",
+      "label": "广告投放报价",
+      "contextRef": "context.advertising-negotiation",
+      "responsibleRoleRef": "role.agency",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "凭证标识",
+          "valueType": "id",
+          "required": true,
+          "meaning": "在此业务凭证类型中唯一的标识"
+        },
+        {
+          "name": "started_at",
+          "label": "开启时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "meaning": "开启时刻",
+          "keyData": true
+        },
+        {
+          "name": "expired_at",
+          "label": "截止时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "meaning": "截止时刻",
+          "keyData": true,
+          "derivedByRuleRef": "rule.proposal.ads-promotion-proposal-deadline"
+        },
+        {
+          "name": "quoted_amount_minor",
+          "label": "报价",
+          "valueType": "int",
+          "required": true,
+          "meaning": "报价，单位为 CNY 分"
+        },
+        {
+          "name": "placement",
+          "label": "版位",
+          "valueType": "string",
+          "required": true,
+          "meaning": "版位"
+        }
+      ],
+      "examples": [
+        {
+          "label": "return-quote",
+          "value": {
+            "id": "quote-summer",
+            "quoted_amount_minor": 720000,
+            "placement": "首页推荐位",
+            "started_at": "2026-07-01T10:00:00Z",
+            "expired_at": "2026-07-03T10:00:00Z"
+          },
+          "test": {
+            "flow": "negotiation-to-daily-report",
+            "actingRoleRef": "role.agency",
+            "asOf": "2026-07-01T10:00:00Z",
+            "basedOn": ["rfp.ads-promotion-inquiry#request-campaign-plan"]
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "request.payment",
+      "category": "evidence",
+      "kind": "fulfillment_request",
+      "label": "预付款申请",
+      "contextRef": "context.advertising-order",
+      "responsibleRoleRef": "role.agency",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "凭证标识",
+          "valueType": "id",
+          "required": true,
+          "meaning": "在此业务凭证类型中唯一的标识"
+        },
+        {
+          "name": "started_at",
+          "label": "开启时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "meaning": "开启时刻",
+          "keyData": true
+        },
+        {
+          "name": "expired_at",
+          "label": "截止时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "meaning": "截止时刻",
+          "keyData": true,
+          "derivedByRuleRef": "rule.request.payment-deadline"
+        }
+      ],
+      "examples": [
+        {
+          "label": "payment-window",
+          "value": {
+            "id": "pay-request-one",
+            "started_at": "2026-06-01T09:15:00Z",
+            "expired_at": "2026-06-02T09:15:00Z"
+          },
+          "test": {
+            "flow": "prepayment-only",
+            "actingRoleRef": "role.agency",
+            "asOf": "2026-06-01T09:15:00Z",
+            "basedOn": ["contract.ads-promotion-order#payment-order"]
+          }
+        },
+        {
+          "label": "summer-payment-window",
+          "value": {
+            "id": "pay-request-summer",
+            "started_at": "2026-07-01T11:05:00Z",
+            "expired_at": "2026-07-02T11:05:00Z"
+          },
+          "test": {
+            "flow": "negotiation-to-daily-report",
+            "actingRoleRef": "role.agency",
+            "asOf": "2026-07-01T11:05:00Z",
+            "basedOn": ["contract.ads-promotion-order#sign-campaign-order"]
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "confirmation.payment",
+      "category": "evidence",
+      "kind": "fulfillment_confirmation",
+      "label": "到账凭证",
+      "contextRef": "context.advertising-order",
+      "responsibleRoleRef": "role.advertiser",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "凭证标识",
+          "valueType": "id",
+          "required": true,
+          "meaning": "在此业务凭证类型中唯一的标识"
+        },
+        {
+          "name": "confirmed_at",
+          "label": "形成时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "meaning": "形成时刻",
+          "keyData": true
+        },
+        {
+          "name": "paid_amount_minor",
+          "label": "核对后到账金额",
+          "valueType": "int",
+          "required": true,
+          "meaning": "核对后到账金额，单位为 CNY 分",
+          "derivedByRuleRef": "rule.payment-amount"
+        },
+        {
+          "name": "gateway_reference",
+          "label": "支付渠道流水号",
+          "valueType": "id",
+          "required": true,
+          "meaning": "支付渠道流水号"
+        }
+      ],
+      "callbackRoleRefs": ["role.payment-gateway"],
+      "examples": [
+        {
+          "label": "gateway-paid",
+          "value": {
+            "id": "payment-proof-one",
+            "paid_amount_minor": 250000,
+            "gateway_reference": "gateway-txn-01",
+            "confirmed_at": "2026-06-01T10:00:00Z"
+          },
+          "test": {
+            "flow": "prepayment-only",
+            "actingRoleRef": "role.payment-gateway",
+            "asOf": "2026-06-01T10:00:00Z",
+            "basedOn": ["request.payment#payment-window"]
+          }
+        },
+        {
+          "label": "summer-payment-proof",
+          "value": {
+            "id": "payment-proof-summer",
+            "paid_amount_minor": 720000,
+            "gateway_reference": "gateway-txn-02",
+            "confirmed_at": "2026-07-01T12:00:00Z"
+          },
+          "test": {
+            "flow": "negotiation-to-daily-report",
+            "actingRoleRef": "role.payment-gateway",
+            "asOf": "2026-07-01T12:00:00Z",
+            "basedOn": ["request.payment#summer-payment-window"]
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "request.advertising",
+      "category": "evidence",
+      "kind": "fulfillment_request",
+      "label": "广告上线申请",
+      "contextRef": "context.advertising-order",
+      "responsibleRoleRef": "role.advertiser",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "凭证标识",
+          "valueType": "id",
+          "required": true,
+          "meaning": "在此业务凭证类型中唯一的标识"
+        },
+        {
+          "name": "started_at",
+          "label": "开启时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "meaning": "开启时刻",
+          "keyData": true
+        },
+        {
+          "name": "expired_at",
+          "label": "截止时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "meaning": "截止时刻",
+          "keyData": true,
+          "derivedByRuleRef": "rule.request.advertising-deadline"
+        },
+        {
+          "name": "placement",
+          "label": "投放版位",
+          "valueType": "string",
+          "required": true,
+          "meaning": "投放版位"
+        }
+      ],
+      "examples": [
+        {
+          "label": "request-launch",
+          "value": {
+            "id": "launch-request-summer",
+            "placement": "首页推荐位",
+            "started_at": "2026-07-01T13:00:00Z",
+            "expired_at": "2026-07-03T13:00:00Z"
+          },
+          "test": {
+            "flow": "negotiation-to-daily-report",
+            "actingRoleRef": "role.advertiser",
+            "asOf": "2026-07-01T13:00:00Z",
+            "basedOn": ["confirmation.payment#summer-payment-proof"]
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "confirmation.advertising",
+      "category": "evidence",
+      "kind": "fulfillment_confirmation",
+      "label": "上线凭证",
+      "contextRef": "context.advertising-order",
+      "responsibleRoleRef": "role.agency",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "凭证标识",
+          "valueType": "id",
+          "required": true,
+          "meaning": "在此业务凭证类型中唯一的标识"
+        },
+        {
+          "name": "confirmed_at",
+          "label": "形成时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "meaning": "形成时刻",
+          "keyData": true
+        },
+        {
+          "name": "placement",
+          "label": "实际投放版位",
+          "valueType": "string",
+          "required": true,
+          "meaning": "实际投放版位"
+        }
+      ],
+      "examples": [
+        {
+          "label": "campaign-live",
+          "value": {
+            "id": "launch-proof-summer",
+            "placement": "首页推荐位",
+            "confirmed_at": "2026-07-02T00:00:00Z"
+          },
+          "test": {
+            "flow": "negotiation-to-daily-report",
+            "actingRoleRef": "role.agency",
+            "asOf": "2026-07-02T00:00:00Z",
+            "basedOn": ["request.advertising#request-launch"]
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "request.daily-report",
+      "category": "evidence",
+      "kind": "fulfillment_request",
+      "label": "日报生成请求",
+      "contextRef": "context.advertising-order",
+      "responsibleRoleRef": "role.advertiser",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "凭证标识",
+          "valueType": "id",
+          "required": true,
+          "meaning": "在此业务凭证类型中唯一的标识"
+        },
+        {
+          "name": "started_at",
+          "label": "开启时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "meaning": "开启时刻",
+          "keyData": true
+        },
+        {
+          "name": "expired_at",
+          "label": "截止时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "meaning": "截止时刻",
+          "keyData": true,
+          "derivedByRuleRef": "rule.request.daily-report-deadline"
+        },
+        {
+          "name": "report_date",
+          "label": "统计日",
+          "valueType": "string",
+          "required": true,
+          "meaning": "广告主业务时区中的 YYYY-MM-DD"
+        }
+      ],
+      "asyncAcceptance": true,
+      "examples": [
+        {
+          "label": "report-accepted",
+          "value": {
+            "id": "report-request-summer",
+            "report_date": "2026-07-02",
+            "started_at": "2026-07-03T00:10:00Z",
+            "expired_at": "2026-07-04T00:10:00Z"
+          },
+          "test": {
+            "flow": "negotiation-to-daily-report",
+            "actingRoleRef": "role.advertiser",
+            "asOf": "2026-07-03T00:10:00Z",
+            "basedOn": ["confirmation.advertising#campaign-live"],
+            "expectedStatus": 202,
+            "expect": {
+              "$._links.self.href": "/ads-promotion-orders/ads-order-summer/daily-reports/report-request-summer"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "confirmation.daily-report",
+      "category": "evidence",
+      "kind": "fulfillment_confirmation",
+      "label": "广告日报凭证",
+      "contextRef": "context.advertising-order",
+      "responsibleRoleRef": "role.agency",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "凭证标识",
+          "valueType": "id",
+          "required": true,
+          "meaning": "在此业务凭证类型中唯一的标识"
+        },
+        {
+          "name": "confirmed_at",
+          "label": "形成时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "meaning": "形成时刻",
+          "keyData": true
+        },
+        {
+          "name": "impressions",
+          "label": "展示次数",
+          "valueType": "int",
+          "required": true,
+          "meaning": "展示次数"
+        },
+        {
+          "name": "report_ref",
+          "label": "归档报表标识",
+          "valueType": "id",
+          "required": true,
+          "meaning": "归档报表标识"
+        }
+      ],
+      "examples": [
+        {
+          "label": "report-published",
+          "value": {
+            "id": "daily-report-summer",
+            "impressions": 12904,
+            "report_ref": "archive-summer-20260702",
+            "confirmed_at": "2026-07-03T00:20:00Z"
+          },
+          "test": {
+            "flow": "negotiation-to-daily-report",
+            "actingRoleRef": "role.agency",
+            "asOf": "2026-07-03T00:20:00Z",
+            "basedOn": ["request.daily-report#report-accepted"],
+            "expectedStatus": 201,
+            "expect": {
+              "$._links.self.href": "/daily-report-confirmations/daily-report-summer"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "type": "relationship",
+      "id": "relation.party.advertiser-role.advertiser",
+      "kind": "plays_role",
+      "sourceRef": "party.advertiser",
+      "targetRef": "role.advertiser",
+      "label": "扮演广告主"
+    },
+    {
+      "type": "relationship",
+      "id": "relation.party.agency-role.agency",
+      "kind": "plays_role",
+      "sourceRef": "party.agency",
+      "targetRef": "role.agency",
+      "label": "扮演广告代理"
+    },
+    {
+      "type": "relationship",
+      "id": "relation.party.payment-gateway-role.payment-gateway",
+      "kind": "plays_role",
+      "sourceRef": "party.payment-gateway",
+      "targetRef": "role.payment-gateway",
+      "label": "扮演支付对账系统"
+    },
+    {
+      "type": "relationship",
+      "id": "relation.proposal.ads-promotion-proposal-rfp.ads-promotion-inquiry",
+      "kind": "references",
+      "sourceRef": "proposal.ads-promotion-proposal",
+      "targetRef": "rfp.ads-promotion-inquiry",
+      "label": "报价回应有效征询",
+      "sourceCardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.contract.ads-promotion-order-proposal.ads-promotion-proposal",
+      "kind": "references",
+      "sourceRef": "contract.ads-promotion-order",
+      "targetRef": "proposal.ads-promotion-proposal",
+      "label": "通过报价签署时引用报价",
+      "sourceCardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.request.payment-contract.ads-promotion-order",
+      "kind": "references",
+      "sourceRef": "request.payment",
+      "targetRef": "contract.ads-promotion-order",
+      "label": "在协议约定范围内发起履约",
+      "sourceCardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.confirmation.payment-request.payment",
+      "kind": "references",
+      "sourceRef": "confirmation.payment",
+      "targetRef": "request.payment",
+      "label": "每份预付款申请只形成一份到账凭证",
+      "sourceCardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.request.advertising-contract.ads-promotion-order",
+      "kind": "references",
+      "sourceRef": "request.advertising",
+      "targetRef": "contract.ads-promotion-order",
+      "label": "在协议约定范围内发起履约",
+      "sourceCardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.request.advertising-confirmation.payment",
+      "kind": "references",
+      "sourceRef": "request.advertising",
+      "targetRef": "confirmation.payment",
+      "label": "收到预付款后才申请上线",
+      "sourceCardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.confirmation.advertising-request.advertising",
+      "kind": "references",
+      "sourceRef": "confirmation.advertising",
+      "targetRef": "request.advertising",
+      "label": "登记实际上线结果",
+      "sourceCardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.request.daily-report-contract.ads-promotion-order",
+      "kind": "references",
+      "sourceRef": "request.daily-report",
+      "targetRef": "contract.ads-promotion-order",
+      "label": "在协议约定范围内发起履约",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.request.daily-report-confirmation.advertising",
+      "kind": "references",
+      "sourceRef": "request.daily-report",
+      "targetRef": "confirmation.advertising",
+      "label": "已上线的广告活动才能生成投放日报",
+      "sourceCardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.confirmation.daily-report-request.daily-report",
+      "kind": "references",
+      "sourceRef": "confirmation.daily-report",
+      "targetRef": "request.daily-report",
+      "label": "统计完成后生成一份独立日报凭证",
+      "sourceCardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    }
+  ],
+  "rules": [
+    {
+      "type": "rule",
+      "id": "rule.rfp.ads-promotion-inquiry-deadline",
+      "kind": "derivation",
+      "label": "投放需求征询窗口为 72 小时",
+      "description": "投放需求征询窗口为 72 小时",
+      "contextRef": "context.advertising-negotiation",
+      "bindings": {
+        "self": {
+          "ref": "rfp.ads-promotion-inquiry"
+        }
+      },
+      "expression": "self.started_at + duration(\"72h\")",
+      "resultType": "timestamp",
+      "target": {
+        "entityRef": "rfp.ads-promotion-inquiry",
+        "attribute": "expired_at"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule.proposal.ads-promotion-proposal-deadline",
+      "kind": "derivation",
+      "label": "广告投放报价窗口为 48 小时",
+      "description": "广告投放报价窗口为 48 小时",
+      "contextRef": "context.advertising-negotiation",
+      "bindings": {
+        "self": {
+          "ref": "proposal.ads-promotion-proposal"
+        }
+      },
+      "expression": "self.started_at + duration(\"48h\")",
+      "resultType": "timestamp",
+      "target": {
+        "entityRef": "proposal.ads-promotion-proposal",
+        "attribute": "expired_at"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule.request.payment-deadline",
+      "kind": "derivation",
+      "label": "预付款申请窗口为 24 小时",
+      "description": "预付款申请窗口为 24 小时",
+      "contextRef": "context.advertising-order",
+      "bindings": {
+        "self": {
+          "ref": "request.payment"
+        }
+      },
+      "expression": "self.started_at + duration(\"24h\")",
+      "resultType": "timestamp",
+      "target": {
+        "entityRef": "request.payment",
+        "attribute": "expired_at"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule.payment-amount",
+      "kind": "derivation",
+      "label": "全额预付款按已签订单金额核对",
+      "description": "全额预付款按已签订单金额核对",
+      "contextRef": "context.advertising-order",
+      "bindings": {
+        "order": {
+          "ref": "contract.ads-promotion-order"
+        }
+      },
+      "expression": "order.agreed_amount_minor",
+      "resultType": "int",
+      "target": {
+        "entityRef": "confirmation.payment",
+        "attribute": "paid_amount_minor"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule.request.payment-completed",
+      "kind": "completion",
+      "label": "时窗内收到到账凭证后关闭付款履约",
+      "description": "时窗内收到到账凭证后关闭付款履约",
+      "contextRef": "context.advertising-order",
+      "bindings": {
+        "request": {
+          "ref": "request.payment"
+        },
+        "results": {
+          "ref": "confirmation.payment",
+          "cardinality": "many"
+        }
+      },
+      "expression": "results.exists(c, c.confirmed_at >= request.started_at && c.confirmed_at <= request.expired_at)",
+      "resultType": "bool"
+    },
+    {
+      "type": "rule",
+      "id": "rule.request.advertising-deadline",
+      "kind": "derivation",
+      "label": "广告上线申请窗口为 48 小时",
+      "description": "广告上线申请窗口为 48 小时",
+      "contextRef": "context.advertising-order",
+      "bindings": {
+        "self": {
+          "ref": "request.advertising"
+        }
+      },
+      "expression": "self.started_at + duration(\"48h\")",
+      "resultType": "timestamp",
+      "target": {
+        "entityRef": "request.advertising",
+        "attribute": "expired_at"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule.request.advertising-completed",
+      "kind": "completion",
+      "label": "时窗内上线才完成投放排期履约",
+      "description": "时窗内上线才完成投放排期履约",
+      "contextRef": "context.advertising-order",
+      "bindings": {
+        "request": {
+          "ref": "request.advertising"
+        },
+        "results": {
+          "ref": "confirmation.advertising",
+          "cardinality": "many"
+        }
+      },
+      "expression": "results.exists(c, c.confirmed_at >= request.started_at && c.confirmed_at <= request.expired_at)",
+      "resultType": "bool"
+    },
+    {
+      "type": "rule",
+      "id": "rule.request.daily-report-deadline",
+      "kind": "derivation",
+      "label": "日报生成请求窗口为 24 小时",
+      "description": "日报生成请求窗口为 24 小时",
+      "contextRef": "context.advertising-order",
+      "bindings": {
+        "self": {
+          "ref": "request.daily-report"
+        }
+      },
+      "expression": "self.started_at + duration(\"24h\")",
+      "resultType": "timestamp",
+      "target": {
+        "entityRef": "request.daily-report",
+        "attribute": "expired_at"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule.request.daily-report-completed",
+      "kind": "completion",
+      "label": "受理不算完成；只有时窗内形成的日报凭证才完成请求",
+      "description": "受理不算完成；只有时窗内形成的日报凭证才完成请求",
+      "contextRef": "context.advertising-order",
+      "bindings": {
+        "request": {
+          "ref": "request.daily-report"
+        },
+        "results": {
+          "ref": "confirmation.daily-report",
+          "cardinality": "many"
+        }
+      },
+      "expression": "results.exists(c, c.confirmed_at >= request.started_at && c.confirmed_at <= request.expired_at)",
+      "resultType": "bool"
+    }
+  ]
+}

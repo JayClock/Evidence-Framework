@@ -66,5 +66,8 @@ jobs:
           pnpm evidence --help
           pnpm evidence --version
 
+      - name: Verify fulfillment example deliverables (read-only)
+        run: pnpm examples:verify
+
       - name: Verify desktop build
         run: pnpm nx build desktop

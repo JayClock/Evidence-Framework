@@ -1,0 +1,540 @@
+{
+  "type": "fm_bundle",
+  "schemaVersion": "5.0",
+  "manifest": {
+    "type": "fm_model",
+    "schemaVersion": "5.0",
+    "id": "shared-settlement",
+    "name": "季度与年度收入核销",
+    "version": "1.0.0",
+    "ruleLanguage": "CEL",
+    "entryContextRefs": ["context.performance"]
+  },
+  "entities": [
+    {
+      "type": "entity",
+      "id": "context.performance",
+      "category": "context",
+      "kind": "contract",
+      "label": "季度与年度收入核销",
+      "rootRefs": ["contract.performance-agreement"]
+    },
+    {
+      "type": "entity",
+      "id": "role.account-owner",
+      "category": "role",
+      "kind": "party",
+      "label": "业绩负责人",
+      "contextRef": "context.performance"
+    },
+    {
+      "type": "entity",
+      "id": "party.account-owner",
+      "category": "participant",
+      "kind": "party",
+      "label": "业绩负责人"
+    },
+    {
+      "type": "entity",
+      "id": "role.finance",
+      "category": "role",
+      "kind": "party",
+      "label": "财务控制方",
+      "contextRef": "context.performance"
+    },
+    {
+      "type": "entity",
+      "id": "party.finance",
+      "category": "participant",
+      "kind": "party",
+      "label": "财务控制方"
+    },
+    {
+      "type": "entity",
+      "id": "contract.performance-agreement",
+      "category": "evidence",
+      "kind": "contract",
+      "label": "季度与年度收入核销",
+      "contextRef": "context.performance",
+      "roleRefs": ["role.account-owner", "role.finance"],
+      "attributes": [
+        {
+          "name": "id",
+          "label": "凭证标识",
+          "valueType": "id",
+          "required": true,
+          "meaning": "在此业务凭证类型中唯一的标识"
+        },
+        {
+          "name": "signed_at",
+          "label": "签署时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "meaning": "签署时刻",
+          "keyData": true
+        },
+        {
+          "name": "fiscal_year",
+          "label": "会计年度",
+          "valueType": "int",
+          "required": true,
+          "meaning": "会计年度"
+        }
+      ],
+      "examples": [
+        {
+          "label": "sign-fy26",
+          "value": {
+            "id": "agreement-fy26",
+            "fiscal_year": 2026,
+            "signed_at": "2026-01-01T09:00:00Z"
+          },
+          "test": {
+            "flow": "credit-quarter-and-year-once",
+            "actingRoleRef": "role.account-owner",
+            "asOf": "2026-01-01T09:00:00Z"
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "request.quarterly-target",
+      "category": "evidence",
+      "kind": "fulfillment_request",
+      "label": "季度收入指标",
+      "contextRef": "context.performance",
+      "responsibleRoleRef": "role.finance",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "凭证标识",
+          "valueType": "id",
+          "required": true,
+          "meaning": "在此业务凭证类型中唯一的标识"
+        },
+        {
+          "name": "started_at",
+          "label": "开启时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "meaning": "开启时刻",
+          "keyData": true
+        },
+        {
+          "name": "expired_at",
+          "label": "截止时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "meaning": "截止时刻",
+          "keyData": true,
+          "derivedByRuleRef": "rule.request.quarterly-target-deadline"
+        },
+        {
+          "name": "quarter",
+          "label": "季度",
+          "valueType": "string",
+          "required": true,
+          "meaning": "例如 2026-Q1"
+        },
+        {
+          "name": "target_amount_minor",
+          "label": "季度指标金额",
+          "valueType": "int",
+          "required": true,
+          "meaning": "季度指标金额，单位为 CNY 分"
+        }
+      ],
+      "examples": [
+        {
+          "label": "open-q1",
+          "value": {
+            "id": "target-2026-q1",
+            "quarter": "2026-Q1",
+            "target_amount_minor": 12000000,
+            "started_at": "2026-01-02T10:00:00Z",
+            "expired_at": "2026-04-02T10:00:00Z"
+          },
+          "test": {
+            "flow": "credit-quarter-and-year-once",
+            "actingRoleRef": "role.finance",
+            "asOf": "2026-01-02T10:00:00Z",
+            "basedOn": ["contract.performance-agreement#sign-fy26"]
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "request.annual-target",
+      "category": "evidence",
+      "kind": "fulfillment_request",
+      "label": "年度收入指标",
+      "contextRef": "context.performance",
+      "responsibleRoleRef": "role.account-owner",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "凭证标识",
+          "valueType": "id",
+          "required": true,
+          "meaning": "在此业务凭证类型中唯一的标识"
+        },
+        {
+          "name": "started_at",
+          "label": "开启时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "meaning": "开启时刻",
+          "keyData": true
+        },
+        {
+          "name": "expired_at",
+          "label": "截止时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "meaning": "截止时刻",
+          "keyData": true,
+          "derivedByRuleRef": "rule.request.annual-target-deadline"
+        },
+        {
+          "name": "target_amount_minor",
+          "label": "年度指标金额",
+          "valueType": "int",
+          "required": true,
+          "meaning": "年度指标金额，单位为 CNY 分"
+        }
+      ],
+      "examples": [
+        {
+          "label": "open-year",
+          "value": {
+            "id": "target-2026",
+            "target_amount_minor": 50000000,
+            "started_at": "2026-01-02T09:00:00Z",
+            "expired_at": "2027-01-02T09:00:00Z"
+          },
+          "test": {
+            "flow": "credit-quarter-and-year-once",
+            "actingRoleRef": "role.account-owner",
+            "asOf": "2026-01-02T09:00:00Z",
+            "basedOn": ["contract.performance-agreement#sign-fy26"]
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "confirmation.revenue",
+      "category": "evidence",
+      "kind": "fulfillment_confirmation",
+      "label": "共享收入凭证",
+      "contextRef": "context.performance",
+      "responsibleRoleRef": "role.finance",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "凭证标识",
+          "valueType": "id",
+          "required": true,
+          "meaning": "在此业务凭证类型中唯一的标识"
+        },
+        {
+          "name": "confirmed_at",
+          "label": "形成时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "meaning": "形成时刻",
+          "keyData": true
+        },
+        {
+          "name": "booking_ref",
+          "label": "已入账业务流水",
+          "valueType": "id",
+          "required": true,
+          "meaning": "已入账业务流水"
+        },
+        {
+          "name": "amount_minor",
+          "label": "入账收入金额",
+          "valueType": "int",
+          "required": true,
+          "meaning": "入账收入金额，单位为 CNY 分"
+        },
+        {
+          "name": "request_ids",
+          "label": "核销的指标请求 ID",
+          "valueType": "list",
+          "required": true,
+          "meaning": "精确记录本笔收入核销的季度与年度指标请求实例"
+        }
+      ],
+      "examples": [
+        {
+          "label": "post-revenue-once",
+          "value": {
+            "id": "revenue-001",
+            "booking_ref": "booking-928",
+            "amount_minor": 52000000,
+            "request_ids": ["target-2026-q1", "target-2026"],
+            "confirmed_at": "2026-03-27T15:00:00Z"
+          },
+          "test": {
+            "flow": "credit-quarter-and-year-once",
+            "actingRoleRef": "role.finance",
+            "asOf": "2026-03-27T15:00:00Z",
+            "basedOn": [
+              "request.quarterly-target#open-q1",
+              "request.annual-target#open-year"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "entity",
+      "id": "confirmation.quarter-close",
+      "category": "evidence",
+      "kind": "fulfillment_confirmation",
+      "label": "季度指标锁账确认",
+      "contextRef": "context.performance",
+      "responsibleRoleRef": "role.account-owner",
+      "attributes": [
+        {
+          "name": "id",
+          "label": "凭证标识",
+          "valueType": "id",
+          "required": true,
+          "meaning": "在此业务凭证类型中唯一的标识"
+        },
+        {
+          "name": "confirmed_at",
+          "label": "形成时刻",
+          "valueType": "timestamp",
+          "required": true,
+          "meaning": "形成时刻",
+          "keyData": true
+        },
+        {
+          "name": "revenue_confirmation_id",
+          "label": "作为本例锁账依据的收入凭证",
+          "valueType": "id",
+          "required": true,
+          "meaning": "作为本例锁账依据的收入凭证",
+          "derivedByRuleRef": "rule.quarter-close-proof"
+        }
+      ],
+      "examples": [
+        {
+          "label": "lock-q1-ledger",
+          "value": {
+            "id": "quarter-close-001",
+            "revenue_confirmation_id": "revenue-001",
+            "confirmed_at": "2026-03-31T16:00:00Z"
+          },
+          "test": {
+            "flow": "credit-quarter-and-year-once",
+            "actingRoleRef": "role.account-owner",
+            "asOf": "2026-03-31T16:00:00Z",
+            "basedOn": ["confirmation.revenue#post-revenue-once"]
+          }
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "type": "relationship",
+      "id": "relation.party.account-owner-role.account-owner",
+      "kind": "plays_role",
+      "sourceRef": "party.account-owner",
+      "targetRef": "role.account-owner",
+      "label": "扮演业绩负责人"
+    },
+    {
+      "type": "relationship",
+      "id": "relation.party.finance-role.finance",
+      "kind": "plays_role",
+      "sourceRef": "party.finance",
+      "targetRef": "role.finance",
+      "label": "扮演财务控制方"
+    },
+    {
+      "type": "relationship",
+      "id": "relation.request.quarterly-target-contract.performance-agreement",
+      "kind": "references",
+      "sourceRef": "request.quarterly-target",
+      "targetRef": "contract.performance-agreement",
+      "label": "在协议约定范围内发起履约",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.request.annual-target-contract.performance-agreement",
+      "kind": "references",
+      "sourceRef": "request.annual-target",
+      "targetRef": "contract.performance-agreement",
+      "label": "在协议约定范围内发起履约",
+      "sourceCardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.confirmation.revenue-request.quarterly-target",
+      "kind": "references",
+      "sourceRef": "confirmation.revenue",
+      "targetRef": "request.quarterly-target",
+      "label": "同一笔收入可计入所属季度，一份季度指标可关联多笔收入",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.confirmation.revenue-request.annual-target",
+      "kind": "references",
+      "sourceRef": "confirmation.revenue",
+      "targetRef": "request.annual-target",
+      "label": "同一笔收入同时计入年度指标，不另写一份年度凭证",
+      "sourceCardinality": {
+        "min": 0,
+        "max": "many"
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    {
+      "type": "relationship",
+      "id": "relation.confirmation.quarter-close-request.quarterly-target",
+      "kind": "references",
+      "sourceRef": "confirmation.quarter-close",
+      "targetRef": "request.quarterly-target",
+      "label": "季度末锁账属于季度请求的独占确认",
+      "sourceCardinality": {
+        "min": 0,
+        "max": 1
+      },
+      "targetCardinality": {
+        "min": 1,
+        "max": 1
+      }
+    }
+  ],
+  "rules": [
+    {
+      "type": "rule",
+      "id": "rule.request.quarterly-target-deadline",
+      "kind": "derivation",
+      "label": "季度收入指标窗口为 2160 小时",
+      "description": "季度收入指标窗口为 2160 小时",
+      "contextRef": "context.performance",
+      "bindings": {
+        "self": {
+          "ref": "request.quarterly-target"
+        }
+      },
+      "expression": "self.started_at + duration(\"2160h\")",
+      "resultType": "timestamp",
+      "target": {
+        "entityRef": "request.quarterly-target",
+        "attribute": "expired_at"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule.request.annual-target-deadline",
+      "kind": "derivation",
+      "label": "年度收入指标窗口为 8760 小时",
+      "description": "年度收入指标窗口为 8760 小时",
+      "contextRef": "context.performance",
+      "bindings": {
+        "self": {
+          "ref": "request.annual-target"
+        }
+      },
+      "expression": "self.started_at + duration(\"8760h\")",
+      "resultType": "timestamp",
+      "target": {
+        "entityRef": "request.annual-target",
+        "attribute": "expired_at"
+      }
+    },
+    {
+      "type": "rule",
+      "id": "rule.request.quarterly-target-completed",
+      "kind": "completion",
+      "label": "本例季度仅需一笔足额的关联到账记录；锁账另行确认",
+      "description": "本例季度仅需一笔足额的关联到账记录；锁账另行确认",
+      "contextRef": "context.performance",
+      "bindings": {
+        "request": {
+          "ref": "request.quarterly-target"
+        },
+        "results": {
+          "ref": "confirmation.revenue",
+          "cardinality": "many"
+        }
+      },
+      "expression": "results.exists(c, c.confirmed_at >= request.started_at && c.confirmed_at <= request.expired_at && c.request_ids.exists(id, id == request.id) && c.amount_minor >= request.target_amount_minor)",
+      "resultType": "bool"
+    },
+    {
+      "type": "rule",
+      "id": "rule.request.annual-target-completed",
+      "kind": "completion",
+      "label": "本例以一笔足额的关联到账记录示范年度指标完成",
+      "description": "本例以一笔足额的关联到账记录示范年度指标完成",
+      "contextRef": "context.performance",
+      "bindings": {
+        "request": {
+          "ref": "request.annual-target"
+        },
+        "results": {
+          "ref": "confirmation.revenue",
+          "cardinality": "many"
+        }
+      },
+      "expression": "results.exists(c, c.confirmed_at >= request.started_at && c.confirmed_at <= request.expired_at && c.request_ids.exists(id, id == request.id) && c.amount_minor >= request.target_amount_minor)",
+      "resultType": "bool"
+    },
+    {
+      "type": "rule",
+      "id": "rule.quarter-close-proof",
+      "kind": "derivation",
+      "label": "季度锁账引用同一收入凭证",
+      "description": "季度锁账引用同一收入凭证",
+      "contextRef": "context.performance",
+      "bindings": {
+        "credit": {
+          "ref": "confirmation.revenue"
+        }
+      },
+      "expression": "credit.id",
+      "resultType": "id",
+      "target": {
+        "entityRef": "confirmation.quarter-close",
+        "attribute": "revenue_confirmation_id"
+      }
+    }
+  ]
+}

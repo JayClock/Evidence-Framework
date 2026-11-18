@@ -75,6 +75,17 @@ An overlay can move a creation entrance independently of its primary GET. Moving
 the primary GET updates all corresponding creation `Location` and self templates.
 Overlays must retain the operation's identity parameters; collisions are errors.
 
+## Asynchronous fulfillment requests
+
+`asyncAcceptance: true` applies only to a `fulfillment_request`. Its POST returns
+`202 Accepted`, not `201`, with `Location` and HAL `self` indicating the request
+item to poll. The request records **acceptance**, not completion. A later
+confirmation POST still returns `201` and its own canonical URI. The request's GET
+advertises a `result:<confirmationRef>` link template; the service should expose a
+concrete result link only once the result exists. The contract projects read
+access to that local result for the bound requesting role, not permission to
+record it. The service must still check the request–result instance association.
+
 ## Service ownership and gateway
 
 A service has `routePrefixes` and `routes` (exact route IDs). Topology, OpenAPI
@@ -114,8 +125,10 @@ pnpm example:setup
 pnpm example:test
 pnpm boundaries:drill
 pnpm exec nx run-many -t lint,typecheck,test
+pnpm nx build cli
 pnpm evidence export --model examples/b2b-escrow/model/b2b-escrow.evidence.json \
   --out examples/b2b-escrow/generated --verify
+pnpm examples:verify
 ```
 
 Use Node 22 as described in ENVIRONMENT.md. The standalone Fastify SUT implements
@@ -123,6 +136,15 @@ the v6 contract; its native tests follow created primary URIs and inspect HAL
 collections. The official Step CI Runner verifies five B2B flows and 121 steps,
 including independently broken amounts, clocks and payloads. Step CI and Hurl
 share model-identified parameter captures, including proposal signing.
+
+The [digital advertising](../examples/digital-advertising/README.md),
+[agile sprint](../examples/agile-sprint/README.md), and
+[shared settlement](../examples/shared-settlement/README.md) examples cover
+single confirmation, append-only confirmation, shared confirmation, and the
+negotiation-to-asynchronous-result lifecycle. Each is a standalone model plus
+compiled OpenAPI and Step CI artifacts, not a service implementation. CI runs
+`pnpm examples:verify` to check their models and compare the generated files
+without writing them. `pnpm boundaries:drill` remains the module-boundary test.
 
 The canonical confirmation paths are an approved breaking change. For B2B escrow,
 comparing the previously committed OpenAPI to the regenerated artifact with

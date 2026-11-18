@@ -106,6 +106,13 @@ const cases: [string, ValidationCode, (doc: DomainModelDocument) => void][] = [
     },
   ],
   [
+    'asynchronous acceptance on a confirmation',
+    'entity.shape',
+    (d) => {
+      raw(requireEvidence(d, 'confirmation.payment')).asyncAcceptance = true;
+    },
+  ],
+  [
     'missing contract roles',
     'entity.roleRefs.missing',
     (d) => {

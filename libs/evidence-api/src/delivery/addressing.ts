@@ -61,10 +61,32 @@ export const callerRoles = (
       ? graph.rootContractOf(context.parentContextRef)
       : undefined);
   const bound = contract?.roleRefs ?? [];
+  const responsible =
+    entity?.category === 'evidence' ? entity.responsibleRoleRef : undefined;
+  const asyncReaders =
+    route.method === 'GET' &&
+    route.id === `route.read.${route.entityRef}` &&
+    entity?.category === 'evidence' &&
+    entity.kind === 'fulfillment_confirmation'
+      ? graph.outgoing(entity.id).flatMap((edge) => {
+          const request = graph.getEntity(edge.targetRef);
+          return edge.kind === 'references' &&
+            request?.category === 'evidence' &&
+            request.kind === 'fulfillment_request' &&
+            request.asyncAcceptance === true &&
+            request.contextRef === route.contextRef &&
+            request.responsibleRoleRef !== undefined
+            ? [request.responsibleRoleRef]
+            : [];
+        })
+      : [];
+  // The party allowed to poll an accepted request can read its local result, not record it.
   const candidates =
-    entity?.category === 'evidence' && entity.responsibleRoleRef !== undefined
-      ? bound.filter((ref) => ref === entity.responsibleRoleRef)
-      : bound;
+    responsible === undefined
+      ? bound
+      : bound.filter(
+          (ref) => ref === responsible || asyncReaders.includes(ref),
+        );
   return [...new Set(candidates)]
     .filter((ref) => {
       const role = graph.getEntity(ref);

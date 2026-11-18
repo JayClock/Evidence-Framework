@@ -26,6 +26,7 @@
       "uniqueItems": true
     },
     "responsibleRoleRef": { "$ref": "#/$defs/id" },
+    "asyncAcceptance": { "const": true },
     "callbackRoleRefs": {
       "type": "array",
       "items": { "$ref": "#/$defs/id" },
@@ -57,6 +58,16 @@
     "sourceSnippet": { "$ref": "#/$defs/provenance" }
   },
   "allOf": [
+    {
+      "if": { "required": ["asyncAcceptance"] },
+      "then": {
+        "properties": {
+          "category": { "const": "evidence" },
+          "kind": { "const": "fulfillment_request" }
+        },
+        "required": ["category", "kind"]
+      }
+    },
     {
       "if": { "required": ["callbackRoleRefs"] },
       "then": {

@@ -1,0 +1,2572 @@
+{
+  "components": {
+    "examples": {
+      "route_read_confirmation_quarter-close_lock-q1-ledger_1": {
+        "summary": "lock-q1-ledger",
+        "value": {
+          "_links": {
+            "self": {
+              "href": "/quarter-close-confirmations/{quarterCloseConfirmationId}"
+            }
+          },
+          "confirmed_at": "2026-03-31T16:00:00Z",
+          "id": "quarter-close-001",
+          "revenue_confirmation_id": "revenue-001"
+        }
+      },
+      "route_read_confirmation_revenue_post-revenue-once_1": {
+        "summary": "post-revenue-once",
+        "value": {
+          "_links": {
+            "self": {
+              "href": "/revenue-confirmations/{revenueConfirmationId}"
+            }
+          },
+          "amount_minor": 52000000,
+          "booking_ref": "booking-928",
+          "confirmed_at": "2026-03-27T15:00:00Z",
+          "id": "revenue-001",
+          "request_ids": [
+            "target-2026-q1",
+            "target-2026"
+          ]
+        }
+      },
+      "route_read_contract_performance-agreement_sign-fy26_1": {
+        "summary": "sign-fy26",
+        "value": {
+          "_links": {
+            "self": {
+              "href": "/performance-agreements/{contractId}"
+            }
+          },
+          "fiscal_year": 2026,
+          "id": "agreement-fy26",
+          "signed_at": "2026-01-01T09:00:00Z"
+        }
+      },
+      "route_read_request_annual-target_open-year_1": {
+        "summary": "open-year",
+        "value": {
+          "_links": {
+            "self": {
+              "href": "/performance-agreements/{contractId}/annual-target"
+            }
+          },
+          "expired_at": "2027-01-02T09:00:00Z",
+          "id": "target-2026",
+          "started_at": "2026-01-02T09:00:00Z",
+          "target_amount_minor": 50000000
+        }
+      },
+      "route_read_request_quarterly-target_open-q1_1": {
+        "summary": "open-q1",
+        "value": {
+          "_links": {
+            "self": {
+              "href": "/performance-agreements/{contractId}/quarterly-targets/{targetId}"
+            }
+          },
+          "expired_at": "2026-04-02T10:00:00Z",
+          "id": "target-2026-q1",
+          "quarter": "2026-Q1",
+          "started_at": "2026-01-02T10:00:00Z",
+          "target_amount_minor": 12000000
+        }
+      }
+    },
+    "schemas": {
+      "confirmation_quarter-close": {
+        "additionalProperties": false,
+        "description": "读取资源详情",
+        "examples": [
+          {
+            "_links": {
+              "self": {
+                "href": "/quarter-close-confirmations/{quarterCloseConfirmationId}"
+              }
+            },
+            "confirmed_at": "2026-03-31T16:00:00Z",
+            "id": "quarter-close-001",
+            "revenue_confirmation_id": "revenue-001"
+          }
+        ],
+        "properties": {
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "confirmed_at": {
+            "description": "形成时刻",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-origin": "service-time"
+          },
+          "id": {
+            "description": "在此业务凭证类型中唯一的标识",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "revenue_confirmation_id": {
+            "description": "作为本例锁账依据的收入凭证",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-derived-by-rule": "rule.quarter-close-proof",
+            "x-evidence-origin": "derived",
+            "x-evidence-rule": "rule.quarter-close-proof"
+          }
+        },
+        "required": [
+          "id",
+          "confirmed_at",
+          "revenue_confirmation_id",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "confirmation_revenue": {
+        "additionalProperties": false,
+        "description": "读取资源详情",
+        "examples": [
+          {
+            "_links": {
+              "self": {
+                "href": "/revenue-confirmations/{revenueConfirmationId}"
+              }
+            },
+            "amount_minor": 52000000,
+            "booking_ref": "booking-928",
+            "confirmed_at": "2026-03-27T15:00:00Z",
+            "id": "revenue-001",
+            "request_ids": [
+              "target-2026-q1",
+              "target-2026"
+            ]
+          }
+        ],
+        "properties": {
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "amount_minor": {
+            "anyOf": [
+              {
+                "maximum": 9007199254740991,
+                "minimum": -9007199254740991,
+                "type": "integer"
+              },
+              {
+                "pattern": "^(?:0|-?[1-9][0-9]*)$",
+                "type": "string"
+              }
+            ],
+            "description": "入账收入金额，单位为 CNY 分",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "booking_ref": {
+            "description": "已入账业务流水",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "confirmed_at": {
+            "description": "形成时刻",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-origin": "service-time"
+          },
+          "id": {
+            "description": "在此业务凭证类型中唯一的标识",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "request_ids": {
+            "description": "精确记录本笔收入核销的季度与年度指标请求实例",
+            "items": {},
+            "type": "array",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          }
+        },
+        "required": [
+          "id",
+          "confirmed_at",
+          "booking_ref",
+          "amount_minor",
+          "request_ids",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "confirmation_revenueCollection": {
+        "additionalProperties": false,
+        "properties": {
+          "_embedded": {
+            "additionalProperties": false,
+            "properties": {
+              "revenue-confirmations": {
+                "items": {
+                  "$ref": "#/components/schemas/confirmation_revenueSummary"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "revenue-confirmations"
+            ],
+            "type": "object"
+          },
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "total": {
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "_links",
+          "_embedded",
+          "total"
+        ],
+        "type": "object"
+      },
+      "confirmation_revenueSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "amount_minor": {
+            "anyOf": [
+              {
+                "maximum": 9007199254740991,
+                "minimum": -9007199254740991,
+                "type": "integer"
+              },
+              {
+                "pattern": "^(?:0|-?[1-9][0-9]*)$",
+                "type": "string"
+              }
+            ],
+            "description": "入账收入金额，单位为 CNY 分",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "booking_ref": {
+            "description": "已入账业务流水",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "confirmed_at": {
+            "description": "形成时刻",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-origin": "service-time"
+          },
+          "id": {
+            "description": "在此业务凭证类型中唯一的标识",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "request_ids": {
+            "description": "精确记录本笔收入核销的季度与年度指标请求实例",
+            "items": {},
+            "type": "array",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          }
+        },
+        "required": [
+          "_links",
+          "id",
+          "booking_ref"
+        ],
+        "type": "object"
+      },
+      "contract_performance-agreement": {
+        "additionalProperties": false,
+        "description": "签署季度与年度收入核销，双方权责自此成立",
+        "examples": [
+          {
+            "_links": {
+              "self": {
+                "href": "/performance-agreements/{contractId}"
+              }
+            },
+            "fiscal_year": 2026,
+            "id": "agreement-fy26",
+            "signed_at": "2026-01-01T09:00:00Z"
+          }
+        ],
+        "properties": {
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "fiscal_year": {
+            "anyOf": [
+              {
+                "maximum": 9007199254740991,
+                "minimum": -9007199254740991,
+                "type": "integer"
+              },
+              {
+                "pattern": "^(?:0|-?[1-9][0-9]*)$",
+                "type": "string"
+              }
+            ],
+            "description": "会计年度",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "id": {
+            "description": "在此业务凭证类型中唯一的标识",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "signed_at": {
+            "description": "签署时刻",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-origin": "service-time"
+          }
+        },
+        "required": [
+          "id",
+          "signed_at",
+          "fiscal_year",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "contract_performance-agreementCollection": {
+        "additionalProperties": false,
+        "properties": {
+          "_embedded": {
+            "additionalProperties": false,
+            "properties": {
+              "performance-agreements": {
+                "items": {
+                  "$ref": "#/components/schemas/contract_performance-agreementSummary"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "performance-agreements"
+            ],
+            "type": "object"
+          },
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "total": {
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "_links",
+          "_embedded",
+          "total"
+        ],
+        "type": "object"
+      },
+      "contract_performance-agreementSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "fiscal_year": {
+            "anyOf": [
+              {
+                "maximum": 9007199254740991,
+                "minimum": -9007199254740991,
+                "type": "integer"
+              },
+              {
+                "pattern": "^(?:0|-?[1-9][0-9]*)$",
+                "type": "string"
+              }
+            ],
+            "description": "会计年度",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "id": {
+            "description": "在此业务凭证类型中唯一的标识",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "signed_at": {
+            "description": "签署时刻",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-origin": "service-time"
+          }
+        },
+        "required": [
+          "_links",
+          "id"
+        ],
+        "type": "object"
+      },
+      "request_annual-target": {
+        "additionalProperties": false,
+        "description": "发起年度收入指标，开启一个有截止时间的履约窗口",
+        "examples": [
+          {
+            "_links": {
+              "self": {
+                "href": "/performance-agreements/{contractId}/annual-target"
+              }
+            },
+            "expired_at": "2027-01-02T09:00:00Z",
+            "id": "target-2026",
+            "started_at": "2026-01-02T09:00:00Z",
+            "target_amount_minor": 50000000
+          }
+        ],
+        "properties": {
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "expired_at": {
+            "description": "截止时刻",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-derived-by-rule": "rule.request.annual-target-deadline",
+            "x-evidence-origin": "derived",
+            "x-evidence-rule": "rule.request.annual-target-deadline"
+          },
+          "id": {
+            "description": "在此业务凭证类型中唯一的标识",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "started_at": {
+            "description": "开启时刻",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-origin": "service-time"
+          },
+          "target_amount_minor": {
+            "anyOf": [
+              {
+                "maximum": 9007199254740991,
+                "minimum": -9007199254740991,
+                "type": "integer"
+              },
+              {
+                "pattern": "^(?:0|-?[1-9][0-9]*)$",
+                "type": "string"
+              }
+            ],
+            "description": "年度指标金额，单位为 CNY 分",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          }
+        },
+        "required": [
+          "id",
+          "started_at",
+          "expired_at",
+          "target_amount_minor",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "request_quarterly-target": {
+        "additionalProperties": false,
+        "description": "发起季度收入指标，开启一个有截止时间的履约窗口",
+        "examples": [
+          {
+            "_links": {
+              "self": {
+                "href": "/performance-agreements/{contractId}/quarterly-targets/{targetId}"
+              }
+            },
+            "expired_at": "2026-04-02T10:00:00Z",
+            "id": "target-2026-q1",
+            "quarter": "2026-Q1",
+            "started_at": "2026-01-02T10:00:00Z",
+            "target_amount_minor": 12000000
+          }
+        ],
+        "properties": {
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "expired_at": {
+            "description": "截止时刻",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-derived-by-rule": "rule.request.quarterly-target-deadline",
+            "x-evidence-origin": "derived",
+            "x-evidence-rule": "rule.request.quarterly-target-deadline"
+          },
+          "id": {
+            "description": "在此业务凭证类型中唯一的标识",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "quarter": {
+            "description": "例如 2026-Q1",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "started_at": {
+            "description": "开启时刻",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-origin": "service-time"
+          },
+          "target_amount_minor": {
+            "anyOf": [
+              {
+                "maximum": 9007199254740991,
+                "minimum": -9007199254740991,
+                "type": "integer"
+              },
+              {
+                "pattern": "^(?:0|-?[1-9][0-9]*)$",
+                "type": "string"
+              }
+            ],
+            "description": "季度指标金额，单位为 CNY 分",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          }
+        },
+        "required": [
+          "id",
+          "started_at",
+          "expired_at",
+          "quarter",
+          "target_amount_minor",
+          "_links"
+        ],
+        "type": "object"
+      },
+      "request_quarterly-targetCollection": {
+        "additionalProperties": false,
+        "properties": {
+          "_embedded": {
+            "additionalProperties": false,
+            "properties": {
+              "quarterly-targets": {
+                "items": {
+                  "$ref": "#/components/schemas/request_quarterly-targetSummary"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "quarterly-targets"
+            ],
+            "type": "object"
+          },
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "total": {
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "_links",
+          "_embedded",
+          "total"
+        ],
+        "type": "object"
+      },
+      "request_quarterly-targetSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "_links": {
+            "additionalProperties": {
+              "properties": {
+                "href": {
+                  "type": "string"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "templated": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "href"
+              ],
+              "type": "object"
+            },
+            "required": [
+              "self"
+            ],
+            "type": "object"
+          },
+          "expired_at": {
+            "description": "截止时刻",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-derived-by-rule": "rule.request.quarterly-target-deadline",
+            "x-evidence-origin": "derived",
+            "x-evidence-rule": "rule.request.quarterly-target-deadline"
+          },
+          "id": {
+            "description": "在此业务凭证类型中唯一的标识",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "quarter": {
+            "description": "例如 2026-Q1",
+            "type": "string",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          },
+          "started_at": {
+            "description": "开启时刻",
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string",
+            "x-evidence-caller-input": false,
+            "x-evidence-origin": "service-time"
+          },
+          "target_amount_minor": {
+            "anyOf": [
+              {
+                "maximum": 9007199254740991,
+                "minimum": -9007199254740991,
+                "type": "integer"
+              },
+              {
+                "pattern": "^(?:0|-?[1-9][0-9]*)$",
+                "type": "string"
+              }
+            ],
+            "description": "季度指标金额，单位为 CNY 分",
+            "x-evidence-caller-input": true,
+            "x-evidence-origin": "caller"
+          }
+        },
+        "required": [
+          "_links",
+          "id"
+        ],
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "由履约模型直接投影的契约：每个路径对应一个业务凭证时刻。\n派生值由服务端计算，业务时间由服务端打点，调用方不能提交或回填。",
+    "title": "季度与年度收入核销",
+    "version": "6.0.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/performance-agreements": {
+      "get": {
+        "operationId": "listContractPerformanceAgreement",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_list_contract_performance-agreement_sign-fy26_1": {
+                    "summary": "sign-fy26",
+                    "value": {
+                      "_embedded": {
+                        "performance-agreements": [
+                          {
+                            "_links": {
+                              "self": {
+                                "href": "/performance-agreements/{contractId}",
+                                "templated": true
+                              }
+                            },
+                            "fiscal_year": 2026,
+                            "id": "agreement-fy26",
+                            "signed_at": "2026-01-01T09:00:00Z"
+                          }
+                        ]
+                      },
+                      "_links": {
+                        "next:request.annual-target": {
+                          "href": "/performance-agreements/{contractId}/annual-target",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "next:request.quarterly-target": {
+                          "href": "/performance-agreements/{contractId}/quarterly-targets",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/performance-agreements",
+                          "templated": false
+                        }
+                      },
+                      "total": 1
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/contract_performance-agreementCollection"
+                },
+                "x-evidence-link-templates": {
+                  "next:request.annual-target": {
+                    "href": "/performance-agreements/{contractId}/annual-target",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "next:request.quarterly-target": {
+                    "href": "/performance-agreements/{contractId}/quarterly-targets",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/performance-agreements",
+                    "templated": false
+                  }
+                }
+              }
+            },
+            "description": "读取资源集合"
+          },
+          "404": {
+            "description": "资源不存在"
+          }
+        },
+        "summary": "读取资源集合",
+        "tags": [
+          "context:context.performance"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.account-owner",
+          "role.finance"
+        ],
+        "x-evidence-context": "context.performance",
+        "x-evidence-contract": "contract.performance-agreement",
+        "x-evidence-derived": [],
+        "x-evidence-entity": "contract.performance-agreement",
+        "x-evidence-exposure": "external",
+        "x-evidence-purpose": "read",
+        "x-evidence-service": "service.performance",
+        "x-evidence-stamped": [
+          "signed_at"
+        ]
+      },
+      "post": {
+        "operationId": "signContractPerformanceAgreement",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "route_sign_contract_performance-agreement_sign-fy26_1": {
+                  "summary": "sign-fy26",
+                  "value": {
+                    "fiscal_year": 2026,
+                    "id": "agreement-fy26"
+                  }
+                }
+              },
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "fiscal_year": {
+                    "anyOf": [
+                      {
+                        "maximum": 9007199254740991,
+                        "minimum": -9007199254740991,
+                        "type": "integer"
+                      },
+                      {
+                        "pattern": "^(?:0|-?[1-9][0-9]*)$",
+                        "type": "string"
+                      }
+                    ],
+                    "description": "会计年度",
+                    "x-evidence-caller-input": true
+                  },
+                  "id": {
+                    "description": "在此业务凭证类型中唯一的标识",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  }
+                },
+                "required": [
+                  "id",
+                  "fiscal_year"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_sign_contract_performance-agreement_sign-fy26_1": {
+                    "summary": "sign-fy26",
+                    "value": {
+                      "_links": {
+                        "next:request.annual-target": {
+                          "href": "/performance-agreements/{contractId}/annual-target",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "next:request.quarterly-target": {
+                          "href": "/performance-agreements/{contractId}/quarterly-targets",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/performance-agreements/{contractId}",
+                          "templated": true
+                        }
+                      },
+                      "fiscal_year": 2026,
+                      "id": "agreement-fy26",
+                      "signed_at": "2026-01-01T09:00:00Z"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/contract_performance-agreement"
+                },
+                "x-evidence-link-templates": {
+                  "next:request.annual-target": {
+                    "href": "/performance-agreements/{contractId}/annual-target",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "next:request.quarterly-target": {
+                    "href": "/performance-agreements/{contractId}/quarterly-targets",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/performance-agreements/{contractId}",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "签署季度与年度收入核销，双方权责自此成立",
+            "headers": {
+              "Location": {
+                "description": "新凭证地址",
+                "schema": {
+                  "format": "uri-reference",
+                  "type": "string"
+                },
+                "x-evidence-uri-template": "/performance-agreements/{contractId}"
+              }
+            }
+          },
+          "409": {
+            "description": "业务窗口已关闭或资源状态冲突"
+          },
+          "422": {
+            "description": "输入内容或业务角色不成立"
+          }
+        },
+        "summary": "签署季度与年度收入核销，双方权责自此成立",
+        "tags": [
+          "context:context.performance"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.account-owner",
+          "role.finance"
+        ],
+        "x-evidence-context": "context.performance",
+        "x-evidence-contract": "contract.performance-agreement",
+        "x-evidence-derived": [],
+        "x-evidence-entity": "contract.performance-agreement",
+        "x-evidence-exposure": "external",
+        "x-evidence-purpose": "sign",
+        "x-evidence-service": "service.performance",
+        "x-evidence-stamped": [
+          "signed_at"
+        ]
+      }
+    },
+    "/performance-agreements/{contractId}": {
+      "get": {
+        "operationId": "readContractPerformanceAgreement",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "contractId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_read_contract_performance-agreement_sign-fy26_1": {
+                    "summary": "sign-fy26",
+                    "value": {
+                      "_links": {
+                        "next:request.annual-target": {
+                          "href": "/performance-agreements/{contractId}/annual-target",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "next:request.quarterly-target": {
+                          "href": "/performance-agreements/{contractId}/quarterly-targets",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/performance-agreements/{contractId}",
+                          "templated": true
+                        }
+                      },
+                      "fiscal_year": 2026,
+                      "id": "agreement-fy26",
+                      "signed_at": "2026-01-01T09:00:00Z"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/contract_performance-agreement"
+                },
+                "x-evidence-link-templates": {
+                  "next:request.annual-target": {
+                    "href": "/performance-agreements/{contractId}/annual-target",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "next:request.quarterly-target": {
+                    "href": "/performance-agreements/{contractId}/quarterly-targets",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/performance-agreements/{contractId}",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "读取资源详情"
+          },
+          "404": {
+            "description": "资源不存在"
+          }
+        },
+        "summary": "读取资源详情",
+        "tags": [
+          "context:context.performance"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.account-owner",
+          "role.finance"
+        ],
+        "x-evidence-context": "context.performance",
+        "x-evidence-contract": "contract.performance-agreement",
+        "x-evidence-derived": [],
+        "x-evidence-entity": "contract.performance-agreement",
+        "x-evidence-exposure": "external",
+        "x-evidence-purpose": "read",
+        "x-evidence-service": "service.performance",
+        "x-evidence-stamped": [
+          "signed_at"
+        ]
+      }
+    },
+    "/performance-agreements/{contractId}/annual-target": {
+      "get": {
+        "operationId": "readRequestAnnualTarget",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "contractId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_read_request_annual-target_open-year_1": {
+                    "summary": "open-year",
+                    "value": {
+                      "_links": {
+                        "confirmations:confirmation.revenue": {
+                          "href": "/performance-agreements/{contractId}/annual-target/revenue-confirmations",
+                          "method": "GET",
+                          "templated": true
+                        },
+                        "next:confirmation.revenue": {
+                          "href": "/revenue-confirmations",
+                          "method": "POST",
+                          "templated": false
+                        },
+                        "self": {
+                          "href": "/performance-agreements/{contractId}/annual-target",
+                          "templated": true
+                        }
+                      },
+                      "expired_at": "2027-01-02T09:00:00Z",
+                      "id": "target-2026",
+                      "started_at": "2026-01-02T09:00:00Z",
+                      "target_amount_minor": 50000000
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/request_annual-target"
+                },
+                "x-evidence-link-templates": {
+                  "confirmations:confirmation.revenue": {
+                    "href": "/performance-agreements/{contractId}/annual-target/revenue-confirmations",
+                    "method": "GET",
+                    "templated": true
+                  },
+                  "next:confirmation.revenue": {
+                    "href": "/revenue-confirmations",
+                    "method": "POST",
+                    "templated": false
+                  },
+                  "self": {
+                    "href": "/performance-agreements/{contractId}/annual-target",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "读取资源详情"
+          },
+          "404": {
+            "description": "资源不存在"
+          }
+        },
+        "summary": "读取资源详情",
+        "tags": [
+          "context:context.performance"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.account-owner"
+        ],
+        "x-evidence-context": "context.performance",
+        "x-evidence-contract": "contract.performance-agreement",
+        "x-evidence-derived": [
+          {
+            "name": "expired_at",
+            "ruleRef": "rule.request.annual-target-deadline"
+          }
+        ],
+        "x-evidence-entity": "request.annual-target",
+        "x-evidence-exposure": "external",
+        "x-evidence-fulfillment-request": "request.annual-target",
+        "x-evidence-purpose": "read",
+        "x-evidence-service": "service.performance",
+        "x-evidence-stamped": [
+          "started_at"
+        ]
+      },
+      "post": {
+        "operationId": "requestRequestAnnualTarget",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "contractId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "route_request_request_annual-target_open-year_1": {
+                  "summary": "open-year",
+                  "value": {
+                    "id": "target-2026",
+                    "target_amount_minor": 50000000
+                  }
+                }
+              },
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "description": "在此业务凭证类型中唯一的标识",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  },
+                  "target_amount_minor": {
+                    "anyOf": [
+                      {
+                        "maximum": 9007199254740991,
+                        "minimum": -9007199254740991,
+                        "type": "integer"
+                      },
+                      {
+                        "pattern": "^(?:0|-?[1-9][0-9]*)$",
+                        "type": "string"
+                      }
+                    ],
+                    "description": "年度指标金额，单位为 CNY 分",
+                    "x-evidence-caller-input": true
+                  }
+                },
+                "required": [
+                  "id",
+                  "target_amount_minor"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_request_request_annual-target_open-year_1": {
+                    "summary": "open-year",
+                    "value": {
+                      "_links": {
+                        "confirmations:confirmation.revenue": {
+                          "href": "/performance-agreements/{contractId}/annual-target/revenue-confirmations",
+                          "method": "GET",
+                          "templated": true
+                        },
+                        "next:confirmation.revenue": {
+                          "href": "/revenue-confirmations",
+                          "method": "POST",
+                          "templated": false
+                        },
+                        "self": {
+                          "href": "/performance-agreements/{contractId}/annual-target",
+                          "templated": true
+                        }
+                      },
+                      "expired_at": "2027-01-02T09:00:00Z",
+                      "id": "target-2026",
+                      "started_at": "2026-01-02T09:00:00Z",
+                      "target_amount_minor": 50000000
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/request_annual-target"
+                },
+                "x-evidence-link-templates": {
+                  "confirmations:confirmation.revenue": {
+                    "href": "/performance-agreements/{contractId}/annual-target/revenue-confirmations",
+                    "method": "GET",
+                    "templated": true
+                  },
+                  "next:confirmation.revenue": {
+                    "href": "/revenue-confirmations",
+                    "method": "POST",
+                    "templated": false
+                  },
+                  "self": {
+                    "href": "/performance-agreements/{contractId}/annual-target",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "发起年度收入指标，开启一个有截止时间的履约窗口",
+            "headers": {
+              "Location": {
+                "description": "新凭证地址",
+                "schema": {
+                  "format": "uri-reference",
+                  "type": "string"
+                },
+                "x-evidence-uri-template": "/performance-agreements/{contractId}/annual-target"
+              }
+            }
+          },
+          "409": {
+            "description": "业务窗口已关闭或资源状态冲突"
+          },
+          "422": {
+            "description": "输入内容或业务角色不成立"
+          }
+        },
+        "summary": "发起年度收入指标，开启一个有截止时间的履约窗口",
+        "tags": [
+          "context:context.performance"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.account-owner"
+        ],
+        "x-evidence-context": "context.performance",
+        "x-evidence-contract": "contract.performance-agreement",
+        "x-evidence-derived": [
+          {
+            "name": "expired_at",
+            "ruleRef": "rule.request.annual-target-deadline"
+          }
+        ],
+        "x-evidence-entity": "request.annual-target",
+        "x-evidence-exposure": "external",
+        "x-evidence-fulfillment-request": "request.annual-target",
+        "x-evidence-purpose": "request",
+        "x-evidence-service": "service.performance",
+        "x-evidence-stamped": [
+          "started_at"
+        ]
+      }
+    },
+    "/performance-agreements/{contractId}/annual-target/revenue-confirmations": {
+      "get": {
+        "operationId": "list-from-request.annual-targetConfirmationRevenue",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "contractId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_list-from-request_annual-target_confirmation_revenue_post-revenue-once_1": {
+                    "summary": "post-revenue-once",
+                    "value": {
+                      "_embedded": {
+                        "revenue-confirmations": [
+                          {
+                            "_links": {
+                              "self": {
+                                "href": "/revenue-confirmations/{revenueConfirmationId}",
+                                "templated": true
+                              }
+                            },
+                            "amount_minor": 52000000,
+                            "booking_ref": "booking-928",
+                            "confirmed_at": "2026-03-27T15:00:00Z",
+                            "id": "revenue-001",
+                            "request_ids": [
+                              "target-2026-q1",
+                              "target-2026"
+                            ]
+                          }
+                        ]
+                      },
+                      "_links": {
+                        "self": {
+                          "href": "/performance-agreements/{contractId}/annual-target/revenue-confirmations",
+                          "templated": true
+                        }
+                      },
+                      "total": 1
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/confirmation_revenueCollection"
+                },
+                "x-evidence-link-templates": {
+                  "self": {
+                    "href": "/performance-agreements/{contractId}/annual-target/revenue-confirmations",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "追溯关联确认凭证"
+          },
+          "404": {
+            "description": "资源不存在"
+          }
+        },
+        "summary": "追溯关联确认凭证",
+        "tags": [
+          "context:context.performance"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.finance"
+        ],
+        "x-evidence-context": "context.performance",
+        "x-evidence-contract": "contract.performance-agreement",
+        "x-evidence-derived": [],
+        "x-evidence-entity": "confirmation.revenue",
+        "x-evidence-exposure": "external",
+        "x-evidence-fulfillment-confirmation": "confirmation.revenue",
+        "x-evidence-fulfillment-request": "request.annual-target",
+        "x-evidence-purpose": "read",
+        "x-evidence-service": "service.performance",
+        "x-evidence-stamped": [
+          "confirmed_at"
+        ]
+      }
+    },
+    "/performance-agreements/{contractId}/quarterly-targets": {
+      "get": {
+        "operationId": "ledgerRequestQuarterlyTarget",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "contractId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_ledger_request_quarterly-target_open-q1_1": {
+                    "summary": "open-q1",
+                    "value": {
+                      "_embedded": {
+                        "quarterly-targets": [
+                          {
+                            "_links": {
+                              "self": {
+                                "href": "/performance-agreements/{contractId}/quarterly-targets/{targetId}",
+                                "templated": true
+                              }
+                            },
+                            "expired_at": "2026-04-02T10:00:00Z",
+                            "id": "target-2026-q1",
+                            "quarter": "2026-Q1",
+                            "started_at": "2026-01-02T10:00:00Z",
+                            "target_amount_minor": 12000000
+                          }
+                        ]
+                      },
+                      "_links": {
+                        "next:confirmation.quarter-close": {
+                          "href": "/performance-agreements/{contractId}/quarterly-targets/{targetId}/confirmation",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "next:confirmation.revenue": {
+                          "href": "/revenue-confirmations",
+                          "method": "POST",
+                          "templated": false
+                        },
+                        "self": {
+                          "href": "/performance-agreements/{contractId}/quarterly-targets",
+                          "templated": true
+                        }
+                      },
+                      "total": 1
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/request_quarterly-targetCollection"
+                },
+                "x-evidence-link-templates": {
+                  "next:confirmation.quarter-close": {
+                    "href": "/performance-agreements/{contractId}/quarterly-targets/{targetId}/confirmation",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "next:confirmation.revenue": {
+                    "href": "/revenue-confirmations",
+                    "method": "POST",
+                    "templated": false
+                  },
+                  "self": {
+                    "href": "/performance-agreements/{contractId}/quarterly-targets",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "读取资源集合"
+          },
+          "404": {
+            "description": "资源不存在"
+          }
+        },
+        "summary": "读取资源集合",
+        "tags": [
+          "context:context.performance"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.finance"
+        ],
+        "x-evidence-context": "context.performance",
+        "x-evidence-contract": "contract.performance-agreement",
+        "x-evidence-derived": [
+          {
+            "name": "expired_at",
+            "ruleRef": "rule.request.quarterly-target-deadline"
+          }
+        ],
+        "x-evidence-entity": "request.quarterly-target",
+        "x-evidence-exposure": "external",
+        "x-evidence-fulfillment-request": "request.quarterly-target",
+        "x-evidence-purpose": "read",
+        "x-evidence-service": "service.performance",
+        "x-evidence-stamped": [
+          "started_at"
+        ]
+      },
+      "post": {
+        "operationId": "requestRequestQuarterlyTarget",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "contractId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "route_request_request_quarterly-target_open-q1_1": {
+                  "summary": "open-q1",
+                  "value": {
+                    "id": "target-2026-q1",
+                    "quarter": "2026-Q1",
+                    "target_amount_minor": 12000000
+                  }
+                }
+              },
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "description": "在此业务凭证类型中唯一的标识",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  },
+                  "quarter": {
+                    "description": "例如 2026-Q1",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  },
+                  "target_amount_minor": {
+                    "anyOf": [
+                      {
+                        "maximum": 9007199254740991,
+                        "minimum": -9007199254740991,
+                        "type": "integer"
+                      },
+                      {
+                        "pattern": "^(?:0|-?[1-9][0-9]*)$",
+                        "type": "string"
+                      }
+                    ],
+                    "description": "季度指标金额，单位为 CNY 分",
+                    "x-evidence-caller-input": true
+                  }
+                },
+                "required": [
+                  "id",
+                  "quarter",
+                  "target_amount_minor"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_request_request_quarterly-target_open-q1_1": {
+                    "summary": "open-q1",
+                    "value": {
+                      "_links": {
+                        "confirmations:confirmation.revenue": {
+                          "href": "/performance-agreements/{contractId}/quarterly-targets/{targetId}/revenue-confirmations",
+                          "method": "GET",
+                          "templated": true
+                        },
+                        "next:confirmation.quarter-close": {
+                          "href": "/performance-agreements/{contractId}/quarterly-targets/{targetId}/confirmation",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "next:confirmation.revenue": {
+                          "href": "/revenue-confirmations",
+                          "method": "POST",
+                          "templated": false
+                        },
+                        "self": {
+                          "href": "/performance-agreements/{contractId}/quarterly-targets/{targetId}",
+                          "templated": true
+                        }
+                      },
+                      "expired_at": "2026-04-02T10:00:00Z",
+                      "id": "target-2026-q1",
+                      "quarter": "2026-Q1",
+                      "started_at": "2026-01-02T10:00:00Z",
+                      "target_amount_minor": 12000000
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/request_quarterly-target"
+                },
+                "x-evidence-link-templates": {
+                  "confirmations:confirmation.revenue": {
+                    "href": "/performance-agreements/{contractId}/quarterly-targets/{targetId}/revenue-confirmations",
+                    "method": "GET",
+                    "templated": true
+                  },
+                  "next:confirmation.quarter-close": {
+                    "href": "/performance-agreements/{contractId}/quarterly-targets/{targetId}/confirmation",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "next:confirmation.revenue": {
+                    "href": "/revenue-confirmations",
+                    "method": "POST",
+                    "templated": false
+                  },
+                  "self": {
+                    "href": "/performance-agreements/{contractId}/quarterly-targets/{targetId}",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "发起季度收入指标，开启一个有截止时间的履约窗口",
+            "headers": {
+              "Location": {
+                "description": "新凭证地址",
+                "schema": {
+                  "format": "uri-reference",
+                  "type": "string"
+                },
+                "x-evidence-uri-template": "/performance-agreements/{contractId}/quarterly-targets/{targetId}"
+              }
+            }
+          },
+          "409": {
+            "description": "业务窗口已关闭或资源状态冲突"
+          },
+          "422": {
+            "description": "输入内容或业务角色不成立"
+          }
+        },
+        "summary": "发起季度收入指标，开启一个有截止时间的履约窗口",
+        "tags": [
+          "context:context.performance"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.finance"
+        ],
+        "x-evidence-context": "context.performance",
+        "x-evidence-contract": "contract.performance-agreement",
+        "x-evidence-derived": [
+          {
+            "name": "expired_at",
+            "ruleRef": "rule.request.quarterly-target-deadline"
+          }
+        ],
+        "x-evidence-entity": "request.quarterly-target",
+        "x-evidence-exposure": "external",
+        "x-evidence-fulfillment-request": "request.quarterly-target",
+        "x-evidence-purpose": "request",
+        "x-evidence-service": "service.performance",
+        "x-evidence-stamped": [
+          "started_at"
+        ]
+      }
+    },
+    "/performance-agreements/{contractId}/quarterly-targets/{targetId}": {
+      "get": {
+        "operationId": "readRequestQuarterlyTarget",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "contractId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "targetId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_read_request_quarterly-target_open-q1_1": {
+                    "summary": "open-q1",
+                    "value": {
+                      "_links": {
+                        "confirmations:confirmation.revenue": {
+                          "href": "/performance-agreements/{contractId}/quarterly-targets/{targetId}/revenue-confirmations",
+                          "method": "GET",
+                          "templated": true
+                        },
+                        "next:confirmation.quarter-close": {
+                          "href": "/performance-agreements/{contractId}/quarterly-targets/{targetId}/confirmation",
+                          "method": "POST",
+                          "templated": true
+                        },
+                        "next:confirmation.revenue": {
+                          "href": "/revenue-confirmations",
+                          "method": "POST",
+                          "templated": false
+                        },
+                        "self": {
+                          "href": "/performance-agreements/{contractId}/quarterly-targets/{targetId}",
+                          "templated": true
+                        }
+                      },
+                      "expired_at": "2026-04-02T10:00:00Z",
+                      "id": "target-2026-q1",
+                      "quarter": "2026-Q1",
+                      "started_at": "2026-01-02T10:00:00Z",
+                      "target_amount_minor": 12000000
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/request_quarterly-target"
+                },
+                "x-evidence-link-templates": {
+                  "confirmations:confirmation.revenue": {
+                    "href": "/performance-agreements/{contractId}/quarterly-targets/{targetId}/revenue-confirmations",
+                    "method": "GET",
+                    "templated": true
+                  },
+                  "next:confirmation.quarter-close": {
+                    "href": "/performance-agreements/{contractId}/quarterly-targets/{targetId}/confirmation",
+                    "method": "POST",
+                    "templated": true
+                  },
+                  "next:confirmation.revenue": {
+                    "href": "/revenue-confirmations",
+                    "method": "POST",
+                    "templated": false
+                  },
+                  "self": {
+                    "href": "/performance-agreements/{contractId}/quarterly-targets/{targetId}",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "读取资源详情"
+          },
+          "404": {
+            "description": "资源不存在"
+          }
+        },
+        "summary": "读取资源详情",
+        "tags": [
+          "context:context.performance"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.finance"
+        ],
+        "x-evidence-context": "context.performance",
+        "x-evidence-contract": "contract.performance-agreement",
+        "x-evidence-derived": [
+          {
+            "name": "expired_at",
+            "ruleRef": "rule.request.quarterly-target-deadline"
+          }
+        ],
+        "x-evidence-entity": "request.quarterly-target",
+        "x-evidence-exposure": "external",
+        "x-evidence-fulfillment-request": "request.quarterly-target",
+        "x-evidence-purpose": "read",
+        "x-evidence-service": "service.performance",
+        "x-evidence-stamped": [
+          "started_at"
+        ]
+      }
+    },
+    "/performance-agreements/{contractId}/quarterly-targets/{targetId}/confirmation": {
+      "post": {
+        "operationId": "confirmConfirmationQuarterClose",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "contractId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "targetId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "route_confirm_confirmation_quarter-close_lock-q1-ledger_1": {
+                  "summary": "lock-q1-ledger",
+                  "value": {
+                    "id": "quarter-close-001"
+                  }
+                }
+              },
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "description": "在此业务凭证类型中唯一的标识",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_confirm_confirmation_quarter-close_lock-q1-ledger_1": {
+                    "summary": "lock-q1-ledger",
+                    "value": {
+                      "_links": {
+                        "request:request.quarterly-target": {
+                          "href": "/performance-agreements/{contractId}/quarterly-targets/{targetId}",
+                          "method": "GET",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/quarter-close-confirmations/{quarterCloseConfirmationId}",
+                          "templated": true
+                        }
+                      },
+                      "confirmed_at": "2026-03-31T16:00:00Z",
+                      "id": "quarter-close-001",
+                      "revenue_confirmation_id": "revenue-001"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/confirmation_quarter-close"
+                },
+                "x-evidence-link-templates": {
+                  "request:request.quarterly-target": {
+                    "href": "/performance-agreements/{contractId}/quarterly-targets/{targetId}",
+                    "method": "GET",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/quarter-close-confirmations/{quarterCloseConfirmationId}",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "登记季度指标锁账确认",
+            "headers": {
+              "Location": {
+                "description": "新凭证地址",
+                "schema": {
+                  "format": "uri-reference",
+                  "type": "string"
+                },
+                "x-evidence-uri-template": "/quarter-close-confirmations/{quarterCloseConfirmationId}"
+              }
+            }
+          },
+          "409": {
+            "description": "业务窗口已关闭或资源状态冲突"
+          },
+          "422": {
+            "description": "输入内容或业务角色不成立"
+          }
+        },
+        "summary": "登记季度指标锁账确认",
+        "tags": [
+          "context:context.performance"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.account-owner"
+        ],
+        "x-evidence-context": "context.performance",
+        "x-evidence-contract": "contract.performance-agreement",
+        "x-evidence-derived": [
+          {
+            "name": "revenue_confirmation_id",
+            "ruleRef": "rule.quarter-close-proof"
+          }
+        ],
+        "x-evidence-entity": "confirmation.quarter-close",
+        "x-evidence-exposure": "external",
+        "x-evidence-fulfillment-confirmation": "confirmation.quarter-close",
+        "x-evidence-fulfillment-request": "request.quarterly-target",
+        "x-evidence-purpose": "confirm",
+        "x-evidence-service": "service.performance",
+        "x-evidence-stamped": [
+          "confirmed_at"
+        ]
+      }
+    },
+    "/performance-agreements/{contractId}/quarterly-targets/{targetId}/revenue-confirmations": {
+      "get": {
+        "operationId": "list-from-request.quarterly-targetConfirmationRevenue",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "contractId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "targetId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_list-from-request_quarterly-target_confirmation_revenue_post-revenue-once_1": {
+                    "summary": "post-revenue-once",
+                    "value": {
+                      "_embedded": {
+                        "revenue-confirmations": [
+                          {
+                            "_links": {
+                              "self": {
+                                "href": "/revenue-confirmations/{revenueConfirmationId}",
+                                "templated": true
+                              }
+                            },
+                            "amount_minor": 52000000,
+                            "booking_ref": "booking-928",
+                            "confirmed_at": "2026-03-27T15:00:00Z",
+                            "id": "revenue-001",
+                            "request_ids": [
+                              "target-2026-q1",
+                              "target-2026"
+                            ]
+                          }
+                        ]
+                      },
+                      "_links": {
+                        "self": {
+                          "href": "/performance-agreements/{contractId}/quarterly-targets/{targetId}/revenue-confirmations",
+                          "templated": true
+                        }
+                      },
+                      "total": 1
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/confirmation_revenueCollection"
+                },
+                "x-evidence-link-templates": {
+                  "self": {
+                    "href": "/performance-agreements/{contractId}/quarterly-targets/{targetId}/revenue-confirmations",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "追溯关联确认凭证"
+          },
+          "404": {
+            "description": "资源不存在"
+          }
+        },
+        "summary": "追溯关联确认凭证",
+        "tags": [
+          "context:context.performance"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.finance"
+        ],
+        "x-evidence-context": "context.performance",
+        "x-evidence-contract": "contract.performance-agreement",
+        "x-evidence-derived": [],
+        "x-evidence-entity": "confirmation.revenue",
+        "x-evidence-exposure": "external",
+        "x-evidence-fulfillment-confirmation": "confirmation.revenue",
+        "x-evidence-fulfillment-request": "request.quarterly-target",
+        "x-evidence-purpose": "read",
+        "x-evidence-service": "service.performance",
+        "x-evidence-stamped": [
+          "confirmed_at"
+        ]
+      }
+    },
+    "/quarter-close-confirmations/{quarterCloseConfirmationId}": {
+      "get": {
+        "operationId": "readConfirmationQuarterClose",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quarterCloseConfirmationId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_read_confirmation_quarter-close_lock-q1-ledger_1": {
+                    "summary": "lock-q1-ledger",
+                    "value": {
+                      "_links": {
+                        "request:request.quarterly-target": {
+                          "href": "/performance-agreements/{contractId}/quarterly-targets/{targetId}",
+                          "method": "GET",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/quarter-close-confirmations/{quarterCloseConfirmationId}",
+                          "templated": true
+                        }
+                      },
+                      "confirmed_at": "2026-03-31T16:00:00Z",
+                      "id": "quarter-close-001",
+                      "revenue_confirmation_id": "revenue-001"
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/confirmation_quarter-close"
+                },
+                "x-evidence-link-templates": {
+                  "request:request.quarterly-target": {
+                    "href": "/performance-agreements/{contractId}/quarterly-targets/{targetId}",
+                    "method": "GET",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/quarter-close-confirmations/{quarterCloseConfirmationId}",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "读取资源详情"
+          },
+          "404": {
+            "description": "资源不存在"
+          }
+        },
+        "summary": "读取资源详情",
+        "tags": [
+          "context:context.performance"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.account-owner"
+        ],
+        "x-evidence-context": "context.performance",
+        "x-evidence-contract": "contract.performance-agreement",
+        "x-evidence-derived": [
+          {
+            "name": "revenue_confirmation_id",
+            "ruleRef": "rule.quarter-close-proof"
+          }
+        ],
+        "x-evidence-entity": "confirmation.quarter-close",
+        "x-evidence-exposure": "external",
+        "x-evidence-fulfillment-confirmation": "confirmation.quarter-close",
+        "x-evidence-fulfillment-request": "request.quarterly-target",
+        "x-evidence-purpose": "read",
+        "x-evidence-service": "service.performance",
+        "x-evidence-stamped": [
+          "confirmed_at"
+        ]
+      }
+    },
+    "/revenue-confirmations": {
+      "post": {
+        "operationId": "confirmConfirmationRevenue",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "route_confirm_confirmation_revenue_post-revenue-once_1": {
+                  "summary": "post-revenue-once",
+                  "value": {
+                    "amount_minor": 52000000,
+                    "booking_ref": "booking-928",
+                    "id": "revenue-001",
+                    "request_ids": [
+                      "target-2026-q1",
+                      "target-2026"
+                    ]
+                  }
+                }
+              },
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "amount_minor": {
+                    "anyOf": [
+                      {
+                        "maximum": 9007199254740991,
+                        "minimum": -9007199254740991,
+                        "type": "integer"
+                      },
+                      {
+                        "pattern": "^(?:0|-?[1-9][0-9]*)$",
+                        "type": "string"
+                      }
+                    ],
+                    "description": "入账收入金额，单位为 CNY 分",
+                    "x-evidence-caller-input": true
+                  },
+                  "booking_ref": {
+                    "description": "已入账业务流水",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  },
+                  "id": {
+                    "description": "在此业务凭证类型中唯一的标识",
+                    "type": "string",
+                    "x-evidence-caller-input": true
+                  },
+                  "request_ids": {
+                    "description": "此共享凭证关联的履约请求实例 ID",
+                    "items": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "type": "array",
+                    "uniqueItems": true,
+                    "x-evidence-caller-input": true
+                  }
+                },
+                "required": [
+                  "id",
+                  "booking_ref",
+                  "amount_minor",
+                  "request_ids"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_confirm_confirmation_revenue_post-revenue-once_1": {
+                    "summary": "post-revenue-once",
+                    "value": {
+                      "_links": {
+                        "request:request.annual-target": {
+                          "href": "/performance-agreements/{contractId}/annual-target",
+                          "method": "GET",
+                          "templated": true
+                        },
+                        "request:request.quarterly-target": {
+                          "href": "/performance-agreements/{contractId}/quarterly-targets/{targetId}",
+                          "method": "GET",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/revenue-confirmations/{revenueConfirmationId}",
+                          "templated": true
+                        }
+                      },
+                      "amount_minor": 52000000,
+                      "booking_ref": "booking-928",
+                      "confirmed_at": "2026-03-27T15:00:00Z",
+                      "id": "revenue-001",
+                      "request_ids": [
+                        "target-2026-q1",
+                        "target-2026"
+                      ]
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/confirmation_revenue"
+                },
+                "x-evidence-link-templates": {
+                  "request:request.annual-target": {
+                    "href": "/performance-agreements/{contractId}/annual-target",
+                    "method": "GET",
+                    "templated": true
+                  },
+                  "request:request.quarterly-target": {
+                    "href": "/performance-agreements/{contractId}/quarterly-targets/{targetId}",
+                    "method": "GET",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/revenue-confirmations/{revenueConfirmationId}",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "登记共享收入凭证",
+            "headers": {
+              "Location": {
+                "description": "新凭证地址",
+                "schema": {
+                  "format": "uri-reference",
+                  "type": "string"
+                },
+                "x-evidence-uri-template": "/revenue-confirmations/{revenueConfirmationId}"
+              }
+            }
+          },
+          "409": {
+            "description": "业务窗口已关闭或资源状态冲突"
+          },
+          "422": {
+            "description": "输入内容或业务角色不成立"
+          }
+        },
+        "summary": "登记共享收入凭证",
+        "tags": [
+          "context:context.performance"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.finance"
+        ],
+        "x-evidence-context": "context.performance",
+        "x-evidence-derived": [],
+        "x-evidence-entity": "confirmation.revenue",
+        "x-evidence-exposure": "external",
+        "x-evidence-fulfillment-confirmation": "confirmation.revenue",
+        "x-evidence-fulfillment-requests": [
+          "request.annual-target",
+          "request.quarterly-target"
+        ],
+        "x-evidence-purpose": "confirm",
+        "x-evidence-service": "service.performance",
+        "x-evidence-stamped": [
+          "confirmed_at"
+        ]
+      }
+    },
+    "/revenue-confirmations/{revenueConfirmationId}": {
+      "get": {
+        "operationId": "readConfirmationRevenue",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "revenueConfirmationId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/hal+json": {
+                "examples": {
+                  "route_read_confirmation_revenue_post-revenue-once_1": {
+                    "summary": "post-revenue-once",
+                    "value": {
+                      "_links": {
+                        "request:request.annual-target": {
+                          "href": "/performance-agreements/{contractId}/annual-target",
+                          "method": "GET",
+                          "templated": true
+                        },
+                        "request:request.quarterly-target": {
+                          "href": "/performance-agreements/{contractId}/quarterly-targets/{targetId}",
+                          "method": "GET",
+                          "templated": true
+                        },
+                        "self": {
+                          "href": "/revenue-confirmations/{revenueConfirmationId}",
+                          "templated": true
+                        }
+                      },
+                      "amount_minor": 52000000,
+                      "booking_ref": "booking-928",
+                      "confirmed_at": "2026-03-27T15:00:00Z",
+                      "id": "revenue-001",
+                      "request_ids": [
+                        "target-2026-q1",
+                        "target-2026"
+                      ]
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/confirmation_revenue"
+                },
+                "x-evidence-link-templates": {
+                  "request:request.annual-target": {
+                    "href": "/performance-agreements/{contractId}/annual-target",
+                    "method": "GET",
+                    "templated": true
+                  },
+                  "request:request.quarterly-target": {
+                    "href": "/performance-agreements/{contractId}/quarterly-targets/{targetId}",
+                    "method": "GET",
+                    "templated": true
+                  },
+                  "self": {
+                    "href": "/revenue-confirmations/{revenueConfirmationId}",
+                    "templated": true
+                  }
+                }
+              }
+            },
+            "description": "读取资源详情"
+          },
+          "404": {
+            "description": "资源不存在"
+          }
+        },
+        "summary": "读取资源详情",
+        "tags": [
+          "context:context.performance"
+        ],
+        "x-evidence-allowed-party-roles": [
+          "role.finance"
+        ],
+        "x-evidence-context": "context.performance",
+        "x-evidence-derived": [],
+        "x-evidence-entity": "confirmation.revenue",
+        "x-evidence-exposure": "external",
+        "x-evidence-fulfillment-confirmation": "confirmation.revenue",
+        "x-evidence-purpose": "read",
+        "x-evidence-service": "service.performance",
+        "x-evidence-stamped": [
+          "confirmed_at"
+        ]
+      }
+    }
+  },
+  "x-evidence-model": "shared-settlement",
+  "x-evidence-model-version": "1.0.0",
+  "x-evidence-services": [
+    {
+      "contextRef": "context.performance",
+      "id": "service.performance",
+      "kind": "fulfillment",
+      "routePrefixes": [
+        "/performance-agreements",
+        "/quarter-close-confirmations",
+        "/revenue-confirmations"
+      ],
+      "routes": [
+        "route.confirm.confirmation.quarter-close",
+        "route.confirm.confirmation.revenue",
+        "route.ledger.request.quarterly-target",
+        "route.list-from-request.annual-target.confirmation.revenue",
+        "route.list-from-request.quarterly-target.confirmation.revenue",
+        "route.list.contract.performance-agreement",
+        "route.read.confirmation.quarter-close",
+        "route.read.confirmation.revenue",
+        "route.read.contract.performance-agreement",
+        "route.read.request.annual-target",
+        "route.read.request.quarterly-target",
+        "route.request.request.annual-target",
+        "route.request.request.quarterly-target",
+        "route.sign.contract.performance-agreement"
+      ]
+    }
+  ]
+}
