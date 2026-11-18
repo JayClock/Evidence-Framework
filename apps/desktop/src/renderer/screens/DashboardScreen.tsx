@@ -1,281 +1,336 @@
-import { AiModelStatusPill } from '../components/settings/AiModelStatusPill';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import type {
   EvidenceProjectSummary,
   ProjectTemplateId,
   ProjectTemplateMeta,
 } from '@evidence-poc/desktop-contracts/projects';
+import { Card } from '@evidence-poc/desktop-ui-kit';
+
 import { CreateProjectModal } from '../components/dashboard/CreateProjectModal';
+import { DashboardNavbar } from '../components/dashboard/DashboardNavbar';
+import { HeroIngestionCard } from '../components/dashboard/HeroIngestionCard';
+import { RecentProjectCard } from '../components/dashboard/RecentProjectCard';
+import { StarterTemplateCard } from '../components/dashboard/StarterTemplateCard';
 import { IngestDraftModal } from '../components/ingestion/IngestDraftModal';
 
-type Status =
+type RecentsState = {
+  projects: readonly EvidenceProjectSummary[];
+  loading: boolean;
+  error?: string;
+};
+
+type TemplatesState =
   | { name: 'loading' }
-  | { name: 'ready'; projects: readonly EvidenceProjectSummary[] }
+  | { name: 'ready'; templates: readonly ProjectTemplateMeta[] }
   | { name: 'error'; message: string };
 
+type OpenRequest = { name: 'choosing' } | { name: 'opening'; path: string };
+
+const featuredTemplateIds = ['procurement', 'blank'] as const;
+
 export const DashboardScreen = () => {
-  const [status, setStatus] = useState<Status>({ name: 'loading' });
-  const [pendingPath, setPendingPath] = useState<string | null>(null);
-  const [templates, setTemplates] = useState<
-    readonly ProjectTemplateMeta[] | null
-  >(null);
+  const [recents, setRecents] = useState<RecentsState>({
+    projects: [],
+    loading: true,
+  });
+  const [openRequest, setOpenRequest] = useState<OpenRequest | null>(null);
+  const [openError, setOpenError] = useState<string | null>(null);
+  const isOpening = useRef(false);
+  const [templatesState, setTemplatesState] = useState<TemplatesState>({
+    name: 'loading',
+  });
   const [createTemplate, setCreateTemplate] =
     useState<ProjectTemplateId | null>(null);
   const [isIngestOpen, setIsIngestOpen] = useState(false);
+  const dashboardModalOpen = createTemplate !== null || isIngestOpen;
 
   useEffect(() => {
     let active = true;
+    const api = window.evidenceAPI.projects;
 
-    void window.evidenceAPI.projects.listRecent().then((result) => {
-      if (!active) {
-        return;
-      }
+    void api
+      .listRecent()
+      .then((result) => {
+        if (!active) return;
+        if (!result.success) {
+          setRecents((current) => ({
+            ...current,
+            loading: false,
+            error: result.error,
+          }));
+          return;
+        }
 
-      setStatus(
-        result.success
-          ? { name: 'ready', projects: result.projects }
-          : { name: 'error', message: result.error },
-      );
-    });
+        setRecents((current) => ({
+          loading: false,
+          // An open/create can finish before the initial history load.
+          projects: [
+            ...current.projects,
+            ...result.projects.filter(
+              (project) =>
+                !current.projects.some(
+                  (item) => item.rootPath === project.rootPath,
+                ),
+            ),
+          ],
+        }));
+      })
+      .catch(() => {
+        if (active) {
+          setRecents((current) => ({
+            ...current,
+            loading: false,
+            error: '无法读取最近项目。',
+          }));
+        }
+      });
 
-    // The starter cards are part of the first screen, so read them with the
-    // recents instead of waiting for the dialog to open.
-    void window.evidenceAPI.projects.listTemplates().then((result) => {
-      if (!active) {
-        return;
-      }
-
-      setTemplates(result.success ? result.templates : []);
-    });
+    void api
+      .listTemplates()
+      .then((result) => {
+        if (!active) return;
+        setTemplatesState(
+          result.success
+            ? { name: 'ready', templates: result.templates }
+            : { name: 'error', message: result.error },
+        );
+      })
+      .catch(() => {
+        if (active)
+          setTemplatesState({ name: 'error', message: '无法读取起点模板。' });
+      });
 
     return () => {
       active = false;
     };
   }, []);
 
-  const openProject = async (rootPath: string) => {
-    setPendingPath(rootPath);
+  const rememberProject = useCallback((project: EvidenceProjectSummary) => {
+    setRecents((current) => ({
+      ...current,
+      projects: [
+        project,
+        ...current.projects.filter(
+          (item) => item.rootPath !== project.rootPath,
+        ),
+      ],
+    }));
+  }, []);
 
-    const result = await window.evidenceAPI.projects.open(rootPath);
+  const openProject = useCallback(
+    async (rootPath?: string) => {
+      if (isOpening.current) return;
+      isOpening.current = true;
+      setOpenError(null);
+      const api = window.evidenceAPI.projects;
 
-    setPendingPath(null);
-
-    if (!result.success) {
-      setStatus({ name: 'error', message: result.error });
-      return;
-    }
-
-    await window.evidenceAPI.projects.openEditorWindow(result.project.rootPath);
-    setStatus((current) =>
-      current.name === 'ready'
-        ? {
-            name: 'ready',
-            projects: [
-              result.project,
-              ...current.projects.filter(
-                (item) => item.rootPath !== result.project.rootPath,
-              ),
-            ],
+      try {
+        if (rootPath === undefined) {
+          setOpenRequest({ name: 'choosing' });
+          const dialog = await api.showOpenDialog();
+          if (!dialog.success) {
+            if (dialog.canceled !== true) setOpenError(dialog.error);
+            return;
           }
-        : current,
-    );
-  };
+          rootPath = dialog.rootPath;
+        }
 
-  const chooseProject = async () => {
-    const dialog = await window.evidenceAPI.projects.showOpenDialog();
+        setOpenRequest({ name: 'opening', path: rootPath });
+        const result = await api.open(rootPath);
+        if (!result.success) {
+          setOpenError(result.error);
+          return;
+        }
 
-    if (dialog.success) {
-      await openProject(dialog.rootPath);
-    }
-  };
-
-  const startCreate = (templateId: ProjectTemplateId = 'procurement') => {
-    setCreateTemplate(templateId);
-  };
-
-  const starterTemplates = (templates ?? []).filter(
-    (template) => template.id !== 'blank',
+        await api.openEditorWindow(result.project.rootPath);
+        rememberProject(result.project);
+      } catch (error) {
+        setOpenError(error instanceof Error ? error.message : '无法打开项目。');
+      } finally {
+        isOpening.current = false;
+        setOpenRequest(null);
+      }
+    },
+    [rememberProject],
   );
 
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (
+        event.defaultPrevented ||
+        event.isComposing ||
+        event.repeat ||
+        event.shiftKey ||
+        event.altKey ||
+        !(event.metaKey || event.ctrlKey) ||
+        event.key.toLowerCase() !== 'o' ||
+        dashboardModalOpen ||
+        document.querySelector('[role="dialog"]') !== null
+      ) {
+        return;
+      }
+      event.preventDefault();
+      void openProject();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [dashboardModalOpen, openProject]);
+
   const rememberCreated = (project: EvidenceProjectSummary) => {
-    setStatus((current) =>
-      current.name === 'ready'
-        ? {
-            name: 'ready',
-            projects: [
-              project,
-              ...current.projects.filter(
-                (item) => item.rootPath !== project.rootPath,
-              ),
-            ],
-          }
-        : current,
-    );
-    void window.evidenceAPI.projects.openEditorWindow(project.rootPath);
+    rememberProject(project);
+    void window.evidenceAPI.projects
+      .openEditorWindow(project.rootPath)
+      .catch(() => {
+        setOpenError('模型已创建，但无法打开工作台。请从最近项目重试。');
+      });
   };
 
+  const { projects } = recents;
+  const templates =
+    templatesState.name === 'ready' ? templatesState.templates : [];
+  const suggestedTemplate =
+    templates.find((template) => template.id === 'procurement') ?? templates[0];
+  const featuredTemplates = featuredTemplateIds.flatMap((id) => {
+    const template = templates.find((item) => item.id === id);
+    return template ? [template] : [];
+  });
+
   return (
-    <div className="flex h-full flex-col bg-[#f7f8fa]">
-      <header className="evidence-drag-region flex h-14 shrink-0 items-center justify-between border-b border-evidence-line bg-white/80 pr-6 pl-[var(--evidence-traffic-light-space)]">
-        <div>
-          <p className="text-[13px] font-semibold text-evidence-ink">
-            Evidence 履约建模
-          </p>
-          <p className="text-[11px] text-evidence-muted">
-            本地 .evidence/fm 源树 · 离线只读投影之外的交互式工作台
-          </p>
-        </div>
-        <div className="evidence-no-drag flex items-center gap-2">
-          <AiModelStatusPill />
-          <button
-            type="button"
-            onClick={() => {
-              setIsIngestOpen(true);
-            }}
-            className="rounded-md border border-evidence-accent px-3 py-1.5 text-[12px] font-medium text-evidence-accent hover:bg-[#f2f6fb]"
-          >
-            从业务文本生成
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              startCreate();
-            }}
-            className="rounded-md bg-evidence-accent px-3 py-1.5 text-[12px] font-medium text-white hover:bg-[#274c76]"
-          >
-            新建模型
-          </button>
-          <button
-            type="button"
-            onClick={() => void chooseProject()}
-            className="rounded-md border border-evidence-line bg-white px-3 py-1.5 text-[12px] font-medium text-evidence-ink hover:border-evidence-accent"
-          >
-            打开本地项目…
-          </button>
-        </div>
-      </header>
+    <>
+      <div
+        className="flex h-full flex-col bg-workbench-background"
+        data-dashboard
+        inert={dashboardModalOpen || undefined}
+      >
+        <DashboardNavbar
+          openDisabled={openRequest !== null}
+          createDisabled={!suggestedTemplate || openRequest !== null}
+          onOpen={() => void openProject()}
+          onCreate={() => {
+            if (suggestedTemplate) setCreateTemplate(suggestedTemplate.id);
+          }}
+        />
 
-      <main className="min-h-0 flex-1 overflow-y-auto px-10 py-8">
-        <h1 className="text-[15px] font-semibold text-evidence-ink">
-          最近打开的模型
-        </h1>
-        <p className="mt-1 text-[12px] text-evidence-muted">
-          选择一个包含{' '}
-          <code className="rounded bg-white px-1 py-0.5 text-[11px] text-evidence-ink">
-            .evidence/fm/model.json
-          </code>{' '}
-          的目录开始建模，或新建一个起点模型。
-        </p>
-
-        {status.name === 'loading' ? (
-          <p className="mt-6 text-[12px] text-evidence-muted">正在读取…</p>
-        ) : null}
-
-        {status.name === 'error' ? (
-          <p className="mt-6 rounded-md border border-[#f3c6c6] bg-[#fdf2f2] px-3 py-2 text-[12px] whitespace-pre-wrap text-[#b42318]">
-            {status.message}
-          </p>
-        ) : null}
-
-        {status.name === 'ready' && status.projects.length === 0 ? (
-          <div className="mt-6 rounded-lg border border-dashed border-evidence-line bg-white/70 px-6 py-8 text-center">
-            <p className="text-[13px] font-medium text-evidence-ink">
-              还没有打开过模型
-            </p>
-            <p className="mt-2 text-[12px] text-evidence-muted">
-              直接新建一个起点模型，或从下面的经典范例开始；也可以粘贴一段合同条款、需求段落或服务蓝图表格，让工作台先读成草稿再校对。建模产物写入{' '}
-              <code className="text-[11px]">.evidence/fm/</code>
-              ，桌面端只读写该源树。
-            </p>
-            <button
-              className="mt-4 rounded-md border border-evidence-accent px-3 py-1.5 text-[12px] font-medium text-evidence-accent hover:bg-[#f2f6fb]"
-              onClick={() => {
-                setIsIngestOpen(true);
-              }}
-              type="button"
-            >
-              从业务文本生成
-            </button>
-            <ul className="mt-5 grid grid-cols-1 gap-2 text-left md:grid-cols-3">
-              {starterTemplates.map((template) => (
-                <li key={template.id}>
-                  <button
-                    className="h-full w-full rounded-lg border border-evidence-line bg-white px-3 py-2.5 transition hover:border-evidence-accent"
-                    onClick={() => {
-                      startCreate(template.id);
-                    }}
-                    type="button"
+        <main className="@container/dashboard min-h-0 flex-1 overflow-y-auto">
+          <div className="mx-auto max-w-[1440px] px-6 py-8 @min-[60rem]/dashboard:px-8 @min-[84rem]/dashboard:px-12">
+            <div className="grid max-w-[1312px] items-start gap-8 @min-[58rem]/dashboard:grid-cols-[minmax(0,820fr)_minmax(0,460fr)]">
+              <section
+                aria-labelledby="recent-projects-title"
+                className="flex min-w-0 flex-col gap-4"
+              >
+                <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+                  <h1
+                    className="text-lg font-bold text-evidence-ink"
+                    id="recent-projects-title"
                   >
-                    <span className="block text-[12px] font-medium text-evidence-ink">
-                      {template.name}
-                    </span>
-                    <span className="mt-1 block text-[11px] text-evidence-muted">
-                      {template.description}
-                    </span>
-                    <span className="mt-1.5 block text-[10px] text-evidence-muted">
-                      {template.entityCount} 业务对象 · {template.ruleCount}{' '}
-                      规则
-                    </span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ) : null}
+                    最近打开的项目
+                  </h1>
+                  {!recents.loading && !recents.error ? (
+                    <p className="text-xs text-workbench-muted">
+                      共 {projects.length} 个项目 · 由本地 .evidence/fm 驱动
+                    </p>
+                  ) : null}
+                </div>
 
-        {status.name === 'ready' && status.projects.length > 0 ? (
-          <ul className="mt-4 grid grid-cols-1 gap-3 xl:grid-cols-2">
-            {status.projects.map((project) => (
-              <li key={project.rootPath}>
-                <button
-                  type="button"
-                  onClick={() => void openProject(project.rootPath)}
-                  disabled={pendingPath !== null}
-                  className="w-full rounded-lg border border-evidence-line bg-white px-4 py-3 text-left transition hover:border-evidence-accent disabled:opacity-60"
+                {recents.loading ? (
+                  <p className="text-xs text-workbench-muted" role="status">
+                    正在读取最近项目…
+                  </p>
+                ) : null}
+                {recents.error ? (
+                  <p className="text-xs break-words text-red-700" role="alert">
+                    {recents.error}
+                  </p>
+                ) : null}
+                {openError ? (
+                  <p
+                    className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs whitespace-pre-wrap break-words text-red-700"
+                    role="alert"
+                  >
+                    {openError}
+                  </p>
+                ) : null}
+                {!recents.loading && !recents.error && projects.length === 0 ? (
+                  <Card className="flex flex-col gap-2 border-dashed px-6 py-8 text-center">
+                    <p className="text-sm font-semibold text-evidence-ink">
+                      还没有打开过模型
+                    </p>
+                    <p className="text-xs text-workbench-muted">
+                      打开包含 <code>.evidence/fm/</code> 的项目目录或 Evidence
+                      单文件，也可以用起点模板或业务文档创建模型。
+                    </p>
+                  </Card>
+                ) : null}
+                {projects.length > 0 ? (
+                  <ul className="flex flex-col gap-3">
+                    {projects.map((project, index) => (
+                      <li key={project.rootPath}>
+                        <RecentProjectCard
+                          project={project}
+                          isMostRecent={index === 0}
+                          disabled={openRequest !== null}
+                          opening={
+                            openRequest?.name === 'opening' &&
+                            openRequest.path === project.rootPath
+                          }
+                          onOpen={() => void openProject(project.rootPath)}
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </section>
+
+              <section
+                aria-labelledby="quick-start-title"
+                className="flex min-w-0 flex-col gap-4"
+              >
+                <h2
+                  className="text-lg font-bold text-evidence-ink"
+                  id="quick-start-title"
                 >
-                  <div className="flex items-baseline justify-between gap-4">
-                    <span className="truncate text-[13px] font-medium text-evidence-ink">
-                      {project.name}
-                    </span>
-                    <span className="shrink-0 text-[11px] text-evidence-muted">
-                      {project.modelVersion}
-                    </span>
-                  </div>
-                  <p className="mt-1 truncate text-[11px] text-evidence-muted">
-                    {project.rootPath}
+                  快速开始与智能摄取
+                </h2>
+                <HeroIngestionCard onOpen={() => setIsIngestOpen(true)} />
+                {featuredTemplates.map((template) => (
+                  <StarterTemplateCard
+                    key={template.id}
+                    template={template}
+                    onSelect={() => setCreateTemplate(template.id)}
+                  />
+                ))}
+                {templatesState.name === 'loading' ? (
+                  <p className="text-xs text-workbench-muted" role="status">
+                    正在读取起点模板…
                   </p>
-                  <p className="mt-2 flex gap-3 text-[11px] text-evidence-muted">
-                    <span>业务对象 {project.entityCount}</span>
-                    <span>关系 {project.relationshipCount}</span>
-                    <span>规则 {project.ruleCount}</span>
+                ) : null}
+                {templatesState.name === 'error' ? (
+                  <p className="text-xs break-words text-red-700" role="alert">
+                    {templatesState.message}
                   </p>
-                </button>
-              </li>
-            ))}
-          </ul>
-        ) : null}
-      </main>
+                ) : null}
+              </section>
+            </div>
+          </div>
+        </main>
+      </div>
 
       {isIngestOpen ? (
         <IngestDraftModal
-          onClose={() => {
-            setIsIngestOpen(false);
-          }}
+          onClose={() => setIsIngestOpen(false)}
           onCompiled={rememberCreated}
         />
       ) : null}
 
-      {createTemplate === null || templates === null ? null : (
+      {createTemplate !== null ? (
         <CreateProjectModal
           initialTemplateId={createTemplate}
-          onClose={() => {
-            setCreateTemplate(null);
-          }}
+          onClose={() => setCreateTemplate(null)}
           onCreated={rememberCreated}
           templates={templates}
         />
-      )}
-    </div>
+      ) : null}
+    </>
   );
 };

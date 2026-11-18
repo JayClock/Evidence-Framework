@@ -32,9 +32,7 @@ describe('DashboardScreen', () => {
     expect(
       await screen.findByText('商品采购（Product Procurement）'),
     ).toBeInTheDocument();
-    expect(screen.getByText('业务对象 12')).toBeInTheDocument();
-    expect(screen.getByText('关系 8')).toBeInTheDocument();
-    expect(screen.getByText('规则 3')).toBeInTheDocument();
+    expect(screen.getByText('12 个实体 · 3 条 CEL 规则')).toBeInTheDocument();
   });
 
   it('opens a recent project in a new editor window', async () => {
@@ -42,7 +40,9 @@ describe('DashboardScreen', () => {
 
     render(<DashboardScreen />);
 
-    fireEvent.click(await screen.findByText('商品采购（Product Procurement）'));
+    fireEvent.click(
+      await screen.findByRole('button', { name: /打开工作台：商品采购/ }),
+    );
 
     await waitFor(() => {
       expect(api.calls.openEditorWindow).toEqual(['/models/procurement']);
@@ -58,7 +58,9 @@ describe('DashboardScreen', () => {
 
     render(<DashboardScreen />);
 
-    fireEvent.click(await screen.findByText('商品采购（Product Procurement）'));
+    fireEvent.click(
+      await screen.findByRole('button', { name: /打开工作台：商品采购/ }),
+    );
 
     expect(
       await screen.findByText('model.json 无法解析。'),
@@ -73,7 +75,7 @@ describe('DashboardScreen', () => {
 
     render(<DashboardScreen />);
 
-    fireEvent.click(screen.getByText('打开本地项目…'));
+    fireEvent.click(screen.getByRole('button', { name: '打开本地项目' }));
 
     await waitFor(() => {
       expect(api.calls.showOpenDialog).toBe(1);
@@ -94,7 +96,7 @@ describe('DashboardScreen starters', () => {
         '询价与报价、采购协议，加上发货、支付、开票三组履约项与对应凭证。',
       ),
     ).toBeInTheDocument();
-    expect(screen.queryByText('空白模型')).not.toBeInTheDocument();
+    expect(screen.getByText('空白模型')).toBeInTheDocument();
   });
 
   it('creates a project from a starter card and opens the editor', async () => {
@@ -118,7 +120,9 @@ describe('DashboardScreen starters', () => {
 
     render(<DashboardScreen />);
 
-    fireEvent.click(await screen.findByText('公对公商品采购履约'));
+    fireEvent.click(
+      await screen.findByRole('button', { name: /公对公商品采购履约/ }),
+    );
 
     const nameInput = await screen.findByLabelText('模型名称');
 
@@ -139,7 +143,9 @@ describe('DashboardScreen starters', () => {
       { kind: 'directory', suggestedName: '采购履约模型.evidence.json' },
     ]);
     expect(api.calls.openEditorWindow).toEqual(['/models/new-procurement']);
-    expect(await screen.findByText('/models/new-procurement')).toBeInTheDocument();
+    expect(
+      await screen.findByText('/models/new-procurement'),
+    ).toBeInTheDocument();
   });
 
   it('starts from the header button with the recommended starter', async () => {
@@ -147,7 +153,8 @@ describe('DashboardScreen starters', () => {
 
     render(<DashboardScreen />);
 
-    fireEvent.click(await screen.findByText('新建模型'));
+    await screen.findByText('公对公商品采购履约');
+    fireEvent.click(screen.getByRole('button', { name: '新建业务模型' }));
 
     const dialog = await screen.findByRole('dialog', { name: '新建模型' });
 
@@ -167,19 +174,21 @@ describe('DashboardScreen starters', () => {
       },
       createResult: {
         success: false,
-        error: '目标目录已有模型（.evidence/fm/model.json），请直接打开它或换一个目录。',
+        error:
+          '目标目录已有模型（.evidence/fm/model.json），请直接打开它或换一个目录。',
       },
     });
 
     render(<DashboardScreen />);
 
-    fireEvent.click(await screen.findByText('新建模型'));
+    await screen.findByText('公对公商品采购履约');
+    fireEvent.click(screen.getByRole('button', { name: '新建业务模型' }));
     fireEvent.click(await screen.findByText('选择位置并创建'));
 
+    expect(await screen.findByText(/目标目录已有模型/)).toBeInTheDocument();
     expect(
-      await screen.findByText(/目标目录已有模型/),
+      screen.getByRole('dialog', { name: '新建模型' }),
     ).toBeInTheDocument();
-    expect(screen.getByRole('dialog', { name: '新建模型' })).toBeInTheDocument();
   });
 
   it('offers a business text as a way to start, next to the templates', async () => {
@@ -187,10 +196,7 @@ describe('DashboardScreen starters', () => {
 
     render(<DashboardScreen />);
 
-    // The header button and the empty-state hint both open the same dialog.
-    const [headerButton] = await screen.findAllByText('从业务文本生成');
-
-    fireEvent.click(headerButton as HTMLElement);
+    fireEvent.click(screen.getByRole('button', { name: '开始智能提取向导' }));
 
     expect(
       await screen.findByRole('dialog', { name: '从业务文本生成模型' }),
@@ -219,7 +225,8 @@ describe('DashboardScreen starters', () => {
 
     render(<DashboardScreen />);
 
-    fireEvent.click(await screen.findByText('新建模型'));
+    await screen.findByText('公对公商品采购履约');
+    fireEvent.click(screen.getByRole('button', { name: '新建业务模型' }));
     fireEvent.click(await screen.findByText('单文件'));
     fireEvent.click(screen.getByText('选择位置并创建'));
 
