@@ -1,9 +1,11 @@
-import { spawn } from 'node:child_process';
+import { execFile, spawn } from 'node:child_process';
 import { once } from 'node:events';
 import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { promisify } from 'node:util';
 import { runAcceptanceSuite } from './runner/acceptanceRunner.js';
 import { Ajv2020 } from 'ajv/dist/2020.js';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -39,7 +41,10 @@ beforeEach(async () => {
 });
 afterEach(() => rmSync(root, { recursive: true, force: true }));
 
-async function execute(fault = 'none') {
+async function withBackend<T>(
+  fault: string,
+  run: (host: string) => Promise<T>,
+): Promise<T> {
   const child = spawn(
     process.execPath,
     [backend, '--test-mode', '--port', '0', '--fault', fault],
@@ -78,7 +83,7 @@ async function execute(fault = 'none') {
         }
       });
     });
-    return await runAcceptanceSuite({ suitePath: suite, targetUrl: host });
+    return await run(host);
   } finally {
     if (child.exitCode === null && child.signalCode === null) {
       const exited = once(child, 'exit');
@@ -88,10 +93,65 @@ async function execute(fault = 'none') {
   }
 }
 
+function execute(fault = 'none') {
+  return withBackend(fault, (host) =>
+    runAcceptanceSuite({ suitePath: suite, targetUrl: host }),
+  );
+}
+
 describe(
   'generated acceptance against an independent backend process',
   { timeout: 20_000 },
   () => {
+    it('runs the checked-in Bruno collection directly without the Evidence adapter', async () => {
+      const require = createRequire(import.meta.url);
+      const bru = path.join(
+        path.dirname(require.resolve('@usebruno/cli/package.json')),
+        'bin',
+        'bru.js',
+      );
+      const directory = fileURLToPath(
+        new URL('../../../examples/b2b-escrow/generated', import.meta.url),
+      );
+      const report = path.join(root, 'bruno.json');
+      await withBackend('none', (host) =>
+        promisify(execFile)(
+          process.execPath,
+          [
+            bru,
+            'run',
+            '-r',
+            '--sandbox',
+            'safe',
+            '--bail',
+            '--env',
+            'test',
+            '--env-var',
+            `host=${host}`,
+            '--reporter-json',
+            report,
+          ],
+          { cwd: directory, timeout: 15_000 },
+        ),
+      );
+      const [{ results }] = JSON.parse(readFileSync(report, 'utf8')) as [
+        {
+          results: {
+            test: { filename: string };
+            status: string;
+            response: { status: number };
+          }[];
+        },
+      ];
+      expect(results).toHaveLength(121);
+      expect(new Set(results.map(({ test }) => test.filename)).size).toBe(121);
+      expect(
+        results.every(
+          ({ status, response }) =>
+            status === 'pass' && Number.isInteger(response.status),
+        ),
+      ).toBe(true);
+    });
     it('passes the complete positive and invalid-input flow via the official runner', async () => {
       const report = await execute();
       expect(

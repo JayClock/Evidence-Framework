@@ -5,6 +5,13 @@ import { tmpdir } from 'node:os';
 import { test } from 'node:test';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
+const implementations = [
+  'golang-gin',
+  'java-spring',
+  'python-fastapi',
+  'ts-fastify',
+];
+
 function make(...args) {
   return spawnSync('make', ['--no-print-directory', '-C', root, ...args], {
     cwd: tmpdir(),
@@ -27,12 +34,7 @@ test('orchestration help is toolchain-free; invalid implementations fail closed'
   }
 });
 
-for (const implementation of [
-  'golang-gin',
-  'java-spring',
-  'python-fastapi',
-  'ts-fastify',
-]) {
+for (const implementation of implementations) {
   test(`${implementation}: native orchestration references only the selected project from any cwd`, () => {
     const result = make(
       '-n',
@@ -73,4 +75,35 @@ test('policy gate passes exact baseline and NEW report paths, not demo defaults'
   );
   assert.match(result.stdout, /--report-dir "\/tmp\/new reports"/);
   assert.doesNotMatch(result.stdout, /allow-pending|install|api:setup/);
+});
+
+test('test-all runs conformance and both strict gates separately for every implementation', () => {
+  const baseline = '/tmp/immutable baseline.evidence.json';
+  const reports = '/tmp/new reports';
+  const result = make(
+    '-n',
+    'test-all',
+    `BASELINE=${baseline}`,
+    `REPORT_DIR=${reports}`,
+  );
+  assert.equal(result.status, 0, result.stderr);
+  const invocations = result.stdout
+    .split('\n')
+    .filter((line) => line.includes('/verification/run.mjs" --implementation'))
+    .map((line) => line.slice(line.indexOf('--implementation')));
+  assert.deepEqual(
+    invocations,
+    implementations.flatMap((implementation) => {
+      const prefix = `--implementation "${implementation}"`;
+      const report = (stage) =>
+        `--report-dir "${reports}/${implementation}/${stage}"`;
+      return [
+        `${prefix} ${report('conformance')}`,
+        ...['regression', 'dod'].map(
+          (gate) =>
+            `${prefix} --gate "${gate}" --baseline-model "${baseline}" ${report(gate)}`,
+        ),
+      ];
+    }),
+  );
 });

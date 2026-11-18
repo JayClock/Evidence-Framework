@@ -34,7 +34,7 @@ help:
 	@printf '%s\n' \
 	 'B2B escrow: run from anywhere with make -C examples/b2b-escrow <target>' \
 	 '  test          Install framework + selected implementation, test/build, verify 11 red/green cases' \
-	 '  test-all      Same checks for all four toolchains, sequentially (all must be installed)' \
+	 '  test-all      For all four implementations: native build/tests, Bruno conformance, strict gates' \
 	 '  framework     Frozen pnpm install + build Evidence CLI (Node/pnpm only)' \
 	 '  check         Scoped checks for both models + read-only export --verify' \
 	 '  tools-test    Test external verification/orchestration (no language tools)' \
@@ -123,11 +123,14 @@ test:
 	$(MAKE) -C "$(ROOT)" verify
 
 test-all:
-	$(if $(REPORT_DIR),mkdir "$(REPORT_DIR)",@:)
+	$(if $(REPORT_DIR),mkdir "$(REPORT_DIR)" $(foreach impl,$(IMPLEMENTATIONS),"$(REPORT_DIR)/$(impl)"),@:)
 	$(MAKE) -C "$(ROOT)" framework
 	$(MAKE) -C "$(ROOT)" check
 	$(MAKE) -C "$(ROOT)" tools-test
 	@set -eu; for impl in $(IMPLEMENTATIONS); do \
 	  $(MAKE) -C "$(ROOT)" prepare IMPLEMENTATION=$$impl; \
-	  $(MAKE) -C "$(ROOT)" verify IMPLEMENTATION=$$impl $(if $(REPORT_DIR),REPORT_DIR="$(REPORT_DIR)/$$impl",); \
+	  $(MAKE) -C "$(ROOT)" verify IMPLEMENTATION=$$impl $(if $(REPORT_DIR),REPORT_DIR="$(REPORT_DIR)/$$impl/conformance",); \
+	  for gate in regression dod; do \
+	    $(MAKE) -C "$(ROOT)" gate IMPLEMENTATION=$$impl GATE=$$gate $(if $(REPORT_DIR),REPORT_DIR="$(REPORT_DIR)/$$impl/$$gate",); \
+	  done; \
 	done

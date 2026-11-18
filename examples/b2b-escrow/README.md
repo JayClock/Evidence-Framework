@@ -23,8 +23,9 @@ make -C examples/b2b-escrow verify IMPLEMENTATION=ts-fastify
 # 可选：指定全新报告目录；拒绝覆盖已有目录。
 make -C examples/b2b-escrow verify IMPLEMENTATION=ts-fastify REPORT_DIR=/tmp/escrow-new-run
 
-# 仅在已经安装四种环境时使用；依次执行，各失败立即停止，日志不被丢弃。
-make -C examples/b2b-escrow test-all
+# 四种环境齐备时执行：依次运行原生测试、Bruno 红绿场景及严格 regression / DoD。
+# 默认用冻结 v1 作为严格门禁基线；可用 BASELINE=/absolute/model.evidence.json 覆盖。
+make -C examples/b2b-escrow test-all REPORT_DIR=/tmp/escrow-bruno-matrix
 ```
 
 **11 个场景的验证成功 ≠ 每个后端场景都 passed**：其中包含刻意故障和开发态 pending；汇总成功表示预期红绿证据全部吻合。合并/发布使用另行执行的严格 gate，不把预期失败场景当作发布验收成功。
@@ -41,7 +42,7 @@ generated/                    # evidence export 生成；禁止手改，提交 G
   evidence-acceptance.json
 ```
 
-两个 Bundle 是可编辑源；`generated/` 只对应当前 v2。`Makefile` 与 `verification/` 是**外部观察者/编排层**，可以了解四个启动命令，但不被任何实现引用，也不是实现单独构建的依赖。v1 的验收套件在后续 regression 门禁中由基线模型重新编译，不复制成另一份手工维护的 YAML。Tree 与 Bundle 都是框架支持的源格式，本案例选择 Bundle 以便独立分发；这不是移除 Tree 格式支持。
+两个 Bundle 是可编辑源；`generated/` 只对应当前 v2。`Makefile` 与 `verification/` 是**外部观察者/编排层**，可以了解四个启动命令，但不被任何实现引用，也不是实现单独构建的依赖。v1 的验收套件在后续 regression 门禁中由基线模型重新编译，不另存一份手工维护的集合。Tree 与 Bundle 都是框架支持的源格式，本案例选择 Bundle 以便独立分发；这不是移除 Tree 格式支持。
 
 四个实现（Gin、Spring Boot、FastAPI、Fastify）各自自包含、互不知道对方存在，不共享运行时代码、数据库、拦截器或构建配置。实现不得读取本模型的 examples 或导出的断言值来伪造响应。每个工程都有自己的依赖清单与原生测试，可单独复制安装、构建、启动和测试；都不属于框架 pnpm workspace。外部验收只使用统一契约和目标 HTTP 地址，不要求四种服务同时启动，也不要求单个开发者安装全部语言环境。
 
@@ -243,7 +244,9 @@ node examples/b2b-escrow/verification/run.mjs --implementation ts-fastify
 node examples/b2b-escrow/verification/run.mjs --implementation all
 ```
 
-验证器使用构建好的 `golang-gin/build/escrow`、`java-spring/target/escrow-0.1.0.jar`、`python-fastapi/.venv/bin/python` 与 `ts-fastify/dist/server.js`（Windows 对应 `.exe` / `Scripts/python.exe`）。Java 使用 `JAVA_HOME/bin/java`，未设置时使用 PATH。它不安装依赖、不替实现构建、不生成或修改契约；先通过 `export --verify` 确认生成物新鲜。
+验证器使用构建好的 `golang-gin/build/escrow`、`java-spring/target/escrow-0.1.0.jar`、`python-fastapi/.venv/bin/python` 与 `ts-fastify/dist/server.js`（Windows 对应 `.exe` / `Scripts/python.exe`）。Java 使用 `JAVA_HOME/bin/java`，未设置时使用 PATH。它不安装依赖、不替实现构建、不生成或修改契约；先通过 `export --verify` 只读核验 Bruno 集合及其余生成物。
+
+也可以在 Bruno 桌面端打开 `generated/`。如果已安装 Bruno CLI，可从该目录对干净的测试后端直接运行 `bru run -r --env test --env-var host=http://127.0.0.1:8085`。直接运行会执行集合内的 HTTP 断言；严格漂移和 Git 基线门禁仍需通过 `evidence test` 或 `make gate` 执行。
 
 每种实现执行 **11 个独立场景**：
 
@@ -277,7 +280,8 @@ node examples/b2b-escrow/verification/run.mjs --implementation all
 | `gate`                                               | 已构建的选定实现，以指定 `BASELINE` 执行严格 regression 或 DoD；不支持 pending 豁免 |
 | `up`                                                 | 前台启动已构建的选定服务，Ctrl-C 退出；支持 `PORT` / `MODE` / `FAULT`               |
 | `up-gin` / `up-spring` / `up-fastapi` / `up-fastify` | 指定实现的前台入口，不自动构建、不后台遗留进程                                      |
-| `test` / `test-all`                                  | 完整单实现闭环 / 依次验证全部实现；即便使用 `make -j` 也不会跳过构建顺序            |
+| `test`                                               | 单实现完整红绿演练，不代替严格门禁                                                  |
+| `test-all`                                           | 顺序运行四种实现的原生测试、11 个 Bruno 红绿场景和严格双门禁；失败立即停止          |
 
 手动查看故障时，可以启动一个服务，再在**另一个终端**从仓库根目录发起验收：
 
@@ -314,7 +318,7 @@ make -C examples/b2b-escrow gate IMPLEMENTATION=ts-fastify GATE=dod \
 
 ### 排障与报告目录
 
-指定的报告目录必须全新；不要用 `generated/` 或实现目录保存报告。省略 `REPORT_DIR` 时使用系统临时目录并打印绝对路径。报告结构如下（由同一次执行生成三种格式，不为格式化重跑状态变更）：
+指定的报告目录必须全新；不要用 `generated/` 或实现目录保存报告。省略 `REPORT_DIR` 时使用系统临时目录并打印绝对路径。`test-all` 指定 `REPORT_DIR` 时，为每个实现分别在 `<report-dir>/<implementation>/{conformance,regression,dod}/` 保存结果；每部分都有独立的汇总，不混用故障演示和严格门禁的报告。单次 `verify` 或 `gate` 的报告结构如下（不为格式化重跑状态变更）：
 
 ```text
 <report-dir>/
