@@ -28,4 +28,4 @@ pnpm evidence export --model examples/shared-settlement/model/shared-settlement.
 pnpm examples:verify
 ```
 
-[OpenAPI](generated/openapi.json) 和 [Step CI](generated/acceptance.stepci.yml) 均由 CLI 生成。验收流校验单笔登记、关联 ID 列表和锁账依据；两个反向 GET 由契约回归测试覆盖。此目录不提供后端，可用 `pnpm evidence test --target <URL> --scenarios examples/shared-settlement/generated/acceptance.stepci.yml` 验证实现了契约的测试环境。
+[OpenAPI](generated/openapi.json) 和 [Bruno 集合](generated/bruno.json) 均由 CLI 生成。验收流校验单笔登记、关联 ID 列表和锁账依据；两个反向 GET 由契约回归测试覆盖。此目录不提供后端，可用 `pnpm evidence test --target <URL> --scenarios examples/shared-settlement/generated` 验证实现了契约的测试环境。

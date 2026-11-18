@@ -14,9 +14,9 @@ it('ships a strict runnable GitHub dual-gate workflow with immutable baseline an
   const { text, data } = load('.github/workflows/evidence-governance.yml');
   for (const key of ['MODEL', 'BOOTSTRAP_MODEL'])
     expect(existsSync(path.join(root, data.env[key]))).toBe(true);
-  expect(
-    existsSync(path.join(root, data.env.GENERATED, 'acceptance.stepci.yml')),
-  ).toBe(true);
+  expect(existsSync(path.join(root, data.env.GENERATED, 'bruno.json'))).toBe(
+    true,
+  );
   expect(data.permissions).toEqual({ contents: 'read' });
   const acceptance = data.jobs.acceptance;
   const contract = data.jobs['contract-and-hygiene'];

@@ -1,0 +1,41 @@
+meta {
+  name: confirmation.advertising#campaign-live
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{host}}/ads-promotion-orders/{{capture_1_3_1}}/advertising/confirmation
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-evidence-role: role.agency
+  x-evidence-asof: {{asOf_7}}
+}
+
+body:json {
+  {
+    "id": "launch-proof-summer",
+    "placement": "首页推荐位"
+  }
+}
+
+assert {
+  res.status: eq 201
+  res.body?.confirmed_at: eq "2026-07-02T00:00:00Z"
+  res.body?.id: eq "launch-proof-summer"
+}
+
+tests {
+  test("$[\"placement\"]", function () {
+    expect(res.body?.placement).to.equal("首页推荐位");
+  });
+}
+
+settings {
+  followRedirects: false
+  timeout: 5000
+}

@@ -12,8 +12,7 @@ import {
 import { buildDeliveryRoutes } from '@evidence-poc/evidence-api';
 import { projectAcceptanceTests } from './delivery/scenarioProjector.js';
 import { assertOpenApiContract } from '@evidence-poc/evidence-api';
-import { renderStepCi } from './renderer/stepCiRenderer.js';
-import { renderHurl } from './renderer/hurlRenderer.js';
+import { renderAcceptanceSuite } from './renderer/brunoSuite.js';
 import { writeOutput } from '@evidence-poc/evidence-api';
 
 export const defaultAcceptanceDirectory = (root: string): string =>
@@ -23,7 +22,6 @@ export const defaultAcceptanceDirectory = (root: string): string =>
 export async function exportAcceptanceTests(options: {
   fm: string;
   out: string;
-  format: 'stepci' | 'hurl';
 }): Promise<{ files: string[]; flowCount: number; stepCount: number }> {
   const parsed = isModelBundlePath(options.fm)
     ? (() => {
@@ -45,10 +43,7 @@ export async function exportAcceptanceTests(options: {
       `API_EXAMPLE_INVALID: ${invalid.map((issue) => issue.message).join('\n')}`,
     );
   const projection = projectAcceptanceTests(model, routes);
-  const files =
-    options.format === 'stepci'
-      ? { 'acceptance.stepci.yml': renderStepCi(projection) }
-      : renderHurl(projection);
+  const files = renderAcceptanceSuite(projection);
   // All validation and rendering precedes the atomic directory replacement.
   mkdirSync(path.dirname(options.out), { recursive: true });
   writeOutput(options.out, files);

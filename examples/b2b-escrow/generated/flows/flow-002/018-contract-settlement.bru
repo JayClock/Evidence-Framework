@@ -1,0 +1,44 @@
+meta {
+  name: contract.settlement#milestone-on-time
+  type: http
+  seq: 18
+}
+
+post {
+  url: {{host}}/settlements
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-evidence-role: role.settlement-seller
+  x-evidence-asof: {{asOf_10}}
+}
+
+body:json {
+  {
+    "acceptance_confirmation_id": "milestone-on-time-confirmation-milestone-acceptance",
+    "deposit_confirmation_id": "milestone-on-time-confirmation-deposit-lock",
+    "id": "milestone-on-time-contract-settlement",
+    "order_confirmation_id": "milestone-on-time-confirmation-order"
+  }
+}
+
+vars:post-response {
+  capture_2_18_1: res.body?.id
+}
+
+assert {
+  res.status: eq 201
+  res.body?.acceptance_confirmation_id: eq "milestone-on-time-confirmation-milestone-acceptance"
+  res.body?.deposit_confirmation_id: eq "milestone-on-time-confirmation-deposit-lock"
+  res.body?.id: eq "milestone-on-time-contract-settlement"
+  res.body?.order_confirmation_id: eq "milestone-on-time-confirmation-order"
+  res.body?.signed_at: eq "2026-06-15T00:00:00Z"
+}
+
+settings {
+  followRedirects: false
+  timeout: 5000
+}

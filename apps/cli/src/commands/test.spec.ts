@@ -1,6 +1,8 @@
 import { createServer } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { mkdtemp, writeFile, readFile, rm } from 'node:fs/promises';
+import { renderAcceptanceSuite } from '@evidence-poc/evidence-acceptance';
+import { writeOutput } from '@evidence-poc/evidence-api';
 import path from 'node:path';
 import { tmpdir } from 'node:os';
 import { afterEach, beforeEach, expect, it } from 'vitest';
@@ -9,29 +11,30 @@ import { dispatch } from '../router.js';
 let root: string;
 beforeEach(async () => {
   root = await mkdtemp(path.join(tmpdir(), 'evidence-test-'));
-  await writeFile(
-    path.join(root, 'smoke.stepci.yml'),
-    `version: "1.1"
-name: smoke
-env:
-  host: http://invalid
-  asOf: "2026-03-31T10:00:00Z"
-tests:
-  flow:
-    env:
-      evidenceTags: '["dod", "payment"]'
-    steps:
-      - name: payment
-        http:
-          method: GET
-          url: "\${{env.host}}/pay"
-          headers:
-            x-evidence-asof: "\${{env.asOf}}"
-          check:
-            status: 200
-            jsonpath:
-              $.amount: 500
-`,
+  writeOutput(
+    path.join(root, 'smoke'),
+    renderAcceptanceSuite({
+      modelId: 'smoke',
+      flows: [
+        {
+          id: 'flow',
+          tags: ['dod', 'payment'],
+          steps: [
+            {
+              ref: 'payment',
+              route: { method: 'GET', path: '/pay' },
+              asOf: '2026-03-31T10:00:00Z',
+              actingRoleRef: 'role.buyer',
+              status: 200,
+              inputs: {},
+              assertions: { '$.amount': 500 },
+              captures: {},
+              parameters: {},
+            },
+          ],
+        },
+      ],
+    }),
   );
 });
 afterEach(() => rm(root, { recursive: true, force: true }));
@@ -59,7 +62,7 @@ it('prints green, red and parseable JSON, ignoring a 404 health probe', async ()
       stderr: (text: string) => errors.push(text),
       color: false,
     };
-    const args = ['test', '--target', target, '--scenarios', '.'];
+    const args = ['test', '--target', target, '--scenarios', 'smoke'];
     expect(await dispatch(args, context)).toBe(0);
     expect(output.pop()).toContain('PASSED (Green)');
     amount = 501;
@@ -139,7 +142,7 @@ it('prints green, red and parseable JSON, ignoring a 404 health probe', async ()
     server.closeAllConnections();
     await new Promise<void>((resolve) => server.close(() => resolve()));
   }
-});
+}, 15_000);
 
 it('fails closed for unreachable targets, invalid clocks and unsupported inputs', async () => {
   const server = createServer();
@@ -153,7 +156,17 @@ it('fails closed for unreachable targets, invalid clocks and unsupported inputs'
     stderr: () => undefined,
     color: false,
   };
-  const args = ['test', '--target', target, '--scenarios', '.', '--json'];
+  const args = ['test', '--target', target, '--scenarios', 'smoke', '--json'];
+  await writeFile(path.join(root, 'old.hurl'), 'old');
+  expect(
+    await dispatch(
+      ['test', '--target', target, '--scenarios', 'old.hurl', '--json'],
+      context,
+    ),
+  ).toBe(1);
+  expect(JSON.parse(output.pop()!).error).toContain(
+    'Invalid generated Bruno collection',
+  );
   expect(await dispatch(args, context)).toBe(1);
   expect(JSON.parse(output.pop()!).error).toContain('is unreachable');
   for (const extra of [

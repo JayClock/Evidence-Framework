@@ -37,7 +37,8 @@ model/
   b2b-escrow.evidence.json      # v2：保留基线，新增可选的两阶段里程碑交付
 generated/                    # evidence export 生成；禁止手改，提交 Git
   openapi.json
-  acceptance.stepci.yml
+  bruno.json, collection.bru, environments/, flows/
+  evidence-acceptance.json
 ```
 
 两个 Bundle 是可编辑源；`generated/` 只对应当前 v2。`Makefile` 与 `verification/` 是**外部观察者/编排层**，可以了解四个启动命令，但不被任何实现引用，也不是实现单独构建的依赖。v1 的验收套件在后续 regression 门禁中由基线模型重新编译，不复制成另一份手工维护的 YAML。Tree 与 Bundle 都是框架支持的源格式，本案例选择 Bundle 以便独立分发；这不是移除 Tree 格式支持。

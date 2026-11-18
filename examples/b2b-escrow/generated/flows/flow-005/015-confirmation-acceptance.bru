@@ -1,0 +1,38 @@
+meta {
+  name: confirmation.acceptance#single-on-time
+  type: http
+  seq: 15
+}
+
+post {
+  url: {{host}}/fulfillments/{{capture_5_11_1}}/acceptances/{{capture_5_14_1}}/confirmation
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-evidence-role: role.fulfillment-buyer
+  x-evidence-asof: {{asOf_10}}
+}
+
+body:json {
+  {
+    "accepted": true,
+    "id": "single-on-time-confirmation-acceptance"
+  }
+}
+
+assert {
+  res.status: eq 201
+  res.body?.accepted: eq true
+  res.body?.accepted_quantity: eq 999
+  res.body?.confirmed_at: eq "2026-06-15T00:00:00Z"
+  res.body?.id: eq "single-on-time-confirmation-acceptance"
+  res.body?.late_days: eq 0
+}
+
+settings {
+  followRedirects: false
+  timeout: 5000
+}

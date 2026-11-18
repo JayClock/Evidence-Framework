@@ -116,7 +116,7 @@ describe('full-spectrum model lifecycle acceptance', () => {
 
   it('exports a deterministic OpenAPI contract before and after both presentation modes', async () => {
     const model = fullSpectrumModel();
-    const options = { openapi: true, tests: false, format: 'stepci' } as const;
+    const options = { openapi: true, tests: false };
     const before = await renderDeliverables(model, options);
     await computeGraphLayout(
       createModelSession({ document: model }).getGraph(),

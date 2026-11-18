@@ -1,0 +1,43 @@
+meta {
+  name: request.quarterly-target#open-q1
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{host}}/performance-agreements/{{capture_1_1_1}}/quarterly-targets
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-evidence-role: role.finance
+  x-evidence-asof: {{asOf_3}}
+}
+
+body:json {
+  {
+    "id": "target-2026-q1",
+    "quarter": "2026-Q1",
+    "target_amount_minor": 12000000
+  }
+}
+
+vars:post-response {
+  capture_1_3_1: res.body?.id
+}
+
+assert {
+  res.status: eq 201
+  res.body?.expired_at: eq "2026-04-02T10:00:00Z"
+  res.body?.id: eq "target-2026-q1"
+  res.body?.quarter: eq "2026-Q1"
+  res.body?.started_at: eq "2026-01-02T10:00:00Z"
+  res.body?.target_amount_minor: eq 12000000
+}
+
+settings {
+  followRedirects: false
+  timeout: 5000
+}

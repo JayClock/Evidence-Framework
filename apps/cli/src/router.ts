@@ -48,7 +48,7 @@ export function createCli(context: CommandContext = defaultContext()): CAC {
   cli
     .command('test', 'Run black-box HTTP acceptance suites')
     .option('--target <url>', 'Backend service base URL (required)')
-    .option('--scenarios <path>', 'Step CI YAML file or directory', {
+    .option('--scenarios <path>', 'Generated Bruno collection directory', {
       default: 'dist',
     })
     .option('--as-of <utc>', 'Business timestamp')
@@ -77,8 +77,7 @@ export function createCli(context: CommandContext = defaultContext()): CAC {
       default: 'dist',
     })
     .option('--openapi', 'Export only the contract')
-    .option('--tests', 'Export only acceptance suites')
-    .option('--format <format>', 'stepci | hurl', { default: 'stepci' })
+    .option('--tests', 'Export only the Bruno acceptance collection')
     .option('--verify', 'Read-only exact byte verification')
     .action((options: CommandOptions) => exportCommand(options, context));
   cli
@@ -130,10 +129,7 @@ export function createCli(context: CommandContext = defaultContext()): CAC {
     .option('--base <path>', 'Baseline model for API diff')
     .option('--target <path>', 'Target model for API diff')
     .option('--base-api <file>', 'Baseline API overlay')
-    .option(
-      '--format <format>',
-      'json | markdown for diff; stepci | hurl for export-tests',
-    )
+    .option('--format <format>', 'json | markdown for diff')
     .action((command: string, options: CommandOptions) =>
       apiCommand(command, options, context),
     );

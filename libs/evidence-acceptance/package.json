@@ -91,12 +91,12 @@
     "@evidence-poc/evidence-model-core": "workspace:*",
     "@evidence-poc/evidence-model-io": "workspace:*",
     "@evidence-poc/evidence-schema": "workspace:*",
-    "@stepci/runner": "2.0.7",
+    "@usebruno/cli": "4.3.0",
     "ajv": "^8.20.0",
     "ajv-formats": "3.0.1",
     "cac": "^6.7.14",
     "tslib": "^2.3.0",
-    "yaml": "2.9.1"
+    "zod": "3.25.76"
   },
   "bin": {
     "evidence-api": "./dist/cli.js"
@@ -104,6 +104,7 @@
   "description": "从 API 契约生成验收脚本、执行 HTTP 门禁并检测契约兼容性",
   "devDependencies": {
     "@evidence-poc/evidence-canvas-interaction": "workspace:*",
-    "@usebruno/lang": "0.41.0"
+    "@usebruno/lang": "0.41.0",
+    "yaml": "2.9.1"
   }
 }

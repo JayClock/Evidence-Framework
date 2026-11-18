@@ -1,17 +1,15 @@
 import { readFileSync, readdirSync } from 'node:fs';
+import { join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { Workflow } from '@stepci/runner';
 import {
   buildFmCheckReport,
   evaluateRuleOnExample,
   parseModelBundleText,
 } from '@evidence-poc/evidence-model-core';
-import { parse } from 'yaml';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { projectAcceptanceTests } from './delivery/scenarioProjector.js';
 import { renderDeliverables } from './renderDeliverables.js';
 import { selectAcceptanceFlows } from './runner/suiteSelection.js';
-import { selectStepCiFlows } from './runner/stepCiSuiteSelection.js';
 
 const root = new URL('../../../examples/b2b-escrow/', import.meta.url);
 function load(name: string) {
@@ -24,7 +22,7 @@ function load(name: string) {
 const baseline = load('b2b-escrow-v1');
 const current = load('b2b-escrow');
 const projection = projectAcceptanceTests(current);
-const options = { openapi: true, tests: true, format: 'stepci' } as const;
+const options = { openapi: true, tests: true };
 let base: Awaited<ReturnType<typeof renderDeliverables>>;
 let head: Awaited<ReturnType<typeof renderDeliverables>>;
 beforeAll(async () => {
@@ -33,8 +31,6 @@ beforeAll(async () => {
     renderDeliverables(current, options),
   ]);
 });
-const names = (workflow: Workflow) =>
-  Object.values(workflow.tests).map((flow) => flow.name);
 
 function output(flowId: string, entityRef: string) {
   const step = projection.flows
@@ -98,23 +94,18 @@ describe('B2B escrow phase-one contract', () => {
       expect(nextShape).toEqual(priorShape);
       expect(next).toEqual(expect.arrayContaining(prior));
     }
-    const flows = parse(head.files['acceptance.stepci.yml']!) as Workflow;
-    const prior = parse(base.files['acceptance.stepci.yml']!) as Workflow;
-    expect(
-      names(selectStepCiFlows(flows, { baseline: prior, gate: 'regression' })),
-    ).toEqual(['single-late', 'single-on-time']);
     const baselineProjection = projectAcceptanceTests(baseline);
-    for (const gate of ['regression', 'dod'] as const) {
-      expect(
-        selectAcceptanceFlows(projection, {
-          baseline: baselineProjection,
-          gate,
-        }).flows.map(({ id }) => id),
-      ).toEqual(names(selectStepCiFlows(flows, { baseline: prior, gate })));
-    }
-    expect(
-      names(selectStepCiFlows(flows, { baseline: prior, gate: 'dod' })),
-    ).toEqual(['milestone-capped', 'milestone-on-time', 'milestone-precision']);
+    const names = (gate: 'regression' | 'dod') =>
+      selectAcceptanceFlows(projection, {
+        baseline: baselineProjection,
+        gate,
+      }).flows.map(({ id }) => id);
+    expect(names('regression')).toEqual(['single-late', 'single-on-time']);
+    expect(names('dod')).toEqual([
+      'milestone-capped',
+      'milestone-on-time',
+      'milestone-precision',
+    ]);
   });
 
   it('compiles valid OpenAPI and exactly reproduces the committed artifacts', () => {
@@ -125,7 +116,20 @@ describe('B2B escrow phase-one contract', () => {
     });
     expect(base).toMatchObject({ flowCount: 2, stepCount: 46 });
     expect(
-      readdirSync(fileURLToPath(new URL('generated/', root))).sort(),
+      readdirSync(new URL('generated/', root), {
+        recursive: true,
+        withFileTypes: true,
+      })
+        .filter((entry) => entry.isFile())
+        .map((entry) =>
+          relative(
+            fileURLToPath(new URL('generated/', root)),
+            join(entry.parentPath, entry.name),
+          )
+            .split(sep)
+            .join('/'),
+        )
+        .sort(),
     ).toEqual(Object.keys(head.files).sort());
     for (const [name, content] of Object.entries(head.files)) {
       expect(readFileSync(new URL(`generated/${name}`, root), 'utf8')).toBe(

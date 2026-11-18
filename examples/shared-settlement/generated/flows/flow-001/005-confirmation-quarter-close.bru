@@ -1,0 +1,35 @@
+meta {
+  name: confirmation.quarter-close#lock-q1-ledger
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{host}}/performance-agreements/{{capture_1_1_1}}/quarterly-targets/{{capture_1_3_1}}/confirmation
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-evidence-role: role.account-owner
+  x-evidence-asof: {{asOf_5}}
+}
+
+body:json {
+  {
+    "id": "quarter-close-001"
+  }
+}
+
+assert {
+  res.status: eq 201
+  res.body?.confirmed_at: eq "2026-03-31T16:00:00Z"
+  res.body?.id: eq "quarter-close-001"
+  res.body?.revenue_confirmation_id: eq "revenue-001"
+}
+
+settings {
+  followRedirects: false
+  timeout: 5000
+}

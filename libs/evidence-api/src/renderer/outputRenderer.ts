@@ -100,11 +100,21 @@ const writeFileDurably = (
   name: string,
   content: string,
 ): void => {
-  if (path.basename(name) !== name || name === '.' || name === '..') {
-    throw new Error('OUTPUT_NAME_INVALID: 输出只允许直接文件名');
+  const segments = name.split('/');
+  if (
+    segments.some(
+      (segment) =>
+        !segment ||
+        segment.endsWith('.') ||
+        segment.trimEnd() !== segment ||
+        /[\\:\0]/.test(segment),
+    )
+  ) {
+    throw new Error('OUTPUT_NAME_INVALID: 输出必须是安全的相对文件路径');
   }
-
-  const descriptor = openSync(path.join(directory, name), 'wx');
+  const destination = path.join(directory, ...segments);
+  mkdirSync(path.dirname(destination), { recursive: true });
+  const descriptor = openSync(destination, 'wx');
 
   try {
     writeSync(descriptor, content);

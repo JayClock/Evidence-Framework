@@ -1,0 +1,33 @@
+meta {
+  name: confirmation.milestone-release#milestone-on-time-20-duplicate
+  type: http
+  seq: 23
+}
+
+post {
+  url: {{host}}/settlements/{{capture_2_18_1}}/milestone-releases/{{capture_2_19_1}}/confirmation
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-evidence-role: role.settlement-escrow
+  x-evidence-asof: {{asOf_10}}
+}
+
+body:json {
+  {
+    "id": "milestone-on-time-duplicate"
+  }
+}
+
+assert {
+  res.status: eq 409
+  res.body?.error: eq "ALREADY_CONFIRMED"
+}
+
+settings {
+  followRedirects: false
+  timeout: 5000
+}

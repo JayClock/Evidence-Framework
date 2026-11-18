@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import type {
-  AcceptanceFlow,
-  AcceptanceProjection,
+  SuiteFlow,
+  SuiteProjection,
 } from '../delivery/scenarioProjector.js';
 
 export type AcceptanceGate = 'regression' | 'dod';
@@ -12,7 +12,7 @@ interface FlowFilters {
   readonly tags?: readonly string[];
 }
 export interface SuiteSelection extends FlowFilters {
-  readonly baseline?: AcceptanceProjection;
+  readonly baseline?: SuiteProjection;
 }
 
 export const canonical = (value: unknown): string =>
@@ -91,7 +91,7 @@ export function validationSchema(value: unknown): unknown {
 }
 
 /** Wire semantics only: a variable name is replaced by its producer and JSONPath. */
-export function fingerprintFlow(flow: AcceptanceFlow): string {
+export function fingerprintFlow(flow: SuiteFlow): string {
   const captures = new Map<string, { producer: number; path: string }>();
   const steps = flow.steps.map((step, index) => {
     const path = step.route.path.split(/\{([^{}]+)\}/g).map((part, i) => {
@@ -143,8 +143,8 @@ export interface SelectableFlow<T> {
   readonly value: T;
 }
 
-/** Shared gate policy; the Step CI adapter only supplies a view of legacy suites. */
-export function selectFlows<T>(
+/** Select whole flows before rendering to a runner-specific format. */
+function selectFlows<T>(
   current: readonly SelectableFlow<T>[],
   baseline: readonly SelectableFlow<T>[] | undefined,
   options: FlowFilters,
@@ -183,11 +183,11 @@ export function selectFlows<T>(
 }
 
 export function selectAcceptanceFlows(
-  current: AcceptanceProjection,
+  current: SuiteProjection,
   options: SuiteSelection,
-): AcceptanceProjection {
+): SuiteProjection {
   const { baseline, gate } = options;
-  const entries = (projection: AcceptanceProjection) =>
+  const entries = (projection: SuiteProjection) =>
     projection.flows.map((flow) => ({
       name: flow.id,
       tags: () => [`flow:${flow.id}`, ...(flow.tags ?? [])],

@@ -41,6 +41,15 @@ export interface AcceptanceProjection {
   modelId: string;
   flows: AcceptanceFlow[];
 }
+
+/** The runner only needs the HTTP method and path, not the delivery graph. */
+export type SuiteStep = Omit<AcceptanceStep, 'route'> & {
+  route: Pick<DeliveryRoute, 'method' | 'path'>;
+};
+export type SuiteFlow = Omit<AcceptanceFlow, 'steps'> & { steps: SuiteStep[] };
+export type SuiteProjection = Omit<AcceptanceProjection, 'flows'> & {
+  flows: SuiteFlow[];
+};
 interface Case {
   ref: string;
   example: ModelExampleAST;

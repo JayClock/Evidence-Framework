@@ -70,12 +70,10 @@ pnpm evidence diff api old.evidence.json new.evidence.json --format markdown
 ```
 
 `export` validates OpenAPI 3.1 and atomically replaces its dedicated output
-directory. Without `--openapi`/`--tests`, it exports both OpenAPI and standard
-Step CI YAML; `--tests --format hurl` exports Hurl instead. `test` uses the official
-Step CI Runner in-process (no separate runner installation), accepts a YAML file
-or a directory of `*.stepci.yml` suites, and exits 0 only when every step passes.
-`--json` emits a machine-readable report without terminal formatting. Hurl suites
-run through the Hurl CLI, not a private interpreter.
+directory. Without `--openapi`/`--tests`, it exports both OpenAPI and a Bruno
+collection. Acceptance export no longer has a `--format` switch. `test` takes
+one generated collection directory and uses the pinned Bruno CLI installed by
+pnpm. `--json` emits a machine-readable report without terminal formatting.
 
 Generated request clocks default to the model examples. `test --as-of <UTC>`
 overrides request clocks, **not the compiled expected values**. Only trusted test

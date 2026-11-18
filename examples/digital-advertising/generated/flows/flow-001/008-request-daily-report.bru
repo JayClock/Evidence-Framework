@@ -1,0 +1,48 @@
+meta {
+  name: request.daily-report#report-accepted
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{host}}/ads-promotion-orders/{{capture_1_3_1}}/daily-reports
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-evidence-role: role.advertiser
+  x-evidence-asof: {{asOf_8}}
+}
+
+body:json {
+  {
+    "id": "report-request-summer",
+    "report_date": "2026-07-02"
+  }
+}
+
+vars:post-response {
+  capture_1_8_1: res.body?.id
+}
+
+assert {
+  res.status: eq 202
+  res.body?._links?.self?.href: eq "/ads-promotion-orders/ads-order-summer/daily-reports/report-request-summer"
+  res.body?.expired_at: eq "2026-07-04T00:10:00Z"
+  res.body?.id: eq "report-request-summer"
+  res.body?.report_date: eq "2026-07-02"
+  res.body?.started_at: eq "2026-07-03T00:10:00Z"
+}
+
+tests {
+  test("202 requires a non-empty Location header", function () {
+    expect(res.getHeader("location")).to.be.a("string").and.match(/\S/);
+  });
+}
+
+settings {
+  followRedirects: false
+  timeout: 5000
+}

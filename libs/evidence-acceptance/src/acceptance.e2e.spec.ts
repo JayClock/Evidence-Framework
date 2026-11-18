@@ -4,7 +4,7 @@ import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { runFromFile } from '@stepci/runner';
+import { runAcceptanceSuite } from './runner/acceptanceRunner.js';
 import { Ajv2020 } from 'ajv/dist/2020.js';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { runCli } from './cli.js';
@@ -35,7 +35,7 @@ beforeEach(async () => {
     out,
   ]);
   expect(result.exitCode, JSON.stringify(result)).toBe(0);
-  suite = path.join(out, 'acceptance.stepci.yml');
+  suite = out;
 });
 afterEach(() => rmSync(root, { recursive: true, force: true }));
 
@@ -78,7 +78,7 @@ async function execute(fault = 'none') {
         }
       });
     });
-    return await runFromFile(suite, { env: { host } });
+    return await runAcceptanceSuite({ suitePath: suite, targetUrl: host });
   } finally {
     if (child.exitCode === null && child.signalCode === null) {
       const exited = once(child, 'exit');
@@ -88,87 +88,94 @@ async function execute(fault = 'none') {
   }
 }
 
-describe('generated acceptance against an independent backend process', () => {
-  it('passes the complete positive and invalid-input flow via the official runner', async () => {
-    const report = await execute();
-    expect(
-      report.result.passed,
-      JSON.stringify(report.result.tests, null, 2),
-    ).toBe(true);
-    const steps = report.result.tests.flatMap((flow) => flow.steps);
-    expect(report.result.tests).toHaveLength(5);
-    expect(steps).toHaveLength(121);
-    expect(steps.every((step) => !step.errored && !step.skipped)).toBe(true);
-    expect(
-      steps
-        .filter((step) => step.name?.endsWith('-00-tamper'))
-        .every((step) => step.response?.status === 422),
-    ).toBe(true);
-  });
-  it('goes red for an incorrect derived amount, and green again after fixing it', async () => {
-    const broken = await execute('amount');
-    expect(broken.result.passed).toBe(false);
-    const step = broken.result.tests
-      .flatMap((flow) => flow.steps)
-      .find((step) => step.name === 'confirmation.order#single-on-time')!;
-    const checks = step.checks?.jsonpath as Record<
-      string,
-      { given: unknown; expected: unknown; passed: boolean }
-    >;
-    expect(checks['$["gross_amount_minor"]']).toMatchObject({
-      given: 1466403,
-      expected: 1466402,
-      passed: false,
+describe(
+  'generated acceptance against an independent backend process',
+  { timeout: 20_000 },
+  () => {
+    it('passes the complete positive and invalid-input flow via the official runner', async () => {
+      const report = await execute();
+      expect(
+        report.passed,
+        JSON.stringify(
+          report.steps.filter((step) => !step.passed),
+          null,
+          2,
+        ),
+      ).toBe(true);
+      const steps = report.steps;
+      expect(report.selectedFlowCount).toBe(5);
+      expect(steps).toHaveLength(121);
+      expect(steps.every((step) => !step.errored && !step.skipped)).toBe(true);
+      expect(
+        steps
+          .filter((step) => step.name?.endsWith('-00-tamper'))
+          .every((step) => step.status === 422),
+      ).toBe(true);
     });
-    expect((await execute()).result.passed).toBe(true);
-  });
-  it('goes red if a backend accepts caller-supplied derived fields', async () => {
-    const broken = await execute('accept-derived');
-    expect(broken.result.passed).toBe(false);
-    const step = broken.result.tests[0]!.steps.find((step) =>
-      step.name?.endsWith('-00-tamper'),
-    )!;
-    expect(step.checks?.status).toMatchObject({
-      given: 201,
-      expected: 422,
-      passed: false,
+    it('goes red for an incorrect derived amount, and green again after fixing it', async () => {
+      const broken = await execute('amount');
+      expect(broken.passed).toBe(false);
+      const step = broken.steps.find(
+        (step) => step.name === 'confirmation.order#single-on-time',
+      )!;
+      expect(step.assertions).toContainEqual({
+        path: 'jsonpath.$["gross_amount_minor"]',
+        actual: 1466403,
+        expected: 1466402,
+        passed: false,
+      });
+      expect((await execute()).passed).toBe(true);
     });
-  });
-  it('goes red if the backend ignores the explicit business clock', async () => {
-    const broken = await execute('clock');
-    expect(broken.result.passed).toBe(false);
-    const checks = broken.result.tests[0]!.steps[0]!.checks?.jsonpath as Record<
-      string,
-      { passed: boolean }
-    >;
-    expect(checks['$["signed_at"]']?.passed).toBe(false);
-  });
-  it('goes red for a response that violates the projected JSON Schema', async () => {
-    const broken = await execute('extra-field');
-    expect(broken.result.passed).toBe(false);
-    expect(broken.result.tests[0]!.steps[0]!.checks?.schema).toMatchObject({
-      passed: false,
+    it('goes red if a backend accepts caller-supplied derived fields', async () => {
+      const broken = await execute('accept-derived');
+      expect(broken.passed).toBe(false);
+      const step = broken.steps.find((step) =>
+        step.name.endsWith('-00-tamper'),
+      )!;
+      expect(step.assertions).toContainEqual({
+        path: 'res.status',
+        actual: 201,
+        expected: 422,
+        passed: false,
+      });
     });
-  });
-  it('keeps the distributed entity JSON Schema aligned with inline examples', () => {
-    const schemaPath = new URL(
-      '../../evidence-schema/schemas/entity.schema.json',
-      import.meta.url,
-    );
-    const schema = JSON.parse(readFileSync(schemaPath, 'utf8'));
-    const validate = new Ajv2020({
-      strict: false,
-      validateFormats: false,
-    }).compile(schema);
-    const bundle = JSON.parse(readFileSync(model, 'utf8'));
-    for (const entity of bundle.entities)
-      expect(validate(entity), JSON.stringify(validate.errors)).toBe(true);
-    const invalid = structuredClone(
-      bundle.entities.find(
-        (entity: { id: string }) => entity.id === 'confirmation.order',
-      ),
-    );
-    invalid.examples[0].test.inputs = {};
-    expect(validate(invalid)).toBe(false);
-  });
-});
+    it('goes red if the backend ignores the explicit business clock', async () => {
+      const broken = await execute('clock');
+      expect(broken.passed).toBe(false);
+      expect(broken.steps[0]?.assertions).toContainEqual(
+        expect.objectContaining({
+          path: 'jsonpath.$["signed_at"]',
+          passed: false,
+        }),
+      );
+    });
+    it('goes red for a response that violates the projected JSON Schema', async () => {
+      const broken = await execute('extra-field');
+      expect(broken.passed).toBe(false);
+      expect(broken.steps[0]?.assertions).toContainEqual(
+        expect.objectContaining({ path: 'schema', passed: false }),
+      );
+    });
+    it('keeps the distributed entity JSON Schema aligned with inline examples', () => {
+      const schemaPath = new URL(
+        '../../evidence-schema/schemas/entity.schema.json',
+        import.meta.url,
+      );
+      const schema = JSON.parse(readFileSync(schemaPath, 'utf8'));
+      const validate = new Ajv2020({
+        strict: false,
+        validateFormats: false,
+      }).compile(schema);
+      const bundle = JSON.parse(readFileSync(model, 'utf8'));
+      for (const entity of bundle.entities)
+        expect(validate(entity), JSON.stringify(validate.errors)).toBe(true);
+      const invalid = structuredClone(
+        bundle.entities.find(
+          (entity: { id: string }) => entity.id === 'confirmation.order',
+        ),
+      );
+      invalid.examples[0].test.inputs = {};
+      expect(validate(invalid)).toBe(false);
+    });
+  },
+);

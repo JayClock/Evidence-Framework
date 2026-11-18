@@ -1,6 +1,6 @@
 import type {
-  AcceptanceProjection,
-  AcceptanceStep,
+  SuiteProjection,
+  SuiteStep,
 } from '../delivery/scenarioProjector.js';
 import { assertLiteralData } from './testLiterals.js';
 
@@ -51,13 +51,16 @@ function literal(value: unknown, ref: string, indent?: number): string {
 }
 
 /** Compile a single-node JSONPath, not an arbitrary expression, to a Bru JS accessor. */
-function responseExpression(path: string, ref: string): string {
+export function responseSegments(
+  path: string,
+  ref: string,
+): (string | number)[] {
   if (!path.startsWith('$'))
     return unsupported(
       ref,
       `invalid response JSONPath ${JSON.stringify(path)}`,
     );
-  let expression = 'res.body';
+  const segments: (string | number)[] = [];
   let rest = path.slice(1);
   while (rest) {
     const segment =
@@ -89,15 +92,26 @@ function responseExpression(path: string, ref: string): string {
         `invalid response JSONPath ${JSON.stringify(path)}`,
       );
     }
-    expression += /^[A-Za-z_$][\w$]*$/.test(key)
-      ? `?.${key}`
-      : `?.[${index ?? JSON.stringify(key)}]`;
+    segments.push(index === undefined ? key : Number(index));
     rest = rest.slice(segment[0].length);
   }
-  return expression;
+  return segments;
 }
 
-function checks(step: AcceptanceStep): string[] {
+export function responseExpression(path: string, ref: string): string {
+  return (
+    'res.body' +
+    responseSegments(path, ref)
+      .map((key) =>
+        typeof key === 'string' && /^[A-Za-z_$][\w$]*$/.test(key)
+          ? `?.${key}`
+          : `?.[${JSON.stringify(key)}]`,
+      )
+      .join('')
+  );
+}
+
+function checks(step: SuiteStep): string[] {
   const assertions = [`res.status: eq ${step.status}`];
   const asserted = new Set<string>();
   const tests: string[] = [];
@@ -139,11 +153,30 @@ function checks(step: AcceptanceStep): string[] {
   ];
 }
 
+export const brunoFlowPath = (index: number) => `flows/flow-${ordinal(index)}`;
+
+export function brunoRequestPath(
+  flowIndex: number,
+  stepIndex: number,
+  ref: string,
+): string {
+  const slug = (ref.split('#', 1)[0] ?? '')
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]+/g, '-')
+    .slice(0, 64);
+  return `${brunoFlowPath(flowIndex)}/${ordinal(stepIndex)}-${slug || 'request'}.bru`;
+}
+
 /** Render a native Bruno collection; no Node runner or legacy format involved. */
 export function renderBruno(
-  projection: AcceptanceProjection,
+  projection: SuiteProjection,
+  options: { readonly asOf?: string; readonly timeoutMs?: number } = {},
 ): Record<string, string> {
   const host = 'http://localhost:8080';
+  const override =
+    options.asOf === undefined
+      ? undefined
+      : singleLine(options.asOf, 'clock override', projection.modelId);
   const clocks = new Map<string, string>();
   const files: Record<string, string> = {
     'bruno.json': `${JSON.stringify({ version: '1', name: `${projection.modelId} acceptance`, type: 'collection' }, null, 2)}\n`,
@@ -157,7 +190,7 @@ export function renderBruno(
     ),
   };
   projection.flows.forEach((flow, flowIndex) => {
-    const folder = `flows/flow-${ordinal(flowIndex)}`;
+    const folder = brunoFlowPath(flowIndex);
     const tags = [...new Set(flow.tags ?? [])].sort(compareText);
     for (const tag of tags)
       if (!/^[\p{L}\p{N}_-]+$/u.test(tag))
@@ -213,11 +246,7 @@ export function renderBruno(
         variables.set(name, variable);
         return `${variable}: ${responseExpression(path, step.ref)}`;
       });
-      const slug = (step.ref.split('#', 1)[0] ?? '')
-        .toLowerCase()
-        .replace(/[^a-z0-9_-]+/g, '-')
-        .slice(0, 64);
-      files[`${folder}/${ordinal(stepIndex)}-${slug || 'request'}.bru`] = file(
+      files[brunoRequestPath(flowIndex, stepIndex, step.ref)] = file(
         block('meta', [
           `name: ${singleLine(step.ref, 'step name', step.ref)}`,
           'type: http',
@@ -236,14 +265,17 @@ export function renderBruno(
         block('body:json', literal(step.inputs, step.ref, 2).split('\n')),
         ...(captures.length ? [block('vars:post-response', captures)] : []),
         ...checks(step),
-        block('settings', ['followRedirects: false', 'timeout: 5000']),
+        block('settings', [
+          'followRedirects: false',
+          `timeout: ${options.timeoutMs ?? 5000}`,
+        ]),
       );
     });
   });
   files['environments/test.bru'] = file(
     block('vars', [
       `host: ${host}`,
-      ...[...clocks].map(([asOf, name]) => `${name}: ${asOf}`),
+      ...[...clocks].map(([asOf, name]) => `${name}: ${override ?? asOf}`),
     ]),
   );
   return files;

@@ -1,0 +1,36 @@
+meta {
+  name: confirmation.milestone-statement#milestone-precision
+  type: http
+  seq: 25
+}
+
+post {
+  url: {{host}}/settlements/{{capture_3_18_1}}/milestone-statements/{{capture_3_24_1}}/confirmation
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-evidence-role: role.settlement-seller
+  x-evidence-asof: {{asOf_11}}
+}
+
+body:json {
+  {
+    "acknowledged": true,
+    "id": "milestone-precision-confirmation-milestone-statement"
+  }
+}
+
+assert {
+  res.status: eq 201
+  res.body?.acknowledged: eq true
+  res.body?.confirmed_at: eq "2026-06-15T00:00:01Z"
+  res.body?.id: eq "milestone-precision-confirmation-milestone-statement"
+}
+
+settings {
+  followRedirects: false
+  timeout: 5000
+}

@@ -44,7 +44,7 @@
 ### 3. 静态模型校验与标准化 HTTP 验收
 
 - **AST 严格静态门禁**：即时检测悬空引用、派生对称性破坏、角色权责失配等致命建模缺陷。
-- **内联样例直出验收**：实体 `examples[].test` 声明测试流程，编译期 CEL 求值产生派生断言，直接导出 Step CI / Hurl；由标准工具对真实后端执行 HTTP 验收。静态检查通过不代表后端验收通过。
+- **内联样例直出验收**：实体 `examples[].test` 声明测试流程，编译期 CEL 求值产生派生断言，直接导出 Bruno 集合；由 Bruno CLI 对真实后端执行 HTTP 验收。静态检查通过不代表后端验收通过。
 - **纯 TypeScript 原生化**：核心引擎完全在内存执行，为画布提供按键级（Keystroke-level）的实时 Lint 反馈。
 
 ### 4. AI 智能体协同建模（MCP / Agent Core）
@@ -60,7 +60,7 @@
 - [产研迭代计划](examples/agile-sprint/README.md)：一个迭代窗口内追加多份故事验收凭证。
 - [共享结算](examples/shared-settlement/README.md)：一笔收入核销季度及年度指标，支持从两处反向追溯。
 
-三个示例各自包含 FM Bundle、OpenAPI 和 Step CI 资产，不附带服务实现。运行 `pnpm nx build cli && pnpm examples:verify` 可只读核验。
+三个示例各自包含 FM Bundle、OpenAPI 和 Bruno 集合，不附带服务实现。运行 `pnpm nx build cli && pnpm examples:verify` 可只读核验。
 
 ## 🛠️ DSL 示例：语言无关的履约事实表达
 
@@ -119,7 +119,7 @@
 │   ├── evidence-agent/                  # AI Agent 运行时：会话、提示词、治理闭环、原生传感器与 Tool 扩展
 │   ├── evidence-mcp/                    # Model Context Protocol (MCP) 工具与桥接协议
 │   ├── evidence-api/                    # API 契约投影与 OpenAPI 3.1 规格导出（不执行验收）
-│   └── evidence-acceptance/             # Step CI/Hurl 生成、HTTP 验收、漂移与 oasdiff 兼容性门禁
+│   └── evidence-acceptance/             # Bruno 生成、HTTP 验收、漂移与 oasdiff 兼容性门禁
 └── docs/                                # 架构设计 RFC 与工作区规范
 ```
 
@@ -165,7 +165,7 @@ pnpm evidence inspect procurement.evidence.json --json
 pnpm evidence compile .evidence/fm --out compiled.json --compact
 pnpm evidence lineage .evidence/fm --out lineage.json
 
-# 导出 OpenAPI 3.1 与 Step CI / Hurl（默认 Step CI）
+# 导出 OpenAPI 3.1 与 Bruno 集合
 pnpm evidence export --model procurement.evidence.json --out dist/contracts
 pnpm evidence export --model procurement.evidence.json --out dist/contracts --verify
 pnpm evidence test --target http://localhost:8080 --scenarios dist/contracts --json
@@ -205,4 +205,4 @@ pnpm evidence diff baseline.evidence.json procurement.evidence.json --format jso
 ### 3. 生产语义漂移与闭环治理（Drift & Governance）
 
 - [ ] **生产环境双向语义漂移实时检测（Live Drift Check）**：深化本地传感器体系，实现对下游实际运行 API / 数据库表结构与 DSL 模型基线的在线语义比对和告警。
-- [x] **标准场景验收导出**：从内联 `examples[].test` 直接导出 Step CI / Hurl，支持依赖捕获、派生断言和显式负向用例。旧 Scenario / Instance 文件格式及内存回放器已移除。
+- [x] **标准场景验收导出**：从内联 `examples[].test` 直接导出 Bruno 集合，支持依赖捕获、派生断言和显式负向用例。旧 Scenario / Instance 文件格式及内存回放器已移除。

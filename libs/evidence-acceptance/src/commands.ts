@@ -43,7 +43,6 @@ export interface CliOptions {
   fmCheck?: string;
   api?: string;
   out?: string;
-  format?: 'stepci' | 'hurl';
 }
 
 export interface DiffCliOptions {
@@ -62,7 +61,7 @@ export interface CliResult {
 }
 
 const USAGE =
-  'usage: evidence-api <inspect|check|project|deliver> --project-root DIR --fm DIR_OR_BUNDLE [--fm-check FILE] [--api FILE] [--out DIR]\n       evidence-api diff --base DIR_OR_BUNDLE --target DIR_OR_BUNDLE [--base-api FILE] [--api FILE] [--format json|markdown]\n       evidence-api export-tests --project-root DIR --fm DIR_OR_BUNDLE [--format stepci|hurl] [--out DIR]';
+  'usage: evidence-api <inspect|check|project|deliver> --project-root DIR --fm DIR_OR_BUNDLE [--fm-check FILE] [--api FILE] [--out DIR]\n       evidence-api diff --base DIR_OR_BUNDLE --target DIR_OR_BUNDLE [--base-api FILE] [--api FILE] [--format json|markdown]\n       evidence-api export-tests --project-root DIR --fm DIR_OR_BUNDLE [--out DIR]';
 
 const isDirectory = (target: string): boolean => {
   try {
@@ -178,18 +177,10 @@ const parse = (
             ...(value('api') === undefined ? {} : { api: value('api') }),
           };
         }
-        const format = value('format') ?? 'stepci';
-        if (
-          command === 'export-tests' &&
-          format !== 'stepci' &&
-          format !== 'hurl'
-        )
-          throw new Error('--format 必须是 stepci 或 hurl');
         return {
           command,
           projectRoot: value('projectRoot') ?? '',
           fm: value('fm') ?? '',
-          ...(command === 'export-tests' ? { format } : {}),
           ...(value('fmCheck') === undefined
             ? {}
             : { fmCheck: value('fmCheck') }),
@@ -201,7 +192,7 @@ const parse = (
       command === 'diff'
         ? ['base', 'target', 'base-api', 'api', 'format']
         : command === 'export-tests'
-          ? ['project-root', 'fm', 'out', 'format']
+          ? ['project-root', 'fm', 'out']
           : ['project-root', 'fm', 'fm-check', 'api', 'out'];
     for (const flag of flags) registered.option(`--${flag} <value>`, flag);
   }
@@ -340,13 +331,11 @@ export const runApiCommand = async (
       const exported = await exportAcceptanceTests({
         fm: options.fm,
         out,
-        format: options.format ?? 'stepci',
       });
       return {
         output: {
           valid: true,
           out,
-          format: options.format ?? 'stepci',
           ...exported,
         },
         exitCode: 0,

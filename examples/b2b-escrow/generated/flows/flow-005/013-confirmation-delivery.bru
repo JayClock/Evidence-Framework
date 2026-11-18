@@ -1,0 +1,36 @@
+meta {
+  name: confirmation.delivery#single-on-time
+  type: http
+  seq: 13
+}
+
+post {
+  url: {{host}}/fulfillments/{{capture_5_11_1}}/deliveries/{{capture_5_12_1}}/confirmation
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-evidence-role: role.fulfillment-seller
+  x-evidence-asof: {{asOf_10}}
+}
+
+body:json {
+  {
+    "delivered_quantity": 999,
+    "id": "single-on-time-confirmation-delivery"
+  }
+}
+
+assert {
+  res.status: eq 201
+  res.body?.confirmed_at: eq "2026-06-15T00:00:00Z"
+  res.body?.delivered_quantity: eq 999
+  res.body?.id: eq "single-on-time-confirmation-delivery"
+}
+
+settings {
+  followRedirects: false
+  timeout: 5000
+}

@@ -1,0 +1,33 @@
+meta {
+  name: confirmation.milestone-release#milestone-capped-20-duplicate
+  type: http
+  seq: 23
+}
+
+post {
+  url: {{host}}/settlements/{{capture_1_18_1}}/milestone-releases/{{capture_1_19_1}}/confirmation
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-evidence-role: role.settlement-escrow
+  x-evidence-asof: {{asOf_9}}
+}
+
+body:json {
+  {
+    "id": "milestone-capped-duplicate"
+  }
+}
+
+assert {
+  res.status: eq 409
+  res.body?.error: eq "ALREADY_CONFIRMED"
+}
+
+settings {
+  followRedirects: false
+  timeout: 5000
+}

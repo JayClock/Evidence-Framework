@@ -4,16 +4,18 @@ export {
   type DriftIssue,
   type DriftReport,
 } from './runner/driftInspector.js';
-export { renderDeliverables } from './renderDeliverables.js';
+export {
+  compileAcceptanceBaseline,
+  renderDeliverables,
+} from './renderDeliverables.js';
 export {
   projectAcceptanceTests,
   type AcceptanceProjection,
   type AcceptanceFlow,
   type AcceptanceStep,
 } from './delivery/scenarioProjector.js';
-export { renderStepCi } from './renderer/stepCiRenderer.js';
-export { renderHurl } from './renderer/hurlRenderer.js';
 export { renderBruno } from './renderer/brunoRenderer.js';
+export { renderAcceptanceSuite } from './renderer/brunoSuite.js';
 export {
   compareContracts,
   type ContractComparison,

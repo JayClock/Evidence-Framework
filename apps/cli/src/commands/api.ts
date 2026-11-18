@@ -77,7 +77,7 @@ export async function apiCommand(
     command === 'diff'
       ? ['base', 'target', 'baseApi', 'api', 'format']
       : command === 'export-tests'
-        ? ['projectRoot', 'model', 'fm', 'out', 'o', 'format']
+        ? ['projectRoot', 'model', 'fm', 'out', 'o']
         : ['projectRoot', 'model', 'fm', 'fmCheck', 'api', 'out', 'o'],
   );
   for (const name of Object.keys(options)) {
@@ -100,13 +100,6 @@ export async function apiCommand(
     format !== 'markdown'
   )
     throw new Error('--format must be json or markdown');
-  if (
-    command === 'export-tests' &&
-    format !== undefined &&
-    format !== 'stepci' &&
-    format !== 'hurl'
-  )
-    throw new Error('--format must be stepci or hurl');
   const result = await runApiCommand(
     command === 'diff'
       ? {
@@ -127,9 +120,6 @@ export async function apiCommand(
           ...(fmCheck === undefined ? {} : { fmCheck }),
           ...(api === undefined ? {} : { api }),
           ...(out === undefined ? {} : { out }),
-          ...(command === 'export-tests'
-            ? { format: (format as 'stepci' | 'hurl') ?? 'stepci' }
-            : {}),
         },
   );
   if (result.error) throw new Error(result.error);

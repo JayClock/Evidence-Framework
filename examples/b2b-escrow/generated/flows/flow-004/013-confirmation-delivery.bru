@@ -1,0 +1,36 @@
+meta {
+  name: confirmation.delivery#single-late
+  type: http
+  seq: 13
+}
+
+post {
+  url: {{host}}/fulfillments/{{capture_4_11_1}}/deliveries/{{capture_4_12_1}}/confirmation
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-evidence-role: role.fulfillment-seller
+  x-evidence-asof: {{asOf_9}}
+}
+
+body:json {
+  {
+    "delivered_quantity": 1000,
+    "id": "single-late-confirmation-delivery"
+  }
+}
+
+assert {
+  res.status: eq 201
+  res.body?.confirmed_at: eq "2026-06-30T00:00:00Z"
+  res.body?.delivered_quantity: eq 1000
+  res.body?.id: eq "single-late-confirmation-delivery"
+}
+
+settings {
+  followRedirects: false
+  timeout: 5000
+}

@@ -1,8 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { parse } from 'yaml';
 import { projectAcceptanceTests } from './scenarioProjector.js';
-import { renderStepCi } from '../renderer/stepCiRenderer.js';
-import { renderHurl } from '../renderer/hurlRenderer.js';
+import { brunoRequestPath, renderBruno } from '../renderer/brunoRenderer.js';
 import {
   createAcceptanceModel,
   EXAMPLE_AS_OF,
@@ -14,7 +12,7 @@ const getExample = (
 ) => model.entities.find((item) => item.id === entity)!.examples![0]!;
 
 describe('direct inline-example acceptance projection', () => {
-  it('carries optional model tags through standard Step CI test env metadata', () => {
+  it('carries optional model tags through Bruno flow metadata', () => {
     const model = createAcceptanceModel();
     const entity = model.entities.find(
       (item) => item.id === 'confirmation.payment',
@@ -25,12 +23,9 @@ describe('direct inline-example acceptance projection', () => {
     };
     const projection = projectAcceptanceTests(model);
     expect(projection.flows[0]?.tags).toEqual(['dod', 'payment']);
-    const workflow = parse(renderStepCi(projection));
-    expect(JSON.parse(workflow.tests.flow_1.env.evidenceTags)).toEqual([
-      `flow:${projection.flows[0]!.id}`,
-      'dod',
-      'payment',
-    ]);
+    expect(renderBruno(projection)['flows/flow-001/folder.bru']).toContain(
+      'tags: [\n    dod\n    payment',
+    );
   });
   it('orders causality, derives assertions and captures modeled IDs without mutating inputs', () => {
     const model = createAcceptanceModel(),
@@ -49,21 +44,6 @@ describe('direct inline-example acceptance projection', () => {
     expect(steps[2]!.parameters.paymentId).toBeDefined();
     expect(model).toEqual(before);
     expect(projectAcceptanceTests(model)).toEqual(projection);
-  });
-  it('emits native Step CI liquid syntax, JSONPath checks and isolated Hurl documents', () => {
-    const projection = projectAcceptanceTests(createAcceptanceModel());
-    const yaml = renderStepCi(projection);
-    const workflow = parse(yaml);
-    const steps = workflow.tests.flow_1.steps;
-    expect(yaml).toContain('${{env.host}}');
-    expect(steps[2].http.url).toContain('${{captures.');
-    expect(steps[2].http.headers['x-evidence-asof']).toBe('${{env.asOf}}');
-    expect(parse(yaml).env.asOf).toBe(EXAMPLE_AS_OF);
-    expect(steps[2].http.check.jsonpath['$["total_amount"]']).toBe(500);
-    const hurl = renderHurl(projection)['flow-001.hurl']!;
-    expect(hurl).toContain('[Captures]');
-    expect(hurl).toContain('== 500');
-    expect(hurl).not.toContain('fulfillmentStatus');
   });
   it('projects a delegated callback without giving it the request action', () => {
     const model = createAcceptanceModel();
@@ -110,8 +90,10 @@ describe('direct inline-example acceptance projection', () => {
         itemPath: '/payment-confirmations/{paymentConfirmationId}',
       },
     });
-    const steps = parse(renderStepCi(projection)).tests.flow_1.steps;
-    expect(steps[2].http.headers['x-evidence-role']).toBe(roleRef);
+    const filename = brunoRequestPath(0, 2, projection.flows[0]!.steps[2]!.ref);
+    expect(renderBruno(projection)[filename]).toContain(
+      `x-evidence-role: ${roleRef}`,
+    );
 
     getExample(model, 'request.payment').test!.actingRoleRef = roleRef;
     expect(() => projectAcceptanceTests(model)).toThrow(
@@ -247,8 +229,7 @@ describe('direct inline-example acceptance projection', () => {
   it('refuses template injection in literal example data', () => {
     const projection = projectAcceptanceTests(createAcceptanceModel());
     projection.flows[0]!.steps[0]!.inputs['id'] = '${{env.host}}';
-    expect(() => renderStepCi(projection)).toThrow('TEST_TEMPLATE_UNSUPPORTED');
-    expect(() => renderHurl(projection)).toThrow('TEST_TEMPLATE_UNSUPPORTED');
+    expect(() => renderBruno(projection)).toThrow('TEST_TEMPLATE_UNSUPPORTED');
   });
   it('keeps independent flows and capture namespaces separate', () => {
     const model = createAcceptanceModel();
@@ -264,16 +245,9 @@ describe('direct inline-example acceptance projection', () => {
     expect(projection.flows.map((flow) => flow.steps.length).sort()).toEqual([
       1, 3,
     ]);
-    expect(Object.keys(renderHurl(projection))).toEqual([
-      'flow-001.hurl',
-      'flow-002.hurl',
-    ]);
-    expect(Object.keys(parse(renderStepCi(projection)).tests)).toHaveLength(2);
-  });
-  it('does not support complex Hurl equality silently', () => {
-    const projection = projectAcceptanceTests(createAcceptanceModel());
-    projection.flows[0]!.steps[0]!.assertions['$.object'] = { nested: 1 };
-    expect(() => renderHurl(projection)).toThrow('HURL_UNSUPPORTED');
+    const files = Object.keys(renderBruno(projection));
+    expect(files).toContain('flows/flow-001/folder.bru');
+    expect(files).toContain('flows/flow-002/folder.bru');
   });
 });
 
@@ -324,6 +298,7 @@ it('selects proposal signing from example causality and captures business-named 
     'inquiryId',
     'quotationId',
   ]);
-  expect(renderStepCi(projection)).toContain('/quotations/');
-  expect(Object.values(renderHurl(projection))[0]).toContain('/quotations/');
+  expect(
+    renderBruno(projection)[brunoRequestPath(0, 2, steps[2]!.ref)],
+  ).toContain('/quotations/');
 });

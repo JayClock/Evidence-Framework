@@ -1,0 +1,34 @@
+meta {
+  name: confirmation.release#single-on-time-01-time-tamper
+  type: http
+  seq: 19
+}
+
+post {
+  url: {{host}}/settlements/{{capture_5_16_1}}/releases/{{capture_5_17_1}}/confirmation
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-evidence-role: role.settlement-escrow
+  x-evidence-asof: {{asOf_10}}
+}
+
+body:json {
+  {
+    "confirmed_at": "2000-01-01T00:00:00Z",
+    "id": "single-on-time-backdated"
+  }
+}
+
+assert {
+  res.status: eq 422
+  res.body?.error: eq "INVALID_INPUT"
+}
+
+settings {
+  followRedirects: false
+  timeout: 5000
+}

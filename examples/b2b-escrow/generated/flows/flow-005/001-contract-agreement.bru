@@ -1,0 +1,54 @@
+meta {
+  name: contract.agreement#single-on-time
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{host}}/agreements
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-evidence-role: role.procurement-buyer
+  x-evidence-asof: {{asOf}}
+}
+
+body:json {
+  {
+    "daily_penalty_bps": 100,
+    "delivery_deadline": "2026-06-15T00:00:00Z",
+    "id": "single-on-time-contract-agreement",
+    "quantity": 999,
+    "retention_bps": 500,
+    "tax_bps": 1300,
+    "tier1_unit_price_minor": 1299,
+    "tier2_unit_price_minor": 1199,
+    "tier_threshold": 1000
+  }
+}
+
+vars:post-response {
+  capture_5_1_1: res.body?.id
+}
+
+assert {
+  res.status: eq 201
+  res.body?.daily_penalty_bps: eq 100
+  res.body?.delivery_deadline: eq "2026-06-15T00:00:00Z"
+  res.body?.id: eq "single-on-time-contract-agreement"
+  res.body?.quantity: eq 999
+  res.body?.retention_bps: eq 500
+  res.body?.signed_at: eq "2026-06-01T00:00:00Z"
+  res.body?.tax_bps: eq 1300
+  res.body?.tier1_unit_price_minor: eq 1299
+  res.body?.tier2_unit_price_minor: eq 1199
+  res.body?.tier_threshold: eq 1000
+}
+
+settings {
+  followRedirects: false
+  timeout: 5000
+}

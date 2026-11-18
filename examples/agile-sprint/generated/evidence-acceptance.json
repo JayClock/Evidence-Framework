@@ -1,0 +1,740 @@
+{
+  "projection": {
+    "flows": [
+      {
+        "id": "two-stories-one-sprint",
+        "steps": [
+          {
+            "actingRoleRef": "role.product-owner",
+            "asOf": "2026-08-03T09:00:00Z",
+            "assertions": {
+              "$[\"id\"]": "iteration-42",
+              "$[\"signed_at\"]": "2026-08-03T09:00:00Z",
+              "$[\"sprint_goal\"]": "买家可查看订单并导出历史记录"
+            },
+            "captures": {
+              "capture_1_0": "$.id"
+            },
+            "inputs": {
+              "id": "iteration-42",
+              "sprint_goal": "买家可查看订单并导出历史记录"
+            },
+            "parameters": {},
+            "ref": "contract.iteration-plan#sprint-42",
+            "responseSchema": {
+              "additionalProperties": false,
+              "description": "签署产研迭代计划，双方权责自此成立",
+              "examples": [
+                {
+                  "_links": {
+                    "self": {
+                      "href": "/iteration-plans/{contractId}"
+                    }
+                  },
+                  "id": "iteration-42",
+                  "signed_at": "2026-08-03T09:00:00Z",
+                  "sprint_goal": "买家可查看订单并导出历史记录"
+                }
+              ],
+              "properties": {
+                "_links": {
+                  "additionalProperties": {
+                    "properties": {
+                      "href": {
+                        "type": "string"
+                      },
+                      "method": {
+                        "type": "string"
+                      },
+                      "templated": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "href"
+                    ],
+                    "type": "object"
+                  },
+                  "required": [
+                    "self"
+                  ],
+                  "type": "object"
+                },
+                "id": {
+                  "description": "在此业务凭证类型中唯一的标识",
+                  "type": "string",
+                  "x-evidence-caller-input": true,
+                  "x-evidence-origin": "caller"
+                },
+                "signed_at": {
+                  "description": "签署时刻",
+                  "format": "date-time",
+                  "readOnly": true,
+                  "type": "string",
+                  "x-evidence-caller-input": false,
+                  "x-evidence-origin": "service-time"
+                },
+                "sprint_goal": {
+                  "description": "迭代目标",
+                  "type": "string",
+                  "x-evidence-caller-input": true,
+                  "x-evidence-origin": "caller"
+                }
+              },
+              "required": [
+                "id",
+                "signed_at",
+                "sprint_goal",
+                "_links"
+              ],
+              "type": "object"
+            },
+            "route": {
+              "method": "POST",
+              "path": "/iteration-plans"
+            },
+            "status": 201
+          },
+          {
+            "actingRoleRef": "role.product-owner",
+            "asOf": "2026-08-03T10:00:00Z",
+            "assertions": {
+              "$[\"backlog_revision\"]": "sprint-42-r1",
+              "$[\"expired_at\"]": "2026-08-17T10:00:00Z",
+              "$[\"id\"]": "backlog-42",
+              "$[\"started_at\"]": "2026-08-03T10:00:00Z",
+              "$[\"story_count\"]": 2
+            },
+            "captures": {},
+            "inputs": {
+              "backlog_revision": "sprint-42-r1",
+              "id": "backlog-42",
+              "story_count": 2
+            },
+            "parameters": {
+              "contractId": "capture_1_0"
+            },
+            "ref": "request.backlog#propose-scope",
+            "responseSchema": {
+              "additionalProperties": false,
+              "description": "发起待办范围确认请求，开启一个有截止时间的履约窗口",
+              "examples": [
+                {
+                  "_links": {
+                    "self": {
+                      "href": "/iteration-plans/{contractId}/backlog"
+                    }
+                  },
+                  "backlog_revision": "sprint-42-r1",
+                  "expired_at": "2026-08-17T10:00:00Z",
+                  "id": "backlog-42",
+                  "started_at": "2026-08-03T10:00:00Z",
+                  "story_count": 2
+                }
+              ],
+              "properties": {
+                "_links": {
+                  "additionalProperties": {
+                    "properties": {
+                      "href": {
+                        "type": "string"
+                      },
+                      "method": {
+                        "type": "string"
+                      },
+                      "templated": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "href"
+                    ],
+                    "type": "object"
+                  },
+                  "required": [
+                    "self"
+                  ],
+                  "type": "object"
+                },
+                "backlog_revision": {
+                  "description": "待办清单版本",
+                  "type": "string",
+                  "x-evidence-caller-input": true,
+                  "x-evidence-origin": "caller"
+                },
+                "expired_at": {
+                  "description": "截止时刻",
+                  "format": "date-time",
+                  "readOnly": true,
+                  "type": "string",
+                  "x-evidence-caller-input": false,
+                  "x-evidence-derived-by-rule": "rule.request.backlog-deadline",
+                  "x-evidence-origin": "derived",
+                  "x-evidence-rule": "rule.request.backlog-deadline"
+                },
+                "id": {
+                  "description": "在此业务凭证类型中唯一的标识",
+                  "type": "string",
+                  "x-evidence-caller-input": true,
+                  "x-evidence-origin": "caller"
+                },
+                "started_at": {
+                  "description": "开启时刻",
+                  "format": "date-time",
+                  "readOnly": true,
+                  "type": "string",
+                  "x-evidence-caller-input": false,
+                  "x-evidence-origin": "service-time"
+                },
+                "story_count": {
+                  "anyOf": [
+                    {
+                      "maximum": 9007199254740991,
+                      "minimum": -9007199254740991,
+                      "type": "integer"
+                    },
+                    {
+                      "pattern": "^(?:0|-?[1-9][0-9]*)$",
+                      "type": "string"
+                    }
+                  ],
+                  "description": "约定故事数",
+                  "x-evidence-caller-input": true,
+                  "x-evidence-origin": "caller"
+                }
+              },
+              "required": [
+                "id",
+                "started_at",
+                "expired_at",
+                "backlog_revision",
+                "story_count",
+                "_links"
+              ],
+              "type": "object"
+            },
+            "route": {
+              "method": "POST",
+              "path": "/iteration-plans/{contractId}/backlog"
+            },
+            "status": 201
+          },
+          {
+            "actingRoleRef": "role.development-team",
+            "asOf": "2026-08-03T11:00:00Z",
+            "assertions": {
+              "$[\"backlog_revision\"]": "sprint-42-r1",
+              "$[\"confirmed_at\"]": "2026-08-03T11:00:00Z",
+              "$[\"id\"]": "locked-42"
+            },
+            "captures": {},
+            "inputs": {
+              "id": "locked-42"
+            },
+            "parameters": {
+              "contractId": "capture_1_0"
+            },
+            "ref": "confirmation.backlog#freeze-scope",
+            "responseSchema": {
+              "additionalProperties": false,
+              "description": "读取资源详情",
+              "examples": [
+                {
+                  "_links": {
+                    "self": {
+                      "href": "/backlog-confirmations/{backlogConfirmationId}"
+                    }
+                  },
+                  "backlog_revision": "sprint-42-r1",
+                  "confirmed_at": "2026-08-03T11:00:00Z",
+                  "id": "locked-42"
+                }
+              ],
+              "properties": {
+                "_links": {
+                  "additionalProperties": {
+                    "properties": {
+                      "href": {
+                        "type": "string"
+                      },
+                      "method": {
+                        "type": "string"
+                      },
+                      "templated": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "href"
+                    ],
+                    "type": "object"
+                  },
+                  "required": [
+                    "self"
+                  ],
+                  "type": "object"
+                },
+                "backlog_revision": {
+                  "description": "锁定的待办版本",
+                  "readOnly": true,
+                  "type": "string",
+                  "x-evidence-caller-input": false,
+                  "x-evidence-derived-by-rule": "rule.locked-backlog-revision",
+                  "x-evidence-origin": "derived",
+                  "x-evidence-rule": "rule.locked-backlog-revision"
+                },
+                "confirmed_at": {
+                  "description": "形成时刻",
+                  "format": "date-time",
+                  "readOnly": true,
+                  "type": "string",
+                  "x-evidence-caller-input": false,
+                  "x-evidence-origin": "service-time"
+                },
+                "id": {
+                  "description": "在此业务凭证类型中唯一的标识",
+                  "type": "string",
+                  "x-evidence-caller-input": true,
+                  "x-evidence-origin": "caller"
+                }
+              },
+              "required": [
+                "id",
+                "confirmed_at",
+                "backlog_revision",
+                "_links"
+              ],
+              "type": "object"
+            },
+            "route": {
+              "method": "POST",
+              "path": "/iteration-plans/{contractId}/backlog/confirmation"
+            },
+            "status": 201
+          },
+          {
+            "actingRoleRef": "role.product-owner",
+            "asOf": "2026-08-06T10:00:00Z",
+            "assertions": {
+              "$[\"acceptance_note\"]": "买家只看到自己的已签订单",
+              "$[\"confirmed_at\"]": "2026-08-06T10:00:00Z",
+              "$[\"id\"]": "story-proof-52",
+              "$[\"story_id\"]": "story-52"
+            },
+            "captures": {},
+            "inputs": {
+              "acceptance_note": "买家只看到自己的已签订单",
+              "id": "story-proof-52",
+              "story_id": "story-52"
+            },
+            "parameters": {
+              "contractId": "capture_1_0"
+            },
+            "ref": "confirmation.story#accept-01-history",
+            "responseSchema": {
+              "additionalProperties": false,
+              "description": "读取资源详情",
+              "examples": [
+                {
+                  "_links": {
+                    "self": {
+                      "href": "/story-confirmations/{storyConfirmationId}"
+                    }
+                  },
+                  "acceptance_note": "买家只看到自己的已签订单",
+                  "confirmed_at": "2026-08-06T10:00:00Z",
+                  "id": "story-proof-52",
+                  "story_id": "story-52"
+                },
+                {
+                  "_links": {
+                    "self": {
+                      "href": "/story-confirmations/{storyConfirmationId}"
+                    }
+                  },
+                  "acceptance_note": "导出文件与页面筛选一致",
+                  "confirmed_at": "2026-08-12T14:00:00Z",
+                  "id": "story-proof-53",
+                  "story_id": "story-53"
+                }
+              ],
+              "properties": {
+                "_links": {
+                  "additionalProperties": {
+                    "properties": {
+                      "href": {
+                        "type": "string"
+                      },
+                      "method": {
+                        "type": "string"
+                      },
+                      "templated": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "href"
+                    ],
+                    "type": "object"
+                  },
+                  "required": [
+                    "self"
+                  ],
+                  "type": "object"
+                },
+                "acceptance_note": {
+                  "description": "已满足的验收条件",
+                  "type": "string",
+                  "x-evidence-caller-input": true,
+                  "x-evidence-origin": "caller"
+                },
+                "confirmed_at": {
+                  "description": "形成时刻",
+                  "format": "date-time",
+                  "readOnly": true,
+                  "type": "string",
+                  "x-evidence-caller-input": false,
+                  "x-evidence-origin": "service-time"
+                },
+                "id": {
+                  "description": "在此业务凭证类型中唯一的标识",
+                  "type": "string",
+                  "x-evidence-caller-input": true,
+                  "x-evidence-origin": "caller"
+                },
+                "story_id": {
+                  "description": "验收的用户故事",
+                  "type": "string",
+                  "x-evidence-caller-input": true,
+                  "x-evidence-origin": "caller"
+                }
+              },
+              "required": [
+                "id",
+                "confirmed_at",
+                "story_id",
+                "acceptance_note",
+                "_links"
+              ],
+              "type": "object"
+            },
+            "route": {
+              "method": "POST",
+              "path": "/iteration-plans/{contractId}/story-confirmations"
+            },
+            "status": 201
+          },
+          {
+            "actingRoleRef": "role.product-owner",
+            "asOf": "2026-08-12T14:00:00Z",
+            "assertions": {
+              "$[\"acceptance_note\"]": "导出文件与页面筛选一致",
+              "$[\"confirmed_at\"]": "2026-08-12T14:00:00Z",
+              "$[\"id\"]": "story-proof-53",
+              "$[\"story_id\"]": "story-53"
+            },
+            "captures": {},
+            "inputs": {
+              "acceptance_note": "导出文件与页面筛选一致",
+              "id": "story-proof-53",
+              "story_id": "story-53"
+            },
+            "parameters": {
+              "contractId": "capture_1_0"
+            },
+            "ref": "confirmation.story#accept-02-export",
+            "responseSchema": {
+              "additionalProperties": false,
+              "description": "读取资源详情",
+              "examples": [
+                {
+                  "_links": {
+                    "self": {
+                      "href": "/story-confirmations/{storyConfirmationId}"
+                    }
+                  },
+                  "acceptance_note": "买家只看到自己的已签订单",
+                  "confirmed_at": "2026-08-06T10:00:00Z",
+                  "id": "story-proof-52",
+                  "story_id": "story-52"
+                },
+                {
+                  "_links": {
+                    "self": {
+                      "href": "/story-confirmations/{storyConfirmationId}"
+                    }
+                  },
+                  "acceptance_note": "导出文件与页面筛选一致",
+                  "confirmed_at": "2026-08-12T14:00:00Z",
+                  "id": "story-proof-53",
+                  "story_id": "story-53"
+                }
+              ],
+              "properties": {
+                "_links": {
+                  "additionalProperties": {
+                    "properties": {
+                      "href": {
+                        "type": "string"
+                      },
+                      "method": {
+                        "type": "string"
+                      },
+                      "templated": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "href"
+                    ],
+                    "type": "object"
+                  },
+                  "required": [
+                    "self"
+                  ],
+                  "type": "object"
+                },
+                "acceptance_note": {
+                  "description": "已满足的验收条件",
+                  "type": "string",
+                  "x-evidence-caller-input": true,
+                  "x-evidence-origin": "caller"
+                },
+                "confirmed_at": {
+                  "description": "形成时刻",
+                  "format": "date-time",
+                  "readOnly": true,
+                  "type": "string",
+                  "x-evidence-caller-input": false,
+                  "x-evidence-origin": "service-time"
+                },
+                "id": {
+                  "description": "在此业务凭证类型中唯一的标识",
+                  "type": "string",
+                  "x-evidence-caller-input": true,
+                  "x-evidence-origin": "caller"
+                },
+                "story_id": {
+                  "description": "验收的用户故事",
+                  "type": "string",
+                  "x-evidence-caller-input": true,
+                  "x-evidence-origin": "caller"
+                }
+              },
+              "required": [
+                "id",
+                "confirmed_at",
+                "story_id",
+                "acceptance_note",
+                "_links"
+              ],
+              "type": "object"
+            },
+            "route": {
+              "method": "POST",
+              "path": "/iteration-plans/{contractId}/story-confirmations"
+            },
+            "status": 201
+          },
+          {
+            "actingRoleRef": "role.development-team",
+            "asOf": "2026-08-14T09:00:00Z",
+            "assertions": {
+              "$[\"demo_ref\"]": "demo-sprint-42",
+              "$[\"expired_at\"]": "2026-08-16T09:00:00Z",
+              "$[\"id\"]": "review-request-42",
+              "$[\"started_at\"]": "2026-08-14T09:00:00Z"
+            },
+            "captures": {},
+            "inputs": {
+              "demo_ref": "demo-sprint-42",
+              "id": "review-request-42"
+            },
+            "parameters": {
+              "contractId": "capture_1_0"
+            },
+            "ref": "request.review#review-iteration",
+            "responseSchema": {
+              "additionalProperties": false,
+              "description": "发起迭代评审请求，开启一个有截止时间的履约窗口",
+              "examples": [
+                {
+                  "_links": {
+                    "self": {
+                      "href": "/iteration-plans/{contractId}/review"
+                    }
+                  },
+                  "demo_ref": "demo-sprint-42",
+                  "expired_at": "2026-08-16T09:00:00Z",
+                  "id": "review-request-42",
+                  "started_at": "2026-08-14T09:00:00Z"
+                }
+              ],
+              "properties": {
+                "_links": {
+                  "additionalProperties": {
+                    "properties": {
+                      "href": {
+                        "type": "string"
+                      },
+                      "method": {
+                        "type": "string"
+                      },
+                      "templated": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "href"
+                    ],
+                    "type": "object"
+                  },
+                  "required": [
+                    "self"
+                  ],
+                  "type": "object"
+                },
+                "demo_ref": {
+                  "description": "演示材料",
+                  "type": "string",
+                  "x-evidence-caller-input": true,
+                  "x-evidence-origin": "caller"
+                },
+                "expired_at": {
+                  "description": "截止时刻",
+                  "format": "date-time",
+                  "readOnly": true,
+                  "type": "string",
+                  "x-evidence-caller-input": false,
+                  "x-evidence-derived-by-rule": "rule.request.review-deadline",
+                  "x-evidence-origin": "derived",
+                  "x-evidence-rule": "rule.request.review-deadline"
+                },
+                "id": {
+                  "description": "在此业务凭证类型中唯一的标识",
+                  "type": "string",
+                  "x-evidence-caller-input": true,
+                  "x-evidence-origin": "caller"
+                },
+                "started_at": {
+                  "description": "开启时刻",
+                  "format": "date-time",
+                  "readOnly": true,
+                  "type": "string",
+                  "x-evidence-caller-input": false,
+                  "x-evidence-origin": "service-time"
+                }
+              },
+              "required": [
+                "id",
+                "started_at",
+                "expired_at",
+                "demo_ref",
+                "_links"
+              ],
+              "type": "object"
+            },
+            "route": {
+              "method": "POST",
+              "path": "/iteration-plans/{contractId}/review"
+            },
+            "status": 201
+          },
+          {
+            "actingRoleRef": "role.product-owner",
+            "asOf": "2026-08-14T13:00:00Z",
+            "assertions": {
+              "$[\"confirmed_at\"]": "2026-08-14T13:00:00Z",
+              "$[\"id\"]": "review-minutes-42",
+              "$[\"outcome\"]": "同意验收结果并归档"
+            },
+            "captures": {},
+            "inputs": {
+              "id": "review-minutes-42",
+              "outcome": "同意验收结果并归档"
+            },
+            "parameters": {
+              "contractId": "capture_1_0"
+            },
+            "ref": "confirmation.review#complete-review",
+            "responseSchema": {
+              "additionalProperties": false,
+              "description": "读取资源详情",
+              "examples": [
+                {
+                  "_links": {
+                    "self": {
+                      "href": "/review-confirmations/{reviewConfirmationId}"
+                    }
+                  },
+                  "confirmed_at": "2026-08-14T13:00:00Z",
+                  "id": "review-minutes-42",
+                  "outcome": "同意验收结果并归档"
+                }
+              ],
+              "properties": {
+                "_links": {
+                  "additionalProperties": {
+                    "properties": {
+                      "href": {
+                        "type": "string"
+                      },
+                      "method": {
+                        "type": "string"
+                      },
+                      "templated": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "href"
+                    ],
+                    "type": "object"
+                  },
+                  "required": [
+                    "self"
+                  ],
+                  "type": "object"
+                },
+                "confirmed_at": {
+                  "description": "形成时刻",
+                  "format": "date-time",
+                  "readOnly": true,
+                  "type": "string",
+                  "x-evidence-caller-input": false,
+                  "x-evidence-origin": "service-time"
+                },
+                "id": {
+                  "description": "在此业务凭证类型中唯一的标识",
+                  "type": "string",
+                  "x-evidence-caller-input": true,
+                  "x-evidence-origin": "caller"
+                },
+                "outcome": {
+                  "description": "评审结论",
+                  "type": "string",
+                  "x-evidence-caller-input": true,
+                  "x-evidence-origin": "caller"
+                }
+              },
+              "required": [
+                "id",
+                "confirmed_at",
+                "outcome",
+                "_links"
+              ],
+              "type": "object"
+            },
+            "route": {
+              "method": "POST",
+              "path": "/iteration-plans/{contractId}/review/confirmation"
+            },
+            "status": 201
+          }
+        ]
+      }
+    ],
+    "modelId": "agile-sprint"
+  },
+  "version": 1
+}

@@ -1,0 +1,39 @@
+meta {
+  name: request.final-milestone#milestone-capped
+  type: http
+  seq: 14
+}
+
+post {
+  url: {{host}}/fulfillments/{{capture_1_11_1}}/final-milestones
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-evidence-role: role.fulfillment-buyer
+  x-evidence-asof: {{asOf_9}}
+}
+
+body:json {
+  {
+    "id": "milestone-capped-request-final-milestone"
+  }
+}
+
+vars:post-response {
+  capture_1_14_1: res.body?.id
+}
+
+assert {
+  res.status: eq 201
+  res.body?.expired_at: eq "2026-07-02T00:00:00Z"
+  res.body?.id: eq "milestone-capped-request-final-milestone"
+  res.body?.started_at: eq "2026-06-30T00:00:00Z"
+}
+
+settings {
+  followRedirects: false
+  timeout: 5000
+}

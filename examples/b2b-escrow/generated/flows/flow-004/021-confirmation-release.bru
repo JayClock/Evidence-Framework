@@ -1,0 +1,33 @@
+meta {
+  name: confirmation.release#single-late-20-duplicate
+  type: http
+  seq: 21
+}
+
+post {
+  url: {{host}}/settlements/{{capture_4_16_1}}/releases/{{capture_4_17_1}}/confirmation
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-evidence-role: role.settlement-escrow
+  x-evidence-asof: {{asOf_9}}
+}
+
+body:json {
+  {
+    "id": "single-late-duplicate"
+  }
+}
+
+assert {
+  res.status: eq 409
+  res.body?.error: eq "ALREADY_CONFIRMED"
+}
+
+settings {
+  followRedirects: false
+  timeout: 5000
+}

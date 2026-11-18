@@ -1,4 +1,4 @@
-import { readdir, stat, mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import {
   runAcceptanceSuite,
@@ -6,7 +6,7 @@ import {
   validateAsOf,
   validateTargetUrl,
 } from '@evidence-poc/evidence-acceptance/runner';
-import { renderDeliverables } from '@evidence-poc/evidence-acceptance';
+import { compileAcceptanceBaseline } from '@evidence-poc/evidence-acceptance';
 import { loadModel } from '../model.js';
 import { markdownReport, junitReport } from '../ui/markdownReporter.js';
 import {
@@ -18,30 +18,6 @@ import {
   trafficLightReport,
   type AcceptanceReport,
 } from '../ui/trafficLightReporter.js';
-
-async function suiteFiles(source: string): Promise<string[]> {
-  const info = await stat(source);
-  if (info.isFile()) {
-    if (!/\.(ya?ml)$/i.test(source))
-      throw new Error(
-        'evidence test runs Step CI YAML; use the Hurl CLI for .hurl files',
-      );
-    return [source];
-  }
-  if (!info.isDirectory())
-    throw new Error(`Not a suite file or directory: ${source}`);
-  const files: string[] = [];
-  // Do not follow directory symlinks: recursive discovery must stay bounded.
-  for (const entry of (await readdir(source, { withFileTypes: true })).sort(
-    (a, b) => a.name.localeCompare(b.name),
-  )) {
-    const file = path.join(source, entry.name);
-    if (entry.isDirectory()) files.push(...(await suiteFiles(file)));
-    else if (entry.isFile() && /\.stepci\.ya?ml$/i.test(entry.name))
-      files.push(file);
-  }
-  return files;
-}
 
 async function healthProbe(target: string, timeoutMs: number): Promise<void> {
   try {
@@ -91,62 +67,40 @@ export async function testCommand(
     throw new Error(
       '--timeout must be a positive integer <= 2147483647 milliseconds',
     );
-  const files = await suiteFiles(
-    path.resolve(context.cwd, stringOption(values.scenarios)!),
-  );
-  if (files.length === 0)
-    throw new Error(
-      'No *.stepci.yml suites found. Run evidence export --tests first.',
-    );
-  if (baselinePath && files.length !== 1)
-    throw new Error(
-      '--baseline-model requires exactly one generated Step CI suite',
-    );
-  const baselineYaml = baselinePath
-    ? (
-        await renderDeliverables(
-          await loadModel(path.resolve(context.cwd, baselinePath)),
-          { openapi: false, tests: true, format: 'stepci' },
-        )
-      ).files['acceptance.stepci.yml']
+  const suitePath = path.resolve(context.cwd, stringOption(values.scenarios)!);
+  const baseline = baselinePath
+    ? await compileAcceptanceBaseline(
+        await loadModel(path.resolve(context.cwd, baselinePath)),
+      )
     : undefined;
-  await healthProbe(targetUrl, timeoutMs);
-  const suites = [];
-  for (const suitePath of files)
-    suites.push(
-      await runAcceptanceSuite({
-        suitePath,
-        targetUrl,
-        ...(asOf === undefined ? {} : { asOf }),
-        timeoutMs,
-        ...(gate ? { gate: gate as AcceptanceGate } : {}),
-        ...(baselineYaml === undefined ? {} : { baselineYaml }),
-        ...(values.filter === undefined
-          ? {}
-          : { filter: stringOption(values.filter)! }),
-        ...(values.tag === undefined ? {} : { tags: values.tag as string[] }),
-        detectDrift: values.detectDrift === true || values.strictDrift === true,
-        strictDrift: values.strictDrift === true,
-      }),
-    );
+  const suite = await runAcceptanceSuite({
+    suitePath,
+    targetUrl,
+    preflight: () => healthProbe(targetUrl, timeoutMs),
+    ...(asOf === undefined ? {} : { asOf }),
+    timeoutMs,
+    ...(gate ? { gate: gate as AcceptanceGate } : {}),
+    ...(baseline === undefined ? {} : { baseline }),
+    ...(values.filter === undefined
+      ? {}
+      : { filter: stringOption(values.filter)! }),
+    ...(values.tag === undefined ? {} : { tags: values.tag as string[] }),
+    detectDrift: values.detectDrift === true || values.strictDrift === true,
+    strictDrift: values.strictDrift === true,
+  });
   const report: AcceptanceReport = {
-    passed: suites.every((suite) => suite.passed),
+    passed: suite.passed,
     targetUrl,
     ...(asOf === undefined ? {} : { asOf }),
-    totalDurationMs: suites.reduce(
-      (total, suite) => total + suite.totalDurationMs,
-      0,
-    ),
-    suites,
+    totalDurationMs: suite.totalDurationMs,
+    suites: [suite],
     ...(gate ? { gate: gate as AcceptanceGate } : {}),
     pending:
       values.allowPending === true &&
-      !suites.every((suite) => suite.passed) &&
-      !suites.some((suite) =>
-        suite.steps.some(
-          (step) =>
-            step.errored || (values.strictDrift && step.driftIssues?.length),
-        ),
+      !suite.passed &&
+      !suite.steps.some(
+        (step) =>
+          step.errored || (values.strictDrift && step.driftIssues?.length),
       ),
   };
   const reportDir = stringOption(values.reportDir);

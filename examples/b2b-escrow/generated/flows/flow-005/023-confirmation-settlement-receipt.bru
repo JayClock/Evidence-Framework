@@ -1,0 +1,36 @@
+meta {
+  name: confirmation.settlement-receipt#single-on-time
+  type: http
+  seq: 23
+}
+
+post {
+  url: {{host}}/settlements/{{capture_5_16_1}}/settlement-receipts/{{capture_5_22_1}}/confirmation
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-evidence-role: role.settlement-seller
+  x-evidence-asof: {{asOf_10}}
+}
+
+body:json {
+  {
+    "acknowledged": true,
+    "id": "single-on-time-confirmation-settlement-receipt"
+  }
+}
+
+assert {
+  res.status: eq 201
+  res.body?.acknowledged: eq true
+  res.body?.confirmed_at: eq "2026-06-15T00:00:00Z"
+  res.body?.id: eq "single-on-time-confirmation-settlement-receipt"
+}
+
+settings {
+  followRedirects: false
+  timeout: 5000
+}

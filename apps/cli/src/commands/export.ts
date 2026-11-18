@@ -88,9 +88,6 @@ export async function exportCommand(
   values: CommandOptions,
   context: CommandContext,
 ): Promise<number> {
-  const format = stringOption(values.format)!;
-  if (format !== 'stepci' && format !== 'hurl')
-    throw new Error('--format must be stepci or hurl');
   const modelPath = canonical(
     path.resolve(context.cwd, stringOption(values.model)!),
   );
@@ -108,7 +105,6 @@ export async function exportCommand(
   const result = await renderDeliverables(model, {
     openapi: all || values.openapi === true,
     tests: all || values.tests === true,
-    format,
   });
   if (values.verify) {
     const verification = verifyDeliverables(out, result.files);
@@ -118,7 +114,7 @@ export async function exportCommand(
           ...verification.missingFiles.map((file) => `MISSING: ${file}`),
           ...verification.staleFiles.map((file) => `MODIFIED: ${file}`),
           ...verification.extraFiles.map((file) => `EXTRA: ${file}`),
-          `Out-of-sync deliverables detected. Run 'evidence export --model ${JSON.stringify(modelPath)} --out ${JSON.stringify(out)}${all ? '' : values.openapi ? ' --openapi' : ` --tests --format ${format}`}' and commit the changes.`,
+          `Out-of-sync deliverables detected. Run 'evidence export --model ${JSON.stringify(modelPath)} --out ${JSON.stringify(out)}${all ? '' : values.openapi ? ' --openapi' : ' --tests'}' and commit the changes.`,
         ].join('\n'),
       );
       return 1;

@@ -1,0 +1,33 @@
+meta {
+  name: confirmation.milestone-release#milestone-precision-20-duplicate
+  type: http
+  seq: 23
+}
+
+post {
+  url: {{host}}/settlements/{{capture_3_18_1}}/milestone-releases/{{capture_3_19_1}}/confirmation
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-evidence-role: role.settlement-escrow
+  x-evidence-asof: {{asOf_11}}
+}
+
+body:json {
+  {
+    "id": "milestone-precision-duplicate"
+  }
+}
+
+assert {
+  res.status: eq 409
+  res.body?.error: eq "ALREADY_CONFIRMED"
+}
+
+settings {
+  followRedirects: false
+  timeout: 5000
+}

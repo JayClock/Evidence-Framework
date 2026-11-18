@@ -11,12 +11,12 @@ import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { serializeModelBundle } from '@evidence-poc/evidence-model-core';
 import { writeModelDirectory } from '@evidence-poc/evidence-model-io';
-import { parse } from 'yaml';
 import { runCli } from './cli.js';
+import { suiteManifest } from './renderer/brunoSuite.js';
 import { createAcceptanceModel } from '@evidence-poc/evidence-api/testing';
 
 let root: string, fm: string, out: string;
-const args = (format = 'stepci') => [
+const args = () => [
   'export-tests',
   '--project-root',
   root,
@@ -24,8 +24,6 @@ const args = (format = 'stepci') => [
   fm,
   '--out',
   out,
-  '--format',
-  format,
 ];
 beforeEach(() => {
   root = mkdtempSync(path.join(os.tmpdir(), 'evidence-acceptance-cli-'));
@@ -36,27 +34,29 @@ beforeEach(() => {
 afterEach(() => rmSync(root, { recursive: true, force: true }));
 
 describe('export-tests CLI', () => {
-  it('exports only native scripts, deterministically, from a bundle or source tree', async () => {
+  it('exports a native Bruno collection deterministically from a bundle or source tree', async () => {
     expect((await runCli(args())).exitCode).toBe(0);
-    expect(readdirSync(out)).toEqual(['acceptance.stepci.yml']);
-    const yaml = readFileSync(path.join(out, 'acceptance.stepci.yml'), 'utf8');
-    expect(parse(yaml).tests.flow_1.steps).toHaveLength(3);
+    expect(readdirSync(out).sort()).toEqual([
+      'bruno.json',
+      'collection.bru',
+      'environments',
+      suiteManifest,
+      'flows',
+    ]);
+    const manifest = readFileSync(path.join(out, suiteManifest), 'utf8');
+    expect(JSON.parse(manifest).projection.flows[0].steps).toHaveLength(3);
     fm = path.join(root, 'fm');
     await writeModelDirectory(fm, createAcceptanceModel());
     expect((await runCli(args())).exitCode).toBe(0);
-    expect(readFileSync(path.join(out, 'acceptance.stepci.yml'), 'utf8')).toBe(
-      yaml,
-    );
+    expect(readFileSync(path.join(out, suiteManifest), 'utf8')).toBe(manifest);
     expect(readdirSync(fm)).not.toContain('validation');
   });
   it.each([
-    ['stepci', 'int', '1857392817294827136', '1857392817294827137'],
-    ['hurl', 'int', '1857392817294827136', '1857392817294827137'],
-    ['stepci', 'uint', '18446744073709551614', '18446744073709551615'],
-    ['hurl', 'uint', '18446744073709551614', '18446744073709551615'],
+    ['int', '1857392817294827136', '1857392817294827137'],
+    ['uint', '18446744073709551614', '18446744073709551615'],
   ] as const)(
-    'exports exact %s %s derived assertions without bigint or number rounding',
-    async (format, type, quantity, expected) => {
+    'exports exact %s derived assertions without bigint or number rounding',
+    async (type, quantity, expected) => {
       const model = createAcceptanceModel();
       const request = model.entities.find(
         (entity) => entity.id === 'request.payment',
@@ -90,49 +90,39 @@ describe('export-tests CLI', () => {
       rule.resultType = type;
       writeFileSync(fm, serializeModelBundle(model));
 
-      const result = await runCli(args(format));
+      const result = await runCli(args());
       expect(result, JSON.stringify(result)).toMatchObject({ exitCode: 0 });
-      if (format === 'stepci') {
-        const workflow = parse(
-          readFileSync(path.join(out, 'acceptance.stepci.yml'), 'utf8'),
-        );
-        expect(workflow.tests.flow_1.steps[1].http.json.quantity).toBe(
-          quantity,
-        );
-        expect(
-          workflow.tests.flow_1.steps[2].http.check.jsonpath[
-            '$["total_amount"]'
-          ],
-        ).toBe(expected);
-      } else {
-        const hurl = readFileSync(path.join(out, 'flow-001.hurl'), 'utf8');
-        expect(hurl).toContain(`"quantity": "${quantity}"`);
-        expect(hurl).toContain(`== "${expected}"`);
-      }
+      const dir = path.join(out, 'flows/flow-001');
+      const requests = readdirSync(dir)
+        .filter((file) => /^\d/.test(file))
+        .sort();
+      expect(readFileSync(path.join(dir, requests[1]!), 'utf8')).toContain(
+        `"quantity": "${quantity}"`,
+      );
+      expect(readFileSync(path.join(dir, requests[2]!), 'utf8')).toContain(
+        `eq "${expected}"`,
+      );
     },
   );
 
-  it('replaces stale artifacts when switching to Hurl', async () => {
+  it('replaces artifacts from earlier exports', async () => {
     await runCli(args());
-    const result = await runCli(args('hurl'));
-    expect(result.exitCode).toBe(0);
-    expect(readdirSync(out)).toEqual(['flow-001.hurl']);
+    writeFileSync(path.join(out, 'acceptance.stepci.yml'), 'old');
+    expect((await runCli(args())).exitCode).toBe(0);
+    expect(readdirSync(out)).not.toContain('acceptance.stepci.yml');
   });
   it('keeps contract exports separate by default', async () => {
     expect(
       (await runCli(['export-tests', '--project-root', root, '--fm', fm]))
         .exitCode,
     ).toBe(0);
-    expect(readdirSync(path.join(root, '.evidence/api/acceptance'))).toEqual([
-      'acceptance.stepci.yml',
-    ]);
+    expect(readdirSync(path.join(root, '.evidence/api/acceptance'))).toContain(
+      'bruno.json',
+    );
   });
   it('does not replace an existing suite when model validation fails', async () => {
     await runCli(args());
-    const before = readFileSync(
-      path.join(out, 'acceptance.stepci.yml'),
-      'utf8',
-    );
+    const before = readFileSync(path.join(out, suiteManifest), 'utf8');
     const model = createAcceptanceModel();
     model.entities.find(
       (entity) => entity.id === 'confirmation.payment',
@@ -141,12 +131,12 @@ describe('export-tests CLI', () => {
     const result = await runCli(args());
     expect(result.exitCode).toBe(1);
     expect(JSON.stringify(result.output)).toContain('disagrees');
-    expect(readFileSync(path.join(out, 'acceptance.stepci.yml'), 'utf8')).toBe(
-      before,
-    );
+    expect(readFileSync(path.join(out, suiteManifest), 'utf8')).toBe(before);
   });
   it('refuses unknown fields, missing source, no executable examples and invalid formats', async () => {
-    expect((await runCli(args('postman'))).exitCode).toBe(1);
+    expect((await runCli([...args(), '--format', 'bruno'])).error).toContain(
+      'unexpected argument',
+    );
     expect((await runCli([...args(), '--api', '/unused'])).error).toContain(
       'unexpected argument',
     );
@@ -179,7 +169,7 @@ describe('export-tests CLI', () => {
   });
   it('refuses legacy test envelopes and leaves the exported suite untouched', async () => {
     await runCli(args());
-    const file = path.join(out, 'acceptance.stepci.yml');
+    const file = path.join(out, suiteManifest);
     const before = readFileSync(file, 'utf8');
     const legacy = {
       ...JSON.parse(serializeModelBundle(createAcceptanceModel())),
@@ -194,6 +184,10 @@ describe('export-tests CLI', () => {
   it('documents the command through help', async () => {
     const result = await runCli(['export-tests', '--help']);
     expect(result.exitCode).toBe(0);
-    expect(result.output).toContain('--format stepci|hurl');
+    expect(
+      String(result.output)
+        .split('\n')
+        .find((line) => line.includes('export-tests')),
+    ).not.toContain('--format');
   });
 });
