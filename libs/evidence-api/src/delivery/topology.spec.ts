@@ -2,6 +2,8 @@ import { readModelRoot } from '@evidence-poc/evidence-model-io';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
 import { API_FIXTURES } from '../testing/fixtures.js';
+import { sharedConfirmationModel } from '../testing/fulfillment.js';
+import { buildModelDelivery } from './modelDelivery.js';
 
 import { buildDeliveryTopology } from './topology.js';
 
@@ -23,9 +25,19 @@ describe('buildDeliveryTopology', () => {
     ]);
     expect(services.map((service) => service.routePrefixes)).toEqual([
       ['/products'],
-      ['/product-inquiries', '/product-procurements'],
+      [
+        '/delivery-confirmations',
+        '/invoice-confirmations',
+        '/payment-confirmations',
+        '/product-inquiries',
+        '/product-procurements',
+      ],
       ['/product-inquiries'],
-      ['/wechat-payments'],
+      [
+        '/wechat-charge-confirmations',
+        '/wechat-payment-confirmations',
+        '/wechat-payments',
+      ],
     ]);
     for (const service of services) {
       expect(service).not.toHaveProperty('lane');
@@ -73,6 +85,21 @@ describe('buildDeliveryTopology', () => {
       reads.map((link) => `${link.from}->${link.to}:${link.mode}`),
     ).toContain('service.product-procurement->service.product-catalog:sync');
   });
+});
+
+it('serves shared confirmation creation and reverse lookup in their owning services', async () => {
+  const delivery = buildModelDelivery(await sharedConfirmationModel());
+  const procurement = delivery.deployment.services['product-procurement']!;
+  const wechat = delivery.deployment.services['wechat-payment']!;
+  expect(Object.values(procurement.labels!)).toContain(
+    'Method(`POST`) && PathRegexp(`^/payment-confirmations$`)',
+  );
+  expect(Object.values(procurement.labels!)).toContain(
+    'Method(`GET`) && PathRegexp(`^/payment-confirmations/[^/]+$`)',
+  );
+  expect(Object.values(wechat.labels!)).toContain(
+    'Method(`GET`) && PathRegexp(`^/wechat-payments/[^/]+/wechat-charge/payment-confirmations$`)',
+  );
 });
 
 it('owns each method/path once, including proposal signing executed by the contract service', async () => {

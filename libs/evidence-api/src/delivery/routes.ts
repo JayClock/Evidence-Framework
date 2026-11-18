@@ -16,21 +16,17 @@ import {
   type UnaddressedRoute,
 } from './addressing.js';
 import {
+  confirmationNounOf,
   createSegmentAllocator,
   operationIdFor,
   pluralSegmentOf,
   itemParameterOf,
+  rawSegmentOf,
   serviceIdOf,
 } from './segments.js';
 
 /**
  * The HTTP surface a modeled fulfillment implies.
- *
- * A fulfillment pair is already shaped like a route pair: a request is the
- * caller's intent and a confirmation is the answer that closes it. Projecting
- * them one-to-one keeps the contract honest — there is no endpoint that does not
- * correspond to a business moment, and no business moment reachable by editing a
- * table.
  *
  * What a caller may send is decided by the model, not by convenience: a derived
  * value has a rule, so the service computes it, and a business time is stamped
@@ -73,6 +69,8 @@ export interface DeliveryRouteResponse {
 
 export type DeliveryExample = ModelExampleAST;
 
+export const SHARED_REQUEST_IDS = 'request_ids';
+
 export interface DeliveryRoute {
   id: string;
   operationId: string;
@@ -86,6 +84,8 @@ export interface DeliveryRoute {
   entityRef: string;
   contractRef: string | null;
   requestRef: string | null;
+  /** Request types whose instance IDs a shared creation accepts. */
+  requestRefs?: readonly string[];
   confirmationRef: string | null;
   summary: string;
   /** Attributes the caller sends; everything else is the service's job. */
@@ -96,6 +96,8 @@ export interface DeliveryRoute {
   shape: 'singleton' | 'collection';
   /** A collection read returns HAL summaries rather than one entity. */
   responseShape: 'item' | 'collection';
+  /** HAL embedding name for collection responses. */
+  collectionRel?: string;
   /** Path variables retain their modeled identity for acceptance captures. */
   parameterEntityRefs: Readonly<Record<string, string>>;
   itemPath: string;
@@ -179,6 +181,12 @@ export const buildDeliveryRoutes = (
 ): DeliveryRoute[] => {
   const graph = createDomainGraph(document);
   const answeredBy = answeredRfpOf(graph);
+  const confirmations = graph.fulfillmentConfirmations();
+  const confirmationById = new Map(
+    confirmations.map((entry) => [entry.entity.id, entry]),
+  );
+  const collectionRel = (ref: string) =>
+    pluralSegmentOf(confirmationById.has(ref) ? confirmationNounOf(ref) : ref);
   const roots = graph
     .entities()
     .filter(
@@ -186,6 +194,7 @@ export const buildDeliveryRoutes = (
         (entity.category === 'evidence' &&
           (entity.kind === 'contract' ||
             entity.kind === 'rfp' ||
+            entity.kind === 'fulfillment_confirmation' ||
             (entity.kind === 'proposal' && !answeredBy.has(entity.id)) ||
             (entity.kind === 'other_evidence' &&
               entity.attributes?.some((field) => field.valueType === 'id')))) ||
@@ -193,7 +202,7 @@ export const buildDeliveryRoutes = (
     );
   const rootSegments = createSegmentAllocator(
     roots.map((entity) => entity.id),
-    pluralSegmentOf,
+    collectionRel,
   );
   const routes: DeliveryRoute[] = [];
   type Address = {
@@ -207,8 +216,9 @@ export const buildDeliveryRoutes = (
     entityRef: string,
     shape: DeliveryRoute['shape'],
     parent?: Address,
+    itemParameter = itemParameterOf(entityRef),
   ): Address => {
-    let parameter = itemParameterOf(entityRef);
+    let parameter = itemParameter;
     if (parent?.parameterEntityRefs[parameter] !== undefined)
       parameter = operationIdFor('item', entityRef) + 'Id';
     return {
@@ -230,28 +240,43 @@ export const buildDeliveryRoutes = (
     refs: {
       contractRef?: string;
       requestRef?: string;
+      requestRefs?: readonly string[];
       confirmationRef?: string;
     } = {},
     suffix?: string,
     primary?: Address,
   ): void => {
     const classified = fieldsOf(entityRef, graph);
+    if (refs.requestRefs !== undefined) {
+      classified.fields = [
+        ...classified.fields.filter(({ name }) => name !== SHARED_REQUEST_IDS),
+        {
+          name: SHARED_REQUEST_IDS,
+          label: '关联履约请求',
+          valueType: 'list',
+          required: true,
+          reason: 'caller',
+          meaning: '此共享凭证关联的履约请求实例 ID',
+        },
+      ];
+    }
     const reading = purpose === 'read';
+    const collectionRead = reading && suffix !== undefined;
     const item = primary ?? location;
     const route: UnaddressedRoute = {
       id: 'route.' + (suffix ?? purpose) + '.' + entityRef,
       operationId: operationIdFor(suffix ?? purpose, entityRef),
       method: reading ? 'GET' : 'POST',
-      path:
-        reading && suffix !== 'list' && suffix !== 'ledger'
-          ? location.itemPath
-          : location.path,
+      path: reading && !collectionRead ? location.itemPath : location.path,
       purpose,
       serviceId: serviceIdOf(contextRef),
       contextRef,
       entityRef,
       contractRef: refs.contractRef ?? null,
       requestRef: refs.requestRef ?? null,
+      ...(refs.requestRefs === undefined
+        ? {}
+        : { requestRefs: refs.requestRefs }),
       confirmationRef: refs.confirmationRef ?? null,
       summary,
       ...classified,
@@ -269,17 +294,12 @@ export const buildDeliveryRoutes = (
       ],
     };
     const allowedPartyRoleRefs = callerRoles(graph, route);
-    const responseShape =
-      reading &&
-      (suffix === 'list' || suffix === 'ledger') &&
-      location.shape === 'collection'
-        ? 'collection'
-        : 'item';
     routes.push({
       ...route,
       shape: item.shape,
       itemPath: item.itemPath,
-      responseShape,
+      responseShape: collectionRead ? 'collection' : 'item',
+      ...(collectionRead ? { collectionRel: collectionRel(entityRef) } : {}),
       parameterEntityRefs: {
         ...location.parameterEntityRefs,
         ...item.parameterEntityRefs,
@@ -333,6 +353,15 @@ export const buildDeliveryRoutes = (
     .entities()
     .filter((entity) => entity.category === 'context')
     .sort((a, b) => a.id.localeCompare(b.id));
+  const requestAddresses = new Map<
+    string,
+    {
+      child: Address;
+      root: Address;
+      contractRef: string;
+      appendSegments: ReturnType<typeof createSegmentAllocator>;
+    }
+  >();
   // Allocate all addresses before scope filtering; a scoped export must keep the same URIs.
   for (const context of contexts) {
     if (context.kind === 'contract') {
@@ -356,20 +385,45 @@ export const buildDeliveryRoutes = (
       const pairs = graph
         .fulfillmentPairs()
         .filter((pair) => pair.request.contextRef === context.id);
+      const shapes = new Map(
+        pairs.map(({ request }) => [
+          request.id,
+          childShape(graph, contract.id, request.id),
+        ]),
+      );
+      const appended = pairs
+        .filter(({ request }) => shapes.get(request.id) === 'singleton')
+        .flatMap(({ confirmations }) => confirmations)
+        .filter(
+          ({ id }) =>
+            confirmationById.get(id)?.topologyKind === 'exclusive_collection',
+        );
       const segments = createSegmentAllocator(
-        pairs.map((pair) => pair.request.id),
+        [
+          ...pairs.map(({ request }) => request.id),
+          ...appended.map(({ id }) => id),
+        ],
+        (id) =>
+          confirmationById.has(id)
+            ? rootSegments.segmentOf(id)
+            : shapes.get(id) === 'collection'
+              ? pluralSegmentOf(id)
+              : rawSegmentOf(id),
       );
       for (const pair of pairs) {
-        const shape = childShape(graph, contract.id, pair.request.id);
-        const segment = segments.segmentOf(pair.request.id);
+        const shape = shapes.get(pair.request.id)!;
         const child = address(
-          root.itemPath +
-            '/' +
-            (shape === 'collection' ? pluralSegmentOf(segment) : segment),
+          root.itemPath + '/' + segments.segmentOf(pair.request.id),
           pair.request.id,
           shape,
           root,
         );
+        requestAddresses.set(pair.request.id, {
+          child,
+          root,
+          contractRef: contract.id,
+          appendSegments: segments,
+        });
         const refs = { ...contractRefs, requestRef: pair.request.id };
         add(
           pair.request.id,
@@ -380,45 +434,6 @@ export const buildDeliveryRoutes = (
           refs,
         );
         reads(pair.request.id, context.id, child, refs, 'ledger');
-        const confirmations = createSegmentAllocator(
-          pair.confirmations.map((entity) => entity.id),
-        );
-        for (const confirmation of pair.confirmations) {
-          const confirmationShape = childShape(
-            graph,
-            pair.request.id,
-            confirmation.id,
-          );
-          const base =
-            child.itemPath +
-            '/confirmation' +
-            (pair.confirmations.length > 1
-              ? '/' + confirmations.segmentOf(confirmation.id)
-              : '');
-          const confirmed = address(
-            base +
-              (confirmationShape === 'collection' &&
-              pair.confirmations.length === 1
-                ? 's'
-                : ''),
-            confirmation.id,
-            confirmationShape,
-            child,
-          );
-          const confirmationRefs = {
-            ...refs,
-            confirmationRef: confirmation.id,
-          };
-          add(
-            confirmation.id,
-            context.id,
-            confirmed,
-            'confirm',
-            '登记' + confirmation.label + '，关闭对应的履约请求',
-            confirmationRefs,
-          );
-          reads(confirmation.id, context.id, confirmed, confirmationRefs);
-        }
       }
       continue;
     }
@@ -539,6 +554,109 @@ export const buildDeliveryRoutes = (
         address('/' + rootSegments.segmentOf(thing.id), thing.id, 'collection'),
       );
     }
+  }
+  for (const { entity, incomingRequests, topologyKind } of confirmations) {
+    const { id, contextRef, label } = entity;
+    const refs = { confirmationRef: id };
+    const segment = rootSegments.segmentOf(id);
+    const parameter = operationIdFor('', confirmationNounOf(id)) + 'Id';
+    const primary = address(
+      '/' + segment,
+      id,
+      'collection',
+      undefined,
+      parameter,
+    );
+    const request = incomingRequests[0];
+    if (topologyKind === 'shared') {
+      const requestRefs = incomingRequests.map(({ id }) => id).sort();
+      add(id, contextRef, primary, 'read', '读取资源详情', refs);
+      add(id, contextRef, primary, 'confirm', '登记' + label, {
+        ...refs,
+        requestRefs,
+      });
+      for (const request of incomingRequests) {
+        const parent = requestAddresses.get(request.id);
+        if (parent === undefined) continue;
+        const reverse = address(
+          parent.child.itemPath + '/' + segment,
+          id,
+          'collection',
+          parent.child,
+          parameter,
+        );
+        add(
+          id,
+          request.contextRef,
+          reverse,
+          'read',
+          '追溯关联确认凭证',
+          {
+            ...refs,
+            contractRef: parent.contractRef,
+            requestRef: request.id,
+          },
+          'list-from-' + request.id,
+          primary,
+        );
+      }
+      continue;
+    }
+    const parent =
+      request === undefined ? undefined : requestAddresses.get(request.id);
+    const exclusiveRefs =
+      parent === undefined
+        ? refs
+        : { ...refs, contractRef: parent.contractRef, requestRef: request!.id };
+    add(id, contextRef, primary, 'read', '读取资源详情', exclusiveRefs);
+    if (parent === undefined) continue;
+    const append = topologyKind === 'exclusive_collection';
+    const owner =
+      append && parent.child.shape === 'singleton' ? parent.root : parent.child;
+    let action = append ? segment : 'confirmation';
+    if (append && owner === parent.root)
+      action = parent.appendSegments.segmentOf(id);
+    if (!append) {
+      const siblings =
+        graph
+          .fulfillmentPair(request!.id)
+          ?.confirmations.filter(
+            ({ id }) =>
+              confirmationById.get(id)?.topologyKind === 'exclusive_singleton',
+          ) ?? [];
+      if (siblings.length > 1)
+        action +=
+          '/' +
+          createSegmentAllocator(siblings.map(({ id }) => id)).segmentOf(id);
+    }
+    const entrance = address(
+      owner.itemPath + '/' + action,
+      id,
+      append ? 'collection' : 'singleton',
+      owner,
+      parameter,
+    );
+    add(
+      id,
+      contextRef,
+      entrance,
+      'confirm',
+      '登记' + label,
+      exclusiveRefs,
+      undefined,
+      primary,
+    );
+    if (append)
+      add(
+        id,
+        contextRef,
+        entrance,
+        'read',
+        '读取资源集合',
+        exclusiveRefs,
+        'list',
+        primary,
+      );
   }
   for (const entity of roots.filter(
     (entity) =>

@@ -45,11 +45,18 @@ export const pluralSegmentOf = (id: string): string => {
   return words.join('-');
 };
 
+/** A confirmation ID may spell out its noun or use the legacy confirmation namespace. */
+export const confirmationNounOf = (id: string): string => {
+  const noun = rawSegmentOf(id);
+  return id.startsWith('confirmation.') && !/(^|-)confirmation$/.test(noun)
+    ? noun + '-confirmation'
+    : noun;
+};
+
 /** Instance parameter names follow the business noun; contracts retain their common root key. */
 export const itemParameterOf = (id: string): string => {
   const category = id.split('.')[0];
   if (category === 'contract') return 'contractId';
-  if (category === 'confirmation') return 'confirmationId';
   return (rawSegmentOf(id).split('-').at(-1) ?? 'item') + 'Id';
 };
 

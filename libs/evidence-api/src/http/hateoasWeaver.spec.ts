@@ -60,7 +60,9 @@ it('keeps branch links, HAL responses and journeys consistent without imposing a
   });
   const cyclic = buildDelivery(reversed);
   expect(cyclic.journeys).toEqual(buildDelivery(reversed).journeys);
-  expect(cyclic.hypermedia).toHaveLength(changed.hypermedia.length + 2);
+  expect(halLinksFor(cyclic.hypermedia, paymentId)).toHaveProperty(
+    'next:request.delivery',
+  );
 });
 
 it('moves possible navigation and journeys when a prerequisite changes', async () => {

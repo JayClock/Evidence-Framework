@@ -677,10 +677,14 @@ const validateRelationships = (
     const evidenceToThing =
       source.category === 'evidence' &&
       signatureOf(target) === 'participant.thing';
+    const confirmsRequest =
+      signatureOf(source) === 'evidence.fulfillment_confirmation' &&
+      signatureOf(target) === 'evidence.fulfillment_request';
     if (
       sourceContext !== targetContext &&
       !contractToProposal &&
       !evidenceToThing &&
+      !confirmsRequest &&
       !(
         source.category === 'evidence' &&
         target.category === 'evidence' &&

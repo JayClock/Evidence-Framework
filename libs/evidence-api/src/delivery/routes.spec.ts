@@ -2,6 +2,7 @@ import { readModelRoot } from '@evidence-poc/evidence-model-io';
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
 import { API_FIXTURES } from '../testing/fixtures.js';
+import { sharedConfirmationModel } from '../testing/fulfillment.js';
 
 import { buildDeliveryRoutes } from './routes.js';
 
@@ -30,6 +31,82 @@ describe('buildDeliveryRoutes', () => {
     );
     expect(paymentConfirm?.requestRef).toBe('request.payment');
     expect(paymentConfirm?.serviceId).toBe('service.product-procurement');
+    expect(paymentConfirm?.itemPath).toBe(
+      '/payment-confirmations/{paymentConfirmationId}',
+    );
+    expect(
+      routes.find(({ id }) => id === 'route.read.confirmation.payment'),
+    ).toMatchObject({
+      path: paymentConfirm?.itemPath,
+      method: 'GET',
+      parameterEntityRefs: { paymentConfirmationId: 'confirmation.payment' },
+    });
+    expect(
+      routes.some(
+        ({ method, path }) => method === 'GET' && path === paymentConfirm?.path,
+      ),
+    ).toBe(false);
+  });
+
+  it('appends to a contract-scoped collection when the request is a singleton', async () => {
+    const document = await model();
+    const edge = document.relationships.find(
+      ({ id }) => id === 'relation.payment-request-precedes-confirmation',
+    )!;
+    edge.sourceCardinality = { min: 0, max: 'many' };
+    const routes = buildDeliveryRoutes(document).filter(
+      ({ entityRef }) => entityRef === 'confirmation.payment',
+    );
+    expect(routes).toMatchObject([
+      {
+        method: 'POST',
+        path: '/product-procurements/{contractId}/payment-confirmations',
+      },
+      {
+        method: 'GET',
+        path: '/product-procurements/{contractId}/payment-confirmations',
+        responseShape: 'collection',
+      },
+      {
+        method: 'GET',
+        path: '/payment-confirmations/{paymentConfirmationId}',
+        responseShape: 'item',
+      },
+    ]);
+    expect(new Set(routes.map(({ itemPath }) => itemPath))).toEqual(
+      new Set(['/payment-confirmations/{paymentConfirmationId}']),
+    );
+  });
+
+  it('creates one shared resource and traces it from each request item', async () => {
+    const routes = buildDeliveryRoutes(await sharedConfirmationModel()).filter(
+      ({ entityRef }) => entityRef === 'confirmation.payment',
+    );
+    expect(routes).toMatchObject([
+      {
+        method: 'POST',
+        path: '/payment-confirmations',
+        requestRefs: ['request.payment', 'request.wechat-charge'],
+        fields: expect.arrayContaining([
+          expect.objectContaining({ name: 'request_ids', required: true }),
+        ]),
+      },
+      {
+        method: 'GET',
+        path: '/product-procurements/{contractId}/payments/{paymentId}/payment-confirmations',
+        responseShape: 'collection',
+      },
+      {
+        method: 'GET',
+        path: '/payment-confirmations/{paymentConfirmationId}',
+        responseShape: 'item',
+      },
+      {
+        method: 'GET',
+        path: '/wechat-payments/{contractId}/wechat-charge/payment-confirmations',
+        responseShape: 'collection',
+      },
+    ]);
   });
 
   it('keeps a derived amount and a business time out of the caller inputs', async () => {

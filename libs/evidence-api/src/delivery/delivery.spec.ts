@@ -83,10 +83,23 @@ describe('buildDeliveryContract', () => {
       { id: 'service.product-catalog', routePrefixes: ['/products'] },
       {
         id: 'service.product-procurement',
-        routePrefixes: ['/product-inquiries', '/product-procurements'],
+        routePrefixes: [
+          '/delivery-confirmations',
+          '/invoice-confirmations',
+          '/payment-confirmations',
+          '/product-inquiries',
+          '/product-procurements',
+        ],
       },
       { id: 'service.product-sourcing', routePrefixes: ['/product-inquiries'] },
-      { id: 'service.wechat-payment', routePrefixes: ['/wechat-payments'] },
+      {
+        id: 'service.wechat-payment',
+        routePrefixes: [
+          '/wechat-charge-confirmations',
+          '/wechat-payment-confirmations',
+          '/wechat-payments',
+        ],
+      },
     ]);
   });
 });

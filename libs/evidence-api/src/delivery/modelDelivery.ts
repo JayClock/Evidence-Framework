@@ -4,7 +4,6 @@ import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 import { createDomainGraph } from '@evidence-poc/evidence-model-core';
 
 import { componentName } from './schemaName.js';
-import { pluralSegmentOf } from './segments.js';
 import {
   weaveHypermedia,
   halLinksFor,
@@ -12,7 +11,7 @@ import {
 } from '../http/hateoasWeaver.js';
 
 import type { DeliveryField, DeliveryRoute } from './routes.js';
-import { buildDeliveryRoutes } from './routes.js';
+import { buildDeliveryRoutes, SHARED_REQUEST_IDS } from './routes.js';
 import { createSegmentAllocator } from './segments.js';
 import { buildDeliveryTopology, type DeliveryService } from './topology.js';
 
@@ -100,7 +99,7 @@ const responseValue = (
     ? {
         _links: links,
         _embedded: {
-          [pluralSegmentOf(route.entityRef)]: [
+          [route.collectionRel!]: [
             {
               ...value,
               _links: {
@@ -268,9 +267,9 @@ const objectSchemas = (
         _links: properties['_links'],
         _embedded: {
           type: 'object',
-          required: [pluralSegmentOf(route.entityRef)],
+          required: [route.collectionRel!],
           properties: {
-            [pluralSegmentOf(route.entityRef)]: {
+            [route.collectionRel!]: {
               type: 'array',
               items: { $ref: '#/components/schemas/' + summaryKey },
             },
@@ -295,7 +294,14 @@ const requestBody = (route: DeliveryRoute): JsonObject | null => {
 
   for (const field of route.fields) {
     properties[field.name] = {
-      ...schemaOf(field),
+      ...(route.requestRefs !== undefined && field.name === SHARED_REQUEST_IDS
+        ? {
+            type: 'array',
+            items: { type: 'string', minLength: 1 },
+            minItems: 1,
+            uniqueItems: true,
+          }
+        : schemaOf(field)),
       description: field.meaning,
       'x-evidence-caller-input': true,
     };
@@ -344,6 +350,9 @@ const operationOf = (
   ...(route.requestRef === null
     ? {}
     : { 'x-evidence-fulfillment-request': route.requestRef }),
+  ...(route.requestRefs === undefined
+    ? {}
+    : { 'x-evidence-fulfillment-requests': route.requestRefs }),
   ...(route.confirmationRef === null
     ? {}
     : { 'x-evidence-fulfillment-confirmation': route.confirmationRef }),
