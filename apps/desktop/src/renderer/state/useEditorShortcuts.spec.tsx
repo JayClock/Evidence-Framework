@@ -10,14 +10,12 @@ const setup = (
     undo: vi.fn(),
     redo: vi.fn(),
     save: vi.fn(),
-    focusSearch: vi.fn(),
     openCommandPalette: vi.fn(),
     clearSelection: vi.fn(),
     zoomIn: vi.fn(),
     zoomOut: vi.fn(),
     resetZoom: vi.fn(),
     fitCanvas: vi.fn(),
-    toggleLeftRail: vi.fn(),
     toggleRightRail: vi.fn(),
     toggleProblems: vi.fn(),
     openInlineCopilot: vi.fn(),
@@ -62,16 +60,14 @@ describe('useEditorShortcuts', () => {
     input.remove();
   });
 
-  it('maps the layout chords to their rails', () => {
+  it('maps the inspector and tool chords', () => {
     const handlers = setup();
 
-    fireEvent.keyDown(window, { key: 'b', ctrlKey: true });
     fireEvent.keyDown(window, { key: 'i', metaKey: true });
     fireEvent.keyDown(window, { key: '\\', metaKey: true });
     fireEvent.keyDown(window, { key: 'j', ctrlKey: true });
     fireEvent.keyDown(window, { code: 'KeyX', altKey: true });
 
-    expect(handlers.toggleLeftRail).toHaveBeenCalled();
     expect(handlers.toggleRightRail).toHaveBeenCalledTimes(2);
     // Mod+J is the agent, Alt+X is the findings list.
     expect(handlers.openInlineCopilot).toHaveBeenCalledTimes(1);
@@ -88,15 +84,12 @@ describe('useEditorShortcuts', () => {
     expect(handlers.fitCanvas).toHaveBeenCalledTimes(1);
   });
 
-  it('opens the command palette on Mod+K instead of focusing a surface', () => {
+  it('opens the command palette on Mod+K', () => {
     const handlers = setup();
 
     fireEvent.keyDown(window, { key: 'k', metaKey: true });
 
     expect(handlers.openCommandPalette).toHaveBeenCalledTimes(1);
-    // Cmd+F still moves the caret into the outline search, so the two chords
-    // answer two different questions.
-    expect(handlers.focusSearch).not.toHaveBeenCalled();
   });
 
   it('exposes the gate and navigation chords the palette prints', () => {
@@ -108,7 +101,6 @@ describe('useEditorShortcuts', () => {
 
     fireEvent.keyDown(window, { key: 'R', metaKey: true, shiftKey: true });
     fireEvent.keyDown(window, { code: 'KeyD', altKey: true });
-    // The sandbox moved one modifier out: Alt+S now flips the split.
     fireEvent.keyDown(window, { code: 'KeyS', altKey: true, shiftKey: true });
 
     expect(handlers.rerunSensors).toHaveBeenCalledTimes(1);
@@ -119,31 +111,20 @@ describe('useEditorShortcuts', () => {
     expect(handlers.redo).toHaveBeenCalledTimes(1);
   });
 
-  it('closes the comparison on Escape before it clears a selection', () => {
-    const handlers = setup({ closeSplit: vi.fn(), clearSelection: vi.fn() });
+  it('exits story playback on Escape without clearing the selection', () => {
+    const handlers = setup({ closeStory: vi.fn(), clearSelection: vi.fn() });
 
     fireEvent.keyDown(window, { key: 'Escape' });
 
-    expect(handlers.closeSplit).toHaveBeenCalledTimes(1);
+    expect(handlers.closeStory).toHaveBeenCalledTimes(1);
     expect(handlers.clearSelection).not.toHaveBeenCalled();
   });
 
-  it('opens each comparison and flips the split from the keyboard', () => {
-    const handlers = setup({
-      openLedgerSplit: vi.fn(),
-      openContractSplit: vi.fn(),
-      rotateSplit: vi.fn(),
-      zoomToSelection: vi.fn(),
-    });
+  it('frames the selection with Shift+2', () => {
+    const handlers = setup({ zoomToSelection: vi.fn() });
 
-    fireEvent.keyDown(window, { code: 'Digit4', altKey: true });
-    fireEvent.keyDown(window, { code: 'Digit5', altKey: true });
-    fireEvent.keyDown(window, { code: 'KeyS', altKey: true });
     fireEvent.keyDown(window, { code: 'Digit2', shiftKey: true });
 
-    expect(handlers.openLedgerSplit).toHaveBeenCalledTimes(1);
-    expect(handlers.openContractSplit).toHaveBeenCalledTimes(1);
-    expect(handlers.rotateSplit).toHaveBeenCalledTimes(1);
     expect(handlers.zoomToSelection).toHaveBeenCalledTimes(1);
   });
 

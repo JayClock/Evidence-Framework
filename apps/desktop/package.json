@@ -25,7 +25,6 @@
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-resizable-panels": "^2.1.9",
-    "yaml": "^2.9.0",
     "@evidence-poc/desktop-contracts": "workspace:*",
     "@evidence-poc/desktop-feature-story": "workspace:*",
     "@evidence-poc/desktop-feature-delivery": "workspace:*",

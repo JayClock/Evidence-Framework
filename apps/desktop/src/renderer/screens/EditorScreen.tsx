@@ -28,7 +28,6 @@ import { CanvasFloatingHud } from '../components/canvas/CanvasFloatingHud';
 import { ActivityDrawer } from '../components/layout/ActivityDrawer';
 import { ClauseTraceDrawer } from '../components/clauses/ClauseTraceDrawer';
 import { ActivityRail } from '../components/layout/ActivityRail';
-import { TopologyDrawer } from '../components/layout/TopologyDrawer';
 import {
   AgentCopilot,
   InlinePatchCopilot,
@@ -36,8 +35,6 @@ import {
   useAgentSession,
   usePatchReview,
 } from '@evidence-poc/desktop-feature-agent';
-import { CelRulesPane } from '../components/split/CelRulesPane';
-import { OpenApiSpecViewer } from '../components/split/OpenApiSpecViewer';
 import { ScenarioStudioModal } from '../components/scenario/ScenarioStudioModal';
 import { WorkshopWizardDrawer } from '../components/wizard/WorkshopWizardDrawer';
 import {
@@ -45,7 +42,6 @@ import {
   StoryDrawer,
   useStoryPlayback,
 } from '@evidence-poc/desktop-feature-story';
-import { SecondaryStage } from '../components/split/SecondaryStage';
 import { DriftRadar } from '@evidence-poc/desktop-feature-drift';
 import {
   DeliveryHub,
@@ -62,6 +58,9 @@ import {
 } from '@evidence-poc/desktop-feature-canvas';
 import { RightInspector } from '@evidence-poc/desktop-feature-inspector';
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
@@ -81,13 +80,6 @@ import {
   type RailTabId,
   useWorkspaceLayoutState,
 } from '../state/useWorkspaceLayoutState';
-import {
-  requestFocusEntity,
-  useBilateralSync,
-  type FocusEntityEvent,
-  type FocusRuleEvent,
-} from '../state/useBilateralSync';
-import { useWorkspaceSplitState } from '../state/useWorkspaceSplitState';
 import { useAiConfiguration } from '../state/AiConfiguration';
 import { useWorkspaceViewMode } from '../state/useWorkspaceViewMode';
 
@@ -169,7 +161,6 @@ interface EditorWorkspaceProps {
 }
 
 const RAIL_TITLES: Record<RailTabId, string> = {
-  topology: '业务结构',
   diagnostics: '门禁与诊断',
   drift: '生产漂移',
   copilot: 'AI 协同',
@@ -187,16 +178,10 @@ const EditorWorkspace = ({
   const canvasMemory = useRef<CanvasViewportMemory['current']>(null);
   const workspaceView = useWorkspaceViewMode();
   const layoutMode =
-    workspaceView.mode === 'topology' ? 'topology' : 'swimlane';
-  // The split stage shares the view mode: "分屏" is one more mode, not a second
-  // boolean that could disagree with the segmented control.
-  const split = useWorkspaceSplitState(
-    workspaceView.mode,
-    workspaceView.setMode,
-  );
-  // Every drawer, sheet and overlay is one object, so the shell renders a
-  // projection instead of coordinating four independent booleans.
-  const layout = useWorkspaceLayoutState();
+    workspaceView.graphMode === 'topology' ? 'topology' : 'swimlane';
+  const ledgerActive = workspaceView.mode === 'table';
+  const storyActive = workspaceView.mode === 'story';
+  const layout = useWorkspaceLayoutState(workspaceView.toggleLedger);
   const {
     state,
     save,
@@ -204,7 +189,6 @@ const EditorWorkspace = ({
     reloadFromDiskIfClean,
     dismissExternalChange,
   } = useEditorSession(project, initialDocument, viewMode, layoutMode);
-  const storyActive = split.isSplit && split.activePane === 'story';
   const story = useStoryPlayback({
     api: window.evidenceAPI.story,
     rootPath: project.rootPath,
@@ -312,7 +296,6 @@ const EditorWorkspace = ({
     report: sensors.report,
     revision: revisionRef.current,
   });
-  const [searchTerm, setSearchTerm] = useState('');
   const [focusRequest, setFocusRequest] = useState<{
     nodeId: string;
     token: number;
@@ -321,19 +304,7 @@ const EditorWorkspace = ({
     direction: ZoomDirection;
     token: number;
   } | null>(null);
-  const searchInputRef = useRef<HTMLInputElement | null>(null);
-  const [searchFocusToken, setSearchFocusToken] = useState(0);
   const tokenRef = useRef(0);
-  // The search box only exists while its drawer is open, so the chord has to
-  // open the drawer first and land the caret on the next paint.
-  const focusSearch = useCallback(() => {
-    layout.setActiveRailTab('topology');
-    setSearchFocusToken((token) => token + 1);
-  }, [layout.setActiveRailTab]);
-  useEffect(() => {
-    if (layout.activeRailTab !== 'topology' || searchFocusToken === 0) return;
-    searchInputRef.current?.focus();
-  }, [layout.activeRailTab, searchFocusToken]);
   // ⌘K bumps this, which moves the caret into the agent composer.
   const [agentFocusToken, setAgentFocusToken] = useState(0);
 
@@ -419,50 +390,6 @@ const EditorWorkspace = ({
     [state.layout, state.session, scope],
   );
 
-  /*
-   * The workspace's own selection, announced rather than prop-drilled.
-   *
-   * Every pane reads the same revision, so the only thing that has to travel is
-   * "which object": the canvas says it once and the ledger, the contract and the
-   * rules each decide how to show it.
-   */
-  useEffect(() => {
-    if (state.selection.nodeId === null) return;
-
-    requestFocusEntity(
-      state.selection.nodeId,
-      'canvas',
-      state.selection.attributeName,
-    );
-  }, [state.selection.nodeId, state.selection.attributeName]);
-
-  // A request from a pane travels back the other way: the canvas owns what
-  // "showing an object" means, so the shell is the one place that resolves it.
-  const focusFromPane = useCallback(
-    (event: FocusEntityEvent) => {
-      if (event.source === 'canvas') return;
-      if (!state.layout.nodeById.has(event.entityId)) return;
-      if (scope !== null && !scope.nodeIds.has(event.entityId))
-        setSelectedScope(null);
-
-      state.session.selectAttribute(event.entityId, event.attributeName);
-      tokenRef.current += 1;
-      setFocusRequest({ nodeId: event.entityId, token: tokenRef.current });
-    },
-    [scope, state.layout, state.session],
-  );
-  const showRulesPane = useCallback(
-    (event: FocusRuleEvent) => {
-      if (event.source === 'code' || !split.isSplit) return;
-      split.setActivePane('cel');
-    },
-    [split],
-  );
-  useBilateralSync({
-    focusEntity: focusFromPane,
-    focusRule: showRulesPane,
-  });
-
   // What the next question will be about: the canvas selection, reduced to what
   // the composer can name without a graph.
   const selectedEntity =
@@ -519,10 +446,7 @@ const EditorWorkspace = ({
         state.session.redo();
       },
       setViewMode: workspaceView.setMode,
-      openContractSplit: () => split.openSplit('openapi'),
-      rotateSplit: split.rotateSplitDirection,
       zoomToSelection: () => requestZoom('selection'),
-      focusSearch,
       openDelivery: () => layout.openHub('delivery'),
       openSandbox: () => layout.openHub('drift'),
       rerunSensors: () => void sensors.refresh(),
@@ -534,13 +458,12 @@ const EditorWorkspace = ({
       toggleProblems: layout.toggleProblemsPanel,
     }),
     [
-      focusSearch,
       layout.setActiveRailTab,
       layout.openHub,
+      layout.toggleProblemsPanel,
+      requestZoom,
       save,
       sensors.refresh,
-      split.openSplit,
-      split.rotateSplitDirection,
       state.session,
       workspaceView.setMode,
     ],
@@ -579,7 +502,6 @@ const EditorWorkspace = ({
         state.session.redo();
       },
       save: () => void save(),
-      focusSearch,
       openCommandPalette: () => setPaletteOpen(true),
       rerunSensors: () => void sensors.refresh(),
       openDelivery: () => layout.openHub('delivery'),
@@ -590,21 +512,12 @@ const EditorWorkspace = ({
       resetZoom: () => requestZoom('reset'),
       fitCanvas: () => requestZoom('fit'),
       zoomToSelection: () => requestZoom('selection'),
-      toggleLeftRail: () => {
-        layout.toggleRailTab('topology');
-      },
       toggleRightRail: () => {
         toggleRail(rightRail);
       },
       openInlineCopilot: layout.openInlineCopilot,
       toggleProblems: layout.toggleProblemsPanel,
-      // The stage's own chords: one per comparison, plus the direction flip.
-      openLedgerSplit: () => split.openSplit('ledger'),
-      openContractSplit: () => split.openSplit('openapi'),
-      rotateSplit: split.rotateSplitDirection,
-      // Only bound while the stage exists, so Escape keeps clearing a selection
-      // in the single-surface workspace.
-      ...(split.isSplit ? { closeSplit: split.closeSplit } : {}),
+      ...(storyActive ? { closeStory: workspaceView.returnToGraph } : {}),
       ...(patchReview.review === null ? {} : { acceptPatch, revertPatch }),
     }),
     [
@@ -612,20 +525,15 @@ const EditorWorkspace = ({
       patchReview.review,
       requestZoom,
       revertPatch,
-      focusSearch,
       layout.openHub,
       layout.openInlineCopilot,
       layout.toggleProblemsPanel,
-      layout.toggleRailTab,
-      layout.setActiveRailTab,
       save,
       sensors.refresh,
-      split.openSplit,
-      split.closeSplit,
-      split.isSplit,
-      split.rotateSplitDirection,
       state.session,
+      storyActive,
       toggleRail,
+      workspaceView.returnToGraph,
     ],
   );
 
@@ -671,10 +579,9 @@ const EditorWorkspace = ({
       diagnostics={diagnostics}
       selectedNodeId={state.selection.nodeId}
       selectedAttributeName={state.selection.attributeName}
-      focusNodeId={state.selection.nodeId}
       onRevealOnGraph={(nodeId) => {
         focusNode(nodeId);
-        workspaceView.setMode('journey');
+        workspaceView.returnToGraph();
       }}
     />
   );
@@ -707,17 +614,13 @@ const EditorWorkspace = ({
         hud={(controls) => (
           <CanvasFloatingHud
             {...controls}
-            viewMode={workspaceView.mode}
+            viewMode={workspaceView.graphMode}
             onViewModeChange={workspaceView.setMode}
             density={viewMode}
             onOpenScenarios={() => setScenarioOpen(true)}
             onDensityChange={setViewMode}
             hasSelection={state.selection.nodeId !== null}
             onClearSelection={() => state.session.clearSelection()}
-            splitPane={split.activePane}
-            onOpenSplit={split.openSplit}
-            onCloseSplit={split.closeSplit}
-            onShowLedger={() => workspaceView.setMode('table')}
           />
         )}
         diagnostics={diagnostics}
@@ -735,89 +638,6 @@ const EditorWorkspace = ({
     </div>
   );
 
-  /*
-   * One stage, four secondary projections.
-   *
-   * The graph keeps the left side either way: what changes is which document is
-   * read beside it — the ledger the graph edits, the contract it projects, the
-   * rules it enforces, or the scenarios it must survive. The stage owns the tab
-   * rail so the shell never has to know how many projections exist.
-   */
-  const secondaryStage = (
-    <SecondaryStage
-      activePane={split.activePane}
-      onPaneChange={split.setActivePane}
-      direction={split.splitDirection}
-      onRotateDirection={split.rotateSplitDirection}
-      onClose={split.closeSplit}
-      badges={{
-        openapi: delivery.analysis?.preview.routes.length ?? 0,
-        cel: state.document.rules.length,
-      }}
-      panes={{
-        story: (
-          <StoryDrawer
-            aiConfigured={ai?.aiConfigured}
-            onConfigureAi={ai?.openSettings}
-            playback={story}
-            dirty={state.dirty}
-            externalConflict={state.dirty && state.externalChangeAt !== null}
-          />
-        ),
-        ledger: ledgerStage,
-        openapi: (
-          <OpenApiSpecViewer
-            analysis={delivery.analysis}
-            stale={delivery.stale}
-            loading={delivery.loading}
-            error={delivery.error}
-          />
-        ),
-        cel: <CelRulesPane document={state.document} />,
-        drift: (
-          <DriftRadar
-            api={window.evidenceAPI.drift}
-            embedded
-            rootPath={project.rootPath}
-            onClose={split.closeSplit}
-          />
-        ),
-      }}
-    />
-  );
-
-  // One model, four projections: the graph alone, one document alone, or the
-  // graph beside whichever document is being compared against it.
-  const canvasStage =
-    workspaceView.mode === 'journey' || workspaceView.mode === 'topology' ? (
-      graphStage
-    ) : workspaceView.mode === 'table' ? (
-      ledgerStage
-    ) : (
-      <ResizablePanelGroup
-        direction={split.splitDirection}
-        autoSaveId={`evidence-stage-split-${split.splitDirection}-v1`}
-      >
-        <ResizablePanel
-          id="split-graph"
-          order={1}
-          defaultSize={100 - split.splitSize}
-          minSize={20}
-        >
-          {graphStage}
-        </ResizablePanel>
-        <ResizableHandle withHandle />
-        <ResizablePanel
-          id="split-secondary"
-          order={2}
-          defaultSize={split.splitSize}
-          minSize={20}
-        >
-          {secondaryStage}
-        </ResizablePanel>
-      </ResizablePanelGroup>
-    );
-
   return (
     <LiveApiProvider analysis={delivery.analysis} stale={delivery.stale}>
       <div className="flex h-full flex-col bg-evidence-surface">
@@ -833,6 +653,7 @@ const EditorWorkspace = ({
         <div
           data-canvas-control=""
           data-evidence-capture-hide=""
+          data-story-toolbar=""
           className="flex flex-wrap items-center gap-3 border-b border-evidence-line bg-white px-4 py-2"
         >
           <div
@@ -851,19 +672,55 @@ const EditorWorkspace = ({
             <button
               type="button"
               aria-pressed={storyActive}
-              onClick={() => split.openSplit('story')}
+              onClick={() => workspaceView.setMode('story')}
               className="rounded border border-evidence-line px-2 py-1 aria-pressed:bg-evidence-active"
             >
               🎬 业务流放映
             </button>
           </div>
           {storyActive ? (
-            <StoryPlayerBar
-              playback={story}
-              onExit={split.closeSplit}
-              aiConfigured={ai?.aiConfigured}
-              onConfigureAi={ai?.openSettings}
-            />
+            <>
+              <StoryPlayerBar
+                playback={story}
+                onExit={workspaceView.returnToGraph}
+                aiConfigured={ai?.aiConfigured}
+                onConfigureAi={ai?.openSettings}
+              />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button
+                    type="button"
+                    className="rounded border border-evidence-line px-2 py-1 text-[11px]"
+                  >
+                    剧情详情
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent
+                  align="end"
+                  aria-label="剧情详情"
+                  onInteractOutside={(event) => {
+                    if (
+                      event.target instanceof Element &&
+                      event.target.closest('[data-story-toolbar]')
+                    ) {
+                      // Let readers step through scenes with details open.
+                      event.preventDefault();
+                    }
+                  }}
+                  className="h-[min(70vh,var(--radix-popover-content-available-height))] w-[min(32rem,calc(100vw-2rem))] p-0"
+                >
+                  <StoryDrawer
+                    aiConfigured={ai?.aiConfigured}
+                    onConfigureAi={ai?.openSettings}
+                    playback={story}
+                    dirty={state.dirty}
+                    externalConflict={
+                      state.dirty && state.externalChangeAt !== null
+                    }
+                  />
+                </PopoverContent>
+              </Popover>
+            </>
           ) : null}
         </div>
 
@@ -871,14 +728,9 @@ const EditorWorkspace = ({
           <p role="alert">实时诊断同步失败：{liveModel.error}</p>
         )}
 
-        {/*
-          The studio is the canvas plus one inspector: outline, diagnostics,
-          sandbox and copilot are drawers the 48px activity rail opens, so the
-          canvas owns every pixel the modeler is not actively using. Findings
-          and the delivery/drift hubs slide over that canvas only while open.
-        */}
         <div className="relative flex min-h-0 flex-1">
           <ActivityRail
+            ledgerActive={ledgerActive}
             activeTab={
               layout.isProblemsPanelOpen ? 'diagnostics' : layout.activeRailTab
             }
@@ -918,23 +770,6 @@ const EditorWorkspace = ({
                 onTogglePinned={layout.toggleRailPinned}
                 onClose={() => layout.setActiveRailTab(null)}
               >
-                {layout.activeRailTab === 'topology' ? (
-                  <TopologyDrawer
-                    graph={state.graph}
-                    layout={state.layout}
-                    selectedNodeId={state.selection.nodeId}
-                    searchTerm={searchTerm}
-                    onSearchTermChange={setSearchTerm}
-                    searchInputRef={searchInputRef}
-                    onFocusNode={(nodeId) => {
-                      focusNode(nodeId);
-                      // An unpinned drawer exists to get you to an object; once
-                      // the canvas shows it, the drawer has done its job.
-                      if (!layout.isRailPinned) layout.setActiveRailTab(null);
-                    }}
-                  />
-                ) : null}
-
                 {layout.activeRailTab === 'workshop' ? (
                   <WorkshopWizardDrawer
                     session={state.session}
@@ -992,7 +827,7 @@ const EditorWorkspace = ({
               autoSaveId="evidence-studio-horizontal-v2"
             >
               <ResizablePanel id="center-stage" order={1} minSize={35}>
-                {canvasStage}
+                {ledgerActive ? ledgerStage : graphStage}
               </ResizablePanel>
 
               <ResizableHandle withHandle />
@@ -1103,7 +938,7 @@ const EditorWorkspace = ({
             onPlay={(flow) => {
               story.selectFlow(flow);
               story.setSkipAi(true);
-              split.openSplit('story');
+              workspaceView.setMode('story');
               setScenarioOpen(false);
             }}
           />

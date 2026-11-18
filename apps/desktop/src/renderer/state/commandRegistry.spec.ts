@@ -24,10 +24,7 @@ const handlers = (): CommandHandlers => ({
   undo: vi.fn(),
   redo: vi.fn(),
   setViewMode: vi.fn(),
-  openContractSplit: vi.fn(),
-  rotateSplit: vi.fn(),
   zoomToSelection: vi.fn(),
-  focusSearch: vi.fn(),
   openDelivery: vi.fn(),
   openSandbox: vi.fn(),
   rerunSensors: vi.fn(),
@@ -53,8 +50,7 @@ describe('buildCommands', () => {
 
   it('prints the chord the shortcut map actually binds', () => {
     expect(find('model.save')?.shortcut).toBe(CHORDS.save);
-    expect(find('view.table')?.shortcut).toBe(CHORDS.table);
-    expect(find('view.rail-topology')?.shortcut).toBe(CHORDS.railTopology);
+    expect(find('view.journey')?.shortcut).toBe(CHORDS.journey);
     expect(find('delivery.contract')?.shortcut).toBe(CHORDS.delivery);
   });
 
@@ -83,7 +79,14 @@ describe('buildCommands', () => {
     expect(find('model.redo')?.disabled).toBe(true);
     expect(find('model.undo')?.disabled).toBe(false);
     expect(find('view.graph')?.disabled).toBe(true);
-    expect(find('view.split')?.disabled).toBe(false);
+    expect(find('view.journey')?.disabled).toBe(false);
+  });
+
+  it('leaves the ledger to the sidebar and omits removed commands', () => {
+    const ids = buildCommands(capabilities(), handlers()).map(({ id }) => id);
+    expect(ids).not.toContain('view.table');
+    expect(ids).not.toContain('view.rail-topology');
+    expect(ids.filter((id) => id.includes('split'))).toEqual([]);
   });
 
   it('runs the handler rather than reimplementing the action', () => {

@@ -4,19 +4,12 @@ interface ShortcutHandlers {
   undo: () => void;
   redo: () => void;
   save: () => void;
-  focusSearch: () => void;
-  /**
-   * Opens the command palette (Mod+K).
-   *
-   * The palette is the single owner of everything else: the copilot composer,
-   * the exports and the sandbox are rows in it, so one chord reaches all of them
-   * and the header does not need a button per feature.
-   */
+  /** Opens commands and business-object search (Mod+K). */
   openCommandPalette?: () => void;
   /** Re-runs the AST gate and the sensors. */
   rerunSensors?: () => void;
   openDelivery?: () => void;
-  /** Opens the sandbox hub (Alt+Shift+S); Alt+S now flips the split. */
+  /** Opens the sandbox hub (Alt+Shift+S). */
   openSandbox?: () => void;
   clearSelection: () => void;
   zoomIn: () => void;
@@ -27,16 +20,8 @@ interface ShortcutHandlers {
   fitCanvas?: () => void;
   /** Frames the selected object (Shift+2). */
   zoomToSelection?: () => void;
-  /** Opens the split stage on the ledger (Alt+3). */
-  openLedgerSplit?: () => void;
-  /** Opens the split stage on the contract (Alt+4). */
-  openContractSplit?: () => void;
-  /** Flips the split between side-by-side and stacked (Alt+S). */
-  rotateSplit?: () => void;
-  /** Leaves the split stage on Escape, before the escape clears a selection. */
-  closeSplit?: () => void;
-  /** Collapses the left outline rail (Mod+B). */
-  toggleLeftRail?: () => void;
+  /** Exits story playback on Escape without clearing the selection. */
+  closeStory?: () => void;
   /** Collapses the inspector rail (Mod+I / Mod+\). */
   toggleRightRail?: () => void;
   /** Slides the problems panel in or out (Alt+X). */
@@ -89,11 +74,8 @@ export const useEditorShortcuts = (handlers: ShortcutHandlers): void => {
 
       // The palette is the way in: it is the only chord the header advertises,
       // and every other surface (copilot, exports, sandbox) is a row inside it.
-      if (
-        mod &&
-        event.key.toLowerCase() === 'k' &&
-        handlers.openCommandPalette
-      ) {
+      const key = event.key.toLowerCase();
+      if (mod && key === 'k' && handlers.openCommandPalette) {
         event.preventDefault();
         handlers.openCommandPalette();
         return;
@@ -117,12 +99,6 @@ export const useEditorShortcuts = (handlers: ShortcutHandlers): void => {
         }
       }
 
-      if (mod && event.key.toLowerCase() === 'f') {
-        event.preventDefault();
-        handlers.focusSearch();
-        return;
-      }
-
       // Alt chords stay off a text field: a modeler typing a CEL expression
       // wants the character, not the panel behind it.
       if (event.altKey && !typing) {
@@ -131,13 +107,7 @@ export const useEditorShortcuts = (handlers: ShortcutHandlers): void => {
             ? handlers.openDelivery
             : event.code === 'KeyX'
               ? handlers.toggleProblems
-              : event.code === 'KeyS'
-                ? handlers.rotateSplit
-                : event.code === 'Digit4'
-                  ? handlers.openLedgerSplit
-                  : event.code === 'Digit5'
-                    ? handlers.openContractSplit
-                    : undefined;
+              : undefined;
 
         if (altAction !== undefined) {
           event.preventDefault();
@@ -163,14 +133,9 @@ export const useEditorShortcuts = (handlers: ShortcutHandlers): void => {
       // Layout keys belong to the workspace, but a text field may want them for
       // its own formatting, so they only fire outside an input.
       if (mod && !typing) {
-        const layoutKey = event.key.toLowerCase();
         // `Mod+\` is the chord the inspector's own fold prints.
         const toggle =
-          layoutKey === 'b'
-            ? handlers.toggleLeftRail
-            : layoutKey === 'i' || event.key === '\\'
-              ? handlers.toggleRightRail
-              : undefined;
+          key === 'i' || event.key === '\\' ? handlers.toggleRightRail : undefined;
 
         if (toggle !== undefined) {
           event.preventDefault();
@@ -189,11 +154,9 @@ export const useEditorShortcuts = (handlers: ShortcutHandlers): void => {
         return;
       }
 
-      // Escape belongs to the stage while one is open: closing the comparison
-      // is what the modeler is looking at, and the selection survives it.
-      if (event.key === 'Escape' && handlers.closeSplit !== undefined) {
+      if (event.key === 'Escape' && handlers.closeStory !== undefined) {
         event.preventDefault();
-        handlers.closeSplit();
+        handlers.closeStory();
         return;
       }
 

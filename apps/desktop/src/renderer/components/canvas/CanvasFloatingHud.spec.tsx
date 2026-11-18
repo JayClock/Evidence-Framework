@@ -1,13 +1,13 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import type { WorkspaceViewMode } from '@evidence-poc/desktop-ui-kit';
+import type { GraphViewMode } from '@evidence-poc/desktop-ui-kit';
 
 import { CanvasFloatingHud } from './CanvasFloatingHud';
 
 const setup = (
   overrides: {
-    viewMode?: WorkspaceViewMode;
+    viewMode?: GraphViewMode;
     density?: 'simplified' | 'standard';
     hasSelection?: boolean;
     zoom?: number;
@@ -22,9 +22,6 @@ const setup = (
     resetZoom: vi.fn(),
     fitToContent: vi.fn(),
     onGridChange: vi.fn(),
-    onOpenSplit: vi.fn(),
-    onCloseSplit: vi.fn(),
-    onShowLedger: vi.fn(),
   };
 
   render(
@@ -35,7 +32,6 @@ const setup = (
       hasSelection={overrides.hasSelection ?? false}
       zoom={overrides.zoom ?? 1}
       grid="dots"
-      splitPane="ledger"
       minimapOpen={false}
       onToggleMinimap={vi.fn()}
     />,
@@ -55,20 +51,20 @@ describe('CanvasFloatingHud', () => {
     expect(handlers.onViewModeChange).toHaveBeenCalledWith('topology');
     expect(handlers.onDensityChange).not.toHaveBeenCalled();
   });
-  it('names the stage the modeler is looking at', () => {
-    setup({ viewMode: 'table' });
+  it('marks the active graph layout', () => {
+    setup({ viewMode: 'topology' });
 
-    expect(screen.getByRole('button', { name: /总台账/ })).toHaveAttribute(
+    expect(screen.getByRole('button', { name: /拓扑图/ })).toHaveAttribute(
       'aria-pressed',
       'true',
     );
-    expect(screen.getByRole('button', { name: /拓扑图/ })).toHaveAttribute(
+    expect(screen.getByRole('button', { name: /业务旅程/ })).toHaveAttribute(
       'aria-pressed',
       'false',
     );
   });
 
-  it('switches the stage and the card density it reports', () => {
+  it('switches the card density', () => {
     const handlers = setup({ density: 'standard' });
 
     expect(screen.getByRole('button', { name: '标准图' })).toHaveAttribute(
@@ -76,24 +72,8 @@ describe('CanvasFloatingHud', () => {
       'true',
     );
 
-    // The segmented control prints its chord beside the label.
-    fireEvent.click(screen.getByRole('button', { name: /分屏⌥4/ }));
-    expect(handlers.onViewModeChange).toHaveBeenCalledWith('split');
-
     fireEvent.click(screen.getByRole('button', { name: '简化图' }));
     expect(handlers.onDensityChange).toHaveBeenCalledWith('simplified');
-  });
-
-  it('opens a chosen comparison beside the graph', () => {
-    const handlers = setup({ viewMode: 'split' });
-
-    fireEvent.click(screen.getByRole('button', { name: /选择分屏对照/ }));
-    fireEvent.click(screen.getByRole('button', { name: /交付契约/ }));
-
-    expect(handlers.onOpenSplit).toHaveBeenCalledWith('openapi');
-    expect(
-      screen.getByRole('button', { name: /选择分屏对照/ }),
-    ).toHaveTextContent('关键台账');
   });
 
   it('cycles the paper the model sits on', () => {

@@ -1,37 +1,20 @@
-import {
-  Columns2,
-  Grid3x3,
-  Maximize2,
-  Minus,
-  MousePointer2,
-  Plus,
-  Rows2,
-} from 'lucide-react';
+import { Grid3x3, Maximize2, Minus, MousePointer2, Plus } from 'lucide-react';
 
 import type {
   CanvasGridStyle,
   CanvasHudControls,
 } from '@evidence-poc/desktop-feature-canvas';
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
   ViewModeSegmentedControl,
   cn,
-  type WorkspaceViewMode,
+  type GraphViewMode,
 } from '@evidence-poc/desktop-ui-kit';
 
 import type { CanvasViewMode } from '@evidence-poc/evidence-canvas-interaction';
-import {
-  SPLIT_PANES,
-  SPLIT_PANE_LABELS,
-  type SplitPaneMode,
-} from '../../state/useWorkspaceSplitState';
 
 export interface CanvasFloatingHudProps extends CanvasHudControls {
-  /** Graph, ledger or split — the app's view state, not the canvas's. */
-  viewMode: WorkspaceViewMode;
-  onViewModeChange: (mode: WorkspaceViewMode) => void;
+  viewMode: GraphViewMode;
+  onViewModeChange: (mode: GraphViewMode) => void;
   /** Card density inside the graph. */
   density: CanvasViewMode;
   onDensityChange: (mode: CanvasViewMode) => void;
@@ -39,12 +22,6 @@ export interface CanvasFloatingHudProps extends CanvasHudControls {
   /** True while an object is selected, so "pointer" can mean "deselect". */
   hasSelection: boolean;
   onClearSelection: () => void;
-  /** Which document the split stage is comparing the graph against. */
-  splitPane: SplitPaneMode;
-  onOpenSplit: (pane: SplitPaneMode) => void;
-  onCloseSplit: () => void;
-  /** Replaces the whole split with the focused ledger. */
-  onShowLedger: () => void;
 }
 
 const DENSITIES: readonly { id: CanvasViewMode; label: string }[] = [
@@ -88,10 +65,6 @@ export const CanvasFloatingHud = ({
   fitToContent,
   grid,
   onGridChange,
-  splitPane,
-  onOpenSplit,
-  onCloseSplit,
-  onShowLedger,
 }: CanvasFloatingHudProps) => (
   <div className="pointer-events-auto flex shrink-0 items-center gap-1 rounded-lg border border-evidence-line bg-white/85 px-1.5 py-1 shadow-hud backdrop-blur-md">
     <button
@@ -147,71 +120,6 @@ export const CanvasFloatingHud = ({
       </button>
     ) : null}
     <ViewModeSegmentedControl mode={viewMode} onChange={onViewModeChange} />
-
-    {/*
-      The split's target is the island's second question: the segmented control
-      says a second surface exists, this says what it compares against.
-    */}
-    <Popover>
-      <PopoverTrigger asChild>
-        <button
-          type="button"
-          aria-label="选择分屏对照"
-          title="选择分屏对照（⌥4 旅程+表、⌥5 旅程+码）"
-          className={cn(
-            'flex h-6 items-center gap-1 rounded border px-1.5 text-[10px] transition-colors',
-            viewMode === 'split'
-              ? 'border-evidence-accent bg-evidence-accent/10 text-evidence-accent'
-              : 'border-evidence-line text-evidence-muted hover:text-evidence-ink',
-          )}
-        >
-          <Columns2 aria-hidden="true" className="size-3" />
-          {viewMode === 'split' ? SPLIT_PANE_LABELS[splitPane] : '分屏'}
-        </button>
-      </PopoverTrigger>
-      <PopoverContent align="center" className="w-44 p-1">
-        <p className="px-2 py-1 text-[10px] tracking-wide text-evidence-muted uppercase">
-          分屏对照
-        </p>
-        {SPLIT_PANES.map((pane) => (
-          <button
-            key={pane}
-            type="button"
-            aria-pressed={viewMode === 'split' && splitPane === pane}
-            onClick={() => onOpenSplit(pane)}
-            className={cn(
-              'flex w-full items-center justify-between rounded px-2 py-1 text-left text-[11px] transition-colors',
-              viewMode === 'split' && splitPane === pane
-                ? 'bg-evidence-active text-evidence-ink'
-                : 'text-evidence-muted hover:bg-evidence-hover hover:text-evidence-ink',
-            )}
-          >
-            <span>{SPLIT_PANE_LABELS[pane]}</span>
-            <span className="text-[9px] text-evidence-muted">
-              {pane === 'ledger' ? '⌥4' : pane === 'openapi' ? '⌥5' : ''}
-            </span>
-          </button>
-        ))}
-        <div className="my-1 h-px bg-evidence-line" />
-        <button
-          type="button"
-          onClick={onShowLedger}
-          className="flex w-full items-center gap-1 rounded px-2 py-1 text-left text-[11px] text-evidence-muted transition-colors hover:bg-evidence-hover hover:text-evidence-ink"
-        >
-          <Rows2 aria-hidden="true" className="size-3" />
-          只看总台账
-        </button>
-        {viewMode === 'split' ? (
-          <button
-            type="button"
-            onClick={onCloseSplit}
-            className="flex w-full items-center rounded px-2 py-1 text-left text-[11px] text-evidence-muted transition-colors hover:bg-evidence-hover hover:text-evidence-ink"
-          >
-            关闭分屏
-          </button>
-        ) : null}
-      </PopoverContent>
-    </Popover>
 
     <button
       type="button"

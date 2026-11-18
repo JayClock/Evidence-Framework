@@ -9,7 +9,7 @@ const setup = (pinned = false) => {
 
   render(
     <ActivityDrawer
-      title="业务结构"
+      title="AI 协同"
       pinned={pinned}
       onTogglePinned={onTogglePinned}
       onClose={onClose}
@@ -25,7 +25,7 @@ describe('ActivityDrawer', () => {
   it('names the panel it wraps', () => {
     setup();
 
-    expect(screen.getByRole('region', { name: '业务结构' })).toBeVisible();
+    expect(screen.getByRole('region', { name: 'AI 协同' })).toBeVisible();
     expect(screen.getByText('抽屉内容')).toBeInTheDocument();
   });
 

@@ -126,8 +126,8 @@ export const createLedgerColumns = (options: LedgerColumnOptions) => [
           {options.onRevealOnGraph === undefined ? null : (
             <button
               type="button"
-              title="在拓扑图中定位"
-              aria-label={`在拓扑图中定位 ${row.entityLabel ?? ''}`}
+              title="在画布中定位"
+              aria-label={`在画布中定位 ${row.entityLabel ?? ''}`}
               onClick={(event) => {
                 event.stopPropagation();
                 if (row.entityId !== null)

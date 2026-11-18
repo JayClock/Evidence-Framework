@@ -1,107 +1,78 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import type { WorkspaceViewMode } from '@evidence-poc/desktop-ui-kit';
+import type { GraphViewMode } from '@evidence-poc/desktop-ui-kit';
 
-export type { WorkspaceViewMode } from '@evidence-poc/desktop-ui-kit';
-export { WORKSPACE_VIEW_MODES } from '@evidence-poc/desktop-ui-kit';
+export type WorkspaceViewMode = GraphViewMode | 'table' | 'story';
 
-export interface WorkspaceViewModeController {
-  mode: WorkspaceViewMode;
-  setMode: (mode: WorkspaceViewMode) => void;
-  /** Flips between the two single-surface modes; the split keeps its own key. */
-  toggleViewMode: () => void;
-}
+/** The ledger replaces the canvas without forgetting its last editing layout. */
+export const useWorkspaceViewMode = () => {
+  const [{ mode, lastGraphMode }, setView] = useState<{
+    mode: WorkspaceViewMode;
+    lastGraphMode: GraphViewMode;
+  }>({ mode: 'journey', lastGraphMode: 'journey' });
 
-/**
- * A text field keeps `v` for itself, and CodeMirror is a contenteditable the
- * same way an input is.
- */
-const isEditable = (target: EventTarget | null): boolean => {
-  if (target === null || typeof (target as Element).closest !== 'function') {
-    return false;
-  }
+  const setMode = useCallback((next: GraphViewMode | 'story') => {
+    setView((current) =>
+      current.mode === next
+        ? current
+        : {
+            mode: next,
+            lastGraphMode: next === 'story' ? current.lastGraphMode : next,
+          },
+    );
+  }, []);
 
-  const element = target as HTMLElement;
+  const toggleLedger = useCallback(() => {
+    setView((current) => ({
+      ...current,
+      mode: current.mode === 'table' ? current.lastGraphMode : 'table',
+    }));
+  }, []);
 
-  return (
-    element.tagName === 'INPUT' ||
-    element.tagName === 'TEXTAREA' ||
-    element.tagName === 'SELECT' ||
-    element.isContentEditable === true ||
-    element.closest('.cm-editor') !== null
-  );
-};
-
-/**
- * Owns which surface the centre stage shows.
- *
- * The mode is view state, not document state: it never enters the model, the
- * undo history or a saved file, so flipping to the ledger and back costs the
- * modeler nothing. `V` flips, `Alt+1/2/3/4` names a mode outright; a modifier key
- * combination is allowed while typing, a bare letter is not.
- *
- * The digits are read from `event.code` because macOS turns `Alt+2` into `™`:
- * the letter a layout produces is not what the chord means.
- */
-export const useWorkspaceViewMode = (
-  initialMode: WorkspaceViewMode = 'journey',
-): WorkspaceViewModeController => {
-  const [mode, setMode] = useState<WorkspaceViewMode>(initialMode);
-
-  const toggleViewMode = useCallback(() => {
-    setMode((current) =>
-      current === 'journey' || current === 'topology' ? 'table' : 'journey',
+  const returnToGraph = useCallback(() => {
+    setView((current) =>
+      current.mode === current.lastGraphMode
+        ? current
+        : { ...current, mode: current.lastGraphMode },
     );
   }, []);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      // A surface that already consumed the key owns it: the ledger sheet and
-      // the copilot composer both sit above the workspace.
-      if (event.defaultPrevented) {
+      if (
+        event.defaultPrevented ||
+        !event.altKey ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey
+      ) {
         return;
       }
 
-      // `Mod+1..4` belongs to the activity rail, so the view modes sit one
-      // modifier further out and never fight it for a digit.
-      if (event.altKey && !event.metaKey && !event.ctrlKey && !event.shiftKey) {
-        const target =
-          event.code === 'Digit1'
-            ? 'journey'
-            : event.code === 'Digit2'
-              ? 'topology'
-              : event.code === 'Digit3'
-                ? 'table'
-                : event.code === 'Digit4'
-                  ? 'split'
-                  : undefined;
+      // Read the physical key: macOS produces `™` for Alt+2.
+      const target =
+        event.code === 'Digit1'
+          ? 'journey'
+          : event.code === 'Digit2'
+            ? 'topology'
+            : undefined;
 
-        if (target !== undefined) {
-          event.preventDefault();
-          setMode(target);
-        }
-
-        return;
-      }
-
-      if (event.metaKey || event.ctrlKey || event.shiftKey) {
-        return;
-      }
-
-      if (isEditable(event.target)) {
-        return;
-      }
-
-      if (event.key.toLowerCase() === 'v') {
+      if (target !== undefined) {
         event.preventDefault();
-        toggleViewMode();
+        setMode(target);
       }
     };
 
     window.addEventListener('keydown', onKeyDown);
 
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [toggleViewMode]);
+  }, [setMode]);
 
-  return { mode, setMode, toggleViewMode };
+  return {
+    mode,
+    graphMode: mode === 'story' ? 'journey' : lastGraphMode,
+    setMode,
+    toggleLedger,
+    returnToGraph,
+  } as const;
 };

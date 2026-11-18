@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
-/** The surfaces the activity rail can put beside the canvas. */
-export const RAIL_TABS = [
-  'topology',
+/** Drawer and panel destinations, excluding the ledger's main-stage switch. */
+const RAIL_TABS = [
   'diagnostics',
   'drift',
   'copilot',
@@ -11,6 +10,9 @@ export const RAIL_TABS = [
 ] as const;
 
 export type RailTabId = (typeof RAIL_TABS)[number];
+
+const ACTIVITY_RAIL_TABS = ['ledger', ...RAIL_TABS] as const;
+export type ActivityRailTabId = (typeof ACTIVITY_RAIL_TABS)[number];
 
 /** Large surfaces that cover the workspace instead of sharing its width. */
 export type HubSurface = 'delivery' | 'drift';
@@ -29,7 +31,7 @@ export interface WorkspaceLayoutState {
 
 export interface WorkspaceLayoutActions {
   setActiveRailTab: (tab: RailTabId | null) => void;
-  toggleRailTab: (tab: RailTabId) => void;
+  toggleRailTab: (tab: ActivityRailTabId) => void;
   toggleRailPinned: () => void;
   toggleProblemsPanel: () => void;
   openProblemsWithIssue: (issueId: string) => void;
@@ -43,15 +45,9 @@ export interface WorkspaceLayoutActions {
 export type WorkspaceLayoutController = WorkspaceLayoutState &
   WorkspaceLayoutActions;
 
-/**
- * Chords the rail answers to.
- *
- * The digits belong to the rail because it is the top-level switch — where the
- * modeler is in the studio — while the three view modes (graph, ledger, split)
- * keep `Alt+1..3` and the `V` toggle, so a chord never means two things.
- */
-export const RAIL_TAB_CHORDS: Record<RailTabId, string> = {
-  topology: '⌘+1',
+/** Chords for the sidebar controls, in rail order. */
+export const RAIL_TAB_CHORDS: Record<ActivityRailTabId, string> = {
+  ledger: '⌘+1',
   diagnostics: '⌘+2',
   drift: '⌘+3',
   copilot: '⌘+4',
@@ -85,11 +81,9 @@ const isEditable = (target: EventTarget | null): boolean => {
  * what is on screen, and the screen becomes a projection of it.
  */
 export const useWorkspaceLayoutState = (
-  initialRailTab: RailTabId | null = null,
+  toggleLedger: () => void,
 ): WorkspaceLayoutController => {
-  const [activeRailTab, setActiveRailTab] = useState<RailTabId | null>(
-    initialRailTab,
-  );
+  const [activeRailTab, setActiveRailTab] = useState<RailTabId | null>(null);
   const [isRailPinned, setRailPinned] = useState(false);
   const [isProblemsPanelOpen, setProblemsPanelOpen] = useState(false);
   const [activeIssueId, setActiveIssueId] = useState<string | null>(null);
@@ -108,16 +102,24 @@ export const useWorkspaceLayoutState = (
    * looking at the object it names. The rail still owns the button, so the
    * chord and the highlight behave like every other tab.
    */
-  const toggleRailTab = useCallback((tab: RailTabId) => {
-    if (tab === 'diagnostics') {
-      setActiveRailTab(null);
-      setActiveIssueId(null);
-      setProblemsPanelOpen((open) => !open);
-      return;
-    }
+  const toggleRailTab = useCallback(
+    (tab: ActivityRailTabId) => {
+      if (tab === 'ledger') {
+        toggleLedger();
+        return;
+      }
 
-    setActiveRailTab((current) => (current === tab ? null : tab));
-  }, []);
+      if (tab === 'diagnostics') {
+        setActiveRailTab(null);
+        setActiveIssueId(null);
+        setProblemsPanelOpen((open) => !open);
+        return;
+      }
+
+      setActiveRailTab((current) => (current === tab ? null : tab));
+    },
+    [toggleLedger],
+  );
 
   const toggleProblemsPanel = useCallback(() => {
     setProblemsPanelOpen((current) => !current);
@@ -149,7 +151,7 @@ export const useWorkspaceLayoutState = (
     setActiveHub(null);
   }, []);
 
-  // A drawer that opens on a chord must not steal a digit a text field wants.
+  // Sidebar shortcuts must not steal a digit a text field wants.
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.defaultPrevented || event.altKey || event.shiftKey) {
@@ -160,7 +162,7 @@ export const useWorkspaceLayoutState = (
         return;
       }
 
-      const tab = RAIL_TABS.find(
+      const tab = ACTIVITY_RAIL_TABS.find(
         (candidate, index) => event.key === String(index + 1),
       );
 

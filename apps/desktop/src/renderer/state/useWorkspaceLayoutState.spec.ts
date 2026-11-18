@@ -1,7 +1,10 @@
 import { act, renderHook } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { useWorkspaceLayoutState } from './useWorkspaceLayoutState';
+
+const setup = (toggleLedger = vi.fn()) =>
+  renderHook(() => useWorkspaceLayoutState(toggleLedger));
 
 const press = (init: KeyboardEventInit) => {
   act(() => {
@@ -13,7 +16,7 @@ const press = (init: KeyboardEventInit) => {
 
 describe('useWorkspaceLayoutState', () => {
   it('starts with the rail closed and nothing covering the canvas', () => {
-    const { result } = renderHook(() => useWorkspaceLayoutState());
+    const { result } = setup();
 
     expect(result.current.activeRailTab).toBeNull();
     expect(result.current.isRailPinned).toBe(false);
@@ -21,18 +24,19 @@ describe('useWorkspaceLayoutState', () => {
     expect(result.current.activeHub).toBeNull();
   });
 
-  it('opens a drawer with Mod+1 and closes it with the same chord', () => {
-    const { result } = renderHook(() => useWorkspaceLayoutState());
+  it('toggles the ledger with Mod+1 without opening a drawer', () => {
+    const toggleLedger = vi.fn();
+    const { result } = setup(toggleLedger);
 
     press({ key: '1', metaKey: true });
-    expect(result.current.activeRailTab).toBe('topology');
-
     press({ key: '1', metaKey: true });
+
+    expect(toggleLedger).toHaveBeenCalledTimes(2);
     expect(result.current.activeRailTab).toBeNull();
   });
 
   it('puts the diagnostics list under the canvas, not in a drawer', () => {
-    const { result } = renderHook(() => useWorkspaceLayoutState());
+    const { result } = setup();
 
     press({ key: '2', metaKey: true });
 
@@ -44,16 +48,17 @@ describe('useWorkspaceLayoutState', () => {
   });
 
   it('switches drawers instead of stacking them', () => {
-    const { result } = renderHook(() => useWorkspaceLayoutState());
+    const { result } = setup();
 
-    press({ key: '1', metaKey: true });
+    press({ key: '3', metaKey: true });
+    expect(result.current.activeRailTab).toBe('drift');
     press({ key: '4', metaKey: true });
 
     expect(result.current.activeRailTab).toBe('copilot');
   });
 
   it('pins a floating drawer into the layout', () => {
-    const { result } = renderHook(() => useWorkspaceLayoutState());
+    const { result } = setup();
 
     act(() => result.current.toggleRailPinned());
     expect(result.current.isRailPinned).toBe(true);
@@ -62,7 +67,7 @@ describe('useWorkspaceLayoutState', () => {
   });
 
   it('opens the problems panel on the finding it was asked for', () => {
-    const { result } = renderHook(() => useWorkspaceLayoutState());
+    const { result } = setup();
 
     act(() => result.current.openProblemsWithIssue('check_fm:1'));
 
@@ -76,7 +81,8 @@ describe('useWorkspaceLayoutState', () => {
   });
 
   it('leaves the digits to a text field', () => {
-    const { result } = renderHook(() => useWorkspaceLayoutState());
+    const toggleLedger = vi.fn();
+    const { result } = setup(toggleLedger);
     const input = document.createElement('input');
     document.body.append(input);
 
@@ -91,11 +97,12 @@ describe('useWorkspaceLayoutState', () => {
     });
 
     expect(result.current.activeRailTab).toBeNull();
+    expect(toggleLedger).not.toHaveBeenCalled();
     act(() => input.remove());
   });
 
   it('holds one blocking hub at a time', () => {
-    const { result } = renderHook(() => useWorkspaceLayoutState());
+    const { result } = setup();
 
     act(() => result.current.openHub('delivery'));
     expect(result.current.activeHub).toBe('delivery');

@@ -2,9 +2,9 @@ import {
   Activity,
   Bot,
   FlaskConical,
-  FolderTree,
   FileText,
   ListChecks,
+  Table2,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -18,6 +18,7 @@ import {
 
 import {
   RAIL_TAB_CHORDS,
+  type ActivityRailTabId,
   type RailTabId,
 } from '../../state/useWorkspaceLayoutState';
 
@@ -30,21 +31,22 @@ export interface RailBadge {
 
 export interface ActivityRailProps {
   activeTab: RailTabId | null;
-  onSelect: (tab: RailTabId) => void;
-  badges?: Partial<Record<RailTabId, RailBadge>>;
+  ledgerActive: boolean;
+  onSelect: (tab: ActivityRailTabId) => void;
+  badges?: Partial<Record<ActivityRailTabId, RailBadge>>;
 }
 
 const RAIL_ITEMS: readonly {
-  id: RailTabId;
+  id: ActivityRailTabId;
   label: string;
   hint: string;
   icon: LucideIcon;
 }[] = [
   {
-    id: 'topology',
-    label: '业务结构',
-    hint: '上下文层级与业务对象导航',
-    icon: FolderTree,
+    id: 'ledger',
+    label: '总台账',
+    hint: '打开总台账，阅读与编辑模型字段',
+    icon: Table2,
   },
   {
     id: 'diagnostics',
@@ -88,13 +90,11 @@ const badgeToneClass = (tone: RailBadge['tone']): string =>
 /**
  * The studio's top-level switch, in 48 pixels.
  *
- * Every surface that used to own a permanent column — outline, diagnostics,
- * sandbox, copilot — is a button here instead. The rail never moves and never
- * resizes, so the canvas can claim the whole remaining width while the modeler
- * still reaches every tool with one click or one chord.
+ * The rail switches between canvas and ledger and opens the studio tools.
  */
 export const ActivityRail = ({
   activeTab,
+  ledgerActive,
   onSelect,
   badges = {},
 }: ActivityRailProps) => (
@@ -106,7 +106,8 @@ export const ActivityRail = ({
     <TooltipProvider>
       {RAIL_ITEMS.map((item) => {
         const Icon = item.icon;
-        const active = item.id === activeTab;
+        const active =
+          item.id === 'ledger' ? ledgerActive : item.id === activeTab;
         const badge = badges[item.id];
 
         return (
@@ -144,7 +145,7 @@ export const ActivityRail = ({
               </button>
             </TooltipTrigger>
             <TooltipContent side="right" shortcut={RAIL_TAB_CHORDS[item.id]}>
-              {item.hint}
+              {item.id === 'ledger' && active ? '返回画布' : item.hint}
             </TooltipContent>
           </Tooltip>
         );

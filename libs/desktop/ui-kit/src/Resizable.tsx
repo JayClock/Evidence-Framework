@@ -7,10 +7,8 @@ import { cn } from './utils';
 /**
  * Workspace primitives around `react-resizable-panels`.
  *
- * The studio is a split-view, not a grid: every region can be dragged, collapsed
- * and reopened, and the sizes survive an app restart through `autoSaveId`. These
- * wrappers only add the Evidence chrome — the resize and persistence behaviour
- * stays in the library.
+ * The app uses these wrappers for the resizable inspector. They add the
+ * Evidence chrome; resizing and `autoSaveId` persistence stay in the library.
  */
 export const ResizablePanelGroup = ({
   className,
@@ -38,7 +36,7 @@ export interface ResizableHandleProps
  * The drag gutter between two panels.
  *
  * It is a rail rather than a line so the pointer target stays usable at a 3px
- * visual width, and it highlights on hover to advertise that the split moves.
+ * visual width, and it highlights on hover to advertise that it can be dragged.
  */
 export const ResizableHandle = ({
   withHandle = false,

@@ -22,6 +22,14 @@ nx make desktop         # installers in apps/desktop/out/make
 
 `electron-forge start` needs a display; the test targets do not.
 
+## Editor navigation
+
+- Select **总台账** in the left sidebar (Cmd/Ctrl+1) to replace the canvas with
+  the model ledger. Select it again to return to the previous canvas layout.
+- Use **Cmd/Ctrl+K** to search for business objects and jump to them.
+- **业务流放映** runs on the canvas. Open **剧情详情** for narration, scene details
+  and What-If questions without adding a second viewport.
+
 ## AI configuration (no Pi CLI required)
 
 Use the **AI** badge on the dashboard/editor, **Cmd/Ctrl+,**, or search for

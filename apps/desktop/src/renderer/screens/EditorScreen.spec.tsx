@@ -4,6 +4,7 @@ import {
   render,
   screen,
   waitFor,
+  within,
 } from '@testing-library/react';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import type { StoryInvalidatedEvent } from '@evidence-poc/desktop-contracts/story';
@@ -74,15 +75,15 @@ describe('EditorScreen', () => {
       ).toHaveClass('ring-2'),
     );
     expect(world().style.transform).toContain('scale(1)');
-    fireEvent.keyDown(window, { code: 'Digit3', altKey: true });
+    const ledger = screen.getByRole('button', { name: '总台账' });
+    fireEvent.click(ledger);
     await screen.findByLabelText('领域模型总台账');
-    fireEvent.keyDown(window, { code: 'Digit1', altKey: true });
-    await waitFor(() =>
-      expect(
-        container.querySelector('[data-swimlane-kind="phase"]'),
-      ).not.toBeNull(),
-    );
+    fireEvent.click(ledger);
     await waitFor(() => expect(world().style.transform).toContain('scale(1)'));
+    expect(screen.getByRole('button', { name: /拓扑图/ })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
     expect(
       container.querySelector('[data-node-id="evidence.request"]'),
     ).toHaveClass('ring-2');
@@ -251,7 +252,7 @@ describe('EditorScreen', () => {
     expect(screen.getByText('上下文 2')).toBeInTheDocument();
   });
 
-  it('opens walkthrough beside the canvas, follows steps and silently refreshes clean models', async () => {
+  it('plays the walkthrough on the canvas and silently refreshes clean models', async () => {
     const api = readyProject();
     api.story.listFlows = vi.fn(async () => [storyFlow()]);
     api.story.project = vi.fn(async () => storyResult());
@@ -270,10 +271,9 @@ describe('EditorScreen', () => {
       target: { value: 'context.catalog' },
     });
     fireEvent.click(screen.getByRole('button', { name: /业务流放映/ }));
-    expect(screen.getByRole('tab', { name: '业务故事' })).toHaveAttribute(
-      'aria-selected',
-      'true',
-    );
+    expect(screen.queryByLabelText('副视口')).toBeNull();
+    expect(screen.queryByRole('region', { name: '业务故事' })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: '剧情详情' }));
     expect(await screen.findByText('采购方办理采购协议。')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: /下一步/ }));
     expect(screen.getByText('采购方办理交付请求。')).toBeInTheDocument();
@@ -306,7 +306,7 @@ describe('EditorScreen', () => {
     );
     fireEvent.click(screen.getByRole('button', { name: '退出放映' }));
     expect(screen.queryByLabelText('业务流放映控制')).toBeNull();
-    expect(screen.queryByLabelText('副视口')).toBeNull();
+    expect(screen.queryByRole('region', { name: '业务故事' })).toBeNull();
     expect(unsubscribe).toHaveBeenCalled();
     expect(container.querySelector('.evidence-story-active')).toBeNull();
     expect(screen.getByLabelText('聚焦范围')).toHaveValue('context.catalog');
@@ -339,9 +339,9 @@ describe('EditorScreen', () => {
         changedAt: '2026-11-11T09:00:00Z',
       }),
     );
+    fireEvent.keyDown(window, { code: 'Digit2', altKey: true });
     fireEvent.click(screen.getByRole('button', { name: /业务流放映/ }));
-    await screen.findByText('采购方办理采购协议。');
-    expect(api.story.project).toHaveBeenCalledOnce();
+    await waitFor(() => expect(api.story.project).toHaveBeenCalledOnce());
     expect(api.story.project).toHaveBeenCalledWith(
       expect.objectContaining({ document }),
     );
@@ -360,99 +360,43 @@ describe('EditorScreen', () => {
     expect(screen.queryByLabelText('门禁问题面板')).toBeNull();
   });
 
-  it('opens and closes the outline drawer with Cmd+B', async () => {
+  it('contains canvas control layers below floating drawers', async () => {
     readyProject();
-    render(<EditorScreen rootPath="/models/procurement" />);
-    await readyCanvas();
-
-    expect(screen.queryByLabelText('搜索业务对象')).toBeNull();
-    fireEvent.keyDown(window, { key: 'b', metaKey: true });
-    expect(await screen.findByLabelText('搜索业务对象')).toBeInTheDocument();
-    fireEvent.keyDown(window, { key: 'b', metaKey: true });
-    await waitFor(() =>
-      expect(screen.queryByLabelText('搜索业务对象')).toBeNull(),
+    const { container } = render(
+      <EditorScreen rootPath="/models/procurement" />,
     );
-  });
-
-  it.each(['journey', 'split'] as const)(
-    'contains canvas control layers below floating drawers in %s mode',
-    async (mode) => {
-      readyProject();
-      const { container } = render(
-        <EditorScreen rootPath="/models/procurement" />,
-      );
-      await readyCanvas();
-
-      if (mode === 'split') {
-        fireEvent.keyDown(window, { code: 'Digit4', altKey: true });
-        await screen.findByLabelText('副视口');
-      }
-
-      fireEvent.click(screen.getByRole('button', { name: '业务结构' }));
-      const drawer = screen.getByRole('region', { name: '业务结构' });
-      const stage = container.querySelector('[data-region="workspace-stage"]');
-
-      // jsdom cannot paint overlaps; enforce the stacking boundary that keeps
-      // the scope control and other canvas chrome beneath the floating drawer.
-      expect(stage).toHaveClass('isolate');
-      expect(stage).toContainElement(screen.getByLabelText('聚焦范围'));
-      expect(stage).not.toContainElement(drawer);
-      expect(drawer.parentElement).toHaveClass('absolute', 'z-30');
-
-      fireEvent.click(screen.getByRole('button', { name: '关闭面板' }));
-      expect(screen.queryByRole('region', { name: '业务结构' })).toBeNull();
-      fireEvent.change(screen.getByLabelText('聚焦范围'), {
-        target: { value: 'context.catalog' },
-      });
-      expect(screen.getByLabelText('聚焦范围')).toHaveValue('context.catalog');
-    },
-  );
-
-  it('hands the canvas back once a drawer picked an object', async () => {
-    readyProject();
-    render(<EditorScreen rootPath="/models/procurement" />);
     await readyCanvas();
 
-    fireEvent.click(screen.getByRole('button', { name: '业务结构' }));
-    fireEvent.click(
-      screen.getByRole('button', { name: '采购协议（Procurement Contract）' }),
-    );
+    fireEvent.click(screen.getByRole('button', { name: 'AI 协同' }));
+    const drawer = screen.getByRole('region', { name: 'AI 协同' });
+    const stage = container.querySelector('[data-region="workspace-stage"]');
 
-    // The selection reached the inspector, and the drawer stopped covering the
-    // canvas it just navigated.
-    expect(
-      screen.getByDisplayValue('采购协议（Procurement Contract）'),
-    ).toBeInTheDocument();
-    expect(screen.queryByLabelText('搜索业务对象')).toBeNull();
+    // jsdom cannot paint overlaps; enforce the stacking boundary instead.
+    expect(stage).toHaveClass('isolate');
+    expect(stage).toContainElement(screen.getByLabelText('聚焦范围'));
+    expect(stage).not.toContainElement(drawer);
+    expect(drawer.parentElement).toHaveClass('absolute', 'z-30');
+
+    fireEvent.click(screen.getByRole('button', { name: '关闭面板' }));
+    expect(screen.queryByRole('region', { name: 'AI 协同' })).toBeNull();
+    fireEvent.change(screen.getByLabelText('聚焦范围'), {
+      target: { value: 'context.catalog' },
+    });
+    expect(screen.getByLabelText('聚焦范围')).toHaveValue('context.catalog');
   });
 
-  it('keeps a pinned drawer open while the modeler picks objects', async () => {
-    readyProject();
-    render(<EditorScreen rootPath="/models/procurement" />);
-    await readyCanvas();
-
-    fireEvent.click(screen.getByRole('button', { name: '业务结构' }));
-    fireEvent.click(screen.getByRole('button', { name: '固定面板' }));
-
-    const request = screen
-      .getAllByText('交付请求（Delivery Request）')
-      .find((item) => item.closest('button') !== null)!;
-    fireEvent.click(request);
-
-    expect(screen.getByLabelText('搜索业务对象')).toBeInTheDocument();
-  });
-
-  it('opens every rail drawer with Mod+1 to Mod+4', async () => {
+  it('switches the ledger and still opens rail tools with Mod+1 to Mod+4', async () => {
     readyProject();
     render(<EditorScreen rootPath="/models/procurement" />);
     await readyCanvas();
 
     fireEvent.keyDown(window, { key: '1', metaKey: true });
-    expect(await screen.findByLabelText('搜索业务对象')).toBeInTheDocument();
+    expect(await screen.findByLabelText('领域模型总台账')).toBeInTheDocument();
+    fireEvent.keyDown(window, { key: '1', metaKey: true });
+    expect(screen.queryByLabelText('领域模型总台账')).toBeNull();
 
     fireEvent.keyDown(window, { key: '2', metaKey: true });
     expect(await screen.findByLabelText('门禁问题面板')).toBeInTheDocument();
-    expect(screen.queryByLabelText('搜索业务对象')).toBeNull();
 
     fireEvent.keyDown(window, { key: '4', metaKey: true });
     expect(await screen.findByLabelText('访谈内容')).toBeInTheDocument();
@@ -501,7 +445,7 @@ describe('EditorScreen', () => {
     expect(screen.queryByTitle('有未保存修改')).toBeNull();
   });
 
-  it('resets scope when sidebar navigation selects an out-of-scope object', async () => {
+  it('resets scope when quick search selects an out-of-scope object', async () => {
     readyProject();
     const { container } = render(
       <EditorScreen rootPath="/models/procurement" />,
@@ -513,12 +457,11 @@ describe('EditorScreen', () => {
     expect(
       container.querySelector('[data-node-id="evidence.request"]'),
     ).toHaveAttribute('aria-disabled', 'true');
-    fireEvent.click(screen.getByRole('button', { name: '业务结构' }));
-    // The drawer remains a full-model navigator, not a second scope filter.
-    const request = screen
-      .getAllByText('交付请求（Delivery Request）')
-      .find((item) => item.closest('button') !== null)!;
-    fireEvent.click(request);
+    fireEvent.keyDown(window, { key: 'k', metaKey: true });
+    fireEvent.change(await screen.findByLabelText('搜索命令或业务对象'), {
+      target: { value: '交付请求' },
+    });
+    fireEvent.click(screen.getByRole('option', { name: /交付请求/ }));
     expect(screen.getByLabelText('聚焦范围')).toHaveValue('');
     expect(
       container.querySelector('[data-node-id="evidence.request"]'),
@@ -803,11 +746,6 @@ describe('EditorScreen sensors', () => {
       expect(document.activeElement).toBe(screen.getByLabelText('访谈内容')),
     );
     expect(screen.queryByRole('dialog', { name: '快速命令' })).toBeNull();
-
-    // The outline search keeps its own chord, because "find this object" and
-    // "run this action" are different questions.
-    fireEvent.keyDown(window, { key: 'f', metaKey: true });
-    expect(document.activeElement).toBe(screen.getByLabelText('搜索业务对象'));
   });
 
   it('jumps to a business object from the command hub', async () => {
@@ -835,9 +773,12 @@ describe('EditorScreen sensors', () => {
     await readyCanvas();
 
     fireEvent.keyDown(window, { key: 'k', metaKey: true });
-    fireEvent.click(await screen.findByRole('option', { name: /总台账/ }));
+    fireEvent.click(await screen.findByRole('option', { name: /拓扑图/ }));
 
-    expect(await screen.findByLabelText('领域模型总台账')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /拓扑图/ })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
   });
 
   it('opens the agent on the selection with Cmd+J', async () => {
@@ -890,7 +831,7 @@ describe('EditorScreen sensors', () => {
   });
 });
 
-describe('EditorScreen dual-mode stage', () => {
+describe('EditorScreen stage navigation', () => {
   // The ledger is virtualised; jsdom reports a zero-height viewport and would
   // render none of its rows.
   beforeAll(() => {
@@ -909,19 +850,34 @@ describe('EditorScreen dual-mode stage', () => {
     Reflect.deleteProperty(HTMLElement.prototype, 'clientWidth');
   });
 
-  it('switches stage and density from the floating island', async () => {
-    readyProject();
-    render(<EditorScreen rootPath="/models/procurement" />);
+  it('switches the ledger from the sidebar without keeping the canvas mounted', async () => {
+    const api = readyProject();
+    const { container } = render(
+      <EditorScreen rootPath="/models/procurement" />,
+    );
     await readyCanvas();
 
     fireEvent.click(screen.getByRole('button', { name: '简化图' }));
+    const rail = within(screen.getByRole('navigation', { name: '活动导轨' }));
+    const ledger = rail.getByRole('button', { name: '总台账' });
+    expect(screen.getAllByRole('button', { name: '总台账' })).toEqual([ledger]);
+    expect(ledger).toHaveAttribute('aria-pressed', 'false');
+    fireEvent.click(ledger);
+    expect(ledger).toHaveAttribute('aria-pressed', 'true');
+    expect(await screen.findByLabelText('领域模型总台账')).toBeInTheDocument();
+    expect(screen.getByText('8 个实体 · 4 个字段')).toBeInTheDocument();
+    expect(
+      container.querySelector('[data-region="canvas-viewport"]'),
+    ).toBeNull();
+
+    fireEvent.click(ledger);
+    expect(ledger).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.queryByLabelText('领域模型总台账')).toBeNull();
     expect(screen.getByRole('button', { name: '简化图' })).toHaveAttribute(
       'aria-pressed',
       'true',
     );
-
-    fireEvent.click(screen.getByRole('button', { name: /总台账/ }));
-    expect(await screen.findByLabelText('领域模型总台账')).toBeInTheDocument();
+    expect(api.calls.save).toEqual([]);
   });
 
   it('resets the zoom with Cmd+0 and fits the model with Shift+1', async () => {
@@ -942,194 +898,29 @@ describe('EditorScreen dual-mode stage', () => {
     await waitFor(() => expect(world().style.transform).not.toBe(reset));
   });
 
-  it('reaches the ledger from the floating island without a header control', async () => {
-    readyProject();
-    render(<EditorScreen rootPath="/models/procurement" />);
-    await readyCanvas();
-
-    // The header no longer carries a view switch: the island owns it.
-    expect(screen.getAllByRole('button', { name: /拓扑图/ })).toHaveLength(1);
-  });
-
-  it('opens the whole ledger with Alt+3 and returns to the journey with Alt+1', async () => {
+  it('removes the outline and split controls and their old shortcuts', async () => {
     readyProject();
     const { container } = render(
       <EditorScreen rootPath="/models/procurement" />,
     );
     await readyCanvas();
 
-    fireEvent.keyDown(window, { code: 'Digit3', altKey: true });
+    expect(screen.queryByRole('button', { name: '业务结构' })).toBeNull();
+    expect(screen.queryByRole('button', { name: /分屏/ })).toBeNull();
+    fireEvent.keyDown(window, { key: 'b', metaKey: true });
+    fireEvent.keyDown(window, { key: 'f', metaKey: true });
+    fireEvent.keyDown(window, { key: 'v' });
+    for (const code of ['Digit3', 'Digit4', 'Digit5', 'KeyS']) {
+      fireEvent.keyDown(window, { code, altKey: true });
+    }
 
-    expect(await screen.findByLabelText('领域模型总台账')).toBeInTheDocument();
-    expect(
-      container.querySelector('[data-region="canvas-viewport"]'),
-    ).toBeNull();
-    expect(screen.getByText('8 个实体 · 4 个字段')).toBeInTheDocument();
-
-    fireEvent.keyDown(window, { code: 'Digit1', altKey: true });
-
-    await waitFor(() =>
-      expect(
-        container.querySelector('[data-region="canvas-viewport"]'),
-      ).not.toBeNull(),
-    );
+    expect(screen.queryByLabelText('搜索业务对象')).toBeNull();
+    expect(screen.queryByRole('dialog', { name: '快速命令' })).toBeNull();
     expect(screen.queryByLabelText('领域模型总台账')).toBeNull();
-  });
-
-  it('flips between the graph and the ledger on V', async () => {
-    readyProject();
-    const { container } = render(
-      <EditorScreen rootPath="/models/procurement" />,
-    );
-    await readyCanvas();
-
-    fireEvent.keyDown(window, { key: 'v' });
-    expect(await screen.findByLabelText('领域模型总台账')).toBeInTheDocument();
-
-    fireEvent.keyDown(window, { key: 'v' });
-    await waitFor(() =>
-      expect(
-        container.querySelector('[data-region="canvas-viewport"]'),
-      ).not.toBeNull(),
-    );
-  });
-
-  it('keeps both surfaces mounted in split mode', async () => {
-    readyProject();
-    const { container } = render(
-      <EditorScreen rootPath="/models/procurement" />,
-    );
-    await readyCanvas();
-
-    fireEvent.keyDown(window, { code: 'Digit4', altKey: true });
-
-    expect(await screen.findByLabelText('领域模型总台账')).toBeInTheDocument();
+    expect(screen.queryByLabelText('副视口')).toBeNull();
     expect(
-      container.querySelector('[data-region="canvas-viewport"]'),
-    ).not.toBeNull();
-    expect(
-      container.querySelectorAll('[data-panel-resize-handle-id]').length,
-    ).toBeGreaterThan(0);
-  });
-
-  it('reads the projected contract, rules and sandbox beside the graph', async () => {
-    installDesktopApi({
-      openResult: {
-        success: true,
-        project: projectSummary({ name: '桌面端夹具（Desktop Fixture）' }),
-        document: createDesktopFixture(),
-        issues: [],
-      },
-      deliveryPreviewResult: {
-        success: true,
-        preview: {
-          modelId: 'desktop-fixture',
-          modelName: '桌面端夹具',
-          modelVersion: '1.0',
-          services: [],
-          links: [],
-          routes: [
-            {
-              method: 'POST',
-              path: '/product-procurements',
-              summary: '发起采购',
-              serviceId: 'svc.procurement',
-            },
-          ],
-          limitations: [],
-        },
-      },
-    });
-    const { container } = render(
-      <EditorScreen rootPath="/models/procurement" />,
-    );
-    await readyCanvas();
-
-    fireEvent.keyDown(window, { code: 'Digit4', altKey: true });
-
-    expect(await screen.findByLabelText('副视口')).toBeInTheDocument();
-    // The stage opens on the ledger, the projection the split always had.
-    expect(screen.getByLabelText('领域模型总台账')).toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole('tab', { name: /交付契约/ }));
-    expect(
-      container.querySelector('[data-region="openapi-spec"]'),
-    ).not.toBeNull();
-    await waitFor(() =>
-      expect(
-        container.querySelector('[data-region="code-editor"]'),
-      ).not.toBeNull(),
-    );
-    await waitFor(() =>
-      expect(
-        container.querySelector('[data-region="code-editor"]')?.textContent,
-      ).toContain('openapi: 3.1.0'),
-    );
-
-    fireEvent.click(screen.getByRole('tab', { name: /派生规则/ }));
-    expect(container.querySelector('[data-region="cel-rules"]')).not.toBeNull();
-
-    // Closing the stage returns to the graph, not to a bare ledger.
-    fireEvent.click(screen.getByRole('button', { name: '关闭分屏' }));
-    await waitFor(() => expect(screen.queryByLabelText('副视口')).toBeNull());
-    expect(
-      container.querySelector('[data-region="canvas-viewport"]'),
-    ).not.toBeNull();
-  });
-
-  it('opens the contract comparison with Alt+5 and flips its direction with Alt+S', async () => {
-    readyProject();
-    const { container } = render(
-      <EditorScreen rootPath="/models/procurement" />,
-    );
-    await readyCanvas();
-
-    fireEvent.keyDown(window, { code: 'Digit5', altKey: true });
-
-    const stage = await screen.findByLabelText('副视口');
-    expect(stage).toHaveAttribute('data-pane', 'openapi');
-    expect(stage).toHaveAttribute('data-direction', 'horizontal');
-    expect(
-      container.querySelector('[data-region="openapi-spec"]'),
-    ).not.toBeNull();
-
-    fireEvent.keyDown(window, { code: 'KeyS', altKey: true });
-
-    await waitFor(() =>
-      expect(screen.getByLabelText('副视口')).toHaveAttribute(
-        'data-direction',
-        'vertical',
-      ),
-    );
-
-    // The graph and the comparison share the stage in either direction.
-    expect(
-      container.querySelector('[data-region="canvas-viewport"]'),
-    ).not.toBeNull();
-  });
-
-  it('travels from a ledger row to the object on the canvas beside it', async () => {
-    readyProject();
-    const { container } = render(
-      <EditorScreen rootPath="/models/procurement" />,
-    );
-    await readyCanvas();
-    fireEvent.keyDown(window, { code: 'Digit4', altKey: true });
-    await screen.findByLabelText('领域模型总台账');
-
-    // React Flow keeps the pan/zoom transform on its viewport element.
-    const world = () =>
-      container.querySelector('.react-flow__viewport') as HTMLElement;
-    const before = world().style.transform;
-
-    fireEvent.click(
-      container.querySelector('[data-ledger-row="evidence.contract"]')!,
-    );
-
-    // The pane's request reaches the canvas on the same bus the canvas uses to
-    // tell the pane which row to light.
-    await waitFor(() => expect(world().style.transform).not.toBe(before));
-    expect(container.querySelector('[data-row-flash]')).not.toBeNull();
+      container.querySelectorAll('[data-region="canvas-viewport"]'),
+    ).toHaveLength(1);
   });
 
   it('walks from a ledger row back to the same object on the canvas', async () => {
@@ -1138,11 +929,11 @@ describe('EditorScreen dual-mode stage', () => {
       <EditorScreen rootPath="/models/procurement" />,
     );
     await readyCanvas();
-    fireEvent.keyDown(window, { code: 'Digit3', altKey: true });
+    fireEvent.click(screen.getByRole('button', { name: '总台账' }));
     await screen.findByLabelText('领域模型总台账');
 
     fireEvent.click(
-      screen.getByLabelText('在拓扑图中定位 采购协议（Procurement Contract）'),
+      screen.getByLabelText('在画布中定位 采购协议（Procurement Contract）'),
     );
 
     await waitFor(() =>

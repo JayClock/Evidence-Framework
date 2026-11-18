@@ -1,24 +1,22 @@
 import {
   Activity,
   Bot,
-  Columns2,
   FlaskConical,
-  FolderTree,
   Network,
   Redo2,
   Save,
   Search,
   ShieldCheck,
   Sparkles,
-  Table2,
   Undo2,
   Workflow,
   type LucideIcon,
 } from 'lucide-react';
 
-import type { WorkspaceViewMode } from '@evidence-poc/desktop-ui-kit';
+import type { GraphViewMode } from '@evidence-poc/desktop-ui-kit';
 
-import type { RailTabId } from './useWorkspaceLayoutState';
+import { RAIL_TAB_CHORDS, type RailTabId } from './useWorkspaceLayoutState';
+import type { WorkspaceViewMode } from './useWorkspaceViewMode';
 
 /**
  * One keyboard-first action.
@@ -31,7 +29,6 @@ import type { RailTabId } from './useWorkspaceLayoutState';
 export type CommandCategory =
   | 'model'
   | 'view'
-  | 'navigation'
   | 'delivery'
   | 'drift'
   | 'diagnostics'
@@ -60,7 +57,6 @@ export const COMMAND_GROUPS: readonly {
 }[] = [
   { id: 'model', label: '核心操作' },
   { id: 'view', label: '视图' },
-  { id: 'navigation', label: '导航' },
   { id: 'delivery', label: '交付契约' },
   { id: 'drift', label: '生产漂移' },
   { id: 'diagnostics', label: '门禁与诊断' },
@@ -78,19 +74,9 @@ export const CHORDS = {
   save: '⌘+S',
   undo: '⌘+Z',
   redo: '⌘+Shift+Z',
-  search: '⌘+F',
   palette: '⌘+K',
-  // The rail owns the bare digits; the three view modes sit one modifier out.
-  railTopology: '⌘+1',
-  railDiagnostics: '⌘+2',
-  railDrift: '⌘+3',
-  railCopilot: '⌘+4',
   journey: '⌥+1',
   graph: '⌥+2',
-  table: '⌥+3',
-  split: '⌥+4',
-  splitContract: '⌥+5',
-  rotateSplit: '⌥+S',
   zoomSelection: '⇧+2',
   delivery: '⌥+D',
   sandbox: '⌥+⇧+S',
@@ -110,14 +96,9 @@ export interface CommandHandlers {
   save: () => void;
   undo: () => void;
   redo: () => void;
-  setViewMode: (mode: WorkspaceViewMode) => void;
-  /** Opens the split stage on the contract rail. */
-  openContractSplit: () => void;
-  /** Flips the split between side-by-side and stacked. */
-  rotateSplit: () => void;
+  setViewMode: (mode: GraphViewMode) => void;
   /** Frames the selected object. */
   zoomToSelection: () => void;
-  focusSearch: () => void;
   openDelivery: () => void;
   openSandbox: () => void;
   rerunSensors: () => void;
@@ -190,48 +171,6 @@ export const buildCommands = (
       perform: () => handlers.setViewMode('topology'),
     },
     {
-      id: 'view.table',
-      title: '总台账',
-      subtitle: '逐字段阅读整个模型',
-      category: 'view',
-      shortcut: CHORDS.table,
-      icon: Table2,
-      keywords: ['table', 'ledger', '台账'],
-      disabled: capabilities.viewMode === 'table',
-      perform: () => handlers.setViewMode('table'),
-    },
-    {
-      id: 'view.split',
-      title: '分屏',
-      subtitle: '左边看图、右边改字段',
-      category: 'view',
-      shortcut: CHORDS.split,
-      icon: Columns2,
-      keywords: ['split', '分屏'],
-      disabled: capabilities.viewMode === 'split',
-      perform: () => handlers.setViewMode('split'),
-    },
-    {
-      id: 'view.split-contract',
-      title: '分屏：图 + 交付契约',
-      subtitle: '左边看履约架构流，右边读 OpenAPI 3.1 契约',
-      category: 'view',
-      shortcut: CHORDS.splitContract,
-      icon: Columns2,
-      keywords: ['split', 'openapi', 'contract', '契约', '分屏'],
-      perform: handlers.openContractSplit,
-    },
-    {
-      id: 'view.rotate-split',
-      title: '切换分屏方向',
-      subtitle: '左右并排与上下并排互换',
-      category: 'view',
-      shortcut: CHORDS.rotateSplit,
-      icon: Columns2,
-      keywords: ['split', 'direction', 'rotate', '方向'],
-      perform: handlers.rotateSplit,
-    },
-    {
       id: 'view.zoom-selection',
       title: '缩放到当前对象',
       subtitle: '把选中的实体铺满画布',
@@ -243,21 +182,11 @@ export const buildCommands = (
       perform: handlers.zoomToSelection,
     },
     {
-      id: 'view.rail-topology',
-      title: '打开业务结构抽屉',
-      subtitle: '上下文层级与业务对象导航',
-      category: 'view',
-      shortcut: CHORDS.railTopology,
-      icon: FolderTree,
-      keywords: ['rail', 'outline', 'topology', '大纲', '结构'],
-      perform: () => handlers.openRail('topology'),
-    },
-    {
       id: 'view.rail-diagnostics',
       title: '打开门禁与诊断抽屉',
       subtitle: 'AST 检查、悬空引用与派生对称性',
       category: 'view',
-      shortcut: CHORDS.railDiagnostics,
+      shortcut: RAIL_TAB_CHORDS.diagnostics,
       icon: ShieldCheck,
       keywords: ['rail', 'diagnostics', 'lint', '门禁'],
       perform: () => handlers.openRail('diagnostics'),
@@ -267,20 +196,10 @@ export const buildCommands = (
       title: '打开 AI 协同抽屉',
       subtitle: '多轮访谈、工具调用与补丁复核',
       category: 'view',
-      shortcut: CHORDS.railCopilot,
+      shortcut: RAIL_TAB_CHORDS.copilot,
       icon: Bot,
       keywords: ['rail', 'agent', 'copilot', '协同'],
       perform: () => handlers.openRail('copilot'),
-    },
-    {
-      id: 'navigation.search',
-      title: '搜索业务对象',
-      subtitle: '打开业务结构抽屉，把光标移进搜索框',
-      category: 'navigation',
-      shortcut: CHORDS.search,
-      icon: Search,
-      keywords: ['search', 'find', 'entity'],
-      perform: handlers.focusSearch,
     },
     {
       id: 'delivery.contract',

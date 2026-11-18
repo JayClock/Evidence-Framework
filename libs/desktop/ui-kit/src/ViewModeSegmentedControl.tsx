@@ -1,7 +1,7 @@
-import type { WorkspaceViewMode } from './workspaceViewMode';
+export type GraphViewMode = 'journey' | 'topology';
 
 const MODES: readonly {
-  id: WorkspaceViewMode;
+  id: GraphViewMode;
   label: string;
   hint: string;
   shortcut: string;
@@ -9,7 +9,7 @@ const MODES: readonly {
   {
     id: 'journey',
     label: '业务旅程',
-    hint: '按业务阶段与权责泳道阅读模型（V / ⌥1）',
+    hint: '按业务阶段与权责泳道阅读模型（⌥1）',
     shortcut: '⌥1',
   },
   {
@@ -18,37 +18,19 @@ const MODES: readonly {
     hint: 'ELK 因果拓扑与技术分析（⌥2）',
     shortcut: '⌥2',
   },
-  {
-    id: 'table',
-    label: '总台账',
-    hint: '逐字段阅读与编辑整个模型（⌥3）',
-    shortcut: '⌥3',
-  },
-  {
-    id: 'split',
-    label: '分屏',
-    hint: '左边看旅程、右边读台账或规则（⌥4）',
-    shortcut: '⌥4',
-  },
 ];
 
-/**
- * Names the surface the centre stage shows.
- *
- * It is a segmented control rather than a menu because these four
- * states are used constantly; the shortcut is printed
- * on the control itself so the keyboard is discoverable without a help screen.
- */
+/** Switches the canvas layout without leaving the canvas. */
 export const ViewModeSegmentedControl = ({
   mode,
   onChange,
 }: {
-  mode: WorkspaceViewMode;
-  onChange: (mode: WorkspaceViewMode) => void;
+  mode: GraphViewMode;
+  onChange: (mode: GraphViewMode) => void;
 }) => (
   <div
     role="group"
-    aria-label="工作台视图"
+    aria-label="画布布局"
     className="flex items-center rounded-md border border-evidence-line bg-evidence-surface p-0.5 text-[11px]"
   >
     {MODES.map((item) => (

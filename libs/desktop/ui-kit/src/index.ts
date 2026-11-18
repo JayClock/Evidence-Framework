@@ -5,11 +5,10 @@ export {
 } from './Resizable.js';
 export type { ResizableHandleProps } from './Resizable.js';
 export { cn } from './utils.js';
-export { ViewModeSegmentedControl } from './ViewModeSegmentedControl.js';
 export {
-  WORKSPACE_VIEW_MODES,
-  type WorkspaceViewMode,
-} from './workspaceViewMode.js';
+  ViewModeSegmentedControl,
+  type GraphViewMode,
+} from './ViewModeSegmentedControl.js';
 
 // Design-system primitives. Every desktop surface composes these instead of
 // growing its own button, popover or toast, so density and focus rings stay one
@@ -73,5 +72,3 @@ export {
 } from './components/command/Command.js';
 export type { CommandDialogProps } from './components/command/Command.js';
 export { Toaster, notify, toast } from './components/sonner/Toaster.js';
-export { CodeEditor, type CodeEditorProps, type CodeLanguage } from './components/code/CodeEditor.js';
-export { celLanguage, celStreamParser } from './components/code/celLanguage.js';
