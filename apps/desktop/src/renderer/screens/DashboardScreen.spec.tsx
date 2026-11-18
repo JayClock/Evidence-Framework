@@ -7,6 +7,9 @@ import {
 } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
+import { version } from '../../../package.json';
+import { AiConfigurationProvider } from '../state/AiConfiguration';
+
 import { DashboardScreen } from './DashboardScreen';
 import {
   defaultTemplates,
@@ -24,15 +27,36 @@ describe('DashboardScreen', () => {
     expect(screen.getByText('.evidence/fm/')).toBeInTheDocument();
   });
 
-  it('lists recent projects with their real counts', async () => {
-    installDesktopApi({ projects: [projectSummary()] });
+  it('lists real counts and highlights only the most recent project', async () => {
+    installDesktopApi({
+      projects: [
+        projectSummary(),
+        projectSummary({
+          rootPath: '/models/warehouse.evidence.json',
+          kind: 'file',
+          name: '仓储履约',
+          entityCount: 5,
+          ruleCount: 0,
+        }),
+      ],
+    });
 
     render(<DashboardScreen />);
 
+    const recents = screen.getByRole('region', { name: '最近打开的项目' });
+    const cards = await within(recents).findAllByRole('listitem');
+    expect(cards).toHaveLength(2);
+    expect(cards[0]).toHaveTextContent('12 个实体 · 3 条 CEL 规则');
+    expect(cards[0]).toHaveTextContent('最近打开');
+    expect(cards[1]).toHaveTextContent('5 个实体 · 0 条 CEL 规则');
+    expect(cards[1]).not.toHaveTextContent('最近打开');
+    expect(within(recents).getByText(/共 2 个项目/)).toBeInTheDocument();
+    const quickStart = screen.getByRole('region', {
+      name: '快速开始与智能摄取',
+    });
     expect(
-      await screen.findByText('商品采购（Product Procurement）'),
+      within(quickStart).getByRole('button', { name: /空白模型/ }),
     ).toBeInTheDocument();
-    expect(screen.getByText('12 个实体 · 3 条 CEL 规则')).toBeInTheDocument();
   });
 
   it('opens a recent project in a new editor window', async () => {
@@ -62,9 +86,12 @@ describe('DashboardScreen', () => {
       await screen.findByRole('button', { name: /打开工作台：商品采购/ }),
     );
 
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'model.json 无法解析。',
+    );
     expect(
-      await screen.findByText('model.json 无法解析。'),
-    ).toBeInTheDocument();
+      screen.getByRole('button', { name: /打开工作台：商品采购/ }),
+    ).toBeEnabled();
     expect(api.calls.openEditorWindow).toEqual([]);
   });
 
@@ -82,6 +109,81 @@ describe('DashboardScreen', () => {
     });
     expect(api.calls.open).toEqual(['/models/warehouse']);
   });
+
+  it.each(['metaKey', 'ctrlKey'])(
+    'opens the picker with %s+O and does not stack a second picker',
+    async (modifier) => {
+      const api = installDesktopApi();
+      render(<DashboardScreen />);
+      const openButton = screen.getByRole('button', { name: '打开本地项目' });
+
+      fireEvent.keyDown(window, { key: 'o', [modifier]: true });
+      expect(openButton).toBeDisabled();
+      fireEvent.keyDown(window, { key: 'o', [modifier]: true });
+      expect(api.calls.showOpenDialog).toBe(1);
+
+      await waitFor(() => expect(openButton).toBeEnabled());
+      expect(api.calls.open).toEqual([]);
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    },
+  );
+
+  it('does not intercept the open shortcut while an existing dialog is shown', async () => {
+    const api = installDesktopApi();
+    render(<DashboardScreen />);
+    fireEvent.click(screen.getByRole('button', { name: '开始智能提取向导' }));
+    const dialog = await screen.findByRole('dialog', {
+      name: '从业务文本生成模型',
+    });
+
+    fireEvent.keyDown(dialog, { key: 'o', metaKey: true });
+
+    expect(api.calls.showOpenDialog).toBe(0);
+  });
+
+  it('shows template loading failures without breaking recent projects', async () => {
+    const api = installDesktopApi({ projects: [projectSummary()] });
+    api.projects.listTemplates = async () => ({
+      success: false,
+      error: '模板不可用。',
+    });
+
+    render(<DashboardScreen />);
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('模板不可用。');
+    expect(screen.getByRole('button', { name: '新建业务模型' })).toBeDisabled();
+    expect(
+      screen.getByRole('button', { name: /打开工作台：商品采购/ }),
+    ).toBeEnabled();
+  });
+
+  it('shows the package version and opens settings from the real AI status', async () => {
+    const api = installDesktopApi();
+    api.aiConfig.getStatus = async () => ({
+      isConfigured: true,
+      activeProviderId: 'deepseek',
+      activeModelId: 'deepseek-chat',
+      thinkingLevel: 'off',
+      hasLocalPiCliConfig: false,
+      availableModels: [],
+    });
+
+    render(
+      <AiConfigurationProvider>
+        <DashboardScreen />
+      </AiConfigurationProvider>,
+    );
+
+    expect(
+      screen.getByText(`v${version} · Fulfillment Modeling`),
+    ).toBeInTheDocument();
+    fireEvent.click(
+      await screen.findByRole('button', { name: '配置大模型：deepseek-chat' }),
+    );
+    expect(
+      await screen.findByRole('dialog', { name: /AI Settings/ }),
+    ).toBeInTheDocument();
+  });
 });
 
 describe('DashboardScreen starters', () => {
@@ -97,6 +199,18 @@ describe('DashboardScreen starters', () => {
       ),
     ).toBeInTheDocument();
     expect(screen.getByText('空白模型')).toBeInTheDocument();
+  });
+
+  it('preselects the blank template from its own card', async () => {
+    installDesktopApi({ projects: [projectSummary()] });
+    render(<DashboardScreen />);
+
+    fireEvent.click(await screen.findByRole('button', { name: /空白模型/ }));
+
+    const dialog = screen.getByRole('dialog', { name: '新建模型' });
+    expect(
+      within(dialog).getByRole('button', { name: /空白模型/ }),
+    ).toHaveAttribute('aria-pressed', 'true');
   });
 
   it('creates a project from a starter card and opens the editor', async () => {
