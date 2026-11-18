@@ -28,6 +28,7 @@ export {
 
 export {
   createDomainGraph,
+  type ClassifiedConfirmation,
   type DomainGraph,
   type FulfillmentPair,
 } from './model/graph.js';

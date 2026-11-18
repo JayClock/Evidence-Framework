@@ -27,11 +27,20 @@ export interface FulfillmentPair {
   readonly breachRules: readonly RuleAST[];
 }
 
+export interface ClassifiedConfirmation {
+  readonly entity: EvidenceEntityAST;
+  readonly incomingRequests: readonly EvidenceEntityAST[];
+  readonly topologyKind:
+    | 'exclusive_singleton'
+    | 'exclusive_collection'
+    | 'shared';
+}
+
 /**
  * Read-only indexes over one immutable {@link DomainModelDocument}.
  *
  * The graph is rebuilt whenever the session document changes; every lookup is
- * O(1) except the memoized fulfillment pairs, which are derived on first use.
+ * O(1) for indexed objects. Fulfillment projections are derived on first use.
  */
 export interface DomainGraph {
   readonly document: DomainModelDocument;
@@ -60,6 +69,7 @@ export interface DomainGraph {
   derivationRule(entityId: string, attributeName: string): RuleAST | undefined;
   fulfillmentPairs(): readonly FulfillmentPair[];
   fulfillmentPair(requestId: string): FulfillmentPair | undefined;
+  fulfillmentConfirmations(): readonly ClassifiedConfirmation[];
 }
 
 const groupBy = <TItem>(
@@ -121,6 +131,7 @@ export function createDomainGraph(document: DomainModelDocument): DomainGraph {
 
   let pairs: readonly FulfillmentPair[] | undefined;
   let pairsByRequest: Map<string, FulfillmentPair> | undefined;
+  let confirmations: readonly ClassifiedConfirmation[] | undefined;
 
   const rootContractOf = (contextId: string): EvidenceEntityAST | undefined => {
     const context = entityById.get(contextId);
@@ -137,10 +148,49 @@ export function createDomainGraph(document: DomainModelDocument): DomainGraph {
   };
 
   const referencesTo = (objectId: string): readonly EntityAST[] =>
-    (incoming.get(objectId) ?? [])
-      .filter((relationship) => relationship.kind === 'references')
-      .map((relationship) => entityById.get(relationship.sourceRef))
+    [
+      ...new Set(
+        (incoming.get(objectId) ?? [])
+          .filter((relationship) => relationship.kind === 'references')
+          .map((relationship) => relationship.sourceRef),
+      ),
+    ]
+      .map((ref) => entityById.get(ref))
       .filter((entity): entity is EntityAST => entity !== undefined);
+
+  const classifyConfirmation = (
+    entity: EvidenceEntityAST,
+  ): ClassifiedConfirmation => {
+    const requestEdges = (outgoing.get(entity.id) ?? []).filter(
+      (edge) =>
+        edge.kind === 'references' &&
+        isFulfillmentRequest(entityById.get(edge.targetRef)),
+    );
+    const incomingRequests = [
+      ...new Set(requestEdges.map((edge) => edge.targetRef)),
+    ]
+      .map((ref) => entityById.get(ref))
+      .filter(isFulfillmentRequest);
+    const shared =
+      incomingRequests.length > 1 ||
+      requestEdges.some(
+        (edge) =>
+          edge.targetCardinality !== undefined &&
+          edge.targetCardinality.max !== 1,
+      );
+    const singleton =
+      requestEdges.length > 0 &&
+      requestEdges.every((edge) => edge.sourceCardinality?.max === 1);
+    return {
+      entity,
+      incomingRequests,
+      topologyKind: shared
+        ? 'shared'
+        : singleton
+          ? 'exclusive_singleton'
+          : 'exclusive_collection',
+    };
+  };
 
   const buildPair = (request: EvidenceEntityAST): FulfillmentPair => {
     const confirmations = referencesTo(request.id).filter(
@@ -248,6 +298,10 @@ export function createDomainGraph(document: DomainModelDocument): DomainGraph {
       return ruleRef === undefined ? undefined : ruleById.get(ruleRef);
     },
     fulfillmentPairs: ensurePairs,
+    fulfillmentConfirmations: () =>
+      (confirmations ??= document.entities
+        .filter(isFulfillmentConfirmation)
+        .map(classifyConfirmation)),
     fulfillmentPair: (requestId) => {
       ensurePairs();
 

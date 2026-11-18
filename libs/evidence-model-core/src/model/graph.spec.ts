@@ -230,3 +230,69 @@ describe('fulfillment pairs', () => {
     expect(subject.fulfillmentPairs()).toBe(subject.fulfillmentPairs());
   });
 });
+
+describe('confirmation topology', () => {
+  it.each([
+    [1, 1, 'exclusive_singleton'],
+    [3, 1, 'exclusive_collection'],
+    [undefined, 1, 'exclusive_collection'],
+    [1, 'many', 'shared'],
+  ] as const)(
+    'classifies confirmation maximum %s and request maximum %s as %s',
+    (confirmationMax, requestMax, topologyKind) => {
+      const document = createProcurementModel();
+      const edge = document.relationships.find(
+        ({ sourceRef }) => sourceRef === 'confirmation.payment',
+      )!;
+      edge.sourceCardinality =
+        confirmationMax === undefined
+          ? undefined
+          : { min: 1, max: confirmationMax };
+      edge.targetCardinality = { min: 1, max: requestMax };
+      const subject = createDomainGraph(document);
+
+      expect(subject.fulfillmentConfirmations()).toEqual([
+        expect.objectContaining({
+          entity: expect.objectContaining({ id: 'confirmation.payment' }),
+          incomingRequests: [
+            expect.objectContaining({ id: 'request.payment' }),
+          ],
+          topologyKind,
+        }),
+      ]);
+      expect(subject.fulfillmentConfirmations()).toBe(
+        subject.fulfillmentConfirmations(),
+      );
+    },
+  );
+
+  it('groups distinct requests and ignores duplicate references', () => {
+    const document = createProcurementModel();
+    const payment = document.entities.find(
+      ({ id }) => id === 'request.payment',
+    )!;
+    const edge = document.relationships.find(
+      ({ sourceRef }) => sourceRef === 'confirmation.payment',
+    )!;
+    document.entities.push({ ...payment, id: 'request.balance' });
+    document.relationships.push(
+      { ...edge, id: 'relation.payment-duplicate' },
+      {
+        ...edge,
+        id: 'relation.confirmation-references-balance',
+        targetRef: 'request.balance',
+      },
+    );
+    const subject = createDomainGraph(document);
+
+    const [confirmation] = subject.fulfillmentConfirmations();
+    expect(confirmation?.topologyKind).toBe('shared');
+    expect(confirmation?.incomingRequests.map(({ id }) => id)).toEqual([
+      'request.payment',
+      'request.balance',
+    ]);
+    expect(
+      subject.fulfillmentPair('request.payment')?.confirmations,
+    ).toHaveLength(1);
+  });
+});
