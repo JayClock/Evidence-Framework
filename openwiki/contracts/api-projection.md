@@ -5,12 +5,18 @@ description: 模型与可选 overlay 如何投影 draft API snapshot、OpenAPI 3
 tags: [api, projection, openapi, overlay, diagnostics, cli, contract]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-17T06:43:02.055Z
+    at: 2026-11-18T09:45:40.969Z
 sources:
   - id: openwiki-source-4c0b31aad45d3c1bd1d286ce
     resource: repo://apps/cli/src/commands/api.ts
+  - id: openwiki-source-eb64da3d440064cfd8e29c7a
+    resource: repo://docs/api-projection-v6.md
   - id: openwiki-source-00036286abae2d8c898e2cef
     resource: repo://libs/evidence-acceptance/src/commands.ts
+  - id: openwiki-source-4f4956186309f29a9271894d
+    resource: repo://libs/evidence-acceptance/src/renderDeliverables.ts
+  - id: openwiki-source-cfb863e81258afec257b30c8
+    resource: repo://libs/evidence-acceptance/src/runner/acceptanceRunner.ts
   - id: openwiki-source-feaf4e64c269397a25f93a3d
     resource: repo://libs/evidence-agent/src/sensors/native/nativeApiSensor.ts
   - id: openwiki-source-d411e4580a06325c2c5fcf75
@@ -53,11 +59,13 @@ sources:
     resource: repo://libs/evidence-api/src/renderer/outputRenderer.spec.ts
   - id: openwiki-source-65cec3fa94938b2f2b5d4a29
     resource: repo://libs/evidence-api/src/renderer/outputRenderer.ts
+  - id: openwiki-source-766caead67fa154b7d97b96f
+    resource: repo://libs/evidence-api/src/renderer/outputWriter.spec.ts
   - id: openwiki-source-13153af2029f2aa63c0edef3
     resource: repo://libs/evidence-api/src/schemas/apiSchema.ts
   - id: openwiki-source-b6b6c0e38c718ba7eef29b0f
     resource: repo://libs/evidence-api/src/testing/openapi.ts
-generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
+generated: { by: "pi", at: "2026-11-18T09:45:40.969Z" }
 ---
 
 # API v6 聚合根契约与 HAL 投影
@@ -76,7 +84,7 @@ generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
 
 公共 URI 从具名业务聚合根开始，不加 Context/lane 前缀：`/product-inquiries/{inquiryId}`、`/product-procurements/{contractId}`。方案嵌套在征询之下；从方案签约和直接签约都返回新合同主 URI。每一个创建入口都有对应的实体 GET，集合创建也有集合 GET。
 
-references 无论箭头方向均读取 child endpoint 基数；全部明确 max=1 才是单例 `/payment`，未知、多值或矛盾使用 `/payments/{paymentId}`。领域 thing 根以及具有 id 类型属性的独立 other_evidence 有只读集合/主 GET。根名在全局分配，子段在兄弟资源间分配，真实冲突用稳定身份后缀消歧，不受无关角色和 Context 重命名影响。
+references 无论箭头方向均读取 child endpoint 基数；普通子资源全部明确 max=1 才采用单例路径。履约确认的动作入口由拓扑决定：单份、可追加或共享确认的 POST 可以不同，但主 GET 都使用全局确认资源 URI。领域 thing 根以及具有 id 类型属性的独立 other_evidence 有只读集合/主 GET。根名在全局分配，子段在兄弟资源间分配，真实冲突用稳定身份后缀消歧，不受无关角色和 Context 重命名影响。
 
 服务仍由 Context 划分，但用 routePrefixes 和精确 route IDs 表达所有权；proposal 下的签约入口由合同服务处理。最终 overlay routes 重新生成 topology、OpenAPI 与 Compose。Traefik 逐操作按 Method 与锚定路径正则路由，后端获得 EVIDENCE_ROUTE_PREFIXES/EVIDENCE_ROUTES；镜像和端口仍是部署草图占位。
 
@@ -89,13 +97,13 @@ Overlay 是严格 JSON：schemaVersion=5.0 或 6.0、id、routes(id/path/summary
 1. 对四部分文档执行 strictValidateDomainModel，失败为 FM_INVALID error，但仍返回可显示的草稿。
 2. buildModelDelivery 生成模型基线，解析 overlay；loader 有诊断时整体放弃 overlay，不做部分接受。
 3. 按 route id 覆盖现有 path/summary；未知 ID、改变参数名、空段/坏括号、method/path pattern 碰撞各有明确 error，不能凭 overlay 新增业务接口。
-4. 校验 journey 的 party role 存在且在 route.allowedPartyRoleRefs 中，nextPossibleSteps 必须解析到既有 step。
+4. 校验 journey 的调用方在路由允许的当事人或回调角色中，nextPossibleSteps 必须解析到既有 step。
 5. 将所有创建的 itemPath 同步到最终主 GET，重新计算 service ownership；编织 hypermedia，缺自定义 journeys 时从可达关系推导，最后才从最终 routes 建 OpenAPI，保证路径不分叉。
 6. 归一化诊断并按 severity/code/target/message/identity 排序；最终 snapshot 在命令层再用 api-projection.schema.json 校验，错误为 PROJECTION_INVALID。
 
 ## 超媒体不是虚构执行顺序
 
-POST 的 self 与 201 Location 指向实体主 GET；实体 GET 的 self 是自身，集合 GET 的 self 是集合路径。集合用 `_embedded.<业务复数名>` 返回摘要，每项有自己的主 self，并返回非负 total。实体、摘要和集合是分离的 schema。Evidence 间 references 让先决对象 route 指向依赖者 POST，形成 next:<entityRef>；去重排序，模板链接保留 templated。默认 journey 是 POST × allowed party roles 的可能步骤，http-journeys.json 明确 runtimeValidated=false，不把静态导航当验收已执行。
+POST 的 self 与 201 Location 指向实体主 GET；实体 GET 的 self 是自身，集合 GET 的 self 是集合路径。集合用 `_embedded.<业务复数名>` 返回摘要，每项有自己的主 self，并返回非负 total。实体、摘要和集合是分离的 schema。Evidence 间 references 让先决对象 route 指向依赖者 POST，形成 next:<entityRef>；去重排序，模板链接保留 templated。默认 journey 为每个 POST 与获准调用者组合生成可能步骤，http-journeys.json 明确 runtimeValidated=false，不把静态导航当验收已执行。
 
 ## OpenAPI 与字段纪律
 
@@ -114,7 +122,7 @@ POST 的 self 与 201 Location 指向实体主 GET；实体 GET 的 self 是自�
 
 每例须唯一映射 POST 且角色获准；依赖按图排序，拒绝环、未知例、跨 flow、依赖拒绝操作、上游时间晚于当前。正向样例先清除 asserted derived 值，再用原生 CEL 对显式 upstream facts 求值；给定期望与推导不符必须失败，不允许 oracle 读取自己的答案。显式负向状态只生成声明的输入/断言，不能臆造非法案例。
 
-路径从上游 response captures 传递，正向结果携带 response schema。导出 Step CI YAML/Hurl，HTTP runner 才检查真实后端。CEL int/uint 在 JSON 边界将安全整数转为 number，较宽的合法 int64/uint64 转为精确十进制 string；输入 unsafe number 或超出 CEL 类型范围的值拒绝，不能静默舍入。
+路径参数从上游响应捕获，正向结果携带响应 Schema。导出生成 Bruno 集合及 Evidence 验收元数据；`evidence test` 调用 Bruno 对真实后端执行请求和断言，再根据实际响应校验 Schema。CEL int/uint 在 JSON 边界将安全整数转为 number，较宽的合法 int64/uint64 转为精确十进制 string；输入 unsafe number 或超出 CEL 类型范围的值拒绝，不能静默舍入。
 
 ## Overlay 迁移
 
@@ -128,7 +136,7 @@ POST 的 self 与 201 Location 指向实体主 GET；实体 GET 的 self 是自�
 
 project/deliver 同一投影与 writer：0=无 errors/gaps；1=错误/拒绝，不写；3=只有 gaps，仍写可审查草稿。complete 比 writable 更严格，要求零 findings 且 schema clean。
 
-输出 openapi.json、topology.json、routes.json、deployment.compose.json、projection.json、http-journeys.json、可选 limitations.md、manifest.json。manifest 记录工具/schema/Node/AJV 和输入/output byte hashes。默认 `.evidence/api/generated`；仅直接文件名，先 sibling temp staging，再 rename/backup，失败恢复旧树，避免半新半旧。
+输出 openapi.json、topology.json、routes.json、deployment.compose.json、projection.json、http-journeys.json、可选 limitations.md、manifest.json。manifest 记录工具/schema/Node/AJV 和输入/output byte hashes。默认 `.evidence/api/generated`；writer 仅接受安全相对路径，支持生成 Bruno 时所需的子目录。先 sibling temp staging，再 rename/backup，失败恢复旧树，避免半新半旧。
 
 ## 验证与消费者
 

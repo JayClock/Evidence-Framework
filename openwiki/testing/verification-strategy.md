@@ -5,7 +5,7 @@ description: 按Zod契约、Immer事务、native CEL、ELK、Node I/O、桌面IP
 tags: [testing, vitest, fixtures, digests, injection, desktop, cli, acceptance]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-17T07:06:17.114Z
+    at: 2026-11-18T09:45:40.969Z
 sources:
   - id: openwiki-source-164e2da859b5277df81c7d94
     resource: repo://.github/workflows/ci.yml
@@ -27,6 +27,8 @@ sources:
     resource: repo://libs/desktop/testing/src/desktopApi.ts
   - id: openwiki-source-6d71eb468fb1263201f30ef6
     resource: repo://libs/evidence-acceptance/README.md
+  - id: openwiki-source-87c8cacafc41063592c13c80
+    resource: repo://libs/evidence-acceptance/src/acceptance.e2e.spec.ts
   - id: openwiki-source-a905a355f408774f2cb0edc5
     resource: repo://libs/evidence-agent/src/session/evidenceAgentSession.ts
   - id: openwiki-source-062416ee8e7e3d6d3b09aaad
@@ -47,7 +49,7 @@ sources:
     resource: repo://tools/workspace-rules/boundary-drill.mjs
   - id: openwiki-source-b58f839a189d87a7e1f37d39
     resource: repo://vitest.config.mts
-generated: { by: "codex", at: "2026-11-17T07:06:17.114Z" }
+generated: { by: "pi", at: "2026-11-18T09:45:40.969Z" }
 ---
 
 # 测试边界与验证策略
@@ -79,7 +81,7 @@ pnpm exec nx run-many -t typecheck lint --all
 | 文件与发现 | model-io adapters/legacyRemoval、desktop projectStore/modelWatcher | tree/Bundle/readme/examples、幂等save/canonical unpack、旧validation拒绝、atomic-save/root-rebuild/close |
 | 桥与竞态 | Agent/MCP/runtime/useGraphLayout/useDeliveryHub |同步revision、旧reply丢弃、ack顺序、超时、冻结export、过期review不撤后续工作 |
 | API与兼容性 | projection/openapi/outputRenderer、oasdiffRunner/breakingScenarios |最终contract/overlay、schema/consumer types、稳定bytes/manifest、原生工具版本/错误闭合 |
-| HTTP验收 | acceptance.e2e、runner/suiteSelection、cli governance.e2e |实际SUT、derived assertions、依赖closure、regression/dod、drift、退出码/报告 |
+| HTTP验收 | `brunoRenderer.spec`、`acceptance.e2e`、`runner/suiteSelection`、`cli governance.e2e` | 固定 Bruno 对真实 SUT 执行；检查捕获、派生断言、双门禁、漂移、退出码与报告 |
 | stories/来源/AI | flowAggregator/story/whatIf/journeyPreview、clauseTrace、aiConfig/safeStorage |声明 flow 与前缀隔离、结构化来源精确匹配、凭证隔离及模型切换 |
 
 ## 注入昂贵依赖，不伪造被测合同
@@ -102,11 +104,11 @@ phase-3-loop把real runtime、fake Pi、transport和real ModelSession接起来�
 
 ## CLI与CI的两种“测试”
 
-常规CI：frozen install+oasdiff+example:setup/test→七条 boundary drill→PR affected/push全lint→全typecheck/tests→build CLI help/version→desktop Forge smoke。drill临时写probe，需在允许修改源码环境运行，不在wiki生成页循环中运行。
+常规 CI 安装锁定依赖并检查工作区 Bruno CLI，准备 oasdiff 与独立 Fastify 后运行原生测试、七条边界验证、lint/typecheck/test、CLI 构建与入口检查、示例产物只读核验及 Desktop 构建。drill临时写probe，需在允许修改源码环境运行，不在wiki生成页循环中运行。
 
 Evidence Governance另有产品门禁：静态check→generated artifacts只读--verify→从不可变Git SHA物化baseline→oasdiff破坏性gate；成功后四种独立实现矩阵分别对隔离 SUT 执行 strict regression/DoD并保JSON/Markdown/JUnit。Git show失败不能退到当前模型伪造baseline，expected backend failure/DoD pending与CI allow-pending豁免不得混淆。
 
-`evidence test`是用户模型导出HTTP suite的验收，不是Vitest源码测试；空筛选/未执行不得当绿，static check testExampleCount只是声明数。详见[CLI工作流](../workflows/cli-governance.md)。
+`evidence test` 对已生成的 Bruno 集合执行 HTTP 验收，不是 Vitest 源码测试；空筛选/未执行不得当绿，static check testExampleCount只是声明数。详见[CLI工作流](../workflows/cli-governance.md)。
 
 ## 执行结果如何记录
 

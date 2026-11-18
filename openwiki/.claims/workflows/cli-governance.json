@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:b7309286cf90313d4e7efa9cb367f31a1237b619ebb7bf859c8deaf717dfdb72",
+  "pageVersion": "sha256:3c97d106b63bd7637aaa4a2d05189f635a6feec8fcd731720132109926660242",
   "claims": [
     {
       "id": "claim_2e23d63c615949bcbde260388194c88b",
@@ -8,7 +8,7 @@
       "evidence": [
         {
           "resource": "repo://apps/cli/src/router.ts",
-          "version": "repo-file-v1:sha256:47ecefdc10b1f1be1dc0d3682061395c6a2dce69989bbf9550e6adffc5c64870"
+          "version": "repo-file-v1:sha256:12df98860edbedbda118b33e8783bf746f9a70c5580641369b27d28c75ad2302"
         }
       ]
     },
@@ -18,25 +18,29 @@
       "evidence": [
         {
           "resource": "repo://apps/cli/src/commands/export.ts",
-          "version": "repo-file-v1:sha256:ee00be9420888fdb4fdefa07edda1fa5edd52ad72324988f47f913833a3d59ef"
+          "version": "repo-file-v1:sha256:a44432f962c26fa8c7064a10be8899a5a0537d1a01e3b5fe64358a4886466017"
         },
         {
           "resource": "repo://libs/evidence-acceptance/src/renderDeliverables.ts",
-          "version": "repo-file-v1:sha256:609710b60f5cf2292828461abd7b21a29553ae2278973e6fd62d50a49b782327"
+          "version": "repo-file-v1:sha256:8e236a78740eae657bc0ccba2b3ed04ded8400dd1416e20ee42c7619c0c66901"
         }
       ]
     },
     {
       "id": "claim_0c31c496b0264958b6bba762706e9d5f",
-      "statement": "test发现Step CI YAML并HEAD探活，调用官方Runner只运行自包含HTTP workflow，拒空或不支持构造；Hurl须外部CLI。",
+      "statement": "test 接收一个生成的 Bruno 集合目录，校验原生文件与元数据一致性；非空执行前 HEAD 探活，并在安全沙箱逐个执行重渲染的完整 flow。",
       "evidence": [
         {
           "resource": "repo://apps/cli/src/commands/test.ts",
-          "version": "repo-file-v1:sha256:bf34403041ffc51240f851d302a36b4f1336a3289b192dfff678b0a19ee9dcbb"
+          "version": "repo-file-v1:sha256:072ca01efd658a6d448bf13eed92710e28c49d4176399f057877cb54748570f2"
         },
         {
-          "resource": "repo://libs/evidence-acceptance/src/runner/acceptanceRunner.ts",
-          "version": "repo-file-v1:sha256:57bb8b744ed3c5d6ba2b181c230bea4936a5b8c71913471341a9a5eec0ec4513"
+          "resource": "repo://libs/evidence-acceptance/src/renderer/brunoSuite.ts",
+          "version": "repo-file-v1:sha256:76c4abe81ac712433e8ece04f0df0428bc8300b4b07a430518c5ec8699a2b331"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/src/runner/brunoCli.ts",
+          "version": "repo-file-v1:sha256:b3a37cbf39666c9f7432f92cf413b2b6666a9b834450ad92dbf0ffeba022888e"
         }
       ]
     },
@@ -46,35 +50,35 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-acceptance/src/runner/acceptanceRunner.ts",
-          "version": "repo-file-v1:sha256:57bb8b744ed3c5d6ba2b181c230bea4936a5b8c71913471341a9a5eec0ec4513"
+          "version": "repo-file-v1:sha256:c41faaaba4842dd6ac5e0581de59106bd79d22dffd216a9d8d71bccee4c0da20"
         },
         {
           "resource": "repo://libs/evidence-acceptance/src/runner/suiteSelection.ts",
-          "version": "repo-file-v1:sha256:f8595b4c99ef658b27b0d2f6dc71f0968f251fcb51eba8e3e0f8a7d5a0c0be5d"
+          "version": "repo-file-v1:sha256:bbecf07fc2af5d0ecf43697a5526359242798b35716474c64635febc418a3505"
         }
       ]
     },
     {
       "id": "claim_0e618b469ed4421c960bf34fa0627233",
-      "statement": "allow-pending只用于DoD，保留passed=false/pending=true，执行错误和strict drift不可豁免；report-dir从单次执行写JSON/Markdown/JUnit。",
+      "statement": "allow-pending 只用于 DoD，保留 passed=false/pending=true，执行错误和 strict drift 不可豁免；report-dir 从单次执行写 JSON/Markdown/JUnit。",
       "evidence": [
         {
-          "resource": "repo://apps/cli/src/commands/test.ts#L128-L185",
-          "version": "repo-lines-v1:sha256:c4670214ac9b05d0589c9777d0a9fdd091112e25e580b01dbea1da34dcc645dd:eyJzZWxlY3RlZExpbmVDb3VudCI6NTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEzYzM3YTM3ZDhmNDc4NTdjYjc0YjNjYzBiMGRhYzlhMzA2MWJkZDZlNmJlZTkxODA0YjAxNDNhMjc4NzFmNmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFmNTJkNTI2YzU1YjUzMDQzOGQzNmM4MmMwYjljMDcxYTMzYjkyOWJmZWI0MjE3NmE1ZjU5ZmE5MDcxMzM3MzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://apps/cli/src/commands/test.ts#L40-L73",
+          "version": "repo-lines-v1:sha256:561c8dffb0e42b7c37f117694d36601c9b6dd41622dab4173c732d80a11e06ad:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4MmRiNDJmOTgzOGY2N2E1NmU5ZjYzY2JhNDMxODI5MGMwOGRiNTQ5OWQyMTM3NDEzMDM1Y2MxYjRkZDI3NTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE3NTk0ODEzM2I4MmViYmQwMzdkODFkZmU3MmFjMTk2ZDczNjIyYmUzNWZlZGM0ODA0NTdiYmQxMTFmMTllNDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE3NDVmZWViZGI3MmFhNGU0MGFhYmQ0ZDZiODY2NGE3N2JiYjVjNmE0MGZmODM0YjczYjhkZGNkMTA1OTIzZTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg4ZDYxMDRmMTI0NTU1NzBjN2Q5Zjg2MzZjZGZmNWY4N2Y3NDViMDhjZWI0MmJhMmQ2MmVmOTNmYjYwYTFjMzYifQ"
         },
         {
-          "resource": "repo://apps/cli/src/commands/test.ts#L69-L84",
-          "version": "repo-lines-v1:sha256:32e537cd004d26a86a5243d71878eebd900467ebacf32b712328c616fd79ccfc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg4MGE4MjAxNzQ5OGRhODVkMmQxODYwZDVmNTlhYmUyZTAzY2Q0M2I0NWMzY2ZlZGRkZWI4YmNmYjEzNjE1YjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyNGJlM2I1Mzc4NTI4NjM4YjVhMGVhYTMxYTI4NjNhYTgxMGUwNzg3M2E4ZDdmMjM0ZTgzYjUxZDNhMTdjYzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY1MjlkMDIwMDViNzVhOWZkYmIzYzAwNzM3N2M0OGQyMzJmNzVkMWY2ZjhjOWFmMzYyOWZmZjdiOTU1MGVhZWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNjYzRmZDk4NjE2YjM0OWVkMTc1YTg0MjNkMDMwZWFlYjRhZTgyZjE4YWIyMDQwZjFlZDRiYTdkMzYxMWE1MmIifQ"
+          "resource": "repo://apps/cli/src/commands/test.ts#L97-L139",
+          "version": "repo-lines-v1:sha256:a5d8d6ba694e8445616b31397c77ae401ced15f43a136b88f7ece899b09b04fa:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE0NDRkYjFjNWY1NTIxNTRlMWZmOTIzODY2OThiNzA1NDhlYzQ4NTEyNTExNjFkMjE1ODEyZWRmZTA4YWIxYmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVjYzEyMDU2MTVjYjBjNmNiNzIxYTVjMGVlMGZkNTg3OTZhMjAxMGQwMWY1Y2YwY2Y1ZDViN2JkYWZjNzA3Y2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
     {
       "id": "claim_68574727728f47958d25f816d7a81856",
-      "statement": "HTTP响应drift用AJV2020 schema/formats且不改payload或取远端ref，detect为建议、strict计失败，区别于OTLP模型语义审计。",
+      "statement": "HTTP 响应以 AJV 2020-12 校验，不改 payload 或取远端引用；默认漂移阻断，detect 设为建议，strict 保持阻断，均不覆盖失败的 Bruno 业务断言。",
       "evidence": [
         {
           "resource": "repo://libs/evidence-acceptance/src/runner/acceptanceRunner.ts",
-          "version": "repo-file-v1:sha256:57bb8b744ed3c5d6ba2b181c230bea4936a5b8c71913471341a9a5eec0ec4513"
+          "version": "repo-file-v1:sha256:c41faaaba4842dd6ac5e0581de59106bd79d22dffd216a9d8d71bccee4c0da20"
         },
         {
           "resource": "repo://libs/evidence-acceptance/src/runner/driftInspector.ts",
@@ -84,11 +88,15 @@
     },
     {
       "id": "claim_a7c29cac5a0d4549a5aae8a070ff6728",
-      "statement": "Governance CI 先 check/产物 verify/不可变 Git baseline/diff，再按四种独立实现矩阵构建 native/conformance/strict regression 与 DoD，保留同次报告且无 allow-pending。",
+      "statement": "Governance CI 从不可变 Git 基线比较最终契约并只读核验产物；四种实现使用锁定的 Bruno CLI 分别验证 conformance、严格 regression 和 DoD，保留报告；GitLab 模板为 Fastify 参考。",
       "evidence": [
         {
           "resource": "repo://.github/workflows/evidence-governance.yml",
-          "version": "repo-file-v1:sha256:600d5d2ec6b54e352a3d4e263212c9650ac80afa362a5e9f69ad144b0dcac613"
+          "version": "repo-file-v1:sha256:29812545f188b62bcefb61c62b03837da5406294ec0b725808d57ed77efea767"
+        },
+        {
+          "resource": "repo://templates/ci/evidence-ci.gitlab-ci.yml",
+          "version": "repo-file-v1:sha256:18e2b067608a40dbdc969546de17661090135d4f4f78946e8f7d0994955070b6"
         }
       ]
     },
@@ -98,7 +106,7 @@
       "evidence": [
         {
           "resource": "repo://apps/cli/src/commands/api.ts",
-          "version": "repo-file-v1:sha256:bcbfc0de398b980370238714041709c57ccab4862fe5f1e1afba0bf5837fe028"
+          "version": "repo-file-v1:sha256:d81d502bf89178b4c4b1e09e56df1408f18dc95ca46133991d0fec7a45e74ab4"
         },
         {
           "resource": "repo://apps/cli/src/commands/story.ts",
@@ -113,6 +121,6 @@
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-17T06:43:02.055Z"
+    "at": "2026-11-18T09:45:40.969Z"
   }
 }

@@ -5,7 +5,7 @@ description: Node/pnpm/Nx工具链、显式oasdiff准备、source条件与层边
 tags: [build, packaging, nx, pnpm, eslint, boundaries, electron-forge, ci, openwiki]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-17T06:43:02.055Z
+    at: 2026-11-18T09:45:40.969Z
 sources:
   - id: openwiki-source-164e2da859b5277df81c7d94
     resource: repo://.github/workflows/ci.yml
@@ -35,6 +35,8 @@ sources:
     resource: repo://eslint.config.mjs
   - id: openwiki-source-089e2bd2aace21171ae406bc
     resource: repo://libs/desktop/feature-canvas/eslint.config.mjs
+  - id: openwiki-source-3487fdf20c88f517d0a744eb
+    resource: repo://libs/evidence-acceptance/package.json
   - id: openwiki-source-100de7a731086244071952a9
     resource: repo://libs/evidence-agent/package.json
   - id: openwiki-source-6c0fdf3558dd7a2667c2fc40
@@ -65,12 +67,12 @@ sources:
     resource: repo://tools/workspace-rules/boundary-drill.mjs
   - id: openwiki-source-df1e4d0dc0a35c64fd0e652b
     resource: repo://tsconfig.base.json
-generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
+generated: { by: "pi", at: "2026-11-18T09:45:40.969Z" }
 ---
 
 # 构建、打包与维护
 
-开发工具链为Node.js22、pnpm12.16.1，一份 workspace lockfile、一个 Nx 图，无Go/Python解释器要求。但**pnpm install不是全部setup**：API compatibility/tests之前另跑pnpm api:setup安装固定原生oasdiff。多语言backend示例只是接入参考。
+开发工具链为 Node.js 22、pnpm 12.16.1，一份 workspace lockfile、一个 Nx 图。`pnpm install` 安装 HTTP 验收用的固定 Bruno CLI，无需全局 `bru`；API compatibility/tests 之前仍需单独执行 `pnpm api:setup` 安装固定原生 oasdiff。多语言后端示例不是框架运行时依赖。
 
 ## Workspace与解析边界
 
@@ -108,7 +110,7 @@ Forge asar=true，不再带 workbench extraResource；Vite分别main/preload/mai
 
 pnpm build/test/lint为nx run-many；graph、boundaries:drill、desktop/package/make/test:desktop是薄wrapper。pnpm evidence、model:pack/unpack/inspect、api:export/diff均走apps/cli/dist/cli.js，先nx build cli。旧 model/api bin只是stderr弃用shim，共享库commands，不反向import app。没有根typecheck script，直接nx run-many -t typecheck。
 
-CI(main push/PR、Node22、frozen lock)：install → api:setup → example:setup → example:test → drill → PR affected lint或push全量 → 全typecheck/tests → build cli并help/version → build desktop smoke。桌面release tag v*.*.* /manual，mac arm64/x64、win x64、linux x64矩阵，Linux装rpm/fakeroot/dpkg，Forge make后收zip/exe/nupkg/RELEASES/deb/rpm，Apple secrets可选。
+CI（main push/PR、Node 22、frozen lock）：安装依赖并检查工作区 `bru --version` → `api:setup` → `example:setup` → `example:test` → drill → PR affected lint 或 push 全量 → 全 typecheck/tests → build CLI 并检查 help/version → 只读核验示例的 OpenAPI + Bruno 产物 → build Desktop。桌面release tag v*.*.* /manual，mac arm64/x64、win x64、linux x64矩阵，Linux装rpm/fakeroot/dpkg，Forge make后收zip/exe/nupkg/RELEASES/deb/rpm，Apple secrets可选。
 
 ## OpenWiki维护是可恢复流程
 

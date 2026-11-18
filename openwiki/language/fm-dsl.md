@@ -5,7 +5,7 @@ description: Zod 定义的 FM v5 AST、跨对象语义约束和稳定诊断，�
 tags: [fm, dsl, schema, entities, rules, validation, vocabulary, zod]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-17T06:43:02.055Z
+    at: 2026-11-18T09:45:40.969Z
 sources:
   - id: openwiki-source-39112fa2dcba304148e956e8
     resource: repo://libs/desktop/feature-agent/src/components/agent/AgentCopilot.tsx
@@ -45,7 +45,7 @@ sources:
     resource: repo://libs/evidence-schema/src/validation/strictValidate.ts
   - id: openwiki-source-976e28bc7b01588161a1f7bd
     resource: repo://libs/evidence-schema/src/vocabulary.ts
-generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
+generated: { by: "pi", at: "2026-11-18T09:45:40.969Z" }
 ---
 
 # FM v5 语言与严格契约
@@ -83,7 +83,7 @@ attribute要求name/label/meaning、可选合法valueType、boolean required/key
 
 plays_role允许party→party/third_party role、thing→domain role、Context→context role，以及跨Context moment Evidence→evidence role。moment是contract/confirmation/other_evidence，rfp/proposal/request时段不够资格，给relationship.playsRole.momentOnly。
 
-references同Context按端点规则，跨界仅：contract引用其pre_contract子Context的proposal；Evidence引用thing；Evidence引用confirmation/other_evidence事实。跨界引用evidence role、Context链、跨Context contract等不合法。Evidence Role作为socket的实现必须隔离在另一Context。
+references 同 Context 按端点规则。跨界白名单包括 contract 到其 pre_contract 子 Context 的 proposal、Evidence 到 thing 或 confirmation/other_evidence，以及履约确认到履约请求。跨界引用 evidence role、Context 链和跨 Context contract 等不合法。Evidence Role 作为 socket 的实现必须隔离在另一 Context。
 
 ## 六类CEL规则
 
@@ -93,7 +93,7 @@ derivation可产生任意合法resultType且必须target；precondition/invarian
 
 实体examples可带test：flow、tags、actingRoleRef、显式offset RFC3339 asOf、basedOn、expectedStatus、inputs、pathParameters(exampleRef/jsonpath)、expect(JSONPath→期望)。对象strict、JSON值须真实可序列化，tags/basedOn唯一；**inputs覆盖只允许显式>=400负向测试**。静态图级检查补充示例标签/引用等约束；创建入口映射、角色、依赖隔离/排序、捕获和CEL oracle属于 evidence-acceptance projector，不把投影条件塞进schema。
 
-没有test的example仍是示例，不臆造业务流程。AcceptanceFlow是临时编译IR，非旧Scenario文件复活；Step CI/Hurl运行时HTTP验收另见[CLI](../workflows/cli-governance.md)。
+没有 test 的 example 仍是示例，不臆造业务流程。AcceptanceFlow 是临时编译 IR，不是新的建模源格式；Bruno 集合也是导出结果。真实 HTTP 验收另见 [CLI](../workflows/cli-governance.md)。
 
 ## 严格校验的实际流水线
 

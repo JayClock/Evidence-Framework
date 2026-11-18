@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:49d2d93edb5ddf46a66ffbc6fae9e9a5ab0c14d7f571ea71109a538a37d65845",
+  "pageVersion": "sha256:69642483dc0e5dc7b0009563fca0a439c72e141b24305b0556c1e8064b1a9da5",
   "claims": [
     {
       "id": "claim_ee126c5ec7e54e45ba574ec335210e21",
@@ -138,7 +138,7 @@
         },
         {
           "resource": "repo://libs/evidence-schema/src/ast/entity.ts",
-          "version": "repo-file-v1:sha256:d6f792b144eeec4b2742db06ccc48fc962303843c073b434d496e4f284681e7d"
+          "version": "repo-file-v1:sha256:32860024081946a781a095076f3fbe84a568d24da036d3ec6062258fbf279a9c"
         },
         {
           "resource": "repo://libs/evidence-schema/src/ast/provenance.ts",
@@ -298,7 +298,7 @@
         },
         {
           "resource": "repo://libs/evidence-api/src/delivery/modelDelivery.ts",
-          "version": "repo-file-v1:sha256:98815e906f0a8eeaf1f83990545b56691c59b652af26c1be960812c7ebfbdc65"
+          "version": "repo-file-v1:sha256:94bbc77cf1fec0be91f0252c9f3119f53bcc75816db9c3d44de67ac82a85bd01"
         }
       ]
     },
@@ -307,7 +307,7 @@
       "statement": "diffDomainModels rebuilds the key-data ledger for both snapshots and reports each item whose source, rule or expression changed, together with hasKeyDataDrift and the owed-decision counts on each side, so a branch comparison shows which provider decisions were added, removed or carried across.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/diff/modelDiff.ts#L350-L460",
+          "resource": "repo://libs/evidence-model-core/src/diff/modelDiff.ts#L351-L461",
           "version": "repo-lines-v1:sha256:8e1ef8f5fee1dca7b7a05a29c48bf9c48e10409dc6fb2fd6c82cbe1b1a40c949:eyJzZWxlY3RlZExpbmVDb3VudCI6MTExLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlYWYyMmNmMDczMjU5MmMyNDcxNDFjYmU2MWVmYTExMDEyNjEyZjVhMzEyMmI5YWY5YmJhZjUyZjU3MjRkMTk0IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmNTExMDMzM2NjZWQ4OWJlYTQ0YmQ2MjE4ZmU3NDJjOWVmYjNmNmExMTRhNzk1ZTM3N2M5NDA3MTZjYWM0ZmE2IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIzMTNkMjQwZWNjYmMyNThiZTUxOWQ0ZDQ0Y2VhZjgyNWM2ZmNkMTQzZGM1OTFhNjM3Mjg3ZDgwZjZlZjZiZjI5IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI1ZDcxNThlNjdlODI0YjI4ZGU1MmJmZDRlZWViZWVhZTE2YzhhZTAxNzMzMzkxOGRlM2NiMDE5OTcyZjNiOTRkIn0"
         }
       ]
@@ -361,6 +361,6 @@
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-17T06:43:02.055Z"
+    "at": "2026-11-18T09:45:40.969Z"
   }
 }

@@ -1,3 +1,3 @@
 # 文件
 
-- [统一 CLI 与双门禁验收工作流](cli-governance.md) - evidence统一命令如何将FM模型编译为OpenAPI/标准HTTP验收，执行只读产物核验、oasdiff兼容gate与regression/DoD分区，并诚实报告pending和响应漂移。
+- [统一 CLI 与双门禁验收工作流](cli-governance.md) - evidence 如何从 FM 模型导出 OpenAPI 与 Bruno 集合，对真实服务执行 Regression 和 DoD，并验证生成产物、响应漂移和契约兼容性。

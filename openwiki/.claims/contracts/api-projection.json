@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:089bd7d69c243dd3839e6d2d0756dd37431527b64f900dde78c2c9fa4cc24ad4",
+  "pageVersion": "sha256:c40f82fc223e168fac0f53b689a752e4776b9cd5f58c9c2881d4bbdbe879591e",
   "claims": [
     {
       "id": "claim_1ccbd29e511e46929319ccbea00159be",
@@ -36,7 +36,7 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-acceptance/src/commands.ts",
-          "version": "repo-file-v1:sha256:5323fc399254a538f75ecc034a6f0796686aa46572f84699e3043c16e59c99e8"
+          "version": "repo-file-v1:sha256:aa56e72bc6408bcb4a54d2fa88a1c2275f2ed3c7e46944af5f6be9e49613ee9d"
         }
       ]
     },
@@ -64,7 +64,7 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-api/src/projector.ts",
-          "version": "repo-file-v1:sha256:baed67dd7add9345154653f7c2510e6aac82cc3a432ef920ac54e8bda8fa4133"
+          "version": "repo-file-v1:sha256:4b78953df8d8d4850b35941cdcca57eb9586a47066498d2ab43a9e833cdf14fe"
         }
       ]
     },
@@ -73,12 +73,12 @@
       "statement": "投影重新严格验证 FM，问题成为 FM_INVALID error；草稿仍可显示但命令不写错误契约。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-acceptance/src/commands.ts",
-          "version": "repo-file-v1:sha256:5323fc399254a538f75ecc034a6f0796686aa46572f84699e3043c16e59c99e8"
+          "resource": "repo://libs/evidence-acceptance/src/renderDeliverables.ts",
+          "version": "repo-file-v1:sha256:8e236a78740eae657bc0ccba2b3ed04ded8400dd1416e20ee42c7619c0c66901"
         },
         {
-          "resource": "repo://libs/evidence-api/src/projector.ts",
-          "version": "repo-file-v1:sha256:baed67dd7add9345154653f7c2510e6aac82cc3a432ef920ac54e8bda8fa4133"
+          "resource": "repo://libs/evidence-acceptance/src/runner/acceptanceRunner.ts",
+          "version": "repo-file-v1:sha256:c41faaaba4842dd6ac5e0581de59106bd79d22dffd216a9d8d71bccee4c0da20"
         }
       ]
     },
@@ -88,7 +88,7 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-api/src/projector.ts",
-          "version": "repo-file-v1:sha256:baed67dd7add9345154653f7c2510e6aac82cc3a432ef920ac54e8bda8fa4133"
+          "version": "repo-file-v1:sha256:4b78953df8d8d4850b35941cdcca57eb9586a47066498d2ab43a9e833cdf14fe"
         }
       ]
     },
@@ -102,7 +102,7 @@
         },
         {
           "resource": "repo://libs/evidence-api/src/projector.ts",
-          "version": "repo-file-v1:sha256:baed67dd7add9345154653f7c2510e6aac82cc3a432ef920ac54e8bda8fa4133"
+          "version": "repo-file-v1:sha256:4b78953df8d8d4850b35941cdcca57eb9586a47066498d2ab43a9e833cdf14fe"
         },
         {
           "resource": "repo://libs/evidence-api/src/schemas/apiSchema.ts",
@@ -116,21 +116,25 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-api/src/projector.ts",
-          "version": "repo-file-v1:sha256:baed67dd7add9345154653f7c2510e6aac82cc3a432ef920ac54e8bda8fa4133"
+          "version": "repo-file-v1:sha256:4b78953df8d8d4850b35941cdcca57eb9586a47066498d2ab43a9e833cdf14fe"
         }
       ]
     },
     {
       "id": "claim_d10d97bc79714fd78f4545af3935ccf5",
-      "statement": "An overlay journey is accepted only when its route exists, its actor is a role/party entity contained in that route's allowedPartyRoleRefs, and every nextPossibleSteps entry resolves; without overlay journeys the projection derives one step per POST route and allowed party role, connected through non-self hypermedia rather than an assumed order.",
+      "statement": "Overlay journey 必须引用存在的路由和该路由获准的当事人或回调角色，nextPossibleSteps 必须存在；无自定义时由 POST 与获准调用者组合并经超媒体连接。",
       "evidence": [
         {
+          "resource": "repo://libs/evidence-api/src/delivery/addressing.ts#L129-L131",
+          "version": "repo-lines-v1:sha256:d6af743c5acc7e9dae29cd71195e33b068f71f4e156adde7019395997cb2614a:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2ZhZjBiNDNkMmFlMDE4MTIyNWVlNjhhYjFlYTgyZTg0NDUzYWUyZDE1YmUxMzNhODRkNzUxMmEyOWU5ZjExOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDAxNGFmYWY5ZTA1OGU4NjkzM2JlYzYzZWE5OTlkODVhYjdhZmVjYzNiOTNlNTUxNmNiYjVmYzYwYmQzZjk5MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWMwMWU0YjQzZWVmMTU0NmM5YTU1M2M2OTZiMzViYjY2MDA4ZWVkYzdlZDIyNDhjYmU3ZDUyYzJkM2Y5ZmY4NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOWMwYmFjMWJhNzBkZGQ5ZTI0MjU3YzMyODhiMTQ4OWNhOTE3MjA3YWM5ZWIwNGIzMjE5ODZhNmEwNmRjY2U3OSJ9"
+        },
+        {
           "resource": "repo://libs/evidence-api/src/http/hateoasWeaver.ts",
-          "version": "repo-file-v1:sha256:3497b11508b73716a27a8ad6a2db84243ab751be17252e33187ca5fa3e28ea16"
+          "version": "repo-file-v1:sha256:72f1e670ca48147087e970e8dc7e712b6260e740ba18f6aef5b36ad81b7b9048"
         },
         {
           "resource": "repo://libs/evidence-api/src/projector.ts",
-          "version": "repo-file-v1:sha256:baed67dd7add9345154653f7c2510e6aac82cc3a432ef920ac54e8bda8fa4133"
+          "version": "repo-file-v1:sha256:4b78953df8d8d4850b35941cdcca57eb9586a47066498d2ab43a9e833cdf14fe"
         }
       ]
     },
@@ -140,11 +144,11 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-api/src/http/hateoasWeaver.spec.ts",
-          "version": "repo-file-v1:sha256:078cd61881f3df42ed9da90d660cac8fefb90799086f6404f98944613ee5be75"
+          "version": "repo-file-v1:sha256:c7894cb08086dc73e8ba101d1d4005ef5eb6d0ee3bb37cc413609ba0e5d764b8"
         },
         {
           "resource": "repo://libs/evidence-api/src/http/hateoasWeaver.ts",
-          "version": "repo-file-v1:sha256:3497b11508b73716a27a8ad6a2db84243ab751be17252e33187ca5fa3e28ea16"
+          "version": "repo-file-v1:sha256:72f1e670ca48147087e970e8dc7e712b6260e740ba18f6aef5b36ad81b7b9048"
         }
       ]
     },
@@ -154,7 +158,7 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-api/src/delivery/modelDelivery.ts",
-          "version": "repo-file-v1:sha256:98815e906f0a8eeaf1f83990545b56691c59b652af26c1be960812c7ebfbdc65"
+          "version": "repo-file-v1:sha256:94bbc77cf1fec0be91f0252c9f3119f53bcc75816db9c3d44de67ac82a85bd01"
         }
       ]
     },
@@ -168,7 +172,7 @@
         },
         {
           "resource": "repo://libs/evidence-api/src/delivery/modelDelivery.ts",
-          "version": "repo-file-v1:sha256:98815e906f0a8eeaf1f83990545b56691c59b652af26c1be960812c7ebfbdc65"
+          "version": "repo-file-v1:sha256:94bbc77cf1fec0be91f0252c9f3119f53bcc75816db9c3d44de67ac82a85bd01"
         }
       ]
     },
@@ -196,7 +200,7 @@
         },
         {
           "resource": "repo://libs/evidence-api/src/delivery/modelDelivery.ts",
-          "version": "repo-file-v1:sha256:98815e906f0a8eeaf1f83990545b56691c59b652af26c1be960812c7ebfbdc65"
+          "version": "repo-file-v1:sha256:94bbc77cf1fec0be91f0252c9f3119f53bcc75816db9c3d44de67ac82a85bd01"
         }
       ]
     },
@@ -216,11 +220,11 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-api/src/delivery/modelDelivery.ts",
-          "version": "repo-file-v1:sha256:98815e906f0a8eeaf1f83990545b56691c59b652af26c1be960812c7ebfbdc65"
+          "version": "repo-file-v1:sha256:94bbc77cf1fec0be91f0252c9f3119f53bcc75816db9c3d44de67ac82a85bd01"
         },
         {
           "resource": "repo://libs/evidence-api/src/projector.ts",
-          "version": "repo-file-v1:sha256:baed67dd7add9345154653f7c2510e6aac82cc3a432ef920ac54e8bda8fa4133"
+          "version": "repo-file-v1:sha256:4b78953df8d8d4850b35941cdcca57eb9586a47066498d2ab43a9e833cdf14fe"
         }
       ]
     },
@@ -234,17 +238,21 @@
         },
         {
           "resource": "repo://libs/evidence-api/src/renderer/outputRenderer.ts",
-          "version": "repo-file-v1:sha256:7520021793f7bf5afe5e9aec5723ad902e2d20dee10ba7af3d3738218c6d06a8"
+          "version": "repo-file-v1:sha256:1a91d7a7c3802a74d34335cf66f6c93642de477ad96fc97c5643ea83b92fd905"
         }
       ]
     },
     {
       "id": "claim_dba71dbd17e446e7984cf68f816480ed",
-      "statement": "The generated tree is replaced all-or-nothing: files are staged in a sibling temp directory, the previous tree is renamed aside, a failed final rename restores it, and only direct file names are accepted so a generated path cannot escape the directory.",
+      "statement": "生成树以同级临时目录 staging 并通过 rename 切换，失败恢复旧树；writer 支持生成集合所需的子目录，但拒绝不安全路径。",
       "evidence": [
         {
           "resource": "repo://libs/evidence-api/src/renderer/outputRenderer.ts",
-          "version": "repo-file-v1:sha256:7520021793f7bf5afe5e9aec5723ad902e2d20dee10ba7af3d3738218c6d06a8"
+          "version": "repo-file-v1:sha256:1a91d7a7c3802a74d34335cf66f6c93642de477ad96fc97c5643ea83b92fd905"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/renderer/outputWriter.spec.ts",
+          "version": "repo-file-v1:sha256:9a8bf1c26b6a6b4cf2774b63fff1f7f38dd1ea1a45cdf7db392f7a92d70cb723"
         }
       ]
     },
@@ -254,7 +262,7 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-acceptance/src/commands.ts",
-          "version": "repo-file-v1:sha256:5323fc399254a538f75ecc034a6f0796686aa46572f84699e3043c16e59c99e8"
+          "version": "repo-file-v1:sha256:aa56e72bc6408bcb4a54d2fa88a1c2275f2ed3c7e46944af5f6be9e49613ee9d"
         }
       ]
     },
@@ -264,7 +272,7 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-acceptance/src/commands.ts",
-          "version": "repo-file-v1:sha256:5323fc399254a538f75ecc034a6f0796686aa46572f84699e3043c16e59c99e8"
+          "version": "repo-file-v1:sha256:aa56e72bc6408bcb4a54d2fa88a1c2275f2ed3c7e46944af5f6be9e49613ee9d"
         },
         {
           "resource": "repo://libs/evidence-api/src/apiLoader.spec.ts",
@@ -294,19 +302,19 @@
     },
     {
       "id": "claim_3ac8d22c787c45d7a6dcace4839d7792",
-      "statement": "公开 URI 按业务聚合根和 references 子基数生成，并为创建及集合补齐主 GET；全局根与局部兄弟段稳定消歧。",
+      "statement": "业务 URI 按聚合根、子基数与履约拓扑生成；确认动作有不同入口，同一确认资源的主 GET 使用全局确认 URI，根与局部子段稳定消歧。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-api/src/delivery/addressing.ts",
-          "version": "repo-file-v1:sha256:c68f3e683d9e3f3b862b01ef1fc03e75d8b16304e04371b43f81e1c29b8bf151"
+          "resource": "repo://docs/api-projection-v6.md#L24-L40",
+          "version": "repo-lines-v1:sha256:eedaf39b19c661524756a12fcccd5393a72d4035bcf7bd0158f0d1e843d8a337:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1ODQ2ZDljYzUzOTQxZTg3YzY0MDY3MjM4NjlhYmFkNGNjOWFiNjIzYzY1OGYwMTkxZjk1MjEyNGQ5ZmY0NjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJmOGE0NDliMmYyMTZkODM2NGZmZDQxODFjYjA0ZTlkMWM3NDIzYmQxYmJiNmI5YjRiYjNlMWNlMDI0OWU3N2MiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMwM2FhOGY5NzU5OTJkOGVmNGI2MjkyNmNmOWYzMDIxZTY5Y2Y0NjUyYTkwYzAwMWE5ZjVlZTg4Y2ViMDY5Y2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgzYzg3OWFhMGViZDQ5NWI0MmEzZjkyYWMwNGI4ZWQzZTE4MTVjNTg5NzI0ZjA4NWU4MDMxMGMxZjdlYWFhZTkifQ"
         },
         {
           "resource": "repo://libs/evidence-api/src/delivery/routes.ts",
-          "version": "repo-file-v1:sha256:c89e334df9b5c064ebab899b5ea150f3b9d7b53ead5fc35112e84e3d685cc87b"
+          "version": "repo-file-v1:sha256:c75ef6ece96c2763a40557fb6467015e2102b00a89ee1ca1bd03a39d744cb9a1"
         },
         {
           "resource": "repo://libs/evidence-api/src/delivery/segments.ts",
-          "version": "repo-file-v1:sha256:b7d097a409699fc39cae2b216912a436b767cff1ae8e84a8faa5115b46416d43"
+          "version": "repo-file-v1:sha256:17f3f0104f9e1a173190e539b0bc203a6b58e3c927a41149f16cb48adc351342"
         }
       ]
     },
@@ -316,7 +324,7 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-api/src/delivery/modelDelivery.ts",
-          "version": "repo-file-v1:sha256:98815e906f0a8eeaf1f83990545b56691c59b652af26c1be960812c7ebfbdc65"
+          "version": "repo-file-v1:sha256:94bbc77cf1fec0be91f0252c9f3119f53bcc75816db9c3d44de67ac82a85bd01"
         },
         {
           "resource": "repo://libs/evidence-api/src/delivery/topology.ts",
@@ -330,7 +338,7 @@
       "evidence": [
         {
           "resource": "repo://apps/cli/src/commands/api.ts",
-          "version": "repo-file-v1:sha256:bcbfc0de398b980370238714041709c57ccab4862fe5f1e1afba0bf5837fe028"
+          "version": "repo-file-v1:sha256:d81d502bf89178b4c4b1e09e56df1408f18dc95ca46133991d0fec7a45e74ab4"
         },
         {
           "resource": "repo://libs/evidence-api/src/loader/migrateOverlay.ts",
@@ -341,6 +349,6 @@
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-17T06:43:02.055Z"
+    "at": "2026-11-18T09:45:40.969Z"
   }
 }

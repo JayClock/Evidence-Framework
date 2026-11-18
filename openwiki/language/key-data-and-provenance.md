@@ -5,7 +5,7 @@ description: 八类来源分类、关键数据台账与 native CEL 属性依赖�
 tags: [key-data, provider, provenance, ledger, lineage, business-time, sensors]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-17T06:43:02.055Z
+    at: 2026-11-18T09:45:40.969Z
 sources:
   - id: openwiki-source-14c1bd0ebaba9f1349ef58a4
     resource: repo://libs/desktop/feature-inspector/src/inspector/AttributeDataGrid.spec.tsx
@@ -63,7 +63,7 @@ sources:
     resource: repo://libs/evidence-schema/src/ast/keyData.ts
   - id: openwiki-source-6dd8352adfce201b404ea1bf
     resource: repo://libs/evidence-schema/src/ast/provenance.ts
-generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
+generated: { by: "pi", at: "2026-11-18T09:45:40.969Z" }
 ---
 
 # 关键数据、派生与来源追溯
@@ -111,7 +111,7 @@ lineage errors进入FM check.errors→check_fm/FM_INCONSISTENT block；provider 
 
 ## 精确整数边界
 
-cel-js运行时int/uint用bigint精确运算。JSON输入允许safe number或CEL int64/uint64范围内的精确十进制string，unsafe number和类型越界值拒绝；celValueToJson把安全整数转number、较宽合法整数保留decimal string，绝不Number静默舍入。内联样例oracle/Step CI/Hurl literals复用此纪律。canonical JSON与hash要一致，不能只换序列化样式当格式调整。详见[检查与CEL](../model/checks-and-simulation.md)。
+cel-js运行时int/uint用bigint精确运算。JSON输入允许safe number或CEL int64/uint64范围内的精确十进制string，unsafe number和类型越界值拒绝；celValueToJson把安全整数转number、较宽合法整数保留decimal string，绝不Number静默舍入。内联样例 oracle 与生成的 Bruno 请求、断言复用此纪律，精确十进制字符串不能转换成浮点数再比较。canonical JSON与hash要一致，不能只换序列化样式当格式调整。详见[检查与CEL](../model/checks-and-simulation.md)。
 
 ## 文本来源是元素级记录
 

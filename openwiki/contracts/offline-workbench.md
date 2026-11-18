@@ -5,7 +5,7 @@ description: 旧 HTML 工作台与 review 入口退役后，如何使用原生�
 tags: [migration, desktop, delivery, cli, review]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-17T07:06:17.114Z
+    at: 2026-11-18T09:45:40.969Z
 sources:
   - id: openwiki-source-69d58f985d20203ea0c2f899
     resource: repo://apps/cli/src/router.ts
@@ -19,7 +19,7 @@ sources:
     resource: repo://libs/desktop/feature-delivery/src/state/useDeliveryHub.ts
   - id: openwiki-source-40275cb92c3610938f16ade3
     resource: repo://pnpm-workspace.yaml
-generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
+generated: { by: "pi", at: "2026-11-18T09:45:40.969Z" }
 ---
 
 # 离线工作台退役与当前审查入口
@@ -28,7 +28,7 @@ generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
 
 当前桌面用原生画布、Inspector、问题面板、故事和交付中心审查实时 ModelSession。画布布局由共享 canvas-interaction/ELK 计算；交付中心比较编辑器打开时的 baseline 与当前文档，展示业务 URI、服务所有权、HAL 契约和原生 oasdiff 变化。
 
-终端使用统一 `evidence`：`check` 验证模型，`export` 导出 OpenAPI 与 Step CI/Hurl，`test` 对真实 HTTP 服务验收，`diff` 比较最终契约。不存在新的 HTML 发布命令替代旧 workbench。
+终端使用统一 `evidence`：`check` 验证模型，`export` 导出 OpenAPI 与 Bruno 集合，`test` 以生成的集合目录为输入，对真实 HTTP 服务验收，`diff` 比较最终契约。不存在新的 HTML 发布命令替代旧 workbench。
 
 交付中心的 live preview 分析 renderer 提供的当前/基线文档；live export 在目录选择前冻结并分析快照，校验预览的 modelDigest，输出交付文件、`api-changes.md` 与 `draft-status.json`。draft-status 明示 `releaseAuthorized: false`，可审查草稿不等于发布批准。saved preview/export 则重新读取磁盘来源。
 

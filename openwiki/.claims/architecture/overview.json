@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:5e84754fbc266843995f8088ed4d31f91a6521196f3410d2f842319d78151c0b",
+  "pageVersion": "sha256:f8dbe451a7fdda20ee6e7aedce7052f67f43345bbd6423a80758c72afcfd69fb",
   "claims": [
     {
       "id": "claim_164af37c15bd455a9db772d5a23f1eed",
@@ -8,11 +8,11 @@
       "evidence": [
         {
           "resource": "repo://docs/workspace-layout.md",
-          "version": "repo-file-v1:sha256:3292607c9d458079b8905506378541895c5167cabc8fb21e08074a9614c8fc5b"
+          "version": "repo-file-v1:sha256:f5b93f8b95fe5bb17289e2b0f5ee3a04f5e314035dc67844e821f711b28e0149"
         },
         {
           "resource": "repo://package.json",
-          "version": "repo-file-v1:sha256:4b1b9596b78b202b81e917f1c2522240e76da6f2e8c3bf7aa26db4628f3e071e"
+          "version": "repo-file-v1:sha256:dede372592c0b80c3094dc143616b53ebdaa0cb7ed395730fca230ae6813845d"
         }
       ]
     },
@@ -54,7 +54,7 @@
         },
         {
           "resource": "repo://libs/evidence-api/src/projector.ts",
-          "version": "repo-file-v1:sha256:baed67dd7add9345154653f7c2510e6aac82cc3a432ef920ac54e8bda8fa4133"
+          "version": "repo-file-v1:sha256:4b78953df8d8d4850b35941cdcca57eb9586a47066498d2ab43a9e833cdf14fe"
         },
         {
           "resource": "repo://libs/evidence-api/src/types.ts",
@@ -82,11 +82,15 @@
     },
     {
       "id": "claim_7f449bd660de4e96a278997d25dd8fa0",
-      "statement": "Node/pnpm 是开发工具链，API 比较另需显式准备固定原生 oasdiff，无需 Go/Docker。",
+      "statement": "Node/pnpm 是开发工具链；pnpm 安装固定 Bruno CLI 执行 HTTP 验收，API 比较另需显式准备固定原生 oasdiff，无需 Go/Docker。",
       "evidence": [
         {
           "resource": "repo://ENVIRONMENT.md#L1-L7",
-          "version": "repo-lines-v1:sha256:e0c15dec664eee5156ede80b20a813f67af2070511d40b5aebcb526bb9b223a9:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODRhMzRiNDgyNTA4MjUwOGMzZjNiZGE3MzUyZmMxMGNhMGI3NGYyOTdlYTcyODM1ZTJhZTliMjZlNjQ0OTBiNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzZkMDRjMDMyZDEyZjE1OTY3Yjk0MGZiYjg3YTg3NGJkODkxMGQ4MzAwNmMxYzQ4MDFkZjUxMGE3MDY5MjBiYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWY3NGM0M2I4ZWUzOGExNTZhZTQ1ZTgyZjFkM2Y4M2Q4MjAxMGVkOWZiNTRhMjlhZDk0NzFjNmE3ZjZkZWEwYSJ9"
+          "version": "repo-lines-v1:sha256:6c0c9dcf98de146dc254862c33eca0702ec9532c635ad4ee039027901a53f755:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODRhMzRiNDgyNTA4MjUwOGMzZjNiZGE3MzUyZmMxMGNhMGI3NGYyOTdlYTcyODM1ZTJhZTliMjZlNjQ0OTBiNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjc5MDZkNzQ3NzhmYjliZTM1ZGUyNmVmZjE5ZWZkOTI4MDc5ODU2NTMzYmM4MWIzNzVhNzAyMGRiZjM2Y2UyZSJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/package.json#L92-L101",
+          "version": "repo-lines-v1:sha256:b3f6886e8f359017ed1f2ab0294bff44ad71dd18d182889f48dc0fbf168ac4a7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRiNGU1YTFjZWMzMWRhZDIwN2U0NjNmYWIxM2Q0YmEzMjY4YzlkNDM3NWVkN2FlMTViYTA0MzdiY2JhZjhmNzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2YzE0NzU3YjhlMWU5ZDZhN2RlZTk5MDJlOTA0MDdhZDhjZjY3M2IzZThkNzYzZTI3OTUwZDE5ZDA2NzhkNjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM5ZjM4MDczYzFiYzUzY2Q3MjNkYTFhNDk2OGFiMDBjZWIzM2Y0MDljYTY5YzQyODM4YWI2MmIzNDc2NjlmODUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY2YWUwOWM0MGFjYzBiZDIxOWVjOGU3ZDRlYzg5YmY0ZjQ5NDI5ZmY0MWE0NDIyODAzOTJmMzY0MTUyZGYyZTIifQ"
         },
         {
           "resource": "repo://tools/oasdiff/setup.mjs",
@@ -244,11 +248,11 @@
       "evidence": [
         {
           "resource": "repo://docs/workspace-layout.md",
-          "version": "repo-file-v1:sha256:3292607c9d458079b8905506378541895c5167cabc8fb21e08074a9614c8fc5b"
+          "version": "repo-file-v1:sha256:f5b93f8b95fe5bb17289e2b0f5ee3a04f5e314035dc67844e821f711b28e0149"
         },
         {
           "resource": "repo://libs/evidence-acceptance/package.json",
-          "version": "repo-file-v1:sha256:cd1fee49176afed6f6ce04dd3d0549625a7f9a2ff89aa37af1c6bd220b617280"
+          "version": "repo-file-v1:sha256:77ed1cbfc70718bfe9d7d24367fdf6fdaaa6be574ce125cbc4c098498ad6bffa"
         },
         {
           "resource": "repo://libs/evidence-tools/package.json",
@@ -259,6 +263,6 @@
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-17T07:06:17.114Z"
+    "at": "2026-11-18T09:45:40.969Z"
   }
 }

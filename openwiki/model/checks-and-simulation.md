@@ -5,7 +5,7 @@ description: FM check v6 如何分开一致性与scope完整性，native cel-js�
 tags: [validation, check, cel, examples, traceability, drift]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-17T06:43:02.055Z
+    at: 2026-11-18T09:45:40.969Z
 sources:
   - id: openwiki-source-52a825b501b0001cef1b2ecc
     resource: repo://apps/cli/src/commands/check.ts
@@ -41,7 +41,7 @@ sources:
     resource: repo://libs/evidence-model-io/src/commands.ts
   - id: openwiki-source-5827654ee488871fab61b1a1
     resource: repo://libs/evidence-model-io/src/legacyRemoval.spec.ts
-generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
+generated: { by: "pi", at: "2026-11-18T09:45:40.969Z" }
 ---
 
 # 静态门禁、CEL 与样例求值
@@ -80,7 +80,7 @@ evaluateRuleOnExample(model,rule,{bindings,asOf})无Node I/O，不读环境时�
 
 按模型属性类型转换独立clone的输入，compile/evaluate后celValueToJson，再验证resultType与JSON可表示性；拒绝undefined/non-finite/private runtime泄漏，失败保留rule ID与cause。它是**编译期预期生成器，不是backend simulator**。
 
-evidence-acceptance projector 从 examples[].test解析flow依赖，先清asserted derived值、用upstream facts求规则，再对显式期望核对，冲突拒绝而非覆盖；标准Step CI/Hurl对真实HTTP后端才执行状态/字段/schema验收。int64/uint64精确string可保留到OpenAPI/测试literal，避免舍入制造伪绿。
+evidence-acceptance projector 从 examples[].test解析flow依赖，先清asserted derived值、用upstream facts求规则，再对显式期望核对，冲突拒绝而非覆盖；`evidence test` 调用 Bruno 在真实后端检查状态与业务字段，再用响应做 Schema 校验；生成集合本身不是执行证据。int64/uint64精确string可保留到OpenAPI/测试literal，避免舍入制造伪绿。
 
 ## 故事与本地预演
 

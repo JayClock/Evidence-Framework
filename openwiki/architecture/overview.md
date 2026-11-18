@@ -5,7 +5,7 @@ description: 两个应用宿主与十八个共享库如何围绕 FM 文档协作
 tags: [architecture, workspace, dependencies, nx, data-flow, monorepo]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-17T07:06:17.114Z
+    at: 2026-11-18T09:45:40.969Z
 sources:
   - id: openwiki-source-8037e2358a2c4f9b2c722a11
     resource: repo://AGENTS.md
@@ -73,7 +73,7 @@ sources:
     resource: repo://tsconfig.base.json
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "codex", at: "2026-11-17T07:06:17.114Z" }
+generated: { by: "pi", at: "2026-11-18T09:45:40.969Z" }
 ---
 
 # 系统架构与依赖边界
@@ -89,7 +89,7 @@ Evidence 的真相源是 `DomainModelDocument`：manifest、entities、relations
 | domain/universal | canvas-interaction：headless async ELK 布局、模型/ELK 适配、可序列化布局和作用域，不持有 DOM/React Flow 视口 |
 | io/node | model-io：源树/Bundle 发现、字节摘要、读写、pack/unpack 及共享模型命令 |
 | projection | evidence-api：模型与可选 overlay → v6 路由、HAL、服务、OpenAPI、部署；不依赖 acceptance |
-| projection/node | acceptance：消费 API，编译内联样例、导出 Step CI/Hurl、运行 HTTP 验收、drift 和原生 oasdiff |
+| projection/node | acceptance：消费 API，编译内联样例、导出 Bruno 集合、运行 HTTP 验收、drift 和原生 oasdiff |
 | domain/universal | evidence-tools：Pi/MCP 共用的 guarded patch/recipe registry |
 | orchestration/node | agent：Pi session、提示词、Zod 工具、传感器、门禁、治理和 trace reader；browser 子入口提供纯数据合同 |
 | orchestration/node | mcp：外部工具与本地桥，不依赖 agent 或 visualization；二者在桌面宿主相遇 |
@@ -113,7 +113,7 @@ ESLint 同时约束 type、layer、platform、scope：universal 只能引用 uni
 3. 静态检查以 Zod strict + semantics、CEL 和 scoped completeness 给出 FM check v6；内联 examples 提供 CEL 编译期 oracle，不代表真实 HTTP 成功。
 4. API 投影生成 draft snapshot，携带 model/design/check-report digest、排序诊断和 limitations。固定 check 报告失效或摘要过期成为显式 gap，不抹掉草稿可见性；正式交付再要求门禁。
 5. Stage gate 消费 v6 报告，要求一致、完整、有效、输入未变化、无 errors/gaps 且覆盖非空 scope；API 目标还重新投影检查和比摘要。
-6. CLI 导出 OpenAPI + Step CI/Hurl，再对真实后端 HTTP 验收；旧 evidence-visualization 与离线 workbench 已撤除。
+6. CLI 导出 OpenAPI + Bruno 集合，再由 `evidence test` 驱动 Bruno 对真实后端执行 HTTP 验收；旧 evidence-visualization 与离线 workbench 已撤除。
 
 ## 两个宿主与进程边界
 
@@ -125,7 +125,7 @@ cli 是唯一推荐终端入口：check、pack/unpack/compile/inspect/lineage、
 
 ## 一套工具链，不是一切都在 JS 内
 
-Node.js 22 + pnpm 是唯一仓库开发工具链；模型引擎、检查、投影和生成器为 TypeScript，无 Python/Go 解释器要求。但契约比较确实执行固定原生 **oasdiff**：`pnpm install` 后另跑 `pnpm api:setup`，无需 Go/Docker。测试后端的多语言示例只是接入参考，不是新增运行时。
+Node.js 22 + pnpm 是唯一仓库开发工具链；模型引擎、检查、投影和生成器为 TypeScript。`pnpm install` 同时安装固定的 Bruno CLI，无需全局 `bru`。契约比较另用固定原生 **oasdiff**：安装依赖后单独执行 `pnpm api:setup`，无需 Go/Docker。测试后端的多语言示例只是接入参考，不是新增运行时。
 
 ## 深入入口
 

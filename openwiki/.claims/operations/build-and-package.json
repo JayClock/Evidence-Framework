@@ -1,14 +1,18 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:0fa1eee63531f9efbd3ce5c9b7ec685b36dfa2eccad88bbe7e07370728cdf9ea",
+  "pageVersion": "sha256:04b3cade17a7e175d859ede8f5eceb917cc84a19e810ccb2827c057b958f0724",
   "claims": [
     {
       "id": "claim_567a05d269c14d5e97a102d43a9b3bcf",
-      "statement": "工具链Node/pnpm，无解释器；install后需显式api:setup准备固定原生oasdiff供比较/tests。",
+      "statement": "工作区工具链为 Node/pnpm；pnpm install 安装固定 Bruno CLI，API 比较及测试另需显式 api:setup 安装原生 oasdiff。",
       "evidence": [
         {
-          "resource": "repo://ENVIRONMENT.md#L1-L10",
-          "version": "repo-lines-v1:sha256:167cf64c5703da73ad907471543274d2c164c1557c7e2bbfb0ff49060dd515b1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg0YTM0YjQ4MjUwODI1MDhjM2YzYmRhNzM1MmZjMTBjYTBiNzRmMjk3ZWE3MjgzNWUyYWU5YjI2ZTY0NDkwYjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI2MzgxOGUwYzdiNDZmZWJhNzU5ZWU3MWM4MDMzMjA5OTBmZmYzMzJhODczZmJiMDc3YWU5ZmVjM2VmOTcwYmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZmZGVjOGNjM2VkZWMxYjczNjczZTAyMmNiOGU1YWRjMTUwOGNkYmRhN2JiYWNlOGVhNjNmYTExN2M4NDNlNWQifQ"
+          "resource": "repo://ENVIRONMENT.md#L1-L6",
+          "version": "repo-lines-v1:sha256:a06db9b7757ab72ea52d1de12743c42ed21705e5f35d680ca0dc74957d16a6f6:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODRhMzRiNDgyNTA4MjUwOGMzZjNiZGE3MzUyZmMxMGNhMGI3NGYyOTdlYTcyODM1ZTJhZTliMjZlNjQ0OTBiNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmY2MGJiNjAwZTc2ZjZhMTFkM2I3OWM5OGI4YzY4ZjU1YmE2MDhhN2JlY2RjMzY4YzU4YTUzMzBlOTE5MDExNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWY3NGM0M2I4ZWUzOGExNTZhZTQ1ZTgyZjFkM2Y4M2Q4MjAxMGVkOWZiNTRhMjlhZDk0NzFjNmE3ZjZkZWEwYSJ9"
+        },
+        {
+          "resource": "repo://libs/evidence-acceptance/package.json#L92-L101",
+          "version": "repo-lines-v1:sha256:b3f6886e8f359017ed1f2ab0294bff44ad71dd18d182889f48dc0fbf168ac4a7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRiNGU1YTFjZWMzMWRhZDIwN2U0NjNmYWIxM2Q0YmEzMjY4YzlkNDM3NWVkN2FlMTViYTA0MzdiY2JhZjhmNzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2YzE0NzU3YjhlMWU5ZDZhN2RlZTk5MDJlOTA0MDdhZDhjZjY3M2IzZThkNzYzZTI3OTUwZDE5ZDA2NzhkNjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM5ZjM4MDczYzFiYzUzY2Q3MjNkYTFhNDk2OGFiMDBjZWIzM2Y0MDljYTY5YzQyODM4YWI2MmIzNDc2NjlmODUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY2YWUwOWM0MGFjYzBiZDIxOWVjOGU3ZDRlYzg5YmY0ZjQ5NDI5ZmY0MWE0NDIyODAzOTJmMzY0MTUyZGYyZTIifQ"
         },
         {
           "resource": "repo://tools/oasdiff/setup.mjs",
@@ -113,16 +117,6 @@
       ]
     },
     {
-      "id": "claim_62fede52a6c7400a878417ec27c623df",
-      "statement": "Node22 frozen install后setup oasdiff，drill/lint/typecheck/test，再CLI build/help/version与desktop smoke。",
-      "evidence": [
-        {
-          "resource": "repo://.github/workflows/ci.yml",
-          "version": "repo-file-v1:sha256:f232d9dcc406b7269168f33b7f9e594858e646752ebf956113dd4e1b71be32d9"
-        }
-      ]
-    },
-    {
       "id": "claim_0e1b7fd9c34d400db2def9f076d9394c",
       "statement": "The release workflow builds a four-way matrix (macOS arm64/x64, Windows x64, Linux x64), installs rpm/fakeroot/dpkg on Linux, runs desktop:make per architecture, collects zip/exe/nupkg/RELEASES/deb/rpm artifacts and publishes a GitHub Release.",
       "evidence": [
@@ -138,7 +132,7 @@
       "evidence": [
         {
           "resource": "repo://package.json",
-          "version": "repo-file-v1:sha256:4b1b9596b78b202b81e917f1c2522240e76da6f2e8c3bf7aa26db4628f3e071e"
+          "version": "repo-file-v1:sha256:dede372592c0b80c3094dc143616b53ebdaa0cb7ed395730fca230ae6813845d"
         },
         {
           "resource": "repo://pnpm-workspace.yaml",
@@ -156,7 +150,7 @@
         },
         {
           "resource": "repo://docs/workspace-layout.md",
-          "version": "repo-file-v1:sha256:3292607c9d458079b8905506378541895c5167cabc8fb21e08074a9614c8fc5b"
+          "version": "repo-file-v1:sha256:f5b93f8b95fe5bb17289e2b0f5ee3a04f5e314035dc67844e821f711b28e0149"
         },
         {
           "resource": "repo://libs/evidence-agent/package.json",
@@ -250,7 +244,7 @@
         },
         {
           "resource": "repo://package.json",
-          "version": "repo-file-v1:sha256:4b1b9596b78b202b81e917f1c2522240e76da6f2e8c3bf7aa26db4628f3e071e"
+          "version": "repo-file-v1:sha256:dede372592c0b80c3094dc143616b53ebdaa0cb7ed395730fca230ae6813845d"
         }
       ]
     },
@@ -308,11 +302,11 @@
     },
     {
       "id": "claim_f81a981b7cd042da8cdb894cc1fe3f61",
-      "statement": "CI Node22 frozen install 后 setup oasdiff 与独立 Fastify，运行 example:test/drill/lint/typecheck/test/CLI sanity/desktop package smoke。",
+      "statement": "CI 用 Node 22 冻结安装并查验工作区 Bruno CLI，显式准备 oasdiff 与独立 Fastify，再运行原生测试、边界验证、lint/typecheck/test、CLI 检查、示例只读核验和桌面构建。",
       "evidence": [
         {
-          "resource": "repo://.github/workflows/ci.yml",
-          "version": "repo-file-v1:sha256:f232d9dcc406b7269168f33b7f9e594858e646752ebf956113dd4e1b71be32d9"
+          "resource": "repo://.github/workflows/ci.yml#L26-L76",
+          "version": "repo-lines-v1:sha256:8c60167274631b078de493edaf0b88230677cd67e714c2e63e3e31d92d693a48:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM2ZDcxMGExNzYyODk1Y2Q0YzkzYzZhMmEyOWU2MjkyNGQ2ZjczMGQ5NWUyYWQxNzdjYTUwNDhlYjU2OWM5YWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1MTZhMTM3Y2ExYTgyMjk3MDcyNWI1NmJhYTljMzJiMzM2ZGIwNjAxNDcxMDJiZTk2NzIyZDcwMjI0MDBlZGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFiODg2OGJmZTBhMGMxM2U2MmJlMWE2MTdkNDllYjhjODcwZGUyNmZjNGRiMTliY2JmMGFmZWE1OWUyNGEzMTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -343,6 +337,6 @@
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-17T06:43:02.055Z"
+    "at": "2026-11-18T09:45:40.969Z"
   }
 }

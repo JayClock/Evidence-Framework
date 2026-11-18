@@ -1,20 +1,20 @@
 ---
 type: guide
 title: 快速开始与任务导航
-description: 安装Evidence桌面与统一CLI，以FM v5建模、静态检查、导出OpenAPI/Step CI并对真实HTTP验收，以及按任务定位架构、桌面、语言和治理文档。
+description: 安装Evidence桌面与统一CLI，以FM v5建模、静态检查、导出 OpenAPI 与 Bruno 集合并对真实 HTTP 服务验收，以及按任务定位架构、桌面、语言和治理文档。
 tags: [quickstart, onboarding, navigation, commands]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-17T06:43:02.055Z
+    at: 2026-11-18T09:45:40.969Z
 sources:
   - id: openwiki-source-8037e2358a2c4f9b2c722a11
     resource: repo://AGENTS.md
-  - id: openwiki-source-5466111549d3bdae4dce66a7
-    resource: repo://apps/cli/package.json
   - id: openwiki-source-4c0b31aad45d3c1bd1d286ce
     resource: repo://apps/cli/src/commands/api.ts
   - id: openwiki-source-52a825b501b0001cef1b2ecc
     resource: repo://apps/cli/src/commands/check.ts
+  - id: openwiki-source-97029bfc63aaa8f0d97e713c
+    resource: repo://apps/cli/src/commands/test.ts
   - id: openwiki-source-69d58f985d20203ea0c2f899
     resource: repo://apps/cli/src/router.ts
   - id: openwiki-source-5d33672c45ec58cd29dce507
@@ -23,6 +23,8 @@ sources:
     resource: repo://docs/api-projection-v6.md
   - id: openwiki-source-0c1cc5dc86ad401eb9678504
     resource: repo://ENVIRONMENT.md
+  - id: openwiki-source-3487fdf20c88f517d0a744eb
+    resource: repo://libs/evidence-acceptance/package.json
   - id: openwiki-source-00036286abae2d8c898e2cef
     resource: repo://libs/evidence-acceptance/src/commands.ts
   - id: openwiki-source-cd086b179a9af7a48561ba25
@@ -35,20 +37,24 @@ sources:
     resource: repo://libs/evidence-model-core/src/validation/fmCheck.ts
   - id: openwiki-source-5827654ee488871fab61b1a1
     resource: repo://libs/evidence-model-io/src/legacyRemoval.spec.ts
+  - id: openwiki-source-52858d6130375e8776a048e7
+    resource: repo://libs/evidence-schema/src/ast/document.ts
+  - id: openwiki-source-c265f00105116b029505cbda
+    resource: repo://libs/evidence-schema/src/ast/entity.ts
+  - id: openwiki-source-e32f800f7852b379dbe14855
+    resource: repo://libs/evidence-schema/src/ast/rule.ts
   - id: openwiki-source-5b54a58d1b51cd490b0e7162
     resource: repo://package.json
-  - id: openwiki-source-23775c3de52f3ab95a13cb8b
-    resource: repo://README.md
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
+generated: { by: "pi", at: "2026-11-18T09:45:40.969Z" }
 ---
 
 # 快速开始与任务导航
 
 Evidence是语言无关的后端业务建模工作台：先描述双方责任、请求时段、确认时刻、事实与派生规则，再投影接口和验收。模型不是ORM或后端实现；画布、CLI、传感器和生成器复用同一DomainModelDocument。
 
-当前workspace为**两个应用（desktop/cli）、十八个 TypeScript 库**。Node.js22、pnpm12.16.1是一套开发工具链，没有Python/Go解释器、virtualenv或项目skill树；契约比对另需固定native oasdiff。
+当前 workspace 为**两个应用（desktop/cli）、十八个 TypeScript 库**。Node.js 22、pnpm 12.16.1 是框架开发工具链；`pnpm install` 安装固定 Bruno CLI，契约比较另需固定原生 oasdiff。项目目录不提供 skill 树。
 
 ## 从干净环境启动
 
@@ -107,7 +113,7 @@ pnpm evidence test --target http://127.0.0.1:8085 --scenarios dist/acceptance --
 pnpm evidence diff baseline.evidence.json procurement.evidence.json --format markdown
 ```
 
-没有examples[].test时不要声称导出了验收，export可用--openapi只交契约；Hurl用--tests --format hurl导出、由Hurl CLI运行。out是会被原子整树替换的专用generated目录，不放手写资料。
+没有 `examples[].test` 时用 `--openapi` 只生成契约；`--tests` 只导出 Bruno 集合，不接受 `--format`。`--out` 会被整树替换，不放手写资料。`test --scenarios` 指向生成目录而非单个请求文件。
 
 旧 evidence-model/api bin暂留为stderr弃用shim；推荐上述入口。api overlay/固定FM报告/完整topology输出可用`evidence api <inspect|check|project|deliver|export-tests|diff|migrate-overlay>`，参数以--help为准，不复制旧脚本的usage猜格式。
 
@@ -131,7 +137,7 @@ rail 为业务结构、诊断、生产漂移、AI 协同、条款审计、共创
 2. **草稿可看≠发布授权。** 兼容api workflow error退出1不写，只有gaps退出3仍可写draft；stage gate要完整scope/有效报告，API还要coverage/兼容性。机器不能代签。
 3. **产物同步不靠CI悄修。** export --verify只比较missing/modified/extra、失败不写，开发重新export并提交。
 4. **双验收gate有明确基线。** regression跑旧基线全部flows，DoD跑当前新增/变化；allow-pending只为DoD探索且报告仍未通过，strict CI不用它。详见下页。
-5. **故事与本地预演不等于验收。** story --no-ai 仅显示声明事实，journey preview 只读可见前缀；真实后端通过 Step CI/Hurl 验收。旧离线 workbench 已撤除。
+5. **故事与本地预演不等于验收。** story --no-ai 仅显示声明事实，journey preview 只读可见前缀；对真实后端的验收由 `evidence test` 驱动 Bruno。旧离线 workbench 已撤除。
 
 ## 按任务找文档
 

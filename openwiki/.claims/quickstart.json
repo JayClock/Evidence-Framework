@@ -1,28 +1,36 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:912115380dcac7d48853b045546a8762f1bf1b72316fae161cd897b19a532732",
+  "pageVersion": "sha256:a1778771303984e25d2172d342ee1b781f0e16f011e2a298c5f8eff14e9d5818",
   "claims": [
     {
       "id": "claim_df5076f9176f4575a1cdc338083b09af",
-      "statement": "Evidence is a language-independent workbench and DSL for backend business models that describes responsibilities, evidence, fulfillment flow and derivation rules instead of ORM entities and framework endpoints.",
+      "statement": "FM 是语言无关的业务模型 DSL，描述权责、证据、履约流和派生规则而不是 ORM 实体或框架端点。",
       "evidence": [
         {
-          "resource": "repo://README.md#L1-L20",
-          "version": "repo-lines-v1:sha256:a128689add3b2ec0fcd143ebdc2c6b0291fc6ea38b33d80daf543a988a63124e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI2MTVhYjc5Y2RlOWFlNmFkOWY1NDVmZDZhYzQ4YjljM2Y5MzU5YTYzMTk1NGJkYjY0MzY3Y2U5YmYzNmUzMzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhZGMxZDM4ZTNlZDkwMzIzZDBjZmI3NWI1ZWVmYWJmNDBiNTc0ODk0ODY4OGQwNjQ3MWNlMTc1OGZjYWU3N2EiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAwMWYyZWMxNzU5M2MxMDU0ZWI0NjM2N2Q4NDUzZWYyNGExNzNjZTk2YjcxMTdkOTFmOWE2OGQ0NGZlZjhiMDEifQ"
+          "resource": "repo://libs/evidence-schema/src/ast/document.ts",
+          "version": "repo-file-v1:sha256:f390474d5859895f22084afde3930f42e7955b3c8db09c39914034c70a4020a5"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/entity.ts",
+          "version": "repo-file-v1:sha256:32860024081946a781a095076f3fbe84a568d24da036d3ec6062258fbf279a9c"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/rule.ts",
+          "version": "repo-file-v1:sha256:cf871f5a3249aea4fe58468b053f677f315c275bbe6d1c3e60547b4542db4ba9"
         }
       ]
     },
     {
       "id": "claim_d1426e9010cc4646a5e2c5090221d33b",
-      "statement": "Node/pnpm install 加显式 api:setup；workspace 两应用十八库，独立 Fastify 另需 example:setup，无项目 skill 树或第二解释器。",
+      "statement": "工作区有两应用十八库；Node/pnpm 安装固定 Bruno CLI，另显式执行 api:setup 为比较准备 oasdiff、example:setup 为真实 HTTP 测试准备独立 Fastify。",
       "evidence": [
         {
           "resource": "repo://ENVIRONMENT.md",
-          "version": "repo-file-v1:sha256:ad75bfea8458d026cfcfb901ff8f3110f1b9532004c3f82b660923d63bf93ab1"
+          "version": "repo-file-v1:sha256:a8c1769c6a0b51335454dda7b9979dc1974de07457780adada955c01a74d074f"
         },
         {
-          "resource": "repo://apps/cli/package.json",
-          "version": "repo-file-v1:sha256:d2ca0caf923736c9567219fb3ade2e92c22afe1983df6b171b147a8e3646f20e"
+          "resource": "repo://libs/evidence-acceptance/package.json#L92-L101",
+          "version": "repo-lines-v1:sha256:b3f6886e8f359017ed1f2ab0294bff44ad71dd18d182889f48dc0fbf168ac4a7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRiNGU1YTFjZWMzMWRhZDIwN2U0NjNmYWIxM2Q0YmEzMjY4YzlkNDM3NWVkN2FlMTViYTA0MzdiY2JhZjhmNzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2YzE0NzU3YjhlMWU5ZDZhN2RlZTk5MDJlOTA0MDdhZDhjZjY3M2IzZThkNzYzZTI3OTUwZDE5ZDA2NzhkNjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM5ZjM4MDczYzFiYzUzY2Q3MjNkYTFhNDk2OGFiMDBjZWIzM2Y0MDljYTY5YzQyODM4YWI2MmIzNDc2NjlmODUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY2YWUwOWM0MGFjYzBiZDIxOWVjOGU3ZDRlYzg5YmY0ZjQ5NDI5ZmY0MWE0NDIyODAzOTJmMzY0MTUyZGYyZTIifQ"
         },
         {
           "resource": "repo://tsconfig.json",
@@ -36,7 +44,7 @@
       "evidence": [
         {
           "resource": "repo://package.json",
-          "version": "repo-file-v1:sha256:4b1b9596b78b202b81e917f1c2522240e76da6f2e8c3bf7aa26db4628f3e071e"
+          "version": "repo-file-v1:sha256:dede372592c0b80c3094dc143616b53ebdaa0cb7ed395730fca230ae6813845d"
         }
       ]
     },
@@ -56,11 +64,15 @@
     },
     {
       "id": "claim_40a52e6231ba417781694bf15cae60b7",
-      "statement": "统一 evidence 提供 check/model/story/export/test/diff/api，旧 model/API 两 shim 保留；review 与旧 timeline/simulate/role-play 已删除。",
+      "statement": "统一 evidence 提供模型、故事、导出、验收、比较和兼容 API 入口；验收导出只有 Bruno 且无 format 参数，test 接收生成目录；旧 review 与内存回放不再支持。",
       "evidence": [
         {
+          "resource": "repo://apps/cli/src/commands/test.ts",
+          "version": "repo-file-v1:sha256:072ca01efd658a6d448bf13eed92710e28c49d4176399f057877cb54748570f2"
+        },
+        {
           "resource": "repo://apps/cli/src/router.ts",
-          "version": "repo-file-v1:sha256:47ecefdc10b1f1be1dc0d3682061395c6a2dce69989bbf9550e6adffc5c64870"
+          "version": "repo-file-v1:sha256:12df98860edbedbda118b33e8783bf746f9a70c5580641369b27d28c75ad2302"
         },
         {
           "resource": "repo://libs/evidence-model-io/src/legacyRemoval.spec.ts",
@@ -88,7 +100,7 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-acceptance/src/commands.ts",
-          "version": "repo-file-v1:sha256:5323fc399254a538f75ecc034a6f0796686aa46572f84699e3043c16e59c99e8"
+          "version": "repo-file-v1:sha256:aa56e72bc6408bcb4a54d2fa88a1c2275f2ed3c7e46944af5f6be9e49613ee9d"
         }
       ]
     },
@@ -102,7 +114,7 @@
         },
         {
           "resource": "repo://libs/evidence-mcp/src/server/toolset.ts",
-          "version": "repo-file-v1:sha256:1f410babf84280cf300e889b5733d80a553eb785384c7d499928cf8cc798d326"
+          "version": "repo-file-v1:sha256:471fddfe0c44822a8cb316e7da3eccd47502da10c2b08f18bd1a924af994f742"
         }
       ]
     },
@@ -112,21 +124,21 @@
       "evidence": [
         {
           "resource": "repo://apps/cli/src/commands/api.ts",
-          "version": "repo-file-v1:sha256:bcbfc0de398b980370238714041709c57ccab4862fe5f1e1afba0bf5837fe028"
+          "version": "repo-file-v1:sha256:d81d502bf89178b4c4b1e09e56df1408f18dc95ca46133991d0fec7a45e74ab4"
         },
         {
           "resource": "repo://docs/api-projection-v6.md",
-          "version": "repo-file-v1:sha256:2efb907009591aa653d6be160ee223351ae4b79d6307ec3b1c0ab206fb105c74"
+          "version": "repo-file-v1:sha256:50a360c597d28aacccdaa69d6091c15a0eb10131b9a62da2a4d4ef34a950e0b7"
         },
         {
           "resource": "repo://libs/evidence-api/src/delivery/routes.ts",
-          "version": "repo-file-v1:sha256:c89e334df9b5c064ebab899b5ea150f3b9d7b53ead5fc35112e84e3d685cc87b"
+          "version": "repo-file-v1:sha256:c75ef6ece96c2763a40557fb6467015e2102b00a89ee1ca1bd03a39d744cb9a1"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-17T06:43:02.055Z"
+    "at": "2026-11-18T09:45:40.969Z"
   }
 }

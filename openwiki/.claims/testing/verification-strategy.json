@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:a0723bc813bf9cacc3d6bbd166eab2839d753f4bc7160caa19ebada4d36e1602",
+  "pageVersion": "sha256:619c2787d512f314974f46d50ed772b58300cba5c805da98b5d140987cba1e77",
   "claims": [
     {
       "id": "claim_43d00c9569fe434d960f89fac57a8acd",
@@ -144,11 +144,11 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-acceptance/README.md",
-          "version": "repo-file-v1:sha256:7d8624f2ef72092b89b9193954cce55d3ffa79cc1d42152cd68de606b04e4ff3"
+          "version": "repo-file-v1:sha256:a58ee894fa12d620133af8d5e3e3c1c9d5c318514d0adcf4d022336d1b55b66c"
         },
         {
           "resource": "repo://libs/evidence-api/src/delivery/routes.spec.ts",
-          "version": "repo-file-v1:sha256:210f32f54417312b00e8bad3708c2859eead5db95a35227a155627e3aac91dff"
+          "version": "repo-file-v1:sha256:5c1464be594cb29ea96893c382c8ea6034d2add25e7710bed5fea58c57e648fe"
         },
         {
           "resource": "repo://libs/evidence-api/src/openapi/openapi.spec.ts",
@@ -162,25 +162,25 @@
     },
     {
       "id": "claim_763d7f2d33f1425c9fc023a66a14149f",
-      "statement": "CI 显式安装构建独立 Fastify 并跑 native tests；真实 HTTP 验收与故障注入检验服务实现而非仅编译出的期望。",
+      "statement": "CI 安装固定 Bruno CLI，显式安装并测试独立 Fastify；真实 HTTP 验收与故障注入通过 Bruno 检验服务实现，而非只验证编译出的期望。",
       "evidence": [
         {
           "resource": "repo://.github/workflows/ci.yml",
-          "version": "repo-file-v1:sha256:f232d9dcc406b7269168f33b7f9e594858e646752ebf956113dd4e1b71be32d9"
+          "version": "repo-file-v1:sha256:3c6460388d810d40ec85ae619b919bc7d73e7458b32e4a84b190efe0bee3cf8f"
         },
         {
           "resource": "repo://examples/b2b-escrow/implementations/ts-fastify/test/app.test.mjs",
-          "version": "repo-file-v1:sha256:e51c37c43bc5ea0106fd63d6f03ddd66ff3d732713c87b453936519817f3575e"
+          "version": "repo-file-v1:sha256:2cb12d9033f0ed4c7d54d08cfc8f411c8836bc2561c944a63ed92d11d9590911"
         },
         {
-          "resource": "repo://libs/evidence-acceptance/README.md",
-          "version": "repo-file-v1:sha256:7d8624f2ef72092b89b9193954cce55d3ffa79cc1d42152cd68de606b04e4ff3"
+          "resource": "repo://libs/evidence-acceptance/src/acceptance.e2e.spec.ts",
+          "version": "repo-file-v1:sha256:6e6e5c7928e5f2f669f7cc29e778d5b65381b2793cd684c77877a4ab1f7ca0ee"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-17T07:06:17.114Z"
+    "at": "2026-11-18T09:45:40.969Z"
   }
 }

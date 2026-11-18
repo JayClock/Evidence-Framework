@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:388c868be7786d2404768d0eaa1415913e84cfaa0b9d39278f7bd8fe7430880d",
+  "pageVersion": "sha256:31deb71f2577ef705ddbcac5afb145636746246e9a9cb0a7f3ffcc9c1596fc20",
   "claims": [
     {
       "id": "claim_de996ad544f1499497b7f31cd3846666",
-      "statement": "旧 evidence-visualization、review 命令和桌面 review IPC 已撤除；当前 CLI 通过 check/export/test/diff 进行模型、契约与 HTTP 检查。",
+      "statement": "旧 evidence-visualization、review 命令和桌面 review IPC 已撤除；当前 CLI 通过 check/export/test/diff 进行模型检查、OpenAPI 与 Bruno 导出、真实 HTTP 验收与最终契约比较。",
       "evidence": [
         {
           "resource": "repo://apps/cli/src/router.ts",
-          "version": "repo-file-v1:sha256:47ecefdc10b1f1be1dc0d3682061395c6a2dce69989bbf9550e6adffc5c64870"
+          "version": "repo-file-v1:sha256:12df98860edbedbda118b33e8783bf746f9a70c5580641369b27d28c75ad2302"
         },
         {
           "resource": "repo://apps/desktop/src/main/main.ts",
@@ -41,6 +41,6 @@
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-17T07:06:17.114Z"
+    "at": "2026-11-18T09:45:40.969Z"
   }
 }

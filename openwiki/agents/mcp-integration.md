@@ -5,7 +5,7 @@ description: 外部 IDE 和 CLI Agent 如何经本地 socket 访问桌面实时�
 tags: [mcp, desktop, bridge, ipc, agent, security]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-17T06:43:02.055Z
+    at: 2026-11-18T09:45:40.969Z
 sources:
   - id: openwiki-source-fc371e1f84c3b5d478075b07
     resource: repo://apps/desktop/src/main/deliveryProjection.ts
@@ -57,7 +57,7 @@ sources:
     resource: repo://libs/evidence-tools/README.md
   - id: openwiki-source-f3dd6cff8734842de5630223
     resource: repo://libs/evidence-tools/src/index.ts
-generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
+generated: { by: "pi", at: "2026-11-18T09:45:40.969Z" }
 ---
 
 # MCP 工具与桌面桥
@@ -79,7 +79,7 @@ generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
 | 截图协作 | `get_canvas_screenshot` |
 | 生成补丁的领域算子 | `introduce_fulfillment_pair`、`add_breach_compensation`、`roleify_and_invert_dependency`、`isolate_domain_calculator` |
 
-补丁工具和四个算子由 `evidence-tools` 的统一 registry 提供，Pi 和 MCP 共用 schema、描述与执行路径；这些写工具标为非幂等（idempotentHint=false），并标为 `readOnlyHint: false`、`destructiveHint: true`。所有工具先用实际 Zod schema 解析输入，未知字段或畸形参数不会进入模型访问。`run_scenario_replay` 已删除；旧方法到达 handler 会收到 `UNSUPPORTED_METHOD`，不会伪造空成功。验收来自实体 `examples[].test` 导出的 Step CI/Hurl，而不是内存回放。
+补丁工具和四个算子由 `evidence-tools` 的统一 registry 提供，Pi 和 MCP 共用 schema、描述与执行路径；这些写工具标为非幂等（idempotentHint=false），并标为 `readOnlyHint: false`、`destructiveHint: true`。所有工具先用实际 Zod schema 解析输入，未知字段或畸形参数不会进入模型访问。`run_scenario_replay` 已删除；旧方法到达 handler 会收到 `UNSUPPORTED_METHOD`，不会伪造空成功。验收来自实体 `examples[].test`：用 `evidence export --tests` 导出 Bruno 集合，再以 `evidence test` 对真实后端执行，而不是在 MCP 中回放。
 
 `SERVER_INSTRUCTIONS` 要求先读应用状态、再读选区或模型；优先用领域算子，其他变更走 `{ rationale, patches }`，禁止直接写 `.evidence/fm`。位置索引编辑应先 `test` 预期对象 ID，避免过期快照改错对象；改后复查台账和阶段门禁。生产阻塞漂移应修后端，不应修改模型迁就实现。
 

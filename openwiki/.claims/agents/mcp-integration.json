@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:c91dbe2c0079e6bee144b3108c94bf2d6a5b8fae7473eb0dc1dffe2f46f92144",
+  "pageVersion": "sha256:8cc0b71fe8e694bdb9a3b18fa922879fe45a8dab20799254df53ce2ccf3c58fb",
   "claims": [
     {
       "id": "claim_93b8ecf8664543a185353872854bd036",
@@ -54,7 +54,7 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-mcp/src/server/toolset.ts",
-          "version": "repo-file-v1:sha256:1f410babf84280cf300e889b5733d80a553eb785384c7d499928cf8cc798d326"
+          "version": "repo-file-v1:sha256:471fddfe0c44822a8cb316e7da3eccd47502da10c2b08f18bd1a924af994f742"
         },
         {
           "resource": "repo://libs/evidence-tools/src/index.ts",
@@ -68,7 +68,7 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-mcp/src/server/toolset.ts",
-          "version": "repo-file-v1:sha256:1f410babf84280cf300e889b5733d80a553eb785384c7d499928cf8cc798d326"
+          "version": "repo-file-v1:sha256:471fddfe0c44822a8cb316e7da3eccd47502da10c2b08f18bd1a924af994f742"
         },
         {
           "resource": "repo://libs/evidence-tools/README.md",
@@ -208,7 +208,7 @@
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/main/deliveryProjection.ts",
-          "version": "repo-file-v1:sha256:b510f57164749b287b64ef58f658227f692bdcac0d9bef4ee0bb5822d9dc6f5c"
+          "version": "repo-file-v1:sha256:43c033ca48862d34978460a7a0b9f228bb6abdd2a99a8f598dd47a02323e76d3"
         },
         {
           "resource": "repo://apps/desktop/src/main/mcpDeliveryService.spec.ts",
@@ -350,17 +350,17 @@
     },
     {
       "id": "claim_e9f25b08e30a4b32b9703342fc5fb243",
-      "statement": "服务端指令要求先读模型、优先算子、其他变更走 RFC 6902 并 test 防过期，禁止直接写源文件，验收使用导出 Step CI/Hurl 而不是回放。",
+      "statement": "服务端指令要求先读模型、优先算子、其他变更走 RFC 6902 并 test 防过期，禁止直接写源文件；对验收指向 evidence export --tests 生成的 Bruno 集合和真实后端上的 evidence test，而不是回放。",
       "evidence": [
         {
           "resource": "repo://libs/evidence-mcp/src/server/toolset.ts#L259-L260",
-          "version": "repo-lines-v1:sha256:b17778a1f9de1a547a408a31f71905a30f1245e2646f9fb132b9001f4112033c:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjExNWVkOWY2NDJjYTkyMjQwMGY4MzkxYWQ0MGQ1YjU1YzQwY2UwZDQ1OWM0YWU5Y2RkNmJkNjI0NWM5MTM0MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDk5NzNmMTQ2NzBmZDgyZDQyYjdmNjI5ZDQyZjFjOGEzNzVhMmJiODZiYWQ2MjYxZjljN2RjNjhhZjZlNTM4OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjc1MjQyZDEwNzE4YzlkOWZhNTBjZmZkZWIzODdjNzdjMmJkMjc3ZDA4YzgyZGVhMTU4YmFhOTBjNzBiZWMyYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+          "version": "repo-lines-v1:sha256:166bbfb7c3648ad6d8165170ccfe886d0c25ebf363ff13666d18386b57d07060:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjExNWVkOWY2NDJjYTkyMjQwMGY4MzkxYWQ0MGQ1YjU1YzQwY2UwZDQ1OWM0YWU5Y2RkNmJkNjI0NWM5MTM0MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTA4NmU2ZDQwZmE5MjVkODBiOTg0ZTc3OGEwOTNkZTZjOWUzZDdiMzc0Yjk0NmM3Yjk1YzQ2NDliNTg3MWJhZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjc1MjQyZDEwNzE4YzlkOWZhNTBjZmZkZWIzODdjNzdjMmJkMjc3ZDA4YzgyZGVhMTU4YmFhOTBjNzBiZWMyYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-17T06:43:02.055Z"
+    "at": "2026-11-18T09:45:40.969Z"
   }
 }
