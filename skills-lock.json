@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "skills": {
+    "electron-best-practices": {
+      "source": "jwynia/agent-skills",
+      "commit": "e02ec7e226a6e4f8419fd3b88a1d8e472d421b32",
+      "sourceType": "github",
+      "skillPath": "skills/tech/development/tooling/electron-best-practices/SKILL.md",
+      "computedHash": "b7f894103739114dc610ee76fda37b61e80d25672df708974df12874841e4eec"
+    },
+    "modern-web-guidance": {
+      "source": "GoogleChrome/modern-web-guidance",
+      "commit": "64a6d708f5a43f2cd3fde5d4d7db3905ba1bdf65",
+      "sourceType": "github",
+      "skillPath": "skills/modern-web-guidance/SKILL.md",
+      "computedHash": "d9f3ceba8b5c77b12ae6f852932a349843ce086d03ce76ab5e2257e7e5acd16d"
+    },
+    "native-feel-cross-platform-desktop": {
+      "source": "yetone/native-feel-skill",
+      "commit": "9bd88c6378e1a80a4da165f3ee7bebb761a74945",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "80d1e61a0853859ae1c2dd993ea91642ea88e9d2a5267920e30cdb87d28b2dca"
+    },
+    "playwright-best-practices": {
+      "source": "currents-dev/playwright-best-practices-skill",
+      "commit": "0b75b5835a87de1fdd202ba965f3bc5a27738fdf",
+      "sourceType": "github",
+      "skillPath": "playwright-best-practices/SKILL.md",
+      "computedHash": "111e9d3e9d63dea34814120fb6583c0b28ee45371662801d8e8d8bdf4b05dcb0"
+    },
+    "shadcn": {
+      "source": "shadcn-ui/ui",
+      "commit": "968d8cb9dc42ae5d52e8fd356cf84596ec832a26",
+      "sourceType": "github",
+      "skillPath": "skills/shadcn/SKILL.md",
+      "computedHash": "388962d16c7a4f13aaeee0d8f128e50a87df8553d42ef7988c39c0e1c74a40e8"
+    },
+    "tailwind-css-patterns": {
+      "source": "giuseppe-trisciuoglio/developer-kit",
+      "commit": "fe73fb33a09ee6562eeec7415a3f9a3bcf795177",
+      "sourceType": "github",
+      "skillPath": "plugins/developer-kit-typescript/skills/tailwind-css-patterns/SKILL.md",
+      "computedHash": "9f84955f461d236a7ec7adf52934ce8389406f2d28e63b7e25bd2d134d5e50d2"
+    },
+    "vercel-react-best-practices": {
+      "source": "vercel-labs/agent-skills",
+      "commit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "sourceType": "github",
+      "skillPath": "skills/react-best-practices/SKILL.md",
+      "computedHash": "7991ed4fbecdac23f47c1a40c243e00a212a9e7f3604db93959b3ae11dffe299"
+    }
+  }
+}
