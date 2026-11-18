@@ -84,7 +84,6 @@ const createClient = (
   runStageGate: vi.fn(async () => ({
     passed: true,
     exitCode: 0,
-    driftDetected: false,
     blockingReasons: [],
   })),
   getDeliveryTopology: vi.fn(async () => ({
@@ -106,15 +105,6 @@ const createClient = (
     ],
     links: [],
     limitations: [],
-  })),
-  auditProductionDrift: vi.fn(async () => ({
-    modelId: 'product-procurement',
-    spanCount: 0,
-    commitCount: 0,
-    counts: {},
-    findings: [],
-    passed: true,
-    errors: [],
   })),
   exportOpenApiContract: vi.fn(async () => ({
     modelId: 'product-procurement',
@@ -290,9 +280,8 @@ describe('createEvidenceTools', () => {
       TOOL_NAMES.isolateDomainCalculator,
       TOOL_NAMES.deliveryTopology,
       TOOL_NAMES.openApiContract,
-      TOOL_NAMES.productionDrift,
     ]);
-    expect(createEvidenceTools(createClient())).toHaveLength(14);
+    expect(createEvidenceTools(createClient())).toHaveLength(13);
   });
 
   it('hands an outside agent the delivery boundaries and the contract', async () => {
@@ -486,16 +475,5 @@ describe('createEvidenceTools', () => {
     expect(result.isError).toBe(true);
     expect(result.text).toContain('不是履约请求');
     expect(client.applyModelPatch).not.toHaveBeenCalled();
-  });
-
-  it('hands the exported trace to the audit unchanged', async () => {
-    const drift = toolOf(TOOL_NAMES.productionDrift);
-    const document = { resourceSpans: [] };
-
-    await drift.tool.run({ document });
-
-    expect(drift.client.auditProductionDrift).toHaveBeenCalledWith({
-      document,
-    });
   });
 });

@@ -21,11 +21,6 @@ import type {
   McpStatus,
 } from '@evidence-poc/desktop-contracts/mcpIpc';
 import type {
-  DriftRequest,
-  McpDriftAudit,
-  TraceDialogResult,
-} from '@evidence-poc/desktop-contracts/drift';
-import type {
   CreateProjectDialogInput,
   CreateProjectDialogResult,
   CreateProjectInput,
@@ -140,7 +135,6 @@ export interface DesktopApiMock extends EvidenceDesktopApi {
     exportDelivery: string[];
     ingestDraft: IngestDraftInput[];
     compileDraft: CompileDraftInput[];
-    drift: DriftRequest[];
   };
   agentMock: AgentMockController;
   mcpMock: McpMockController;
@@ -184,16 +178,6 @@ export const installDesktopApi = ({
     error: '测试没有配置导入结果。',
     issues: [],
   } as IngestDraftResult,
-  driftResult = {
-    modelId: 'product-procurement',
-    spanCount: 0,
-    commitCount: 0,
-    counts: {},
-    findings: [],
-    passed: true,
-    errors: [],
-  } as McpDriftAudit,
-  traceDialogResult = { canceled: true } as TraceDialogResult,
   compileResult = {
     success: false,
     error: '测试没有配置编译结果。',
@@ -218,8 +202,6 @@ export const installDesktopApi = ({
   >;
   ingestResult?: IngestDraftResult;
   compileResult?: CompileDraftOutcome;
-  driftResult?: McpDriftAudit;
-  traceDialogResult?: TraceDialogResult;
 } = {}): DesktopApiMock => {
   const calls: DesktopApiMock['calls'] = {
     open: [],
@@ -238,7 +220,6 @@ export const installDesktopApi = ({
     exportDelivery: [],
     ingestDraft: [],
     compileDraft: [],
-    drift: [],
   };
 
   const rootPath =
@@ -472,14 +453,6 @@ export const installDesktopApi = ({
         throw new Error('测试没有配置沙盘。');
       },
       onInvalidated: () => () => undefined,
-    },
-    drift: {
-      drift: async (input) => {
-        calls.drift.push(input);
-
-        return driftResult;
-      },
-      pickTrace: async () => traceDialogResult,
     },
     ingestion: {
       draft: async (input) => {

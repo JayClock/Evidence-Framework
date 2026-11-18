@@ -21,7 +21,7 @@ describe('useWorkspaceLayoutState', () => {
     expect(result.current.activeRailTab).toBeNull();
     expect(result.current.isRailPinned).toBe(false);
     expect(result.current.isProblemsPanelOpen).toBe(false);
-    expect(result.current.activeHub).toBeNull();
+    expect(result.current.isDeliveryOpen).toBe(false);
   });
 
   it('toggles the ledger with Mod+1 without opening a drawer', () => {
@@ -51,10 +51,10 @@ describe('useWorkspaceLayoutState', () => {
     const { result } = setup();
 
     press({ key: '3', metaKey: true });
-    expect(result.current.activeRailTab).toBe('drift');
+    expect(result.current.activeRailTab).toBe('copilot');
     press({ key: '4', metaKey: true });
 
-    expect(result.current.activeRailTab).toBe('copilot');
+    expect(result.current.activeRailTab).toBe('workshop');
   });
 
   it('pins a floating drawer into the layout', () => {
@@ -101,16 +101,13 @@ describe('useWorkspaceLayoutState', () => {
     act(() => input.remove());
   });
 
-  it('holds one blocking hub at a time', () => {
+  it('opens and closes the delivery hub', () => {
     const { result } = setup();
 
-    act(() => result.current.openHub('delivery'));
-    expect(result.current.activeHub).toBe('delivery');
+    act(() => result.current.openDelivery());
+    expect(result.current.isDeliveryOpen).toBe(true);
 
-    act(() => result.current.openHub('drift'));
-    expect(result.current.activeHub).toBe('drift');
-
-    act(() => result.current.closeHub());
-    expect(result.current.activeHub).toBeNull();
+    act(() => result.current.closeDelivery());
+    expect(result.current.isDeliveryOpen).toBe(false);
   });
 });

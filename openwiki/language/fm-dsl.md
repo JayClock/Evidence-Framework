@@ -111,7 +111,7 @@ lifecycle stages=rfp/proposal/contract/fulfillment，schema helpers按kind/Conte
 
 WORKSHOP_STEPS七步：anchor-contract、pair-fulfillment、name-things、invert-dependency、close-breach、trace-key-data、connect-flow。rank是1-based，focus给Agent步骤前缀；REVERSE_CONTRACT_MODE从需要留存事实反推。它们都不作为FM落盘状态。
 
-sourceSnippet 可选保存 text/locator/source(contract/prd/interview/blueprint/unknown)、clauseIndex 与成对 charStart/charEnd；范围必须与 UTF-16 snippet 长度一致。manifest.sourceDocument 的条款须顺序连续且精确匹配原文切片。它们供作者本地审计，不是运行时授权或 key-data provider 证据，也不进入公开 API/故事模型投影。
+sourceSnippet 可选保存 text/locator/source(contract/prd/interview/blueprint/unknown)、clauseIndex 与成对 charStart/charEnd；范围必须与 UTF-16 snippet 长度一致。manifest.sourceDocument 的条款须顺序连续且精确匹配原文切片。它们是建模来源记录，不是运行时授权或 key-data provider 证据，也不进入公开 API/故事模型投影。
 
 ## 验证入口
 

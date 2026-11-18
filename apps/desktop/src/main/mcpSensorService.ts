@@ -86,14 +86,12 @@ export const createMcpSensorService = ({
         return {
           passed: gate.passed,
           exitCode: gate.passed ? 0 : 1,
-          driftDetected: false,
           blockingReasons: gate.errors,
         };
       } catch (error) {
         return {
           passed: false,
           exitCode: 1,
-          driftDetected: false,
           blockingReasons: [
             error instanceof Error
               ? error.message

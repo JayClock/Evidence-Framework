@@ -26,7 +26,6 @@ import {
 import { DomainLedgerTable } from '../components/ledger/DomainLedgerTable';
 import { CanvasFloatingHud } from '../components/canvas/CanvasFloatingHud';
 import { ActivityDrawer } from '../components/layout/ActivityDrawer';
-import { ClauseTraceDrawer } from '../components/clauses/ClauseTraceDrawer';
 import { ActivityRail } from '../components/layout/ActivityRail';
 import {
   AgentCopilot,
@@ -42,7 +41,6 @@ import {
   StoryDrawer,
   useStoryPlayback,
 } from '@evidence-poc/desktop-feature-story';
-import { DriftRadar } from '@evidence-poc/desktop-feature-drift';
 import {
   DeliveryHub,
   useDeliveryHub,
@@ -162,9 +160,7 @@ interface EditorWorkspaceProps {
 
 const RAIL_TITLES: Record<RailTabId, string> = {
   diagnostics: '门禁与诊断',
-  drift: '生产漂移',
   copilot: 'AI 协同',
-  clauses: '条款审计',
   workshop: '共创工作坊',
 };
 
@@ -447,8 +443,7 @@ const EditorWorkspace = ({
       },
       setViewMode: workspaceView.setMode,
       zoomToSelection: () => requestZoom('selection'),
-      openDelivery: () => layout.openHub('delivery'),
-      openSandbox: () => layout.openHub('drift'),
+      openDelivery: layout.openDelivery,
       rerunSensors: () => void sensors.refresh(),
       askAgent: () => {
         layout.setActiveRailTab('copilot');
@@ -459,7 +454,7 @@ const EditorWorkspace = ({
     }),
     [
       layout.setActiveRailTab,
-      layout.openHub,
+      layout.openDelivery,
       layout.toggleProblemsPanel,
       requestZoom,
       save,
@@ -504,8 +499,7 @@ const EditorWorkspace = ({
       save: () => void save(),
       openCommandPalette: () => setPaletteOpen(true),
       rerunSensors: () => void sensors.refresh(),
-      openDelivery: () => layout.openHub('delivery'),
-      openSandbox: () => layout.openHub('drift'),
+      openDelivery: layout.openDelivery,
       clearSelection: () => state.session.clearSelection(),
       zoomIn: () => requestZoom('in'),
       zoomOut: () => requestZoom('out'),
@@ -525,7 +519,7 @@ const EditorWorkspace = ({
       patchReview.review,
       requestZoom,
       revertPatch,
-      layout.openHub,
+      layout.openDelivery,
       layout.openInlineCopilot,
       layout.toggleProblemsPanel,
       save,
@@ -780,25 +774,6 @@ const EditorWorkspace = ({
                     }}
                   />
                 ) : null}
-                {layout.activeRailTab === 'clauses' ? (
-                  <ClauseTraceDrawer
-                    model={state.document}
-                    selectedNodeId={state.selection.nodeId}
-                    onFocusEntity={(id) => {
-                      workspaceView.setMode('journey');
-                      focusNode(id);
-                    }}
-                  />
-                ) : null}
-
-                {layout.activeRailTab === 'drift' ? (
-                  <DriftRadar
-                    api={window.evidenceAPI.drift}
-                    embedded
-                    rootPath={project.rootPath}
-                    onClose={() => layout.setActiveRailTab(null)}
-                  />
-                ) : null}
 
                 {layout.activeRailTab === 'copilot' ? (
                   <AgentCopilot
@@ -846,7 +821,6 @@ const EditorWorkspace = ({
                   graph={state.graph}
                   session={state.session}
                   selection={state.selection}
-                  onOpenSource={() => layout.setActiveRailTab('clauses')}
                 />
               </ResizablePanel>
             </ResizablePanelGroup>
@@ -890,19 +864,11 @@ const EditorWorkspace = ({
           ) : null}
         </div>
 
-        {layout.activeHub === 'delivery' ? (
+        {layout.isDeliveryOpen ? (
           <DeliveryHub
             hub={delivery}
-            onClose={layout.closeHub}
+            onClose={layout.closeDelivery}
             onFocusEntity={focusNode}
-          />
-        ) : null}
-
-        {layout.activeHub === 'drift' ? (
-          <DriftRadar
-            api={window.evidenceAPI.drift}
-            rootPath={project.rootPath}
-            onClose={layout.closeHub}
           />
         ) : null}
 

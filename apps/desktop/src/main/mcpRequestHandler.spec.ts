@@ -30,19 +30,6 @@ const deliveryService = () => ({
   }),
 });
 
-/** A drift audit that answer without reading a real project. */
-const driftService = () => ({
-  auditDrift: async (input: { rootPath: string; document: unknown }) => ({
-    modelId: 'product-procurement',
-    spanCount: 1,
-    commitCount: 0,
-    counts: {},
-    findings: [],
-    passed: input.document !== undefined,
-    errors: [],
-  }),
-});
-
 const appState = (): McpAppState => ({
   isRunning: true,
   activeProject: {
@@ -85,7 +72,6 @@ const sensors = (): McpSensorService & {
       return {
         passed: false,
         exitCode: 1,
-        driftDetected: false,
         blockingReasons: ['key data decision owed'],
       };
     },
@@ -102,7 +88,6 @@ describe('createMcpRequestHandler', () => {
         return appState();
       },
       delivery: deliveryService(),
-      drift: driftService(),
       sensors: sensors(),
       capture: async () => ({ data: 'ZmFrZQ==', width: 1, height: 1 }),
     });
@@ -130,7 +115,6 @@ describe('createMcpRequestHandler', () => {
     const handler = createMcpRequestHandler({
       renderer: async () => appState(),
       delivery: deliveryService(),
-      drift: driftService(),
       sensors: service,
       capture: async () => ({ data: '', width: 1, height: 1 }),
     });
@@ -148,7 +132,6 @@ describe('createMcpRequestHandler', () => {
         activeProject: null,
       }),
       delivery: deliveryService(),
-      drift: driftService(),
       sensors: sensors(),
       capture: async () => ({ data: '', width: 1, height: 1 }),
     });
@@ -167,7 +150,6 @@ describe('createMcpRequestHandler', () => {
           ? { x: 24, y: 24, width: 320, height: 120 }
           : appState(),
       delivery: deliveryService(),
-      drift: driftService(),
       sensors: sensors(),
       capture: async (rect) => {
         captured.push(rect);
@@ -193,7 +175,6 @@ describe('createMcpRequestHandler', () => {
     const handler = createMcpRequestHandler({
       renderer: async () => null,
       delivery: deliveryService(),
-      drift: driftService(),
       sensors: sensors(),
       capture: async () => ({ data: '', width: 0, height: 0 }),
     });
@@ -207,7 +188,6 @@ describe('createMcpRequestHandler', () => {
     const handler = createMcpRequestHandler({
       renderer: async () => appState(),
       delivery: deliveryService(),
-      drift: driftService(),
       sensors: sensors(),
       capture: async () => ({ data: '', width: 0, height: 0 }),
     });
@@ -222,7 +202,6 @@ describe('createMcpRequestHandler', () => {
     const handler = createMcpRequestHandler({
       renderer: async () => appState(),
       delivery: deliveryService(),
-      drift: driftService(),
       sensors: sensors(),
       capture: async () => ({ data: '', width: 1, height: 1 }),
       onCall: (method) => calls.push(method),
@@ -231,22 +210,5 @@ describe('createMcpRequestHandler', () => {
     await handler({ method: 'get_domain_model', includeRules: false });
 
     expect(calls).toEqual(['get_domain_model']);
-  });
-
-  it('audits the trace the caller exported against the active project', async () => {
-    const handler = createMcpRequestHandler({
-      renderer: async () => appState(),
-      delivery: deliveryService(),
-      drift: driftService(),
-      sensors: sensors(),
-      capture: async () => ({ data: '', width: 1, height: 1 }),
-    });
-
-    const result = (await handler({
-      method: 'audit_production_drift',
-      document: { resourceSpans: [] },
-    })) as { passed: boolean };
-
-    expect(result.passed).toBe(true);
   });
 });

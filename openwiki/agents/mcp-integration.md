@@ -1,11 +1,11 @@
 ---
 type: integration
 title: MCP 工具与桌面桥
-description: 外部 IDE 和 CLI Agent 如何经本地 socket 访问桌面实时模型、提交 RFC 6902 补丁，以及读取已保存模型的传感器、交付和生产漂移结果。
+description: 外部 IDE 和 CLI Agent 如何经本地 socket 访问桌面实时模型、提交 RFC 6902 补丁，以及读取已保存模型的传感器与交付结果。
 tags: [mcp, desktop, bridge, ipc, agent, security]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-18T09:45:40.969Z
+    at: 2026-11-18T12:34:41.390Z
 sources:
   - id: openwiki-source-fc371e1f84c3b5d478075b07
     resource: repo://apps/desktop/src/main/deliveryProjection.ts
@@ -51,37 +51,38 @@ sources:
     resource: repo://libs/evidence-mcp/src/bridge/endpoint.ts
   - id: openwiki-source-84e6441315cee138958f6890
     resource: repo://libs/evidence-mcp/src/bridge/server.ts
+  - id: openwiki-source-77f78c07571bd5f81a39b9b1
+    resource: repo://libs/evidence-mcp/src/server/toolset.spec.ts
   - id: openwiki-source-aac6631a251b846350b2d550
     resource: repo://libs/evidence-mcp/src/server/toolset.ts
   - id: openwiki-source-4c008c3497d98e90590e5286
     resource: repo://libs/evidence-tools/README.md
   - id: openwiki-source-f3dd6cff8734842de5630223
     resource: repo://libs/evidence-tools/src/index.ts
-generated: { by: "pi", at: "2026-11-18T09:45:40.969Z" }
+generated: { by: "pi", at: "2026-11-18T12:34:41.390Z" }
 ---
 
 # MCP 工具与桌面桥
 
-`evidence-mcp` 把协议工具与传输分开：stdio 进程定义可调用的行为，桌面主进程负责路由，渲染进程持有实时 `ModelSession`。模型读取/修改面向内存；传感器、交付和漂移审计面向保存后的模型，不能用后者证明未保存编辑已通过检查。
+`evidence-mcp` 把协议工具与传输分开：stdio 进程定义可调用的行为，桌面主进程负责路由，渲染进程持有实时 `ModelSession`。模型读取/修改面向内存；传感器与交付面向保存后的模型，不能用后者证明未保存编辑已通过检查。
 
 ## 启动与工具面
 
 桌面可执行文件带 `--mcp-stdio` 时只启动 stdio 服务，不打开窗口、不读取项目存储，也不注册客户端；它仍需要另一个运行中的桌面宿主。启动失败写 stderr 并退出 1。`runEvidenceMcpStdio` 用桥客户端连接 `McpServer`，stdin 结束即结束；服务器把工具异常包装成错误结果。
 
-当前注册 **14 个工具**：9 个只读和 5 个共享写工具。
+当前注册 **13 个工具**：8 个只读和 5 个共享写工具。
 
 | 所有者 | 工具 |
 | --- | --- |
 | 渲染会话 | `get_app_state`、`get_domain_model`、`get_selected_entity`、`apply_model_patch` |
 | 主进程传感器 | `get_key_data_audit`、`run_stage_gate` |
 | 主进程交付服务 | `get_delivery_topology`、`export_openapi_contract` |
-| 主进程漂移服务 | `audit_production_drift` |
 | 截图协作 | `get_canvas_screenshot` |
 | 生成补丁的领域算子 | `introduce_fulfillment_pair`、`add_breach_compensation`、`roleify_and_invert_dependency`、`isolate_domain_calculator` |
 
 补丁工具和四个算子由 `evidence-tools` 的统一 registry 提供，Pi 和 MCP 共用 schema、描述与执行路径；这些写工具标为非幂等（idempotentHint=false），并标为 `readOnlyHint: false`、`destructiveHint: true`。所有工具先用实际 Zod schema 解析输入，未知字段或畸形参数不会进入模型访问。`run_scenario_replay` 已删除；旧方法到达 handler 会收到 `UNSUPPORTED_METHOD`，不会伪造空成功。验收来自实体 `examples[].test`：用 `evidence export --tests` 导出 Bruno 集合，再以 `evidence test` 对真实后端执行，而不是在 MCP 中回放。
 
-`SERVER_INSTRUCTIONS` 要求先读应用状态、再读选区或模型；优先用领域算子，其他变更走 `{ rationale, patches }`，禁止直接写 `.evidence/fm`。位置索引编辑应先 `test` 预期对象 ID，避免过期快照改错对象；改后复查台账和阶段门禁。生产阻塞漂移应修后端，不应修改模型迁就实现。
+`SERVER_INSTRUCTIONS` 要求先读应用状态、再读选区或模型；优先用领域算子，其他变更走 `{ rationale, patches }`，禁止直接写 `.evidence/fm`。位置索引编辑应先 `test` 预期对象 ID，避免过期快照改错对象；改后复查台账和阶段门禁。
 
 证据入口：`libs/evidence-mcp/src/server/toolset.ts`、`server/mcpServer.ts`。
 
@@ -103,12 +104,11 @@ Unix 启动前清理旧 socket，监听后收紧权限到 `0600`，关闭后删�
 
 ## 主进程路由与已保存结果
 
-`createMcpRequestHandler` 将实时会话方法转发 renderer。传感器、交付和漂移仍先用 `get_app_state` 查询 active project root；没有项目就抛 `NO_ACTIVE_PROJECT`。MCP 选择的是 `listEditorWindows()` 返回的首个窗口（Map 插入顺序），不是当前焦点窗口；截图测量和模型访问共用这个 WebContents。
+`createMcpRequestHandler` 将实时会话方法转发 renderer。传感器和交付先用 `get_app_state` 查询 active project root；没有项目就抛 `NO_ACTIVE_PROJECT`。MCP 选择的是 `listEditorWindows()` 返回的首个窗口（Map 插入顺序），不是当前焦点窗口；截图测量和模型访问共用这个 WebContents。
 
 - 传感器引擎按 root 缓存；无法读取时台账为 `producedBy: unavailable`，门禁为 `passed: false`、退出码 1，不能显示空绿灯。MCP 台账的 `derived` 当前固定为空，不能代表完整派生明细。
 - 交付服务复用 `readDelivery`（`loadFm` + `buildProjection`），统计各服务路由，返回 routePrefixes、精确 routes、OpenAPI、pathCount 和 limitations。读取或投影失败传播为工具错误，而不是部分契约。
-- `createDriftService` 把调用者 trace 交给 `runNativeDriftAudit`，返回计数、严重级别、证据/上下文和修复建议；读取失败转成 `passed: false` 与 errors。
-- 原生传感器明确拒绝直接的 `*.evidence.json` root。交付会先处理 bundle 所在目录；漂移走 `modelSourceOf(rootPath)`。不要把旧“交付和仿真总能读取 Bundle”的描述当作保证。
+- 原生传感器明确拒绝直接的 `*.evidence.json` root。交付会先处理 bundle 所在目录。
 
 ## 截图、注册与状态
 
@@ -126,9 +126,9 @@ renderer 测量可见画布或目标节点裁剪矩形；无布局/节点在屏�
 | 桌面在运行但无编辑窗口 | 首次 renderer 跳转失败并序列化为 `INTERNAL_ERROR`，不降级为离线 |
 | 无选区 | `NO_SELECTION` |
 | bridge 启动失败 | stderr 记录，桌面继续但没有 MCP |
-| 模型/门禁不可用 | 显式 unavailable/失败；漂移在 errors 中说明原因 |
+| 模型/门禁不可用 | 显式 unavailable 或失败 |
 
-`bridge/bridge.spec.ts` 覆盖真实 socket 往返、0600、超时和端点复用；`toolset.spec.ts` 覆盖输入先验拒绝、14 工具及五个写工具、PNG、算子提交与拒绝。桌面 `mcpBridgeRuntime.spec.ts` 验证调用计数、renderer 错误、截图恢复和无窗口；`mcpRequestHandler.spec.ts` 验证路由、active root、空截图、移除 replay 和计数。传感器/交付/漂移及客户端注册各有独立测试。
+`bridge/bridge.spec.ts` 覆盖真实 socket 往返、0600、超时和端点复用；`toolset.spec.ts` 覆盖输入先验拒绝、13 工具及五个写工具、PNG、算子提交与拒绝。桌面 `mcpBridgeRuntime.spec.ts` 验证调用计数、renderer 错误、截图恢复和无窗口；`mcpRequestHandler.spec.ts` 验证路由、active root、空截图、移除 replay 和计数。传感器、交付及客户端注册各有独立测试。
 
 ## 相关页面
 

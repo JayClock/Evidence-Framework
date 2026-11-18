@@ -163,29 +163,14 @@ describe('EditorScreen', () => {
     expect(api.calls.save).toEqual([]);
   });
 
-  it('navigates in both directions between persisted clauses and canvas objects', async () => {
+  it('shows the selected object’s source excerpt in the inspector', async () => {
     const document = createDesktopFixture();
-    document.manifest.sourceDocument = {
-      text: '交货条款。',
-      clauses: [
-        {
-          index: 1,
-          text: '交货条款',
-          category: 'business',
-          reason: '约定交货',
-          charStart: 0,
-          charEnd: 4,
-        },
-      ],
-    };
     document.entities.find(
       (entity) => entity.id === 'evidence.request',
     )!.sourceSnippet = {
       text: '交货条款',
       source: 'contract',
-      clauseIndex: 1,
-      charStart: 0,
-      charEnd: 4,
+      locator: '第 1 条',
     };
     installDesktopApi({
       openResult: {
@@ -199,27 +184,14 @@ describe('EditorScreen', () => {
       <EditorScreen rootPath="/models/procurement" />,
     );
     await readyCanvas();
-    fireEvent.click(screen.getByRole('button', { name: '条款审计' }));
-    fireEvent.click(screen.getByRole('button', { name: /定位 交付请求/ }));
-    await waitFor(() =>
-      expect(
-        container.querySelector('[data-clause-id="clause-1"]'),
-      ).toHaveAttribute('data-clause-selected', 'true'),
-    );
-    expect(screen.getByLabelText('依据条款原文')).toHaveTextContent('交货条款');
-    fireEvent.click(
-      container.querySelector('[data-node-id="evidence.contract"]')!,
-    );
-    expect(
-      container.querySelector('[data-clause-id="clause-1"]'),
-    ).toHaveAttribute('data-clause-selected', 'false');
     fireEvent.click(
       container.querySelector('[data-node-id="evidence.request"]')!,
     );
-    expect(
-      container.querySelector('[data-clause-id="clause-1"]'),
-    ).toHaveAttribute('data-clause-selected', 'true');
+    const excerpt = await screen.findByLabelText('依据条款原文');
+    expect(excerpt).toHaveTextContent('交货条款');
+    expect(excerpt).toHaveTextContent('第 1 条');
   });
+
   it('explains a missing project path instead of rendering an empty canvas', async () => {
     installDesktopApi();
 
@@ -398,11 +370,14 @@ describe('EditorScreen', () => {
     fireEvent.keyDown(window, { key: '2', metaKey: true });
     expect(await screen.findByLabelText('门禁问题面板')).toBeInTheDocument();
 
-    fireEvent.keyDown(window, { key: '4', metaKey: true });
+    fireEvent.keyDown(window, { key: '3', metaKey: true });
     expect(await screen.findByLabelText('访谈内容')).toBeInTheDocument();
 
-    fireEvent.keyDown(window, { key: '4', metaKey: true });
+    fireEvent.keyDown(window, { key: '3', metaKey: true });
     await waitFor(() => expect(screen.queryByLabelText('访谈内容')).toBeNull());
+
+    fireEvent.keyDown(window, { key: '4', metaKey: true });
+    expect(await screen.findByLabelText('工作坊合约')).toBeInTheDocument();
   });
 
   it('keeps scope and view mode out of the document and undo history', async () => {
@@ -910,7 +885,7 @@ describe('EditorScreen stage navigation', () => {
     fireEvent.keyDown(window, { key: 'b', metaKey: true });
     fireEvent.keyDown(window, { key: 'f', metaKey: true });
     fireEvent.keyDown(window, { key: 'v' });
-    for (const code of ['Digit3', 'Digit4', 'Digit5', 'KeyS']) {
+    for (const code of ['Digit3', 'Digit4', 'Digit5']) {
       fireEvent.keyDown(window, { code, altKey: true });
     }
 

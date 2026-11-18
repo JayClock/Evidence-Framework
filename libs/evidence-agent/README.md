@@ -1,6 +1,6 @@
 # evidence-agent
 
-进程内的 Pi Harness 底座，同时拥有桌面端建模副驾的两个切面：
+进程内的 Pi Harness 底座，提供桌面端建模副驾的会话、传感器和工具：
 
 1. **Agent 会话**（`session/`）——把 `@earendil-works/pi-coding-agent` 收敛成一个窄接口
    （`PiSdkPort`），把内置建模指令（`prompts/`：角色、建模红线、一轮如何推进）追加到
@@ -8,12 +8,10 @@
    会话以 `noSkills: true` 启动，不扫描工作目录寻找 `SKILL.md`。传入 `sessionFile` 时
    改为续写该份记录，分支因此能拥有自己的对话谱系。记录分叉（`forkSessionLines`）是纯
    函数，按检查点只保留祖先链并改写 `session` 头（新 `id` 与 `parentSession`）。
-2. **治理与传感器**（`governance/`、`sensors/`）——治理判定循环把模型漂移收敛成一个
-   决策；传感器引擎把模型核心的一致性检查、关键数据台账、API 覆盖与链路审计编排成一份
-   `SensorReport`，并据此判定阶段门禁。
+2. **传感器**（`sensors/`）——把模型一致性检查、关键数据台账和 API 诊断
+   汇总到 `SensorReport`，并据此判定阶段门禁。
 3. **工具注入**（`tools/`）——`createEvidenceToolsExtension` 把模型补丁、API 差异投影
-   等能力注册给 Pi，Agent 因此只能在受控契约内读写模型。生产链路读取（`telemetry/`）
-   把 OTLP 导出还原成 Evidence 提交记录，供漂移审计使用。
+   等能力注册给 Pi，Agent 因此只能在受控契约内读写模型。
 
 ## 边界
 

@@ -5,28 +5,18 @@ description: 一个编辑窗口如何保持单一 ModelSession、异步 ELK 几�
 tags: [desktop, renderer, state, model-session, ipc, mcp, react]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-17T06:43:02.055Z
+    at: 2026-11-18T12:34:41.390Z
 sources:
   - id: openwiki-source-55138c775f581f8c989ca7dc
     resource: repo://apps/desktop/src/main/agentRuntime.ts
   - id: openwiki-source-76f615743ac07abb0f83475e
     resource: repo://apps/desktop/src/main/mcpBridgeRuntime.ts
-  - id: openwiki-source-75ea16b51af8189bcb64a227
-    resource: repo://apps/desktop/src/renderer/components/ledger/DomainLedgerTable.tsx
-  - id: openwiki-source-90c693a21769f2a2cd3f866e
-    resource: repo://apps/desktop/src/renderer/components/split/CelRulesPane.tsx
-  - id: openwiki-source-bedc9eb4fc31e9c041a560ab
-    resource: repo://apps/desktop/src/renderer/components/split/OpenApiSpecViewer.tsx
   - id: openwiki-source-9459ee1a8fc917f2d94619ce
     resource: repo://apps/desktop/src/renderer/screens/EditorScreen.tsx
   - id: openwiki-source-febf1dc4c40bace9f81ae6c9
     resource: repo://apps/desktop/src/renderer/state/commandRegistry.ts
   - id: openwiki-source-691a65e70d0a88e8032e0166
     resource: repo://apps/desktop/src/renderer/state/mcpCapture.ts
-  - id: openwiki-source-e8c506a8d05cddb8e6415b6b
-    resource: repo://apps/desktop/src/renderer/state/useBilateralSync.spec.tsx
-  - id: openwiki-source-64e02f46b7978332dd710c41
-    resource: repo://apps/desktop/src/renderer/state/useBilateralSync.ts
   - id: openwiki-source-d4fc84c37b0edfd16ffd121b
     resource: repo://apps/desktop/src/renderer/state/useCommandRegistry.ts
   - id: openwiki-source-f0f06a0981a7ca97c510b44d
@@ -43,10 +33,6 @@ sources:
     resource: repo://apps/desktop/src/renderer/state/useWorkspaceLayoutState.spec.ts
   - id: openwiki-source-5c9b3359cf58a8175a7e8c84
     resource: repo://apps/desktop/src/renderer/state/useWorkspaceLayoutState.ts
-  - id: openwiki-source-060e6f7bbae79b74b7b3ae16
-    resource: repo://apps/desktop/src/renderer/state/useWorkspaceSplitState.spec.ts
-  - id: openwiki-source-c0750187b8b81a71c6768dd8
-    resource: repo://apps/desktop/src/renderer/state/useWorkspaceSplitState.ts
   - id: openwiki-source-4390945ee74c598cb51e8f18
     resource: repo://apps/desktop/src/renderer/state/useWorkspaceViewMode.spec.tsx
   - id: openwiki-source-cd0c9b3dd84e3af20289b703
@@ -67,7 +53,7 @@ sources:
     resource: repo://libs/desktop/feature-story/src/state/useStoryPlayback.ts
   - id: openwiki-source-29536c90f762c67d4e41b9c9
     resource: repo://libs/desktop/testing/src/desktopApi.ts
-generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
+generated: { by: "pi", at: "2026-11-18T12:34:41.390Z" }
 ---
 
 # 渲染会话、异步布局与实时同步
@@ -84,11 +70,9 @@ useGraphLayout 为每次 effect 建 cancellation 标记，只有未清理的请�
 
 所有 Inspector、键盘、Agent、MCP 编辑使用 mutate/applyPatchBatch，共享历史；baseline 是 initialDocument，保存不接受变更、不重置 baseline。
 
-## 双向定位 bus
+## 对象定位
 
-BilateralSyncBus 每窗口一个，发 focus-entity（entityId/attributeName）或 focus-rule（ruleId/entityId），附 source 和递增 token。不存当前值、不 replay，迟挂载读不到过去意图；fan-out 用 listener 副本，处理中 unsubscribe 不跳过其他人。caller 不造 token。
-
-ledger 忽略 table、code panes 忽略 code、shell 忽略 canvas，防反馈环；shell 从任意 selection 变化公告 canvas 事件，返回方向集中校验对象存在、解除会隐藏它的 scope、selectAttribute 并发 pan token。相同对象重复定位仍有新 token；ledger flash 和 editor reveal 依它重触发。切 CEL rule 可改已开分屏，不凭一个焦点事件强开关闭的分屏。hook handler 需 useCallback 避免重复订阅。
+台账和画布共用会话选区。台账的定位按钮切回画布并聚焦对应对象；统一的定位函数会清理阻挡目标对象的范围过滤。
 
 ## 实时发布先于补丁答复
 
@@ -114,14 +98,14 @@ useSensorsState 先 latestReport，只有空才触发 fresh，push 按 root 过�
 
 ## Chrome 与命令能力
 
-useWorkspaceLayoutState 一对象持 rail tab/pinned、problems/activeIssue、inline copilot 与 exclusive hub（delivery/drift）；diagnostics tab 特别开底部 problems，DriftRadar 可作为 rail drawer、split pane 或独立 hub，不再 simulation/replay。Mod+1..6 切 topology/diagnostics/drift/copilot/clauses/workshop rail，尊重 editable/defaultPrevented 和修饰键。
+`useWorkspaceLayoutState` 管理导轨抽屉、固定状态、底部问题面板、内联副驾和交付对话框。Mod+1 至 Mod+4 依次是总台账、门禁与诊断、AI 协同和共创工作坊；导轨快捷键尊重输入焦点与已处理事件。
 
-useWorkspaceViewMode 的 journey/topology/table/split 不进模型/历史/保存，默认 journey（业务泳道）；V 切图/表，Alt+1/2/3/4 用 event.code（避 macOS符号）直选；已消费事件退让，裸字母尊重输入/CodeMirror。Split state 从 mode 派生 isSplit，无第二 boolean，关闭保留 pane/direction/size。
+`useWorkspaceViewMode` 默认业务旅程，Alt+1/2 用物理按键切换旅程与拓扑。台账替换中央画布；返回时恢复上次图形布局。两种图形布局、台账和放映都不写入模型或撤销历史。
 
 buildCommands 是 capabilities+handlers 的纯函数，disabled rows 保留解释；CHORDS 是显示键帽唯一源，groupCommands 固定分类，useCommandRegistry 依 caller memo 对象稳定结果。palette 和 header 复用 handler，不复制业务逻辑。
 
 ## 测试 seam
 
-desktop-testing 的 installDesktopApi 提供 channel call log、agentMock 的 stream/report/patch 与 mcpMock 的 request/response/capture/status，UI 无需 Electron/socket/真实模型。useGraphLayout specs 覆盖旧结果、错误、unmount；bridge specs 覆盖 mount/selection区分、rapid calls、test-only/失败 revision；delivery/sensors/patchReview specs 覆盖 debounce竞态和后续编辑保护；BilateralSync/workspace/command registry specs 保护 token、意图、typing guards 与非模型状态。
+desktop-testing 的 installDesktopApi 提供 channel call log、agentMock 的 stream/report/patch 与 mcpMock 的 request/response/capture/status，UI 无需 Electron/socket/真实模型。useGraphLayout specs 覆盖旧结果、错误、unmount；bridge specs 覆盖 mount/selection区分、rapid calls、test-only/失败 revision；delivery/sensors/patchReview specs 覆盖 debounce竞态和后续编辑保护；布局和命令测试覆盖导轨切换、输入焦点避让与非模型状态。
 
 相关：[会话事务](../model/commands-and-session.md) · [画布](./canvas-and-inspector.md) · [MCP](../agents/mcp-integration.md) · [传感器](../agents/sensor-orchestration.md)

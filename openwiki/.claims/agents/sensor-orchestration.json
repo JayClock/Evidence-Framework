@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:eae873dbc098ccfdf9d93880e9fd4d9187eac0295aa915fc5474de8974a562d8",
+  "pageVersion": "sha256:ce269f161bd8df0c3c00a8de8ef4d5fd4949d61d59215646cd9429bc8ca0031c",
   "claims": [
     {
       "id": "claim_a007c15b40764a179f770eb7c0348624",
@@ -17,7 +17,7 @@
       "statement": "FM errors 为 blocking，gaps/inputChanged 为 warning，advisories 保留 code 和定位，已无 FM_NO_SCENARIO。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts#L196-L242",
+          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts#L148-L194",
           "version": "repo-lines-v1:sha256:db25de3278d9f9281b1e28181f6a006d7c084047306778d375501afd88d553f1:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI5N2E2NTZlODliYWY0ODM1MzE5NmYwZmE4NWMxNTgzMWY3MDVlZWRjZWY2N2Y3OTlkYWFjYjU3ODU1NTk3ODEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU5ODI4NzUyZjgwMmVkYWEwNjFjMmFlYWM1YmM0OTMxZmE2NjFmM2EyODUzMzY5ZWFiNDNlM2E5YmE5Nzk4NzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM2Nzg4ODY5ODkxZWU1M2Q1ZmUyM2I2MjhkYjYzMDZkNGQ5OWFjMjQzZDk1YjFlMGEwNDg4NWU0OTQxYzE5NzMifQ"
         }
       ]
@@ -27,11 +27,11 @@
       "statement": "Key data items that still owe a provider decision become warning KEY_DATA_DECISION_OWED findings with targetNodeId entity#attribute, increment decisionOwedCount, and are capped at 40 emitted findings while the summary still counts the full ledger; a ledger with nothing owed produces one informational KEY_DATA_RESOLVED finding, and owed decisions stay warnings but still keep the stage gate closed.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts#L157-L159",
+          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts#L137-L139",
           "version": "repo-lines-v1:sha256:74a2bb94681d87a54c0520a8d54a2ef8848946320512f0e8fa71d8a54edd7d7c:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjA4OTc1MzA2YzY2OGFiY2FmY2JhZjY3YTcyMzQ3ZDdmZDgyODBlNmMzODI3ZDgxMWI1NWM4ZTZhYjExNDEyOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTkyNjBlYzQ1Yzc3NDU4NWQyNzQzMjZiNTI3YjM4M2U3NDFhOGFiNzEwNjliYjAxNTE1ZWQ4ODY0N2NmYTU1YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTU0MjIzNjEzOTE2ZTk5MGExNGQ4YjM5MWNjNGU3ZmRjZWEzOGIwZGJhNDIxZmRjMTcwZjc5MWRkNTU0NDI0MyJ9"
         },
         {
-          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts#L245-L292",
+          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts#L197-L244",
           "version": "repo-lines-v1:sha256:1e7415695658eb0366ea3e1a05b1ed191577b219138a0d8f62c43d57cae12799:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE4ZWU2OTI0NzFmZTIzMTQ0ZjBhYTNmZjBjNzRiMjVkNzk2YzY0NDYxZGQ4YjhmYzU5ODhjMWU2OGJkNWNjOWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVlZWNhOWFmY2U1ZjIwMzVkOTdjYjgwNGEwNjI4MmE0YTEyMjM5ZWM1YTI0YWJiNmFlZmVlNzAzZTQ4YjhjODIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBkMzk4NzE0ZTRjOWIxNWQ5ZjQ4MGEzMDdmMDRkYTg4YjUxMTI4NGM1ODg0M2Y3N2VjNzg4Y2E4MTgyMDg0YjgifQ"
         }
       ]
@@ -41,7 +41,7 @@
       "statement": "报告以 Map 按 issueId 去重，后值覆盖且保持键顺序，重算严重性和零阻塞 verdict。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts#L309-L351",
+          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts#L261-L303",
           "version": "repo-lines-v1:sha256:1095e92e76a3bc608e0e9b62606901261043669aa410418656ca58871d6c8530:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ2NTNjNzc3MmYwZTAzYmZjMTRhNmExMTJmZDkyMDdiYWU4MzExNzFmNTI5MjJmNjk3ZGY4YTNhZjFmNzMxNGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEyZDA2M2E1YjNhNTIzMDhiYjk4ZjgxYWRkY2VkOGE5NmUwYmNiY2FiOTJkNmM2N2RiNWFiY2FmYjQwNWMzNWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUwMTJmNWFkZTIyZGRjZTA4MWY1MDkyYTFkYzA3MjUyNGEwOGY3ZjNkNWViNDQ1YTBhMDI5YmU0YTUyMDIxNTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEzNzI0MWQzMzUzZDMzNzg2NWM4MGZlNWZjZDEyNWNjZjE2ZTc2NTQyODk3ZWQ2MDM2YjY1Y2FiM2M2YjJhZjcifQ"
         }
       ]
@@ -60,7 +60,7 @@
         },
         {
           "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts",
-          "version": "repo-file-v1:sha256:4317a62abc6cdb93bb9ca00852d221842d1d8c4bd61fa8795f3f741847ccc102"
+          "version": "repo-file-v1:sha256:cf70e77f2f70ddf2461ef059201ca979d6775854559cdff6a28b00bc65a31bc8"
         }
       ]
     },
@@ -98,25 +98,21 @@
         },
         {
           "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.spec.ts",
-          "version": "repo-file-v1:sha256:8976e533d39f167231e4fadab552a255d7032bd78f71abe2e7161dfaad8df5fb"
+          "version": "repo-file-v1:sha256:80c1aa9b811321a634d7968654881adf1cfa549eb25f6fdd64fcf6cf2fd2e8dc"
         },
         {
           "resource": "repo://libs/evidence-agent/src/sensors/sensorsEngine.spec.ts",
-          "version": "repo-file-v1:sha256:a4d678461ae90155d983b688e7e6887a62c036d08b733570ff8f8a13a5ee0252"
+          "version": "repo-file-v1:sha256:ca36d058b97d93d08b055bec6e5e7075967a3e8ccaecfbeada9eda7b483fe754"
         }
       ]
     },
     {
       "id": "claim_10193f9fa05d426797e9395ebd61dbdc",
-      "statement": "A SensorIssue is identified by the string `source:code:message` and carries severity block, warn or info, one of the five declared sources, an optional targetNodeId of entity or entity#attribute, an optional contextRef and an optional suggestion, so rewording a finding makes it a new finding rather than matching the old one.",
+      "statement": "SensorIssue 以 source:code:message 标识，来源为 FM 检查、关键数据、API 或阶段门禁；可携带目标对象、上下文与建议。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts#L1-L23",
-          "version": "repo-lines-v1:sha256:8ce7e33679f7600f619a7a348a8b656f39ecd4a4e1d90769c651f3e39ccce6b6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUxMDY3MzFiY2JjZjkyYmY5ODQ3NjRjOGVmYWNhZTliMTBiOWY5NzA3OWQ0NTc0Mzk0YmQ1MDI1NmEwZjA2OWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJkZjk3NThkNTlkMjNjM2Y4M2JjM2NlZmJkNjUyOTM4YTE1N2FmODdlNGRkNWRhMGMxMDAzNzdkZjVjYzU4ODQifQ"
-        },
-        {
-          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts#L82-L97",
-          "version": "repo-lines-v1:sha256:5e123ba27e7ad329bdd65aea75572b1b384b4d9570ac38dfde66d610a0d9180d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA1YTU3Zjk1NmJkMTdiMGE5YTZhZWUzNzExNjI1OTc5MzNmYWI3ZjdjOTU1ZGUyYTM5MGVjNzk4MjIzNzlhZDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk4Y2QxNzNlMTBiYTNhYjZkMGY2ZDkzYjIwNjAyYjA1ZmM4MDU4OTc2NDM5NTYyNTJlODRmNTA3NzFjYzdhZDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlmNDBiM2Q1MjUzNjcwNDQ4NzE1ZGFkMDQwN2MzMzU5OTIwZWZhNWM2OGQ2MzAwMmNjOThiOTUwNmMyYmMwZDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI4OTE4M2UxOTBiYzUxN2FlYWEwOGE1YmEwYjkxMjc5ODQzYmJhZmNiNTI2OGM2M2NkMWRjM2I0OTlmOTBiNzEifQ"
+          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts",
+          "version": "repo-file-v1:sha256:cf70e77f2f70ddf2461ef059201ca979d6775854559cdff6a28b00bc65a31bc8"
         }
       ]
     },
@@ -151,52 +147,12 @@
       ]
     },
     {
-      "id": "claim_706b0485b2444e4cb62686bdb28629ce",
-      "statement": "The drift audit compares one parsed OTLP/JSON trace against a freshly read saved model root rather than the session document, classifies divergences into five kinds, blocks only UNMODELED_EVIDENCE_COMMITTED and DERIVED_VALUE_SUPPLIED while the other three warn, attaches commit, evidenceRef, contextRef, modelExpectation and remediation to each finding, and merges source-read problems into the audit's errors so an incomplete read never looks like a clean comparison.",
-      "evidence": [
-        {
-          "resource": "repo://libs/evidence-agent/src/sensors/native/driftSensor.ts#L108-L113",
-          "version": "repo-lines-v1:sha256:413ef701d72735318fad500414932f1c6dd865dc2201760c77f07b5944721996:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGQ1Y2QyZmI0ZjNkZjg4NDUxNTI1NWIzOTUyM2YyZjhiNTQ3MmJlZWE5ZjU2NmZmY2EyMDRkYjgwMjU2MTA0MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjgxOTU0MDI3Yjg2MzJkYTNjODk3ZmExYzUzMDU2NDk5ZWIwOTliMzgzMjEwMzU3ZWFmNDk4YjU3M2VhNGFkNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDYxZThiYmI1ZGNkOWI5ZDFjMTk1MDdlNmI2YWQ2ZWU2ZWRlODk1OTI4Zjg2NDAyN2VlMTEyOWY1ODQ5ZTlmZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTY5ZTk4ZWUzZjQ5Y2NmOTBhY2E5NDEzNWRiMmFlM2M3OWUzNGViYzBkMjRlZmIzY2E5MDI1Njk4MDIzNjc0NyJ9"
-        },
-        {
-          "resource": "repo://libs/evidence-agent/src/sensors/native/driftSensor.ts#L17-L30",
-          "version": "repo-lines-v1:sha256:52e98d583117fcd39aa7f309d9b3c5bc14478c9d711d9dfba131473ba1928fb7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1OWRmZTNlMWNlMTAzZDYwNDJkY2QyYjA4YjYzNjU4NDFjMzQ0MGVlNjk2YjkwNjY0ZThhNDE2MWJmZDE1NjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI0MmE2OTkxNjMwZTFjZmVjMDM2YzUxYjg1OWMyMDYwMmVkMzA4YmJhOTEzNzU2NThiNWY0MGQyYTBkYzZlMjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNkMTQ3MWI3NDZmM2UzZTljM2U1ZTIyMmUyNjEzNGJjOTUyMWRmOTFmNzJhNWMyZjY1NjQ0YzBmOGRhZDBjOWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ2OWE2YTI5YzI2OWI3NGNiMGIyNDAxMTc5NzgwMzdiNjNmOTE1ZmZlZTk3ZTcwM2E3YTE2OWM3MGY2M2NlOGMifQ"
-        },
-        {
-          "resource": "repo://libs/evidence-agent/src/sensors/native/driftSensor.ts#L172-L370",
-          "version": "repo-lines-v1:sha256:84900871ba43090d77971f0bc5b1c04b9e207522003eda60f9454648aee583f9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTk5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI5NzJhNDI5MzgyYjJlMTQ3MThlMGUzN2IwNTcwYThhMTcwMjk5MWZjZDg0OThjZDg0MDYwYThiZjRmMDUwMTdiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIxZTkzNmUzMWY3MjRkMjMxM2Q5ODcwMTY3YTM4ZWQ4ZDY2ZjM0NGNhNzI3MGJlZWY0OTUwYmEwNDMwYTg0ZjE3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
-        },
-        {
-          "resource": "repo://libs/evidence-agent/src/sensors/native/nativeDriftAudit.ts#L19-L30",
-          "version": "repo-lines-v1:sha256:3941e5c86f50a7f465b21fb3a651bda16bfa64c6e0aeeb0ceb51eaa82428ac18:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhhNjMyY2UyMzQ0NzFiOTk1ODUxZDQzYzViYTFkOTg4ODJjYjE3NmNjMzllNGQ5Nzc3MWNlOTNmNDY5ZmE0ODQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZmMzEwNjc1YjQ4YjViYTc4YWUzZDFlNGVlOWExZTMwNzE0OWE5NDAwMjU0ODAzZGMzNmIzNjAwOTEzN2Q0YTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_c04a0b66e85a4fd497c2a179f1318295",
-      "statement": "独立漂移审计经 DriftRadar/MCP 提供，可折叠为 shared issues 并保留 remedy，不再使用 SimulationSandbox。",
-      "evidence": [
-        {
-          "resource": "repo://apps/desktop/src/main/mcpRequestHandler.ts",
-          "version": "repo-file-v1:sha256:632519b8515b3357591e5b4cbb2e2ac8c4b9d432f1dfa0679440b2454983439c"
-        },
-        {
-          "resource": "repo://libs/desktop/feature-drift/src/components/drift/DriftRadar.tsx",
-          "version": "repo-file-v1:sha256:354c82e08927cbc85f296e52595d1289ad912de13b9d6deb27367f62c44216d2"
-        },
-        {
-          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts",
-          "version": "repo-file-v1:sha256:4317a62abc6cdb93bb9ca00852d221842d1d8c4bd61fa8795f3f741847ccc102"
-        }
-      ]
-    },
-    {
       "id": "claim_5960684fae664bada335d3f46627bd37",
       "statement": "API gate 每次重新跑 release sensors，收集全部高于 info 的 audit_api findings；拒绝 supplied FM 报告与 fresh digest 不同，visualization target 已删除。",
       "evidence": [
         {
           "resource": "repo://libs/evidence-agent/src/sensors/sensorsEngine.spec.ts",
-          "version": "repo-file-v1:sha256:a4d678461ae90155d983b688e7e6887a62c036d08b733570ff8f8a13a5ee0252"
+          "version": "repo-file-v1:sha256:ca36d058b97d93d08b055bec6e5e7075967a3e8ccaecfbeada9eda7b483fe754"
         },
         {
           "resource": "repo://libs/evidence-agent/src/sensors/sensorsEngine.ts",
@@ -273,24 +229,14 @@
       "statement": "Findings must describe the revision on screen: the editor builds the diagnostic index from null instead of a report unless the report's documentRevision equals the live model revision and neither the live bridge nor the sensor state is loading or errored, and it re-runs the sensors after each save.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L268-L284",
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L248-L264",
           "version": "repo-lines-v1:sha256:d37670551359005081df16958d48491b2c7869075cc1fe46d722323c9be7a992:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdhYjEyMGYyY2E4NTZhNGY4MmJlOTQ3NjE1Njk3MDlmNzVhNjIwNDlmZTc5YjJjY2I5MDVhN2E0ZDQzZDgzMWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1ZmI0ZjI1MjAzNTFlMzBjZTlkYTJjMDY0NTc3ODY2ZmQzYjhjOTFjMjQyNDA2OWJiYmEzN2JjM2EwYmQzNTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZhNDEwZTgwYzcxYWY1MzdhOWFiNGJhNjgxMDc1MGMwMzQ0ZjQ0ZWE4MmJhODgyNjA1MGU4ZDIxNTBhMDllMjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM0MDE3MDZhM2JhMmJmMDkzYzllZDA3NmFmNmI3NDliYWMwYjY4N2EwNjViYzZhOTIxMjhlZGQ0ODY1MzYxMWQifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_2220a1acb7644c0cb6fe91fb46cb0aed",
-      "statement": "治理使用外部 HTTP acceptance；失败要求修实现，只有无 blocking、非空全通过且 model_lagging 才可改模型。",
-      "evidence": [
-        {
-          "resource": "repo://libs/evidence-agent/src/governance/governanceLoop.ts#L142-L213",
-          "version": "repo-lines-v1:sha256:0c2042ab4106ad67dcda5d913e3d3e8718064db891f994cbe44071490a33b244:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBhNTQxMjVmZTQ2NDQ2MTgzMWYxOGI0NGY3YWU0NDc1ZGVhYjRjNWMxMmU5ZGVhZWJkMDhjYjhkOGQ3MDFlYTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU2ZTk3NjMwOTRkNWY4ZjY2OWI3NDViYTg5NGI1YzEwMTBlNDVkNDI1MjE0MjQxYTJiZWIyOWViZWJjNGI0MzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-17T06:43:02.055Z"
+    "at": "2026-11-18T12:34:41.390Z"
   }
 }

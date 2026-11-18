@@ -1,11 +1,11 @@
 ---
 type: orchestration
-title: 原生传感器与治理闭环
-description: 共享 SensorReport 如何承载 FM 静态检查、关键数据和 API 诊断，以及 version 6 阶段门禁、独立漂移审计与真实 HTTP 验收治理的区别。
-tags: [sensors, stage-gate, governance, drift, diagnostics]
+title: 原生传感器与阶段门禁
+description: 共享 SensorReport 如何承载 FM 静态检查、关键数据和 API 诊断，以及阶段门禁如何汇总这些结论。
+tags: [sensors, stage-gate, diagnostics]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-17T06:43:02.055Z
+    at: 2026-11-18T12:34:41.390Z
 sources:
   - id: openwiki-source-f85ce0e3a462797434d822a8
     resource: repo://apps/desktop/src/main/agentIpcHandlers.ts
@@ -13,8 +13,6 @@ sources:
     resource: repo://apps/desktop/src/main/agentRuntime.spec.ts
   - id: openwiki-source-55138c775f581f8c989ca7dc
     resource: repo://apps/desktop/src/main/agentRuntime.ts
-  - id: openwiki-source-f278221a7db6307920fce03f
-    resource: repo://apps/desktop/src/main/mcpRequestHandler.ts
   - id: openwiki-source-bc335f19a22e1758f9ecea1e
     resource: repo://apps/desktop/src/main/sensorRuntime.ts
   - id: openwiki-source-34616781ee43c94607ccca92
@@ -33,18 +31,10 @@ sources:
     resource: repo://libs/desktop/feature-canvas/src/diagnosticIndex.spec.tsx
   - id: openwiki-source-f172557f5294fb7b6d40b660
     resource: repo://libs/desktop/feature-canvas/src/diagnosticIndex.ts
-  - id: openwiki-source-072343668e3623c3bbde4c30
-    resource: repo://libs/desktop/feature-drift/src/components/drift/DriftRadar.tsx
-  - id: openwiki-source-172b58a8c9ee4fcc3b2b3daa
-    resource: repo://libs/evidence-agent/src/governance/governanceLoop.ts
-  - id: openwiki-source-5570b1437846809479c60f79
-    resource: repo://libs/evidence-agent/src/sensors/native/driftSensor.ts
   - id: openwiki-source-eb29c98cfa71901c2675a7e4
     resource: repo://libs/evidence-agent/src/sensors/native/modelSources.ts
   - id: openwiki-source-feaf4e64c269397a25f93a3d
     resource: repo://libs/evidence-agent/src/sensors/native/nativeApiSensor.ts
-  - id: openwiki-source-701227b6d41a5cbdfe79bcbf
-    resource: repo://libs/evidence-agent/src/sensors/native/nativeDriftAudit.ts
   - id: openwiki-source-925f1915fe23c3f1c07b66e9
     resource: repo://libs/evidence-agent/src/sensors/native/nativeSensors.spec.ts
   - id: openwiki-source-819cda3e1e556eb778e9f02b
@@ -59,10 +49,10 @@ sources:
     resource: repo://libs/evidence-agent/src/sensors/sensorsEngine.spec.ts
   - id: openwiki-source-ebeef9d445379fe3773732df
     resource: repo://libs/evidence-agent/src/sensors/sensorsEngine.ts
-generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
+generated: { by: "pi", at: "2026-11-18T12:34:41.390Z" }
 ---
 
-# 原生传感器与治理闭环
+# 原生传感器与阶段门禁
 
 `libs/evidence-agent/src/sensors` 分三层：native 传感器计算事实，sensorReport 折叠诊断，sensorsEngine 决定下游交付门禁。它们分析而不写模型。静态通过不是 HTTP 后端验收，也不是业务批准。
 
@@ -70,7 +60,7 @@ generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
 
 磁盘路径经 `loadModelSources` 读模型和原始文件字节，形成 sourceIssues、sha256 digest 与 rereadDigest；各传感器共享这份模型和内联 examples，不再加载 Scenario/Instance suite。FM check 默认再次读取摘要以检测输入漂移。直接的 `*.evidence.json` 路径被 native sensors 拒绝，宿主须按源格式适配。内存 document 则以 JSON 摘要和恒定 rereadDigest 建立固定快照，不会产生磁盘 FM_INPUT_CHANGED。engine 的 RunSensorsInput 不提供跳过二次读取选项。
 
-SensorIssue 有五类 source（check_fm、audit_key_data、audit_api、audit_drift、stage_gate），severity=block/warn/info，稳定 code，以及可选 targetNodeId、contextRef、suggestion。通用 issue helper 用 source:code:message 形成身份；重写消息就是新身份。finalizeSensorReport 用 Map 按 issueId 去重（同 ID 后值覆盖、保留键顺序），重新计数；passed 和 canPreviewApi 仅表示 blockCount=0。不可用传感器必须产生 blocking SENSOR_UNAVAILABLE。
+SensorIssue 有四类 source（check_fm、audit_key_data、audit_api、stage_gate），severity=block/warn/info，稳定 code，以及可选 targetNodeId、contextRef、suggestion。通用 issue helper 用 source:code:message 形成身份；重写消息就是新身份。finalizeSensorReport 用 Map 按 issueId 去重（同 ID 后值覆盖、保留键顺序），重新计数；passed 和 canPreviewApi 仅表示 blockCount=0。不可用传感器必须产生 blocking SENSOR_UNAVAILABLE。
 
 关键数据待决是 warn/KEY_DATA_DECISION_OWED，定位 entity#attribute。最多输出 40 条，summary 仍统计全量；无待决输出 info/KEY_DATA_RESOLVED（包括空台账）。resolvedCount=max(0,total-owed)。
 
@@ -87,20 +77,7 @@ SensorIssue 有五类 source（check_fm、audit_key_data、audit_api、audit_dri
 
 `nativeStageGate` 消费已有 FM 报告而不重建模型：要求 **checkVersion=6**、consistent/complete/valid=true、inputChanged=false、无 errors/gaps、所有请求 scope 在报告 scopeRefs 内。空 scope 明确拒绝“无边界下游”；所有拒绝原因累积返回，不使用人工闭环标记。`isGateReadyReport` 是去掉空 scope 检查的同一谓词。
 
-engine 的 target 仅 api，每次都跑 fresh sensors，并使用 release 模式。API gate 收集所有高于 info 的 audit_api 诊断，并比较 saved/fresh modelDigest，摘要不同必须重查；旧 visualization gate 已删除。MCP 投影 passed、exitCode、driftDetected、blockingReasons；异常关闭门禁而不伪造退出码 0。
-
-## 独立漂移与治理
-
-漂移不属于 runFullSensors。nativeDriftAudit 读取已保存模型和 OTLP/JSON trace，合并源读取错误；finding 带 commit、evidenceRef、contextRef、modelExpectation、remediation。
-
-| kind | 默认严重性 |
-| --- | --- |
-| UNMODELED_EVIDENCE_COMMITTED、DERIVED_VALUE_SUPPLIED | block |
-| UNMODELED_ATTRIBUTE_WRITTEN、CROSS_CONTEXT_WRITE、BREACH_WITHOUT_FOLLOW_UP | warn |
-
-可选 driftIssues 把证据引用映射 target、remediation 映射 suggestion，trace-read errors 为 DRIFT_TRACE_UNREADABLE 警告。桌面当前入口是独立 DriftRadar（不是已删除 SimulationSandbox），MCP 走 audit_production_drift。
-
-纯策略 `decideGovernance` 对每种 finding 给一个行动/工具；未知类型升级人工 ticket，派生值输入错误应修服务。补偿缺口建议 add_breach_compensation；跨上下文写入要求归还所有者。策略优先 production_overreach > needs_repair > model_lagging > healthy。外部 HTTP acceptance 缺失不能确认实现，空、畸形或非全绿追加 repair_implementation。只有无 blocking、提供非空全绿验收且 model_lagging 才 canPatchModel；这不是自动执行补丁的调度器，桌面测试调用策略不代表生产 UI 自动调用。
+engine 的 target 仅 api，每次都跑 fresh sensors，并使用 release 模式。API gate 收集所有高于 info 的 audit_api 诊断，并比较 saved/fresh modelDigest，摘要不同必须重查；旧 visualization gate 已删除。MCP 投影 passed、exitCode、blockingReasons；异常关闭门禁而不伪造退出码 0。
 
 ## 诊断如何到达界面
 
@@ -112,6 +89,6 @@ ProblemsPanel 展示严重级别 tabs、报告计数、过期标记、active row
 
 ## 验证与邻接
 
-sensorReport/nativeSensors/sensorsEngine specs 保护严重性、计数、台账上限、不可用失败、v6/空 scope 门禁和 API release 检查；nativeApiSensor specs 保护草稿/发布差异与 API 故障隔离。driftSensor/governanceLoop specs 覆盖五种漂移、真实验收门槛和行动优先级。diagnosticIndex 与 ProblemsPanel specs 覆盖引用定位、去重、tabs、过期与定位。
+sensorReport/nativeSensors/sensorsEngine specs 保护严重性、计数、台账上限、不可用失败、v6/空 scope 门禁和 API release 检查；nativeApiSensor specs 保护草稿/发布差异与 API 故障隔离。diagnosticIndex 与 ProblemsPanel specs 覆盖引用定位、去重、tabs、过期与定位。
 
 参见[静态检查](../model/checks-and-simulation.md)、[关键数据](../language/key-data-and-provenance.md)、[Pi 工具](./pi-harness.md)、[CLI 双门禁](../workflows/cli-governance.md)。

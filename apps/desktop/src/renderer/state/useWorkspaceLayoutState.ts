@@ -1,21 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 
 /** Drawer and panel destinations, excluding the ledger's main-stage switch. */
-const RAIL_TABS = [
-  'diagnostics',
-  'drift',
-  'copilot',
-  'clauses',
-  'workshop',
-] as const;
+const RAIL_TABS = ['diagnostics', 'copilot', 'workshop'] as const;
 
 export type RailTabId = (typeof RAIL_TABS)[number];
 
 const ACTIVITY_RAIL_TABS = ['ledger', ...RAIL_TABS] as const;
 export type ActivityRailTabId = (typeof ACTIVITY_RAIL_TABS)[number];
-
-/** Large surfaces that cover the workspace instead of sharing its width. */
-export type HubSurface = 'delivery' | 'drift';
 
 export interface WorkspaceLayoutState {
   /** Open drawer; null leaves the rail as the only rail-width chrome. */
@@ -25,8 +16,7 @@ export interface WorkspaceLayoutState {
   readonly isProblemsPanelOpen: boolean;
   readonly activeIssueId: string | null;
   readonly isInlineCopilotOpen: boolean;
-  /** Blocking hub (delivery or drift), or null. */
-  readonly activeHub: HubSurface | null;
+  readonly isDeliveryOpen: boolean;
 }
 
 export interface WorkspaceLayoutActions {
@@ -38,8 +28,8 @@ export interface WorkspaceLayoutActions {
   closeProblemsPanel: () => void;
   openInlineCopilot: () => void;
   closeInlineCopilot: () => void;
-  openHub: (surface: HubSurface) => void;
-  closeHub: () => void;
+  openDelivery: () => void;
+  closeDelivery: () => void;
 }
 
 export type WorkspaceLayoutController = WorkspaceLayoutState &
@@ -49,10 +39,8 @@ export type WorkspaceLayoutController = WorkspaceLayoutState &
 export const RAIL_TAB_CHORDS: Record<ActivityRailTabId, string> = {
   ledger: '⌘+1',
   diagnostics: '⌘+2',
-  drift: '⌘+3',
-  copilot: '⌘+4',
-  clauses: '⌘+5',
-  workshop: '⌘+6',
+  copilot: '⌘+3',
+  workshop: '⌘+4',
 };
 
 const isEditable = (target: EventTarget | null): boolean => {
@@ -88,7 +76,7 @@ export const useWorkspaceLayoutState = (
   const [isProblemsPanelOpen, setProblemsPanelOpen] = useState(false);
   const [activeIssueId, setActiveIssueId] = useState<string | null>(null);
   const [isInlineCopilotOpen, setInlineCopilotOpen] = useState(false);
-  const [activeHub, setActiveHub] = useState<HubSurface | null>(null);
+  const [isDeliveryOpen, setDeliveryOpen] = useState(false);
 
   const toggleRailPinned = useCallback(() => {
     setRailPinned((current) => !current);
@@ -143,12 +131,12 @@ export const useWorkspaceLayoutState = (
     setInlineCopilotOpen(false);
   }, []);
 
-  const openHub = useCallback((surface: HubSurface) => {
-    setActiveHub(surface);
+  const openDelivery = useCallback(() => {
+    setDeliveryOpen(true);
   }, []);
 
-  const closeHub = useCallback(() => {
-    setActiveHub(null);
+  const closeDelivery = useCallback(() => {
+    setDeliveryOpen(false);
   }, []);
 
   // Sidebar shortcuts must not steal a digit a text field wants.
@@ -185,7 +173,7 @@ export const useWorkspaceLayoutState = (
     isProblemsPanelOpen,
     activeIssueId,
     isInlineCopilotOpen,
-    activeHub,
+    isDeliveryOpen,
     setActiveRailTab,
     toggleRailTab,
     toggleRailPinned,
@@ -194,7 +182,7 @@ export const useWorkspaceLayoutState = (
     closeProblemsPanel,
     openInlineCopilot,
     closeInlineCopilot,
-    openHub,
-    closeHub,
+    openDelivery,
+    closeDelivery,
   };
 };

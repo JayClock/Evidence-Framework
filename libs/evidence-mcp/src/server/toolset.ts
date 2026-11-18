@@ -60,7 +60,6 @@ export const TOOL_NAMES = {
   isolateDomainCalculator: MODEL_TOOL_NAMES.isolateDomainCalculator,
   deliveryTopology: 'get_delivery_topology',
   openApiContract: 'export_openapi_contract',
-  productionDrift: 'audit_production_drift',
 } as const;
 
 const json = (value: unknown): EvidenceToolResult => ({
@@ -220,22 +219,6 @@ export const createEvidenceTools = (
     run: async () => json(await client.exportOpenApiContract()),
   }),
   defineTool({
-    name: TOOL_NAMES.productionDrift,
-    title: '比对生产轨迹与模型',
-    description:
-      '把导出的 OTLP/JSON trace 与已保存的模型比对：生产提交了模型没有的凭证、把值写进派生字段、跨上下文写入、违约后没有后续履约，都会逐条报告。阻塞项的修复方向不是改模型迁就代码。',
-    inputSchema: z
-      .object({
-        document: z
-          .unknown()
-          .describe('OTLP/JSON 导出，形如 { resourceSpans: [...] }。'),
-      })
-      .strict(),
-    annotations: READ_ONLY,
-    run: async (input) =>
-      json(await client.auditProductionDrift({ document: input.document })),
-  }),
-  defineTool({
     name: TOOL_NAMES.stageGate,
     title: '执行阶段门禁',
     description:
@@ -257,4 +240,4 @@ export const createEvidenceTools = (
 export const evidenceToolNames: readonly string[] = Object.values(TOOL_NAMES);
 
 export const SERVER_INSTRUCTIONS =
-  'These tools read the Evidence business model that is open in the desktop app. Read get_app_state first, then get_selected_entity or get_domain_model before proposing changes. Prefer the fulfillment operators over hand-written patches: introduce_fulfillment_pair for a request plus the confirmation that closes it, add_breach_compensation for a missed deadline and the pair it triggers, roleify_and_invert_dependency when a capability moves behind its own contract. Anything else goes through apply_model_patch using { rationale, patches } with RFC 6902 operations and RFC 6901 string pointers (not array paths or typed commands). Before positional edits, test the expected object id to reject a stale snapshot. The modeler can undo each batch; never write .evidence/fm files directly. After a patch, check get_key_data_audit and run_stage_gate before claiming the work is done. When the question is what the model becomes, read get_delivery_topology and export_openapi_contract instead of inventing a service split. Acceptance cases live in entity examples[].test; export them as a Bruno collection with evidence export --tests and run them against a real backend with evidence test, not in-memory replay. When the question is whether production matches it, audit_production_drift — and treat a blocking drift as a service-side defect, not a reason to edit the model.';
+  'These tools read the Evidence business model that is open in the desktop app. Read get_app_state first, then get_selected_entity or get_domain_model before proposing changes. Prefer the fulfillment operators over hand-written patches: introduce_fulfillment_pair for a request plus the confirmation that closes it, add_breach_compensation for a missed deadline and the pair it triggers, roleify_and_invert_dependency when a capability moves behind its own contract. Anything else goes through apply_model_patch using { rationale, patches } with RFC 6902 operations and RFC 6901 string pointers (not array paths or typed commands). Before positional edits, test the expected object id to reject a stale snapshot. The modeler can undo each batch; never write .evidence/fm files directly. After a patch, check get_key_data_audit and run_stage_gate before claiming the work is done. When the question is what the model becomes, read get_delivery_topology and export_openapi_contract instead of inventing a service split. Acceptance cases live in entity examples[].test; export them as a Bruno collection with evidence export --tests and run them against a real backend with evidence test, not in-memory replay.';

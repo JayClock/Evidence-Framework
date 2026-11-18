@@ -76,7 +76,6 @@ describe('createMcpSensorService', () => {
     ).resolves.toEqual({
       passed: true,
       exitCode: 0,
-      driftDetected: false,
       blockingReasons: [],
     });
 

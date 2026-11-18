@@ -21,10 +21,6 @@ import {
 } from '@evidence-poc/desktop-contracts/ipc';
 import { STORY_IPC_CHANNELS } from '@evidence-poc/desktop-contracts/story';
 import {
-  EVIDENCE_DRIFT_IPC_CHANNELS,
-  type DriftRequest,
-} from '@evidence-poc/desktop-contracts/drift';
-import {
   EVIDENCE_MCP_IPC_CHANNELS,
   type McpRendererRequest,
   type McpRendererResponse,
@@ -199,12 +195,6 @@ const api: EvidenceDesktopApi = {
         );
       };
     },
-  },
-  drift: {
-    drift: (input: DriftRequest) =>
-      ipcRenderer.invoke(EVIDENCE_DRIFT_IPC_CHANNELS.drift, input),
-    pickTrace: () =>
-      ipcRenderer.invoke(EVIDENCE_DRIFT_IPC_CHANNELS.traceDialog),
   },
   ingestion: {
     draft: (input) =>

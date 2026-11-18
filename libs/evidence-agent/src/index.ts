@@ -29,24 +29,7 @@ export type {
   WhatIfRuleOutcome,
 } from './story/types.js';
 
-// ─── Agent session, prompts and governance ────────────────────────────────
-export { GOVERNANCE_PROMPT } from './prompts/governance.js';
-
-export {
-  GOVERNANCE_INSTRUCTIONS,
-  GOVERNANCE_SYSTEM_PROMPT,
-} from './prompts/index.js';
-
-export {
-  decideGovernance,
-  type GovernanceAction,
-  type GovernanceActionKind,
-  type GovernanceDecision,
-  type GovernanceDrift,
-  type GovernanceAcceptance,
-  type GovernanceVerdict,
-} from './governance/governanceLoop.js';
-
+// ─── Agent session and prompts ───────────────────────────────────────────
 export {
   EVIDENCE_INSTRUCTIONS,
   EVIDENCE_SYSTEM_PROMPT,
@@ -93,14 +76,7 @@ export {
   type ModelPatchResult,
 } from './tools/evidenceTools.js';
 
-export {
-  TRACE_ATTRIBUTE_KEYS,
-  readProductionTrace,
-  type EvidenceCommit,
-  type ProductionTrace,
-} from './telemetry/index.js';
-
-// ─── Sensors, stage gate and drift audits ─────────────────────────────────
+// ─── Sensors and stage gate ───────────────────────────────────────────────
 export {
   checkNativeApiSensor,
   type ApiSensorInput,
@@ -109,13 +85,11 @@ export {
 
 export {
   buildSensorReport,
-  driftIssues,
   finalizeSensorReport,
   fmCheckIssues,
   keyDataSummaryOf,
   stageGateSummaryOf,
   type ApiCoverageSummary,
-  type DriftAuditReport,
   type FmCheckReport,
   type KeyDataAuditReport,
   type KeyDataDecision,
@@ -136,19 +110,6 @@ export {
   type SensorsEngineOptions,
   type StageGateInput,
 } from './sensors/sensorsEngine.js';
-
-export {
-  DRIFT_KIND_LABELS,
-  auditProductionDrift,
-  type ArchitectureDriftFinding,
-  type ArchitectureDriftKind,
-  type DriftAudit,
-} from './sensors/native/driftSensor.js';
-
-export {
-  runNativeDriftAudit,
-  type NativeDriftInput,
-} from './sensors/native/nativeDriftAudit.js';
 
 export {
   ModelSourceError,

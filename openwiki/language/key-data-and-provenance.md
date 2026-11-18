@@ -5,7 +5,7 @@ description: 八类来源分类、关键数据台账与 native CEL 属性依赖�
 tags: [key-data, provider, provenance, ledger, lineage, business-time, sensors]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-18T09:45:40.969Z
+    at: 2026-11-18T12:34:41.390Z
 sources:
   - id: openwiki-source-14c1bd0ebaba9f1349ef58a4
     resource: repo://libs/desktop/feature-inspector/src/inspector/AttributeDataGrid.spec.tsx
@@ -15,10 +15,6 @@ sources:
     resource: repo://libs/desktop/feature-inspector/src/inspector/KeyDataLedgerSheet.tsx
   - id: openwiki-source-3046611767bc0c00a44d0bdb
     resource: repo://libs/desktop/feature-inspector/src/inspector/KeyDataProvenancePicker.tsx
-  - id: openwiki-source-70d3f2bb00f582fa4b46c89c
-    resource: repo://libs/evidence-agent/src/sensors/native/driftSensor.spec.ts
-  - id: openwiki-source-5570b1437846809479c60f79
-    resource: repo://libs/evidence-agent/src/sensors/native/driftSensor.ts
   - id: openwiki-source-80031f5421964a543e95e5ba
     resource: repo://libs/evidence-agent/src/sensors/native/nativeKeyDataAudit.ts
   - id: openwiki-source-925f1915fe23c3f1c07b66e9
@@ -37,10 +33,6 @@ sources:
     resource: repo://libs/evidence-api/src/delivery/modelDelivery.ts
   - id: openwiki-source-bab9cd022cd0c06c4edacf32
     resource: repo://libs/evidence-model-core/src/diff/modelDiff.ts
-  - id: openwiki-source-b58a1e28682d01780d2726d1
-    resource: repo://libs/evidence-model-core/src/ingestion/clauseTrace.spec.ts
-  - id: openwiki-source-4968069c33b9958841bbecb5
-    resource: repo://libs/evidence-model-core/src/ingestion/clauseTrace.ts
   - id: openwiki-source-f02b234edea2573a78a178f1
     resource: repo://libs/evidence-model-core/src/ingestion/compileDraft.ts
   - id: openwiki-source-f4983b717b76eb5f0cfd69e1
@@ -63,7 +55,7 @@ sources:
     resource: repo://libs/evidence-schema/src/ast/keyData.ts
   - id: openwiki-source-6dd8352adfce201b404ea1bf
     resource: repo://libs/evidence-schema/src/ast/provenance.ts
-generated: { by: "pi", at: "2026-11-18T09:45:40.969Z" }
+generated: { by: "pi", at: "2026-11-18T12:34:41.390Z" }
 ---
 
 # 关键数据、派生与来源追溯
@@ -115,13 +107,13 @@ cel-js运行时int/uint用bigint精确运算。JSON输入允许safe number或CEL
 
 ## 文本来源是元素级记录
 
-draft element.provenance的text/locator/source(kind contract/prd/interview/blueprint/unknown)经compileDraft复制到entity.sourceSnippet；Zod EntityBase明确允许ProvenanceSnippetSchema，DraftAttribute没有独立来源字段。手写模型可以省略；协议全文和条款精确切片存于 manifest.sourceDocument，sourceSnippet 可用 clauseIndex/charStart/charEnd 关联，但原句仍须一致。collectClauseTrace 先核精确范围、再核 index、最后只接受唯一原句匹配，歧义进入 unmatched，不做模糊法律引用。annotation 的分类/理由不等于强制证明每对象都由该句导出。
+draft element.provenance的text/locator/source(kind contract/prd/interview/blueprint/unknown)经compileDraft复制到entity.sourceSnippet；Zod EntityBase明确允许ProvenanceSnippetSchema，DraftAttribute没有独立来源字段。手写模型可以省略；导入时可记录合同全文与条款范围，检查器可显示已选对象自己的来源片段。annotation 的分类与理由是对文本的解读。
 
 native sensors不对照访谈记录，模型是唯一输入；interview仅是来源kind。对话里说过但未落成模型不算验证证据。公开 API 与 flow story 投影不输出 sourceDocument/sourceSnippet；旧离线 workbench 已撤除，作者可以看模型不等于有权看来源材料。
 
 ## 邻接与验证
 
-diffDomainModels复算两侧ledger，报告source/rule/expression变化、hasKeyDataDrift和两侧owed计数；这是模型比较能力，不表示桌面有branch API。生产drift直接读derivedByRuleRef：后端提交派生值为block DERIVED_VALUE_SUPPLIED、未声明字段warn UNMODELED_ATTRIBUTE_WRITTEN。
+diffDomainModels复算两侧ledger，报告source/rule/expression变化、hasKeyDataDrift和两侧owed计数；这是模型比较能力，不表示桌面有 branch API。
 
 keyDataLedger/keyData specs保护八类优先级、counts、other局限和未标排除；traceability/celAnalysis specs保护native成员/macro/shadowing、动态索引、cycle、scalar纪律。FM/sensor specs保护warn/block区分，Inspector specs保护来源展示/绑定/撤回的一次撤销与Sheet header。审查还需补问未标金额、other提供方、语义正确性、真实HTTP实现和scope闭环。
 

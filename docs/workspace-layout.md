@@ -7,7 +7,7 @@ each answers a different question.
 | --------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------- |
 | `apps/`         | Runnable entry points: `desktop` (Electron Forge) and `cli` (the unified `evidence` command)         | yes (`apps/*`)                  |
 | `libs/`         | Model/schema/interaction engines, model I/O, shared tools, API projection, acceptance, Agent and MCP | yes (`libs/*`)                  |
-| `libs/desktop/` | Desktop contracts, UI kit, canvas/inspector/story/delivery/drift/agent features and test support     | yes (`libs/desktop/*`)          |
+| `libs/desktop/` | Desktop contracts, UI kit, canvas/inspector/story/delivery/agent features and test support     | yes (`libs/desktop/*`)          |
 
 Nothing is a library in two toolchains: every `libs/*` entry is a TypeScript
 package consumed through pnpm, and no Java or Gradle module lives in this
@@ -115,7 +115,7 @@ Tags drive `@nx/enforce-module-boundaries` in `eslint.config.mjs`:
   of constants; dependencies on Node libraries are type-only. It is not a new
   general-purpose RPC protocol. Feature hooks take narrow API ports as arguments;
   only the application shell reads `window.evidenceAPI`.
-- `desktop-feature-story`, `desktop-feature-delivery`, `desktop-feature-drift`
+- `desktop-feature-story`, `desktop-feature-delivery`
   and `desktop-feature-agent` own their UI, hooks and colocated tests. Cross-feature
   coordination, window handling and project services stay in `apps/desktop`.
   Shared renderer fixtures live in `desktop-testing`, never in an app import.

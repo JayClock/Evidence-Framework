@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:69642483dc0e5dc7b0009563fca0a439c72e141b24305b0556c1e8064b1a9da5",
+  "pageVersion": "sha256:a4f7587a45ca396ca86df6e0b586bd76f1a052a83a16ed98faf7516641dcaf7b",
   "claims": [
     {
       "id": "claim_ee126c5ec7e54e45ba574ec335210e21",
@@ -75,15 +75,15 @@
       "statement": "keyDataSummaryOf folds the key-data audit into totalItems, resolvedCount computed as total minus the owed list, decisionOwedCount and an unresolved list capped at 40, emitting info KEY_DATA_RESOLVED when nothing is owed or one warn KEY_DATA_DECISION_OWED per path; passed counts block findings only, while isStageGateReady also requires a passed stage gate, zero owed decisions and a clean API summary, so an owed decision never blocks the report but always closes the gate.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.spec.ts#L130-L155",
+          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.spec.ts#L129-L154",
           "version": "repo-lines-v1:sha256:671b4007e99b9d81031f5b2756a0efe35550de44689b2740716d25cc6a862166:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRlMDgwN2UwZDM4MTVmNjFkMjI2ZTVhNzdmMTIxOWU3NWZiOWRlM2ZlMzViNmY3MmI1N2RjNTdkZjQwM2U3YzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkwOTNlMTI5MDZhNjFmZDVjMDg5ZmVlOGZjYWZkOTUyZTU3YTU5MDlhMjQ5ZGQxMjUwOTQ5OGQyNzFhNzFjOTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY5MGVhYzg2MWFhZDk2YzJiNTU0YjEwZTYwYjZiMGI5NDliZWM2OWE1YjkxNzYyMjk4OTNmMjZhYmY1N2QzMDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNiYmNjODZlZGQzYzY0ZjZiNWQyMjNhY2ZmYTU3ZmE0NzIwNmQ5ZmRlZWE0ODUwM2NmODM1OTQ3ZjA2NTkxNTkifQ"
         },
         {
-          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts#L244-L291",
+          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts#L196-L243",
           "version": "repo-lines-v1:sha256:e706a48733c69ae9a50dc6955071f44f431463650858322fefbc19f60306ee90:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM4N2M5MzU5ZDliOGJiOTgzZTkwMmRkOTZhZWM5YzQ3YzYxYjM2NWFiY2NiMDc1NGU1ZjViMThkNGY3NzMzNTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NWQ0ZTRhOGFmYmExMDZiZDc1ODY4ODA1NTA5MjU4MzdjMmE4NTA5NTUxMjU3OGFiZDNkZmM1MTQwNDM5MTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE5MjViMTNjOGUzNzRmODkyNTQxNGQxNzViMGI2NGZjOWJmNWQyZjA5YzkyZWExZDk1Njc0NDU5MmI0NjJjYzIifQ"
         },
         {
-          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts#L302-L349",
+          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts#L254-L301",
           "version": "repo-lines-v1:sha256:751a130fc33ccf108062f8b667c67de7bffd3f3ca9c51dd0a8a72d937432d3c4:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU4YzE2NDZkMGIxZWI3NTRhZWU2NTAwYmZhMTBjMThkYjc3YzE0YWQ1OGRmNGRkMmMyM2RkNjY5NzcyODI5NGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA1NWY4ZGVmYzUzMzk4MGNkYzFmN2Y5YjEzZGU3NTgyZTU0NGY1MmE4OTNlZTlkMzZlMDZhNjRlNTJmZGMzODQifQ"
         }
       ]
@@ -165,7 +165,7 @@
       "statement": "The `other` bucket is a blind spot: isKeyDataResolved rejects it but only needs-decision sets decisionOwed, and the sensor summary computes resolvedCount as total items minus the owed list, so a key-data attribute on a role or context entity is reported as resolved and produces no issue at all.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts#L252-L291",
+          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts#L204-L243",
           "version": "repo-lines-v1:sha256:e02f4d8150957121ea4635ce36128e5b8fdf04073011b404c0801f843eaf4c5d:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAyNTdmM2I3NTVlNWNhZWIzZmM1YTZiODk0NGI4ZjlkYmVjOTEzYTYwODhhNWM2MzJjNzY3ODY0NDNiYTliOTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM4N2M5MzU5ZDliOGJiOTgzZTkwMmRkOTZhZWM5YzQ3YzYxYjM2NWFiY2NiMDc1NGU1ZjViMThkNGY3NzMzNTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFjNTc1YjM1ZTdiN2VhMmE1OTc1YTg5MjUzODVjMDEwNWE3NWE0Y2I1MzU1MzU2ZmZiZWFlZTliOWM1ODY0MjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE5MjViMTNjOGUzNzRmODkyNTQxNGQxNzViMGI2NGZjOWJmNWQyZjA5YzkyZWExZDk1Njc0NDU5MmI0NjJjYzIifQ"
         },
         {
@@ -237,7 +237,7 @@
       "statement": "lineage错误进入FM errors/block，provider待决仍台账warn，两者验证问题不同。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts#L196-L291",
+          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts#L148-L243",
           "version": "repo-lines-v1:sha256:73bbaa3da77c40487fcd0bb1b407588de712cc66e5f3177569619630d5167c7a:eyJzZWxlY3RlZExpbmVDb3VudCI6OTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI5N2E2NTZlODliYWY0ODM1MzE5NmYwZmE4NWMxNTgzMWY3MDVlZWRjZWY2N2Y3OTlkYWFjYjU3ODU1NTk3ODEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM4N2M5MzU5ZDliOGJiOTgzZTkwMmRkOTZhZWM5YzQ3YzYxYjM2NWFiY2NiMDc1NGU1ZjViMThkNGY3NzMzNTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU5ODI4NzUyZjgwMmVkYWEwNjFjMmFlYWM1YmM0OTMxZmE2NjFmM2EyODUzMzY5ZWFiNDNlM2E5YmE5Nzk4NzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE5MjViMTNjOGUzNzRmODkyNTQxNGQxNzViMGI2NGZjOWJmNWQyZjA5YzkyZWExZDk1Njc0NDU5MmI0NjJjYzIifQ"
         },
         {
@@ -313,20 +313,6 @@
       ]
     },
     {
-      "id": "claim_8d1ea507b95c4e0bb719b6ba6f5c2d79",
-      "statement": "The production drift sensor reads derivedByRuleRef rather than the ledger: a service writing a field the model says is derived produces a block DERIVED_VALUE_SUPPLIED finding citing the rule, and writing an undeclared field produces a warn UNMODELED_ATTRIBUTE_WRITTEN finding.",
-      "evidence": [
-        {
-          "resource": "repo://libs/evidence-agent/src/sensors/native/driftSensor.spec.ts#L116-L140",
-          "version": "repo-lines-v1:sha256:b03e93c796bd9389faf8dae41f2afff8c8b1b02de45d80ede89fb0ec4c797b26:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVkMDQwNjk5YzdkZjI1YTM5MzNjNDg5MzVhODM3MDIyYmVjMDE5Zjc4M2ZhMGM5NjlhNTc0ZGVjNTM1ZWM3NjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUzNTc4YTFiODE5NDU4MmVjOWY0MDJhZDQzZGM0MzY2MjFjYTdlMTZiNzdhNDE5MzNiNjdlNzcwODVlMWMzOTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY3MjI2OTQ4MTJhYTQxNDNiNmUyODU5MjNmNDM1NjVjYjY2ODRhMDliZmE3NjNmZGIzZjhjMDk2NzRlMTI5ZTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRmNmFiOGQyNGUwZTE5OGYyYmQ4MDZiMzllZjZlZjg4YWNmZDE5ZWM0NzgwYjYyOGZmNWQ1ZDlhNjgwN2RmODYifQ"
-        },
-        {
-          "resource": "repo://libs/evidence-agent/src/sensors/native/driftSensor.ts#L241-L300",
-          "version": "repo-lines-v1:sha256:d6c01ae097f4a50bc6990241e160917dbcc098bdcb59d07d004b6807a7e778a8:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhZGQ3MjkxZjIzYTc2MWUzNTcxYjEyMTA5NzgzYWMyODgxN2M1NWRkZTAwNDgyYjdiMTgzMWQ1M2NmYzNkOGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM3NWMyYmNhNzE2YTBmNjBmYTA1NGZiZGEzMGU4N2FmNzMyZjQ3ZWJiNzIwMGMxYTJiY2M4NWEzZmEwMWVlYjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBiYzI4NGU2ZGY4MjJkNmZmYmIyMTYwMDEyYTNmMTQ4NjM1ODI0MTZjYTk3NWZiN2VlNmQyZDA0NjdmYTNiNDAifQ"
-        }
-      ]
-    },
-    {
       "id": "claim_461f192ad0f8426ca2d9987647b4d549",
       "statement": "测试保护来源优先级/计数、未标排除、provider展示以及派生绑定/撤回keyData的会话行为。",
       "evidence": [
@@ -343,24 +329,10 @@
           "version": "repo-file-v1:sha256:3a09c020c22acab4e1e6bf4951352a33ad0d394dc20a2fbc4c29141311aa84df"
         }
       ]
-    },
-    {
-      "id": "claim_da2de8be5b2349518d661e47cf880041",
-      "statement": "collectClauseTrace 在有全文时只接受原句一致的精确范围/index/唯一文本匹配，歧义留 unmatched；无全文时按 snippet 归组，不模糊解析法律引用。",
-      "evidence": [
-        {
-          "resource": "repo://libs/evidence-model-core/src/ingestion/clauseTrace.spec.ts",
-          "version": "repo-file-v1:sha256:17ffb5561f0634c93c7336a86b13f2bb2abc6ee6de97be36f9c38b53a200f661"
-        },
-        {
-          "resource": "repo://libs/evidence-model-core/src/ingestion/clauseTrace.ts",
-          "version": "repo-file-v1:sha256:50a480d0f624f190690b4328b263755f3459288dde32e4925ca9dcf83d0bdbbd"
-        }
-      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-18T09:45:40.969Z"
+    "at": "2026-11-18T12:34:41.390Z"
   }
 }

@@ -26,7 +26,6 @@ const handlers = (): CommandHandlers => ({
   setViewMode: vi.fn(),
   zoomToSelection: vi.fn(),
   openDelivery: vi.fn(),
-  openSandbox: vi.fn(),
   rerunSensors: vi.fn(),
   askAgent: vi.fn(),
   openRail: vi.fn(),

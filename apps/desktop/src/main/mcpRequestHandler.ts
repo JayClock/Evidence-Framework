@@ -10,7 +10,6 @@ import type {
 import type { McpRendererMethod } from '@evidence-poc/desktop-contracts/mcpIpc';
 
 import type { McpDeliveryService } from './mcpDeliveryService';
-import type { DriftService } from './mcpDriftService';
 
 /** Thrown by a dependency to surface a stable MCP error code. */
 export class McpRequestError extends Error {
@@ -49,7 +48,6 @@ export interface McpRequestHandlerDeps {
   renderer: McpRendererChannel;
   sensors: McpSensorService;
   delivery: McpDeliveryService;
-  drift: DriftService;
   capture: McpCaptureService;
   /** Notified for every served call, so the header can show activity. */
   onCall?: (method: EvidenceMcpAppRequest['method']) => void;
@@ -79,7 +77,6 @@ export const createMcpRequestHandler = ({
   renderer,
   sensors,
   delivery,
-  drift,
   capture,
   onCall,
 }: McpRequestHandlerDeps) => {
@@ -116,11 +113,6 @@ export const createMcpRequestHandler = ({
         return (await delivery.openapi(
           await activeRoot(renderer),
         )) as EvidenceMcpAppResult;
-      case 'audit_production_drift':
-        return drift.auditDrift({
-          rootPath: await activeRoot(renderer),
-          document: request.document,
-        });
       case 'get_canvas_screenshot':
         return captureCanvas({
           renderer,

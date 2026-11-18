@@ -5,7 +5,7 @@ description: 按Zod契约、Immer事务、native CEL、ELK、Node I/O、桌面IP
 tags: [testing, vitest, fixtures, digests, injection, desktop, cli, acceptance]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-18T09:45:40.969Z
+    at: 2026-11-18T12:34:41.390Z
 sources:
   - id: openwiki-source-164e2da859b5277df81c7d94
     resource: repo://.github/workflows/ci.yml
@@ -49,7 +49,7 @@ sources:
     resource: repo://tools/workspace-rules/boundary-drill.mjs
   - id: openwiki-source-b58f839a189d87a7e1f37d39
     resource: repo://vitest.config.mts
-generated: { by: "pi", at: "2026-11-18T09:45:40.969Z" }
+generated: { by: "pi", at: "2026-11-18T12:34:41.390Z" }
 ---
 
 # 测试边界与验证策略
@@ -82,7 +82,7 @@ pnpm exec nx run-many -t typecheck lint --all
 | 桥与竞态 | Agent/MCP/runtime/useGraphLayout/useDeliveryHub |同步revision、旧reply丢弃、ack顺序、超时、冻结export、过期review不撤后续工作 |
 | API与兼容性 | projection/openapi/outputRenderer、oasdiffRunner/breakingScenarios |最终contract/overlay、schema/consumer types、稳定bytes/manifest、原生工具版本/错误闭合 |
 | HTTP验收 | `brunoRenderer.spec`、`acceptance.e2e`、`runner/suiteSelection`、`cli governance.e2e` | 固定 Bruno 对真实 SUT 执行；检查捕获、派生断言、双门禁、漂移、退出码与报告 |
-| stories/来源/AI | flowAggregator/story/whatIf/journeyPreview、clauseTrace、aiConfig/safeStorage |声明 flow 与前缀隔离、结构化来源精确匹配、凭证隔离及模型切换 |
+| 放映、来源、AI | flowAggregator/story/whatIf/journeyPreview、EditorScreen、aiConfig/safeStorage | 声明的流程与前缀隔离、选中对象的来源片段、凭证隔离及模型切换 |
 
 ## 注入昂贵依赖，不伪造被测合同
 

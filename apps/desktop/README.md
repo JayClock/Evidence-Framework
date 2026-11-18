@@ -135,7 +135,7 @@ Renderer behavior is shared through Nx libraries:
 | IPC DTOs and channel constants           | `@evidence-poc/desktop-contracts`                                                                     |
 | layout, viewport, rulers                 | `@evidence-poc/evidence-canvas-interaction`                                                           |
 | canvas and inspector UI                  | `@evidence-poc/desktop-feature-canvas`, `desktop-feature-inspector`                                   |
-| story, delivery, drift, Copilot UI/hooks | `desktop-feature-story`, `desktop-feature-delivery`, `desktop-feature-drift`, `desktop-feature-agent` |
+| story, delivery, Copilot UI/hooks | `desktop-feature-story`, `desktop-feature-delivery`, `desktop-feature-agent` |
 | browser sensor/event DTOs and labels     | `@evidence-poc/evidence-agent/browser`                                                                |
 | inline acceptance compilation            | `@evidence-poc/evidence-acceptance/projection`                                                        |
 | shared scripted API/renderer fixtures    | `@evidence-poc/desktop-testing` (tests only)                                                          |

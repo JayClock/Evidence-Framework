@@ -5,14 +5,7 @@ import {
   DOMAIN_ID_PATTERN,
 } from '@evidence-poc/evidence-schema';
 
-/**
- * Typed-value rules for compile-time example evaluation and trace inspection.
- *
- * They are the one reading of a typed value: the compiler and the
- * trace reader accept exactly the same values, and a value either satisfies its
- * declared `valueType` or fails with the reason.
- */
-
+/** Typed-value rules for compile-time example evaluation. */
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 const ISO_TIMESTAMP_PATTERN =

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { ActivityRail } from './ActivityRail';
@@ -9,23 +9,21 @@ describe('ActivityRail', () => {
       <ActivityRail activeTab={null} ledgerActive={false} onSelect={vi.fn()} />,
     );
 
-    expect(screen.getByRole('navigation', { name: '活动导轨' })).toBeVisible();
-    for (const label of [
-      '总台账',
-      '门禁与诊断',
-      '生产漂移',
-      'AI 协同',
-      '条款审计',
-      '共创工作坊',
-    ]) {
-      expect(screen.getByRole('button', { name: label })).toBeInTheDocument();
-    }
+    const rail = screen.getByRole('navigation', { name: '活动导轨' });
+    expect(rail).toBeVisible();
+    expect(
+      within(rail)
+        .getAllByRole('button')
+        .map((button) => button.getAttribute('aria-label')),
+    ).toEqual(['总台账', '门禁与诊断', 'AI 协同', '共创工作坊']);
   });
 
   it('marks ledger independently of the active drawer and reports its click', () => {
     const onSelect = vi.fn();
 
-    render(<ActivityRail activeTab="copilot" ledgerActive onSelect={onSelect} />);
+    render(
+      <ActivityRail activeTab="copilot" ledgerActive onSelect={onSelect} />,
+    );
 
     expect(screen.getByRole('button', { name: 'AI 协同' })).toHaveAttribute(
       'aria-pressed',

@@ -17,7 +17,6 @@ import type {
 } from './ingestion.js';
 import type { EvidenceMcpApi } from './mcpIpc.js';
 import type { EvidenceStoryApi } from './story.js';
-import type { EvidenceDriftApi } from './drift.js';
 import type {
   CreateProjectDialogInput,
   CreateProjectDialogResult,
@@ -108,13 +107,6 @@ export interface EvidenceDesktopApi {
   /** MCP bridge status and the renderer side of external tool calls. */
   mcp: EvidenceMcpApi;
   /**
-   * The production drift radar.
-   *
-   * Reads the saved model in the main process: an audit that
-   * described unsaved canvas edits would answer a question nobody asked.
-   */
-  drift: EvidenceDriftApi;
-  /**
    * Business text and blueprint tables in, a model out.
    *
    * Both calls run in the main process: reading uses the project's model
@@ -141,8 +133,6 @@ export type {
   IngestionInputKind,
   IngestionReader,
 } from './ingestion.js';
-
-export type { DriftRequest, TraceDialogResult } from './drift.js';
 
 export type {
   DeliveryPreview,

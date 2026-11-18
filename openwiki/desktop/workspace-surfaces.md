@@ -1,42 +1,34 @@
 ---
-type: frontend
-title: 工作区、台账、交付与漂移
-description: EditorWorkspace 的 rail/drawer、业务泳道/拓扑/台账/分屏、delivery/drift hubs、问题条和命令键盘的所有权、定位与过期状态。
-tags: [desktop, renderer, ui, keyboard, navigation, surfaces]
+type: desktop
+title: 工作区、台账与交付
+description: 编辑器如何通过左侧导轨切换台账、打开诊断与协同工具，以及如何定位对象、使用快捷键和预览交付契约。
+tags: [desktop, workspace, ledger, delivery, shortcuts]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-17T07:06:17.114Z
+    at: 2026-11-18T12:34:41.390Z
 sources:
   - id: openwiki-source-2ff5ad29deef1166ab3731d6
     resource: repo://apps/desktop/src/renderer/components/canvas/CanvasFloatingHud.tsx
   - id: openwiki-source-c6160e86e9fe73aae407ea29
     resource: repo://apps/desktop/src/renderer/components/command/CommandPalette.tsx
-  - id: openwiki-source-54bfa14340461b5df12c5a93
-    resource: repo://apps/desktop/src/renderer/components/console/ProblemsPanel.tsx
   - id: openwiki-source-bb63e45b6dfb119f48ce6593
     resource: repo://apps/desktop/src/renderer/components/layout/ActivityDrawer.tsx
   - id: openwiki-source-29f60f1a4fe3d6d3c2e49178
     resource: repo://apps/desktop/src/renderer/components/layout/ActivityRail.tsx
-  - id: openwiki-source-f33a2c1f54f15e4161b2463b
-    resource: repo://apps/desktop/src/renderer/components/split/SecondaryStage.tsx
+  - id: openwiki-source-74158507676a0014907d29c4
+    resource: repo://apps/desktop/src/renderer/screens/EditorScreen.spec.tsx
   - id: openwiki-source-9459ee1a8fc917f2d94619ce
     resource: repo://apps/desktop/src/renderer/screens/EditorScreen.tsx
   - id: openwiki-source-febf1dc4c40bace9f81ae6c9
     resource: repo://apps/desktop/src/renderer/state/commandRegistry.ts
-  - id: openwiki-source-64e02f46b7978332dd710c41
-    resource: repo://apps/desktop/src/renderer/state/useBilateralSync.ts
   - id: openwiki-source-d4fc84c37b0edfd16ffd121b
     resource: repo://apps/desktop/src/renderer/state/useCommandRegistry.ts
   - id: openwiki-source-bb6258935fdbbe2efa81dede
     resource: repo://apps/desktop/src/renderer/state/useEditorShortcuts.spec.tsx
   - id: openwiki-source-e4eff0404180d86ccc5c9300
     resource: repo://apps/desktop/src/renderer/state/useEditorShortcuts.ts
-  - id: openwiki-source-07d3a3a523a823055d2c6b41
-    resource: repo://apps/desktop/src/renderer/state/useWorkspaceLayoutState.spec.ts
   - id: openwiki-source-5c9b3359cf58a8175a7e8c84
     resource: repo://apps/desktop/src/renderer/state/useWorkspaceLayoutState.ts
-  - id: openwiki-source-c0750187b8b81a71c6768dd8
-    resource: repo://apps/desktop/src/renderer/state/useWorkspaceSplitState.ts
   - id: openwiki-source-cd0c9b3dd84e3af20289b703
     resource: repo://apps/desktop/src/renderer/state/useWorkspaceViewMode.ts
   - id: openwiki-source-4f65ae6b144628015dbea7fa
@@ -49,57 +41,44 @@ sources:
     resource: repo://libs/desktop/feature-inspector/src/inspector/KeyDataLedgerSheet.tsx
   - id: openwiki-source-329e2fdd1b963b693d975c9a
     resource: repo://libs/desktop/feature-inspector/src/RightInspector.tsx
-  - id: openwiki-source-74d7b554a01c3f371dc93772
-    resource: repo://libs/desktop/feature-story/src/state/journeyPreview.ts
   - id: openwiki-source-245f4a200cbde2a0d89ec4b6
     resource: repo://libs/desktop/feature-story/src/state/useStoryPlayback.ts
-generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
+generated: { by: "pi", at: "2026-11-18T12:34:41.390Z" }
 ---
 
-# 工作区、台账、交付与漂移
+# 工作区、台账与交付
 
-EditorWorkspace 是界面组合点：48px TopHeader、48px activity rail、可选 drawer、resizable centre/inspector、32px BottomStatusBar；problems/inline copilot/hubs/palette 只在需要时覆盖。页面呈现状态不进模型、不进 undo，也不保存到 FM。
+`EditorWorkspace` 组合顶部栏、放映工具栏、左侧活动导轨、可调整宽度的中央工作区与右侧检查器、底部状态栏。界面的展开、布局和阅读模式不写入模型，也不进入撤销历史。
 
-## 一张画布，按需工具
+## 左侧四个入口
 
-RAIL_TABS 当前为 **topology、diagnostics、drift、copilot、clauses、workshop**；诊断 badge 是 block+warn，copilot 待审 patch 是点。diagnostics 特别开画布底部38%问题条，不另叠 drawer。其他 tab 共用 ActivityDrawer：pinned300px占宽、floating320px从left-12盖在画布上、一次只有一个。选对象后 unpinned 退回画布，pinned 保持；Mod+F 先开 topology、下一 paint 以 token 聚焦搜索。
+| 快捷键 | 入口 | 行为 |
+| --- | --- | --- |
+| Mod+1 | 总台账 | 在中央区域切换表格与画布；返回时恢复上次图形布局。 |
+| Mod+2 | 门禁与诊断 | 展开或关闭底部问题面板，按严重性筛选并定位目标。 |
+| Mod+3 | AI 协同 | 打开协同抽屉，查看访谈、工具活动及补丁复核。 |
+| Mod+4 | 共创工作坊 | 打开七步业务提问与成对履约创建向导。 |
 
-画布 controls/HUD 位于 activity drawer 以下的 stacking context，不能遮住 drawer。HUD 管视图/密度/分屏、paper、zoom/minimap，**不创建对象**（创建需 Context/角色红线）。controls/inline copilot 带 capture-hide，data-region/data-pane 等是测试和 MCP 几何协议。
+诊断徽标显示阻塞与警告的合计；AI 协同的圆点表示有待审补丁。协同和工作坊共用一个 `ActivityDrawer`：固定时占 300px，浮动时以 320px 宽覆盖在画布上。切换两项工具会替换抽屉；诊断使用独立的底部面板。
 
-centre 与 inspector 为 resizable pair，中心 min35，right 默认20%、14–26、可折0；横向 ratio 用 autoSaveId。右侧 ledger Sheet 为 modal、55vw，可 Alt+L/按钮开，同 session 编辑，不需返回合并。后台 load/error/live-sync alert 明确不同于空模型。
+## 画布、台账与对象定位
 
-## 业务泳道、拓扑、表格与分屏
+默认画布模式为业务旅程，Alt+1 和 Alt+2 切换旅程与拓扑。浮动工具条管理缩放、密度、视图和场景入口；其层叠顺序低于浮动抽屉。中央区域和检查器宽度由 `react-resizable-panels` 保存，检查器可折叠。右侧字段台账 Sheet 和中央总台账共用同一模型会话。
 
-useWorkspaceViewMode：journey、topology、table、split，默认业务泳道；V切图/表，Alt+1/2/3/4按event.code选模式，避免macOS Alt+2产生™。split isSplit 从mode派生，无第二boolean；pane/direction/size关闭后保留，ratio 按方向持久化。
+台账的定位动作切回画布并聚焦对应节点。问题面板的定位还可指定实体属性或图中的上下文、关系；编辑器负责协调选区、范围过滤和画布定位。顶部放映工具栏支持业务流播放及按需打开的剧情详情。
 
-五副面板是 **ledger/openapi/cel/drift/story**，不是 simulation。OpenAPI 与 CEL badges 分别 route/rule count。SecondaryStage 只渲染 panes[activePane]，inactive unmount，因此 YAML/JSON 等 local state重置；不能依赖隐藏 pane 常驻。maximize 临时 fixed，不关split，close先取消maximize。Drift 不自动回放，用户明确选 trace 才 audit。
+## 交付与诊断
 
-## DriftRadar 与两个契约 hub
+Alt+D 或命令面板打开交付对话框。它展示当前内存快照与项目打开时基线的交付投影和 API 差异；过期的预览不能导出，草稿导出不等于发布批准。底部问题面板也可通过 Alt+X 或状态栏打开。画布不会把上一修订的诊断标到当前模型对象上。
 
-同一个 DriftRadar 可用于 rail、split embedded region 和 modal hub；useDriftAudit 选择文件后经 main读取 saved模型+OTLP JSON，显示span/commit数、passed阻塞结论、findings、errors和remediation。无结果只显示未审计，不把空表当绿灯；loading防重入，读取失败明确error。旧 SimulationSandbox/useSimulation/replay pane已删除。
+## 命令与按键归属
 
-activeHub 保留 **delivery | drift | null** 的互斥值，第二hub替换第一个，不叠加；fixed dialog位于studio之外，也盖住header/status。DeliveryHub 显示当前accepted内存投影与opening baseline，原生oasdiff差异和draft未授权；Drift hub仍看saved来源，不能和未保存预览混淆。
+Mod 在 macOS 为 ⌘，处理程序也接受 Ctrl。Mod+K 打开命令面板，Mod+J 打开内联副驾，Mod+I 或 Mod+反斜杠折叠或恢复右侧检查器。画布支持 Mod+0 重设缩放、Shift+1 适配模型、Shift+2 聚焦当前选区。
 
-story pane 使用声明的 examples flow 生成事实卡片与可选 AI 叙事，播放镜头同步画布，不伪造 HTTP 运行结论。What-If 与本地 journey preview 在副本或当前可见前缀试算，未知绑定保持未知。clauses rail 本地显示协议条款和模型对象双向定位，workshop 提供七步提问与成对履约创建。
+已处理的按键不会重复派发；导轨快捷键不抢输入框焦点。补丁复核期间 Escape 优先撤回补丁，Mod+Enter 确认补丁但不抢文本输入。无待审补丁时，Escape 可退出放映或清理选区。命令面板复用同一组操作处理程序，在执行前关闭，避免对话框相互抢焦点。
 
-## 一选择，多种定位意图
+## 验证入口
 
-画布、台账、OpenAPI行、CEL规则用 bilateral focus bus 的source/token同步；shell是resolver，校验geometry存在，必要时清隐藏target的scope，selectAttribute并pan。entity#attribute精确到行，Context/relationship只定位不造实体选择。返回非table模式时重新聚焦选择，避免丢失阅读位置；diagnostic badge同时开problems activeIssue并focusIssue。详情见[renderer状态](./renderer-state.md)。
+`ActivityRail.spec.tsx` 固定四个入口及顺序，`useWorkspaceLayoutState.spec.ts` 验证快捷键、抽屉与交付对话框。`EditorScreen.spec.tsx` 联测总台账切换与回到画布、问题定位、工作坊、放映和补丁复核。
 
-## 快捷键与事件所有权
-
-CHORDS是palette键帽来源（显示⌘，handler也接受Ctrl）；rail自有⌘1..6表，HUD打印⌘0/⇧1。常用键：⌘S保存，⌘K命令，⌘F结构搜索，⌘J inline副驾，⌘B拓扑，⌘I/⌘\\折Inspector；Alt+D交付、Alt+Shift+S漂移hub（旧内部handler仍名openSandbox），Alt+X问题、Alt+S旋转split、Alt+4 ledger、Alt+5 contract、Alt+L台账；⌘Shift+R重查；undo/redo、zoom/fit/selection复用会话/画布handler。
-
-事件先尊重defaultPrevented/capture surface。ledger Sheet的Escape capture关闭自己且不清背后选区；inline copilot无pending patch时capture关闭，有pending则退让。workspace Escape：pending patch先revert（typing guard之前），其次closeSplit，最后clearSelection；Mod+Enter accept在typing guard之后，避免抢文本输入。bare键/Alt与rail/view chords尊重input/textarea/select/contenteditable/CodeMirror，Mod digits还要求无Alt/Shift。
-
-Alt+4 同时表示 split 模式与 ledger split 入口，Alt+5 选交付契约；具体以已注册 handler/defaultPrevented 仲裁。
-
-## Palette 是索引，不是另一实现
-
-buildCommands(capabilities,handlers) 复用header/keyboard行为；disabled rows保留理由（busy时等待、没有选择时说明原因），query非空才显示对象targets。运行先关palette再perform，防OS dialog在focus trap后悬挂。useCommandRegistry以memo对象稳定结果，groupCommands固定分组。ui-kit统一Dialog/Sheet/Resizable/Tooltip/CodeEditor/Toaster，不在每个surface复制一套focus/density逻辑。
-
-## 验证地图
-
-EditorScreen specs联测六rail、drawer交还/固定、台账↔画布、分屏tabs、pending patch Escape与scope不进历史。ActivityRail/Drawer、SecondaryStage、DriftRadar、DeliveryHub独测标记、badges、mount/unmount、空/错误/过期与键盘。shortcuts/workspace hooks tests保护typing/defaultPrevented/捕获仲裁；CommandPalette保护disabled解释和先关闭再执行。
-
-相关：[画布](./canvas-and-inspector.md) · [交付](../contracts/delivery-routes-and-diff.md) · [补丁审查](./ingestion-and-patch-review.md) · [传感器](../agents/sensor-orchestration.md)
+相关：[渲染状态](./renderer-state.md) · [画布](./canvas-and-inspector.md) · [交付](../contracts/delivery-routes-and-diff.md) · [补丁审查](./ingestion-and-patch-review.md)

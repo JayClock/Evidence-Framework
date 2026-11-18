@@ -29,18 +29,6 @@ const deliveryService = () => ({
   }),
 });
 
-const driftService = () => ({
-  auditDrift: async () => ({
-    modelId: 'product-procurement',
-    spanCount: 0,
-    commitCount: 0,
-    counts: {},
-    findings: [],
-    passed: true,
-    errors: [],
-  }),
-});
-
 const appState = {
   isRunning: true,
   activeProject: {
@@ -88,7 +76,6 @@ describe('startMcpBridgeRuntime', () => {
           renderer,
           capture,
           delivery: deliveryService(),
-          drift: driftService(),
           sensors: {
             readKeyDataAudit: async () => ({
               producedBy: 'unavailable',
@@ -101,7 +88,6 @@ describe('startMcpBridgeRuntime', () => {
             checkStageGate: async () => ({
               passed: true,
               exitCode: 0,
-              driftDetected: false,
               blockingReasons: [],
             }),
           },
@@ -148,7 +134,6 @@ describe('startMcpBridgeRuntime', () => {
           renderer,
           capture,
           delivery: deliveryService(),
-          drift: driftService(),
           sensors: {
             readKeyDataAudit: async () => ({
               producedBy: 'unavailable',
@@ -161,7 +146,6 @@ describe('startMcpBridgeRuntime', () => {
             checkStageGate: async () => ({
               passed: true,
               exitCode: 0,
-              driftDetected: false,
               blockingReasons: [],
             }),
           },
@@ -204,7 +188,6 @@ describe('startMcpBridgeRuntime', () => {
           renderer,
           capture,
           delivery: deliveryService(),
-          drift: driftService(),
           sensors: {
             readKeyDataAudit: async () => ({
               producedBy: 'unavailable',
@@ -217,7 +200,6 @@ describe('startMcpBridgeRuntime', () => {
             checkStageGate: async () => ({
               passed: true,
               exitCode: 0,
-              driftDetected: false,
               blockingReasons: [],
             }),
           },
@@ -274,7 +256,6 @@ describe('startMcpBridgeRuntime', () => {
           renderer,
           capture,
           delivery: deliveryService(),
-          drift: driftService(),
           sensors: {
             readKeyDataAudit: async () => ({
               producedBy: 'unavailable',
@@ -287,7 +268,6 @@ describe('startMcpBridgeRuntime', () => {
             checkStageGate: async () => ({
               passed: true,
               exitCode: 0,
-              driftDetected: false,
               blockingReasons: [],
             }),
           },

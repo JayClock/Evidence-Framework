@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:85609b7eba7ba8eca642000dd05495252f7814b1db848b62ed74a5ce8513eabe",
+  "pageVersion": "sha256:b8d407f449228dd9bc501235aa50e6dede0afdd69ac3bf660b578cd2b2a358c5",
   "claims": [
     {
       "id": "claim_c08824c2d15442f09d8d2d854923d444",
@@ -35,11 +35,11 @@
           "version": "repo-lines-v1:sha256:e2b4fe8588e2f1ee3f436275a86e5c0060cc4f188eb62fb92abad2dac0e79350:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkwNjgyNjU4YTI5MDU2ZTAzYjQwY2VmMTJkNDdjMDg1YjkyZWZjNDQ2NmZkMTM0ZWExZTgyZWJhNmMxMGNjZTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5MDlmZDc4MWYyZDgzMGIzNTAzODZmNmE5OTM5MGE2MjM3NGFlNmM2NzI5OTZhNGJlMzMyMmMzYzY0MDZlZTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc1MmEzZTY4M2Y0NTA3MWNkMGFkMThiNWE0ZDRkY2I3ZmEyNzZmNjM5Nzc0NTc3Y2U1N2E0OTJjMTdjZDk5ZDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ0MGJiNThiNTc5NDdmZjAyNTJjMTIwMjRjOGVjOTI1NDViNzkyMDA3ZDc5Njc1NGViZGE2YzhmMjMyYWM4M2YifQ"
         },
         {
-          "resource": "repo://libs/evidence-agent/src/prompts/index.ts#L13-L18",
+          "resource": "repo://libs/evidence-agent/src/prompts/index.ts#L12-L17",
           "version": "repo-lines-v1:sha256:81abfcee89d29fad6e3926ad645e8b365367c3675bb1f61a31ee1bcacca57723:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzYzYmIyYzE5YTk1NjgxMDViZWU4MDFmMjQ2YjQ4YzhlYTViMzQ0N2JhMDA5ODg5ODAzNzQzNjZhMThlNWYxMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYjAyZDJjMGQ2ZGM1ZTc0ZDkyZmExNGI5MWRiZWEyNjQwOTBiZWIzNWZkYjkxODhkOWIzNDExODFkY2U5ZjRjZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGQyMDRlMDQxYTUxNzNhOWEwYTA3OWI2ZmQzZmYzNzA3NmM2YjBjMTI4MWYzMjU2OTU0NDAxZTAwNGZhZmUzOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjYyYThiMTc2MGM3OGY5MThkNTNmOTZlZjJhMmExZWE2MThiNTAyOGE2ZmM2NmNmNjdkY2Y1NTU2NzQwOGI3MyJ9"
         },
         {
-          "resource": "repo://libs/evidence-agent/src/prompts/prompts.spec.ts#L26-L46",
+          "resource": "repo://libs/evidence-agent/src/prompts/prompts.spec.ts#L23-L43",
           "version": "repo-lines-v1:sha256:25a19bcb5380bcab3cddecd2953839b89dfbf007a12e77ecbedfc54529ceeb12:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYyZWM2ODEwODAxOTA5YWNiZjZmOTc5OWRkZGE3MzNhODgzNTRmZDk1YzY5Y2UwNDUyN2YwMmVhNDUwYWRmNDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM0NjM0ZjhhNGVhMDliOGFmNTkwZWUyZmRkZGM4MTA0ZTgzMDFkYzA0YjIyOWZlOGU0MzEyYzY0YTQ2Yjk2NGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMzk1YzZiODQ5OWFlNDkyZWY5ZjUzMTU3OWVkMmVkZGE3ZDQyOTI3MTYyMmY3ZGI0ODZlZjMxMzEyNTg4MWMifQ"
         },
         {
@@ -170,19 +170,15 @@
     },
     {
       "id": "claim_49ff2d4e333a40ab9eea401475035fbd",
-      "statement": "会话、工具、提示词、传感器、治理和 trace reader 同属 evidence-agent，browser 入口隔离 Node 会话运行时。",
+      "statement": "evidence-agent 提供建模会话、提示词、工具与传感器；browser 入口隔离 Node 会话运行时。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-agent/package.json",
-          "version": "repo-file-v1:sha256:0d4c144c9da8c389f1b3c3f9f998ae722c30a43006a98c6cda21d62891171872"
-        },
-        {
           "resource": "repo://libs/evidence-agent/src/browser.ts",
-          "version": "repo-file-v1:sha256:4c9f3a2bba15db2ef2cbbe702f6abd0a20e8d155563e123291436e5898db697a"
+          "version": "repo-file-v1:sha256:ad0fc6a21785b330f14a1c41fde06885d36372a87f6f4418d4a1f3c1ef344d09"
         },
         {
           "resource": "repo://libs/evidence-agent/src/index.ts",
-          "version": "repo-file-v1:sha256:fcb83c15c513f6c838fc2cfe3c9fcaed7093249fd875ed5838d201a171ef8745"
+          "version": "repo-file-v1:sha256:9c4c6e8f4c3118fab368fcedcbe11477a3c9f719cc50bd80fb08478ce15f48e1"
         }
       ]
     },
@@ -272,7 +268,7 @@
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx",
-          "version": "repo-file-v1:sha256:941b09d88c3a3b6a2ab2f4d3a6e487d76ec671cabde4412a404baf0188cacbad"
+          "version": "repo-file-v1:sha256:2cae815b99c3f2747c9abf184ed98223b2c52f0a4e2f7f121716ee058a113824"
         },
         {
           "resource": "repo://libs/desktop/feature-agent/src/state/usePatchReview.ts",
@@ -291,44 +287,6 @@
         {
           "resource": "repo://libs/evidence-agent/src/session/evidenceAgentSession.ts",
           "version": "repo-file-v1:sha256:601abbf629d88688424b3e5d3d4baa1015b053985f9877454556f8a44ed1a6b2"
-        }
-      ]
-    },
-    {
-      "id": "claim_7b2d5de0eaff46d8b75a536a7857ea5c",
-      "statement": "readProductionTrace turns an OTLP/JSON export into Evidence commits keyed by fm.evidence.ref, silently passing over spans that name no Evidence and reporting spans that name Evidence without trace or span ids, so a malformed export yields empty commits plus path: message errors instead of throwing.",
-      "evidence": [
-        {
-          "resource": "repo://libs/evidence-agent/src/telemetry/productionTrace.ts#L203-L293",
-          "version": "repo-lines-v1:sha256:bf30324a5a9b7ac39603bf6f472f39ebe9afd4ac0f04de1e97337d879462ce12:eyJzZWxlY3RlZExpbmVDb3VudCI6OTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlYTNmZmM0MDA4Y2VmM2I4MTYwZDg4YTFlNjljNzhiMzYyOWVmZDkzNzQ3MjUwZmNmODhkYTdkYTI4YTU5YzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMzMWIzNGZlMjVkZTQ0YzE1MjlmZjkwNmU0MTZlMDM3N2U5ZmI0NGMyMDk5YWFhZDdmZjllZWNlNjgwY2E4MjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
-        },
-        {
-          "resource": "repo://libs/evidence-agent/src/telemetry/productionTrace.ts#L30-L50",
-          "version": "repo-lines-v1:sha256:12e380284f9e17296ef3544447103900fcd9f25237b731b4f7bd381e4b7cfead:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJmMTkxODA2NDIwOGY5ODI4YjQ5ZjE1NzBhZmQyMjRmZWJmNmZiOGQzYTE5YzVmYjE3NTI1MzJlOTdmMzZmODgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdjYjM1Y2I0ZGNkNThmMGRiNzExZjk2NzE3MzVhNmMwZmQ3NjQyODc3ODRlZjhjMDA3NmI5YmZiYWZhOTYyNDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM2MTAyZmE0OTNhZTRiMDFlYWM5YTI5ZDRhMzQ2ZjZmMTZhY2QxMWY1MjZlNzI5MGEwODIyYWZkZDRkZjdiZTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRjY2MxMDFiOTdiMmJmMWE1N2NkNGRjZTYxYjNlNTFmZWE1MGIzYjY2MjhlOTMwOWZlZDMyOWNiNjdmNzBhZmIifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_b190eafd7bc4455d8e47faa7a8bfa77e",
-      "statement": "治理使用 drift 与外部 HTTP acceptance；空/畸形/失败验收要求修实现，只有无 blocking、非空全绿且 model_lagging 才可改模型。",
-      "evidence": [
-        {
-          "resource": "repo://libs/evidence-agent/src/governance/governanceLoop.ts#L142-L213",
-          "version": "repo-lines-v1:sha256:0c2042ab4106ad67dcda5d913e3d3e8718064db891f994cbe44071490a33b244:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBhNTQxMjVmZTQ2NDQ2MTgzMWYxOGI0NGY3YWU0NDc1ZGVhYjRjNWMxMmU5ZGVhZWJkMDhjYjhkOGQ3MDFlYTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU2ZTk3NjMwOTRkNWY4ZjY2OWI3NDViYTg5NGI1YzEwMTBlNDVkNDI1MjE0MjQxYTJiZWIyOWViZWJjNGI0MzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_d884bffb50444af9b191383a801a8f55",
-      "statement": "独立治理指令以漂移和真实 HTTP 验收替代 replay；桌面默认建模指令不被该指令覆盖。",
-      "evidence": [
-        {
-          "resource": "repo://libs/evidence-agent/src/prompts/governance.ts",
-          "version": "repo-file-v1:sha256:52da743e888d38a08ec6d31a0d72880c4d8997dbb111c3ee3c609250b7a76b31"
-        },
-        {
-          "resource": "repo://libs/evidence-agent/src/prompts/index.ts#L44-L51",
-          "version": "repo-lines-v1:sha256:08bb59ef6a124d60646a792edd0e12e9ddabd71f3cc5a0032a8915275110d192:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGYxMjI5MWI5YTkwZDg0YjJjMjE4MzgzMzBlZTk0N2E3MGU5ZjIxZDAyNWE0NjhiY2JkZGIwNTMxYTYxNGRmOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGUxNjNlYTQyNzE0YTk0OTlhZDU2ZGZiNWM4ZGU0MDQ4OGU0NzBlMTc4ZWZkMTk3NzkwYzQ1MGZiZWUzNjA4NiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOWFhMWZhN2I4MDhiMTQ5ZmUxMDc5ODhiOTNhMmZiMTkwN2U3NzA0MjhhODhmYmFjMmFiNDE4NTNjNzQzZTk2NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
         }
       ]
     },
@@ -357,6 +315,6 @@
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-17T06:43:02.055Z"
+    "at": "2026-11-18T12:34:41.390Z"
   }
 }

@@ -33,19 +33,19 @@
 | **派生与安全纪律** | 依赖开发者自觉，计算逻辑常泄漏给前端 | 极易允许入参直接覆盖金额/状态等派生值 | **CEL 声明式服务端求值**，出入参物理隔离 |
 | **模型一致性** | 人肉维护文档与代码，文档永远滞后 | 随对话上下文漂移，生成逻辑前后矛盾 | **纯内存 AST 静态门禁**，按键级拓扑校验 |
 | **人机协作模式** | 无 | 黑盒放手生成，人类只能逐行 Review 代码 | **人机协作门禁（Human Gate）**：画布审查 + 原子算子 |
-| **验收与验证** | 手工补写测试用例，耗时且易遗漏 | AI 自己写测试验证自己的代码（假阳性高） | **规范向下投影为 Bruno HTTP 黑盒验收**与漂移告警 |
+| **验收与验证** | 手工补写测试用例，耗时且易遗漏 | AI 自己写测试验证自己的代码（假阳性高） | **规范向下投影为 Bruno HTTP 黑盒验收**，检查业务断言与响应结构 |
 
 ---
 
 ## 🔄 端到端 AI Coding 研发工作流（Workflow Panorama）
 
-Evidence 不仅是一个桌面设计器，更是贯穿**业务意图澄清 ➔ 领域建模 ➔ 契约向下投影 ➔ AI 驱动多语言 TDD 编码 ➔ 运行时黑盒验收与防漂移**的完整研发闭环：
+Evidence 不仅是一个桌面设计器，更是贯穿**业务意图澄清 ➔ 领域建模 ➔ 契约向下投影 ➔ AI 驱动多语言 TDD 编码 ➔ 运行时黑盒验收**的完整研发闭环：
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
 │                              端到端 AI Coding 研发工作流                                │
 │                                                                                        │
-│  [阶段 1: 业务意图]    [阶段 2: 履约建模]    [阶段 3: 架构师门禁]    [阶段 4: 契约向下投影]    [阶段 5: AI 驱动编码]     [阶段 6: 验收与漂移]  │
+│  [阶段 1: 业务意图]    [阶段 2: 履约建模]    [阶段 3: 架构师门禁]    [阶段 4: 契约向下投影]    [阶段 5: AI 驱动编码]     [阶段 6: HTTP 验收]  │
 │    需求澄清访谈  ──>    FM v5 形式化模型 ──>   桌面图谱与故事  ──>   OpenAPI + Bruno  ──>   多语言 TDD 实现  ──>   运行时黑盒验证   │
 │   (AI Copilot)        (AST + CEL 守护)      (Human Gate)         (Evidence Export)      (Red-Green 循环)       (Bruno + oasdiff)│
 │                                                                                        │
@@ -91,17 +91,17 @@ pnpm evidence export --model b2b-escrow.evidence.json --out generated/ --verify
   - `java-spring`（Java）
   - `python-fastapi`（Python）
 
-### 6. 运行时黑盒验收与防漂移治理（Live Drift & Verification）
+### 6. HTTP 黑盒验收与契约兼容性检查
 - **真机黑盒验收**：
   ```bash
   make -C examples/b2b-escrow verify IMPLEMENTATION=ts-fastify
   ```
   外部编排层为被测服务分配独立端口与内存账本，端到端执行真实 HTTP 红绿场景测试；
-- **双向契约漂移门禁**：
+- **OpenAPI 契约兼容性门禁**：
   ```bash
   pnpm evidence diff baseline.evidence.json target.evidence.json
   ```
-  借助内置 `oasdiff` 比对基线契约与当前实现，拦截任何未经授权的破坏性演进。
+  借助 `oasdiff` 比较基线模型和当前模型派生的 OpenAPI 契约，检查破坏性变更。
 
 ---
 
@@ -212,7 +212,6 @@ pnpm evidence export --model b2b-escrow.evidence.json --out generated/ --verify
 │   │   ├── feature-inspector/           # 属性审查面板、CEL 代码高亮与自动补全
 │   │   ├── feature-story/               # 故事回放、事实卡片与 What-If 交互
 │   │   ├── feature-delivery/            # 交付中心、增量预览与导出状态
-│   │   ├── feature-drift/               # 生产漂移雷达与 trace 选择
 │   │   ├── feature-agent/               # Copilot 会话、补丁桥接与审查
 │   │   └── testing/                     # 桌面端渲染测试夹具与 Mock 容器
 │   ├── evidence-schema/                 # 领域模型 AST 定义与严格语法校验基石
@@ -295,7 +294,7 @@ pnpm evidence diff baseline.evidence.json procurement.evidence.json --format jso
 
 ## 🧭 未来规划与待办（Roadmap & TODOs）
 
-随着 DSL、纯内存校验仿真引擎与桌面端三态视图的完备，后续待办主要聚焦于**下游实现投影**、**独立运行入口收敛**与**运行时双向闭环**：
+随着 DSL、纯内存校验仿真引擎与桌面端三态视图的完备，后续待办主要聚焦于**下游实现投影**、**独立运行入口收敛**与**HTTP 验收**：
 
 ### 1. 下游投影与交付契约（Downstream Projections）
 
@@ -308,9 +307,8 @@ pnpm evidence diff baseline.evidence.json procurement.evidence.json --format jso
 - [x] **统一命令行工具容器 (`apps/cli`)**：基于 `cac` 提供 `evidence check/test/export/diff/pack/unpack/compile`；保留 `inspect/lineage` 与 `api` 兼容工作流，旧 Libs `bin` 入口作为弃用适配器过渡。
 - [ ] **独立 MCP 服务端应用 (`apps/mcp-server`)**：将 MCP 协议服务从纯 Libs 提升为可脱离桌面端、独立以 stdio/SSE 启动的长周期服务容器。
 
-### 3. 生产语义漂移与闭环治理（Drift & Governance）
+### 3. HTTP 验收
 
-- [ ] **生产环境双向语义漂移实时检测（Live Drift Check）**：深化本地传感器体系，实现对下游实际运行 API / 数据库表结构与 DSL 模型基线的在线语义比对和告警。
 - [x] **标准场景验收导出**：从内联 `examples[].test` 直接导出 Bruno 集合，支持依赖捕获、派生断言和显式负向用例。旧 Scenario / Instance 文件格式及内存回放器已移除。
 
 ### 4. 架构与工程规范通用化（Industry Standard Refactoring）

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:378f40750970db654a1f492e033de90211bfe1c4748655bf72d51f02245e058f",
+  "pageVersion": "sha256:9fd91412efedf42122530b2bc05d093e670f83276c2b0fa87c769ee14cb6650c",
   "claims": [
     {
       "id": "claim_5bc15eddd9434496a5f9aae91810a602",
@@ -42,61 +42,11 @@
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx",
-          "version": "repo-file-v1:sha256:941b09d88c3a3b6a2ab2f4d3a6e487d76ec671cabde4412a404baf0188cacbad"
+          "version": "repo-file-v1:sha256:2cae815b99c3f2747c9abf184ed98223b2c52f0a4e2f7f121716ee058a113824"
         },
         {
           "resource": "repo://libs/desktop/contracts/src/delivery.ts",
           "version": "repo-file-v1:sha256:96af347645bf3044d7c8dbafb33e64a931f6f335d08be2b0b7ff974b16ddd9f0"
-        }
-      ]
-    },
-    {
-      "id": "claim_781de0329d924420a42783fa9667a4c2",
-      "statement": "`BilateralSyncBus` retains nothing and stamps every emitted request with a monotonically increasing `token` while callers send the event without one, and it fans out over a copy of its listener set so a listener that unsubscribes mid-handling cannot make the remaining listeners skip the event.",
-      "evidence": [
-        {
-          "resource": "repo://apps/desktop/src/renderer/state/useBilateralSync.spec.tsx#L12-L65",
-          "version": "repo-lines-v1:sha256:58d439fa863b0db030088d2aa66acd412236bd5ebbdc6bbd6daa4c78caadc62e:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc2MDY2MjdmYWE0ODg4ODZkMDZhMWEzMGY5ZDA2Yzk1OTBhMzZkNjUzM2I5NjE5MTM5NGFiYjc0YmFmZDZlM2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5N2RjYzM1MjRiY2ZlZGI1ZDQ3NmQ0NDFhMzA5MjU2N2I1MjJkMTY3YWQwMDQzMGM3MDRkY2E2ODgxYzY5YTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE3ZjE1NzYwMTE2MzRhMDVlNzhkYzgyZTNkYWZlN2Y0MWZhYTE4Y2E1Y2ExMGJlNTJmYmQ2ZjVjNjVhYmQ1YTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI3NzlkMTE4ZDZlM2NiZjQ1MDUzOTc0OGRlZTdhNDMwN2FjYmU2NDQ2Y2JhMjk3ZjI3NjBmYTVkMGJiYTFiYzIifQ"
-        },
-        {
-          "resource": "repo://apps/desktop/src/renderer/state/useBilateralSync.ts#L37-L70",
-          "version": "repo-lines-v1:sha256:6541ba22bbc65dab653142d53dff1607bf64560a96c276fe4e05863fbaa6fc6e:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYyMTBmNmVhYjk3N2UyY2UyYmNkZWVjMDE0NDcwZDBhZWIxMjRjNGYyZTZkNGVmNmMzMmIyMmJmNjRiZGU3MjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg1YmMwY2U3Y2U0ZmRhYTk3MTdiNjk3YTQxNGRiMmMxMzEzMDQ0NmZlN2ViMTVhMDIxNmMwNTBjNmE2NzM2ZTQifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_e66d8ea15fae4794862dd5b8358cb9b3",
-      "statement": "Focus events carry their `source` so each pane ignores its own requests — the ledger drops `table`, the contract viewer and rules pane drop `code`, and the editor screen drops `canvas` — which is why cross-pane sync needs no prop-drilled callback chain from the shell.",
-      "evidence": [
-        {
-          "resource": "repo://apps/desktop/src/renderer/components/ledger/DomainLedgerTable.tsx#L168-L177",
-          "version": "repo-lines-v1:sha256:fd88521ab6f36b043b20ee0ac530c20d266715d0913a51daa8371c1e8ae9e208:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjYWNkY2QxOWJmOWE5ZDNkYjA1NjRhYmFkM2M5Y2ExMmEyMzU5ZTQzMWE2NzlkOWJjZmJjMjc4ZWJhMjNkMTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEyN2QzMTVkNzJiNmE3Mzk3MGYwMzkzMDA3NjRkODU4Yzc1YWMwNzI0MWVlNmZlOWM2ZjlkZDljM2UyMTAyNDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFjNTViZmVjMTkwNDA5M2IyMjY0MjhjMWYzYjI0YzE0MmExOTU5NzczMGQwMmEzYzZkMjg0MGI0Y2EwNDMwZmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcxMzMyMGNkODg4YmY5MmNjZDk4OWZiYTkzOGRjMjQzNDViYzM4MDRkNjFjZjc5YWI2YWE5NmEwYmQyNzViYTgifQ"
-        },
-        {
-          "resource": "repo://apps/desktop/src/renderer/components/split/CelRulesPane.tsx#L48-L55",
-          "version": "repo-lines-v1:sha256:e7f0334149b58f3d0906cc691ad64f69b20d2663e4d21d62aa6fb33a8922d0cc:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjJjODg1MTc1MmYzZDA2YTQzNDk5ZmQwMzllNjdlZmQ2MjdkOTM3ZGIzNTczOTg4ZDJiZjMyNWVlYTU5MDRiMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmIwMGI5NTI3NjFjNTE0NzdmYjk0Njg5NmI0OGQyYWFjMTJkYWQ5NTAxOWZjN2NmYWUzNjIwY2RhOTBiY2ZkYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTRhZTE5NmRiY2U3Y2Y0OGVkY2U0YjYxN2JhMTAwN2QyZTc0NmUzYmUwZjU5ZWQxOGMzZmJkNDcwODE2N2Q0NyJ9"
-        },
-        {
-          "resource": "repo://apps/desktop/src/renderer/components/split/OpenApiSpecViewer.tsx#L53-L67",
-          "version": "repo-lines-v1:sha256:84a0e710920451c554929d1a116fdc0ff4ccf2c41e89cba91d808dcde94a3e37:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUwOTQ5NWM0YTgwN2I0YjUwYzE4YWI4YTBhMGFjNzQ4ZDA2NjZiM2QyZjBmMDkyZTdmYmEzMzJmZWQ4OGNiYWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkNDgyNTNhNDljMzE2OTY3ZjMyYjdlZGNkN2NmNGJlMTE2Zjg5OTZlOTJkNGVhOWUzYjM1YmU0NGFkZTI5YTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE5OWEyMTQwM2U0ODI0YzVhNDg4MjUwYzI4ZTZjOTczNjFhOGRhZGM0N2YxMTliODY3ZDYzNzk4YTE2YTFjNTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYyMDEyYTkzOTk3YTFmYzE3YTE5YzgxMWEzZTNmOWIyYzNiMDNkOTkyNzMyNjU3OTUzYzkwZWQ0MDBjMzk2ZDMifQ"
-        },
-        {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L455-L485",
-          "version": "repo-lines-v1:sha256:693e33d79c6f4beb75a650f000fb666b091b174f509a878792aec7c6b23d9be7:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdlM2YwOGQyYzA0OWRjYThjZTAzYmQ3NDYzNGFlMmI5NzJmNTIyY2RlMDI2ZWM2MTgzNTA2Mzc1MjE0YzI1YWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRhYjc0YWJjODcyZTI5NTMzZjRjOGNjOWE0NGNjODdmNmVlZDU0ZGRlNmUxNGE4MTU2YWUyYTNjNTJiOWQyNDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE3NjA1YWQzOWZjMWI4Y2RlMzYxYzA0N2QxMzZhMGUzZmI3YTlkNDA1MTY0YzFmMGIxNzk4NjM5ZTU4ODkzMGUifQ"
-        },
-        {
-          "resource": "repo://apps/desktop/src/renderer/state/useBilateralSync.ts#L3-L35",
-          "version": "repo-lines-v1:sha256:ae4ec18fb3eb1666d576308e05922cc380285b7c2371dc5b71210d4ccb899174:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE5NjBhNTQ5ZDE3NDIwODY0OGVmZjQzNDc3YzY1NjkxNDk3NGViMGQxZWRlYmJjMGY5NzQ1YjkyODBkMzA3MmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRjZmVlYWZmMmIwOTg2MmVhZTkxZDNmNTI3NWYyNzhjN2Y1YTNmYzE1NmJlMTRkYjI3NzRlYjQxNGJlNTA5OTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM0YjE4OTZjNTZlZTRhYWQ1NGJjMTYwODQ4MTljYjJmOTg2NzM5ZDVkZWE5NTQwYzI0Y2M2Y2RiYTRkODYyZDAifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_3ac3f0f785c847c4bd9ddd1c8fe04256",
-      "statement": "The editor screen announces the workspace selection as a `canvas` focus request from an effect keyed on the selected node id and attribute, so panes follow any selection change; the returning direction is resolved in one place that ignores the canvas's own announcement, rejects objects missing from the layout, clears a scope that would hide the target and pans to it.",
-      "evidence": [
-        {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L436-L485",
-          "version": "repo-lines-v1:sha256:6ee4b2098edc469286b1b3d73c68881ad7df97a0c1d74c19c141bfccd184c556:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg0ZTQyMDhjZDZmZmI4YzRhMzU0N2IyZjU0YWRhMTk5NzhjM2YzNjVlNzhmOTUwMmVmNTE0NWNkZDJhYTg1NDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA4YjE0OTk2MGJkYzJjZjE3M2U2ZWJjNzJiYzNkZmI3MTkwMDJlYTY4ZmVlYTEyNzVlYWFlODFkYzRmNDIzZmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE3NjA1YWQzOWZjMWI4Y2RlMzYxYzA0N2QxMzZhMGUzZmI3YTlkNDA1MTY0YzFmMGIxNzk4NjM5ZTU4ODkzMGUifQ"
         }
       ]
     },
@@ -133,7 +83,7 @@
       "statement": "The editor marks sensor findings stale and hands the canvas no diagnostics whenever the live bridge reported an error, the sensors are loading or errored, or `report.documentRevision` differs from the live bridge revision — so findings can never be attributed to a different edit than the one on screen.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L268-L284",
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L248-L264",
           "version": "repo-lines-v1:sha256:d37670551359005081df16958d48491b2c7869075cc1fe46d722323c9be7a992:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdhYjEyMGYyY2E4NTZhNGY4MmJlOTQ3NjE1Njk3MDlmNzVhNjIwNDlmZTc5YjJjY2I5MDVhN2E0ZDQzZDgzMWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1ZmI0ZjI1MjAzNTFlMzBjZTlkYTJjMDY0NTc3ODY2ZmQzYjhjOTFjMjQyNDA2OWJiYmEzN2JjM2EwYmQzNTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZhNDEwZTgwYzcxYWY1MzdhOWFiNGJhNjgxMDc1MGMwMzQ0ZjQ0ZWE4MmJhODgyNjA1MGU4ZDIxNTBhMDllMjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM0MDE3MDZhM2JhMmJmMDkzYzllZDA3NmFmNmI3NDliYWMwYjY4N2EwNjViYzZhOTIxMjhlZGQ0ODY1MzYxMWQifQ"
         }
       ]
@@ -232,43 +182,29 @@
     },
     {
       "id": "claim_6fb3931eb4c94d9ea257ecaafb875bd0",
-      "statement": "workspace chrome 单一 controller 持 rail/pin/problems/inline copilot 与 delivery/drift hub；六个 rail tabs 使用 Mod+1..6，diagnostics 打开底部问题面板。",
+      "statement": "布局控制器管理导轨、固定状态、底部诊断、内联副驾和交付对话框；四个导轨入口使用 Mod+1 至 Mod+4。",
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceLayoutState.spec.ts",
-          "version": "repo-file-v1:sha256:70e5229099a937eb43575d9c3715b31602e09ca36b85c4f050641b1f9f763f24"
+          "version": "repo-file-v1:sha256:4243594541b0892e6c4d4ff0a751503a1b43de5dcca51b0df5d45617e87718a6"
         },
         {
           "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceLayoutState.ts",
-          "version": "repo-file-v1:sha256:c1b7be5b5504d6d9399ddee63f0df4c26372c5362966277478f0c52eb891b351"
+          "version": "repo-file-v1:sha256:7985d3e982f1ec197acb5b14ad6408db5fcffef3541a3bb33547d2c16f77ad5a"
         }
       ]
     },
     {
       "id": "claim_9d334888860a455dbd10865cf9098b9d",
-      "statement": "workspace mode 为 journey/topology/table/split；默认 journey，V 在图与表之间切换，Alt+1/2/3/4 用 event.code 选模式，模式不进模型/历史；已消费事件退让，裸 V 尊重输入焦点。",
+      "statement": "工作区默认业务旅程，Alt+1/2 切换两种图形布局，台账返回时恢复上次图形布局；视图不写入模型。",
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceViewMode.spec.tsx",
-          "version": "repo-file-v1:sha256:3cebe6eeb972846066a7b4762ed5612202911ac943da63db1b1c65c361a0e32c"
+          "version": "repo-file-v1:sha256:3bf3a090e1b6d3373c02037285109f4aea490a62257a97c50efe7ea8819f743e"
         },
         {
           "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceViewMode.ts",
-          "version": "repo-file-v1:sha256:29ed8495119c2b22a78696d0e064c720dfb2c88208550e78f8ad41e020e6ca42"
-        }
-      ]
-    },
-    {
-      "id": "claim_dcdb75446d104a9ca12d9e66edf69aec",
-      "statement": "`useWorkspaceSplitState` derives `isSplit` from the view mode instead of keeping a second boolean, and retains the active pane, direction and size across closing so reopening the split lands on the last pane shown.",
-      "evidence": [
-        {
-          "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceSplitState.spec.ts",
-          "version": "repo-file-v1:sha256:60cb0039ff69a456d3e15f5a5582851a8ca36467199b0d8072361e4421e3cfbe"
-        },
-        {
-          "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceSplitState.ts",
-          "version": "repo-file-v1:sha256:0984bb0f89671f340c357d589c85024e6dc5de0bf2adec978aa1c2aad2dc8dc8"
+          "version": "repo-file-v1:sha256:7ecf809f06e3cc5d45c3e20f852ee92f8e7341976a4b0798587931e5ea0a9756"
         }
       ]
     },
@@ -278,7 +214,7 @@
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/renderer/state/commandRegistry.ts",
-          "version": "repo-file-v1:sha256:a7a8a8687d2e033e3578cc2ee6bd6a86fd314ef52b56f93ee3bfd3c8034d46b7"
+          "version": "repo-file-v1:sha256:0059788c3de092d1949c77415bae3150eaa130ec93a1c8c9dab843ca0e7d02ac"
         },
         {
           "resource": "repo://apps/desktop/src/renderer/state/useCommandRegistry.ts",
@@ -292,7 +228,7 @@
       "evidence": [
         {
           "resource": "repo://libs/desktop/testing/src/desktopApi.ts",
-          "version": "repo-file-v1:sha256:93188c2c511c68805b1b916302f76a6c937c9e8f9d339f02e48bf5a1b5be7583"
+          "version": "repo-file-v1:sha256:0a237d3277020ebeeacc10fdc471853f38e940c8296623700a3fc21ab9f584bb"
         }
       ]
     },
@@ -302,7 +238,7 @@
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx",
-          "version": "repo-file-v1:sha256:941b09d88c3a3b6a2ab2f4d3a6e487d76ec671cabde4412a404baf0188cacbad"
+          "version": "repo-file-v1:sha256:2cae815b99c3f2747c9abf184ed98223b2c52f0a4e2f7f121716ee058a113824"
         },
         {
           "resource": "repo://apps/desktop/src/renderer/state/useEditorSession.ts",
@@ -317,6 +253,6 @@
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-17T06:43:02.055Z"
+    "at": "2026-11-18T12:34:41.390Z"
   }
 }

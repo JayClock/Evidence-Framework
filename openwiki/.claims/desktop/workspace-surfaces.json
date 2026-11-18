@@ -1,52 +1,44 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:9151254ef05b6ce2bd69dbbb6fbc2a411a9008c19958eca6f785926f4eb44e9f",
+  "pageVersion": "sha256:90d28867fe5cca2942292074813bdc4ec767d65b8e7861d536206ee078ac6c5b",
   "claims": [
     {
       "id": "claim_fe4254228849474d93ef6b6f97e17914",
-      "statement": "The editor window is composed by EditorWorkspace as a 48px TopHeader row, a flexible studio, a 32px BottomStatusBar and one overlay layer; the studio holds the 48px ActivityRail, an optional ActivityDrawer, and a horizontal resizable pair of centre stage and RightInspector, so no permanent outline column or bottom console drawer exists in this shell.",
+      "statement": "EditorWorkspace 组合顶部栏、放映工具栏、左侧导轨、可选抽屉、可调宽度的中央区和检查器以及底部状态栏。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/components/console/ProblemsPanel.tsx",
-          "version": "repo-file-v1:sha256:a2c4e42eb7a41d15cd8507c2cb39286e91c67e3773bf0c1af143356009ecdf39"
-        },
-        {
           "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx",
-          "version": "repo-file-v1:sha256:941b09d88c3a3b6a2ab2f4d3a6e487d76ec671cabde4412a404baf0188cacbad"
+          "version": "repo-file-v1:sha256:2cae815b99c3f2747c9abf184ed98223b2c52f0a4e2f7f121716ee058a113824"
         }
       ]
     },
     {
       "id": "claim_5df9886436df48dda695b88b300f9219",
-      "statement": "48px rail 有 topology/diagnostics/drift/copilot/clauses/workshop 六 tab，诊断与 pending patch 标记由当前状态投影。",
+      "statement": "活动导轨有总台账、门禁与诊断、AI 协同和共创工作坊四个入口；诊断徽标汇总阻塞和警告，协同显示待审补丁标记。",
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/renderer/components/layout/ActivityRail.tsx",
-          "version": "repo-file-v1:sha256:7594aa50a45ff5897c2555c2932d1cb5087809928d9b58d77868f653b9f786f4"
+          "version": "repo-file-v1:sha256:6d8d19d766c4d4562cba3a9a52d076c277050d6506aafabe97ff7d4a8bf9dd9a"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceLayoutState.ts",
-          "version": "repo-file-v1:sha256:c1b7be5b5504d6d9399ddee63f0df4c26372c5362966277478f0c52eb891b351"
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx",
+          "version": "repo-file-v1:sha256:2cae815b99c3f2747c9abf184ed98223b2c52f0a4e2f7f121716ee058a113824"
         }
       ]
     },
     {
       "id": "claim_bf34cd44b44944d6b6c41bba1b7b5bdb",
-      "statement": "diagnostics rail 特别关闭 drawer 并切换画布底部问题条，其余 tabs 复用单一 drawer。",
+      "statement": "总台账切换中央视图，诊断切换底部问题面板，协同和工作坊共用一个侧边抽屉。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceLayoutState.spec.ts",
-          "version": "repo-file-v1:sha256:70e5229099a937eb43575d9c3715b31602e09ca36b85c4f050641b1f9f763f24"
-        },
-        {
           "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceLayoutState.ts",
-          "version": "repo-file-v1:sha256:c1b7be5b5504d6d9399ddee63f0df4c26372c5362966277478f0c52eb891b351"
+          "version": "repo-file-v1:sha256:7985d3e982f1ec197acb5b14ad6408db5fcffef3541a3bb33547d2c16f77ad5a"
         }
       ]
     },
     {
       "id": "claim_bd23d13f71c64cc8929a80a81ea1db2e",
-      "statement": "A single ActivityDrawer shell renders every rail tab, either pinned as a 300px in-flow column or floating as a 320px absolute panel starting at left-12 over the canvas, and the tab content is selected by activeRailTab so switching tabs replaces the drawer rather than stacking another one.",
+      "statement": "侧边抽屉固定时占 300px，浮动时为 320px，协同与工作坊切换时替换而不叠加。",
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/renderer/components/layout/ActivityDrawer.tsx",
@@ -54,101 +46,77 @@
         },
         {
           "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx",
-          "version": "repo-file-v1:sha256:941b09d88c3a3b6a2ab2f4d3a6e487d76ec671cabde4412a404baf0188cacbad"
-        },
-        {
-          "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceLayoutState.spec.ts",
-          "version": "repo-file-v1:sha256:70e5229099a937eb43575d9c3715b31602e09ca36b85c4f050641b1f9f763f24"
+          "version": "repo-file-v1:sha256:2cae815b99c3f2747c9abf184ed98223b2c52f0a4e2f7f121716ee058a113824"
         }
       ]
     },
     {
       "id": "claim_fbda09bab47949fa8268ff2ca5bb37ab",
-      "statement": "delivery/drift 为单一互斥 hub，第二个替换第一个；review hub 已移除。",
+      "statement": "布局控制器维护交付对话框的开启状态，编辑器用该状态挂载 DeliveryHub。",
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx",
-          "version": "repo-file-v1:sha256:941b09d88c3a3b6a2ab2f4d3a6e487d76ec671cabde4412a404baf0188cacbad"
+          "version": "repo-file-v1:sha256:2cae815b99c3f2747c9abf184ed98223b2c52f0a4e2f7f121716ee058a113824"
         },
         {
           "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceLayoutState.ts",
-          "version": "repo-file-v1:sha256:c1b7be5b5504d6d9399ddee63f0df4c26372c5362966277478f0c52eb891b351"
-        }
-      ]
-    },
-    {
-      "id": "claim_f19034ca1248490293147197e3ab7ed0",
-      "statement": "isSplit 由 mode===split 派生，closeSplit 回到 journey，并保留 pane/direction/size。",
-      "evidence": [
-        {
-          "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceSplitState.ts",
-          "version": "repo-file-v1:sha256:0984bb0f89671f340c357d589c85024e6dc5de0bf2adec978aa1c2aad2dc8dc8"
-        }
-      ]
-    },
-    {
-      "id": "claim_4c087bd57d9d4fe587e4e918efb36daf",
-      "statement": "SecondaryStage只挂active pane，切tab销毁local state；旧simulation pane已移除，不再自动请求replay。",
-      "evidence": [
-        {
-          "resource": "repo://apps/desktop/src/renderer/components/split/SecondaryStage.tsx#L126-L152",
-          "version": "repo-lines-v1:sha256:eb80abef99bcc7e71430768d185d81f06f505632d09ff27991b17ce4e4ef2962:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhhOTg4YTMwZWM3YjE5YjdmNTkzMzI3YzdiZmE2MmI5MzA1NzI0Y2Q5ZjllNDgwMzQ1YTJhZjUyY2Y1OTY3YzQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxZDk2ZGE1MDgzNDQyYmQ3YjFiOTEwZDA4NGU3MjZlYzYyZTNiMThkZDU4MWM1ZjFjNzZkMmExZGU5NTY2NmQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlhOTE5OWZkNjYxNzQ5NDkwZGFhNjdhMzAxZDNlMTc5ZGJlMzNiNjI3MTZjMGExN2QwNzM0MTU4YzU3YWExMWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdiMDA4NTlhZmNmODA2ODdkODkwZDg1YTY0Mzg4OGIzYTljZjcwMGFjZmY2MWJmNzE2ZjMyN2ZmMWM5NmYyODkifQ"
+          "version": "repo-file-v1:sha256:7985d3e982f1ec197acb5b14ad6408db5fcffef3541a3bb33547d2c16f77ad5a"
         }
       ]
     },
     {
       "id": "claim_a54fca44918a4474acb53d7cee66da6b",
-      "statement": "中心为 journey/topology/table/split 四模式，split 五 pane 为 ledger/openapi/cel/drift/story；API/rule badges 来自当前投影/模型。",
+      "statement": "中央工作区支持旅程、拓扑、放映和总台账，台账关闭后恢复上次图形布局。",
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx",
-          "version": "repo-file-v1:sha256:941b09d88c3a3b6a2ab2f4d3a6e487d76ec671cabde4412a404baf0188cacbad"
+          "version": "repo-file-v1:sha256:2cae815b99c3f2747c9abf184ed98223b2c52f0a4e2f7f121716ee058a113824"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceSplitState.ts",
-          "version": "repo-file-v1:sha256:0984bb0f89671f340c357d589c85024e6dc5de0bf2adec978aa1c2aad2dc8dc8"
+          "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceViewMode.ts",
+          "version": "repo-file-v1:sha256:7ecf809f06e3cc5d45c3e20f852ee92f8e7341976a4b0798587931e5ea0a9756"
         }
       ]
     },
     {
       "id": "claim_486c9a58582d483f849be82cf40699fe",
-      "statement": "Panel geometry persistence is delegated to react-resizable-panels autoSaveId keys (evidence-studio-horizontal-v2 and evidence-stage-split-<direction>-v1); useWorkspaceSplitState's splitSize is only read as defaultSize and never written back from a drag.",
+      "statement": "中央区与检查器的横向尺寸经 react-resizable-panels 的 evidence-studio-horizontal-v2 键保存。",
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx",
-          "version": "repo-file-v1:sha256:941b09d88c3a3b6a2ab2f4d3a6e487d76ec671cabde4412a404baf0188cacbad"
-        },
-        {
-          "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceSplitState.ts",
-          "version": "repo-file-v1:sha256:0984bb0f89671f340c357d589c85024e6dc5de0bf2adec978aa1c2aad2dc8dc8"
+          "version": "repo-file-v1:sha256:2cae815b99c3f2747c9abf184ed98223b2c52f0a4e2f7f121716ee058a113824"
         }
       ]
     },
     {
       "id": "claim_aaa80f100cdc4ca6848c8b0e01f74ac6",
-      "statement": "CHORDS 是 palette 键帽源，rail 用 RAIL_TAB_CHORDS 的 Mod+1..6，HUD 显示 zoom/fit 等键帽；handler 同时支持 meta/ctrl。",
+      "statement": "命令面板从 CHORDS 取得动作键帽，导轨从 RAIL_TAB_CHORDS 取得 Mod+1 至 Mod+4；工具条显示画布缩放和适配快捷键。",
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/renderer/components/canvas/CanvasFloatingHud.tsx",
-          "version": "repo-file-v1:sha256:9e9d7ecb8b4c7662f8cb7c78777d27188c637d6336383846da1949cdd2df06ae"
+          "version": "repo-file-v1:sha256:28c27a4ff15f2399ec264d0b6982ac621fdd000c212dae27e9819edf748ada71"
         },
         {
           "resource": "repo://apps/desktop/src/renderer/state/commandRegistry.ts",
-          "version": "repo-file-v1:sha256:a7a8a8687d2e033e3578cc2ee6bd6a86fd314ef52b56f93ee3bfd3c8034d46b7"
+          "version": "repo-file-v1:sha256:0059788c3de092d1949c77415bae3150eaa130ec93a1c8c9dab843ca0e7d02ac"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceLayoutState.ts",
+          "version": "repo-file-v1:sha256:7985d3e982f1ec197acb5b14ad6408db5fcffef3541a3bb33547d2c16f77ad5a"
         }
       ]
     },
     {
       "id": "claim_f3b61d523e1748d0b87a3da94fade9b8",
-      "statement": "rail 用 Mod+1..6，view 用 Alt+1..4/event.code，裸 V 避输入；Alt+4 打开 ledger split、Alt+5 contract split，已消费事件按 defaultPrevented 退让。",
+      "statement": "活动导轨用 Mod+1 至 Mod+4，图形布局用 Alt+1/2 的物理键；已处理的事件不会重复派发。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useEditorShortcuts.ts",
-          "version": "repo-file-v1:sha256:3da5b7cce91f5f20952962c137756b796bd8e83f57db958251ccfa2b5b338468"
+          "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceLayoutState.ts",
+          "version": "repo-file-v1:sha256:7985d3e982f1ec197acb5b14ad6408db5fcffef3541a3bb33547d2c16f77ad5a"
         },
         {
           "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceViewMode.ts",
-          "version": "repo-file-v1:sha256:29ed8495119c2b22a78696d0e064c720dfb2c88208550e78f8ad41e020e6ca42"
+          "version": "repo-file-v1:sha256:7ecf809f06e3cc5d45c3e20f852ee92f8e7341976a4b0798587931e5ea0a9756"
         }
       ]
     },
@@ -157,11 +125,11 @@
       "statement": "useEditorShortcuts returns immediately when the keydown event is already defaultPrevented, implementing the rule that a surface which consumed a key owns it instead of having the workspace act on it as well.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useEditorShortcuts.spec.tsx#L31-L51",
+          "resource": "repo://apps/desktop/src/renderer/state/useEditorShortcuts.spec.tsx#L29-L49",
           "version": "repo-lines-v1:sha256:f2c4218c29254b0b543972f911576580b1a8cd3eddb631014464b3c29d175463:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY0OGVjODQ3ODZjZDIyMzM3NDYzMzUwMzhhMDI2NjZjOTlhNDdhOGU1NDdhNTRlZmJhYTRhYzVlMzQ5MDkwMDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFhNjI1MzY1ZGE5Yzc1ZTUyM2U1NzliN2M5NGFkMzY4OThiY2FiNjNhNjViNTgzMTExN2QyMmQxOWE2M2ViNWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM1NmRjZTJlOTE2ZTNkMWUyNTU3M2Y2NGZkZTA3YjdiNjRiOTA3YTFlYjZhNWNmMTdhZDNmZThjM2E4MGM5YjIifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useEditorShortcuts.ts#L75-L80",
+          "resource": "repo://apps/desktop/src/renderer/state/useEditorShortcuts.ts#L58-L63",
           "version": "repo-lines-v1:sha256:940c14726a35b860ff5910523121104728cc18374ef518dea6b3ce0324660ba3:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTcyZDhhZDRiYTY0ODMwN2Y4MmNmMGQ3YjM4MzM1NzAyYTAzZjM1NjMyODlkMmZlNmVhMWI3Zjk3ZjQyNGU1NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWI2MmY2MGQ4NTkwYTU3OWNmNDZmOGQ2NzM3OGM0YzU3MmI5NjJjZWNjZGI5MGM3YTVmN2I0MmI5NjA3ODJhNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmU5NDhiYThkMDBlYjRjMGQyM2I5OWVmNWVjYTc2YmUyYWMyMTNjNTAwNzI2OTA5MDM0MGQ2OTNiNDE3Y2Q0NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDg3ZDA3YjFlMDZkNmIxOTNjZTQ2YjMwZjUzZTBmZGEyNTRlZWVjMzlmZDQxZTY0MWE5Y2MxOWI0ZDg1OTA3YSJ9"
         }
       ]
@@ -172,25 +140,25 @@
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx",
-          "version": "repo-file-v1:sha256:941b09d88c3a3b6a2ab2f4d3a6e487d76ec671cabde4412a404baf0188cacbad"
+          "version": "repo-file-v1:sha256:2cae815b99c3f2747c9abf184ed98223b2c52f0a4e2f7f121716ee058a113824"
         },
         {
           "resource": "repo://apps/desktop/src/renderer/state/useEditorShortcuts.ts",
-          "version": "repo-file-v1:sha256:3da5b7cce91f5f20952962c137756b796bd8e83f57db958251ccfa2b5b338468"
+          "version": "repo-file-v1:sha256:e5c1692ac4bfec95c73a4dd039ceb1430cfc00d0638a1be2c8fa9528d97757b9"
         }
       ]
     },
     {
       "id": "claim_a63f96e260324419bfbbe1de451a7a5b",
-      "statement": "Below the pending patch, Escape closes the split stage before it clears the canvas selection, and only an Escape that no surface claimed reaches clearSelection; the closeSplit handler is bound only while split.isSplit so a single-surface workspace keeps selection clearing on Escape.",
+      "statement": "无待审补丁时，Escape 优先退出正在播放的业务流，否则清理画布选区。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useEditorShortcuts.spec.tsx#L117-L128",
-          "version": "repo-lines-v1:sha256:27203285d45999520da08353b4d85325ed4808147cba144d842ae1544045bd49:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlYzgxODNhZmYzODI2MGVjMjUxZjNkNDMzNzZjNzBiYzU3YmVlNjNmY2EzMGRhM2NhOWZiMzJkODU5ZWQ4YjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQwMThkYzg4NTM1NGY0OGNhMjllZDdjZmQzZjQ3ZjQ3ZjAxMmE3MGQwY2RhNGNmNTczMDM0YTEzNDU0OTI3ZDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRlNDBjZDIzMzM2ZmZlOGZlOTA3NDA3NGNhOTk1Y2IzYjNjMzUzMzI0ZDZjNDgzMjI5ZDllODE3MmI4Mzg5NzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY1ZmMwNzhhMjhmYWRmZWJhMmI2Y2E2ZTM4ZTg5ZjMxNTViYTVkZWJhMjIwY2RiMzAzNjhlZTViM2M5NDU0ZTQifQ"
+          "resource": "repo://apps/desktop/src/renderer/state/useEditorShortcuts.spec.tsx",
+          "version": "repo-file-v1:sha256:09c93f37cc1dacaa7b0c0234c42751202259b4f38fb9e9129fa961e31a29622b"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useEditorShortcuts.ts#L192-L222",
-          "version": "repo-lines-v1:sha256:d2d20245c3f0f711b72758c88acdb85d88b0324370eca60db690b057123c317d:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg1OWYyYzc2ZTFmZmMzODJlNjk3NTVhOWRjMDgwOTE4YzVkODY5ZjJlNjczMWU1Zjc2NGNiYzYyMTQ1NGMyNzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM0NWJjNWMxNTJiNGZlOGQyYTFhNzQ5MGE0YmE1YWJmOGRiMDRmZDA0ZGY4YmU3ZDQ0ZWZlOTE0MzA4ZDUzMTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJlZmZiMjAxMTljY2QzMTQwNmExNjdjMDlhNjc4ZjJiNTkzZWY3YWQ0YmUwOWRlYzZjYTA3MGIyZTJiYzI0MmQifQ"
+          "resource": "repo://apps/desktop/src/renderer/state/useEditorShortcuts.ts",
+          "version": "repo-file-v1:sha256:e5c1692ac4bfec95c73a4dd039ceb1430cfc00d0638a1be2c8fa9528d97757b9"
         }
       ]
     },
@@ -214,39 +182,25 @@
     },
     {
       "id": "claim_9fccae701097458d92629693196192ca",
-      "statement": "Navigation of the single workspace selection is split into three mechanisms: the bilateralSync focus bus carrying token-stamped focus-entity/focus-rule intents between panes, shell focus/zoom request tokens that make the canvas pan to a node, and a view-mode effect that re-issues a focus request for the current selection when the stage changes away from the ledger.",
+      "statement": "从台账定位对象时切回画布并聚焦该对象；台账和画布共用编辑会话。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx",
-          "version": "repo-file-v1:sha256:941b09d88c3a3b6a2ab2f4d3a6e487d76ec671cabde4412a404baf0188cacbad"
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.spec.tsx",
+          "version": "repo-file-v1:sha256:76019ccd5c45118b7028dddefcf78bfe6b6119c86a3f5d6f17f5956d4b811f3b"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useBilateralSync.ts",
-          "version": "repo-file-v1:sha256:51eaac4f360f55d56443ecab974f85bb63c7717fce2e7f71a2a167ceae188bfd"
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx",
+          "version": "repo-file-v1:sha256:2cae815b99c3f2747c9abf184ed98223b2c52f0a4e2f7f121716ee058a113824"
         }
       ]
     },
     {
       "id": "claim_dabb9ae838fe4d2296e20463d82dd3c2",
-      "statement": "The shell is the only place that resolves navigation intent: focusIssue treats an entity#attribute target as select-the-attribute-row plus pan while a Context or relationship target only pans to its geometry without inventing a selection, and focusFromPane ignores the canvas's own announcement, refuses ids the layout does not contain and drops a scope that would hide the target.",
-      "evidence": [
-        {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L374-L465",
-          "version": "repo-lines-v1:sha256:e2733f82407948ebda934cf67963aedf8053a8b853c22e806fc20177db5370ed:eyJzZWxlY3RlZExpbmVDb3VudCI6OTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU0NzdhOGM1ZTk2ZTVmZWUyOGEwOTU1MjFjM2MyZTU3ZWU4YzVjMjdkMWZmYzE4OGU2MDg3MzEzZGYwNzA4ZTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRmZWM0NjE0ZGYxZGVmY2ZlZDZjNzEwOWFiNTI5YzU1OTU4ZDU5YTNiMTIzMTA5MmFiZjQxNDA2YjYxY2FhN2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmNzcxYjczODVjY2MwMTA2MGNkOWQ3YjFlNDFhYTUyMjBiMWEwZjcwYWU3NDhjNzRiNjA4Y2ZkNjAzMzZiODAifQ"
-        },
-        {
-          "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceLayoutState.ts#L36-L54",
-          "version": "repo-lines-v1:sha256:d6777713f9f315e588045b1f11cb40c176dd9468ffbcb59f93593ab1b7c48163:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjZGVmNzMzYWRhOGJhYzNkMTM3MzkxZGI0MmEwNzljMjViZjY4ZmM2N2I3OGQ5MDc4MGJmMDc5NjNkYWM5NzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1OWZiNGJlNjg4YzNkMmEyMjRhOTU0Y2I1NzIyY2NiMzBkMjUzZWNjMWY2YzUwOTczZGUyYzgwYzZkODYxYmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMxYzE2ZmZlYjI0NDJjNjJiNzdmZjkwZDIyMTg2NzRjNjQzMzI5NWYyNDRiN2FkNjhjZTk0YWM5YmFmMzFmOWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI3MGMzZDYzYzg1ZmFiOTA0OWRhMGVhNTZkMDMyZjJjNDJiNmFkMWI5YmMyZTJmMTBkN2E5NDgwZGZiOWZlYjkifQ"
-        }
-      ]
-    },
-    {
-      "id": "claim_41b718e19a794e32958e9da1b74c53b0",
-      "statement": "drawer定位后unpinned关闭、pinned保留；search以token开后聚焦，诊断定位与problem active issue协作。",
+      "statement": "问题定位可选中实体属性并平移画布；上下文或关系指向图形几何对象，不伪造实体选区。",
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx",
-          "version": "repo-file-v1:sha256:941b09d88c3a3b6a2ab2f4d3a6e487d76ec671cabde4412a404baf0188cacbad"
+          "version": "repo-file-v1:sha256:2cae815b99c3f2747c9abf184ed98223b2c52f0a4e2f7f121716ee058a113824"
         }
       ]
     },
@@ -260,7 +214,7 @@
         },
         {
           "resource": "repo://apps/desktop/src/renderer/state/commandRegistry.ts",
-          "version": "repo-file-v1:sha256:a7a8a8687d2e033e3578cc2ee6bd6a86fd314ef52b56f93ee3bfd3c8034d46b7"
+          "version": "repo-file-v1:sha256:0059788c3de092d1949c77415bae3150eaa130ec93a1c8c9dab843ca0e7d02ac"
         },
         {
           "resource": "repo://apps/desktop/src/renderer/state/useCommandRegistry.ts",
@@ -270,11 +224,11 @@
     },
     {
       "id": "claim_1293ea70857245f99cb59a987829ab47",
-      "statement": "The floating HUD is a workspace control island, not a canvas one: the canvas supplies only viewport math and positions the strip at the bottom centre, and CanvasFloatingHud adds card density, view mode, split target and paper while deliberately offering no object-creation action, because creation must honour Context and role bindings owned by the inspector and the agent.",
+      "statement": "浮动工具条组合视口缩放、适配、视图、密度与场景入口，不承担创建模型对象的职责。",
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/renderer/components/canvas/CanvasFloatingHud.tsx",
-          "version": "repo-file-v1:sha256:9e9d7ecb8b4c7662f8cb7c78777d27188c637d6336383846da1949cdd2df06ae"
+          "version": "repo-file-v1:sha256:28c27a4ff15f2399ec264d0b6982ac621fdd000c212dae27e9819edf748ada71"
         },
         {
           "resource": "repo://libs/desktop/feature-canvas/src/CanvasViewport.tsx",
@@ -287,11 +241,11 @@
       "statement": "EditorScreen replaces the entire workspace with a message screen when the project path is missing or projects.open fails, and renders a role=alert strip between the header and the studio while live model sync is failing, rather than letting either failure hide inside the studio.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L137-L163",
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L127-L153",
           "version": "repo-lines-v1:sha256:037fe0cef8f68712b1472f543c0a8d4574cb05692c4946487bc3f87816d8f47d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdmZjUwYmE5YzJmODRjMjAyYzk3NDU3NmU0N2VmOGRkNDY0N2FmYWM5ZTNlZWI4MzgwZTBlZGZjNmY4NWE1ZTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZWYwMWJjMDhkYmMzYjYzZTRlNzVlYTNkMjZhNWI5NDE4OTE4NzdlMjdhZDg5MTMyOWM4NDExZDdkOGRjNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU4ZmRiNWU2NTVmY2Q2Yjc5NThjZTlmOTNhMGM1ZjRjMzRlODIxOWQ4NjNjMTJhNGMwMzgyNzQxMjg3MjAyODAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU4YTQxYzBlMzlmODRmYjVkZTAxN2RjMmQyZjBlZTY3MzIwZWE5MmQxMGJiMTRkMzQxZDE1OWY2ZTA0YmY5ODIifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L869-L871",
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L720-L722",
           "version": "repo-lines-v1:sha256:efa2a54adfb3ac4e52b19c18a02ab034a9bf802361a3052e9b41a9146beb09ad:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDhjNjIxZDliMzZmZmZmYjZjZDdjM2RiZmQ3MGZjZmMzNTJiY2NjMjAxOGI5YjRhMjZiZGZkNjQ0OWRmNzNmMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiM2VmODYwZDJmMGZhMWMwYzMxMmNhZDBiNDE1M2Y3MWM4OGI3ZjdmMmQ2MTZlNDk0OTAwMzc2ZDU1YmE4MTU0MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzBkNDFmNjhhOWU4MmYzZDZhMjY0NmY3OTA5Yzk4YWIyODFmNjhhYzE2OGRlNDhiMGJjZWYyZDNhNDAyNDFiYyJ9"
         }
       ]
@@ -301,7 +255,7 @@
       "statement": "The wide key-data ledger is a modal ui-kit Sheet opened from inside the inspector, and Alt+L opens it only while an entity is selected, which is why the inspector binds that chord rather than the workspace shortcut table.",
       "evidence": [
         {
-          "resource": "repo://libs/desktop/feature-inspector/src/RightInspector.tsx#L76-L96",
+          "resource": "repo://libs/desktop/feature-inspector/src/RightInspector.tsx#L74-L94",
           "version": "repo-lines-v1:sha256:bd55829b54922960728dd15e57ab1cd4547bd1b02867189ea1b30921aef54920:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ4MGUxMzE5NDFlOGVmZWMyMGJjNzc4ODE2Y2Y5OTE1MjY5MTZhN2E0NDhiZDg1OTZhMTkwYjQ1ZTUxMTFjODEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlmMTY0MTMwZDc0NGVjNjE2Zjc1NjcwZDAxY2I2ZDEzMzMyMmZiZDFkM2NmMjllNDdlMjYzZjcxNWRmZmIyZGYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ0OWNhNzI4M2YzMGQyZmQ0OGNkNjhmYTg5NzY3YzJhNDQ5NTIxZTY1ZTM2ZTdmNGI1MGZiYzdkNDdmMGJkNDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJiN2MzZDUyNWY4YWMzN2FjMThiZjQwMzk4MWMxMzkzMmNjODZmMDZmNDllZTY5ZDdmMzg5NjAyZDYxNjU0NjcifQ"
         },
         {
@@ -312,15 +266,11 @@
     },
     {
       "id": "claim_c3158e32340644ae8023b5abd74b1a1b",
-      "statement": "story pane 展示声明 examples flow 的故事与播放镜头，本地规则预演只读当前可见前缀，跳过未知绑定，不等同 HTTP 验收；clauses/workshop 提供协议溯源与七步共创。",
+      "statement": "业务流放映使用模型声明的流程，协调剧情、画布镜头与按需展开的详情，不代表 HTTP 验收结论。",
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx",
-          "version": "repo-file-v1:sha256:941b09d88c3a3b6a2ab2f4d3a6e487d76ec671cabde4412a404baf0188cacbad"
-        },
-        {
-          "resource": "repo://libs/desktop/feature-story/src/state/journeyPreview.ts",
-          "version": "repo-file-v1:sha256:f24bcc09d64d558b8a27c0e2af82ed4ac1d8bca7a494da043921888258399a41"
+          "version": "repo-file-v1:sha256:2cae815b99c3f2747c9abf184ed98223b2c52f0a4e2f7f121716ee058a113824"
         },
         {
           "resource": "repo://libs/desktop/feature-story/src/state/useStoryPlayback.ts",
@@ -331,6 +281,6 @@
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-17T07:06:17.114Z"
+    "at": "2026-11-18T12:34:41.390Z"
   }
 }

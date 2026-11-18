@@ -1,8 +1,6 @@
 import {
   Activity,
   Bot,
-  FlaskConical,
-  FileText,
   ListChecks,
   Table2,
   type LucideIcon,
@@ -55,22 +53,10 @@ const RAIL_ITEMS: readonly {
     icon: Activity,
   },
   {
-    id: 'drift',
-    label: '生产漂移',
-    hint: '比对生产轨迹与模型',
-    icon: FlaskConical,
-  },
-  {
     id: 'copilot',
     label: 'AI 协同',
     hint: '多轮访谈、工具调用与补丁复核',
     icon: Bot,
-  },
-  {
-    id: 'clauses',
-    label: '条款审计',
-    hint: '合同原文与模型对象双向定位（仅本地）',
-    icon: FileText,
   },
   {
     id: 'workshop',

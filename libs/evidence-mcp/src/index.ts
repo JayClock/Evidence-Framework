@@ -8,8 +8,6 @@ export {
   type EvidenceMcpErrorCode,
   type McpAppState,
   type McpDeliveryTopology,
-  type McpDriftAudit,
-  type McpDriftFinding,
   type McpDomainModel,
   type McpOpenApiContract,
   type McpKeyDataAudit,

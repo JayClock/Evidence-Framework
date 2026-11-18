@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:a1778771303984e25d2172d342ee1b781f0e16f011e2a298c5f8eff14e9d5818",
+  "pageVersion": "sha256:c8fe6b6be4af8d7a2aa7bff76131590e4a8a6c7245410e30ce31428a34ab76f8",
   "claims": [
     {
       "id": "claim_df5076f9176f4575a1cdc338083b09af",
@@ -22,19 +22,15 @@
     },
     {
       "id": "claim_d1426e9010cc4646a5e2c5090221d33b",
-      "statement": "工作区有两应用十八库；Node/pnpm 安装固定 Bruno CLI，另显式执行 api:setup 为比较准备 oasdiff、example:setup 为真实 HTTP 测试准备独立 Fastify。",
+      "statement": "工作区有两个应用和十七个库；pnpm 安装固定 Bruno CLI，另用 api:setup 和 example:setup 准备 oasdiff 与独立 Fastify 测试服务。",
       "evidence": [
         {
           "resource": "repo://ENVIRONMENT.md",
           "version": "repo-file-v1:sha256:a8c1769c6a0b51335454dda7b9979dc1974de07457780adada955c01a74d074f"
         },
         {
-          "resource": "repo://libs/evidence-acceptance/package.json#L92-L101",
-          "version": "repo-lines-v1:sha256:b3f6886e8f359017ed1f2ab0294bff44ad71dd18d182889f48dc0fbf168ac4a7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRiNGU1YTFjZWMzMWRhZDIwN2U0NjNmYWIxM2Q0YmEzMjY4YzlkNDM3NWVkN2FlMTViYTA0MzdiY2JhZjhmNzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2YzE0NzU3YjhlMWU5ZDZhN2RlZTk5MDJlOTA0MDdhZDhjZjY3M2IzZThkNzYzZTI3OTUwZDE5ZDA2NzhkNjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM5ZjM4MDczYzFiYzUzY2Q3MjNkYTFhNDk2OGFiMDBjZWIzM2Y0MDljYTY5YzQyODM4YWI2MmIzNDc2NjlmODUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY2YWUwOWM0MGFjYzBiZDIxOWVjOGU3ZDRlYzg5YmY0ZjQ5NDI5ZmY0MWE0NDIyODAzOTJmMzY0MTUyZGYyZTIifQ"
-        },
-        {
           "resource": "repo://tsconfig.json",
-          "version": "repo-file-v1:sha256:b598c5d19f8e91fbfac3bab736fb0c5eaa80e2768eeda50bf28fb23496fff842"
+          "version": "repo-file-v1:sha256:3257d896fda47807b116943d63128d511195c8fc7030e2270e731b8fc799bb3b"
         }
       ]
     },
@@ -106,15 +102,19 @@
     },
     {
       "id": "claim_954923a1673640c797f59bff06f86403",
-      "statement": "MCP 通过 local socket 与同 binary stdio 代理，14 工具中 patch 加四 recipe 为共享的非幂等写工具，提交 renderer JSON Patch/undo。",
+      "statement": "MCP 通过本地 socket 和同一桌面程序的 stdio 代理提供 13 个工具，补丁和四个算子最终写入 renderer 会话的撤销历史。",
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/main/main.ts",
-          "version": "repo-file-v1:sha256:42b4ffc91faab6739d8b429421737e9ba298d53a678b43db5956f4f971137aef"
+          "version": "repo-file-v1:sha256:5c69369ed5af8a83f6d595da3fc733d39c6d556b485949077f252ee18d2077c2"
         },
         {
-          "resource": "repo://libs/evidence-mcp/src/server/toolset.ts",
-          "version": "repo-file-v1:sha256:471fddfe0c44822a8cb316e7da3eccd47502da10c2b08f18bd1a924af994f742"
+          "resource": "repo://apps/desktop/src/renderer/state/useMcpBridge.ts",
+          "version": "repo-file-v1:sha256:851cbe7af65bb60efd37e0ecc16999402964c0c1b8145037d2016e7b4cd3f22e"
+        },
+        {
+          "resource": "repo://libs/evidence-mcp/src/server/toolset.spec.ts",
+          "version": "repo-file-v1:sha256:934b0524b2dc5278152a24be9d3120fe2d38aae0e0e7ddfb5af7047cb1829000"
         }
       ]
     },
@@ -139,6 +139,6 @@
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-18T09:45:40.969Z"
+    "at": "2026-11-18T12:34:41.390Z"
   }
 }

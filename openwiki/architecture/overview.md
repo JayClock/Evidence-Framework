@@ -1,26 +1,26 @@
 ---
 type: architecture
 title: 系统架构与依赖边界
-description: 两个应用宿主与十八个共享库如何围绕 FM 文档协作，以及 Zod、原生 CEL、Immer、ELK 和 Node I/O 的职责与依赖方向。
+description: 两个应用宿主与十七个共享库如何围绕 FM 文档协作，以及 Zod、原生 CEL、Immer、ELK 和 Node I/O 的职责与依赖方向。
 tags: [architecture, workspace, dependencies, nx, data-flow, monorepo]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-18T09:45:40.969Z
+    at: 2026-11-18T12:34:41.390Z
 sources:
   - id: openwiki-source-8037e2358a2c4f9b2c722a11
     resource: repo://AGENTS.md
   - id: openwiki-source-5466111549d3bdae4dce66a7
     resource: repo://apps/cli/package.json
-  - id: openwiki-source-55138c775f581f8c989ca7dc
-    resource: repo://apps/desktop/src/main/agentRuntime.ts
+  - id: openwiki-source-de5c5760d707be19e09eb7e3
+    resource: repo://apps/desktop/project.json
   - id: openwiki-source-5d33672c45ec58cd29dce507
     resource: repo://apps/desktop/src/main/main.ts
   - id: openwiki-source-f278221a7db6307920fce03f
     resource: repo://apps/desktop/src/main/mcpRequestHandler.ts
-  - id: openwiki-source-9459ee1a8fc917f2d94619ce
-    resource: repo://apps/desktop/src/renderer/screens/EditorScreen.tsx
   - id: openwiki-source-f0f06a0981a7ca97c510b44d
     resource: repo://apps/desktop/src/renderer/state/useEditorSession.ts
+  - id: openwiki-source-034a304691f6c1f77f682d25
+    resource: repo://apps/desktop/src/renderer/state/useMcpBridge.ts
   - id: openwiki-source-b5ea8c8713a5b04ee1c21d2d
     resource: repo://apps/desktop/vite.main.config.mjs
   - id: openwiki-source-15aba07b973e26bd886a7db3
@@ -31,12 +31,14 @@ sources:
     resource: repo://ENVIRONMENT.md
   - id: openwiki-source-2fda883e9b76745f69f487f7
     resource: repo://eslint.config.mjs
+  - id: openwiki-source-8a3964422b76faf8b78c4915
+    resource: repo://libs/desktop/feature-agent/src/state/useAgentPatchBridge.ts
   - id: openwiki-source-3487fdf20c88f517d0a744eb
     resource: repo://libs/evidence-acceptance/package.json
-  - id: openwiki-source-100de7a731086244071952a9
-    resource: repo://libs/evidence-agent/package.json
   - id: openwiki-source-9d54a30ae7fe8603951dd3dd
     resource: repo://libs/evidence-agent/src/browser.ts
+  - id: openwiki-source-1c67fed1db077d0e39bb80ad
+    resource: repo://libs/evidence-agent/src/index.ts
   - id: openwiki-source-a51a313ecc5551e788fbf06c
     resource: repo://libs/evidence-agent/src/sensors/native/nativeStageGate.ts
   - id: openwiki-source-ebeef9d445379fe3773732df
@@ -61,8 +63,6 @@ sources:
     resource: repo://libs/evidence-schema/src/ast/document.ts
   - id: openwiki-source-2d798afa87a0b2d7dccd51cb
     resource: repo://libs/evidence-tools/package.json
-  - id: openwiki-source-5b54a58d1b51cd490b0e7162
-    resource: repo://package.json
   - id: openwiki-source-40275cb92c3610938f16ade3
     resource: repo://pnpm-workspace.yaml
   - id: openwiki-source-ad6afd03545cc41ebdb6326a
@@ -73,12 +73,12 @@ sources:
     resource: repo://tsconfig.base.json
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "pi", at: "2026-11-18T09:45:40.969Z" }
+generated: { by: "pi", at: "2026-11-18T12:34:41.390Z" }
 ---
 
 # 系统架构与依赖边界
 
-Evidence 的真相源是 `DomainModelDocument`：manifest、entities、relationships、rules。桌面实时编辑与磁盘模型是同一契约的不同时间快照，而不是两套领域语言。当前 workspace 有 **apps/desktop 和 apps/cli 两个应用**，九个 evidence 库和九个 desktop 库；旧说明中的“只有一个应用”已过时。
+Evidence 的真相源是 `DomainModelDocument`：manifest、entities、relationships、rules。桌面实时编辑与磁盘模型是同一契约的不同时间快照，而不是两套领域语言。当前 workspace 有 **apps/desktop 和 apps/cli 两个应用**，九个 evidence 库和八个 desktop 库；旧说明中的“只有一个应用”已过时。
 
 ## 责任与依赖方向
 
@@ -91,9 +91,9 @@ Evidence 的真相源是 `DomainModelDocument`：manifest、entities、relations
 | projection | evidence-api：模型与可选 overlay → v6 路由、HAL、服务、OpenAPI、部署；不依赖 acceptance |
 | projection/node | acceptance：消费 API，编译内联样例、导出 Bruno 集合、运行 HTTP 验收、drift 和原生 oasdiff |
 | domain/universal | evidence-tools：Pi/MCP 共用的 guarded patch/recipe registry |
-| orchestration/node | agent：Pi session、提示词、Zod 工具、传感器、门禁、治理和 trace reader；browser 子入口提供纯数据合同 |
+| orchestration/node | agent：Pi session、提示词、Zod 工具、传感器与阶段门禁；browser 子入口提供纯数据合同 |
 | orchestration/node | mcp：外部工具与本地桥，不依赖 agent 或 visualization；二者在桌面宿主相遇 |
-| ui/feature/browser | desktop-contracts 与 ui-kit、canvas/inspector/story/delivery/drift/agent features；testing 为独立支持库 |
+| ui/feature/browser | desktop-contracts 与 ui-kit、canvas/inspector/story/delivery/agent features；testing 为独立支持库 |
 | app | desktop 组合 Electron/React 工作台；cli 组合共享库命令，使用 cac 注册参数，不复制领域规则 |
 
 旧 evidence-agent-core/modeling-orchestrator 已合并。库不能反向依赖 app；acceptance 可消费 api，api 不可依赖 acceptance；共享工具不依赖 SDK 适配器。
@@ -104,7 +104,7 @@ Evidence 的真相源是 `DomainModelDocument`：manifest、entities、relations
 
 ESLint 同时约束 type、layer、platform、scope：universal 只能引用 universal；browser 只允许 browser/universal 或明确 browser-safe 表面，禁直接引用 Electron、MCP SDK、Pi SDK。schema 不得依赖投影，evidence 不得依赖 desktop/testing。
 
-库 export 的 `@evidence-poc/source` 条件指向 src，tsconfig customConditions、Vite/Vitest resolve.conditions 必须一致；遗漏会退到 dist，出现未构建模块错误。agent/api 的 browser 子入口、model-core/testing、各命令入口延续此合同。根 tsconfig 引用十八库及 cli；desktop 继续由自己的 Forge/typecheck target 检查。
+库 export 的 `@evidence-poc/source` 条件指向 src，tsconfig customConditions、Vite/Vitest resolve.conditions 必须一致；遗漏会退到 dist，出现未构建模块错误。agent/api 的 browser 子入口、model-core/testing、各命令入口延续此合同。根 tsconfig 引用十七库及 cli；desktop 继续由自己的 Forge/typecheck target 检查。
 
 ## 从建模到交付
 
@@ -117,9 +117,9 @@ ESLint 同时约束 type、layer、platform、scope：universal 只能引用 uni
 
 ## 两个宿主与进程边界
 
-桌面 main 注册项目、摄取、AI、drift、delivery、Agent IPC，创建 Agent runtime 与 MCP bridge。`--mcp-stdio` 是同一可执行文件的无窗口代理模式，转发到已运行桌面，不读取项目存储。preload 暴露 typed EvidenceDesktopApi，renderer 不拿 fs/ipcRenderer。
+桌面 main 注册项目、摄取、AI、delivery、Agent IPC，创建 Agent runtime 与 MCP bridge。`--mcp-stdio` 是同一可执行文件的无窗口代理模式，转发到已运行桌面，不读取项目存储。preload 暴露 typed EvidenceDesktopApi，renderer 不拿 fs/ipcRenderer。
 
-renderer 拥有实时会话、异步布局与 UI；main 执行 Node 文件操作、传感器、交付和 trace。saved 导出描述磁盘来源；live delivery export 冻结预览快照并校验摘要，不能混淆。
+renderer 拥有实时会话、异步布局与 UI；main 执行 Node 文件操作、传感器与交付。saved 导出描述磁盘来源；live delivery export 冻结预览快照并校验摘要，不能混淆。
 
 cli 是唯一推荐终端入口：check、pack/unpack/compile/inspect/lineage、export/test/diff 和兼容 api 子命令。旧 evidence-model/api bin 暂留为 stderr 弃用 shim，执行库内共享逻辑，不反向依赖 cli app。
 

@@ -14,8 +14,6 @@ import { registerAgentIpc } from './agentIpcHandlers';
 import { startMcpBridgeRuntime } from './mcpBridgeRuntime';
 import { registerMcpIpc } from './mcpIpcHandlers';
 import { createMcpRequestHandler } from './mcpRequestHandler';
-import { createDriftService } from './mcpDriftService';
-import { registerDriftIpc } from './driftIpc';
 import {
   mcpClientConfigs,
   synchronizeEvidenceMcpRegistration,
@@ -91,7 +89,6 @@ const startApplication = async (): Promise<void> => {
   });
   app.once('before-quit', () => aiConfigIpc.dispose());
   app.once('before-quit', () => storyIpc.dispose());
-  registerDriftIpc();
   registerDeliveryIpc();
   app.once('before-quit', () => agentIpc.dispose());
 
@@ -118,7 +115,6 @@ const startApplication = async (): Promise<void> => {
         capture,
         sensors: createMcpSensorService(),
         delivery: createMcpDeliveryService(),
-        drift: createDriftService(),
         onCall,
       }),
     publishStatus: (status) => {

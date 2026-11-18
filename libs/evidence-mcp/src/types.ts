@@ -149,29 +149,9 @@ export interface McpOpenApiContract {
   limitations: readonly string[];
 }
 
-export interface McpDriftFinding {
-  kind: string;
-  severity: 'block' | 'warn';
-  message: string;
-  evidenceRef: string | null;
-  contextRef: string | null;
-  remediation: string;
-}
-
-export interface McpDriftAudit {
-  modelId: string;
-  spanCount: number;
-  commitCount: number;
-  counts: Readonly<Record<string, number>>;
-  findings: readonly McpDriftFinding[];
-  passed: boolean;
-  errors: readonly string[];
-}
-
 export interface McpStageGateResult {
   passed: boolean;
   exitCode: number;
-  driftDetected: boolean;
   blockingReasons: readonly string[];
 }
 
@@ -189,8 +169,7 @@ export type EvidenceMcpAppRequest =
   | { method: 'apply_model_patch'; patch: McpPatchInput }
   | { method: 'run_stage_gate'; target: 'api' }
   | { method: 'get_delivery_topology' }
-  | { method: 'export_openapi_contract' }
-  | { method: 'audit_production_drift'; document: unknown };
+  | { method: 'export_openapi_contract' };
 
 export type EvidenceMcpAppResult =
   | McpAppState
@@ -201,8 +180,7 @@ export type EvidenceMcpAppResult =
   | McpPatchResult
   | McpStageGateResult
   | McpDeliveryTopology
-  | McpOpenApiContract
-  | McpDriftAudit;
+  | McpOpenApiContract;
 
 /**
  * What every MCP tool needs from the desktop.
@@ -226,8 +204,6 @@ export interface EvidenceMcpAppClient {
   getDeliveryTopology(): Promise<McpDeliveryTopology>;
   /** The OpenAPI 3.1 contract the saved model implies. */
   exportOpenApiContract(): Promise<McpOpenApiContract>;
-  /** Compares an exported production trace with the saved model. */
-  auditProductionDrift(input: { document: unknown }): Promise<McpDriftAudit>;
 }
 
 export const MCP_SERVER_NAME = 'evidence-desktop';

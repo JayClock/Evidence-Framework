@@ -5,7 +5,7 @@ description: 安装Evidence桌面与统一CLI，以FM v5建模、静态检查、
 tags: [quickstart, onboarding, navigation, commands]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-18T09:45:40.969Z
+    at: 2026-11-18T12:34:41.390Z
 sources:
   - id: openwiki-source-8037e2358a2c4f9b2c722a11
     resource: repo://AGENTS.md
@@ -19,18 +19,18 @@ sources:
     resource: repo://apps/cli/src/router.ts
   - id: openwiki-source-5d33672c45ec58cd29dce507
     resource: repo://apps/desktop/src/main/main.ts
+  - id: openwiki-source-034a304691f6c1f77f682d25
+    resource: repo://apps/desktop/src/renderer/state/useMcpBridge.ts
   - id: openwiki-source-eb64da3d440064cfd8e29c7a
     resource: repo://docs/api-projection-v6.md
   - id: openwiki-source-0c1cc5dc86ad401eb9678504
     resource: repo://ENVIRONMENT.md
-  - id: openwiki-source-3487fdf20c88f517d0a744eb
-    resource: repo://libs/evidence-acceptance/package.json
   - id: openwiki-source-00036286abae2d8c898e2cef
     resource: repo://libs/evidence-acceptance/src/commands.ts
   - id: openwiki-source-cd086b179a9af7a48561ba25
     resource: repo://libs/evidence-api/src/delivery/routes.ts
-  - id: openwiki-source-aac6631a251b846350b2d550
-    resource: repo://libs/evidence-mcp/src/server/toolset.ts
+  - id: openwiki-source-77f78c07571bd5f81a39b9b1
+    resource: repo://libs/evidence-mcp/src/server/toolset.spec.ts
   - id: openwiki-source-83f9ee9177192af59a8fc434
     resource: repo://libs/evidence-model-core/src/adapters/modelBundle.ts
   - id: openwiki-source-9008514a60858ff717f539ab
@@ -47,14 +47,14 @@ sources:
     resource: repo://package.json
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "pi", at: "2026-11-18T09:45:40.969Z" }
+generated: { by: "pi", at: "2026-11-18T12:34:41.390Z" }
 ---
 
 # 快速开始与任务导航
 
 Evidence是语言无关的后端业务建模工作台：先描述双方责任、请求时段、确认时刻、事实与派生规则，再投影接口和验收。模型不是ORM或后端实现；画布、CLI、传感器和生成器复用同一DomainModelDocument。
 
-当前 workspace 为**两个应用（desktop/cli）、十八个 TypeScript 库**。Node.js 22、pnpm 12.16.1 是框架开发工具链；`pnpm install` 安装固定 Bruno CLI，契约比较另需固定原生 oasdiff。项目目录不提供 skill 树。
+当前 workspace 为**两个应用（desktop/cli）、十七个 TypeScript 库**。Node.js 22、pnpm 12.16.1 是框架开发工具链；`pnpm install` 安装固定 Bruno CLI，契约比较另需固定原生 oasdiff。项目目录不提供 skill 树。
 
 ## 从干净环境启动
 
@@ -127,9 +127,9 @@ open选择含.evidence/fm的项目或Bundle；新项目选模板，或从业务�
 
 默认业务泳道呈现七阶段、责任与补偿轨道，topology 模式由 ELK 异步布置 compound Context，React Flow管视口，Inspector编辑语义；所有mutations/RFC6902共用Immer历史。Agent补丁先应用并给tool结果，再显示保留/最新时一步撤销；后续编辑后不能用旧review误撤工作。
 
-rail 为业务结构、诊断、生产漂移、AI 协同、条款审计、共创工作坊；journey/topology/table/split 共享选择，split 可看台账/OpenAPI/CEL/漂移/故事。生产trace审计看saved模型，实时静态diagnostics看明确revision，不把二者混成一份结论。外部文件写入只提示reload，save并无自动merge/乐观锁。
+左侧导轨从上到下是总台账、门禁与诊断、AI 协同、共创工作坊，对应 Mod+1 至 Mod+4。总台账与画布共用选区；交付预览通过命令面板或 Alt+D 打开。诊断与当前模型修订匹配才标到画布，外部文件写入只提示重新加载。
 
-外部Agent通过per-user socket；desktop同binary支持--mcp-stdio，当前 14 工具，五个 write（patch+四算子）最终走renderer session，不直接写源。MCP/内置Agent的参数用共享Zod校验，算子优先。
+外部Agent通过per-user socket；desktop同binary支持--mcp-stdio，当前 13 个工具，五个 write（patch+四算子）最终走renderer session，不直接写源。MCP/内置Agent的参数用共享Zod校验，算子优先。
 
 ## 第一天必须分清的门槛
 

@@ -23,7 +23,6 @@ interface RightInspectorProps {
   graph: DomainGraph;
   session: ModelSession;
   selection: ModelSelection;
-  onOpenSource?: () => void;
 }
 
 const fieldValue = (entity: EntityAST, field: string): unknown =>
@@ -71,7 +70,6 @@ export const RightInspector = ({
   graph,
   session,
   selection,
-  onOpenSource,
 }: RightInspectorProps) => {
   const entity =
     selection.nodeId === null ? undefined : graph.getEntity(selection.nodeId);
@@ -141,15 +139,6 @@ export const RightInspector = ({
             <p className="text-evidence-muted">
               {entity.sourceSnippet.locator ?? '未记录定位信息'}
             </p>
-            {onOpenSource === undefined ? null : (
-              <button
-                type="button"
-                className="mt-1 text-evidence-accent"
-                onClick={onOpenSource}
-              >
-                查看条款审计
-              </button>
-            )}
           </section>
         )}
         <InspectorBody

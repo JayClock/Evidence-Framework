@@ -1,7 +1,6 @@
 export * from './aiConfig.js';
 export * from './agentIpc.js';
 export * from './delivery.js';
-export * from './drift.js';
 export * from './ingestion.js';
 export * from './ipc.js';
 export * from './mcpIpc.js';

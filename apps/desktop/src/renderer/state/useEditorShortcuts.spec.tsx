@@ -96,16 +96,13 @@ describe('useEditorShortcuts', () => {
     const handlers = setup({
       rerunSensors: vi.fn(),
       openDelivery: vi.fn(),
-      openSandbox: vi.fn(),
     });
 
     fireEvent.keyDown(window, { key: 'R', metaKey: true, shiftKey: true });
     fireEvent.keyDown(window, { code: 'KeyD', altKey: true });
-    fireEvent.keyDown(window, { code: 'KeyS', altKey: true, shiftKey: true });
 
     expect(handlers.rerunSensors).toHaveBeenCalledTimes(1);
     expect(handlers.openDelivery).toHaveBeenCalledTimes(1);
-    expect(handlers.openSandbox).toHaveBeenCalledTimes(1);
     // Mod+Shift+Z must stay redo, not become another shifted action.
     fireEvent.keyDown(window, { key: 'Z', metaKey: true, shiftKey: true });
     expect(handlers.redo).toHaveBeenCalledTimes(1);

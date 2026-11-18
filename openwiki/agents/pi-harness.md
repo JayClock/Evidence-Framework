@@ -5,7 +5,7 @@ description: 桌面内置 Pi 会话的 SDK 适配、代码随包提示词、Zod 
 tags: [agent, pi-sdk, session, tools, prompts, desktop]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-17T06:43:02.055Z
+    at: 2026-11-18T12:34:41.390Z
 sources:
   - id: openwiki-source-f85ce0e3a462797434d822a8
     resource: repo://apps/desktop/src/main/agentIpcHandlers.ts
@@ -33,16 +33,10 @@ sources:
     resource: repo://libs/desktop/feature-agent/src/state/useAgentSession.ts
   - id: openwiki-source-0c662531e68a2db936eccc7f
     resource: repo://libs/desktop/feature-agent/src/state/usePatchReview.ts
-  - id: openwiki-source-100de7a731086244071952a9
-    resource: repo://libs/evidence-agent/package.json
   - id: openwiki-source-9d54a30ae7fe8603951dd3dd
     resource: repo://libs/evidence-agent/src/browser.ts
-  - id: openwiki-source-172b58a8c9ee4fcc3b2b3daa
-    resource: repo://libs/evidence-agent/src/governance/governanceLoop.ts
   - id: openwiki-source-1c67fed1db077d0e39bb80ad
     resource: repo://libs/evidence-agent/src/index.ts
-  - id: openwiki-source-d3fe1c0ad288855daa625351
-    resource: repo://libs/evidence-agent/src/prompts/governance.ts
   - id: openwiki-source-be4ecf29feda5ec973d60afb
     resource: repo://libs/evidence-agent/src/prompts/index.ts
   - id: openwiki-source-c24d79f7e7415c37828b5d3c
@@ -57,8 +51,6 @@ sources:
     resource: repo://libs/evidence-agent/src/session/sessionFork.ts
   - id: openwiki-source-cdc6f461741d851702ef8581
     resource: repo://libs/evidence-agent/src/session/streamEvents.ts
-  - id: openwiki-source-0caa2c2590ce661670e9636d
-    resource: repo://libs/evidence-agent/src/telemetry/productionTrace.ts
   - id: openwiki-source-6af8fc5a6e80831b1dfa13b9
     resource: repo://libs/evidence-agent/src/tools/evidenceTools.spec.ts
   - id: openwiki-source-418388028b19fdeb893f56a8
@@ -67,12 +59,12 @@ sources:
     resource: repo://libs/evidence-agent/src/tools/registerZodTool.ts
   - id: openwiki-source-4c008c3497d98e90590e5286
     resource: repo://libs/evidence-tools/README.md
-generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
+generated: { by: "pi", at: "2026-11-18T12:34:41.390Z" }
 ---
 
 # Pi 建模 Agent 与受控工具
 
-`@evidence-poc/evidence-agent` 合并会话、提示词、工具、传感器、治理策略和 trace reader；`.` 是 Node 入口，`./browser` 避免 renderer 引入会话运行时。旧 agent-core/modeling-orchestrator 包名不再是实现位置。
+`@evidence-poc/evidence-agent` 合并会话、提示词、工具和传感器；`.` 是 Node 入口，`./browser` 避免 renderer 引入会话运行时。旧 agent-core/modeling-orchestrator 包名不再是实现位置。
 
 ## 会话边界与生命周期
 
@@ -88,7 +80,7 @@ Agent 和摄取 reader 共用主进程 AiConfigService 的 getModelOptions，显
 
 ## 指令、事件与界面
 
-`EVIDENCE_INSTRUCTIONS` 由角色、红线、算子、工作流组成普通 TS 字符串。提示词测试防止引用不存在的工具或遗留 skill 路径；桌面只传一个 extension factory，不覆盖 modeling instructions。`GOVERNANCE_INSTRUCTIONS` 是另一个宿主可选的生产审计指令集，要求 trace 审计和真实 HTTP 验收，不再调用旧 replay。
+`EVIDENCE_INSTRUCTIONS` 由角色、红线、算子、工作流组成普通 TS 字符串。提示词测试防止引用不存在的工具或遗留 skill 路径；桌面只传一个 extension factory，不覆盖 modeling instructions。
 
 Pi 事件投影成五种纯数据：text-delta、tool-call-started、tool-call-completed、agent-settled、agent-error，其余丢弃。renderer `useAgentSession` 汇总最多末尾 8000 字符文本、工具运行状态、错误；运行中 submit 变成 steer。AgentCopilot 与 InlinePatchCopilot 共用控制器，⌘/Ctrl+Enter 发送、Escape 停止；前者附 workshop step，后者附选中对象。选区由 editor 单独发布，不存入会话私有状态。
 
@@ -111,18 +103,14 @@ Pi 事件投影成五种纯数据：text-delta、tool-call-started、tool-call-c
 
 `usePatchReview` 记录差异与 canvas overlay；只有屏幕仍是该批修改后的模型时允许一键撤销，避免撤销后续工作。详见[补丁审查](../desktop/ingestion-and-patch-review.md)。
 
-## Runtime 所有权、镜像与治理
+## Runtime 所有权与模型镜像
 
 主进程按 project root single-flight 创建 runtime，第二窗口共享原会话；事件和报告只送创建它的 WebContents，销毁窗口时 dispose。模型读取优先 renderer 已发布镜像，否则磁盘；不同 root 或非递增 revision 被拒绝/忽略，首次 baseline 跨修订保留。默认 800ms debounce 聚合编辑，报告带 revision；run sequence 与当前 revision 双检查防止慢旧结果覆盖新结果。dispose 清镜像、timer、会话并使晚到报告失效。
 
 `sessionFork` 对 JSONL transcript 的 id/parentId 祖先链做纯复制，重写 session id、timestamp、parentSession，报告叶节点和丢弃分支数；无 fork 点保留全 transcript。MISSING_HEADER、INVALID_LINE、ENTRY_NOT_FOUND 明确拒绝，循环链终止且不修改源数据。
 
-`readProductionTrace` 把 OTLP/JSON 中带 fm.evidence.ref 的 span 转成 Evidence commit（服务、操作、时间、上下文、fm.value.*、履约声明）。无该属性跳过，已声明 Evidence 却缺 trace/span ID 则报告错误；来源问题并入审计，不能伪装完整绿灯。
-
-`decideGovernance` 使用 drift + **外部 HTTP acceptance**，不再使用 replay。每种 finding 映射行动：派生值写入是服务漏洞，违约无后续建议补偿；失败或空/畸形验收追加 repair_implementation。优先级 production_overreach > needs_repair > model_lagging > healthy；只有无 blocking、提供了非空全通过验收、且 verdict=model_lagging 才 canPatchModel。healthy 是无需修改，不是自动写许可。
-
 ## 验证入口
 
-会话/fork specs 覆盖 lazy single-flight、恢复、失败重试、事件和谱系；tools/registerZodTool specs 覆盖 refinement、恶意/缺失参数、11 工具、只读预览与算子拒绝。agentRuntime、useAgentPatchBridge 和 governanceLoop specs 分别覆盖报告竞态、真实补丁反馈/撤销以及 HTTP 验收驱动的治理决策。测试 seam 使用假 SDK，不要求真实模型调用。
+会话/fork specs 覆盖 lazy single-flight、恢复、失败重试、事件和谱系；tools/registerZodTool specs 覆盖 refinement、恶意/缺失参数、11 工具、只读预览与算子拒绝。agentRuntime 和 useAgentPatchBridge specs 分别覆盖报告竞态和真实补丁反馈/撤销。测试 seam 使用假 SDK，不要求真实模型调用。
 
 相关：[MCP](./mcp-integration.md) · [传感器](./sensor-orchestration.md) · [模型会话](../model/commands-and-session.md)

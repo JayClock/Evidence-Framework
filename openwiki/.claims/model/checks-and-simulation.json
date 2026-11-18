@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:79ec8b57f4d581d2b7ded2c0cdd4093d72d44d064c05245f83aa69c5d462c7fa",
+  "pageVersion": "sha256:babba670494b5922d72c078f6b0a7e8f73dd757e60532de4535286503d08f16f",
   "claims": [
     {
       "id": "claim_4260686904514941808ef785c7ef5562",
@@ -105,43 +105,11 @@
       ]
     },
     {
-      "id": "claim_f0b6035893be4940917a8178aac92e6f",
-      "statement": "drift在main读取saved模型/trace，读取或解析错误明确失败，旧sandbox服务已删除。",
-      "evidence": [
-        {
-          "resource": "repo://apps/desktop/src/main/driftIpc.ts",
-          "version": "repo-file-v1:sha256:b68dcc61abc438d51de7297f26abcc204200265094744c1f0caf1ec4efb1d672"
-        },
-        {
-          "resource": "repo://apps/desktop/src/main/mcpDriftService.ts",
-          "version": "repo-file-v1:sha256:222833a265474f59b08b28da7a1a258d57925bfecf2a10f5293f74b6d8d740ff"
-        }
-      ]
-    },
-    {
-      "id": "claim_d70f1be2adc7497da4c9bca108f14a3e",
-      "statement": "The drift audit classifies five disagreements with the model, treats only unmodeled evidence committed and derived value supplied as blocking when deciding passed, attaches the model expectation and a remediation to every finding, and merges source read problems into its errors so an incomplete audit cannot read as a clean comparison.",
-      "evidence": [
-        {
-          "resource": "repo://libs/evidence-agent/src/sensors/native/driftSensor.ts#L20-L34",
-          "version": "repo-lines-v1:sha256:0a68728cf2b052bd7aacf3422012dfefb7d583bfb71b6a6dce8ec7b86960de05:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI0N2ZhYWI4YTUyYzA0YzJlYmQ1Y2I2MzUwYmVlMDk2ZjBiYTY4ZWIyZTI1ZDU2MzI3NTlkMTNjZmRhMzg2ODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdiNDQ5MzU5NDQ0YWJjNDQyMjNlZTMxOGQ1NDRmNmNiNDZlMTkzZjgzMTZiOWMzZDc4ZmVjY2Q1OTUxNzQwMmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA1MjNhMDhiMjgwNzA0NjNmNmNjMTNlNGM5MDNiZDc1YTRiMzRlZjAzMjI3NDJiODVkZmIyYzYwMzlhZmY2NzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVjYzI4M2UwZDUxMDhiNjI3NjA2MzgzMGNlN2ZmOTRhYTlkMjA1N2QyMmM2MDZiMDgxMzliOGIzMGY3N2QxM2EifQ"
-        },
-        {
-          "resource": "repo://libs/evidence-agent/src/sensors/native/driftSensor.ts#L99-L102",
-          "version": "repo-lines-v1:sha256:62eb3437fee35e6fc9d1881216476c854f76eb1b8700d94b136c4aa5476e81b9:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTM2YTY2NGUwYzI5MTJkOWVjNDUzMGE2MTZlMDEzZGY0MzQ2YWY2MWM3MWZkYmM4MmQ2ZWZmNjM1MWYwY2UzNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDk2OWZkYzBlODc3NWI0MTkxMzM4M2NkZmMyYjkxNTI0NmYwN2ZhNzcxN2JlZGE4MGNiNTdkNzNiNTQ1Yzg5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjFkNzY1NzUwMGNkNGVkMzYxYTFkZjMzM2RmY2QwMTM0NTA2Yzk4MzJhOTU1ODE0MWJkODNkMjIyZTJjNGVmYiJ9"
-        },
-        {
-          "resource": "repo://libs/evidence-agent/src/sensors/native/nativeDriftAudit.ts#L19-L30",
-          "version": "repo-lines-v1:sha256:3941e5c86f50a7f465b21fb3a651bda16bfa64c6e0aeeb0ceb51eaa82428ac18:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhhNjMyY2UyMzQ0NzFiOTk1ODUxZDQzYzViYTFkOTg4ODJjYjE3NmNjMzllNGQ5Nzc3MWNlOTNmNDY5ZmE0ODQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZmMzEwNjc1YjQ4YjViYTc4YWUzZDFlNGVlOWExZTMwNzE0OWE5NDAwMjU0ODAzZGMzNmIzNjAwOTEzN2Q0YTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
-        }
-      ]
-    },
-    {
       "id": "claim_8a4a8f65e4e94932bd9ff2a1e53528f6",
       "statement": "errors折block，gap/inputChanged/advisories折warn，已无FM_NO_SCENARIO。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts#L196-L242",
+          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts#L148-L194",
           "version": "repo-lines-v1:sha256:db25de3278d9f9281b1e28181f6a006d7c084047306778d375501afd88d553f1:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI5N2E2NTZlODliYWY0ODM1MzE5NmYwZmE4NWMxNTgzMWY3MDVlZWRjZWY2N2Y3OTlkYWFjYjU3ODU1NTk3ODEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU5ODI4NzUyZjgwMmVkYWEwNjFjMmFlYWM1YmM0OTMxZmE2NjFmM2EyODUzMzY5ZWFiNDNlM2E5YmE5Nzk4NzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM2Nzg4ODY5ODkxZWU1M2Q1ZmUyM2I2MjhkYjYzMDZkNGQ5OWFjMjQzZDk1YjFlMGEwNDg4NWU0OTQxYzE5NzMifQ"
         }
       ]
@@ -195,6 +163,6 @@
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-18T09:45:40.969Z"
+    "at": "2026-11-18T12:34:41.390Z"
   }
 }

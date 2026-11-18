@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:3f914af06a0e2d7f1d1d06fc2b5bd84d87c22a0adcf670ee6602c92321be5e35",
+  "pageVersion": "sha256:29f24dcf7e834f1c80cc00e4f9e14ed0baec516cadab96fce5d226570d33b26d",
   "claims": [
     {
       "id": "claim_319186a606cf4eb5b41077fcdfadf0b8",
@@ -12,27 +12,27 @@
         },
         {
           "resource": "repo://apps/desktop/src/preload/index.ts",
-          "version": "repo-file-v1:sha256:a664ac6e00c28e316e4384f7057c49590aa38dbe22a682d8e9a67f0fede848d2"
+          "version": "repo-file-v1:sha256:5150c0f359b7a4321e3cabd67e88adf6bf0e16205780fe314987f60f6486ea4d"
         }
       ]
     },
     {
       "id": "claim_05befca32a3f4158ae3b52cd6757edd6",
-      "statement": "preload 提供 projects/agent/mcp/drift/ingestion/story/aiConfig/system，订阅可取消，补丁/MCP 回答为 send，旧 simulation/review 已删除。",
+      "statement": "preload 提供 projects、agent、mcp、ingestion、story、aiConfig 和 system；订阅可取消，补丁及 MCP 回答用单向 send。",
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/preload/index.ts",
-          "version": "repo-file-v1:sha256:a664ac6e00c28e316e4384f7057c49590aa38dbe22a682d8e9a67f0fede848d2"
+          "version": "repo-file-v1:sha256:5150c0f359b7a4321e3cabd67e88adf6bf0e16205780fe314987f60f6486ea4d"
         }
       ]
     },
     {
       "id": "claim_f56eb7c5fa72408f818137022475698a",
-      "statement": "main 组合项目/摄取/story/AI/drift/delivery/Agent 与 MCP；MCP 启动失败降级，退出释放资源，AI 配置变化重置 story 和 Agent 模型。",
+      "statement": "主进程组合项目、摄取、story、AI、交付、Agent 与 MCP；MCP 启动失败可降级，退出释放资源，AI 配置变化重置 story 和 Agent 模型。",
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/main/main.ts",
-          "version": "repo-file-v1:sha256:42b4ffc91faab6739d8b429421737e9ba298d53a678b43db5956f4f971137aef"
+          "version": "repo-file-v1:sha256:5c69369ed5af8a83f6d595da3fc733d39c6d556b485949077f252ee18d2077c2"
         }
       ]
     },
@@ -41,11 +41,11 @@
       "statement": "With --mcp-stdio the same executable opens no window, reads no project store and registers nothing, running only the stdio MCP server against the derived endpoint.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/main.ts#L152-L153",
+          "resource": "repo://apps/desktop/src/main/main.ts#L148-L149",
           "version": "repo-lines-v1:sha256:03a42be7aad9cf31e7126f6d67707fcf7150cecd596e9d7ec533b587ac8bf701:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTdmM2UxNDM5MDU4MTg1ZDRjOGNkZTQxMWJiOWI3NTgwZDhhN2QxMzA3ODlkODI3N2YxNGM4NGY2ZjI5MDY1YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmE3N2M4OTA3OTY5NDNkNTYyNDdmMGY1ZTRiZTljYTRkNjI4MGQ5ZTVhNDZhNWQyYTc1NDhkM2UwNzEyNTI0ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjAwNzE0Zjg5NWFlYjYzMDllNjI3MjE4YjAwOGZhYTc0YmRkZDM0YTQzNTU2YjAxYmIwMzg4ZDNiZDk5OTUyMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2JjNmI4OTRkODhkNDMyYjQ5NjliY2UzYmExNjNkYTc5ZGYzMmFhNmUzNzYzOTEyZmE2ZDY0N2I4ZjgxYjViNCJ9"
         },
         {
-          "resource": "repo://apps/desktop/src/main/main.ts#L38-L63",
+          "resource": "repo://apps/desktop/src/main/main.ts#L36-L61",
           "version": "repo-lines-v1:sha256:53d3e19492fa526c1610f5cd7fa49879a2ee7224d110ae761ad9a1c026323941:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiOGY4NTU1YWNhZWRlZWIxMDk4NDc4ZWI2NjBmYjNmNGIyZDc0YzdmMzYyMWZlZGI0MWU1MGY1OGQ0ZjEzYTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ5YmYyYzFmYWRhMjcwNWU5NTIzYTIyOGY2M2QzMTk1ZjhlMzgyMmI4OTI0YzcwNTUwMWYwNjE2MjYzODUxN2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMyOTYyY2MzYmUzODkyNTE4MTkxMzZlYzNhZGIxZmNhMzg5ZDhjZWM1YmYxODYxZTQ1NmQ0NDgzY2NiODNhZTMifQ"
         }
       ]
@@ -207,16 +207,6 @@
       ]
     },
     {
-      "id": "claim_f3d60ed3253b4a4f9e665ee3c6bdd161",
-      "statement": "Drift IPC 在主进程读取/解析 trace，对 saved 来源审计，lazy service 可注入，dispose 移除两个 handler，无 replay。",
-      "evidence": [
-        {
-          "resource": "repo://apps/desktop/src/main/driftIpc.ts",
-          "version": "repo-file-v1:sha256:b68dcc61abc438d51de7297f26abcc204200265094744c1f0caf1ec4efb1d672"
-        }
-      ]
-    },
-    {
       "id": "claim_a662b340e39445dab2d25119484e87e4",
       "statement": "Ingestion runs entirely in the main process: draft reads a contract by clauses, a blueprint table or business text, preferring a configured model and falling back to the built-in vocabulary while reporting why, and compile refuses a draft that yields no entity, writes it through createFromDocument and opens the new project's editor window.",
       "evidence": [
@@ -255,8 +245,8 @@
       "statement": "MCP 使用 listEditorWindows 首窗承载模型与截图，status 推所有窗口且可拉取。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/main.ts#L108-L134",
-          "version": "repo-lines-v1:sha256:3862e5276cce0ad363338c42c801de669bde9cdb8040326cbf2e8c71eff70c47:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZmN2Q0Yzk4ODI1M2U3YzMyZWU3ODJkOGNmZjVjNDIwOTFhZDg0NjU3ZjlhZTVjODAxNzQ4ZDU1ZWIxN2U5ODMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyOWM2NzU0ODlkNTlmZWM1ZGNkNDkyMzJkNWU5ZGVkZGE2ZTBjOTljMjY3ODE4NTlkMDRiZTQ2MDMzY2U5YzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYwMjBkNzY1MDNlM2Y5MzkxODQzYjFiZGM5MjkyY2E4NjI3Zjg2ZmRlOWFiNGVlZGNiOTJiNWFjMTlkYWI1MWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg4YmUxYjYzMzMyNmIwMmQwZjFlMGVmYjlmYjExZjU4YTAyMGQ5ZWIxZTgyMDA3ZjVjYWVlN2VkYTFhY2VlN2YifQ"
+          "resource": "repo://apps/desktop/src/main/main.ts#L105-L130",
+          "version": "repo-lines-v1:sha256:5fe16fd241d69790ae24225333ca154ce02c6f6b9ed57cf57c7c4c0fb71640d5:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZmN2Q0Yzk4ODI1M2U3YzMyZWU3ODJkOGNmZjVjNDIwOTFhZDg0NjU3ZjlhZTVjODAxNzQ4ZDU1ZWIxN2U5ODMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyOWM2NzU0ODlkNTlmZWM1ZGNkNDkyMzJkNWU5ZGVkZGE2ZTBjOTljMjY3ODE4NTlkMDRiZTQ2MDMzY2U5YzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYwMjBkNzY1MDNlM2Y5MzkxODQzYjFiZGM5MjkyY2E4NjI3Zjg2ZmRlOWFiNGVlZGNiOTJiNWFjMTlkYWI1MWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg4YmUxYjYzMzMyNmIwMmQwZjFlMGVmYjlmYjExZjU4YTAyMGQ5ZWIxZTgyMDA3ZjVjYWVlN2VkYTFhY2VlN2YifQ"
         }
       ]
     },
@@ -274,17 +264,17 @@
         },
         {
           "resource": "repo://apps/desktop/src/main/main.ts",
-          "version": "repo-file-v1:sha256:42b4ffc91faab6739d8b429421737e9ba298d53a678b43db5956f4f971137aef"
+          "version": "repo-file-v1:sha256:5c69369ed5af8a83f6d595da3fc733d39c6d556b485949077f252ee18d2077c2"
         },
         {
           "resource": "repo://apps/desktop/src/preload/index.ts",
-          "version": "repo-file-v1:sha256:a664ac6e00c28e316e4384f7057c49590aa38dbe22a682d8e9a67f0fede848d2"
+          "version": "repo-file-v1:sha256:5150c0f359b7a4321e3cabd67e88adf6bf0e16205780fe314987f60f6486ea4d"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-17T06:43:02.055Z"
+    "at": "2026-11-18T12:34:41.390Z"
   }
 }

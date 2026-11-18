@@ -1,18 +1,18 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:f8dbe451a7fdda20ee6e7aedce7052f67f43345bbd6423a80758c72afcfd69fb",
+  "pageVersion": "sha256:6eb0a63305bf948da86df86a629db0f85e98aaa4a2408fbf3c640f9ee00f71f4",
   "claims": [
     {
       "id": "claim_164af37c15bd455a9db772d5a23f1eed",
-      "statement": "工作区有 desktop/cli 两个应用与十八个库：九个 evidence 库、九个 desktop 库；CLI 是独立组合宿主。",
+      "statement": "工作区有 desktop 和 cli 两个应用、九个 evidence 库和八个 desktop 库；CLI 是独立组合宿主。",
       "evidence": [
         {
           "resource": "repo://docs/workspace-layout.md",
-          "version": "repo-file-v1:sha256:f5b93f8b95fe5bb17289e2b0f5ee3a04f5e314035dc67844e821f711b28e0149"
+          "version": "repo-file-v1:sha256:4c0d0b7ed766f0caa991b996ec19e0a05c761859a700c6e090d7e56540255245"
         },
         {
-          "resource": "repo://package.json",
-          "version": "repo-file-v1:sha256:dede372592c0b80c3094dc143616b53ebdaa0cb7ed395730fca230ae6813845d"
+          "resource": "repo://tsconfig.json",
+          "version": "repo-file-v1:sha256:3257d896fda47807b116943d63128d511195c8fc7030e2270e731b8fc799bb3b"
         }
       ]
     },
@@ -64,15 +64,11 @@
     },
     {
       "id": "claim_162804aee7cf4d8a86cc3212a92aa7fc",
-      "statement": "桌面 app 是组合根，renderer 拥有实时 ModelSession，main 负责文件操作、AI、传感器、交付、漂移和 MCP；旧 review/workbench 已移除。",
+      "statement": "桌面 app 是组合根，renderer 拥有实时 ModelSession，main 负责文件操作、AI、传感器、交付和 MCP。",
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/main/main.ts",
-          "version": "repo-file-v1:sha256:42b4ffc91faab6739d8b429421737e9ba298d53a678b43db5956f4f971137aef"
-        },
-        {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx",
-          "version": "repo-file-v1:sha256:941b09d88c3a3b6a2ab2f4d3a6e487d76ec671cabde4412a404baf0188cacbad"
+          "version": "repo-file-v1:sha256:5c69369ed5af8a83f6d595da3fc733d39c6d556b485949077f252ee18d2077c2"
         },
         {
           "resource": "repo://apps/desktop/src/renderer/state/useEditorSession.ts",
@@ -112,7 +108,7 @@
         },
         {
           "resource": "repo://tsconfig.json",
-          "version": "repo-file-v1:sha256:b598c5d19f8e91fbfac3bab736fb0c5eaa80e2768eeda50bf28fb23496fff842"
+          "version": "repo-file-v1:sha256:3257d896fda47807b116943d63128d511195c8fc7030e2270e731b8fc799bb3b"
         }
       ]
     },
@@ -182,39 +178,43 @@
     },
     {
       "id": "claim_28b90e8c55c84621a47ef78b7e9cde9f",
-      "statement": "agent 汇总会话/提示词/工具/传感器/治理/trace，通过 browser 子入口向 renderer 提供合同。",
+      "statement": "evidence-agent 汇总会话、提示词、工具和传感器；browser 子入口向 renderer 提供数据契约。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-agent/package.json",
-          "version": "repo-file-v1:sha256:0d4c144c9da8c389f1b3c3f9f998ae722c30a43006a98c6cda21d62891171872"
+          "resource": "repo://libs/evidence-agent/src/browser.ts",
+          "version": "repo-file-v1:sha256:ad0fc6a21785b330f14a1c41fde06885d36372a87f6f4418d4a1f3c1ef344d09"
         },
         {
-          "resource": "repo://libs/evidence-agent/src/browser.ts",
-          "version": "repo-file-v1:sha256:4c9f3a2bba15db2ef2cbbe702f6abd0a20e8d155563e123291436e5898db697a"
+          "resource": "repo://libs/evidence-agent/src/index.ts",
+          "version": "repo-file-v1:sha256:9c4c6e8f4c3118fab368fcedcbe11477a3c9f719cc50bd80fb08478ce15f48e1"
         }
       ]
     },
     {
       "id": "claim_8b07171bc0ec434fa67b0e33c141d860",
-      "statement": "Agent/MCP 写入均经 renderer ModelSession 共享历史；主进程负责传感器、交付、漂移和截图，已无 replay。",
+      "statement": "Agent 和 MCP 写入在 renderer 的 ModelSession 共用历史，MCP 的传感器、交付及截图请求由主进程处理。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/agentRuntime.ts",
-          "version": "repo-file-v1:sha256:03e3b8aacc5423729bbdb69484256ea40902a252ddef58a4f959ee53f90713cc"
+          "resource": "repo://apps/desktop/src/main/mcpRequestHandler.ts",
+          "version": "repo-file-v1:sha256:4f6a810a7875ff0da571576dd47da37d33093123bdc5f7cce7180c1efbdd2739"
         },
         {
-          "resource": "repo://apps/desktop/src/main/mcpRequestHandler.ts",
-          "version": "repo-file-v1:sha256:632519b8515b3357591e5b4cbb2e2ac8c4b9d432f1dfa0679440b2454983439c"
+          "resource": "repo://apps/desktop/src/renderer/state/useMcpBridge.ts",
+          "version": "repo-file-v1:sha256:851cbe7af65bb60efd37e0ecc16999402964c0c1b8145037d2016e7b4cd3f22e"
+        },
+        {
+          "resource": "repo://libs/desktop/feature-agent/src/state/useAgentPatchBridge.ts",
+          "version": "repo-file-v1:sha256:afc96e6610d906ea684a85f946385c5d2e9ba318c26eb7f608e3133bd6a521af"
         }
       ]
     },
     {
       "id": "claim_8dbf7451e1474945b5ac82276d2a37d0",
-      "statement": "desktop main 注册项目/摄取/AI/drift/delivery/Agent IPC，--mcp-stdio 启动无窗口代理。",
+      "statement": "桌面主进程注册项目、摄取、AI、story、delivery 和 Agent IPC；--mcp-stdio 启动无窗口代理。",
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/main/main.ts",
-          "version": "repo-file-v1:sha256:42b4ffc91faab6739d8b429421737e9ba298d53a678b43db5956f4f971137aef"
+          "version": "repo-file-v1:sha256:5c69369ed5af8a83f6d595da3fc733d39c6d556b485949077f252ee18d2077c2"
         }
       ]
     },
@@ -234,11 +234,15 @@
     },
     {
       "id": "claim_7a6fe659906343718c5dda31b182ac6c",
-      "statement": "根 tsconfig 引用十八库及 cli，desktop 自有 typecheck/Forge targets。",
+      "statement": "根 tsconfig 引用十七个库及 CLI；桌面有自己的 typecheck 和 Forge targets。",
       "evidence": [
         {
+          "resource": "repo://apps/desktop/project.json",
+          "version": "repo-file-v1:sha256:bf1f2f80021837d3b21e8af8072f606610d0f56054e903bf0ef7d71ef02bdfa7"
+        },
+        {
           "resource": "repo://tsconfig.json",
-          "version": "repo-file-v1:sha256:b598c5d19f8e91fbfac3bab736fb0c5eaa80e2768eeda50bf28fb23496fff842"
+          "version": "repo-file-v1:sha256:3257d896fda47807b116943d63128d511195c8fc7030e2270e731b8fc799bb3b"
         }
       ]
     },
@@ -248,7 +252,7 @@
       "evidence": [
         {
           "resource": "repo://docs/workspace-layout.md",
-          "version": "repo-file-v1:sha256:f5b93f8b95fe5bb17289e2b0f5ee3a04f5e314035dc67844e821f711b28e0149"
+          "version": "repo-file-v1:sha256:4c0d0b7ed766f0caa991b996ec19e0a05c761859a700c6e090d7e56540255245"
         },
         {
           "resource": "repo://libs/evidence-acceptance/package.json",
@@ -263,6 +267,6 @@
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-18T09:45:40.969Z"
+    "at": "2026-11-18T12:34:41.390Z"
   }
 }

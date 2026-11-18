@@ -9,8 +9,6 @@ interface ShortcutHandlers {
   /** Re-runs the AST gate and the sensors. */
   rerunSensors?: () => void;
   openDelivery?: () => void;
-  /** Opens the sandbox hub (Alt+Shift+S). */
-  openSandbox?: () => void;
   clearSelection: () => void;
   zoomIn: () => void;
   zoomOut: () => void;
@@ -73,17 +71,11 @@ export const useEditorShortcuts = (handlers: ShortcutHandlers): void => {
       }
 
       // The palette is the way in: it is the only chord the header advertises,
-      // and every other surface (copilot, exports, sandbox) is a row inside it.
+      // and other surfaces such as copilot and exports have rows inside it.
       const key = event.key.toLowerCase();
       if (mod && key === 'k' && handlers.openCommandPalette) {
         event.preventDefault();
         handlers.openCommandPalette();
-        return;
-      }
-
-      if (event.altKey && event.shiftKey && !typing && event.code === 'KeyS') {
-        event.preventDefault();
-        handlers.openSandbox?.();
         return;
       }
 
@@ -135,7 +127,9 @@ export const useEditorShortcuts = (handlers: ShortcutHandlers): void => {
       if (mod && !typing) {
         // `Mod+\` is the chord the inspector's own fold prints.
         const toggle =
-          key === 'i' || event.key === '\\' ? handlers.toggleRightRail : undefined;
+          key === 'i' || event.key === '\\'
+            ? handlers.toggleRightRail
+            : undefined;
 
         if (toggle !== undefined) {
           event.preventDefault();

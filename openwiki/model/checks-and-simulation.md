@@ -2,23 +2,15 @@
 type: pipeline
 title: 静态门禁、CEL 与样例求值
 description: FM check v6 如何分开一致性与scope完整性，native cel-js如何分析/求值，以及内联样例oracle和真实HTTP验收之间的不可替代边界。
-tags: [validation, check, cel, examples, traceability, drift]
+tags: [validation, check, cel, examples, traceability]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-18T09:45:40.969Z
+    at: 2026-11-18T12:34:41.390Z
 sources:
   - id: openwiki-source-52a825b501b0001cef1b2ecc
     resource: repo://apps/cli/src/commands/check.ts
-  - id: openwiki-source-64d2ba689444145d517c3142
-    resource: repo://apps/desktop/src/main/driftIpc.ts
-  - id: openwiki-source-01b85019316bb82ac088e1fd
-    resource: repo://apps/desktop/src/main/mcpDriftService.ts
   - id: openwiki-source-74d7b554a01c3f371dc93772
     resource: repo://libs/desktop/feature-story/src/state/journeyPreview.ts
-  - id: openwiki-source-5570b1437846809479c60f79
-    resource: repo://libs/evidence-agent/src/sensors/native/driftSensor.ts
-  - id: openwiki-source-701227b6d41a5cbdfe79bcbf
-    resource: repo://libs/evidence-agent/src/sensors/native/nativeDriftAudit.ts
   - id: openwiki-source-9ad3f46aa18e9c002bf6f482
     resource: repo://libs/evidence-agent/src/sensors/sensorReport.ts
   - id: openwiki-source-4e8476923f1a3d656f3339cf
@@ -41,7 +33,7 @@ sources:
     resource: repo://libs/evidence-model-io/src/commands.ts
   - id: openwiki-source-5827654ee488871fab61b1a1
     resource: repo://libs/evidence-model-io/src/legacyRemoval.spec.ts
-generated: { by: "pi", at: "2026-11-18T09:45:40.969Z" }
+generated: { by: "pi", at: "2026-11-18T12:34:41.390Z" }
 ---
 
 # 静态门禁、CEL 与样例求值
@@ -92,11 +84,9 @@ evidence-acceptance projector 从 examples[].test解析flow依赖，先清assert
 
 桌面ProblemsPanel读SensorReport：FM errors=block、gaps=warn、inputChanged=warn、advisories=warn；不再FM_NO_SCENARIO。报告documentRevision不等当前或loading/error则过期不标画布。实时静态检查不修改模型，不代替保存或业务批准。
 
-DriftRadar独立读saved模型+trace，MCP仅audit_production_drift而无run_scenario_replay。UNMODELED_EVIDENCE_COMMITTED/DERIVED_VALUE_SUPPLIED默认block，未声明属性/跨Context写/违约无后续warn；源/trace错误显式显示。治理许可使用外部HTTP acceptance，不再用内存replay。
-
 ## 验证与故障边界
 
-fmCheck/scope specs保护v6字段、null complete、digest变化、独立边界、缺口和lint；celEvaluator/celAnalysis/traceability specs保护native功能、词法scope和精确整数；transientSandbox specs保护显式时钟、typed值、resultType/JSON、输入不变。API acceptance e2e用独立HTTP后端验证真实红绿；drift/CLI legacyRemoval tests证明旧入口不假通过。
+fmCheck/scope specs保护v6字段、null complete、digest变化、独立边界、缺口和lint；celEvaluator/celAnalysis/traceability specs保护native功能、词法scope和精确整数；transientSandbox specs保护显式时钟、typed值、resultType/JSON、输入不变。API acceptance e2e 用独立 HTTP 后端验证真实红绿。
 
 遇错按层定位：syntax/引用/lineage→修模型；scope gaps→补责任闭环；oracle绑定/期望→修examples或规则；HTTP失败→修实际实现；源变更→重查；工具缺失→显式setup，不编造一个成功结论。
 

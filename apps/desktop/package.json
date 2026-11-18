@@ -28,7 +28,6 @@
     "@evidence-poc/desktop-contracts": "workspace:*",
     "@evidence-poc/desktop-feature-story": "workspace:*",
     "@evidence-poc/desktop-feature-delivery": "workspace:*",
-    "@evidence-poc/desktop-feature-drift": "workspace:*",
     "@evidence-poc/desktop-feature-agent": "workspace:*",
     "@evidence-poc/evidence-acceptance": "workspace:*"
   },

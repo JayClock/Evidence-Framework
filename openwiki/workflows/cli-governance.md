@@ -5,7 +5,7 @@ description: evidence 如何从 FM 模型导出 OpenAPI 与 Bruno 集合，对�
 tags: [cli, acceptance, governance, bruno, oasdiff, drift, ci]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-18T09:45:40.969Z
+    at: 2026-11-18T12:34:41.390Z
 sources:
   - id: openwiki-source-17a7254439d5e92a919764bb
     resource: repo://.github/workflows/evidence-governance.yml
@@ -35,7 +35,7 @@ sources:
     resource: repo://libs/evidence-api/src/loader/migrateOverlay.ts
   - id: openwiki-source-c22dc8548266abcfb6970baf
     resource: repo://templates/ci/evidence-ci.gitlab-ci.yml
-generated: { by: "pi", at: "2026-11-18T09:45:40.969Z" }
+generated: { by: "pi", at: "2026-11-18T12:34:41.390Z" }
 ---
 
 # 统一 CLI 与双门禁验收工作流
@@ -111,11 +111,9 @@ pnpm evidence test --target http://127.0.0.1:8085 --scenarios dist/acceptance \
 
 默认traffic-light适合人，--verbose保留失败详情，NO_COLOR关闭色。--json、--report markdown|junit互斥；--report-dir一次写同一执行报告的JSON/Markdown/XML（名为gate或acceptance），不是为了多格式重跑SUT。退出passed/pending0，其他1；diff单独0无breaking/1breaking/2输入工具失败。
 
-## 两种drift不能混淆
+## HTTP 响应结构检查
 
 Evidence 用 AJV 2020-12 和 formats 检查**本次 HTTP 响应**，不修改 payload 或加载远端引用。默认 Schema 失败会阻断；`--detect-drift` 将漂移设为建议并列出带 RFC 6901 路径的问题，`--strict-drift` 仍阻断。Bruno 的其他业务断言不受影响。Schema 声明开放的对象不会因出现额外字段自动失败。
-
-桌面/MCP的audit_production_drift则比较saved FM与OTLP trace的Evidence commits，是另一种语义审计，不由HTTP开关代替。
 
 ## 契约gate与CI基线纪律
 

@@ -65,7 +65,6 @@ const client = (): EvidenceMcpAppClient => ({
   runStageGate: vi.fn(async () => ({
     passed: false,
     exitCode: 1,
-    driftDetected: false,
     blockingReasons: ['key data decision owed'],
   })),
   getDeliveryTopology: vi.fn(async () => ({
@@ -75,15 +74,6 @@ const client = (): EvidenceMcpAppClient => ({
     services: [],
     links: [],
     limitations: [],
-  })),
-  auditProductionDrift: vi.fn(async () => ({
-    modelId: 'product-procurement',
-    spanCount: 0,
-    commitCount: 0,
-    counts: {},
-    findings: [],
-    passed: true,
-    errors: [],
   })),
   exportOpenApiContract: vi.fn(async () => ({
     modelId: 'product-procurement',
@@ -116,7 +106,7 @@ describe('createEvidenceMcpServer', () => {
     const { tools } = await mcp.listTools();
 
     expect(tools.map((tool) => tool.name)).toContain(TOOL_NAMES.appState);
-    expect(tools).toHaveLength(14);
+    expect(tools).toHaveLength(13);
     expect(
       tools.find((tool) => tool.name === TOOL_NAMES.applyPatch)?.annotations,
     ).toMatchObject({ readOnlyHint: false });

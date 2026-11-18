@@ -1,7 +1,6 @@
 import {
   Activity,
   Bot,
-  FlaskConical,
   Network,
   Redo2,
   Save,
@@ -30,7 +29,6 @@ export type CommandCategory =
   | 'model'
   | 'view'
   | 'delivery'
-  | 'drift'
   | 'diagnostics'
   | 'agent';
 
@@ -58,7 +56,6 @@ export const COMMAND_GROUPS: readonly {
   { id: 'model', label: '核心操作' },
   { id: 'view', label: '视图' },
   { id: 'delivery', label: '交付契约' },
-  { id: 'drift', label: '生产漂移' },
   { id: 'diagnostics', label: '门禁与诊断' },
   { id: 'agent', label: '智能协同' },
 ];
@@ -79,7 +76,6 @@ export const CHORDS = {
   graph: '⌥+2',
   zoomSelection: '⇧+2',
   delivery: '⌥+D',
-  sandbox: '⌥+⇧+S',
   rerunSensors: '⌘+Shift+R',
   problems: '⌥+X',
 } as const;
@@ -100,7 +96,6 @@ export interface CommandHandlers {
   /** Frames the selected object. */
   zoomToSelection: () => void;
   openDelivery: () => void;
-  openSandbox: () => void;
   rerunSensors: () => void;
   askAgent: () => void;
   openRail: (tab: RailTabId) => void;
@@ -210,16 +205,6 @@ export const buildCommands = (
       icon: Network,
       keywords: ['delivery', 'openapi', '契约', '交付'],
       perform: handlers.openDelivery,
-    },
-    {
-      id: 'drift.sandbox',
-      title: '比对生产漂移',
-      subtitle: '用导出的 OTLP trace 比对模型',
-      category: 'drift',
-      shortcut: CHORDS.sandbox,
-      icon: FlaskConical,
-      keywords: ['drift', 'trace', '漂移'],
-      perform: handlers.openSandbox,
     },
     {
       id: 'diagnostics.problems',

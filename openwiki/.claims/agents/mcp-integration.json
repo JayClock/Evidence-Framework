@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:8cc0b71fe8e694bdb9a3b18fa922879fe45a8dab20799254df53ce2ccf3c58fb",
+  "pageVersion": "sha256:7a73cfcfe0284e17f51823bca752d08b84aa0e3052a349135ef447ce59949afb",
   "claims": [
     {
       "id": "claim_93b8ecf8664543a185353872854bd036",
       "statement": "The desktop executable becomes a headless MCP stdio server when started with --mcp-stdio: that mode opens no window, reads no project store and performs no client registration, and only forwards tool calls to a running desktop over the local socket.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/main.ts#L152-L153",
+          "resource": "repo://apps/desktop/src/main/main.ts#L148-L149",
           "version": "repo-lines-v1:sha256:03a42be7aad9cf31e7126f6d67707fcf7150cecd596e9d7ec533b587ac8bf701:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTdmM2UxNDM5MDU4MTg1ZDRjOGNkZTQxMWJiOWI3NTgwZDhhN2QxMzA3ODlkODI3N2YxNGM4NGY2ZjI5MDY1YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmE3N2M4OTA3OTY5NDNkNTYyNDdmMGY1ZTRiZTljYTRkNjI4MGQ5ZTVhNDZhNWQyYTc1NDhkM2UwNzEyNTI0ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjAwNzE0Zjg5NWFlYjYzMDllNjI3MjE4YjAwOGZhYTc0YmRkZDM0YTQzNTU2YjAxYmIwMzg4ZDNiZDk5OTUyMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2JjNmI4OTRkODhkNDMyYjQ5NjliY2UzYmExNjNkYTc5ZGYzMmFhNmUzNzYzOTEyZmE2ZDY0N2I4ZjgxYjViNCJ9"
         },
         {
-          "resource": "repo://apps/desktop/src/main/main.ts#L38-L63",
+          "resource": "repo://apps/desktop/src/main/main.ts#L36-L61",
           "version": "repo-lines-v1:sha256:53d3e19492fa526c1610f5cd7fa49879a2ee7224d110ae761ad9a1c026323941:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiOGY4NTU1YWNhZWRlZWIxMDk4NDc4ZWI2NjBmYjNmNGIyZDc0YzdmMzYyMWZlZGI0MWU1MGY1OGQ0ZjEzYTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ5YmYyYzFmYWRhMjcwNWU5NTIzYTIyOGY2M2QzMTk1ZjhlMzgyMmI4OTI0YzcwNTUwMWYwNjE2MjYzODUxN2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMyOTYyY2MzYmUzODkyNTE4MTkxMzZlYzNhZGIxZmNhMzg5ZDhjZWM1YmYxODYxZTQ1NmQ0NDgzY2NiODNhZTMifQ"
         }
       ]
@@ -50,15 +50,15 @@
     },
     {
       "id": "claim_2ab514563f724d02a28a6c905d1a3bab",
-      "statement": "MCP 注册 14 个工具：9 个只读、共享 registry 提供的 5 个非幂等写工具，含 isolate_domain_calculator；scenario replay 已移除。",
+      "statement": "MCP 注册 13 个工具：8 个只读，5 个由共享 registry 提供的非幂等写工具。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-mcp/src/server/toolset.ts",
-          "version": "repo-file-v1:sha256:471fddfe0c44822a8cb316e7da3eccd47502da10c2b08f18bd1a924af994f742"
+          "resource": "repo://libs/evidence-mcp/src/server/toolset.spec.ts",
+          "version": "repo-file-v1:sha256:934b0524b2dc5278152a24be9d3120fe2d38aae0e0e7ddfb5af7047cb1829000"
         },
         {
-          "resource": "repo://libs/evidence-tools/src/index.ts",
-          "version": "repo-file-v1:sha256:ebe9c1094ade94db3a0ca0df10ed3bb3ecbc60689a9dcc5bbb2b728fffb69992"
+          "resource": "repo://libs/evidence-mcp/src/server/toolset.ts",
+          "version": "repo-file-v1:sha256:0f7c38e72820b9505ca57f2da48e09418bca7ee00506964a2dbe9cee387acb0a"
         }
       ]
     },
@@ -68,7 +68,7 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-mcp/src/server/toolset.ts",
-          "version": "repo-file-v1:sha256:471fddfe0c44822a8cb316e7da3eccd47502da10c2b08f18bd1a924af994f742"
+          "version": "repo-file-v1:sha256:0f7c38e72820b9505ca57f2da48e09418bca7ee00506964a2dbe9cee387acb0a"
         },
         {
           "resource": "repo://libs/evidence-tools/README.md",
@@ -82,11 +82,11 @@
     },
     {
       "id": "claim_c794f08cfe804676b942773fcd55c385",
-      "statement": "handler 把实时会话读写转给 renderer，台账/门禁、交付和 trace 漂移分别转给 sensors、delivery、drift 服务；截图协作测量后捕获，已无 replay。",
+      "statement": "主进程把实时会话读写转发 renderer，台账和门禁走 sensors，交付结果走 delivery；截图由渲染端测量后由主进程捕获。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/mcpRequestHandler.ts#L91-L135",
-          "version": "repo-lines-v1:sha256:348a820bb2a86151412fa331476cbb033f0ec69dc7263ec768df675892309bc2:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZlMzlhNDllOTZkYWI3ZDIwZDA2ZGEyZGEwMjM2M2Q3Y2EyMzkwNGU1NzIyNWJkNjg4ZWE0MzU5YWU0ZWE1ZjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYxZTU5ZGJlYWQ2NTU2NGQxMmVhOGYwMzQxZjE1ODg1NmVmNGQ1N2IzMDVlZWM2MTZkNTRmMmVhMzFkN2Y4Y2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY5Nzk2ZTMyNWNjMjkxYzdkMTI1Y2FlNWJhMGRmMjIwMjhlZmI5ZjVmYTNhZjBhNjEwODk2MjkwZTcxNDZkN2MifQ"
+          "resource": "repo://apps/desktop/src/main/mcpRequestHandler.ts",
+          "version": "repo-file-v1:sha256:4f6a810a7875ff0da571576dd47da37d33093123bdc5f7cce7180c1efbdd2739"
         }
       ]
     },
@@ -128,7 +128,7 @@
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/main/mcpSensorService.ts",
-          "version": "repo-file-v1:sha256:acbe88100668b06c1902f0e4a339bb2ca395e79d9ca3503e53a589683899fe5a"
+          "version": "repo-file-v1:sha256:ecd50516f7e62dd9993e57f47704b6fcce59620f60287210a4411df5e7b7940a"
         }
       ]
     },
@@ -176,15 +176,11 @@
     },
     {
       "id": "claim_5ec442625c35421ebc504cf3fb053ba5",
-      "statement": "传感器、交付和漂移请求先查 renderer 的 active root，无项目则抛 NO_ACTIVE_PROJECT。",
+      "statement": "传感器和交付请求先查询 renderer 的项目路径，无活动项目时抛出 NO_ACTIVE_PROJECT。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/mcpRequestHandler.ts#L108-L125",
-          "version": "repo-lines-v1:sha256:35065abc4ba9b313d6424294a93dabffa0cc088060edb97214098885071ccf9c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkNmYzYmIxOWM0NzE1NDJkNGMyOWE0MTI2YTAyNzVkODk5OGFkNDM1ZDdhZTQ5MTZiY2UyMWIxNTY5YmRkODIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5MzUzZmM1MWFlMWJlOTkyNWJkZGU3OTkwM2NkNDYwM2Y3ZDkxZDNiZDFiYzUyNGRlYWJlODBjNDUwN2VlYjQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1MTc0MTZlYmRiZWQ4MTIxNTdlNmYzMGRiMjM0NTc0Y2JmOGIwMjQ2MGNiZjNiOGJjNDk0OTA0MTlmZjdiZWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxYjJlNjk3NDU5M2VkMzg0MjJkMDg4NWYxZDFjN2M0MzRmZmIxZmZhZjU3OGJhMTFiZGY0MDQ4N2ZlNzVhODYifQ"
-        },
-        {
-          "resource": "repo://apps/desktop/src/main/mcpRequestHandler.ts#L58-L69",
-          "version": "repo-lines-v1:sha256:93807540f5be77709c708aeef8f141df4b0b52c5cc25d7ad57e19c984d059bbd:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3Y2VmOWU5NTFjYTMxZGRkOWZjZTJiM2ZhMWEzMzVkNzBiMWM2NGRhYjUwZmY2ZGQ0YTk4OWM5MjcxMmU1NjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ4MGFkODg3ODVjN2NjZDg4YjYxYTk5ZDg0Mzg1Mjg1MjA1ZDA5N2M0MmIyMTEwNWFmODQzNjY1MjgwMWNkNDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE1OGFiYjk3YjRkNTg1OWViOTg3NTgxNWY0ZjYxY2FkOTA3MDA0ZWY2M2JhMWJmYzA4NzNlY2UxNTM5NjEzMTIifQ"
+          "resource": "repo://apps/desktop/src/main/mcpRequestHandler.ts",
+          "version": "repo-file-v1:sha256:4f6a810a7875ff0da571576dd47da37d33093123bdc5f7cce7180c1efbdd2739"
         }
       ]
     },
@@ -193,7 +189,7 @@
       "statement": "Renderer-bound MCP calls go to the first editor window returned by listEditorWindows, which yields Map insertion order rather than focus order; because the capture rectangle and the model reads share that one WebContents, a screenshot cannot depict a different project than the model the agent just read.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/main.ts#L108-L114",
+          "resource": "repo://apps/desktop/src/main/main.ts#L105-L111",
           "version": "repo-lines-v1:sha256:3099c121ff2c17975de531f1e5e88f8768391e6d2a12fa445f53995323a3ec5c:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmY3ZDRjOTg4MjUzZTdjMzJlZTc4MmQ4Y2ZmNWM0MjA5MWFkODQ2NTdmOWFlNWM4MDE3NDhkNTVlYjE3ZTk4MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWYwY2RiOTcyYTdiZmI3ZWQyNDZmOWZmNjcyMzg1ZTU1ZjQ5NjhmYzExMDQzZGM1YjY4NGQ1MWRmYTMxZGJjYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjAyMGQ3NjUwM2UzZjkzOTE4NDNiMWJkYzkyOTJjYTg2MjdmODZmZGU5YWI0ZWVkY2I5MmI1YWMxOWRhYjUxYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWMxYTFlYjBiZjMyYmFjY2NlMDc1MDJhYjYzZThlYTQ3M2Y0MmRlNWQ1NmJjN2VmMjY1YjMyN2RhZTA0ZGM3NyJ9"
         },
         {
@@ -229,7 +225,7 @@
           "version": "repo-lines-v1:sha256:4e3d2a0c2f604b81802026c6f03f1b9539dfe67e66c927aee5f68d6d2cc090b2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUyMmMyMzg3MGI5ODYzYmE0ZTM5ZjlhNzFlN2Q1ZjJhOWIzYWU4ODBiMWRmN2Y5OWVmN2Y3MjliODA2ZTExNDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlkNzk1OTk0ODU0MjY4YzY2MWVlMjBmZTY4YjEyNGU5MzIwZjFiODI3Mjg2NzA3MDNiMDc3MTBhNDBkZTZmYTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAwNWJlZWMwMWE5NTU3MjQwMjBlMWUxZWI4NmRhNGNhYzI2NDE2ZDdkYmQxY2UxYzU5ZmI0OTY2YTM1N2Q0N2MifQ"
         },
         {
-          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts#L115-L128",
+          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts#L114-L127",
           "version": "repo-lines-v1:sha256:ea6a84a926d38c218a5669593791a3524d401a47deda3114dec73fc7cf41521b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiZGFhY2MxZjZkM2NmZDA5ODY2ZjNkYjQ5MTgxYjE1NDE5ZWMzZTVlOTEwYWJhMzQxOTk0NGVlZDNiNGEyZTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ODk1MzRlNDhiYWMyODA2OWE4MzM5MzZiMTRjYzY1NGIzY2E0NjU1MGFhYTU2MTNkNGIzYWY3OGM1ODQxZmQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYzMGYwZWZmNGNjZTUwNmMyNjRlNDhjMDg4ZWFmMGU5YzFhOWM5YTEzOGJkNjc0OGU0MDkwYmUwY2UwMjliMWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZjODUxMmE0MzE2MzYxZGVkM2RkYmZjNTJiMGY4ZGE3MDNkOTEwYjBmODQ5Yjg0YzI0YzY0OTgyNWJiYmRiMDEifQ"
         }
       ]
@@ -240,7 +236,7 @@
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/main/main.ts",
-          "version": "repo-file-v1:sha256:42b4ffc91faab6739d8b429421737e9ba298d53a678b43db5956f4f971137aef"
+          "version": "repo-file-v1:sha256:5c69369ed5af8a83f6d595da3fc733d39c6d556b485949077f252ee18d2077c2"
         },
         {
           "resource": "repo://apps/desktop/src/main/mcpBridgeRuntime.ts",
@@ -269,7 +265,7 @@
       "statement": "The bridge's connections counter is non-zero only while a call is in flight, because the stdio client opens one socket per request and destroys it once the answer arrives; registeredClients lists only the clients whose config sync succeeded.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/main.ts#L132-L138",
+          "resource": "repo://apps/desktop/src/main/main.ts#L128-L134",
           "version": "repo-lines-v1:sha256:5342e3e53fd0bdaecf7093f66f7a8a20a327d042865c46eb79b6fce81cc2dfa6:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTQ1YThiOTFjZjQ0NzNkYTVlMzc0YjVlMDVhZTY5M2I4YjQ1N2E5NTY0ZGMyMDRhYTBkMDNmMzVlMWNmZmMzNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2EzZTQ2Zjk0Mjc2YjZmNmY0ZWQxZjAyYWY3OGJlZjZhMmVlMWM0MzlkZDU1ODRiOTczOTQ4MzEzMjE0ZDJiNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTRjYTI5NThiOWY1MGZmOTlhMDlkYTFmYTQyNjg0NjdkOGZmOTI0ZmQyMTg0ZTM0NjZmYjZiNDY5YjAzY2U5YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWQ3YTdmMjBkNmFlYjFjMmEwNzQzYmMyY2FjZTkyMGYzYWM3NWNlZTg2ODBlZjVhYjE4N2RlZTFkMzllMjkzOCJ9"
         },
         {
@@ -297,8 +293,8 @@
       "statement": "没有模型窗口时 MCP renderer 跳转失败；只有 APP_NOT_RUNNING 被 get_app_state 降级为离线。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/mcpBridgeRuntime.spec.ts#L267-L309",
-          "version": "repo-lines-v1:sha256:996b86a949d58fc81791efe3db4e610c3eda5fa9124a147d372de7d4d4033c31:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmMzZiOWIzYTJkMzIwMDUyNzdmYTRlNzdmZWNmNGM5ODM5YmQwNTE2N2Y1YzYyZGU2MDJjY2NkOGVjYzQ3YjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyMGZjOWU2N2RiMDdlZDIzOWJiM2FkMjMxMmVhYWI5YTcwZTFmNmZiYTAxMjg4YjBiYTZlNjFkN2Y4ZWU3ODgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://apps/desktop/src/main/mcpBridgeRuntime.spec.ts",
+          "version": "repo-file-v1:sha256:f387245788e4421fe1c0647640439822c3660b8327038f4dcfa1d80f475d055c"
         },
         {
           "resource": "repo://libs/evidence-mcp/src/bridge/client.ts#L175-L190",
@@ -329,7 +325,7 @@
       "statement": "截图矩形为 null 时 handler 报 SCREENSHOT_FAILED，而不返回空图片。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/mcpRequestHandler.ts#L138-L167",
+          "resource": "repo://apps/desktop/src/main/mcpRequestHandler.ts#L130-L159",
           "version": "repo-lines-v1:sha256:889cc078e3236d132eeea66ed324ed69754c3898073eac0adae4098ea6ac865a:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMzNmM0YTY5ZTA3ODAzZDVlZjBlMmE0MGUwNTFmZjcwMGJjNGQ2MmJhOThhZWY4ZmRjMzJmYWY3MDU4YzNkZDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM0YTc2MDI3ZDY4ZTM2ZDRiYTczYmE0ZTJkNzRjNTczMjJjMTQwMWZjZTg0NzNhOWJjMWUxZWEyNmI3ZmQ2NjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
@@ -340,27 +336,27 @@
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/main/mcpBridgeRuntime.spec.ts",
-          "version": "repo-file-v1:sha256:97a2a58f370819c1e85115710c15d35b9b79423fa646944bba8e46c442d48b8b"
+          "version": "repo-file-v1:sha256:f387245788e4421fe1c0647640439822c3660b8327038f4dcfa1d80f475d055c"
         },
         {
           "resource": "repo://apps/desktop/src/main/mcpRequestHandler.spec.ts",
-          "version": "repo-file-v1:sha256:bc0168cfa89574e080d249fc2f2a6fec8eedf624c0d9dbbdece3b6b2c4ce8172"
+          "version": "repo-file-v1:sha256:ed3b13d730f7f50dddfd5b864a3f4eda1dc0a9300c90b800154f2923aac24f98"
         }
       ]
     },
     {
       "id": "claim_e9f25b08e30a4b32b9703342fc5fb243",
-      "statement": "服务端指令要求先读模型、优先算子、其他变更走 RFC 6902 并 test 防过期，禁止直接写源文件；对验收指向 evidence export --tests 生成的 Bruno 集合和真实后端上的 evidence test，而不是回放。",
+      "statement": "服务端指令要求先读模型、优先使用算子，其他变更走带 test 防过期的 RFC 6902 补丁；验收通过导出 Bruno 集合并在真实后端上执行。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-mcp/src/server/toolset.ts#L259-L260",
-          "version": "repo-lines-v1:sha256:166bbfb7c3648ad6d8165170ccfe886d0c25ebf363ff13666d18386b57d07060:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjExNWVkOWY2NDJjYTkyMjQwMGY4MzkxYWQ0MGQ1YjU1YzQwY2UwZDQ1OWM0YWU5Y2RkNmJkNjI0NWM5MTM0MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTA4NmU2ZDQwZmE5MjVkODBiOTg0ZTc3OGEwOTNkZTZjOWUzZDdiMzc0Yjk0NmM3Yjk1YzQ2NDliNTg3MWJhZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjc1MjQyZDEwNzE4YzlkOWZhNTBjZmZkZWIzODdjNzdjMmJkMjc3ZDA4YzgyZGVhMTU4YmFhOTBjNzBiZWMyYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+          "resource": "repo://libs/evidence-mcp/src/server/toolset.ts",
+          "version": "repo-file-v1:sha256:0f7c38e72820b9505ca57f2da48e09418bca7ee00506964a2dbe9cee387acb0a"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-18T09:45:40.969Z"
+    "at": "2026-11-18T12:34:41.390Z"
   }
 }

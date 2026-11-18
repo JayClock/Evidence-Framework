@@ -3,9 +3,6 @@ import { describe, expect, it } from 'vitest';
 import {
   EVIDENCE_INSTRUCTIONS,
   EVIDENCE_SYSTEM_PROMPT,
-  GOVERNANCE_INSTRUCTIONS,
-  GOVERNANCE_PROMPT,
-  GOVERNANCE_SYSTEM_PROMPT,
   MODELING_PROMPT,
   OPERATOR_PROMPT,
   ROLE_PROMPT,
@@ -86,42 +83,5 @@ describe('the built-in instructions', () => {
     expect(WORKFLOW_PROMPT).toContain('哪些凭证必须留存与追溯');
     expect(WORKFLOW_PROMPT).toContain('违约时凭什么追责');
     expect(WORKFLOW_PROMPT).toContain('根合同');
-  });
-});
-
-describe('the governance instructions', () => {
-  it('keep the red lines and the operators a repair also needs', () => {
-    expect(GOVERNANCE_INSTRUCTIONS).toEqual([
-      ROLE_PROMPT,
-      MODELING_PROMPT,
-      OPERATOR_PROMPT,
-      GOVERNANCE_PROMPT,
-    ]);
-    expect(GOVERNANCE_SYSTEM_PROMPT).toBe(GOVERNANCE_INSTRUCTIONS.join('\n\n'));
-  });
-
-  it('start from the trace instead of the workshop board', () => {
-    for (const instruction of [
-      'audit_production_drift',
-      'evidence export --tests',
-      'Bruno',
-      'evidence test --target',
-    ]) {
-      expect(GOVERNANCE_PROMPT).toContain(instruction);
-    }
-
-    // A governance turn that walks the workshop steps would ask a business
-    // again for facts the trace already holds.
-    expect(GOVERNANCE_PROMPT).not.toContain('锚定合约与双方');
-    expect(GOVERNANCE_SYSTEM_PROMPT).not.toContain('锚定合约与双方');
-  });
-
-  it('never lets an audit rewrite the model to match a leaking service', () => {
-    expect(GOVERNANCE_PROMPT).toContain('生产越权');
-    expect(GOVERNANCE_PROMPT).toContain('不许改模型迁就');
-    expect(GOVERNANCE_PROMPT).toContain(
-      '没有 HTTP 验收执行结果就不能声称后端符合模型',
-    );
-    expect(GOVERNANCE_PROMPT).not.toContain('run_scenario_replay');
   });
 });

@@ -5,7 +5,7 @@ description: Electron 启动、窗口/IPC、安全边界、树与 Bundle 项目�
 tags: [desktop, electron, ipc, preload, project-store, windows]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-17T06:43:02.055Z
+    at: 2026-11-18T12:34:41.390Z
 sources:
   - id: openwiki-source-f85ce0e3a462797434d822a8
     resource: repo://apps/desktop/src/main/agentIpcHandlers.ts
@@ -15,8 +15,6 @@ sources:
     resource: repo://apps/desktop/src/main/ai/safeStorageStore.ts
   - id: openwiki-source-c8d6c908e749a45544b1e625
     resource: repo://apps/desktop/src/main/deliveryIpc.ts
-  - id: openwiki-source-64d2ba689444145d517c3142
-    resource: repo://apps/desktop/src/main/driftIpc.ts
   - id: openwiki-source-71f7c0262d5ba642c71843ea
     resource: repo://apps/desktop/src/main/ingestionIpc.ts
   - id: openwiki-source-5d33672c45ec58cd29dce507
@@ -45,7 +43,7 @@ sources:
     resource: repo://apps/desktop/src/renderer/screens/DashboardScreen.tsx
   - id: openwiki-source-f0f06a0981a7ca97c510b44d
     resource: repo://apps/desktop/src/renderer/state/useEditorSession.ts
-generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
+generated: { by: "pi", at: "2026-11-18T12:34:41.390Z" }
 ---
 
 # 桌面宿主与项目生命周期
@@ -54,7 +52,7 @@ apps/desktop 是 Electron 可视化宿主（另有 apps/cli 终端应用）。ma
 
 ## 启动与窗口
 
-ready 后创建 recent-projects.json store，注册 Agent、项目、摄取、story、AI、**drift**、delivery IPC，再同步 MCP client config、启动本地 bridge、成功后注册 MCP IPC，最后开 dashboard。配置同步失败降级空列表，bridge 启动失败写 stderr 并继续；before-quit 释放 Agent/bridge。macOS 使用 light theme、activate 在无窗口时重开 dashboard，其他平台 window-all-closed 退出。
+ready 后创建 recent-projects.json store，注册 Agent、项目、摄取、story、AI、delivery IPC，再同步 MCP client config、启动本地 bridge、成功后注册 MCP IPC，最后开 dashboard。配置同步失败降级空列表，bridge 启动失败写 stderr 并继续；before-quit 释放 Agent/bridge。macOS 使用 light theme、activate 在无窗口时重开 dashboard，其他平台 window-all-closed 退出。
 
 同一 binary 带 --mcp-stdio 则不打开窗口、不读 store、不注册客户端，仅连接已运行 desktop socket；失败写 stderr/退出1。
 
@@ -64,7 +62,7 @@ Dashboard mount 同时读 recents/templates，模板数量来自真实构造；o
 
 ## Preload 合同
 
-EvidenceDesktopApi 分 projects、agent、mcp、drift、ingestion、story、aiConfig、system；旧 simulation/replay group 已删除，也没有 interview branches API。projects 包含保存/变更通知与 live/saved delivery；agent 负责会话、实时镜像、sensors、选区和补丁往返；mcp 负责状态/request/response/capture-mode；drift 只有 audit 和 trace picker。
+EvidenceDesktopApi 分 projects、agent、mcp、ingestion、story、aiConfig、system；旧 simulation/replay group 已删除，也没有 interview branches API。projects 包含保存/变更通知与 live/saved delivery；agent 负责会话、实时镜像、sensors、选区和补丁往返；mcp 负责状态/request/response/capture-mode。
 
 请求多为 invoke，订阅均返回 unsubscribe；agent.respondPatch 和 mcp.respond 用单向 send 回答 main 发起请求。channel 与 DTO 由 desktop-contracts 统一；features 通过参数取得窄 API port，只有 app shell 读取 window.evidenceAPI。renderer tests 注入 evidenceAPI 假实现，不启动 Electron。
 
@@ -96,12 +94,12 @@ projectIpc 将 {rootPath,changedAt,paths} 送 evidence:project:changed；rendere
 
 Delivery live pair 分析显式 revision；export 在 async picker 前冻结，校验 expectedModelDigest/零 blocking，附 draft-status.json 的 releaseAuthorized=false；saved pair 重新读磁盘。都返回 saved/cancelled/failed。
 
-Drift IPC 在 main 读 trace JSON，lazy import DriftService（测试可注入），对 saved 模型 audit；dispose 移除 audit/picker 两 handler，已无 replay。摄取可选模型 reader 和规则 fallback，compile 拒绝空实体，再写项目/开窗。
+摄取可选模型 reader 和规则 fallback，compile 拒绝空实体，再写项目/开窗。
 
 Agent runtime 按 root single-flight，绑定创建窗口，补丁发 renderer UUID/15秒往返，关窗立即失败并释放 runtime。MCP 同一 WebContents 回答模型和截图矩形，status 推送所有窗口并可拉取，见专页。
 
 ## 验证入口
 
-projectStore specs 保护树/Bundle/空项目、覆盖拒绝、幂等保存、recent 和摘要；modelWatcher specs 保护初始静默、嵌套/缺根/重建、合批、atomic Bundle、多余 sibling 与 close。App tests 保护 hash；delivery/drift/ingestion/story/AI IPC specs 通过注入 dialog/service 保护生命周期与取消，integration specs 验证真实树往返。
+projectStore specs 保护树/Bundle/空项目、覆盖拒绝、幂等保存、recent 和摘要；modelWatcher specs 保护初始静默、嵌套/缺根/重建、合批、atomic Bundle、多余 sibling 与 close。App tests 保护 hash；delivery/ingestion/story/AI IPC specs 通过注入 dialog/service 保护生命周期与取消，integration specs 验证真实树往返。
 
 相关：[renderer 会话](./renderer-state.md) · [源格式](../model/source-formats.md) · [构建资源](../operations/build-and-package.md) · [MCP](../agents/mcp-integration.md)

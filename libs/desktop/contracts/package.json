@@ -32,12 +32,6 @@
       "import": "./dist/mcpIpc.js",
       "default": "./dist/mcpIpc.js"
     },
-    "./drift": {
-      "@evidence-poc/source": "./src/drift.ts",
-      "types": "./dist/drift.d.ts",
-      "import": "./dist/drift.js",
-      "default": "./dist/drift.js"
-    },
     "./ipc": {
       "@evidence-poc/source": "./src/ipc.ts",
       "types": "./dist/ipc.d.ts",
@@ -83,7 +77,6 @@
     "tslib": "^2.3.0",
     "@evidence-poc/evidence-agent": "workspace:*",
     "@evidence-poc/evidence-api": "workspace:*",
-    "@evidence-poc/evidence-mcp": "workspace:*",
     "@evidence-poc/evidence-model-core": "workspace:*",
     "@evidence-poc/evidence-schema": "workspace:*",
     "@evidence-poc/evidence-acceptance": "workspace:*"
