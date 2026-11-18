@@ -24,7 +24,7 @@ export const controlVariants = cva(
     variants: {
       variant: {
         default:
-          'border-evidence-accent bg-evidence-accent text-white hover:bg-[#274c76]',
+          'border-evidence-accent bg-evidence-accent text-white hover:bg-evidence-accent-hover',
         secondary:
           'border-evidence-line bg-evidence-surface text-evidence-ink hover:bg-evidence-hover',
         outline:

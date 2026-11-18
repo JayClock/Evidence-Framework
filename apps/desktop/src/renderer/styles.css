@@ -17,6 +17,18 @@
   --color-evidence-line: #e5e7eb;
   --color-evidence-surface: #f7f8fa;
   --color-evidence-accent: #2f5d8f;
+  --color-evidence-accent-hover: #274c76;
+
+  /* Workbench design (workbench.pen). Keep the legacy editor surfaces intact
+     until they migrate to these roles. */
+  --color-workbench-background: #f8fafc;
+  --color-workbench-border: #e2e8f0;
+  --color-workbench-border-strong: #cbd5e1;
+  --color-workbench-subtle: #f1f5f9;
+  --color-workbench-muted: #64748b;
+  --color-workbench-label: #475569;
+  --color-workbench-body: #334155;
+  --color-workbench-status-dot: #10b981;
   --color-evidence-evidence: #b43656;
   --color-evidence-participant: #3d7553;
   --color-evidence-role: #8d6200;
@@ -55,7 +67,9 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-button {
+/* Dashboard controls use the type scale from their utilities. Preserve the
+   legacy reset for the editor and existing dialogs until those are migrated. */
+button:not(:where([data-dashboard] button)) {
   font: inherit;
 }
 

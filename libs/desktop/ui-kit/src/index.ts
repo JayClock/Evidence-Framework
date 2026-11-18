@@ -18,6 +18,7 @@ export type { ButtonProps } from './components/button/Button.js';
 export { Badge, badgeVariants } from './components/badge/Badge.js';
 export type { BadgeProps } from './components/badge/Badge.js';
 export { Kbd, KbdChord } from './components/badge/Kbd.js';
+export { Card } from './components/card/Card.js';
 export {
   Dialog,
   DialogClose,
