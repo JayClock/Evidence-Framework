@@ -35,7 +35,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm api:setup
       - run: pnpm nx build cli
-      - run: make -C examples/b2b-escrow check tools-test
+      - name: Verify committed OpenAPI and Bruno collection (read-only)
+        run: make -C examples/b2b-escrow check tools-test
       - name: Materialize immutable baseline (never fall back after a failed git show)
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
@@ -69,7 +70,7 @@ jobs:
           path: reports/
 
   acceptance:
-    name: ${{ matrix.implementation }} native + conformance + strict gates
+    name: ${{ matrix.implementation }} native + Bruno conformance + strict gates
     needs: contract-and-hygiene
     runs-on: ubuntu-latest
     timeout-minutes: 25
@@ -108,7 +109,10 @@ jobs:
         if: matrix.implementation == 'python-fastapi'
         with:
           python-version: '3.12'
-      - run: pnpm install --frozen-lockfile
+      - name: Install dependencies (including the pinned Bruno CLI)
+        run: pnpm install --frozen-lockfile
+      - name: Check workspace Bruno CLI
+        run: pnpm --filter @evidence-poc/evidence-acceptance exec bru --version
       - run: pnpm nx build cli
       - uses: actions/download-artifact@v4
         with:

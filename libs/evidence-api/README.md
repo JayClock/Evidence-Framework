@@ -4,8 +4,8 @@ Nx project: `evidence-api`; package: `@evidence-poc/evidence-api`.
 
 Projects an FM model into delivery routes, service topology, OpenAPI 3.1 and HTTP
 journeys, validates overlays and examples, and publishes deterministic contract
-artifacts. This package does **not** execute HTTP acceptance, generate Step CI /
-Hurl suites or spawn `oasdiff`. Those concerns live in
+artifacts. This package does **not** generate Bruno collections, execute HTTP
+acceptance, or spawn `oasdiff`. Those concerns live in
 [`evidence-acceptance`](../evidence-acceptance/README.md).
 
 ## Entry points

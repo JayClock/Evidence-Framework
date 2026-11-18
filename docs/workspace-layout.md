@@ -125,8 +125,8 @@ Tags drive `@nx/enforce-module-boundaries` in `eslint.config.mjs`:
   are **not** idempotent. Transport-specific read/sensor tools remain in their
   respective adapters.
 - `evidence-api` owns contract projection; it has no acceptance dependency and
-  does not load Step CI or spawn `oasdiff`. `evidence-acceptance` depends on it
-  and owns test compilation, HTTP execution, drift and native contract diff.
+  does not load the Bruno CLI or spawn `oasdiff`. `evidence-acceptance` depends
+  on it and owns test compilation, HTTP execution, drift and native contract diff.
   Browser scenario editors use `evidence-acceptance/projection`; Node callers
   use its root, `/runner` or `/commands`. API fixtures are shared through the
   test-only `evidence-api/testing` export.

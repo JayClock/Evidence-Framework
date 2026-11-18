@@ -146,7 +146,7 @@ pnpm test
 pnpm desktop
 ```
 
-`pnpm install` 不会自动安装 `oasdiff`。`pnpm api:setup` 下载固定版本的预编译二进制并校验归档校验和及可执行文件版本，无需 Go 或 Docker；已有匹配版本时复用缓存。删除 `node_modules` 或工具缓存后，需在 API 比对及相关测试前重新运行。详见 [ENVIRONMENT.md](ENVIRONMENT.md)。
+`pnpm install` 安装验收所用的固定版本 Bruno CLI，无需全局安装 `bru`。`pnpm api:setup` 则单独下载固定版本的 `oasdiff` 预编译二进制并校验归档校验和及可执行文件版本，无需 Go 或 Docker；已有匹配版本时复用缓存。删除 `node_modules` 或工具缓存后，需在 API 比对及相关测试前重新运行。详见 [ENVIRONMENT.md](ENVIRONMENT.md)。
 
 ### 统一命令行
 
@@ -174,13 +174,15 @@ pnpm evidence test --target http://localhost:8080 --scenarios dist/contracts --j
 pnpm evidence diff baseline.evidence.json procurement.evidence.json --format json
 ```
 
+**验收迁移**：Step CI 和 Hurl 不再支持。移除验收导出命令的 `--format` 参数，从模型重新导出，并将 `test --scenarios` 指向完整的生成目录，而不是旧测试文件。可在 Bruno Desktop 打开集合进行调试；CI 应使用 `evidence test`，以执行响应 Schema 校验与 Regression / DoD 门禁。`diff --format` 不受影响。
+
 旧的 `evidence-model`、`evidence-api` 可执行入口暂时保留，执行时只向 **stderr** 输出弃用提示，不污染 JSON stdout。它们与统一入口复用库内执行逻辑，不反向依赖应用包。
 
 | 旧入口                                                                                      | 推荐入口                                                         |
 | ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | `evidence-model pack/unpack/inspect/check/compile/lineage`                                  | `evidence pack/unpack/inspect/check/compile/lineage`             |
 | 常规契约与验收导出                                                                          | `evidence export`                                                |
-| `evidence-api inspect/check/project/deliver/export-tests/diff`（含 overlay 与固定检查报告） | `evidence api <command>`（兼容原参数，也支持 `--model` 与 `-o`） |
+| `evidence-api inspect/check/project/deliver/export-tests/diff`（含 overlay 与固定检查报告） | `evidence api <command>`（支持 `--model` 与 `-o`；验收导出不再接受 `--format`） |
 | `evidence diff api <base> <target>`                                                         | `evidence diff <base> <target>`；旧写法保留 JSON 默认值          |
 
 `model:pack`、`model:unpack`、`model:inspect`、`api:export`、`api:diff` 根脚本仍可使用，但均已转到 `apps/cli`。门禁参数、退出码与只读 `--verify` 行为保持不变。

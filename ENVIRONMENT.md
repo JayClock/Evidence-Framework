@@ -1,10 +1,9 @@
 # Environment
 
-One toolchain: Node.js and pnpm. `pnpm install` installs the workspace dependencies;
-run `pnpm api:setup` separately to provision the pinned native `oasdiff` used by
-API compatibility checks and their tests. There is no interpreter to pin, no
-virtualenv to repair and no lockfile for a second runtime. The prebuilt binary
-needs neither a Go toolchain nor Docker.
+One toolchain: Node.js and pnpm. `pnpm install` installs the workspace dependencies,
+including the pinned Bruno CLI for HTTP acceptance. Run `pnpm api:setup`
+separately to provision the pinned native `oasdiff` used by API compatibility
+checks and their tests. The prebuilt binary needs neither a Go toolchain nor Docker.
 
 ```bash
 pnpm install
@@ -73,7 +72,11 @@ pnpm evidence diff api old.evidence.json new.evidence.json --format markdown
 directory. Without `--openapi`/`--tests`, it exports both OpenAPI and a Bruno
 collection. Acceptance export no longer has a `--format` switch. `test` takes
 one generated collection directory and uses the pinned Bruno CLI installed by
-pnpm. `--json` emits a machine-readable report without terminal formatting.
+pnpm. `--json` emits a machine-readable report without terminal formatting. Commit
+`bruno.json`, the generated `.bru` files and `evidence-acceptance.json` together;
+`export --verify` compares the entire generated output byte for byte without
+writing it. See [acceptance execution](libs/evidence-acceptance/README.md#running-the-collection)
+for what direct Bruno runs do and what `evidence test` adds.
 
 Generated request clocks default to the model examples. `test --as-of <UTC>`
 overrides request clocks, **not the compiled expected values**. Only trusted test

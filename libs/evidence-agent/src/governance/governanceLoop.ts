@@ -17,7 +17,7 @@ export interface GovernanceDrift {
   contextRef?: string | null;
 }
 
-/** Summary of an externally executed Step CI/Hurl acceptance run. */
+/** Summary of an externally executed Bruno HTTP acceptance run. */
 export interface GovernanceAcceptance {
   testCount: number;
   passedCount: number;

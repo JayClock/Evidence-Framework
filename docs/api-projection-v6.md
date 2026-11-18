@@ -133,16 +133,17 @@ pnpm examples:verify
 
 Use Node 22 as described in ENVIRONMENT.md. The standalone Fastify SUT implements
 the v6 contract; its native tests follow created primary URIs and inspect HAL
-collections. The official Step CI Runner verifies five B2B flows and 121 steps,
-including independently broken amounts, clocks and payloads. Step CI and Hurl
-share model-identified parameter captures, including proposal signing.
+collections. Evidence runs generated flows with the pinned Bruno CLI and uses
+actual HTTP responses for schema validation. The acceptance tests exercise
+independently broken amounts, clocks and payloads, and chained response
+captures, including proposal signing.
 
 The [digital advertising](../examples/digital-advertising/README.md),
 [agile sprint](../examples/agile-sprint/README.md), and
 [shared settlement](../examples/shared-settlement/README.md) examples cover
 single confirmation, append-only confirmation, shared confirmation, and the
 negotiation-to-asynchronous-result lifecycle. Each is a standalone model plus
-compiled OpenAPI and Step CI artifacts, not a service implementation. CI runs
+compiled OpenAPI and a Bruno collection, not a service implementation. CI runs
 `pnpm examples:verify` to check their models and compare the generated files
 without writing them. `pnpm boundaries:drill` remains the module-boundary test.
 

@@ -29,8 +29,11 @@ jobs:
           node-version: 22
           cache: 'pnpm'
 
-      - name: Install dependencies
+      - name: Install dependencies (including the pinned Bruno CLI)
         run: pnpm install --frozen-lockfile
+
+      - name: Check workspace Bruno CLI
+        run: pnpm --filter @evidence-poc/evidence-acceptance exec bru --version
 
       - name: Install pinned OpenAPI comparison tool
         run: pnpm api:setup
@@ -66,7 +69,7 @@ jobs:
           pnpm evidence --help
           pnpm evidence --version
 
-      - name: Verify fulfillment example deliverables (read-only)
+      - name: Verify fulfillment example OpenAPI and Bruno collections (read-only)
         run: pnpm examples:verify
 
       - name: Verify desktop build

@@ -101,8 +101,13 @@ describe('the governance instructions', () => {
   });
 
   it('start from the trace instead of the workshop board', () => {
-    for (const tool of ['audit_production_drift', 'export-tests']) {
-      expect(GOVERNANCE_PROMPT).toContain(tool);
+    for (const instruction of [
+      'audit_production_drift',
+      'evidence export --tests',
+      'Bruno',
+      'evidence test --target',
+    ]) {
+      expect(GOVERNANCE_PROMPT).toContain(instruction);
     }
 
     // A governance turn that walks the workshop steps would ask a business

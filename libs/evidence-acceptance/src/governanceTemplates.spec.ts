@@ -4,6 +4,8 @@ import path from 'node:path';
 import { parseDocument } from 'yaml';
 import { expect, it } from 'vitest';
 const root = fileURLToPath(new URL('../../../', import.meta.url));
+const checkBruno =
+  'pnpm --filter @evidence-poc/evidence-acceptance exec bru --version';
 const load = (file: string) => {
   const text = readFileSync(path.join(root, file), 'utf8');
   const doc = parseDocument(text, { uniqueKeys: true });
@@ -29,6 +31,13 @@ it('ships a strict runnable GitHub dual-gate workflow with immutable baseline an
   ]);
   expect(acceptance.strategy['fail-fast']).toBe(false);
   expect(acceptance.env.IMPLEMENTATION).toBe('${{ matrix.implementation }}');
+  const acceptanceCommands = acceptance.steps.map(
+    (step: { run?: string }) => step.run,
+  );
+  expect(acceptanceCommands.indexOf(checkBruno)).toBeGreaterThan(
+    acceptanceCommands.indexOf('pnpm install --frozen-lockfile'),
+  );
+  expect(acceptanceCommands).toContain('pnpm install --frozen-lockfile');
   expect(contract.steps).toContainEqual(
     expect.objectContaining({
       uses: 'actions/checkout@v4',
@@ -92,6 +101,11 @@ it('ships a GitLab template with the same strict policy and native JUnit artifac
       extends: '.evidence-gate',
       variables: { GATE: gate },
     });
+  const setup = data['.evidence-job'].before_script;
+  expect(setup).toContain('pnpm install --frozen-lockfile');
+  expect(setup.indexOf(checkBruno)).toBeGreaterThan(
+    setup.indexOf('pnpm install --frozen-lockfile'),
+  );
   expect(data.variables.GIT_DEPTH).toBe('0');
   expect(data['contract-and-hygiene'].artifacts).toMatchObject({
     when: 'always',
@@ -161,6 +175,9 @@ it('delegates generated-file verification and strict policy gates without losing
 
 it('prepares the standalone SUT explicitly without inferring it as a workspace project', () => {
   const { data } = load('.github/workflows/ci.yml');
+  expect(data.jobs.verify.steps).toContainEqual(
+    expect.objectContaining({ run: checkBruno }),
+  );
   expect(data.jobs.verify.steps).toContainEqual(
     expect.objectContaining({ run: 'pnpm example:setup' }),
   );

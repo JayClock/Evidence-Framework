@@ -233,7 +233,7 @@ export const TopologyDrawer = ({
             <p className="px-2 text-[11px] text-evidence-muted">
               {testExamples.length === 0
                 ? '在实体 examples[].test 中声明验收样例。'
-                : '使用 export-tests 导出 Step CI / Hurl；此处不执行 HTTP 验收。'}
+                : '使用 evidence export --tests 导出 Bruno 集合；此处不执行 HTTP 验收。'}
             </p>
           </>
         )}

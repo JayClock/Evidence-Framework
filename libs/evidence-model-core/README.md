@@ -38,8 +38,8 @@ canvas and inspector consume, and the only sanctioned way to change it.
 - `generated/` never enters a bundle: it is derived output, not a source.
 
 Both forms carry the same inline examples. Acceptance cases live exclusively in
-`entities[].examples[].test`; `evidence-api export-tests` emits Step CI / Hurl
-without a persisted intermediate format. Legacy bundle `validation` envelopes
+`entities[].examples[].test`; `evidence export --tests` emits a Bruno collection
+without introducing another authored source format. Legacy bundle `validation` envelopes
 and `validation/` source files are rejected, not migrated or silently ignored.
 The static FM report (v6) proves consistency and scope completeness only, never
 backend test execution. The old simulator, instance timeline, role-play packet

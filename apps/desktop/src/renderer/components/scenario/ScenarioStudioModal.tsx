@@ -666,7 +666,7 @@ export const ScenarioStudioModal = ({
                       );
                   const result = projectAcceptanceTests(scoped);
                   setNotice(
-                    `可生成 ${result.flows.reduce((n, f) => n + f.steps.length, 0)} 步 HTTP 验收；保存后从交付中心导出 StepCI / Hurl。尚未运行后端。`,
+                    `可生成 ${result.flows.reduce((n, f) => n + f.steps.length, 0)} 步 HTTP 验收；保存后可用 evidence export --tests 导出 Bruno 集合。尚未运行后端。`,
                   );
                 } catch (error) {
                   setNotice(`验收投影尚未就绪：${message(error)}`);

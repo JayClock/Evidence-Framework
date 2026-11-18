@@ -8,9 +8,11 @@ against the downloaded Git baseline. `fail-fast: false` keeps the other jobs'
 evidence when one implementation fails. The adjacent GitLab template remains a
 Node/Fastify-only reference that can be included in `.gitlab-ci.yml`; it does not
 provision four language images. Both use Node 22 + the repository-pinned pnpm,
-build the actual CLI, and run three independent policy checks:
+build the actual CLI, and use the Bruno CLI pinned by the workspace lockfile (no
+global `bru` or Bruno Desktop is required). They run three independent checks:
 
-1. Model validity and **read-only, byte-exact** generated artifact verification.
+1. Model validity and **read-only, byte-exact** verification of the committed
+   OpenAPI contract and Bruno collection, including `evidence-acceptance.json`.
 2. A pinned `oasdiff` comparison against an **immutable Git baseline**; breaking
    changes and tool errors fail the job. No `|| true` around baseline extraction.
 3. Isolated strict regression and DoD backend runs, with JSON/Markdown/JUnit
@@ -46,8 +48,9 @@ build the actual CLI, and run three independent policy checks:
   steps. Shared prerequisites are replayed. Removed requirements need an explicit
   version/migration policy; do not silently drop failing baseline tests.
 - No baseline? Set inline example `test.tags: ["regression"]` or `["dod"]`.
-  Step CI has no native flow tags, so labels are stored in its supported test
-  `env.evidenceTags` JSON string. An unmatched gate/filter fails, rather than
+  The labels are part of the generated flow metadata. `evidence test` selects
+  whole flows; do not use Bruno's request-level tag filtering for Evidence
+  gates. An unmatched gate/filter fails, rather than
   reporting an empty green suite. The sole intentional empty result is DoD
   with an unchanged baseline, explicitly reported as “No incremental flows”.
 - Keep `--strict-drift` for merge/release. `--detect-drift` makes schema drift

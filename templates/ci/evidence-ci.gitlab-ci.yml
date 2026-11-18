@@ -13,7 +13,9 @@ variables:
   image: node:22-bookworm
   before_script:
     - npm install --global pnpm@12.16.1
+    # The workspace lockfile also provisions Bruno; no global bru is needed.
     - pnpm install --frozen-lockfile
+    - pnpm --filter @evidence-poc/evidence-acceptance exec bru --version
     - pnpm nx build cli
 
 contract-and-hygiene:
