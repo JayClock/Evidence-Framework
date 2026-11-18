@@ -561,6 +561,28 @@ test('each created primary URI supports GET and collection HAL links follow the 
     headers: headers('seller'),
     payload: { id: uid() },
   });
+  assert.equal(
+    confirmation.headers.location,
+    `/order-confirmations/${confirmation.json().id}`,
+  );
+  assert.equal(
+    (
+      await app.inject({
+        url: confirmation.headers.location,
+        headers: headers('buyer'),
+      })
+    ).statusCode,
+    403,
+  );
+  assert.equal(
+    (
+      await app.inject({
+        url: `/commitment-confirmations/${confirmation.json().id}`,
+        headers: headers('buyer'),
+      })
+    ).statusCode,
+    404,
+  );
   for (const [response, role] of [
     [contract, 'buyer'],
     [request, 'buyer'],

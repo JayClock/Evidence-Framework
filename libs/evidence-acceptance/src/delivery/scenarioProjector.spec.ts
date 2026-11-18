@@ -65,6 +65,59 @@ describe('direct inline-example acceptance projection', () => {
     expect(hurl).toContain('== 500');
     expect(hurl).not.toContain('fulfillmentStatus');
   });
+  it('projects a delegated callback without giving it the request action', () => {
+    const model = createAcceptanceModel();
+    const confirmation = model.entities.find(
+      ({ id }) => id === 'confirmation.payment',
+    );
+    if (confirmation?.category !== 'evidence')
+      throw new Error('Missing confirmation');
+    const roleRef = 'role.payment-gateway';
+    model.entities.push(
+      {
+        type: 'entity',
+        category: 'participant',
+        kind: 'party',
+        id: 'party.gateway',
+        label: 'Payment system',
+      },
+      {
+        type: 'entity',
+        category: 'role',
+        kind: 'third_party',
+        id: roleRef,
+        label: 'Payment notifier',
+        contextRef: confirmation.contextRef,
+      },
+    );
+    model.relationships.push({
+      type: 'relationship',
+      kind: 'plays_role',
+      id: 'relation.gateway-callback',
+      label: 'Plays payment notifier',
+      sourceRef: 'party.gateway',
+      targetRef: roleRef,
+    });
+    confirmation.callbackRoleRefs = [roleRef];
+    getExample(model).test!.actingRoleRef = roleRef;
+
+    const projection = projectAcceptanceTests(model);
+    expect(projection.flows[0]!.steps[2]).toMatchObject({
+      actingRoleRef: roleRef,
+      status: 201,
+      route: {
+        purpose: 'confirm',
+        itemPath: '/payment-confirmations/{paymentConfirmationId}',
+      },
+    });
+    const steps = parse(renderStepCi(projection)).tests.flow_1.steps;
+    expect(steps[2].http.headers['x-evidence-role']).toBe(roleRef);
+
+    getExample(model, 'request.payment').test!.actingRoleRef = roleRef;
+    expect(() => projectAcceptanceTests(model)).toThrow(
+      'cannot call route.request.request.payment',
+    );
+  });
   it('generates only explicitly modeled negative cases, without polluting OpenAPI facts', () => {
     const model = createAcceptanceModel();
     const entity = model.entities.find(

@@ -308,7 +308,7 @@ class EscrowService:
                 contract_id,
                 data["id"] if action == "order" else contract.order_id,
                 data,
-                f"{request.href}/confirmation",
+                f"/{action}-confirmations/{quote(data['id'], safe='')}",
                 request_id,
             )
         )

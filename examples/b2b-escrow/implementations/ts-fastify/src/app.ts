@@ -192,16 +192,18 @@ export function createApp(options: Options = {}) {
             );
         },
       );
-      app.get<{ Params: { contractId: string; requestId: string } }>(
-        base + '/:requestId/confirmation',
+      app.get<{ Params: { confirmationId: string } }>(
+        `/${action}-confirmations/:confirmationId`,
         (request, reply) => {
           authorize([confirmRole]);
-          requestFact(request.params.contractId, request.params.requestId);
           return reply
             .type('application/hal+json')
             .send(
               representation(
-                service.ledger.confirmation(request.params.requestId),
+                service.ledger.get(
+                  request.params.confirmationId,
+                  'confirmation.' + action,
+                ),
               ),
             );
         },

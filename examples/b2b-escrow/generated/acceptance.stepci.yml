@@ -499,7 +499,7 @@
                   "delivery_deadline": "2026-06-15T00:00:00Z"
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/orders/{orderId}/confirmation"
+                      "href": "/order-confirmations/{orderConfirmationId}"
                 - "id": "single-late-confirmation-order"
                   "confirmed_at": "2026-06-01T00:01:00Z"
                   "subtotal_minor": 1199000
@@ -510,7 +510,7 @@
                   "delivery_deadline": "2026-06-15T00:00:00Z"
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/orders/{orderId}/confirmation"
+                      "href": "/order-confirmations/{orderConfirmationId}"
                 - "id": "milestone-on-time-confirmation-order"
                   "confirmed_at": "2026-06-01T00:01:00Z"
                   "subtotal_minor": 1199000
@@ -521,7 +521,7 @@
                   "delivery_deadline": "2026-06-15T00:00:00Z"
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/orders/{orderId}/confirmation"
+                      "href": "/order-confirmations/{orderConfirmationId}"
                 - "id": "milestone-precision-confirmation-order"
                   "confirmed_at": "2026-06-01T00:01:00Z"
                   "subtotal_minor": "20000000000000002"
@@ -532,7 +532,7 @@
                   "delivery_deadline": "2026-06-15T00:00:00Z"
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/orders/{orderId}/confirmation"
+                      "href": "/order-confirmations/{orderConfirmationId}"
                 - "id": "milestone-capped-confirmation-order"
                   "confirmed_at": "2026-06-01T00:01:00Z"
                   "subtotal_minor": 1200199
@@ -543,7 +543,7 @@
                   "delivery_deadline": "2026-06-15T00:00:00Z"
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/orders/{orderId}/confirmation"
+                      "href": "/order-confirmations/{orderConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "milestone-capped-confirmation-order"
@@ -718,31 +718,31 @@
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/commitments/{commitmentId}/confirmation"
+                      "href": "/commitment-confirmations/{commitmentConfirmationId}"
                 - "id": "single-late-confirmation-commitment"
                   "confirmed_at": "2026-06-01T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/commitments/{commitmentId}/confirmation"
+                      "href": "/commitment-confirmations/{commitmentConfirmationId}"
                 - "id": "milestone-on-time-confirmation-commitment"
                   "confirmed_at": "2026-06-01T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/commitments/{commitmentId}/confirmation"
+                      "href": "/commitment-confirmations/{commitmentConfirmationId}"
                 - "id": "milestone-precision-confirmation-commitment"
                   "confirmed_at": "2026-06-01T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/commitments/{commitmentId}/confirmation"
+                      "href": "/commitment-confirmations/{commitmentConfirmationId}"
                 - "id": "milestone-capped-confirmation-commitment"
                   "confirmed_at": "2026-06-01T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/commitments/{commitmentId}/confirmation"
+                      "href": "/commitment-confirmations/{commitmentConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "milestone-capped-confirmation-commitment"
@@ -1018,31 +1018,31 @@
                   "locked_amount_minor": 1466402
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/deposit-locks/{lockId}/confirmation"
+                      "href": "/deposit-lock-confirmations/{depositLockConfirmationId}"
                 - "id": "single-late-confirmation-deposit-lock"
                   "confirmed_at": "2026-06-02T00:01:00Z"
                   "locked_amount_minor": 1354870
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/deposit-locks/{lockId}/confirmation"
+                      "href": "/deposit-lock-confirmations/{depositLockConfirmationId}"
                 - "id": "milestone-on-time-confirmation-deposit-lock"
                   "confirmed_at": "2026-06-02T00:01:00Z"
                   "locked_amount_minor": 1354870
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/deposit-locks/{lockId}/confirmation"
+                      "href": "/deposit-lock-confirmations/{depositLockConfirmationId}"
                 - "id": "milestone-precision-confirmation-deposit-lock"
                   "confirmed_at": "2026-06-02T00:01:00Z"
                   "locked_amount_minor": "22600000000000002"
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/deposit-locks/{lockId}/confirmation"
+                      "href": "/deposit-lock-confirmations/{depositLockConfirmationId}"
                 - "id": "milestone-capped-confirmation-deposit-lock"
                   "confirmed_at": "2026-06-02T00:01:00Z"
                   "locked_amount_minor": 1356225
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/deposit-locks/{lockId}/confirmation"
+                      "href": "/deposit-lock-confirmations/{depositLockConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "milestone-capped-confirmation-deposit-lock"
@@ -1212,31 +1212,31 @@
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/custody-statements/{statementId}/confirmation"
+                      "href": "/custody-statement-confirmations/{custodyStatementConfirmationId}"
                 - "id": "single-late-confirmation-custody-statement"
                   "confirmed_at": "2026-06-02T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/custody-statements/{statementId}/confirmation"
+                      "href": "/custody-statement-confirmations/{custodyStatementConfirmationId}"
                 - "id": "milestone-on-time-confirmation-custody-statement"
                   "confirmed_at": "2026-06-02T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/custody-statements/{statementId}/confirmation"
+                      "href": "/custody-statement-confirmations/{custodyStatementConfirmationId}"
                 - "id": "milestone-precision-confirmation-custody-statement"
                   "confirmed_at": "2026-06-02T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/custody-statements/{statementId}/confirmation"
+                      "href": "/custody-statement-confirmations/{custodyStatementConfirmationId}"
                 - "id": "milestone-capped-confirmation-custody-statement"
                   "confirmed_at": "2026-06-02T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/custody-statements/{statementId}/confirmation"
+                      "href": "/custody-statement-confirmations/{custodyStatementConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "milestone-capped-confirmation-custody-statement"
@@ -1510,19 +1510,19 @@
                   "delivered_quantity": 500
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/first-milestones/{milestoneId}/confirmation"
+                      "href": "/first-milestone-confirmations/{firstMilestoneConfirmationId}"
                 - "id": "milestone-precision-confirmation-first-milestone"
                   "confirmed_at": "2026-06-10T00:00:00Z"
                   "delivered_quantity": 1
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/first-milestones/{milestoneId}/confirmation"
+                      "href": "/first-milestone-confirmations/{firstMilestoneConfirmationId}"
                 - "id": "milestone-capped-confirmation-first-milestone"
                   "confirmed_at": "2026-06-10T00:00:00Z"
                   "delivered_quantity": 500
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/first-milestones/{milestoneId}/confirmation"
+                      "href": "/first-milestone-confirmations/{firstMilestoneConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "milestone-capped-confirmation-first-milestone"
@@ -1685,19 +1685,19 @@
                   "delivered_quantity": 500
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/final-milestones/{milestoneId}/confirmation"
+                      "href": "/final-milestone-confirmations/{finalMilestoneConfirmationId}"
                 - "id": "milestone-precision-confirmation-final-milestone"
                   "confirmed_at": "2026-06-15T00:00:01Z"
                   "delivered_quantity": 1
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/final-milestones/{milestoneId}/confirmation"
+                      "href": "/final-milestone-confirmations/{finalMilestoneConfirmationId}"
                 - "id": "milestone-capped-confirmation-final-milestone"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "delivered_quantity": 501
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/final-milestones/{milestoneId}/confirmation"
+                      "href": "/final-milestone-confirmations/{finalMilestoneConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "milestone-capped-confirmation-final-milestone"
@@ -1887,8 +1887,8 @@
                   "late_days": 0
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/milestone-acceptances/{acceptanceId}/confir\
-                        mation"
+                      "href": "/milestone-acceptance-confirmations/{milestoneAcceptanceConfirmationId\
+                        }"
                 - "id": "milestone-precision-confirmation-milestone-acceptance"
                   "confirmed_at": "2026-06-15T00:00:01Z"
                   "accepted": true
@@ -1896,8 +1896,8 @@
                   "late_days": 1
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/milestone-acceptances/{acceptanceId}/confir\
-                        mation"
+                      "href": "/milestone-acceptance-confirmations/{milestoneAcceptanceConfirmationId\
+                        }"
                 - "id": "milestone-capped-confirmation-milestone-acceptance"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "accepted": true
@@ -1905,8 +1905,8 @@
                   "late_days": 15
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/milestone-acceptances/{acceptanceId}/confir\
-                        mation"
+                      "href": "/milestone-acceptance-confirmations/{milestoneAcceptanceConfirmationId\
+                        }"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "milestone-capped-confirmation-milestone-acceptance"
@@ -2286,7 +2286,7 @@
                   "payout_minor": 1287126
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-on-time-confirmation-milestone-release-01-time-tamper"
                   "confirmed_at": "2026-06-15T00:00:00Z"
                   "gross_amount_minor": 1354870
@@ -2295,7 +2295,7 @@
                   "payout_minor": 1287126
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-on-time-confirmation-milestone-release-10-confirmed"
                   "confirmed_at": "2026-06-15T00:00:00Z"
                   "gross_amount_minor": 1354870
@@ -2304,7 +2304,7 @@
                   "payout_minor": 1287126
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-on-time-confirmation-milestone-release-20-duplicate"
                   "confirmed_at": "2026-06-15T00:00:00Z"
                   "gross_amount_minor": 1354870
@@ -2313,7 +2313,7 @@
                   "payout_minor": 1287126
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-precision-confirmation-milestone-release-00-tamper"
                   "confirmed_at": "2026-06-15T00:00:01Z"
                   "gross_amount_minor": "22600000000000002"
@@ -2322,7 +2322,7 @@
                   "payout_minor": "21244000000000002"
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-precision-confirmation-milestone-release-01-time-tamper"
                   "confirmed_at": "2026-06-15T00:00:01Z"
                   "gross_amount_minor": "22600000000000002"
@@ -2331,7 +2331,7 @@
                   "payout_minor": "21244000000000002"
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-precision-confirmation-milestone-release-10-confirmed"
                   "confirmed_at": "2026-06-15T00:00:01Z"
                   "gross_amount_minor": "22600000000000002"
@@ -2340,7 +2340,7 @@
                   "payout_minor": "21244000000000002"
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-precision-confirmation-milestone-release-20-duplicate"
                   "confirmed_at": "2026-06-15T00:00:01Z"
                   "gross_amount_minor": "22600000000000002"
@@ -2349,7 +2349,7 @@
                   "payout_minor": "21244000000000002"
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-capped-confirmation-milestone-release-00-tamper"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "gross_amount_minor": 1356225
@@ -2358,7 +2358,7 @@
                   "payout_minor": 0
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-capped-confirmation-milestone-release-01-time-tamper"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "gross_amount_minor": 1356225
@@ -2367,7 +2367,7 @@
                   "payout_minor": 0
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-capped-confirmation-milestone-release-10-confirmed"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "gross_amount_minor": 1356225
@@ -2376,7 +2376,7 @@
                   "payout_minor": 0
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-capped-confirmation-milestone-release-20-duplicate"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "gross_amount_minor": 1356225
@@ -2385,7 +2385,7 @@
                   "payout_minor": 0
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "milestone-capped-confirmation-milestone-release-10-confirmed"
@@ -2564,22 +2564,19 @@
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-statements/{statementId}/confirmat\
-                        ion"
+                      "href": "/milestone-statement-confirmations/{milestoneStatementConfirmationId}"
                 - "id": "milestone-precision-confirmation-milestone-statement"
                   "confirmed_at": "2026-06-15T00:00:01Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-statements/{statementId}/confirmat\
-                        ion"
+                      "href": "/milestone-statement-confirmations/{milestoneStatementConfirmationId}"
                 - "id": "milestone-capped-confirmation-milestone-statement"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-statements/{statementId}/confirmat\
-                        ion"
+                      "href": "/milestone-statement-confirmations/{milestoneStatementConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "milestone-capped-confirmation-milestone-statement"
@@ -3066,7 +3063,7 @@
                   "delivery_deadline": "2026-06-15T00:00:00Z"
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/orders/{orderId}/confirmation"
+                      "href": "/order-confirmations/{orderConfirmationId}"
                 - "id": "single-late-confirmation-order"
                   "confirmed_at": "2026-06-01T00:01:00Z"
                   "subtotal_minor": 1199000
@@ -3077,7 +3074,7 @@
                   "delivery_deadline": "2026-06-15T00:00:00Z"
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/orders/{orderId}/confirmation"
+                      "href": "/order-confirmations/{orderConfirmationId}"
                 - "id": "milestone-on-time-confirmation-order"
                   "confirmed_at": "2026-06-01T00:01:00Z"
                   "subtotal_minor": 1199000
@@ -3088,7 +3085,7 @@
                   "delivery_deadline": "2026-06-15T00:00:00Z"
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/orders/{orderId}/confirmation"
+                      "href": "/order-confirmations/{orderConfirmationId}"
                 - "id": "milestone-precision-confirmation-order"
                   "confirmed_at": "2026-06-01T00:01:00Z"
                   "subtotal_minor": "20000000000000002"
@@ -3099,7 +3096,7 @@
                   "delivery_deadline": "2026-06-15T00:00:00Z"
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/orders/{orderId}/confirmation"
+                      "href": "/order-confirmations/{orderConfirmationId}"
                 - "id": "milestone-capped-confirmation-order"
                   "confirmed_at": "2026-06-01T00:01:00Z"
                   "subtotal_minor": 1200199
@@ -3110,7 +3107,7 @@
                   "delivery_deadline": "2026-06-15T00:00:00Z"
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/orders/{orderId}/confirmation"
+                      "href": "/order-confirmations/{orderConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "milestone-on-time-confirmation-order"
@@ -3285,31 +3282,31 @@
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/commitments/{commitmentId}/confirmation"
+                      "href": "/commitment-confirmations/{commitmentConfirmationId}"
                 - "id": "single-late-confirmation-commitment"
                   "confirmed_at": "2026-06-01T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/commitments/{commitmentId}/confirmation"
+                      "href": "/commitment-confirmations/{commitmentConfirmationId}"
                 - "id": "milestone-on-time-confirmation-commitment"
                   "confirmed_at": "2026-06-01T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/commitments/{commitmentId}/confirmation"
+                      "href": "/commitment-confirmations/{commitmentConfirmationId}"
                 - "id": "milestone-precision-confirmation-commitment"
                   "confirmed_at": "2026-06-01T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/commitments/{commitmentId}/confirmation"
+                      "href": "/commitment-confirmations/{commitmentConfirmationId}"
                 - "id": "milestone-capped-confirmation-commitment"
                   "confirmed_at": "2026-06-01T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/commitments/{commitmentId}/confirmation"
+                      "href": "/commitment-confirmations/{commitmentConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "milestone-on-time-confirmation-commitment"
@@ -3585,31 +3582,31 @@
                   "locked_amount_minor": 1466402
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/deposit-locks/{lockId}/confirmation"
+                      "href": "/deposit-lock-confirmations/{depositLockConfirmationId}"
                 - "id": "single-late-confirmation-deposit-lock"
                   "confirmed_at": "2026-06-02T00:01:00Z"
                   "locked_amount_minor": 1354870
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/deposit-locks/{lockId}/confirmation"
+                      "href": "/deposit-lock-confirmations/{depositLockConfirmationId}"
                 - "id": "milestone-on-time-confirmation-deposit-lock"
                   "confirmed_at": "2026-06-02T00:01:00Z"
                   "locked_amount_minor": 1354870
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/deposit-locks/{lockId}/confirmation"
+                      "href": "/deposit-lock-confirmations/{depositLockConfirmationId}"
                 - "id": "milestone-precision-confirmation-deposit-lock"
                   "confirmed_at": "2026-06-02T00:01:00Z"
                   "locked_amount_minor": "22600000000000002"
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/deposit-locks/{lockId}/confirmation"
+                      "href": "/deposit-lock-confirmations/{depositLockConfirmationId}"
                 - "id": "milestone-capped-confirmation-deposit-lock"
                   "confirmed_at": "2026-06-02T00:01:00Z"
                   "locked_amount_minor": 1356225
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/deposit-locks/{lockId}/confirmation"
+                      "href": "/deposit-lock-confirmations/{depositLockConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "milestone-on-time-confirmation-deposit-lock"
@@ -3779,31 +3776,31 @@
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/custody-statements/{statementId}/confirmation"
+                      "href": "/custody-statement-confirmations/{custodyStatementConfirmationId}"
                 - "id": "single-late-confirmation-custody-statement"
                   "confirmed_at": "2026-06-02T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/custody-statements/{statementId}/confirmation"
+                      "href": "/custody-statement-confirmations/{custodyStatementConfirmationId}"
                 - "id": "milestone-on-time-confirmation-custody-statement"
                   "confirmed_at": "2026-06-02T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/custody-statements/{statementId}/confirmation"
+                      "href": "/custody-statement-confirmations/{custodyStatementConfirmationId}"
                 - "id": "milestone-precision-confirmation-custody-statement"
                   "confirmed_at": "2026-06-02T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/custody-statements/{statementId}/confirmation"
+                      "href": "/custody-statement-confirmations/{custodyStatementConfirmationId}"
                 - "id": "milestone-capped-confirmation-custody-statement"
                   "confirmed_at": "2026-06-02T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/custody-statements/{statementId}/confirmation"
+                      "href": "/custody-statement-confirmations/{custodyStatementConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "milestone-on-time-confirmation-custody-statement"
@@ -4077,19 +4074,19 @@
                   "delivered_quantity": 500
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/first-milestones/{milestoneId}/confirmation"
+                      "href": "/first-milestone-confirmations/{firstMilestoneConfirmationId}"
                 - "id": "milestone-precision-confirmation-first-milestone"
                   "confirmed_at": "2026-06-10T00:00:00Z"
                   "delivered_quantity": 1
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/first-milestones/{milestoneId}/confirmation"
+                      "href": "/first-milestone-confirmations/{firstMilestoneConfirmationId}"
                 - "id": "milestone-capped-confirmation-first-milestone"
                   "confirmed_at": "2026-06-10T00:00:00Z"
                   "delivered_quantity": 500
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/first-milestones/{milestoneId}/confirmation"
+                      "href": "/first-milestone-confirmations/{firstMilestoneConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "milestone-on-time-confirmation-first-milestone"
@@ -4252,19 +4249,19 @@
                   "delivered_quantity": 500
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/final-milestones/{milestoneId}/confirmation"
+                      "href": "/final-milestone-confirmations/{finalMilestoneConfirmationId}"
                 - "id": "milestone-precision-confirmation-final-milestone"
                   "confirmed_at": "2026-06-15T00:00:01Z"
                   "delivered_quantity": 1
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/final-milestones/{milestoneId}/confirmation"
+                      "href": "/final-milestone-confirmations/{finalMilestoneConfirmationId}"
                 - "id": "milestone-capped-confirmation-final-milestone"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "delivered_quantity": 501
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/final-milestones/{milestoneId}/confirmation"
+                      "href": "/final-milestone-confirmations/{finalMilestoneConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "milestone-on-time-confirmation-final-milestone"
@@ -4454,8 +4451,8 @@
                   "late_days": 0
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/milestone-acceptances/{acceptanceId}/confir\
-                        mation"
+                      "href": "/milestone-acceptance-confirmations/{milestoneAcceptanceConfirmationId\
+                        }"
                 - "id": "milestone-precision-confirmation-milestone-acceptance"
                   "confirmed_at": "2026-06-15T00:00:01Z"
                   "accepted": true
@@ -4463,8 +4460,8 @@
                   "late_days": 1
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/milestone-acceptances/{acceptanceId}/confir\
-                        mation"
+                      "href": "/milestone-acceptance-confirmations/{milestoneAcceptanceConfirmationId\
+                        }"
                 - "id": "milestone-capped-confirmation-milestone-acceptance"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "accepted": true
@@ -4472,8 +4469,8 @@
                   "late_days": 15
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/milestone-acceptances/{acceptanceId}/confir\
-                        mation"
+                      "href": "/milestone-acceptance-confirmations/{milestoneAcceptanceConfirmationId\
+                        }"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "milestone-on-time-confirmation-milestone-acceptance"
@@ -4853,7 +4850,7 @@
                   "payout_minor": 1287126
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-on-time-confirmation-milestone-release-01-time-tamper"
                   "confirmed_at": "2026-06-15T00:00:00Z"
                   "gross_amount_minor": 1354870
@@ -4862,7 +4859,7 @@
                   "payout_minor": 1287126
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-on-time-confirmation-milestone-release-10-confirmed"
                   "confirmed_at": "2026-06-15T00:00:00Z"
                   "gross_amount_minor": 1354870
@@ -4871,7 +4868,7 @@
                   "payout_minor": 1287126
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-on-time-confirmation-milestone-release-20-duplicate"
                   "confirmed_at": "2026-06-15T00:00:00Z"
                   "gross_amount_minor": 1354870
@@ -4880,7 +4877,7 @@
                   "payout_minor": 1287126
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-precision-confirmation-milestone-release-00-tamper"
                   "confirmed_at": "2026-06-15T00:00:01Z"
                   "gross_amount_minor": "22600000000000002"
@@ -4889,7 +4886,7 @@
                   "payout_minor": "21244000000000002"
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-precision-confirmation-milestone-release-01-time-tamper"
                   "confirmed_at": "2026-06-15T00:00:01Z"
                   "gross_amount_minor": "22600000000000002"
@@ -4898,7 +4895,7 @@
                   "payout_minor": "21244000000000002"
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-precision-confirmation-milestone-release-10-confirmed"
                   "confirmed_at": "2026-06-15T00:00:01Z"
                   "gross_amount_minor": "22600000000000002"
@@ -4907,7 +4904,7 @@
                   "payout_minor": "21244000000000002"
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-precision-confirmation-milestone-release-20-duplicate"
                   "confirmed_at": "2026-06-15T00:00:01Z"
                   "gross_amount_minor": "22600000000000002"
@@ -4916,7 +4913,7 @@
                   "payout_minor": "21244000000000002"
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-capped-confirmation-milestone-release-00-tamper"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "gross_amount_minor": 1356225
@@ -4925,7 +4922,7 @@
                   "payout_minor": 0
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-capped-confirmation-milestone-release-01-time-tamper"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "gross_amount_minor": 1356225
@@ -4934,7 +4931,7 @@
                   "payout_minor": 0
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-capped-confirmation-milestone-release-10-confirmed"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "gross_amount_minor": 1356225
@@ -4943,7 +4940,7 @@
                   "payout_minor": 0
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-capped-confirmation-milestone-release-20-duplicate"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "gross_amount_minor": 1356225
@@ -4952,7 +4949,7 @@
                   "payout_minor": 0
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "milestone-on-time-confirmation-milestone-release-10-confirmed"
@@ -5131,22 +5128,19 @@
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-statements/{statementId}/confirmat\
-                        ion"
+                      "href": "/milestone-statement-confirmations/{milestoneStatementConfirmationId}"
                 - "id": "milestone-precision-confirmation-milestone-statement"
                   "confirmed_at": "2026-06-15T00:00:01Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-statements/{statementId}/confirmat\
-                        ion"
+                      "href": "/milestone-statement-confirmations/{milestoneStatementConfirmationId}"
                 - "id": "milestone-capped-confirmation-milestone-statement"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-statements/{statementId}/confirmat\
-                        ion"
+                      "href": "/milestone-statement-confirmations/{milestoneStatementConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "milestone-on-time-confirmation-milestone-statement"
@@ -5634,7 +5628,7 @@
                   "delivery_deadline": "2026-06-15T00:00:00Z"
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/orders/{orderId}/confirmation"
+                      "href": "/order-confirmations/{orderConfirmationId}"
                 - "id": "single-late-confirmation-order"
                   "confirmed_at": "2026-06-01T00:01:00Z"
                   "subtotal_minor": 1199000
@@ -5645,7 +5639,7 @@
                   "delivery_deadline": "2026-06-15T00:00:00Z"
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/orders/{orderId}/confirmation"
+                      "href": "/order-confirmations/{orderConfirmationId}"
                 - "id": "milestone-on-time-confirmation-order"
                   "confirmed_at": "2026-06-01T00:01:00Z"
                   "subtotal_minor": 1199000
@@ -5656,7 +5650,7 @@
                   "delivery_deadline": "2026-06-15T00:00:00Z"
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/orders/{orderId}/confirmation"
+                      "href": "/order-confirmations/{orderConfirmationId}"
                 - "id": "milestone-precision-confirmation-order"
                   "confirmed_at": "2026-06-01T00:01:00Z"
                   "subtotal_minor": "20000000000000002"
@@ -5667,7 +5661,7 @@
                   "delivery_deadline": "2026-06-15T00:00:00Z"
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/orders/{orderId}/confirmation"
+                      "href": "/order-confirmations/{orderConfirmationId}"
                 - "id": "milestone-capped-confirmation-order"
                   "confirmed_at": "2026-06-01T00:01:00Z"
                   "subtotal_minor": 1200199
@@ -5678,7 +5672,7 @@
                   "delivery_deadline": "2026-06-15T00:00:00Z"
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/orders/{orderId}/confirmation"
+                      "href": "/order-confirmations/{orderConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "milestone-precision-confirmation-order"
@@ -5853,31 +5847,31 @@
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/commitments/{commitmentId}/confirmation"
+                      "href": "/commitment-confirmations/{commitmentConfirmationId}"
                 - "id": "single-late-confirmation-commitment"
                   "confirmed_at": "2026-06-01T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/commitments/{commitmentId}/confirmation"
+                      "href": "/commitment-confirmations/{commitmentConfirmationId}"
                 - "id": "milestone-on-time-confirmation-commitment"
                   "confirmed_at": "2026-06-01T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/commitments/{commitmentId}/confirmation"
+                      "href": "/commitment-confirmations/{commitmentConfirmationId}"
                 - "id": "milestone-precision-confirmation-commitment"
                   "confirmed_at": "2026-06-01T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/commitments/{commitmentId}/confirmation"
+                      "href": "/commitment-confirmations/{commitmentConfirmationId}"
                 - "id": "milestone-capped-confirmation-commitment"
                   "confirmed_at": "2026-06-01T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/commitments/{commitmentId}/confirmation"
+                      "href": "/commitment-confirmations/{commitmentConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "milestone-precision-confirmation-commitment"
@@ -6153,31 +6147,31 @@
                   "locked_amount_minor": 1466402
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/deposit-locks/{lockId}/confirmation"
+                      "href": "/deposit-lock-confirmations/{depositLockConfirmationId}"
                 - "id": "single-late-confirmation-deposit-lock"
                   "confirmed_at": "2026-06-02T00:01:00Z"
                   "locked_amount_minor": 1354870
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/deposit-locks/{lockId}/confirmation"
+                      "href": "/deposit-lock-confirmations/{depositLockConfirmationId}"
                 - "id": "milestone-on-time-confirmation-deposit-lock"
                   "confirmed_at": "2026-06-02T00:01:00Z"
                   "locked_amount_minor": 1354870
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/deposit-locks/{lockId}/confirmation"
+                      "href": "/deposit-lock-confirmations/{depositLockConfirmationId}"
                 - "id": "milestone-precision-confirmation-deposit-lock"
                   "confirmed_at": "2026-06-02T00:01:00Z"
                   "locked_amount_minor": "22600000000000002"
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/deposit-locks/{lockId}/confirmation"
+                      "href": "/deposit-lock-confirmations/{depositLockConfirmationId}"
                 - "id": "milestone-capped-confirmation-deposit-lock"
                   "confirmed_at": "2026-06-02T00:01:00Z"
                   "locked_amount_minor": 1356225
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/deposit-locks/{lockId}/confirmation"
+                      "href": "/deposit-lock-confirmations/{depositLockConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "milestone-precision-confirmation-deposit-lock"
@@ -6347,31 +6341,31 @@
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/custody-statements/{statementId}/confirmation"
+                      "href": "/custody-statement-confirmations/{custodyStatementConfirmationId}"
                 - "id": "single-late-confirmation-custody-statement"
                   "confirmed_at": "2026-06-02T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/custody-statements/{statementId}/confirmation"
+                      "href": "/custody-statement-confirmations/{custodyStatementConfirmationId}"
                 - "id": "milestone-on-time-confirmation-custody-statement"
                   "confirmed_at": "2026-06-02T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/custody-statements/{statementId}/confirmation"
+                      "href": "/custody-statement-confirmations/{custodyStatementConfirmationId}"
                 - "id": "milestone-precision-confirmation-custody-statement"
                   "confirmed_at": "2026-06-02T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/custody-statements/{statementId}/confirmation"
+                      "href": "/custody-statement-confirmations/{custodyStatementConfirmationId}"
                 - "id": "milestone-capped-confirmation-custody-statement"
                   "confirmed_at": "2026-06-02T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/custody-statements/{statementId}/confirmation"
+                      "href": "/custody-statement-confirmations/{custodyStatementConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "milestone-precision-confirmation-custody-statement"
@@ -6645,19 +6639,19 @@
                   "delivered_quantity": 500
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/first-milestones/{milestoneId}/confirmation"
+                      "href": "/first-milestone-confirmations/{firstMilestoneConfirmationId}"
                 - "id": "milestone-precision-confirmation-first-milestone"
                   "confirmed_at": "2026-06-10T00:00:00Z"
                   "delivered_quantity": 1
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/first-milestones/{milestoneId}/confirmation"
+                      "href": "/first-milestone-confirmations/{firstMilestoneConfirmationId}"
                 - "id": "milestone-capped-confirmation-first-milestone"
                   "confirmed_at": "2026-06-10T00:00:00Z"
                   "delivered_quantity": 500
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/first-milestones/{milestoneId}/confirmation"
+                      "href": "/first-milestone-confirmations/{firstMilestoneConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "milestone-precision-confirmation-first-milestone"
@@ -6820,19 +6814,19 @@
                   "delivered_quantity": 500
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/final-milestones/{milestoneId}/confirmation"
+                      "href": "/final-milestone-confirmations/{finalMilestoneConfirmationId}"
                 - "id": "milestone-precision-confirmation-final-milestone"
                   "confirmed_at": "2026-06-15T00:00:01Z"
                   "delivered_quantity": 1
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/final-milestones/{milestoneId}/confirmation"
+                      "href": "/final-milestone-confirmations/{finalMilestoneConfirmationId}"
                 - "id": "milestone-capped-confirmation-final-milestone"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "delivered_quantity": 501
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/final-milestones/{milestoneId}/confirmation"
+                      "href": "/final-milestone-confirmations/{finalMilestoneConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "milestone-precision-confirmation-final-milestone"
@@ -7022,8 +7016,8 @@
                   "late_days": 0
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/milestone-acceptances/{acceptanceId}/confir\
-                        mation"
+                      "href": "/milestone-acceptance-confirmations/{milestoneAcceptanceConfirmationId\
+                        }"
                 - "id": "milestone-precision-confirmation-milestone-acceptance"
                   "confirmed_at": "2026-06-15T00:00:01Z"
                   "accepted": true
@@ -7031,8 +7025,8 @@
                   "late_days": 1
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/milestone-acceptances/{acceptanceId}/confir\
-                        mation"
+                      "href": "/milestone-acceptance-confirmations/{milestoneAcceptanceConfirmationId\
+                        }"
                 - "id": "milestone-capped-confirmation-milestone-acceptance"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "accepted": true
@@ -7040,8 +7034,8 @@
                   "late_days": 15
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/milestone-acceptances/{acceptanceId}/confir\
-                        mation"
+                      "href": "/milestone-acceptance-confirmations/{milestoneAcceptanceConfirmationId\
+                        }"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "milestone-precision-confirmation-milestone-acceptance"
@@ -7421,7 +7415,7 @@
                   "payout_minor": 1287126
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-on-time-confirmation-milestone-release-01-time-tamper"
                   "confirmed_at": "2026-06-15T00:00:00Z"
                   "gross_amount_minor": 1354870
@@ -7430,7 +7424,7 @@
                   "payout_minor": 1287126
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-on-time-confirmation-milestone-release-10-confirmed"
                   "confirmed_at": "2026-06-15T00:00:00Z"
                   "gross_amount_minor": 1354870
@@ -7439,7 +7433,7 @@
                   "payout_minor": 1287126
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-on-time-confirmation-milestone-release-20-duplicate"
                   "confirmed_at": "2026-06-15T00:00:00Z"
                   "gross_amount_minor": 1354870
@@ -7448,7 +7442,7 @@
                   "payout_minor": 1287126
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-precision-confirmation-milestone-release-00-tamper"
                   "confirmed_at": "2026-06-15T00:00:01Z"
                   "gross_amount_minor": "22600000000000002"
@@ -7457,7 +7451,7 @@
                   "payout_minor": "21244000000000002"
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-precision-confirmation-milestone-release-01-time-tamper"
                   "confirmed_at": "2026-06-15T00:00:01Z"
                   "gross_amount_minor": "22600000000000002"
@@ -7466,7 +7460,7 @@
                   "payout_minor": "21244000000000002"
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-precision-confirmation-milestone-release-10-confirmed"
                   "confirmed_at": "2026-06-15T00:00:01Z"
                   "gross_amount_minor": "22600000000000002"
@@ -7475,7 +7469,7 @@
                   "payout_minor": "21244000000000002"
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-precision-confirmation-milestone-release-20-duplicate"
                   "confirmed_at": "2026-06-15T00:00:01Z"
                   "gross_amount_minor": "22600000000000002"
@@ -7484,7 +7478,7 @@
                   "payout_minor": "21244000000000002"
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-capped-confirmation-milestone-release-00-tamper"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "gross_amount_minor": 1356225
@@ -7493,7 +7487,7 @@
                   "payout_minor": 0
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-capped-confirmation-milestone-release-01-time-tamper"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "gross_amount_minor": 1356225
@@ -7502,7 +7496,7 @@
                   "payout_minor": 0
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-capped-confirmation-milestone-release-10-confirmed"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "gross_amount_minor": 1356225
@@ -7511,7 +7505,7 @@
                   "payout_minor": 0
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
                 - "id": "milestone-capped-confirmation-milestone-release-20-duplicate"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "gross_amount_minor": 1356225
@@ -7520,7 +7514,7 @@
                   "payout_minor": 0
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-releases/{releaseId}/confirmation"
+                      "href": "/milestone-release-confirmations/{milestoneReleaseConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "milestone-precision-confirmation-milestone-release-10-confirmed"
@@ -7699,22 +7693,19 @@
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-statements/{statementId}/confirmat\
-                        ion"
+                      "href": "/milestone-statement-confirmations/{milestoneStatementConfirmationId}"
                 - "id": "milestone-precision-confirmation-milestone-statement"
                   "confirmed_at": "2026-06-15T00:00:01Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-statements/{statementId}/confirmat\
-                        ion"
+                      "href": "/milestone-statement-confirmations/{milestoneStatementConfirmationId}"
                 - "id": "milestone-capped-confirmation-milestone-statement"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/milestone-statements/{statementId}/confirmat\
-                        ion"
+                      "href": "/milestone-statement-confirmations/{milestoneStatementConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "milestone-precision-confirmation-milestone-statement"
@@ -8201,7 +8192,7 @@
                   "delivery_deadline": "2026-06-15T00:00:00Z"
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/orders/{orderId}/confirmation"
+                      "href": "/order-confirmations/{orderConfirmationId}"
                 - "id": "single-late-confirmation-order"
                   "confirmed_at": "2026-06-01T00:01:00Z"
                   "subtotal_minor": 1199000
@@ -8212,7 +8203,7 @@
                   "delivery_deadline": "2026-06-15T00:00:00Z"
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/orders/{orderId}/confirmation"
+                      "href": "/order-confirmations/{orderConfirmationId}"
                 - "id": "milestone-on-time-confirmation-order"
                   "confirmed_at": "2026-06-01T00:01:00Z"
                   "subtotal_minor": 1199000
@@ -8223,7 +8214,7 @@
                   "delivery_deadline": "2026-06-15T00:00:00Z"
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/orders/{orderId}/confirmation"
+                      "href": "/order-confirmations/{orderConfirmationId}"
                 - "id": "milestone-precision-confirmation-order"
                   "confirmed_at": "2026-06-01T00:01:00Z"
                   "subtotal_minor": "20000000000000002"
@@ -8234,7 +8225,7 @@
                   "delivery_deadline": "2026-06-15T00:00:00Z"
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/orders/{orderId}/confirmation"
+                      "href": "/order-confirmations/{orderConfirmationId}"
                 - "id": "milestone-capped-confirmation-order"
                   "confirmed_at": "2026-06-01T00:01:00Z"
                   "subtotal_minor": 1200199
@@ -8245,7 +8236,7 @@
                   "delivery_deadline": "2026-06-15T00:00:00Z"
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/orders/{orderId}/confirmation"
+                      "href": "/order-confirmations/{orderConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "single-late-confirmation-order"
@@ -8420,31 +8411,31 @@
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/commitments/{commitmentId}/confirmation"
+                      "href": "/commitment-confirmations/{commitmentConfirmationId}"
                 - "id": "single-late-confirmation-commitment"
                   "confirmed_at": "2026-06-01T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/commitments/{commitmentId}/confirmation"
+                      "href": "/commitment-confirmations/{commitmentConfirmationId}"
                 - "id": "milestone-on-time-confirmation-commitment"
                   "confirmed_at": "2026-06-01T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/commitments/{commitmentId}/confirmation"
+                      "href": "/commitment-confirmations/{commitmentConfirmationId}"
                 - "id": "milestone-precision-confirmation-commitment"
                   "confirmed_at": "2026-06-01T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/commitments/{commitmentId}/confirmation"
+                      "href": "/commitment-confirmations/{commitmentConfirmationId}"
                 - "id": "milestone-capped-confirmation-commitment"
                   "confirmed_at": "2026-06-01T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/commitments/{commitmentId}/confirmation"
+                      "href": "/commitment-confirmations/{commitmentConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "single-late-confirmation-commitment"
@@ -8720,31 +8711,31 @@
                   "locked_amount_minor": 1466402
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/deposit-locks/{lockId}/confirmation"
+                      "href": "/deposit-lock-confirmations/{depositLockConfirmationId}"
                 - "id": "single-late-confirmation-deposit-lock"
                   "confirmed_at": "2026-06-02T00:01:00Z"
                   "locked_amount_minor": 1354870
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/deposit-locks/{lockId}/confirmation"
+                      "href": "/deposit-lock-confirmations/{depositLockConfirmationId}"
                 - "id": "milestone-on-time-confirmation-deposit-lock"
                   "confirmed_at": "2026-06-02T00:01:00Z"
                   "locked_amount_minor": 1354870
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/deposit-locks/{lockId}/confirmation"
+                      "href": "/deposit-lock-confirmations/{depositLockConfirmationId}"
                 - "id": "milestone-precision-confirmation-deposit-lock"
                   "confirmed_at": "2026-06-02T00:01:00Z"
                   "locked_amount_minor": "22600000000000002"
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/deposit-locks/{lockId}/confirmation"
+                      "href": "/deposit-lock-confirmations/{depositLockConfirmationId}"
                 - "id": "milestone-capped-confirmation-deposit-lock"
                   "confirmed_at": "2026-06-02T00:01:00Z"
                   "locked_amount_minor": 1356225
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/deposit-locks/{lockId}/confirmation"
+                      "href": "/deposit-lock-confirmations/{depositLockConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "single-late-confirmation-deposit-lock"
@@ -8914,31 +8905,31 @@
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/custody-statements/{statementId}/confirmation"
+                      "href": "/custody-statement-confirmations/{custodyStatementConfirmationId}"
                 - "id": "single-late-confirmation-custody-statement"
                   "confirmed_at": "2026-06-02T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/custody-statements/{statementId}/confirmation"
+                      "href": "/custody-statement-confirmations/{custodyStatementConfirmationId}"
                 - "id": "milestone-on-time-confirmation-custody-statement"
                   "confirmed_at": "2026-06-02T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/custody-statements/{statementId}/confirmation"
+                      "href": "/custody-statement-confirmations/{custodyStatementConfirmationId}"
                 - "id": "milestone-precision-confirmation-custody-statement"
                   "confirmed_at": "2026-06-02T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/custody-statements/{statementId}/confirmation"
+                      "href": "/custody-statement-confirmations/{custodyStatementConfirmationId}"
                 - "id": "milestone-capped-confirmation-custody-statement"
                   "confirmed_at": "2026-06-02T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/custody-statements/{statementId}/confirmation"
+                      "href": "/custody-statement-confirmations/{custodyStatementConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "single-late-confirmation-custody-statement"
@@ -9207,13 +9198,13 @@
                   "delivered_quantity": 999
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/deliveries/{deliveryId}/confirmation"
+                      "href": "/delivery-confirmations/{deliveryConfirmationId}"
                 - "id": "single-late-confirmation-delivery"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "delivered_quantity": 1000
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/deliveries/{deliveryId}/confirmation"
+                      "href": "/delivery-confirmations/{deliveryConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "single-late-confirmation-delivery"
@@ -9396,7 +9387,7 @@
                   "late_days": 0
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/acceptances/{acceptanceId}/confirmation"
+                      "href": "/acceptance-confirmations/{acceptanceConfirmationId}"
                 - "id": "single-late-confirmation-acceptance"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "accepted": true
@@ -9404,7 +9395,7 @@
                   "late_days": 15
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/acceptances/{acceptanceId}/confirmation"
+                      "href": "/acceptance-confirmations/{acceptanceConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "single-late-confirmation-acceptance"
@@ -9778,7 +9769,7 @@
                   "payout_minor": 1393082
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/releases/{releaseId}/confirmation"
+                      "href": "/release-confirmations/{releaseConfirmationId}"
                 - "id": "single-on-time-confirmation-release-01-time-tamper"
                   "confirmed_at": "2026-06-15T00:00:00Z"
                   "gross_amount_minor": 1466402
@@ -9787,7 +9778,7 @@
                   "payout_minor": 1393082
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/releases/{releaseId}/confirmation"
+                      "href": "/release-confirmations/{releaseConfirmationId}"
                 - "id": "single-on-time-confirmation-release-10-confirmed"
                   "confirmed_at": "2026-06-15T00:00:00Z"
                   "gross_amount_minor": 1466402
@@ -9796,7 +9787,7 @@
                   "payout_minor": 1393082
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/releases/{releaseId}/confirmation"
+                      "href": "/release-confirmations/{releaseConfirmationId}"
                 - "id": "single-on-time-confirmation-release-20-duplicate"
                   "confirmed_at": "2026-06-15T00:00:00Z"
                   "gross_amount_minor": 1466402
@@ -9805,7 +9796,7 @@
                   "payout_minor": 1393082
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/releases/{releaseId}/confirmation"
+                      "href": "/release-confirmations/{releaseConfirmationId}"
                 - "id": "single-late-confirmation-release-00-tamper"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "gross_amount_minor": 1354870
@@ -9814,7 +9805,7 @@
                   "payout_minor": 1083895
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/releases/{releaseId}/confirmation"
+                      "href": "/release-confirmations/{releaseConfirmationId}"
                 - "id": "single-late-confirmation-release-01-time-tamper"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "gross_amount_minor": 1354870
@@ -9823,7 +9814,7 @@
                   "payout_minor": 1083895
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/releases/{releaseId}/confirmation"
+                      "href": "/release-confirmations/{releaseConfirmationId}"
                 - "id": "single-late-confirmation-release-10-confirmed"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "gross_amount_minor": 1354870
@@ -9832,7 +9823,7 @@
                   "payout_minor": 1083895
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/releases/{releaseId}/confirmation"
+                      "href": "/release-confirmations/{releaseConfirmationId}"
                 - "id": "single-late-confirmation-release-20-duplicate"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "gross_amount_minor": 1354870
@@ -9841,7 +9832,7 @@
                   "payout_minor": 1083895
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/releases/{releaseId}/confirmation"
+                      "href": "/release-confirmations/{releaseConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "single-late-confirmation-release-10-confirmed"
@@ -10014,13 +10005,13 @@
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/settlement-receipts/{receiptId}/confirmation"
+                      "href": "/settlement-receipt-confirmations/{settlementReceiptConfirmationId}"
                 - "id": "single-late-confirmation-settlement-receipt"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/settlement-receipts/{receiptId}/confirmation"
+                      "href": "/settlement-receipt-confirmations/{settlementReceiptConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "single-late-confirmation-settlement-receipt"
@@ -10507,7 +10498,7 @@
                   "delivery_deadline": "2026-06-15T00:00:00Z"
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/orders/{orderId}/confirmation"
+                      "href": "/order-confirmations/{orderConfirmationId}"
                 - "id": "single-late-confirmation-order"
                   "confirmed_at": "2026-06-01T00:01:00Z"
                   "subtotal_minor": 1199000
@@ -10518,7 +10509,7 @@
                   "delivery_deadline": "2026-06-15T00:00:00Z"
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/orders/{orderId}/confirmation"
+                      "href": "/order-confirmations/{orderConfirmationId}"
                 - "id": "milestone-on-time-confirmation-order"
                   "confirmed_at": "2026-06-01T00:01:00Z"
                   "subtotal_minor": 1199000
@@ -10529,7 +10520,7 @@
                   "delivery_deadline": "2026-06-15T00:00:00Z"
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/orders/{orderId}/confirmation"
+                      "href": "/order-confirmations/{orderConfirmationId}"
                 - "id": "milestone-precision-confirmation-order"
                   "confirmed_at": "2026-06-01T00:01:00Z"
                   "subtotal_minor": "20000000000000002"
@@ -10540,7 +10531,7 @@
                   "delivery_deadline": "2026-06-15T00:00:00Z"
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/orders/{orderId}/confirmation"
+                      "href": "/order-confirmations/{orderConfirmationId}"
                 - "id": "milestone-capped-confirmation-order"
                   "confirmed_at": "2026-06-01T00:01:00Z"
                   "subtotal_minor": 1200199
@@ -10551,7 +10542,7 @@
                   "delivery_deadline": "2026-06-15T00:00:00Z"
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/orders/{orderId}/confirmation"
+                      "href": "/order-confirmations/{orderConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "single-on-time-confirmation-order"
@@ -10726,31 +10717,31 @@
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/commitments/{commitmentId}/confirmation"
+                      "href": "/commitment-confirmations/{commitmentConfirmationId}"
                 - "id": "single-late-confirmation-commitment"
                   "confirmed_at": "2026-06-01T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/commitments/{commitmentId}/confirmation"
+                      "href": "/commitment-confirmations/{commitmentConfirmationId}"
                 - "id": "milestone-on-time-confirmation-commitment"
                   "confirmed_at": "2026-06-01T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/commitments/{commitmentId}/confirmation"
+                      "href": "/commitment-confirmations/{commitmentConfirmationId}"
                 - "id": "milestone-precision-confirmation-commitment"
                   "confirmed_at": "2026-06-01T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/commitments/{commitmentId}/confirmation"
+                      "href": "/commitment-confirmations/{commitmentConfirmationId}"
                 - "id": "milestone-capped-confirmation-commitment"
                   "confirmed_at": "2026-06-01T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/agreements/{contractId}/commitments/{commitmentId}/confirmation"
+                      "href": "/commitment-confirmations/{commitmentConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "single-on-time-confirmation-commitment"
@@ -11026,31 +11017,31 @@
                   "locked_amount_minor": 1466402
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/deposit-locks/{lockId}/confirmation"
+                      "href": "/deposit-lock-confirmations/{depositLockConfirmationId}"
                 - "id": "single-late-confirmation-deposit-lock"
                   "confirmed_at": "2026-06-02T00:01:00Z"
                   "locked_amount_minor": 1354870
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/deposit-locks/{lockId}/confirmation"
+                      "href": "/deposit-lock-confirmations/{depositLockConfirmationId}"
                 - "id": "milestone-on-time-confirmation-deposit-lock"
                   "confirmed_at": "2026-06-02T00:01:00Z"
                   "locked_amount_minor": 1354870
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/deposit-locks/{lockId}/confirmation"
+                      "href": "/deposit-lock-confirmations/{depositLockConfirmationId}"
                 - "id": "milestone-precision-confirmation-deposit-lock"
                   "confirmed_at": "2026-06-02T00:01:00Z"
                   "locked_amount_minor": "22600000000000002"
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/deposit-locks/{lockId}/confirmation"
+                      "href": "/deposit-lock-confirmations/{depositLockConfirmationId}"
                 - "id": "milestone-capped-confirmation-deposit-lock"
                   "confirmed_at": "2026-06-02T00:01:00Z"
                   "locked_amount_minor": 1356225
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/deposit-locks/{lockId}/confirmation"
+                      "href": "/deposit-lock-confirmations/{depositLockConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "single-on-time-confirmation-deposit-lock"
@@ -11220,31 +11211,31 @@
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/custody-statements/{statementId}/confirmation"
+                      "href": "/custody-statement-confirmations/{custodyStatementConfirmationId}"
                 - "id": "single-late-confirmation-custody-statement"
                   "confirmed_at": "2026-06-02T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/custody-statements/{statementId}/confirmation"
+                      "href": "/custody-statement-confirmations/{custodyStatementConfirmationId}"
                 - "id": "milestone-on-time-confirmation-custody-statement"
                   "confirmed_at": "2026-06-02T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/custody-statements/{statementId}/confirmation"
+                      "href": "/custody-statement-confirmations/{custodyStatementConfirmationId}"
                 - "id": "milestone-precision-confirmation-custody-statement"
                   "confirmed_at": "2026-06-02T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/custody-statements/{statementId}/confirmation"
+                      "href": "/custody-statement-confirmations/{custodyStatementConfirmationId}"
                 - "id": "milestone-capped-confirmation-custody-statement"
                   "confirmed_at": "2026-06-02T00:02:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/escrows/{contractId}/custody-statements/{statementId}/confirmation"
+                      "href": "/custody-statement-confirmations/{custodyStatementConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "single-on-time-confirmation-custody-statement"
@@ -11513,13 +11504,13 @@
                   "delivered_quantity": 999
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/deliveries/{deliveryId}/confirmation"
+                      "href": "/delivery-confirmations/{deliveryConfirmationId}"
                 - "id": "single-late-confirmation-delivery"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "delivered_quantity": 1000
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/deliveries/{deliveryId}/confirmation"
+                      "href": "/delivery-confirmations/{deliveryConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "single-on-time-confirmation-delivery"
@@ -11702,7 +11693,7 @@
                   "late_days": 0
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/acceptances/{acceptanceId}/confirmation"
+                      "href": "/acceptance-confirmations/{acceptanceConfirmationId}"
                 - "id": "single-late-confirmation-acceptance"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "accepted": true
@@ -11710,7 +11701,7 @@
                   "late_days": 15
                   "_links":
                     "self":
-                      "href": "/fulfillments/{contractId}/acceptances/{acceptanceId}/confirmation"
+                      "href": "/acceptance-confirmations/{acceptanceConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "single-on-time-confirmation-acceptance"
@@ -12084,7 +12075,7 @@
                   "payout_minor": 1393082
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/releases/{releaseId}/confirmation"
+                      "href": "/release-confirmations/{releaseConfirmationId}"
                 - "id": "single-on-time-confirmation-release-01-time-tamper"
                   "confirmed_at": "2026-06-15T00:00:00Z"
                   "gross_amount_minor": 1466402
@@ -12093,7 +12084,7 @@
                   "payout_minor": 1393082
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/releases/{releaseId}/confirmation"
+                      "href": "/release-confirmations/{releaseConfirmationId}"
                 - "id": "single-on-time-confirmation-release-10-confirmed"
                   "confirmed_at": "2026-06-15T00:00:00Z"
                   "gross_amount_minor": 1466402
@@ -12102,7 +12093,7 @@
                   "payout_minor": 1393082
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/releases/{releaseId}/confirmation"
+                      "href": "/release-confirmations/{releaseConfirmationId}"
                 - "id": "single-on-time-confirmation-release-20-duplicate"
                   "confirmed_at": "2026-06-15T00:00:00Z"
                   "gross_amount_minor": 1466402
@@ -12111,7 +12102,7 @@
                   "payout_minor": 1393082
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/releases/{releaseId}/confirmation"
+                      "href": "/release-confirmations/{releaseConfirmationId}"
                 - "id": "single-late-confirmation-release-00-tamper"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "gross_amount_minor": 1354870
@@ -12120,7 +12111,7 @@
                   "payout_minor": 1083895
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/releases/{releaseId}/confirmation"
+                      "href": "/release-confirmations/{releaseConfirmationId}"
                 - "id": "single-late-confirmation-release-01-time-tamper"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "gross_amount_minor": 1354870
@@ -12129,7 +12120,7 @@
                   "payout_minor": 1083895
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/releases/{releaseId}/confirmation"
+                      "href": "/release-confirmations/{releaseConfirmationId}"
                 - "id": "single-late-confirmation-release-10-confirmed"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "gross_amount_minor": 1354870
@@ -12138,7 +12129,7 @@
                   "payout_minor": 1083895
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/releases/{releaseId}/confirmation"
+                      "href": "/release-confirmations/{releaseConfirmationId}"
                 - "id": "single-late-confirmation-release-20-duplicate"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "gross_amount_minor": 1354870
@@ -12147,7 +12138,7 @@
                   "payout_minor": 1083895
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/releases/{releaseId}/confirmation"
+                      "href": "/release-confirmations/{releaseConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "single-on-time-confirmation-release-10-confirmed"
@@ -12320,13 +12311,13 @@
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/settlement-receipts/{receiptId}/confirmation"
+                      "href": "/settlement-receipt-confirmations/{settlementReceiptConfirmationId}"
                 - "id": "single-late-confirmation-settlement-receipt"
                   "confirmed_at": "2026-06-30T00:00:00Z"
                   "acknowledged": true
                   "_links":
                     "self":
-                      "href": "/settlements/{contractId}/settlement-receipts/{receiptId}/confirmation"
+                      "href": "/settlement-receipt-confirmations/{settlementReceiptConfirmationId}"
               "additionalProperties": false
             "jsonpath":
               "$[\"id\"]": "single-on-time-confirmation-settlement-receipt"

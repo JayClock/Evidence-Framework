@@ -427,7 +427,7 @@ func (l *Ledger) Confirm(lane, action, contractID, requestID string, input Data,
 	if action == "order" {
 		orderID = id
 	}
-	return l.commit(Fact{ID: id, Kind: "confirmation." + action, ContractID: contractID, OrderID: orderID, RequestID: requestID, Data: d, Href: r.Href + "/confirmation"})
+	return l.commit(Fact{ID: id, Kind: "confirmation." + action, ContractID: contractID, OrderID: orderID, RequestID: requestID, Data: d, Href: "/" + action + "-confirmations/" + url.PathEscape(id)})
 }
 func Representation(f Fact) Data {
 	d := clone(f).Data

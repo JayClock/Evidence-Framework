@@ -22,7 +22,7 @@ java -jar target/escrow-0.1.0.jar --test-mode --port 8082
 
 合同集合为 `/agreements`、`/escrows`、`/fulfillments`、`/settlements`，均支持 GET 列表和 POST 签署。合同实例通过 `/{collection}/{contractId}` 读取。
 
-履约项使用合同下的业务复数集合，例如 `POST /agreements/{contractId}/orders`；GET 同一路径返回订单请求集合，GET `…/orders/{orderId}` 读取请求。POST / GET `…/orders/{orderId}/confirmation` 登记或读取确认。交付集合为 `deliveries`，其余履约项使用 `commitments`、`deposit-locks`、`custody-statements`、`acceptances`、`first-milestones`、`final-milestones`、`milestone-acceptances`、`releases`、`settlement-receipts`、`milestone-releases`、`milestone-statements`。
+履约项使用合同下的业务复数集合，例如 `POST /agreements/{contractId}/orders`；GET 同一路径返回订单请求集合，GET `…/orders/{orderId}` 读取请求。POST `…/orders/{orderId}/confirmation` 登记确认，`201 Location` 和 HAL `self` 指向顶层 `GET /order-confirmations/{orderConfirmationId}`。交付集合为 `deliveries`，其余履约项使用 `commitments`、`deposit-locks`、`custody-statements`、`acceptances`、`first-milestones`、`final-milestones`、`milestone-acceptances`、`releases`、`settlement-receipts`、`milestone-releases`、`milestone-statements`。
 
 每个正常 POST 的 201 `Location` 与 `_links.self.href` 指向同一可 GET 的主 URI。集合以 `application/hal+json` 返回 `_links.self`、`_embedded.<集合名>` 数组和 `total`；空集合返回空数组与 0。合同读取沿用签署角色，履约项集合/请求读取使用请求方角色，确认读取使用确认方角色。
 

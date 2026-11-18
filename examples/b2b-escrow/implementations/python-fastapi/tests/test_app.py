@@ -153,29 +153,23 @@ def test_hal_collections_and_scoped_primary_reads():
             "total": 1,
         }
         assert call(client, "GET", "/agreements/b/orders").json()["total"] == 0
-        confirmation = path + "/req/confirmation"
+        confirmation = "/order-confirmations/confirmed"
         seller = "role.procurement-seller"
         assert call(client, "GET", confirmation, role=seller).status_code == 404
-        post(client, confirmation, {"id": "confirmed"}, seller)
-        for suffix in ("req", "req/confirmation"):
-            role = (
-                seller if suffix.endswith("confirmation") else "role.procurement-buyer"
-            )
-            assert (
-                call(
-                    client, "GET", "/agreements/b/orders/" + suffix, role=role
-                ).status_code
-                == 404
-            )
-            assert (
-                call(
-                    client,
-                    "GET",
-                    root + "/commitments/" + suffix,
-                    role=seller if suffix == "req" else "role.procurement-buyer",
-                ).status_code
-                == 404
-            )
+        confirmed = post(
+            client, path + "/req/confirmation", {"id": "confirmed"}, seller
+        )
+        assert confirmed["_links"]["self"]["href"] == confirmation
+        assert call(client, "GET", confirmation, role=seller).json() == confirmed
+        assert call(client, "GET", "/agreements/b/orders/req").status_code == 404
+        assert (
+            call(client, "GET", root + "/commitments/req", role=seller).status_code
+            == 404
+        )
+        assert (
+            call(client, "GET", "/commitment-confirmations/confirmed").status_code
+            == 404
+        )
         assert call(client, "GET", path + "/req", role=seller).status_code == 403
         assert call(client, "GET", confirmation).status_code == 403
         assert call(client, "GET", "/agreements/missing/orders").status_code == 404

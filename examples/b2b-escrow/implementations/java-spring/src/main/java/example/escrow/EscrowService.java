@@ -364,6 +364,6 @@ public class EscrowService {
             action.equals("order") ? id : c.orderId(),
             requestId,
             d,
-            r.href() + "/confirmation"));
+            "/" + action + "-confirmations/" + segment(id)));
   }
 }

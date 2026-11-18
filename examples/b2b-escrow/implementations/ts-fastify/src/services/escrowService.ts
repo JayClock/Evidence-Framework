@@ -337,14 +337,15 @@ export class EscrowService {
       );
     }
     // The validation, release uniqueness check and commit are synchronous/atomic.
+    const confirmationId = String(data.id);
     return this.ledger.commit({
-      id: String(data.id),
+      id: confirmationId,
       kind: `confirmation.${action}`,
       contractId,
-      orderId: action === 'order' ? String(data.id) : contract.orderId,
+      orderId: action === 'order' ? confirmationId : contract.orderId,
       requestId,
       data: { ...data, confirmed_at: this.stamp(now), ...derived },
-      href: `${request.href}/confirmation`,
+      href: `/${action}-confirmations/${encodeURIComponent(confirmationId)}`,
     });
   }
 

@@ -76,17 +76,18 @@ class ResourceTest {
                 1)),
         read(path, buyer));
     assertEquals(0, read("/agreements/b/orders", buyer).path("total").asInt());
-    String confirmation = path + "/req/confirmation";
+    String confirmation = "/order-confirmations/confirmed";
     assertEquals(
         404, app.call("GET", confirmation, seller, HttpTest.WHEN, null).getResponse().getStatus());
-    app.postOk(confirmation, seller, Map.of("id", "confirmed"));
+    var confirmed = app.postOk(path + "/req/confirmation", seller, Map.of("id", "confirmed"));
+    assertEquals(confirmation, confirmed.path("_links").path("self").path("href").asText());
+    assertEquals(confirmed, read(confirmation, seller));
     record Check(String path, String role, int status) {}
     for (var check :
         List.of(
             new Check("/agreements/b/orders/req", buyer, 404),
-            new Check("/agreements/b/orders/req/confirmation", seller, 404),
             new Check("/agreements/a%20b/commitments/req", seller, 404),
-            new Check("/agreements/a%20b/commitments/req/confirmation", buyer, 404),
+            new Check("/commitment-confirmations/confirmed", buyer, 404),
             new Check("/agreements/missing/orders", buyer, 404),
             new Check("/escrows/a%20b", "role.escrow-buyer", 404),
             new Check(path + "/req", seller, 403),

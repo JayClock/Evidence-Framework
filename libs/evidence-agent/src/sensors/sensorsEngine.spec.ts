@@ -77,9 +77,8 @@ describe('createSensorsEngine', () => {
     };
     const apiGate = await engine.checkStageGate({ ...input, target: 'api' });
     expect(apiGate.passed).toBe(false);
-    expect(
-      apiGate.errors.every((error) => error.startsWith('API_COVERAGE_GAP:')),
-    ).toBe(true);
-    expect(apiGate.errors).toHaveLength(2);
+    expect(apiGate.errors).toEqual([
+      'API_COVERAGE_GAP: 支付渠道回执 尚无模型路由覆盖。',
+    ]);
   });
 });

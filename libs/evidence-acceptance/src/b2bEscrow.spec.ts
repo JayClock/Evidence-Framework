@@ -126,6 +126,27 @@ describe('B2B escrow phase-one contract', () => {
     }
   });
 
+  it('keeps acceptance writes nested while exposing all confirmation GETs at their canonical URIs', () => {
+    const { paths } = JSON.parse(head.files['openapi.json']!);
+    const canonical = new Set<string>();
+    for (const step of projection.flows.flatMap(({ steps }) => steps)) {
+      if (step.route.purpose !== 'confirm') continue;
+      const { path, itemPath, entityRef } = step.route;
+      const noun = entityRef.slice('confirmation.'.length);
+      expect(path).toMatch(/\/confirmation$/);
+      expect(itemPath).toMatch(
+        new RegExp(`^/${noun}-confirmations/\\{[^/]+\\}$`),
+      );
+      expect(paths[path].get).toBeUndefined();
+      expect(paths[path].post.responses['201'].headers.Location).toMatchObject({
+        'x-evidence-uri-template': itemPath,
+      });
+      expect(paths[itemPath].get['x-evidence-entity']).toBe(entityRef);
+      canonical.add(itemPath);
+    }
+    expect(canonical.size).toBe(13);
+  });
+
   it.each([
     ['single-on-time', 'confirmation.release', 1466402, 73320, 0, 1393082],
     ['single-late', 'confirmation.release', 1354870, 67744, 203231, 1083895],

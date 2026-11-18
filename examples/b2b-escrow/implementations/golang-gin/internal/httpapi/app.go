@@ -186,10 +186,9 @@ func New(options Options) *gin.Engine {
 				authorize(c, lane, []string{roles[0]})
 				send(c, 200, requestFact(c))
 			})
-			app.GET(base+"/:requestId/confirmation", func(c *gin.Context) {
+			app.GET("/"+action+"-confirmations/:confirmationId", func(c *gin.Context) {
 				authorize(c, lane, []string{roles[1]})
-				requestFact(c)
-				send(c, 200, ledger.Confirmation(c.Param("requestId")))
+				send(c, 200, ledger.Get(c.Param("confirmationId"), "confirmation."+action))
 			})
 			app.POST(base, func(c *gin.Context) {
 				authorize(c, lane, []string{roles[0]})

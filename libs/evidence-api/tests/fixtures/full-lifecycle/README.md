@@ -9,7 +9,7 @@
 - 参与方、责任角色、商品和跨上下文支付凭证角色。
 - 完成规则、实例和场景断言。
 
-API 与 OpenAPI 均由模型实时派生；这里不保存手写 API 设计或过期的生成快照。局部覆盖在测试中显式声明。
+API 与 OpenAPI 均由模型实时派生；这里不保存手写 API 设计或生成快照。测试直接验证：独占确认由请求下的动作登记，`201 Location` 和 HAL `self` 指向顶层凭证；共享确认的派生夹具则验证单一写入口与各请求的反向追溯。局部路径覆盖在测试中显式声明。
 
 运行 API 回归测试：
 
@@ -17,4 +17,4 @@ API 与 OpenAPI 均由模型实时派生；这里不保存手写 API 设计或�
 pnpm exec vitest run --project evidence-api
 ```
 
-多步演进与破坏性变更的内存模型构造器位于 `../../support/procurement.ts`。
+多步演进与共享确认的内存模型构造器位于 [`src/testing/procurement.ts`](../../../src/testing/procurement.ts) 和 [`src/testing/fulfillment.ts`](../../../src/testing/fulfillment.ts)。

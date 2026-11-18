@@ -15,7 +15,7 @@ A deployment Context supplies a service boundary, never a URI prefix.
 | Contract | `/product-procurements` | `/product-procurements/{contractId}` |
 | Singleton payment | `…/{contractId}/payment` | same path |
 | Repeated payment | `…/{contractId}/payments` | `…/{contractId}/payments/{paymentId}` |
-| Payment confirmation | `…/payment/confirmation` | same path when singleton |
+| Payment confirmation | `…/payment/confirmation` | `/payment-confirmations/{paymentConfirmationId}` |
 | Domain root | read only | `/products/{productId}` |
 
 The child endpoint's `references` cardinality determines singleton versus
@@ -23,7 +23,19 @@ collection, whichever direction the relationship points. Missing or contradictor
 cardinalities imply a collection. The full-lifecycle fixture declares singleton
 quotations and payments; changing a child's maximum to `many` produces the plural
 collection and its instance parameter. Collection GETs accompany collection
-creation; confirmations also have primary GETs.
+creation. A confirmation's creation entrance and authority are independent:
+
+- **Exclusive singleton:** POST at the request item's `/confirmation` action.
+- **Exclusive collection:** POST to the confirmation collection under the request
+  item, or under the contract item when the request is itself a singleton. A GET
+  on the same collection is a ledger view, not the authority for each item.
+- **Shared:** one top-level POST accepts a `request_ids` array of request instance
+  IDs. Each request item exposes a reverse collection GET at
+  `…/{request-item}/{confirmation-plural}`; it does not expose another POST.
+
+All confirmations have a top-level primary GET at
+`/{confirmation-plural}/{confirmation-id}`. Clients should follow the `201 Location`
+header or HAL `self` instead of constructing a detail URI from the write entrance.
 
 Proposals nest under the inquiry they reference. A contract referencing a proposal
 also gets a signing operation under that proposal's primary URI, served by the
@@ -44,13 +56,20 @@ Every POST's 201 `Location` and `_links.self` identify a GET operation. A collec
 GET returns `_links.self`, `_embedded.<business-collection>` summaries with their
 own primary links, and a nonnegative `total`. Entity and collection schemas are
 separate OpenAPI components. Reference edges produce templated `next:<entityRef>`
-links; they describe possible navigation, while runtime authorization and business
-state determine whether an operation is currently available.
+links. Confirmation items can link back to requests via `request:<requestRef>`;
+request items can link to shared-confirmation collections via
+`confirmations:<confirmationRef>`. These are contract templates, not claims that
+an instance is ready, associated, or authorized at runtime.
 
 Only caller-owned attributes appear in POST input, with
 `additionalProperties: false`. Derived and service-time response fields are
-`readOnly`; derivations retain their rule references. External callers must play a
-real `role.party` through a `participant.party` relationship.
+`readOnly`; derivations retain their rule references. Contract callers must play
+`role.party` through `participant.party`. A fulfillment confirmation can also
+explicitly delegate its POST with `callbackRoleRefs`: each entry names a local
+`role.third_party` played by a `participant.party`. These delegates do not own the
+obligation or gain GET access. OpenAPI exposes them separately in
+`x-evidence-allowed-callback-roles`; the actual service must authenticate and
+authorize the caller.
 
 An overlay can move a creation entrance independently of its primary GET. Moving
 the primary GET updates all corresponding creation `Location` and self templates.
@@ -104,6 +123,13 @@ the v6 contract; its native tests follow created primary URIs and inspect HAL
 collections. The official Step CI Runner verifies five B2B flows and 121 steps,
 including independently broken amounts, clocks and payloads. Step CI and Hurl
 share model-identified parameter captures, including proposal signing.
+
+The canonical confirmation paths are an approved breaking change. For B2B escrow,
+comparing the previously committed OpenAPI to the regenerated artifact with
+`oasdiff breaking` reports 13 removed nested GET operations. The corresponding
+POSTs keep their action paths; clients must switch to the new `Location`/HAL `self`
+URI for reads. Git model baselines remain immutable; rerunning the current
+projector on both models measures model evolution, not this projector migration.
 
 OpenWiki is maintained through the pinned OpenWiki 0.9.0 generation lifecycle or
 `.github/workflows/openwiki-update.yml`; the workflow currently requires manual

@@ -159,7 +159,7 @@ def create_app(test_mode=False, mode="v2", clock=None, fault="none"):
 
         return list_requests
 
-    def get_request_handler(lane, action, role, confirmation=False):
+    def get_request_handler(lane, action, role):
         async def get_request(contractId: str, requestId: str):
             authorize(lane, [role])
             with service.ledger.transaction:
@@ -169,12 +169,19 @@ def create_app(test_mode=False, mode="v2", clock=None, fault="none"):
                     raise BusinessError(
                         404, "NOT_FOUND", "Request belongs to another contract"
                     )
-                return response(
-                    service.ledger.confirmation(requestId) if confirmation else fact,
-                    200,
-                )
+                return response(fact, 200)
 
         return get_request
+
+    def get_confirmation_handler(lane, action, role):
+        async def get_confirmation(confirmationId: str):
+            authorize(lane, [role])
+            with service.ledger.transaction:
+                return response(
+                    service.ledger.get(confirmationId, f"confirmation.{action}"), 200
+                )
+
+        return get_confirmation
 
     for lane, (name, roles) in CONTRACTS.items():
         root = f"/{COLLECTION_NAMES[name]}"
@@ -206,8 +213,8 @@ def create_app(test_mode=False, mode="v2", clock=None, fault="none"):
                 methods=["POST"],
             )
             app.add_api_route(
-                base + "/{requestId}/confirmation",
-                get_request_handler(lane, action, confirm_role, confirmation=True),
+                f"/{action}-confirmations/{{confirmationId}}",
+                get_confirmation_handler(lane, action, confirm_role),
                 methods=["GET"],
             )
     return app
