@@ -312,3 +312,20 @@ pnpm evidence diff baseline.evidence.json procurement.evidence.json --format jso
 
 - [ ] **生产环境双向语义漂移实时检测（Live Drift Check）**：深化本地传感器体系，实现对下游实际运行 API / 数据库表结构与 DSL 模型基线的在线语义比对和告警。
 - [x] **标准场景验收导出**：从内联 `examples[].test` 直接导出 Bruno 集合，支持依赖捕获、派生断言和显式负向用例。旧 Scenario / Instance 文件格式及内存回放器已移除。
+
+### 4. 架构与工程规范通用化（Industry Standard Refactoring）
+
+针对现有代码实现中自研胶水层与非标准实践的重构待办，向现代前端/Node.js 开源生态通用实践演进：
+
+- [ ] **OpenAPI 3.1 契约生成类型化重构（Type-safe OpenAPI Builder）**：替换 `libs/evidence-api` 中手写对象字典拼接 OpenAPI 规格的方式，引入 `@asteasolutions/zod-to-openapi` 或 `openapi3-ts`，直接基于 `libs/evidence-schema` 的 Zod 定义派生 OpenAPI 3.1 文档，获得编译期结构校验与自动 `$ref` 引用管理。
+- [ ] **API 差异比对（oasdiff）分发与原生执行优化**：重构 `tools/oasdiff/setup.mjs` 中基于 `fetch` 下载外部二进制的逻辑，改用 npm `optionalDependencies` 平台包分发二进制，或迁移至纯 TypeScript 原生 OpenAPI Diff 引擎（如 `@openapitools/openapi-diff`），规避离线与内网 CI 环境网络阻断。
+- [ ] **HTTP 验收测试引擎解耦与内存化执行**：
+  - **交付与执行解耦**：保留 Bruno `.bru` 集合作为面向人类开发者的导出交付物；CLI / CI 自动化验收引擎（`libs/evidence-acceptance`）改为内存化 HTTP Runner（基于 Node 原生 `fetch` / `undici`），消除临时文件 I/O 与子进程冷启动开销。
+  - **响应路径解析标准化**：使用标准 RFC 6901 `json-pointer` 或 `jsonpath-plus` 替换 `brunoRenderer.ts` 中手写的正则表达式属性路径解析器。
+- [ ] **Electron 跨进程通信体系重构（Type-safe IPC）**：使用 `electron-trpc` 或 `zod-ipc` 替换 `libs/desktop/contracts` 与 `apps/desktop/src/preload` 中大量手写字符串 Channel 常量与 Preload 模板粘合代码，建立端到端强类型 RPC 与自动校验。
+- [ ] **MCP 跨进程桥接协议标准化（MCP Transport & JSON-RPC 2.0）**：重构 `libs/evidence-mcp/src/bridge` 中自研的换行符 JSON 短连接协议，全面对齐 MCP 官方规范，优先采用官方标准 Transport（`StdioServerTransport` / `SSEServerTransport`），或在本地管道使用标准的 `vscode-jsonrpc` 多路复用长连接。
+- [ ] **CLI 框架与工具链生态现代化**：
+  - 将长期未维护的 `cac` 迁移至成熟活跃的 `commander` 或现代极简的 `citty`；
+  - 优化 `prettyCanonicalJson` 等 JSON 规范化处理，避免多重反序列化/序列化损耗；
+  - 统一收敛 Zod 与 Ajv 的校验职责边界，提升单一真相源一致性。
+
