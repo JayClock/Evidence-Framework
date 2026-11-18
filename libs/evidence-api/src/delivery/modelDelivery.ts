@@ -343,6 +343,9 @@ const operationOf = (
   'x-evidence-entity': route.entityRef,
   'x-evidence-service': route.serviceId,
   'x-evidence-allowed-party-roles': route.allowedPartyRoleRefs,
+  ...(route.allowedCallbackRoleRefs === undefined
+    ? {}
+    : { 'x-evidence-allowed-callback-roles': route.allowedCallbackRoleRefs }),
   'x-evidence-exposure': route.exposure,
   ...(route.contractRef === null
     ? {}

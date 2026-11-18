@@ -6,6 +6,7 @@
  * exports out of browser bundles.
  */
 export { buildDeliveryRoutes } from './delivery/routes.js';
+export { allowedCallerRoleRefs } from './delivery/addressing.js';
 export { fieldFor } from './delivery/fieldOrigin.js';
 export type { DeliveryField, DeliveryFieldReason } from './delivery/routes.js';
 

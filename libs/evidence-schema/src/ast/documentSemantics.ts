@@ -480,6 +480,30 @@ const validateEntities = (
       );
     }
 
+    if (
+      entity.category === 'evidence' &&
+      entity.callbackRoleRefs !== undefined
+    ) {
+      const seen = new Set<string>();
+      for (const [i, ref] of entity.callbackRoleRefs.entries()) {
+        const role = entityOf(index, ref);
+        if (
+          entity.kind !== 'fulfillment_confirmation' ||
+          signatureOf(role) !== 'role.third_party' ||
+          ownerContextOf(role) !== entity.contextRef ||
+          seen.has(ref)
+        ) {
+          addIssue(
+            ctx,
+            'entity.shape',
+            [...path, 'callbackRoleRefs', i],
+            'Callback roles are unique third-party roles in the confirmation Context.',
+            entity.id,
+          );
+        }
+        seen.add(ref);
+      }
+    }
     if (entity.category === 'evidence' && entity.kind === 'contract') {
       validateContractEntity(entity, position, context, index, ctx);
       continue;

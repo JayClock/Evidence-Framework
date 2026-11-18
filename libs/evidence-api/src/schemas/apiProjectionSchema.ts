@@ -106,6 +106,12 @@ export const API_PROJECTION_SCHEMA_TEXT = String.raw`{
             "type": "string",
             "pattern": "^/"
           },
+          "allowedCallbackRoleRefs": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1 }
+          },
           "allowedPartyRoleRefs": {
             "type": "array",
             "uniqueItems": true,

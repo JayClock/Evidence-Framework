@@ -10,7 +10,10 @@ import {
   buildDeliveryRoutes,
   type DeliveryRoute,
 } from '@evidence-poc/evidence-api/delivery';
-import { buildDeliveryContract } from '@evidence-poc/evidence-api/delivery';
+import {
+  allowedCallerRoleRefs,
+  buildDeliveryContract,
+} from '@evidence-poc/evidence-api/delivery';
 import { componentName } from '@evidence-poc/evidence-api/delivery';
 import { compareText } from '@evidence-poc/evidence-api/delivery';
 
@@ -93,7 +96,7 @@ export function projectAcceptanceTests(
         fail(ref, 'requires exactly one modeled POST route');
       const route = selected[0]!;
       const test = example.test;
-      if (!route.allowedPartyRoleRefs.includes(test.actingRoleRef))
+      if (!allowedCallerRoleRefs(route).includes(test.actingRoleRef))
         fail(ref, `role '${test.actingRoleRef}' cannot call ${route.id}`);
       const dependencies = [
         ...new Set([

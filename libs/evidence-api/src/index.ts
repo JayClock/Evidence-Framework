@@ -51,6 +51,7 @@ export {
 } from './inspect.js';
 
 export { componentName } from './delivery/schemaName.js';
+export { allowedCallerRoleRefs } from './delivery/addressing.js';
 
 export {
   TOOL_NAME,

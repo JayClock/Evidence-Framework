@@ -1,6 +1,9 @@
 import { projectAcceptanceTests } from '@evidence-poc/evidence-acceptance/projection';
 import { useMemo, useState } from 'react';
-import { buildDeliveryRoutes } from '@evidence-poc/evidence-api/delivery';
+import {
+  allowedCallerRoleRefs,
+  buildDeliveryRoutes,
+} from '@evidence-poc/evidence-api/delivery';
 import {
   cloneScenarioExamples,
   evaluateScenario,
@@ -336,7 +339,7 @@ export const ScenarioStudioModal = ({
                       value: {},
                       test: {
                         flow,
-                        actingRoleRef: chosen.allowedPartyRoleRefs[0] ?? '',
+                        actingRoleRef: allowedCallerRoleRefs(chosen)[0] ?? '',
                         asOf: '',
                       },
                     },
@@ -436,7 +439,9 @@ export const ScenarioStudioModal = ({
                     {[
                       ...new Set([
                         item.example.test?.actingRoleRef ?? '',
-                        ...(route?.allowedPartyRoleRefs ?? []),
+                        ...(route === undefined
+                          ? []
+                          : allowedCallerRoleRefs(route)),
                       ]),
                     ].map((ref) => (
                       <option key={ref} value={ref}>

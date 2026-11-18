@@ -185,6 +185,8 @@ export const EvidenceEntitySchema = EntityBaseSchema.extend({
   kind: EvidenceKindSchema,
   contextRef: DomainIdSchema,
   responsibleRoleRef: DomainIdSchema.optional(),
+  /** Explicit delegates for recording this confirmation; they do not own the obligation. */
+  callbackRoleRefs: z.array(DomainIdSchema).min(1).optional(),
   roleRefs: z.array(DomainIdSchema).optional(),
 }).strict();
 

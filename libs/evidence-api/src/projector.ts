@@ -30,6 +30,7 @@ import {
 import type { ApiJourneyStep, EvidenceApiSnapshot } from './types.js';
 import { deriveJourneys, weaveHypermedia } from './http/hateoasWeaver.js';
 import { buildDeliveryTopology } from './delivery/topology.js';
+import { allowedCallerRoleRefs } from './delivery/addressing.js';
 
 export type Projection = EvidenceApiSnapshot;
 
@@ -134,22 +135,17 @@ export const buildProjection = ({
   const journeys: ApiJourneyStep[] = [];
   for (const step of declared) {
     const route = routes.find((item) => item.id === step.routeId);
-    const role = index.entities.get(step.roleRef);
     if (route === undefined) {
       diagnostics.push(
         errorDiagnostic('API_ROUTE_NOT_FOUND', '旅程引用的路由不存在', step.id),
       );
       continue;
     }
-    if (
-      role?.category !== 'role' ||
-      role.kind !== 'party' ||
-      !route.allowedPartyRoleRefs.includes(step.roleRef)
-    ) {
+    if (!allowedCallerRoleRefs(route).includes(step.roleRef)) {
       diagnostics.push(
         errorDiagnostic(
           'API_ROLE_INVALID',
-          '旅程调用方必须是 Party Role',
+          '旅程调用方必须是该路由允许的当事人或回调角色',
           step.id,
         ),
       );

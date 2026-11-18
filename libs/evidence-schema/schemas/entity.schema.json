@@ -26,6 +26,12 @@
       "uniqueItems": true
     },
     "responsibleRoleRef": { "$ref": "#/$defs/id" },
+    "callbackRoleRefs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/id" },
+      "minItems": 1,
+      "uniqueItems": true
+    },
     "domainRole": {
       "description": "A Thing that stands for domain computation rather than a traded object.",
       "enum": ["calculator", "checker"]
@@ -51,6 +57,16 @@
     "sourceSnippet": { "$ref": "#/$defs/provenance" }
   },
   "allOf": [
+    {
+      "if": { "required": ["callbackRoleRefs"] },
+      "then": {
+        "properties": {
+          "category": { "const": "evidence" },
+          "kind": { "const": "fulfillment_confirmation" }
+        },
+        "required": ["category", "kind"]
+      }
+    },
     {
       "if": {
         "properties": { "category": { "const": "evidence" } },

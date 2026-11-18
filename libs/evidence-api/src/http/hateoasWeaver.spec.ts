@@ -5,6 +5,7 @@ import { loadFmFromDocument } from '../adapter/fmAdapter.js';
 import { halLinksFor } from './hateoasWeaver.js';
 import { procurementEvolution } from '../testing/procurement.js';
 import { operationFor } from '../testing/contract.js';
+import { sharedConfirmationModel } from '../testing/fulfillment.js';
 
 it('keeps branch links, HAL responses and journeys consistent without imposing a sequence', () => {
   const document = procurementEvolution()[3]!;
@@ -14,6 +15,7 @@ it('keeps branch links, HAL responses and journeys consistent without imposing a
   expect(Object.keys(links).sort()).toEqual([
     'next:request.delivery',
     'next:request.invoicing',
+    'request:request.payment',
     'self',
   ]);
   const operation = operationFor(snapshot, paymentId);
@@ -166,6 +168,41 @@ it('uses GET self links for every creation and signs proposals into the contract
       (link) => link.sourceRouteId === route.id && link.rel === 'self',
     )!;
     expect(self).toMatchObject({ method: 'GET', href: route.itemPath });
+  }
+});
+
+it('links each shared request to its own trace view and one canonical confirmation', async () => {
+  const bundle = await sharedConfirmationModel();
+  const confirm = 'route.confirm.confirmation.payment';
+  const path = '/receipts/{paymentConfirmationId}';
+  const { projection, diagnostics } = buildProjection({
+    index: loadFmFromDocument(bundle).index!,
+    design: { routes: [{ id: 'route.read.confirmation.payment', path }] },
+  });
+  expect(diagnostics).toEqual([]);
+  const links = halLinksFor(projection.hypermedia, confirm);
+  expect(links.self).toMatchObject({ href: path });
+  expect(
+    operationFor(projection, confirm).responses['201']!.headers!['Location'],
+  ).toMatchObject({ 'x-evidence-uri-template': path });
+  for (const ref of ['request.payment', 'request.wechat-charge']) {
+    const request = projection.routes.find(
+      ({ id }) => id === 'route.read.' + ref,
+    )!;
+    const trace = projection.routes.find(
+      ({ id }) => id === 'route.list-from-' + ref + '.confirmation.payment',
+    )!;
+    expect(links[`request:${ref}`]).toMatchObject({
+      href: request.path,
+      method: 'GET',
+    });
+    expect(halLinksFor(projection.hypermedia, request.id)).toMatchObject({
+      'confirmations:confirmation.payment': { href: trace.path, method: 'GET' },
+    });
+    expect(trace.itemPath).toBe(path);
+    expect(halLinksFor(projection.hypermedia, trace.id).self).toMatchObject({
+      href: trace.path,
+    });
   }
 });
 

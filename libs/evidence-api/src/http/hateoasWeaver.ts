@@ -1,6 +1,7 @@
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 import type { DeliveryRoute } from '../delivery/routes.js';
 import type { ApiJourneyStep } from '../types.js';
+import { allowedCallerRoleRefs } from '../delivery/addressing.js';
 
 export interface HypermediaLink {
   sourceRouteId: string;
@@ -17,28 +18,35 @@ export const weaveHypermedia = (
   routes: readonly DeliveryRoute[],
 ): HypermediaLink[] => {
   const links = new Map<string, HypermediaLink>();
-  const add = (
-    source: DeliveryRoute,
-    target: DeliveryRoute,
-    rel: string,
-    href: string,
-  ) => {
+  const byEntity = new Map<string, DeliveryRoute[]>();
+  for (const route of routes) {
+    const group = byEntity.get(route.entityRef) ?? [];
+    group.push(route);
+    byEntity.set(route.entityRef, group);
+  }
+  const forEntity = (ref: string) => byEntity.get(ref) ?? [];
+  const primaryOf = (route: DeliveryRoute) =>
+    forEntity(route.entityRef).find(
+      (candidate) =>
+        candidate.method === 'GET' &&
+        candidate.responseShape === 'item' &&
+        candidate.path === route.itemPath,
+    );
+  const add = (source: DeliveryRoute, target: DeliveryRoute, rel: string) => {
     const link = {
       sourceRouteId: source.id,
       targetRouteId: target.id,
       rel,
-      href,
+      href: target.path,
       method: target.method,
-      templated: href.includes('{'),
+      templated: target.path.includes('{'),
     };
     links.set(`${source.id}\0${rel}\0${target.id}`, link);
   };
   for (const route of routes) {
-    const primary = routes.find(
-      (candidate) => candidate.id === 'route.read.' + route.entityRef,
-    );
-    const target = route.responseShape === 'collection' ? route : primary;
-    if (target !== undefined) add(route, target, 'self', target.path);
+    const target =
+      route.responseShape === 'collection' ? route : primaryOf(route);
+    if (target !== undefined) add(route, target, 'self');
   }
   const entities = new Map(
     document.entities.map((entity) => [entity.id, entity]),
@@ -52,24 +60,46 @@ export const weaveHypermedia = (
       prerequisite?.category !== 'evidence'
     )
       continue;
-    const targets = routes.filter((route) => {
-      if (route.entityRef !== dependent.id || route.method !== 'POST')
-        return false;
+    const sources = forEntity(prerequisite.id);
+    const dependentRoutes = forEntity(dependent.id);
+    const targets = dependentRoutes.filter((route) => {
+      if (route.method !== 'POST') return false;
       if (dependent.kind === 'contract' && prerequisite.kind === 'proposal') {
-        const primary = routes.find(
-          (candidate) => candidate.id === 'route.read.' + prerequisite.id,
-        );
+        // Overlay paths are presentation; the signing entrance still belongs to this proposal.
         return (
-          primary !== undefined && route.path.startsWith(primary.path + '/')
+          route.id === `route.sign-from-${prerequisite.id}.${dependent.id}`
         );
       }
       return !route.id.startsWith('route.sign-from-');
     });
-    for (const source of routes.filter(
-      (route) => route.entityRef === prerequisite.id,
-    )) {
-      for (const target of targets)
-        add(source, target, `next:${target.entityRef}`, target.path);
+    for (const source of sources) {
+      for (const target of targets) add(source, target, `next:${dependent.id}`);
+    }
+    if (
+      dependent.kind === 'fulfillment_confirmation' &&
+      prerequisite.kind === 'fulfillment_request'
+    ) {
+      const trace = dependentRoutes.find(
+        (route) =>
+          route.method === 'GET' &&
+          route.responseShape === 'collection' &&
+          route.requestRef === prerequisite.id,
+      );
+      const request = sources.find(
+        (route) => route.method === 'GET' && route.responseShape === 'item',
+      );
+      if (trace !== undefined) {
+        for (const source of sources.filter(
+          (route) => route.responseShape === 'item',
+        ))
+          add(source, trace, `confirmations:${dependent.id}`);
+      }
+      if (request !== undefined) {
+        for (const source of dependentRoutes.filter(
+          (route) => route.responseShape === 'item',
+        ))
+          add(source, request, `request:${prerequisite.id}`);
+      }
     }
   }
   return [...links.values()].sort((a, b) =>
@@ -104,7 +134,7 @@ export const deriveJourneys = (
   const steps = routes
     .filter((route) => route.method === 'POST')
     .flatMap((route) =>
-      route.allowedPartyRoleRefs.map((roleRef) => ({
+      allowedCallerRoleRefs(route).map((roleRef) => ({
         id: `step.${route.id}.${roleRef}`,
         roleRef,
         routeId: route.id,

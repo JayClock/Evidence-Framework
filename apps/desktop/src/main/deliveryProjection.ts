@@ -6,6 +6,7 @@ import type {
 import path from 'node:path';
 
 import {
+  allowedCallerRoleRefs,
   buildProjection,
   hasErrors,
   loadFm,
@@ -169,7 +170,7 @@ export const livePreviewOf = async (
       entityRef: route.entityRef,
       method: route.method,
       path: route.path,
-      roleRefs: route.allowedPartyRoleRefs,
+      roleRefs: allowedCallerRoleRefs(route),
       exposure: route.exposure,
       fields: route.outputFields,
     })),

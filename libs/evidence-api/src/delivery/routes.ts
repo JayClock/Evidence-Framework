@@ -11,6 +11,7 @@ import {
 } from '@evidence-poc/evidence-model-core';
 
 import {
+  callbackRoles,
   callerRoles,
   childShape,
   type UnaddressedRoute,
@@ -102,6 +103,8 @@ export interface DeliveryRoute {
   parameterEntityRefs: Readonly<Record<string, string>>;
   itemPath: string;
   allowedPartyRoleRefs: readonly string[];
+  /** Third-party delegates explicitly authorized to record this confirmation. */
+  allowedCallbackRoleRefs?: readonly string[];
   exposure: 'external' | 'internal';
   outputFields: readonly DeliveryField[];
   /** Concrete values declared for the route's modeled entity. */
@@ -294,6 +297,7 @@ export const buildDeliveryRoutes = (
       ],
     };
     const allowedPartyRoleRefs = callerRoles(graph, route);
+    const allowedCallbackRoleRefs = callbackRoles(graph, route);
     routes.push({
       ...route,
       shape: item.shape,
@@ -305,7 +309,13 @@ export const buildDeliveryRoutes = (
         ...item.parameterEntityRefs,
       },
       allowedPartyRoleRefs,
-      exposure: allowedPartyRoleRefs.length === 0 ? 'internal' : 'external',
+      ...(allowedCallbackRoleRefs.length === 0
+        ? {}
+        : { allowedCallbackRoleRefs }),
+      exposure:
+        allowedPartyRoleRefs.length + allowedCallbackRoleRefs.length === 0
+          ? 'internal'
+          : 'external',
       rules: graph
         .rules()
         .filter(
