@@ -1,23 +1,107 @@
 # Evidence Framework
 
 > **The Pencil for Backend Architecture.**  
-> 语言无关的领域履约模型设计工作台与 DSL 引擎。
+> 语言无关的领域履约模型设计工作台与形式化 DSL 引擎。
 
 ---
 
-## 🎯 项目定位
+## 🎯 项目定位与核心理念
 
 在前端领域，我们使用 **Pencil / Figma** 绘制设计稿，使用结构化的 DSL 表达 UI 布局、交互行为与组件状态。设计稿是独立的“单一真相源（Single Source of Truth）”，先于任何具体的前端框架（React / Vue / Flutter）存在。
 
 而在后端架构中，业务模型往往从一开始就被迫与具体的代码实现绑死：
 
-- 领域实体直接写死在特定的 ORM（JPA / Prisma / GORM）或特定编程语言中；
-- 业务因果拓扑与状态机淹没在繁杂的代码细节中，架构文档永远滞后；
-- 数据库建表与 API 接口各自为政，缺乏形式化的一致性约束（例如金额、状态等派生属性被前端作为入参传入导致业务漏洞）。
+- **实现侵入模型**：领域实体直接写死在特定的 ORM（JPA / Prisma / GORM）或特定编程语言中；
+- **业务因果湮灭**：业务因果拓扑与状态机淹没在繁杂的代码细节中，架构文档永远滞后；
+- **缺乏形式化约束**：数据库建表与 API 接口各自为政，计算逻辑与出入参边界混乱。
 
-**Evidence 致力于成为后端领域的 Pencil。**
+### AI Coding 时代的后端确定性挑战
 
-它提供了一套基于**履约建模法（Fulfillment Modeling）**的领域描述语言（DSL）与**桌面可视化建模工作台（Canvas & Inspector）**。架构师、业务专家乃至 AI Agent 能够在脱离具体编程语言的纯净环境中，精确表达业务权责、证据事实、履约流与派生规则，并通过内置的仿真引擎验证业务闭环。
+在 AI 辅助编程普及的今天，后端架构面临着更严峻的失控风险：
+- **放手式 AI 生成的隐患**：让大模型直接生成后端业务代码时，AI 倾向于生成贫血的 CRUD 结构，极易将金额、优惠、状态等**服务端计算逻辑暴露为接口入参**，引发严重的业务与资金安全漏洞；
+- **自圆其说的虚假单测**：AI 编写的测试往往基于其自身生成的代码假设，缺乏独立的业务事实约束，测试全部通过并不代表符合真实业务契约。
+
+**Evidence 致力于成为后端领域的 Pencil 与形式化安全门禁。**
+
+它提供了一套基于**履约建模法（Fulfillment Modeling v5）**的领域描述语言（DSL）与**桌面可视化建模工作台（Canvas & Inspector）**。确立**“宏观形式化确定，微观生成式灵活”**的设计原则：在脱离具体语言的环境中精确表达业务权责、事实凭证与派生规则，锁死架构与契约底线，为 AI Coding 提供不可伪造的外部验收基线。
+
+### 研发范式对比
+
+| 维度 | 传统手工 CRUD 开发 | 放手式 AI 编程 (Chat / Agent) | Evidence 履约建模驱动 |
+| :--- | :--- | :--- | :--- |
+| **领域抽象** | 与具体 ORM / 语言强行绑定 | 自由生成实体，容易演化为贫血 CRUD | **权责、事实证据与法定契约**（语言无关） |
+| **派生与安全纪律** | 依赖开发者自觉，计算逻辑常泄漏给前端 | 极易允许入参直接覆盖金额/状态等派生值 | **CEL 声明式服务端求值**，出入参物理隔离 |
+| **模型一致性** | 人肉维护文档与代码，文档永远滞后 | 随对话上下文漂移，生成逻辑前后矛盾 | **纯内存 AST 静态门禁**，按键级拓扑校验 |
+| **人机协作模式** | 无 | 黑盒放手生成，人类只能逐行 Review 代码 | **人机协作门禁（Human Gate）**：画布审查 + 原子算子 |
+| **验收与验证** | 手工补写测试用例，耗时且易遗漏 | AI 自己写测试验证自己的代码（假阳性高） | **规范向下投影为 Bruno HTTP 黑盒验收**与漂移告警 |
+
+---
+
+## 🔄 端到端 AI Coding 研发工作流（Workflow Panorama）
+
+Evidence 不仅是一个桌面设计器，更是贯穿**业务意图澄清 ➔ 领域建模 ➔ 契约向下投影 ➔ AI 驱动多语言 TDD 编码 ➔ 运行时黑盒验收与防漂移**的完整研发闭环：
+
+```
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                              端到端 AI Coding 研发工作流                                │
+│                                                                                        │
+│  [阶段 1: 业务意图]    [阶段 2: 履约建模]    [阶段 3: 架构师门禁]    [阶段 4: 契约向下投影]    [阶段 5: AI 驱动编码]     [阶段 6: 验收与漂移]  │
+│    需求澄清访谈  ──>    FM v5 形式化模型 ──>   桌面图谱与故事  ──>   OpenAPI + Bruno  ──>   多语言 TDD 实现  ──>   运行时黑盒验证   │
+│   (AI Copilot)        (AST + CEL 守护)      (Human Gate)         (Evidence Export)      (Red-Green 循环)       (Bruno + oasdiff)│
+│                                                                                        │
+│   ── 宏观由 Evidence 门禁锁死安全边界与验收用例；微观由 AI Coding 自由探索具体语言实现 ──      │
+└────────────────────────────────────────┬───────────────────────────────────────────────┘
+                                         │
+                    ┌────────────────────┴────────────────────┐
+                    ▼                                         ▼
+         【架构师 / 人机门禁 (Human Gate)】           【AI 编码助手 (Coding Agent)】
+          - 桌面画布审查业务拓扑 (Canvas)             - 依据导出的 OpenAPI 编写服务
+          - 检查关键数据台账 (Ledger)                 - 以 Bruno 集合为不可作弊的红灯目标
+          - 回放业务演进故事 (Story Replay)           - 严格遵守服务端派生，不越界
+```
+
+### 1. 业务意图澄清（Requirement Elicitation）
+架构师与 AI 助手（MCP / Agent Core）通过自然语言访谈，梳理业务上下文、参与方（Party）、主体角色（Role）与履约意图，澄清责任边界。
+
+### 2. 领域履约建模与形式化守护（Fulfillment Modeling）
+- 建立 Context、Contract、Request 与 Confirmation 原语；
+- **纯内存 AST 静态门禁**：即时检测悬空引用、对称性破坏与角色权责失配；
+- **CEL 严格派生纪律**：使用 Google Common Expression Language 声明式计算派生属性；
+- **受控变异机制**：AI 助手通过 Universal Model Tools（`libs/evidence-tools`）的原子补丁算子修改模型，杜绝大文本重写导致的 AST 损坏。
+
+### 3. 人机协作门禁（Human Gate: Desktop Canvas）
+- 架构师启动桌面建模工作台（`pnpm desktop`），在画布上审查因果拓扑与关键数据台账（Key Data Ledger）；
+- 在 **Story 回放面板** 中逐步演进事实卡片，进行 What-If 假设推演，确认无误后冻结基线。
+
+### 4. 契约向下投影（Contract Projection）
+运行统一命令行将模型编译并投影为下游工程契约：
+```bash
+pnpm evidence export --model b2b-escrow.evidence.json --out generated/ --verify
+```
+- **OpenAPI 3.1 规格**：自动导出 RESTful 接口契约，服务端派生属性已严格从 Request Input 中剔除；
+- **Bruno 黑盒验收测试集**：内联样例直出验收，包含依赖捕获、金额断言与显式负向错误用例。
+- **契约冻结**：契约与断言一经导出即作为不可篡改的“外部法典”，防止后续 AI 实现时私自修改测试以迁就代码。
+
+### 5. AI 驱动多语言 TDD 编码（Polyglot Implementation via TDD）
+- **Red（红灯）**：启动空服务，运行 Bruno 测试集，此时由于业务未实现全部报错。Bruno 集合充当了 **AI 无法伪造的外部 TDD 验收红灯**；
+- **Green（绿灯）**：AI 编码助手（如 Cursor、Claude 等）阅读导出的 OpenAPI 契约和 Bruno 断言，编写对应语言的路由、状态机与业务逻辑，驱动测试逐个变绿；
+- **实战样板**：参见 [examples/b2b-escrow](examples/b2b-escrow/README.md)，包含由契约驱动生成的 4 种独立参考实现：
+  - [ts-fastify](examples/b2b-escrow/implementations/ts-fastify)（TypeScript）
+  - `golang-gin`（Go）
+  - `java-spring`（Java）
+  - `python-fastapi`（Python）
+
+### 6. 运行时黑盒验收与防漂移治理（Live Drift & Verification）
+- **真机黑盒验收**：
+  ```bash
+  make -C examples/b2b-escrow verify IMPLEMENTATION=ts-fastify
+  ```
+  外部编排层为被测服务分配独立端口与内存账本，端到端执行真实 HTTP 红绿场景测试；
+- **双向契约漂移门禁**：
+  ```bash
+  pnpm evidence diff baseline.evidence.json target.evidence.json
+  ```
+  借助内置 `oasdiff` 比对基线契约与当前实现，拦截任何未经授权的破坏性演进。
 
 ---
 
@@ -54,14 +138,6 @@
 
 ---
 
-## 可运行的契约示例
-
-- [数字广告投放](examples/digital-advertising/README.md)：单次支付确认、磋商后签署独立订单、日报异步受理。
-- [产研迭代计划](examples/agile-sprint/README.md)：一个迭代窗口内追加多份故事验收凭证。
-- [共享结算](examples/shared-settlement/README.md)：一笔收入核销季度及年度指标，支持从两处反向追溯。
-
-三个示例各自包含 FM Bundle、OpenAPI 和 Bruno 集合，不附带服务实现。运行 `pnpm nx build cli && pnpm examples:verify` 可只读核验。
-
 ## 🛠️ DSL 示例：语言无关的履约事实表达
 
 以下是 Evidence 表达的一段采购履约片段（保存为 `*.evidence.json` 或 `.evidence/fm/`）：
@@ -90,7 +166,35 @@
 }
 ```
 
-这份 DSL 不依赖任何 Java / Go / Python / Node 运行时，是纯粹的业务规范基线。
+这份 DSL 不依赖任何 Java / Go / Python / Node 运行时，是纯粹的形式化业务规范基线。
+
+---
+
+## 💡 架构权衡与工程实践（Lessons Learned）
+
+在 Evidence 演进过程中，我们沉淀了一套严谨的工程权衡纪律：
+
+1. **彻底消除第二运行时，全栈纯内存 TypeScript 执行**
+   早期工具链常混用外部脚本与 Node 工具，导致环境碎片化、依赖锁定脆弱且桌面端与命令行校验逻辑脱节。Evidence 全面收敛为纯内存 TypeScript 执行，不仅消除了额外运行时配置，更赋予了桌面画布**按键级（Keystroke-level）的毫秒级即时校验反馈**。
+2. **服务端严格派生纪律（Server-Side Derivation Discipline）**
+   AI 编程中最易犯的安全漏洞是将金额、状态等派生值交由前端计算并传入。Evidence 在 DSL 与投影层设立物理隔离：派生属性严禁出现在 Request Input 中，强制在 Confirmation / Evidence 中由服务端 CEL 规则封闭计算。
+3. **投影与验收彻底解耦（Projection vs Acceptance Decoupling）**
+   静态自洽不代表运行时正确。OpenAPI 导出只负责交付规格，黑盒验收完全交由导出的 Bruno 真实 HTTP 场景对运行中的后端发起网络探测。静态门禁和网络验收是两道独立关卡。
+4. **零 Go/Docker 的固定原生二进制编排（Native OASDiff Provisioning）**
+   为保证 CI 与本地环境具备严苛的 API 变更比对能力，不引入笨重的 Docker 或第二语言编译环境，内置轻量级预编译二进制调配方案（`pnpm api:setup`），保证跨平台一致性。
+5. **受控原子算子对抗 LLM 格式雪崩（Guarded Mutation Operators）**
+   直接让 LLM 读写整块 DSL 文件极易引发括号损坏或引用断裂。Evidence 将模型变更封装为原子的、强类型的 Patch 操作（`libs/evidence-tools`），每次变异即刻触发 AST 守护门禁，非法变异即时回滚。
+
+---
+
+## 📂 可运行的契约与多语言实战示例
+
+- [B2B 担保采购与里程碑履约](examples/b2b-escrow/README.md)：**【AI Coding 完整实战样板】** 涵盖 4 份双边合同、三方角色、4 种独立后端框架实现（Fastify / Gin / Spring / FastAPI）、11 个真实 Bruno 红绿场景及 DoD 严格回归门禁。
+- [数字广告投放](examples/digital-advertising/README.md)：单次支付确认、磋商后签署独立订单、日报异步受理。
+- [产研迭代计划](examples/agile-sprint/README.md)：一个迭代窗口内追加多份故事验收凭证。
+- [共享结算](examples/shared-settlement/README.md)：一笔收入核销季度及年度指标，支持从两处反向追溯。
+
+运行 `pnpm nx build cli && pnpm examples:verify` 可对示例进行只读核验。
 
 ---
 
