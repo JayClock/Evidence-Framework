@@ -16,6 +16,8 @@ import type { EvidenceProjectSummary } from '@evidence-poc/desktop-contracts/pro
 import { Button, DialogClose } from '@evidence-poc/desktop-ui-kit';
 import { WorkbenchDialog } from '../layout/WorkbenchDialog';
 import { DraftReviewPanel } from './DraftReviewPanel';
+import { IngestionFilePicker } from './IngestionFilePicker';
+import { readIngestionFile } from './readIngestionFile';
 
 /**
  * Two business texts the method's own lectures work through.
@@ -98,6 +100,9 @@ export const IngestDraftModal = ({
   const [draft, setDraft] = useState<DraftState | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [readingFile, setReadingFile] = useState(false);
+  const [fileName, setFileName] = useState<string | null>(null);
+  const inputBusy = busy || readingFile;
   const sourceField = useRef<HTMLTextAreaElement>(null);
   const returningToSource = useRef(false);
   useEffect(() => {
@@ -107,8 +112,24 @@ export const IngestDraftModal = ({
     }
   }, [draft]);
 
+  const loadFiles = async (files: readonly File[]) => {
+    if (inputBusy) return;
+    setReadingFile(true);
+    setError(null);
+    try {
+      const file = await readIngestionFile(files);
+      setContent(file.content);
+      setFileName(file.name);
+      if (file.kind) setKind(file.kind);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : '无法读取文件。');
+    } finally {
+      setReadingFile(false);
+    }
+  };
+
   const read = async () => {
-    if (busy) return;
+    if (inputBusy) return;
     const text = content.trim();
 
     if (text.length === 0) {
@@ -155,9 +176,9 @@ export const IngestDraftModal = ({
       description={
         draft
           ? '核对提取结果，再选择位置生成新的履约模型。'
-          : '将业务说明、合同原文或服务蓝图转换为可校对的履约模型草稿。'
+          : '将业务说明、合同原文或接口契约转换为可校对的履约模型草稿。'
       }
-      busy={busy}
+      busy={inputBusy}
       onClose={onClose}
     >
       {draft ? (
@@ -180,8 +201,24 @@ export const IngestDraftModal = ({
           }}
         >
           <div className="min-h-0 overflow-y-auto overscroll-contain p-1">
-            <fieldset className="min-w-0" disabled={busy}>
+            <fieldset className="min-w-0" disabled={inputBusy}>
               <legend className="sr-only">业务资料</legend>
+              <IngestionFilePicker
+                disabled={inputBusy}
+                onFiles={(files) => void loadFiles(files)}
+              />
+              {fileName ? (
+                <p
+                  role="status"
+                  className="mb-2 text-xs break-words text-workbench-label"
+                >
+                  已载入原文：{fileName}
+                </p>
+              ) : null}
+              <p className="mb-3 text-[11px] text-workbench-muted">
+                文件仅载入下方供核对。OpenAPI 与 SQL 按业务文本解读，不执行
+                SQL，也不做格式校验。选择业务自然语言并读取时，原文可能发送给已配置的模型服务。
+              </p>
               {ai && !ai.aiConfigured ? (
                 <aside className="mb-3 rounded border border-workbench-border p-3 text-xs">
                   未配置大模型：仍可使用离线合同、蓝图和规则解读。要启用 AI
@@ -237,7 +274,6 @@ export const IngestDraftModal = ({
                 id="ingest-content"
                 ref={sourceField}
                 name="content"
-                data-dialog-autofocus=""
                 onChange={(event) => {
                   setContent(event.target.value);
                   setError(null);
@@ -257,6 +293,7 @@ export const IngestDraftModal = ({
                         preset.id === 'blueprint' ? 'blueprint' : 'contract',
                       );
                       setContent(preset.content);
+                      setFileName(null);
                       setError(null);
                     }}
                     type="button"
@@ -291,9 +328,9 @@ export const IngestDraftModal = ({
               {error}
             </p>
           ) : null}
-          {busy ? (
+          {inputBusy ? (
             <p role="status" className="text-xs text-workbench-muted">
-              正在解读业务原文…
+              {readingFile ? '正在载入本地文件…' : '正在解读业务原文…'}
             </p>
           ) : null}
           <div className="flex shrink-0 flex-wrap justify-end gap-2">
@@ -302,7 +339,7 @@ export const IngestDraftModal = ({
                 className="rounded-md px-3.5 text-xs"
                 size="md"
                 type="button"
-                disabled={busy}
+                disabled={inputBusy}
               >
                 放弃
               </Button>
@@ -312,6 +349,7 @@ export const IngestDraftModal = ({
               size="md"
               type="submit"
               variant="default"
+              disabled={inputBusy}
               loading={busy}
             >
               读成草稿

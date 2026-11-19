@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { IngestDraftModal } from './IngestDraftModal';
 import {
@@ -7,6 +7,7 @@ import {
   projectSummary,
 } from '@evidence-poc/desktop-testing/desktopApi';
 import type { IngestionDraft } from '@evidence-poc/evidence-schema';
+import { AiConfigurationProvider } from '../../state/AiConfiguration';
 
 const draft = (): IngestionDraft => ({
   modelName: '云服务采购',
@@ -87,6 +88,133 @@ const openReview = async (issues: readonly string[] = []) => {
 };
 
 describe('IngestDraftModal', () => {
+  it('loads a selected OpenAPI file locally before asking the text reader to interpret it', async () => {
+    const api = installDesktopApi({
+      ingestResult: {
+        success: true,
+        draft: draft(),
+        reader: 'text-model',
+        issues: [],
+      },
+    });
+    render(<IngestDraftModal onClose={vi.fn()} onCompiled={vi.fn()} />);
+    const text = '{"openapi":"3.1.0"}';
+    const input = screen.getByLabelText('选择业务文档');
+    const clickPicker = vi.spyOn(input, 'click');
+    fireEvent.click(screen.getByRole('button', { name: /选择文件或拖放/ }));
+    expect(clickPicker).toHaveBeenCalledOnce();
+    fireEvent.change(input, {
+      target: { files: [new File([text], 'spec.JSON')] },
+    });
+
+    expect(await screen.findByText('已载入原文：spec.JSON')).toBeVisible();
+    expect(screen.getByLabelText('业务原文')).toHaveValue(text);
+    expect(api.calls.ingestDraft).toEqual([]);
+    fireEvent.click(screen.getByRole('button', { name: '读成草稿' }));
+    await screen.findByRole('dialog', { name: '校对导入的草稿' });
+    expect(api.calls.ingestDraft).toEqual([
+      expect.objectContaining({ kind: 'text', content: text }),
+    ]);
+  });
+
+  it('uses the blueprint reader for a dropped CSV file', async () => {
+    const api = installDesktopApi({
+      ingestResult: {
+        success: true,
+        draft: draft(),
+        reader: 'blueprint',
+        issues: [],
+      },
+    });
+    render(<IngestDraftModal onClose={vi.fn()} onCompiled={vi.fn()} />);
+    const text = '阶段,业务凭证\n履约,支付申请';
+    const target = screen.getByRole('button', { name: /选择文件或拖放/ });
+    const dataTransfer = {
+      types: ['Files'],
+      files: [new File([text], 'blueprint.csv')],
+    };
+    fireEvent.dragEnter(target, { dataTransfer });
+    expect(target).toHaveAttribute('data-drag-active', 'true');
+    fireEvent.drop(target, { dataTransfer });
+    expect(target).not.toHaveAttribute('data-drag-active');
+
+    expect(await screen.findByText('已载入原文：blueprint.csv')).toBeVisible();
+    fireEvent.click(screen.getByRole('button', { name: '读成草稿' }));
+    await screen.findByRole('dialog', { name: '校对导入的草稿' });
+    expect(api.calls.ingestDraft).toEqual([
+      expect.objectContaining({
+        kind: 'blueprint',
+        format: 'auto',
+        content: text,
+      }),
+    ]);
+  });
+
+  it.each([
+    { files: [new File(['raw'], 'draft.pdf')], error: /不支持此文件格式/ },
+    { files: [new File(['  '], 'draft.md')], error: /没有可读取的文本/ },
+    {
+      files: [new File([new Uint8Array([0xff])], 'draft.txt')],
+      error: /UTF-8/,
+    },
+    {
+      files: [
+        Object.defineProperty(new File(['raw'], 'large.md'), 'size', {
+          value: 20_000_001,
+        }),
+      ],
+      error: /超过 20 MB/,
+    },
+    {
+      files: [new File(['1'], '1.md'), new File(['2'], '2.md')],
+      error: /请选择一个文件/,
+    },
+  ])(
+    'rejects invalid file drops without replacing the original text ($error)',
+    async ({ files, error }) => {
+      const api = installDesktopApi();
+      render(<IngestDraftModal onClose={vi.fn()} onCompiled={vi.fn()} />);
+      fireEvent.change(screen.getByLabelText('业务原文'), {
+        target: { value: '保留原文' },
+      });
+      fireEvent.drop(screen.getByRole('button', { name: /选择文件或拖放/ }), {
+        dataTransfer: { types: ['Files'], files },
+      });
+      expect(await screen.findByRole('alert')).toHaveTextContent(error);
+      expect(screen.getByLabelText('业务原文')).toHaveValue('保留原文');
+      expect(api.calls.ingestDraft).toEqual([]);
+    },
+  );
+
+  it('returns focus and keeps the draft text after closing AI settings', async () => {
+    const api = installDesktopApi();
+    api.aiConfig.getStatus = async () => ({
+      isConfigured: false,
+      activeProviderId: null,
+      activeModelId: null,
+      thinkingLevel: 'off',
+      hasLocalPiCliConfig: false,
+      availableModels: [],
+    });
+    render(
+      <AiConfigurationProvider>
+        <IngestDraftModal onClose={vi.fn()} onCompiled={vi.fn()} />
+      </AiConfigurationProvider>,
+    );
+    fireEvent.change(screen.getByLabelText('业务原文'), {
+      target: { value: '本地原文' },
+    });
+    const trigger = screen.getByRole('button', { name: '配置 API Key' });
+    trigger.focus();
+    fireEvent.click(trigger);
+    const settings = screen.getByRole('dialog', { name: /AI Model Settings/ });
+    expect(
+      screen.queryByRole('dialog', { name: /Smart Ingestion/ }),
+    ).toBeNull();
+    fireEvent.keyDown(settings, { key: 'Escape' });
+    await waitFor(() => expect(trigger).toHaveFocus());
+    expect(screen.getByLabelText('业务原文')).toHaveValue('本地原文');
+  });
   it('sends the pasted text to the main process and says who read it', async () => {
     const api = await openReview();
 

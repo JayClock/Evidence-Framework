@@ -19,7 +19,7 @@ export const HeroIngestionCard = ({ onOpen }: { onOpen: () => void }) => (
       </div>
     </div>
     <p className="text-xs leading-relaxed text-workbench-body">
-      粘贴业务原文或蓝图表格，从中提取履约凭证与权责关系，先生成模型草稿再校对。
+      选择或拖入本地文件，也可粘贴业务原文。提取履约凭证与权责关系后，先校对草稿再生成模型。
     </p>
     <Button
       className="rounded-md px-3.5 text-xs font-medium"
