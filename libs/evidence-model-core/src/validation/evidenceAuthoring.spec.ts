@@ -78,6 +78,6 @@ describe('evidence-first authoring', () => {
       errors: [],
     });
     expect(report.gaps.join('\n')).toMatch(/responsibleRoleRef/);
-    expect(report.gaps.join('\n')).toMatch(/confirmed_at/);
+    expect(report.gaps.join('\n')).toMatch(/occurrence/);
   });
 });

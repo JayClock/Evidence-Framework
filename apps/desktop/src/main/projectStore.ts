@@ -2,7 +2,10 @@ import { createHash, randomUUID } from 'node:crypto';
 import { mkdir, readFile, rename, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
-import { isModelBundlePath } from '@evidence-poc/evidence-model-core';
+import {
+  isModelBundlePath,
+  MODEL_VERSION_ISSUE_CODE,
+} from '@evidence-poc/evidence-model-core';
 import {
   isModelBundleFile,
   readModelBundle,
@@ -108,9 +111,10 @@ const exists = async (absolute: string): Promise<boolean> =>
 
 const isReadableSource = (parsed: {
   document: { entities: readonly unknown[] };
-  issues: readonly unknown[];
+  issues: readonly { code?: string }[];
 }): boolean =>
-  parsed.issues.length === 0 || parsed.document.entities.length > 0;
+  !parsed.issues.some(({ code }) => code === MODEL_VERSION_ISSUE_CODE) &&
+  (parsed.issues.length === 0 || parsed.document.entities.length > 0);
 
 /** Where a starter document lands, before anything is written. */
 interface StarterTarget {

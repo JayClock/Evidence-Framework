@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 /**
- * Identifier grammar shared by every Fulfillment Modeling (FM) v5 source object.
+ * Identifier grammar shared by every Fulfillment Modeling (FM) v6 source object.
  *
  * These patterns are the single source of truth for the schema package and are
  * reused by the model core and the disk adapter.

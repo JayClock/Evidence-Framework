@@ -96,7 +96,7 @@ export const countLedgerCategories = (
     if (row.category === 'evidence') counts.evidence += 1;
     else counts.participant += 1;
   }
-  // Thread is in the design, but not an FM v5 entity category.
+  // Thread is in the design, but not an FM v6 entity category.
   return counts;
 };
 

@@ -1,6 +1,6 @@
 # API projection v6
 
-The FM model keeps schema version 5.0. Its API snapshot and export manifest use
+The FM model uses schema version 6.0. Its API snapshot and export manifest use
 6.0; the OpenAPI document uses OpenAPI 3.1 with `info.version: 6.0.0`. The business
 model's version remains available as `x-evidence-model-version`.
 

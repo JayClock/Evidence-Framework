@@ -50,7 +50,7 @@ describe('derived document commands', () => {
     );
 
     expect(ids).toEqual([...ids].sort());
-    expect(compiled['schemaVersion']).toBe('5.0');
+    expect(compiled['schemaVersion']).toBe('6.0');
   });
 
   it('writes attribute lineage', async () => {

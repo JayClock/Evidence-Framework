@@ -1,4 +1,6 @@
 import {
+  timeAttributeOf,
+  type TimeRole,
   type DomainModelDocument,
   type EntityAST,
   type RuleAST,
@@ -48,24 +50,22 @@ export const bindDerivedRuleMutator = (
 };
 
 /** Attributes whose business time a modeled moment must declare. */
-export const MANDATORY_MOMENT_TIME: Record<string, readonly string[]> = {
-  request: ['started_at', 'expired_at'],
-  confirmation: ['confirmed_at'],
-};
+const fulfillmentTimeRoles = {
+  request: ['start', 'deadline'],
+  confirmation: ['occurrence'],
+} as const satisfies Record<string, readonly TimeRole[]>;
 
 export const assertMandatoryTime = (
-  moment: string,
+  moment: keyof typeof fulfillmentTimeRoles,
   entity: Pick<EntityAST, 'id'> & { attributes?: EntityAST['attributes'] },
 ): void => {
-  for (const name of MANDATORY_MOMENT_TIME[moment] ?? []) {
-    const attribute = entity.attributes?.find(
-      (candidate) => candidate.name === name,
-    );
+  for (const role of fulfillmentTimeRoles[moment]) {
+    const attribute = timeAttributeOf(entity, role);
 
     if (attribute === undefined) {
       fail(
         'attribute.time.missing',
-        `${moment} '${entity.id}' requires explicit time attribute '${name}'.`,
+        `${moment} '${entity.id}' requires business time role '${role}'.`,
       );
     }
 
@@ -76,7 +76,7 @@ export const assertMandatoryTime = (
     ) {
       fail(
         'attribute.time.missing',
-        `${moment} '${entity.id}' attribute '${name}' must be a required keyData timestamp.`,
+        `${moment} '${entity.id}' attribute '${attribute.name}' must be a required keyData timestamp.`,
       );
     }
   }

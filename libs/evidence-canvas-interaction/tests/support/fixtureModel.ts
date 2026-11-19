@@ -13,6 +13,7 @@ import {
 import { computeGraphLayout, type DomainGraphLayout } from '../../src/index.js';
 
 const timestamp = (
+  role: import('@evidence-poc/evidence-schema').TimeRole,
   name: string,
   label: string,
   meaning: string,
@@ -23,6 +24,7 @@ const timestamp = (
   valueType: 'timestamp',
   required: true,
   keyData: true,
+  timeRole: role,
 });
 
 const context = (
@@ -135,7 +137,7 @@ const completion: RuleAST = {
 export const createFixtureDocument = (): DomainModelDocument => ({
   manifest: {
     type: 'fm_model',
-    schemaVersion: '5.0',
+    schemaVersion: '6.0',
     id: 'fixture-desktop-layout',
     name: '桌面画布布局夹具',
     version: '1.0.0',
@@ -167,14 +169,14 @@ export const createFixtureDocument = (): DomainModelDocument => ({
       '询价单（RFP）',
       'other_evidence',
       'context.product-sourcing',
-      [timestamp('created_at', '创建时间', '采购方创建')],
+      [timestamp('occurrence', 'created_at', '创建时间', '采购方创建')],
     ),
     evidence(
       'evidence.procurement-contract',
       '商品采购协议（Procurement Contract）',
       'contract',
       'context.product-procurement',
-      [timestamp('signed_at', '签署时间', '双方签署')],
+      [timestamp('occurrence', 'signed_at', '签署时间', '双方签署')],
       {
         roleRefs: ['role.buyer', 'role.supplier'],
       },
@@ -187,8 +189,8 @@ export const createFixtureDocument = (): DomainModelDocument => ({
       'fulfillment_request',
       'context.product-procurement',
       [
-        timestamp('started_at', '开始时间', '采购方发起'),
-        timestamp('expired_at', '截止时间', '合同约定'),
+        timestamp('start', 'started_at', '开始时间', '采购方发起'),
+        timestamp('deadline', 'expired_at', '截止时间', '合同约定'),
         {
           name: 'delivery_window',
           label: '交付期限（Delivery Window）',
@@ -208,7 +210,7 @@ export const createFixtureDocument = (): DomainModelDocument => ({
       '交付确认（Delivery Confirmation）',
       'fulfillment_confirmation',
       'context.product-procurement',
-      [timestamp('confirmed_at', '确认时间', '采购方确认')],
+      [timestamp('occurrence', 'confirmed_at', '确认时间', '采购方确认')],
       { responsibleRoleRef: 'role.buyer' },
     ),
     evidence(
@@ -216,7 +218,7 @@ export const createFixtureDocument = (): DomainModelDocument => ({
       '签收单（Delivery Note）',
       'other_evidence',
       'context.product-procurement',
-      [timestamp('created_at', '创建时间', '供应方出具')],
+      [timestamp('occurrence', 'created_at', '创建时间', '供应方出具')],
     ),
     party('participant.buyer', '采购方企业（Buyer Org）'),
     party('participant.supplier', '供应方企业（Supplier Org）'),

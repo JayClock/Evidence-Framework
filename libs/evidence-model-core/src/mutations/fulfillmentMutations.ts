@@ -5,6 +5,7 @@ import {
   type RelationshipAST,
   type RuleAST,
 } from '@evidence-poc/evidence-schema';
+import { completionExpressionFor } from '../model/fulfillmentTime.js';
 
 import { assertMandatoryTime } from './derivationMutations.js';
 import { createEntityMutator } from './entityMutations.js';
@@ -46,9 +47,6 @@ export interface FulfillmentPairResult {
   reference: RelationshipAST;
   contractReference: RelationshipAST | null;
 }
-
-const DEFAULT_COMPLETION_EXPRESSION =
-  'confirmations.exists(c, c.confirmed_at >= request.started_at && c.confirmed_at <= request.expired_at)';
 
 export const createFulfillmentPairMutator = (
   draft: DomainModelDocument,
@@ -124,6 +122,14 @@ export const createFulfillmentPairMutator = (
           sourceCardinality: { min: 1, max: 1 },
           targetCardinality: { min: 1, max: 1 },
         };
+  const expression =
+    input.completionExpression ??
+    completionExpressionFor(request, confirmation);
+  if (expression === undefined)
+    fail(
+      'attribute.time.missing',
+      'A default completion rule needs the request window and confirmation time.',
+    );
   const rule: RuleAST = {
     type: 'rule',
     id: input.ruleId ?? `rule.${request.id}-completed`,
@@ -135,7 +141,7 @@ export const createFulfillmentPairMutator = (
       request: { ref: request.id },
       confirmations: { ref: confirmation.id, cardinality: 'many' },
     },
-    expression: input.completionExpression ?? DEFAULT_COMPLETION_EXPRESSION,
+    expression,
     resultType: 'bool',
   };
   createEntityMutator(draft, request);

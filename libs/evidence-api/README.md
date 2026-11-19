@@ -38,7 +38,7 @@ may adjust routes/journeys but cannot invent model semantics or hide errors.
 
 See [API projection v6](../../docs/api-projection-v6.md) for aggregate-root
 addresses, singleton/collection cardinality, HAL, service routing and overlay
-migration. API snapshots and manifests use schema 6.0; FM models remain 5.0.
+migration. API snapshots, manifests, and FM models use schema 6.0.
 
 ## Inline examples
 

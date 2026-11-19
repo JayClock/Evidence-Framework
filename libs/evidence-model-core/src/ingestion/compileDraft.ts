@@ -11,9 +11,11 @@ import {
   type RoleEntityAST,
   type RuleAST,
   type ValueType,
+  type TimeRole,
 } from '@evidence-poc/evidence-schema';
 
 import { evidenceIdPrefix, uniqueId } from './draftSupport.js';
+import { completionExpressionFor } from '../model/fulfillmentTime.js';
 
 export interface CompileDraftOptions {
   /** Manifest id; must already satisfy the schema id pattern. */
@@ -38,9 +40,6 @@ export interface CompileDraftResult {
 }
 
 const DEFAULT_VERSION = '0.1.0';
-
-const DEFAULT_COMPLETION_EXPRESSION =
-  'confirmations.exists(c, c.confirmed_at >= request.started_at && c.confirmed_at <= request.expired_at)';
 
 const idAllocator = () => {
   const taken = new Set<string>();
@@ -73,10 +72,14 @@ const attributeOf = (draftAttribute: {
   valueType?: ValueType;
   required?: boolean;
   keyData?: boolean;
+  timeRole?: TimeRole;
 }): AttributeAST => ({
   name: draftAttribute.name,
   label: draftAttribute.label,
   meaning: draftAttribute.meaning,
+  ...(draftAttribute.timeRole === undefined
+    ? {}
+    : { timeRole: draftAttribute.timeRole }),
   ...(draftAttribute.valueType === undefined
     ? {}
     : { valueType: draftAttribute.valueType }),
@@ -676,6 +679,19 @@ export const compileIngestionDraft = (
       draft.evidences.find((evidence) => evidence.id === pair.confirmationRef)
         ?.label ?? confirmationRef;
 
+    const request = entities.find(({ id }) => id === requestRef);
+    const confirmation = entities.find(({ id }) => id === confirmationRef);
+    const expression =
+      request && confirmation
+        ? completionExpressionFor(request, confirmation)
+        : undefined;
+    if (expression === undefined) {
+      issues.push({
+        draftId: pair.id,
+        message: '履约对缺少请求窗口或确认时刻，未生成默认完成规则。',
+      });
+      continue;
+    }
     const ruleId = uniqueId('rule', `${requestRef}-completed`, ruleIds);
     const rule: RuleAST = {
       type: 'rule',
@@ -688,7 +704,7 @@ export const compileIngestionDraft = (
         request: { ref: requestRef },
         confirmations: { ref: confirmationRef, cardinality: 'many' },
       },
-      expression: DEFAULT_COMPLETION_EXPRESSION,
+      expression,
       resultType: 'bool',
     };
 
@@ -707,7 +723,7 @@ export const compileIngestionDraft = (
   const document: DomainModelDocument = {
     manifest: {
       type: 'fm_model',
-      schemaVersion: '5.0',
+      schemaVersion: '6.0',
       id: options.modelId,
       name: draft.modelName,
       version: options.modelVersion ?? DEFAULT_VERSION,

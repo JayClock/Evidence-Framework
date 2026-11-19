@@ -235,7 +235,7 @@ describe('Zod pipeline and diagnostic contract', () => {
     const doc = {
       ...base(),
       type: 'fm_bundle',
-      schemaVersion: '5.0',
+      schemaVersion: '6.0',
       readme: 'Model notes',
     };
     expect(DomainModelDocumentSchema.safeParse(doc).success).toBe(true);

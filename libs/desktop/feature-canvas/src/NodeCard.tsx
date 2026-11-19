@@ -1,10 +1,7 @@
 import type { CSSProperties } from 'react';
 
 import { useLiveApi } from './LiveApiContext';
-import {
-  EVIDENCE_TIME_ATTRIBUTE_NAMES,
-  type EntityAST,
-} from '@evidence-poc/evidence-schema';
+import { timeAttributeOf, type EntityAST } from '@evidence-poc/evidence-schema';
 import type {
   CanvasViewMode,
   LayoutNode,
@@ -36,49 +33,44 @@ interface NodeCardProps {
   onSelect: (nodeId: string) => void;
 }
 
-const timeAttributes = (entity: EntityAST): string[] =>
-  EVIDENCE_TIME_ATTRIBUTE_NAMES.filter(
-    (name) =>
-      entity.attributes?.some((candidate) => candidate.name === name) === true,
-  );
-
 const businessTime = (
   entity: EntityAST,
   values?: Readonly<Record<string, unknown>>,
 ): string | null => {
-  const present = timeAttributes(entity);
-
-  if (present.length === 0) {
-    return null;
-  }
-
-  return formatBusinessTimeWindow(present, (name) =>
-    typeof values?.[name] === 'string'
-      ? (values[name] as string)
-      : entity.attributes?.find((attribute) => attribute.name === name)?.label,
+  const present = (['start', 'deadline', 'occurrence'] as const).flatMap(
+    (role) => {
+      const attribute = timeAttributeOf(entity, role);
+      return attribute === undefined ? [] : [attribute];
+    },
+  );
+  return formatBusinessTimeWindow(
+    present.map(({ name }) => name),
+    (name) => {
+      const value = values?.[name];
+      return typeof value === 'string'
+        ? value
+        : present.find((attribute) => attribute.name === name)?.label;
+    },
   );
 };
 
-/**
- * The request's window, drawn as a bar with two ends.
- *
- * `started_at` and `expired_at` are both mandatory on a request, so the shape
- * says "this obligation is open over a period". A rounded bar rather than a
- * plain line, because the corner is where the "expired" end reads.
- */
 export const IntervalTaskBar = ({
   accent,
   window,
+  start,
+  deadline,
 }: {
   accent: string;
   window: string | null;
+  start: string | undefined;
+  deadline: string | undefined;
 }) => (
   <span
-    aria-label={`履行时段：${window ?? 'started_at → expired_at'}`}
-    data-start-attribute="started_at"
-    data-end-attribute="expired_at"
+    aria-label={`履行时段：${window ?? '未设置'}`}
+    data-start-attribute={start}
+    data-end-attribute={deadline}
     data-node-shape="interval"
-    title={window ?? 'started_at → expired_at'}
+    title={window ?? undefined}
     className="mt-0.5 flex w-full items-center gap-1"
   >
     <span
@@ -103,25 +95,20 @@ export const IntervalTaskBar = ({
   </span>
 );
 
-/**
- * The confirmation's instant, drawn as a stamp.
- *
- * A confirmation has one end (`confirmed_at`); giving it the same bar as the
- * request would say the obligation is still open. The ring is the signature
- * metaphor the method uses: this moment already happened and cannot change.
- */
 export const MomentStamp = ({
   accent,
   time,
-  confirmation,
+  label,
+  attributeName,
 }: {
   accent: string;
   time: string | null;
-  confirmation: boolean;
+  label: string;
+  attributeName: string | undefined;
 }) => (
   <span
-    aria-label={`${confirmation ? '盖章确认' : '签署时刻'}：${time ?? (confirmation ? 'confirmed_at' : 'signed_at')}`}
-    data-time-attribute={confirmation ? 'confirmed_at' : 'signed_at'}
+    aria-label={`${label}：${time ?? '未设置'}`}
+    data-time-attribute={attributeName}
     data-node-shape="moment"
     className="mt-0.5 inline-flex max-w-full items-center gap-1 rounded-full border-2 border-double px-1.5 py-[1px] text-[8px] font-semibold"
     style={{ borderColor: accent, color: accent }}
@@ -131,7 +118,8 @@ export const MomentStamp = ({
       style={{ borderColor: accent }}
     />
     <span className="truncate">
-      {confirmation ? '盖章确认' : '签署时刻'} · {time}
+      {label}
+      {time === null ? '' : ` · ${time}`}
     </span>
   </span>
 );
@@ -367,15 +355,24 @@ export const NodeCard = ({
           </span>
         ) : null}
         {shape === 'interval' ? (
-          <IntervalTaskBar accent={color} window={time} />
+          <IntervalTaskBar
+            accent={color}
+            window={time}
+            start={timeAttributeOf(entity, 'start')?.name}
+            deadline={timeAttributeOf(entity, 'deadline')?.name}
+          />
         ) : null}
         {shape === 'moment' ? (
           <MomentStamp
             accent={color}
             time={time}
-            confirmation={
-              entity.category === 'evidence' &&
+            attributeName={timeAttributeOf(entity, 'occurrence')?.name}
+            label={
               entity.kind === 'fulfillment_confirmation'
+                ? '盖章确认'
+                : entity.kind === 'contract'
+                  ? '签署时刻'
+                  : '报价时刻'
             }
           />
         ) : null}

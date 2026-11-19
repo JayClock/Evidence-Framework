@@ -239,7 +239,7 @@ it('migrates a legacy overlay through the executable CLI and protects existing o
   writeFileSync(
     input,
     JSON.stringify({
-      schemaVersion: '5.0',
+      schemaVersion: '6.0',
       routes: [
         { id: 'route.sign.contract.agreement', path: '/procurement/agreement' },
         {

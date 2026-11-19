@@ -1,9 +1,9 @@
 {
   "type": "fm_bundle",
-  "schemaVersion": "5.0",
+  "schemaVersion": "6.0",
   "manifest": {
     "type": "fm_model",
-    "schemaVersion": "5.0",
+    "schemaVersion": "6.0",
     "id": "b2b-escrow",
     "name": "B2B escrow procurement and milestone settlement",
     "version": "1.0.0",
@@ -86,6 +86,7 @@
         },
         {
           "name": "signed_at",
+          "timeRole": "occurrence",
           "label": "signed_at",
           "meaning": "Server-recorded UTC business time; caller may not supply this field.",
           "valueType": "timestamp",
@@ -253,6 +254,7 @@
         },
         {
           "name": "signed_at",
+          "timeRole": "occurrence",
           "label": "signed_at",
           "meaning": "Server-recorded UTC business time; caller may not supply this field.",
           "valueType": "timestamp",
@@ -360,6 +362,7 @@
         },
         {
           "name": "signed_at",
+          "timeRole": "occurrence",
           "label": "signed_at",
           "meaning": "Server-recorded UTC business time; caller may not supply this field.",
           "valueType": "timestamp",
@@ -476,6 +479,7 @@
         },
         {
           "name": "signed_at",
+          "timeRole": "occurrence",
           "label": "signed_at",
           "meaning": "Server-recorded UTC business time; caller may not supply this field.",
           "valueType": "timestamp",
@@ -572,6 +576,7 @@
         },
         {
           "name": "started_at",
+          "timeRole": "start",
           "label": "started_at",
           "meaning": "Server-recorded UTC business time; caller may not supply this field.",
           "valueType": "timestamp",
@@ -580,6 +585,7 @@
         },
         {
           "name": "expired_at",
+          "timeRole": "deadline",
           "label": "expired_at",
           "meaning": "Server-recorded UTC business time; caller may not supply this field.",
           "valueType": "timestamp",
@@ -652,6 +658,7 @@
         },
         {
           "name": "confirmed_at",
+          "timeRole": "occurrence",
           "label": "confirmed_at",
           "meaning": "Server-recorded UTC business time; caller may not supply this field.",
           "valueType": "timestamp",
@@ -784,6 +791,7 @@
         },
         {
           "name": "started_at",
+          "timeRole": "start",
           "label": "started_at",
           "meaning": "Server-recorded UTC business time; caller may not supply this field.",
           "valueType": "timestamp",
@@ -792,6 +800,7 @@
         },
         {
           "name": "expired_at",
+          "timeRole": "deadline",
           "label": "expired_at",
           "meaning": "Server-recorded UTC business time; caller may not supply this field.",
           "valueType": "timestamp",
@@ -864,6 +873,7 @@
         },
         {
           "name": "confirmed_at",
+          "timeRole": "occurrence",
           "label": "confirmed_at",
           "meaning": "Server-recorded UTC business time; caller may not supply this field.",
           "valueType": "timestamp",
@@ -942,6 +952,7 @@
         },
         {
           "name": "started_at",
+          "timeRole": "start",
           "label": "started_at",
           "meaning": "Server-recorded UTC business time; caller may not supply this field.",
           "valueType": "timestamp",
@@ -950,6 +961,7 @@
         },
         {
           "name": "expired_at",
+          "timeRole": "deadline",
           "label": "expired_at",
           "meaning": "Server-recorded UTC business time; caller may not supply this field.",
           "valueType": "timestamp",
@@ -1022,6 +1034,7 @@
         },
         {
           "name": "confirmed_at",
+          "timeRole": "occurrence",
           "label": "confirmed_at",
           "meaning": "Server-recorded UTC business time; caller may not supply this field.",
           "valueType": "timestamp",
@@ -1102,6 +1115,7 @@
         },
         {
           "name": "started_at",
+          "timeRole": "start",
           "label": "started_at",
           "meaning": "Server-recorded UTC business time; caller may not supply this field.",
           "valueType": "timestamp",
@@ -1110,6 +1124,7 @@
         },
         {
           "name": "expired_at",
+          "timeRole": "deadline",
           "label": "expired_at",
           "meaning": "Server-recorded UTC business time; caller may not supply this field.",
           "valueType": "timestamp",
@@ -1182,6 +1197,7 @@
         },
         {
           "name": "confirmed_at",
+          "timeRole": "occurrence",
           "label": "confirmed_at",
           "meaning": "Server-recorded UTC business time; caller may not supply this field.",
           "valueType": "timestamp",
@@ -1260,6 +1276,7 @@
         },
         {
           "name": "started_at",
+          "timeRole": "start",
           "label": "started_at",
           "meaning": "Server-recorded UTC business time; caller may not supply this field.",
           "valueType": "timestamp",
@@ -1268,6 +1285,7 @@
         },
         {
           "name": "expired_at",
+          "timeRole": "deadline",
           "label": "expired_at",
           "meaning": "Server-recorded UTC business time; caller may not supply this field.",
           "valueType": "timestamp",
@@ -1340,6 +1358,7 @@
         },
         {
           "name": "confirmed_at",
+          "timeRole": "occurrence",
           "label": "confirmed_at",
           "meaning": "Server-recorded UTC business time; caller may not supply this field.",
           "valueType": "timestamp",
@@ -1418,6 +1437,7 @@
         },
         {
           "name": "started_at",
+          "timeRole": "start",
           "label": "started_at",
           "meaning": "Server-recorded UTC business time; caller may not supply this field.",
           "valueType": "timestamp",
@@ -1426,6 +1446,7 @@
         },
         {
           "name": "expired_at",
+          "timeRole": "deadline",
           "label": "expired_at",
           "meaning": "Server-recorded UTC business time; caller may not supply this field.",
           "valueType": "timestamp",
@@ -1498,6 +1519,7 @@
         },
         {
           "name": "confirmed_at",
+          "timeRole": "occurrence",
           "label": "confirmed_at",
           "meaning": "Server-recorded UTC business time; caller may not supply this field.",
           "valueType": "timestamp",
@@ -1596,6 +1618,7 @@
         },
         {
           "name": "started_at",
+          "timeRole": "start",
           "label": "started_at",
           "meaning": "Server-recorded UTC business time; caller may not supply this field.",
           "valueType": "timestamp",
@@ -1604,6 +1627,7 @@
         },
         {
           "name": "expired_at",
+          "timeRole": "deadline",
           "label": "expired_at",
           "meaning": "Server-recorded UTC business time; caller may not supply this field.",
           "valueType": "timestamp",
@@ -1676,6 +1700,7 @@
         },
         {
           "name": "confirmed_at",
+          "timeRole": "occurrence",
           "label": "confirmed_at",
           "meaning": "Server-recorded UTC business time; caller may not supply this field.",
           "valueType": "timestamp",
@@ -1979,6 +2004,7 @@
         },
         {
           "name": "started_at",
+          "timeRole": "start",
           "label": "started_at",
           "meaning": "Server-recorded UTC business time; caller may not supply this field.",
           "valueType": "timestamp",
@@ -1987,6 +2013,7 @@
         },
         {
           "name": "expired_at",
+          "timeRole": "deadline",
           "label": "expired_at",
           "meaning": "Server-recorded UTC business time; caller may not supply this field.",
           "valueType": "timestamp",
@@ -2059,6 +2086,7 @@
         },
         {
           "name": "confirmed_at",
+          "timeRole": "occurrence",
           "label": "confirmed_at",
           "meaning": "Server-recorded UTC business time; caller may not supply this field.",
           "valueType": "timestamp",

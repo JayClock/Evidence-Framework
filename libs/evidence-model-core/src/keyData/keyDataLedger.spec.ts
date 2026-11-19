@@ -7,7 +7,7 @@ import { buildKeyDataLedger, keyDataEntryOf } from './keyDataLedger.js';
 const document = (): DomainModelDocument => ({
   manifest: {
     type: 'fm_model',
-    schemaVersion: '5.0',
+    schemaVersion: '6.0',
     id: 'key-data-ledger',
     name: '关键数据夹具（Key Data Fixture）',
     version: '1.0.0',
@@ -129,7 +129,9 @@ describe('buildKeyDataLedger', () => {
     expect(ledger.decisionOwed.map((entry) => entry.attribute)).toEqual([
       'penalty_amount',
     ]);
-    expect(ledger.derived.map((entry) => entry.attribute)).toEqual(['quantity']);
+    expect(ledger.derived.map((entry) => entry.attribute)).toEqual([
+      'quantity',
+    ]);
   });
 
   it('exposes the derivation providers so the inspector can name a source', () => {
@@ -147,9 +149,9 @@ describe('buildKeyDataLedger', () => {
   it('ignores attributes that are not marked as key data', () => {
     const ledger = buildKeyDataLedger(document());
 
-    expect(ledger.entries.every((entry) => entry.attribute !== 'signed_at')).toBe(
-      true,
-    );
+    expect(
+      ledger.entries.every((entry) => entry.attribute !== 'signed_at'),
+    ).toBe(true);
     expect(
       keyDataEntryOf(document(), 'evidence.contract', 'unit_price')?.source,
     ).toBe('contract-term');

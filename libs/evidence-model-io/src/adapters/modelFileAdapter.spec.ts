@@ -69,7 +69,7 @@ describe('bundle files on disk', () => {
     // A hand-written file keeps inline arrays the serializer would expand.
     const handWritten = `{
   "type": "fm_model",
-  "schemaVersion": "5.0",
+  "schemaVersion": "6.0",
   "id": "procurement-core",
   "name": "采购履约核心模型",
   "version": "1.0.0",

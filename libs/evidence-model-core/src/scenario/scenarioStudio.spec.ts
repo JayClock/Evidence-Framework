@@ -53,8 +53,12 @@ const examples = (flow = '正常订阅'): ScenarioExample[] => [
 describe('scenario authoring and local oracle', () => {
   it('only replays compensation when the refund obligation and facts are explicitly modeled', () => {
     const model = createProcurementModel();
-    const time = (name: string) => ({
+    const time = (
+      timeRole: import('@evidence-poc/evidence-schema').TimeRole,
+      name: string,
+    ) => ({
       name,
+      timeRole,
       label: name,
       meaning: '合同约定的业务时间',
       valueType: 'timestamp' as const,
@@ -67,13 +71,16 @@ describe('scenario authoring and local oracle', () => {
         id: 'request.refund',
         label: '断供退款请求',
         responsibleRoleRef: 'role.buyer',
-        attributes: [time('started_at'), time('expired_at')],
+        attributes: [
+          time('start', 'started_at'),
+          time('deadline', 'expired_at'),
+        ],
       },
       confirmation: {
         id: 'confirmation.refund',
         label: '退款确认',
         responsibleRoleRef: 'role.seller',
-        attributes: [time('confirmed_at')],
+        attributes: [time('occurrence', 'confirmed_at')],
       },
       contractReferenceId: 'relation.refund-contract',
     });

@@ -1,6 +1,7 @@
-import type {
-  DomainModelDocument,
-  EntityAST,
+import {
+  evidenceStageOf,
+  type DomainModelDocument,
+  type EntityAST,
 } from '@evidence-poc/evidence-schema';
 
 /** Canvas coordinate of one entity. */
@@ -37,13 +38,12 @@ const isPreContractEvidence = (
   preContractContextIds: ReadonlySet<string>,
 ): boolean =>
   entity.category === 'evidence' &&
-  (entity.kind === 'rfp' ||
-    entity.kind === 'proposal' ||
+  (['rfp', 'proposal'].includes(evidenceStageOf(entity)) ||
     (entity.contextRef !== undefined &&
       preContractContextIds.has(entity.contextRef)));
 
 const isContractEvidence = (entity: EntityAST): boolean =>
-  entity.category === 'evidence' && entity.kind === 'contract';
+  entity.category === 'evidence' && evidenceStageOf(entity) === 'contract';
 
 /**
  * Assigns every entity a slot on the canvas.

@@ -11,9 +11,13 @@ const attribute = (
   valueType: AttributeAST['valueType'] = 'string',
   required = true,
 ): AttributeAST => ({ name, label: name, meaning: name, valueType, required });
-const time = (name: string): AttributeAST => ({
+const time = (
+  timeRole: import('@evidence-poc/evidence-schema').TimeRole,
+  name: string,
+): AttributeAST => ({
   ...attribute(name, 'timestamp'),
   keyData: true,
+  timeRole,
 });
 
 const reference = (
@@ -82,7 +86,7 @@ export const createProcurementBaseModel = (): DomainModelDocument => {
       contextRef: 'context.procurement',
       label: 'Agreement',
       roleRefs: ['role.buyer', 'role.seller'],
-      attributes: [attribute('id', 'id'), time('signed_at')],
+      attributes: [attribute('id', 'id'), time('occurrence', 'signed_at')],
     },
     {
       type: 'entity',
@@ -94,8 +98,8 @@ export const createProcurementBaseModel = (): DomainModelDocument => {
       responsibleRoleRef: 'role.buyer',
       attributes: [
         attribute('id', 'id'),
-        time('started_at'),
-        time('expired_at'),
+        time('start', 'started_at'),
+        time('deadline', 'expired_at'),
       ],
     },
     {
@@ -108,8 +112,8 @@ export const createProcurementBaseModel = (): DomainModelDocument => {
       responsibleRoleRef: 'role.seller',
       attributes: [
         attribute('id', 'id'),
-        time('started_at'),
-        time('expired_at'),
+        time('start', 'started_at'),
+        time('deadline', 'expired_at'),
       ],
     },
   ];
@@ -141,8 +145,8 @@ const appendPair = (
       responsibleRoleRef: requester,
       attributes: [
         attribute('id', 'id'),
-        time('started_at'),
-        time('expired_at'),
+        time('start', 'started_at'),
+        time('deadline', 'expired_at'),
       ],
     },
     {
@@ -153,7 +157,7 @@ const appendPair = (
       contextRef,
       label: `${name} confirmation`,
       responsibleRoleRef: confirmer,
-      attributes: [attribute('id', 'id'), time('confirmed_at')],
+      attributes: [attribute('id', 'id'), time('occurrence', 'confirmed_at')],
     },
   );
   document.relationships.push(
@@ -233,7 +237,7 @@ export const addExternalPayment = (
       contextRef: 'context.gateway',
       label: 'Processing agreement',
       roleRefs: ['role.payer', 'role.provider'],
-      attributes: [attribute('id', 'id'), time('signed_at')],
+      attributes: [attribute('id', 'id'), time('occurrence', 'signed_at')],
     },
     {
       type: 'entity',

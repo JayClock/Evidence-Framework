@@ -44,6 +44,7 @@ const domainModel = (): DomainModelDocument => ({
       attributes: [
         {
           name: 'signed_at',
+          timeRole: 'occurrence',
           label: '签署时间（Signed At）',
           meaning: '双方签署后由采购方登记。',
           valueType: 'timestamp',
@@ -482,7 +483,7 @@ describe('projectStore.create', () => {
 
     if (result.success) {
       expect(result.document.entities).toEqual([]);
-      expect(result.issues.map(({ code }) => code)).toContain('model.empty');
+      expect(result.issues).toEqual([]);
     }
   });
 });

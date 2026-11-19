@@ -9,6 +9,7 @@
   "attributes": [
     {
       "name": "started_at",
+      "timeRole": "start",
       "label": "发货申请时间",
       "valueType": "timestamp",
       "required": true,
@@ -17,6 +18,7 @@
     },
     {
       "name": "expired_at",
+      "timeRole": "deadline",
       "label": "发货截止时间",
       "valueType": "timestamp",
       "required": true,

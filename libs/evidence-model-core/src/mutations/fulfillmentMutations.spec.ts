@@ -35,6 +35,7 @@ const input = (
     attributes: [
       {
         name: 'started_at',
+        timeRole: 'start',
         label: '请求时间',
         meaning: '卖方提出发货请求的业务时间',
         valueType: 'timestamp',
@@ -43,6 +44,7 @@ const input = (
       },
       {
         name: 'expired_at',
+        timeRole: 'deadline',
         label: '截止时间',
         meaning: '卖方完成发货的截止时间',
         valueType: 'timestamp',
@@ -58,6 +60,7 @@ const input = (
     attributes: [
       {
         name: 'confirmed_at',
+        timeRole: 'occurrence',
         label: '确认时间',
         meaning: '买方形成收货确认的业务时间',
         valueType: 'timestamp',

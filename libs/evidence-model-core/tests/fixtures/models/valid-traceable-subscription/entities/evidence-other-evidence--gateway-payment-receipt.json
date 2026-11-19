@@ -9,6 +9,7 @@
   "attributes": [
     {
       "name": "created_at",
+      "timeRole": "occurrence",
       "label": "回执形成时间",
       "valueType": "timestamp",
       "required": true,

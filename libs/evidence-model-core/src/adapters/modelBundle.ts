@@ -10,6 +10,7 @@ import {
   type RuleAST,
 } from '@evidence-poc/evidence-schema';
 import {
+  MODEL_VERSION_ISSUE_CODE,
   serializeDomainModel,
   stringifyModelJson,
   parseModelSourceFiles,
@@ -151,11 +152,20 @@ export function parseModelBundleText(
       failure(
         'schemaVersion',
         `bundle schemaVersion must be '${FM_SCHEMA_VERSION}', found ${JSON.stringify(root.schemaVersion)}.`,
+        MODEL_VERSION_ISSUE_CODE,
       ),
     );
-  if (object(root.manifest))
+  if (object(root.manifest)) {
     document.manifest = root.manifest as unknown as DomainModelManifest;
-  else issues.push(failure('manifest', 'bundle requires a manifest object.'));
+    if (root.manifest.schemaVersion !== FM_SCHEMA_VERSION)
+      issues.push(
+        failure(
+          'manifest.schemaVersion',
+          `FM schemaVersion must be '${FM_SCHEMA_VERSION}', found ${JSON.stringify(root.manifest.schemaVersion)}.`,
+          MODEL_VERSION_ISSUE_CODE,
+        ),
+      );
+  } else issues.push(failure('manifest', 'bundle requires a manifest object.'));
   const collect = <T>(key: string, type: string): T[] => {
     const values = root[key];
     if (values === undefined) return [];

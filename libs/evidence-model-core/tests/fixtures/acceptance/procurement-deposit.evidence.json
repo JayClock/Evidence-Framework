@@ -1,9 +1,9 @@
 {
   "type": "fm_bundle",
-  "schemaVersion": "5.0",
+  "schemaVersion": "6.0",
   "manifest": {
     "type": "fm_model",
-    "schemaVersion": "5.0",
+    "schemaVersion": "6.0",
     "id": "procurement-evolution",
     "name": "Procurement with deposit payment",
     "version": "1.1.0",
@@ -29,6 +29,7 @@
         },
         {
           "name": "confirmed_at",
+          "timeRole": "occurrence",
           "label": "confirmed_at",
           "meaning": "confirmed_at",
           "valueType": "timestamp",
@@ -124,6 +125,7 @@
         },
         {
           "name": "signed_at",
+          "timeRole": "occurrence",
           "label": "signed_at",
           "meaning": "signed_at",
           "valueType": "timestamp",
@@ -191,6 +193,7 @@
         },
         {
           "name": "started_at",
+          "timeRole": "start",
           "label": "started_at",
           "meaning": "started_at",
           "valueType": "timestamp",
@@ -199,6 +202,7 @@
         },
         {
           "name": "expired_at",
+          "timeRole": "deadline",
           "label": "expired_at",
           "meaning": "expired_at",
           "valueType": "timestamp",
@@ -225,6 +229,7 @@
         },
         {
           "name": "started_at",
+          "timeRole": "start",
           "label": "started_at",
           "meaning": "started_at",
           "valueType": "timestamp",
@@ -233,6 +238,7 @@
         },
         {
           "name": "expired_at",
+          "timeRole": "deadline",
           "label": "expired_at",
           "meaning": "expired_at",
           "valueType": "timestamp",
@@ -291,6 +297,7 @@
         },
         {
           "name": "started_at",
+          "timeRole": "start",
           "label": "started_at",
           "meaning": "started_at",
           "valueType": "timestamp",
@@ -299,6 +306,7 @@
         },
         {
           "name": "expired_at",
+          "timeRole": "deadline",
           "label": "expired_at",
           "meaning": "expired_at",
           "valueType": "timestamp",
@@ -341,6 +349,7 @@
         },
         {
           "name": "started_at",
+          "timeRole": "start",
           "label": "started_at",
           "meaning": "started_at",
           "valueType": "timestamp",
@@ -349,6 +358,7 @@
         },
         {
           "name": "expired_at",
+          "timeRole": "deadline",
           "label": "expired_at",
           "meaning": "expired_at",
           "valueType": "timestamp",
@@ -408,6 +418,7 @@
         },
         {
           "name": "confirmed_at",
+          "timeRole": "occurrence",
           "label": "confirmed_at",
           "meaning": "confirmed_at",
           "valueType": "timestamp",

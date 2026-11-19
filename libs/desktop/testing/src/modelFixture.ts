@@ -1,19 +1,24 @@
 import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
 
-const timestamp = (name: string, label: string) => ({
+const timestamp = (
+  role: import('@evidence-poc/evidence-schema').TimeRole,
+  name: string,
+  label: string,
+) => ({
   name,
   label,
   meaning: `${label}由责任方登记。`,
   valueType: 'timestamp' as const,
   required: true,
   keyData: true,
+  timeRole: role,
 });
 
 /** Compact two-context model used by renderer tests. */
 export const createDesktopFixture = (): DomainModelDocument => ({
   manifest: {
     type: 'fm_model',
-    schemaVersion: '5.0',
+    schemaVersion: '6.0',
     id: 'desktop-fixture',
     name: '桌面端夹具（Desktop Fixture）',
     version: '1.0.0',
@@ -83,7 +88,7 @@ export const createDesktopFixture = (): DomainModelDocument => ({
       label: '采购协议（Procurement Contract）',
       contextRef: 'context.procurement',
       roleRefs: ['role.buyer', 'role.supplier'],
-      attributes: [timestamp('signed_at', '签署时间')],
+      attributes: [timestamp('occurrence', 'signed_at', '签署时间')],
     },
     {
       type: 'entity',
@@ -94,8 +99,8 @@ export const createDesktopFixture = (): DomainModelDocument => ({
       contextRef: 'context.procurement',
       responsibleRoleRef: 'role.supplier',
       attributes: [
-        timestamp('started_at', '开始时间'),
-        timestamp('expired_at', '截止时间'),
+        timestamp('start', 'started_at', '开始时间'),
+        timestamp('deadline', 'expired_at', '截止时间'),
       ],
     },
     {
@@ -106,7 +111,7 @@ export const createDesktopFixture = (): DomainModelDocument => ({
       label: '交付确认（Delivery Confirmation）',
       contextRef: 'context.procurement',
       responsibleRoleRef: 'role.buyer',
-      attributes: [timestamp('confirmed_at', '确认时间')],
+      attributes: [timestamp('occurrence', 'confirmed_at', '确认时间')],
     },
   ],
   relationships: [

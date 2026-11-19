@@ -70,6 +70,7 @@ export const evidenceIdPrefix = (kind: EvidenceKind): string => {
 };
 
 const timeAttribute = (
+  role: import('@evidence-poc/evidence-schema').TimeRole,
   name: string,
   label: string,
   meaning: string,
@@ -80,43 +81,85 @@ const timeAttribute = (
   valueType: 'timestamp',
   required: true,
   keyData: true,
+  timeRole: role,
 });
 
-/**
- * The business time every evidence kind must carry.
- *
- * A time span needs a start and a deadline, an instant needs the moment it
- * happened; the model refuses to store an evidence without them, so a reader
- * has to supply them rather than leave the field for later.
- */
+/** Default business-time fields when constructing evidence from a blueprint. */
 export const mandatoryTimeAttributes = (
   kind: EvidenceKind,
 ): readonly DraftAttribute[] => {
   switch (kind) {
     case 'rfp':
       return [
-        timeAttribute('started_at', '索取开始时间', '权利方发起索取的业务时间'),
-        timeAttribute('expired_at', '索取截止时间', '本次索取失效的业务时间'),
+        timeAttribute(
+          'start',
+          'started_at',
+          '索取开始时间',
+          '权利方发起索取的业务时间',
+        ),
+        timeAttribute(
+          'deadline',
+          'expired_at',
+          '索取截止时间',
+          '本次索取失效的业务时间',
+        ),
       ];
     case 'proposal':
       return [
-        timeAttribute('started_at', '提案开始时间', '义务方形成提案的业务时间'),
-        timeAttribute('expired_at', '提案有效期截止时间', '本次提案失效的业务时间'),
+        timeAttribute(
+          'start',
+          'started_at',
+          '提案开始时间',
+          '义务方形成提案的业务时间',
+        ),
+        timeAttribute(
+          'deadline',
+          'expired_at',
+          '提案有效期截止时间',
+          '本次提案失效的业务时间',
+        ),
       ];
     case 'contract':
-      return [timeAttribute('signed_at', '签署时间', '双方形成合约关系的业务时间')];
+      return [
+        timeAttribute(
+          'occurrence',
+          'signed_at',
+          '签署时间',
+          '双方形成合约关系的业务时间',
+        ),
+      ];
     case 'fulfillment_request':
       return [
-        timeAttribute('started_at', '履约请求时间', '权利方提出履约请求的业务时间'),
-        timeAttribute('expired_at', '履约截止时间', '义务方完成履约的业务截止时间'),
+        timeAttribute(
+          'start',
+          'started_at',
+          '履约请求时间',
+          '权利方提出履约请求的业务时间',
+        ),
+        timeAttribute(
+          'deadline',
+          'expired_at',
+          '履约截止时间',
+          '义务方完成履约的业务截止时间',
+        ),
       ];
     case 'fulfillment_confirmation':
       return [
-        timeAttribute('confirmed_at', '履约确认时间', '义务方形成履约结果的业务时间'),
+        timeAttribute(
+          'occurrence',
+          'confirmed_at',
+          '履约确认时间',
+          '义务方形成履约结果的业务时间',
+        ),
       ];
     case 'other_evidence':
       return [
-        timeAttribute('created_at', '凭证形成时间', '该凭证被开具或登记的业务时间'),
+        timeAttribute(
+          'occurrence',
+          'created_at',
+          '凭证形成时间',
+          '该凭证被开具或登记的业务时间',
+        ),
       ];
   }
 };

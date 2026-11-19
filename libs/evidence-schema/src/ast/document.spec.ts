@@ -28,7 +28,9 @@ describe('manifest guard', () => {
   });
 
   it('rejects a wrong schema version', () => {
-    expect(isDomainModelManifest({ ...valid, schemaVersion: '4.0' })).toBe(false);
+    expect(isDomainModelManifest({ ...valid, schemaVersion: '5.0' })).toBe(
+      false,
+    );
   });
 
   it('rejects a malformed id', () => {
@@ -70,8 +72,12 @@ describe('document shape guard', () => {
   });
 
   it('rejects a missing manifest', () => {
-    expect(isDomainModelDocumentShape({ entities: [], relationships: [], rules: [] })).toBe(
-      false,
-    );
+    expect(
+      isDomainModelDocumentShape({
+        entities: [],
+        relationships: [],
+        rules: [],
+      }),
+    ).toBe(false);
   });
 });

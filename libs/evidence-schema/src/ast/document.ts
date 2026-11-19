@@ -7,7 +7,7 @@ import { ContractSourceDocumentSchema } from './provenance.js';
 import { refineDomainModel } from './documentSemantics.js';
 
 /** FM schema version emitted by this package. */
-export const FM_SCHEMA_VERSION = '5.0' as const;
+export const FM_SCHEMA_VERSION = '6.0' as const;
 export const FM_RULE_LANGUAGE = 'CEL' as const;
 export const MODEL_BUNDLE_TYPE = 'fm_bundle' as const;
 

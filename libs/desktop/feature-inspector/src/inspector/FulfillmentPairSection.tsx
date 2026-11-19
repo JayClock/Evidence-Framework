@@ -9,6 +9,7 @@ import {
   bindBreachRuleMutator,
   pairFulfillmentMutator,
   updateRuleMutator,
+  timeoutExpressionFor,
   type DomainGraph,
   type ModelSession,
   type ModelRecipe,
@@ -22,9 +23,6 @@ interface FulfillmentPairSectionProps {
   graph: DomainGraph;
   session: ModelSession;
 }
-
-const DEFAULT_BREACH_EXPRESSION =
-  '!confirmations.exists(c, c.confirmed_at <= request.expired_at)';
 
 /**
  * Request-side fulfillment structure: completion condition, its result
@@ -336,7 +334,7 @@ const BreachForm = ({
     id: string;
     label: string;
     description: string;
-    bindings: Record<string, { ref: string }>;
+    bindings: RuleAST['bindings'];
     expression: string;
     resultType: 'bool';
   }) => void;
@@ -350,7 +348,21 @@ const BreachForm = ({
   const [description, setDescription] = useState(
     '请求有效期内没有任何交付确认形成时，判定为违约。',
   );
-  const [expression, setExpression] = useState(DEFAULT_BREACH_EXPRESSION);
+  const confirmations = graph.fulfillmentPair(request.id)?.confirmations ?? [];
+  const confirmation =
+    confirmations.length === 1 ? confirmations[0] : undefined;
+  const [expression, setExpression] = useState(() =>
+    confirmation === undefined
+      ? ''
+      : (timeoutExpressionFor(request, confirmation) ?? ''),
+  );
+  const bindings: RuleAST['bindings'] = {
+    request: { ref: request.id },
+    now: { type: 'timestamp' },
+    ...(confirmation === undefined
+      ? {}
+      : { confirmations: { ref: confirmation.id, cardinality: 'many' } }),
+  };
 
   return (
     <div className="mt-1 space-y-1">
@@ -375,12 +387,13 @@ const BreachForm = ({
       <div className="flex gap-1">
         <button
           type="button"
+          disabled={!expression.trim()}
           onClick={() =>
             onBind({
               id: ruleId,
               label: `${request.label}违约判断`,
               description,
-              bindings: { request: { ref: request.id } },
+              bindings,
               expression,
               resultType: 'bool',
             })

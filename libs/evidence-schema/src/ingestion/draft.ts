@@ -3,6 +3,7 @@ import type {
   DomainComponentRole,
   EvidenceKind,
   RoleKind,
+  TimeRole,
 } from '../ast/entity.js';
 import type { ValueType } from '../ast/values.js';
 import type {
@@ -87,6 +88,7 @@ export interface DraftAttribute {
   valueType?: ValueType;
   required?: boolean;
   keyData?: boolean;
+  timeRole?: TimeRole;
 }
 
 export interface DraftEvidence {

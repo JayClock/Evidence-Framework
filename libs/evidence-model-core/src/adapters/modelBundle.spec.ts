@@ -17,7 +17,7 @@ import {
 import { createProcurementModel } from '../testing/modelFixture.js';
 
 const bundleOf = (document: ReturnType<typeof createProcurementModel>) =>
-  ({ ...document, type: MODEL_BUNDLE_TYPE, schemaVersion: '5.0' }) as const;
+  ({ ...document, type: MODEL_BUNDLE_TYPE, schemaVersion: '6.0' }) as const;
 
 describe('isModelBundlePath', () => {
   it('recognises the single-file suffix only', () => {
@@ -35,7 +35,7 @@ describe('serializeModelBundle', () => {
     ) as Record<string, unknown>;
 
     expect(bundle['type']).toBe(MODEL_BUNDLE_TYPE);
-    expect(bundle['schemaVersion']).toBe('5.0');
+    expect(bundle['schemaVersion']).toBe('6.0');
     expect(Array.isArray(bundle['entities'])).toBe(true);
     expect(bundle['validation']).toBeUndefined();
     expect(bundle['readme']).toBeUndefined();

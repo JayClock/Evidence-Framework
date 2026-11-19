@@ -26,6 +26,7 @@ export {
   type ExampleRuleInputs,
 } from './cel/transientSandbox.js';
 
+export { timeoutExpressionFor } from './model/fulfillmentTime.js';
 export {
   createDomainGraph,
   type ClassifiedConfirmation,
@@ -97,6 +98,7 @@ export {
 
 export {
   MODEL_MANIFEST_PATH,
+  MODEL_VERSION_ISSUE_CODE,
   MODEL_NON_SOURCE_TREES,
   MODEL_SOURCE_TREES,
   modelSourcePaths,

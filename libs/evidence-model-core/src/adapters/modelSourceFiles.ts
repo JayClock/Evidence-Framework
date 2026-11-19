@@ -1,4 +1,6 @@
 import {
+  FM_SCHEMA_VERSION,
+  createEmptyDomainModel,
   type DomainModelDocument,
   type DomainModelManifest,
   type EntityAST,
@@ -8,6 +10,7 @@ import {
 } from '@evidence-poc/evidence-schema';
 
 export const MODEL_MANIFEST_PATH = 'model.json';
+export const MODEL_VERSION_ISSUE_CODE = 'model.schema-version';
 
 /** Trees that hold model sources and are therefore rewritten by the adapter. */
 export const MODEL_SOURCE_TREES = [
@@ -30,14 +33,6 @@ export interface ModelSourceIssue {
   message: string;
   code?: string;
 }
-
-/**
- * Code of the finding that reports a source tree holding no entity yet.
- *
- * A reader that tolerates a blank start (a freshly created project) filters on
- * this code instead of matching the message, so every other finding stays
- * fatal.
- */
 
 export interface ModelSourceParseResult {
   document: DomainModelDocument;
@@ -213,21 +208,6 @@ export function serializeDomainModel(
   return files;
 }
 
-const emptyDocument = (): DomainModelDocument => ({
-  manifest: {
-    type: 'fm_model',
-    schemaVersion: '5.0',
-    id: 'untitled',
-    name: 'Untitled model',
-    version: '0.1.0',
-    ruleLanguage: 'CEL',
-    entryContextRefs: [],
-  },
-  entities: [],
-  relationships: [],
-  rules: [],
-});
-
 /**
  * Parses a set of source files into a document.
  *
@@ -240,7 +220,7 @@ export function parseModelSourceFiles(
   options: ParseOptions = {},
 ): ModelSourceParseResult {
   const issues: ModelSourceIssue[] = [];
-  const document = emptyDocument();
+  const document = createEmptyDomainModel();
   let manifest: DomainModelManifest | undefined;
   const seenIds = new Map<string, string>();
 
@@ -317,6 +297,12 @@ export function parseModelSourceFiles(
     });
   } else {
     document.manifest = manifest;
+    if (manifest.schemaVersion !== FM_SCHEMA_VERSION)
+      issues.push({
+        path: MODEL_MANIFEST_PATH,
+        code: MODEL_VERSION_ISSUE_CODE,
+        message: `FM schemaVersion must be '${FM_SCHEMA_VERSION}', found ${JSON.stringify(manifest.schemaVersion)}.`,
+      });
   }
 
   if (options.validate === true) {

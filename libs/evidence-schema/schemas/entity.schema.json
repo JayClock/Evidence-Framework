@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://jayclock.dev/fm/v5/entity.schema.json",
+  "$id": "https://jayclock.dev/fm/v6/entity.schema.json",
   "title": "Business model entity",
   "type": "object",
   "required": ["type", "id", "category", "label"],
@@ -11,6 +11,7 @@
       "enum": ["evidence", "participant", "role", "context"]
     },
     "kind": { "type": "string", "minLength": 1 },
+    "stage": { "enum": ["rfp", "proposal", "contract", "fulfillment"] },
     "label": { "type": "string", "minLength": 1 },
     "aliases": {
       "type": "array",
@@ -92,31 +93,6 @@
               "fulfillment_confirmation",
               "other_evidence"
             ]
-          },
-          "attributes": {
-            "items": {
-              "if": {
-                "properties": {
-                  "name": {
-                    "enum": [
-                      "started_at",
-                      "expired_at",
-                      "signed_at",
-                      "confirmed_at",
-                      "created_at"
-                    ]
-                  }
-                },
-                "required": ["name"]
-              },
-              "then": {
-                "properties": {
-                  "valueType": { "const": "timestamp" },
-                  "required": { "const": true },
-                  "keyData": { "const": true }
-                }
-              }
-            }
           }
         }
       }
@@ -195,7 +171,9 @@
       },
       "then": {
         "properties": {
-          "examples": { "items": { "properties": { "test": false } } }
+          "stage": false,
+          "examples": { "items": { "properties": { "test": false } } },
+          "attributes": { "items": { "properties": { "timeRole": false } } }
         }
       }
     }
@@ -284,6 +262,15 @@
     "attribute": {
       "type": "object",
       "required": ["name", "label", "meaning"],
+      "if": { "required": ["timeRole"] },
+      "then": {
+        "required": ["valueType", "required", "keyData"],
+        "properties": {
+          "valueType": { "const": "timestamp" },
+          "required": { "const": true },
+          "keyData": { "const": true }
+        }
+      },
       "properties": {
         "name": {
           "type": "string",
@@ -310,6 +297,7 @@
             "dynamic"
           ]
         },
+        "timeRole": { "enum": ["start", "deadline", "occurrence"] },
         "required": { "type": "boolean" },
         "keyData": { "type": "boolean" },
         "meaning": { "type": "string", "minLength": 1 },

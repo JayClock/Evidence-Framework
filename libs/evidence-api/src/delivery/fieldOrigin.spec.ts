@@ -7,7 +7,7 @@ it('classifies fields without needing a projection or filesystem', () => {
   const graph = createDomainGraph({
     manifest: {
       type: 'fm_model',
-      schemaVersion: '5.0',
+      schemaVersion: '6.0',
       id: 'test',
       name: 'test',
       version: '1',
@@ -27,6 +27,18 @@ it('classifies fields without needing a projection or filesystem', () => {
   expect(fieldFor(field, graph, 'evidence.test').reason).toBe('caller');
   expect(
     fieldFor({ ...field, name: 'confirmed_at' }, graph, 'evidence.test').reason,
+  ).toBe('caller');
+  expect(
+    fieldFor(
+      {
+        ...field,
+        name: 'paid_at',
+        valueType: 'timestamp',
+        timeRole: 'occurrence',
+      },
+      graph,
+      'evidence.test',
+    ).reason,
   ).toBe('service-time');
   // A dangling derivation never accidentally becomes caller input.
   expect(

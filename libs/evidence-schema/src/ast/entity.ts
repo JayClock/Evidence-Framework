@@ -6,7 +6,6 @@ import { ProvenanceSnippetSchema } from './provenance.js';
 import { ValueTypeSchema } from './values.js';
 import {
   isVocabularyId,
-  vocabularyField,
   vocabularyIds,
   vocabularyLabels,
 } from '../vocabulary.js';
@@ -29,31 +28,25 @@ export const EntityCategorySchema = z.enum(
   ENTITY_CATEGORIES as unknown as [EntityCategory, ...EntityCategory[]],
 );
 
-export interface EvidenceKindDefinition {
-  readonly label: string;
-  readonly requiredTimeAttributes: readonly string[];
-}
+export const EvidenceStageSchema = z.enum([
+  'rfp',
+  'proposal',
+  'contract',
+  'fulfillment',
+]);
+export type EvidenceStage = z.infer<typeof EvidenceStageSchema>;
+
+export const TimeRoleSchema = z.enum(['start', 'deadline', 'occurrence']);
+export type TimeRole = z.infer<typeof TimeRoleSchema>;
 
 export const EVIDENCE_KIND_DEFINITIONS = {
-  rfp: { label: '询价', requiredTimeAttributes: ['started_at', 'expired_at'] },
-  proposal: {
-    label: '方案',
-    requiredTimeAttributes: ['started_at', 'expired_at'],
-  },
-  contract: { label: '合同', requiredTimeAttributes: ['signed_at'] },
-  fulfillment_request: {
-    label: '履约请求',
-    requiredTimeAttributes: ['started_at', 'expired_at'],
-  },
-  fulfillment_confirmation: {
-    label: '履约确认',
-    requiredTimeAttributes: ['confirmed_at'],
-  },
-  other_evidence: {
-    label: '其他凭证',
-    requiredTimeAttributes: ['created_at'],
-  },
-} as const satisfies Record<string, EvidenceKindDefinition>;
+  rfp: { label: '询价', stage: 'rfp' },
+  proposal: { label: '方案', stage: 'proposal' },
+  contract: { label: '合同', stage: 'contract' },
+  fulfillment_request: { label: '履约请求', stage: 'fulfillment' },
+  fulfillment_confirmation: { label: '履约确认', stage: 'fulfillment' },
+  other_evidence: { label: '其他凭证', stage: 'fulfillment' },
+} as const satisfies Record<string, { label: string; stage: EvidenceStage }>;
 
 export type EvidenceKind = keyof typeof EVIDENCE_KIND_DEFINITIONS;
 export const EVIDENCE_KINDS = vocabularyIds(EVIDENCE_KIND_DEFINITIONS);
@@ -61,11 +54,6 @@ export const EVIDENCE_KIND_LABELS = vocabularyLabels(EVIDENCE_KIND_DEFINITIONS);
 export const EvidenceKindSchema = z.enum(
   EVIDENCE_KINDS as unknown as [EvidenceKind, ...EvidenceKind[]],
 );
-
-export const REQUIRED_EVIDENCE_TIME_ATTRIBUTES: Record<
-  EvidenceKind,
-  readonly string[]
-> = vocabularyField(EVIDENCE_KIND_DEFINITIONS, 'requiredTimeAttributes');
 
 export const PARTICIPANT_KIND_DEFINITIONS = {
   party: { label: '参与方' },
@@ -129,27 +117,13 @@ export const ContextKindSchema = z.enum(
   CONTEXT_KINDS as unknown as [ContextKind, ...ContextKind[]],
 );
 
-export const EVIDENCE_TIME_ATTRIBUTE_DEFINITIONS = {
-  started_at: { label: '开始' },
-  expired_at: { label: '截止' },
-  signed_at: { label: '签署' },
-  confirmed_at: { label: '确认' },
-  created_at: { label: '创建' },
-} as const satisfies Record<string, { readonly label: string }>;
-
-export const EVIDENCE_TIME_ATTRIBUTE_NAMES = vocabularyIds(
-  EVIDENCE_TIME_ATTRIBUTE_DEFINITIONS,
-);
-export const EVIDENCE_TIME_ATTRIBUTE_LABELS = vocabularyLabels(
-  EVIDENCE_TIME_ATTRIBUTE_DEFINITIONS,
-);
-
 export const AttributeASTSchema = z
   .object({
     name: AttributeNameSchema,
     label: z.string().min(1),
     meaning: z.string().min(1),
     valueType: ValueTypeSchema.optional(),
+    timeRole: TimeRoleSchema.optional(),
     required: z.boolean().optional(),
     keyData: z.boolean().optional(),
     derivedByRuleRef: DomainIdSchema.optional(),
@@ -183,6 +157,7 @@ const EntityBaseSchema = z.object({
 export const EvidenceEntitySchema = EntityBaseSchema.extend({
   category: z.literal('evidence'),
   kind: EvidenceKindSchema,
+  stage: EvidenceStageSchema.optional(),
   contextRef: DomainIdSchema.optional(),
   responsibleRoleRef: DomainIdSchema.optional(),
   /** Explicit delegates for recording this confirmation; they do not own the obligation. */
@@ -226,6 +201,31 @@ export type ParticipantEntityAST = z.infer<typeof ParticipantEntitySchema>;
 export type RoleEntityAST = z.infer<typeof RoleEntitySchema>;
 export type ContextEntityAST = z.infer<typeof ContextEntitySchema>;
 export type EntityAST = z.infer<typeof EntityASTSchema>;
+
+export const evidenceStageOf = (entity: EvidenceEntityAST): EvidenceStage =>
+  entity.stage ?? EVIDENCE_KIND_DEFINITIONS[entity.kind].stage;
+
+export const timeAttributeOf = (
+  entity: Pick<EntityAST, 'attributes'>,
+  role: TimeRole,
+): AttributeAST | undefined =>
+  entity.attributes?.find((attribute) => attribute.timeRole === role);
+
+const windowRoles = ['start', 'deadline'] as const;
+const momentRoles = ['occurrence'] as const;
+
+export const evidenceTimeRolesOf = (
+  entity: EvidenceEntityAST,
+): readonly TimeRole[] => {
+  if (entity.kind === 'rfp' || entity.kind === 'fulfillment_request')
+    return windowRoles;
+  if (
+    entity.kind === 'proposal' &&
+    (timeAttributeOf(entity, 'start') || timeAttributeOf(entity, 'deadline'))
+  )
+    return windowRoles;
+  return momentRoles;
+};
 
 /** Composite `category.kind` signature used by graph and validation checks. */
 export type EntitySignature = `${EntityCategory}.${string}`;

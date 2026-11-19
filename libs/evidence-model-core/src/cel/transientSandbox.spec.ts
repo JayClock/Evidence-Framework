@@ -33,6 +33,7 @@ model.entities.push({
     },
     {
       name: 'expired_at',
+      timeRole: 'deadline',
       label: 'Deadline',
       meaning: 'Deadline',
       valueType: 'timestamp',

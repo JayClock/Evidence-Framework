@@ -7,6 +7,7 @@ import type {
 } from '@evidence-poc/evidence-schema';
 
 const timestamp = (
+  role: import('@evidence-poc/evidence-schema').TimeRole,
   name: string,
   label: string,
   meaning: string,
@@ -17,6 +18,7 @@ const timestamp = (
   valueType: 'timestamp',
   required: true,
   keyData: true,
+  timeRole: role,
 });
 
 const context = (
@@ -33,7 +35,11 @@ const context = (
   rootRefs,
 });
 
-const partyRole = (id: string, label: string, contextRef: string): EntityAST => ({
+const partyRole = (
+  id: string,
+  label: string,
+  contextRef: string,
+): EntityAST => ({
   type: 'entity',
   id,
   category: 'role',
@@ -72,7 +78,12 @@ export function createProcurementModel(): DomainModelDocument {
       contextRef: 'context.procurement',
       roleRefs: ['role.buyer', 'role.seller'],
       attributes: [
-        timestamp('signed_at', '签署时间', '双方签署采购协议的业务时间'),
+        timestamp(
+          'occurrence',
+          'signed_at',
+          '签署时间',
+          '双方签署采购协议的业务时间',
+        ),
         {
           name: 'quantity',
           label: '采购数量',
@@ -105,8 +116,18 @@ export function createProcurementModel(): DomainModelDocument {
       contextRef: 'context.procurement',
       responsibleRoleRef: 'role.seller',
       attributes: [
-        timestamp('started_at', '请求提出时间', '卖方提出付款请求的业务时间'),
-        timestamp('expired_at', '付款截止时间', '买方完成付款的业务截止时间'),
+        timestamp(
+          'start',
+          'started_at',
+          '请求提出时间',
+          '卖方提出付款请求的业务时间',
+        ),
+        timestamp(
+          'deadline',
+          'expired_at',
+          '付款截止时间',
+          '买方完成付款的业务截止时间',
+        ),
         {
           name: 'requested_minor_units',
           label: '请求金额',
@@ -126,7 +147,12 @@ export function createProcurementModel(): DomainModelDocument {
       contextRef: 'context.procurement',
       responsibleRoleRef: 'role.buyer',
       attributes: [
-        timestamp('confirmed_at', '确认时间', '买方形成付款确认结果的业务时间'),
+        timestamp(
+          'occurrence',
+          'confirmed_at',
+          '确认时间',
+          '买方形成付款确认结果的业务时间',
+        ),
         {
           name: 'paid_minor_units',
           label: '确认金额',
@@ -145,7 +171,14 @@ export function createProcurementModel(): DomainModelDocument {
       label: '银行回单',
       contextRef: 'context.procurement',
       responsibleRoleRef: 'role.buyer',
-      attributes: [timestamp('created_at', '回单形成时间', '银行回单形成的业务时间')],
+      attributes: [
+        timestamp(
+          'occurrence',
+          'created_at',
+          '回单形成时间',
+          '银行回单形成的业务时间',
+        ),
+      ],
     },
     context('context.catalogue', '商品目录上下文', 'domain', ['thing.product']),
     {
@@ -268,7 +301,7 @@ export function createProcurementModel(): DomainModelDocument {
   return {
     manifest: {
       type: 'fm_model',
-      schemaVersion: '5.0',
+      schemaVersion: '6.0',
       id: 'procurement-core',
       name: '采购履约核心模型',
       version: '1.0.0',

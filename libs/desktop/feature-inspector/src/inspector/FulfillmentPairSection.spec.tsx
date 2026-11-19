@@ -35,6 +35,7 @@ const createFixture = (): DomainModelDocument => {
         attributes: [
           {
             name: 'confirmed_at',
+            timeRole: 'occurrence',
             label: '确认时间（Confirmed At）',
             meaning: '复验通过时登记。',
             valueType: 'timestamp',
@@ -54,6 +55,7 @@ const createFixture = (): DomainModelDocument => {
         attributes: [
           {
             name: 'created_at',
+            timeRole: 'occurrence',
             label: '形成时间（Created At）',
             meaning: '承运方开具。',
             valueType: 'timestamp',

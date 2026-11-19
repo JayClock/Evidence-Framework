@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  EVIDENCE_TIME_ATTRIBUTE_NAMES,
-  REQUIRED_EVIDENCE_TIME_ATTRIBUTES,
+  evidenceTimeRolesOf,
+  evidenceStageOf,
+  timeAttributeOf,
   createEmptyDomainModel,
   entitySignature,
   findAttribute,
@@ -41,7 +42,9 @@ const contract: EvidenceEntityAST = {
   label: '采购合同',
   contextRef: contractContext.id,
   roleRefs: ['role.buyer', 'role.seller'],
-  attributes: [{ name: 'signed_at', label: '签署时间', meaning: '双方签署的业务时间' }],
+  attributes: [
+    { name: 'signed_at', label: '签署时间', meaning: '双方签署的业务时间' },
+  ],
 };
 
 const paymentRequest: EvidenceEntityAST = {
@@ -94,20 +97,26 @@ describe('entity signatures', () => {
   it('builds category.kind signatures', () => {
     expect(entitySignature(contractContext)).toBe('context.contract');
     expect(entitySignature(contract)).toBe('evidence.contract');
-    expect(entitySignature(paymentRequest)).toBe('evidence.fulfillment_request');
+    expect(entitySignature(paymentRequest)).toBe(
+      'evidence.fulfillment_request',
+    );
     expect(entitySignature(buyerRole)).toBe('role.party');
   });
 
   it('recognises every category guard', () => {
     expect(isContextEntity(contractContext)).toBe(true);
     expect(isContractContext(contractContext)).toBe(true);
-    expect(isContractContext({ ...contractContext, kind: 'domain' })).toBe(false);
+    expect(isContractContext({ ...contractContext, kind: 'domain' })).toBe(
+      false,
+    );
     expect(isEvidenceEntity(contract)).toBe(true);
     expect(isContractEntity(contract)).toBe(true);
     expect(isContractEntity(paymentRequest)).toBe(false);
     expect(isFulfillmentRequest(paymentRequest)).toBe(true);
     expect(isFulfillmentConfirmation(paymentRequest)).toBe(false);
-    expect(isEvidenceMoment({ ...paymentRequest, kind: 'other_evidence' })).toBe(true);
+    expect(
+      isEvidenceMoment({ ...paymentRequest, kind: 'other_evidence' }),
+    ).toBe(true);
     expect(isEvidenceMoment(paymentRequest)).toBe(false);
     expect(isRoleEntity(buyerRole)).toBe(true);
     expect(isPartyRole(buyerRole)).toBe(true);
@@ -149,26 +158,37 @@ describe('attribute helpers', () => {
   });
 });
 
-describe('required evidence time attributes', () => {
-  it('names a mandatory business time for every evidence kind', () => {
-    expect(REQUIRED_EVIDENCE_TIME_ATTRIBUTES).toEqual({
-      rfp: ['started_at', 'expired_at'],
-      proposal: ['started_at', 'expired_at'],
-      contract: ['signed_at'],
-      fulfillment_request: ['started_at', 'expired_at'],
-      fulfillment_confirmation: ['confirmed_at'],
-      other_evidence: ['created_at'],
-    });
+describe('business time semantics', () => {
+  it('uses semantic roles rather than names to find time fields', () => {
+    const confirmation = {
+      ...contract,
+      kind: 'fulfillment_confirmation' as const,
+      attributes: [
+        {
+          name: 'paid_at',
+          label: '支付时刻',
+          meaning: '收到付款',
+          timeRole: 'occurrence' as const,
+        },
+      ],
+    };
+    expect(timeAttributeOf(confirmation, 'occurrence')?.name).toBe('paid_at');
+    expect(timeAttributeOf(contract, 'occurrence')).toBeUndefined();
+    expect(evidenceTimeRolesOf(confirmation)).toEqual(['occurrence']);
+    expect(
+      evidenceTimeRolesOf({ ...confirmation, kind: 'fulfillment_request' }),
+    ).toEqual(['start', 'deadline']);
   });
 
-  it('keeps the recognised time attribute names in sync', () => {
-    const declared = new Set(
-      Object.values(REQUIRED_EVIDENCE_TIME_ATTRIBUTES).flat(),
-    );
-
-    for (const name of declared) {
-      expect(EVIDENCE_TIME_ATTRIBUTE_NAMES).toContain(name);
-    }
+  it('places canonical and supporting evidence by business stage', () => {
+    expect(evidenceStageOf(contract)).toBe('contract');
+    expect(
+      evidenceStageOf({
+        ...contract,
+        kind: 'other_evidence',
+        stage: 'proposal',
+      }),
+    ).toBe('proposal');
   });
 });
 
@@ -180,7 +200,7 @@ describe('empty document factory', () => {
     first.entities.push(contract);
 
     expect(second.entities).toEqual([]);
-    expect(first.manifest.schemaVersion).toBe('5.0');
+    expect(first.manifest.schemaVersion).toBe('6.0');
   });
 
   it('accepts manifest overrides', () => {

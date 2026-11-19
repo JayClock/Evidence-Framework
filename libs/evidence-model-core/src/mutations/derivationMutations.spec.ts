@@ -155,6 +155,7 @@ describe('assertMandatoryTime', () => {
         attributes: [
           {
             name: 'confirmed_at',
+            timeRole: 'occurrence',
             label: '确认时间',
             meaning: '买方形成确认的业务时间',
             valueType: 'timestamp',
@@ -182,6 +183,7 @@ describe('assertMandatoryTime', () => {
           attributes: [
             {
               name: 'started_at',
+              timeRole: 'start',
               label: '请求时间',
               meaning: '卖方提出请求的时间',
               valueType: 'timestamp',

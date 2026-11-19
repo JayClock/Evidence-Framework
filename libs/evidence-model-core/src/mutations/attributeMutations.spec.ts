@@ -15,7 +15,7 @@ import { ModelMutationError } from './errors.js';
 const baseDocument = (): DomainModelDocument => ({
   manifest: {
     type: 'fm_model',
-    schemaVersion: '5.0',
+    schemaVersion: '6.0',
     id: 'attribute-commands',
     name: '属性命令夹具（Attribute Commands Fixture）',
     version: '1.0.0',
@@ -42,6 +42,7 @@ const baseDocument = (): DomainModelDocument => ({
       attributes: [
         {
           name: 'signed_at',
+          timeRole: 'occurrence',
           label: '签署时间（Signed At）',
           meaning: '双方签署时登记。',
           valueType: 'timestamp',

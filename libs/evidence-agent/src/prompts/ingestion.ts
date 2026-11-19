@@ -53,7 +53,7 @@ export const INGESTION_PROMPT = `# 把业务叙述读成履约草稿
 }
 \`\`\`
 
-时间属性是必填项：\`rfp\`、\`proposal\`、\`fulfillment_request\` 需要 \`started_at\` 与 \`expired_at\`；\`contract\` 需要 \`signed_at\`；\`fulfillment_confirmation\` 需要 \`confirmed_at\`；\`other_evidence\` 需要 \`created_at\`。`;
+业务时标可按事实命名。时间窗口使用 \`timeRole: start\` 与 \`timeRole: deadline\`；合同、确认或瞬时凭证使用 \`timeRole: occurrence\`。给已明确的时标标注必填关键 timestamp，不猜测缺失时标。`;
 
 /**
  * Two readings that pin the prompt to the lecture's own cases.

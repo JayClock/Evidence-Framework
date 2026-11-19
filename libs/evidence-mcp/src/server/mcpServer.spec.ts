@@ -24,7 +24,7 @@ const client = (): EvidenceMcpAppClient => ({
     document: {
       manifest: {
         type: 'fm_model' as const,
-        schemaVersion: '5.0' as const,
+        schemaVersion: '6.0' as const,
         id: 'product-procurement',
         name: '商品采购（Product Procurement）',
         version: '1.0.0',

@@ -14,6 +14,7 @@ const fixture = (): { -readonly [K in keyof WhatIfInput]: WhatIfInput[K] } => {
     .find(({ id }) => id === 'request.payment')!
     .attributes!.push({
       name: 'expired_at',
+      timeRole: 'deadline',
       label: '付款期限',
       meaning: '约定的最迟付款时间',
       valueType: 'timestamp',
@@ -28,6 +29,7 @@ const fixture = (): { -readonly [K in keyof WhatIfInput]: WhatIfInput[K] } => {
     attributes: [
       {
         name: 'confirmed_at',
+        timeRole: 'occurrence',
         label: '付款时间',
         meaning: '实际支付时间',
         valueType: 'timestamp',

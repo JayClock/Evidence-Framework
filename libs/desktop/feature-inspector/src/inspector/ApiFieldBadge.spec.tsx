@@ -46,12 +46,17 @@ it('refreshes input, derived and service-time labels using the same classifier a
   );
   rerender(
     <ApiFieldBadge
-      attribute={{ ...attribute, name: 'signed_at' }}
+      attribute={{
+        ...attribute,
+        name: 'accepted_at',
+        valueType: 'timestamp',
+        timeRole: 'occurrence',
+      }}
       entityRef={entityRef}
       graph={graph}
     />,
   );
   expect(
-    screen.getByLabelText('signed_at API 字段：Service Timestamp'),
+    screen.getByLabelText('accepted_at API 字段：Service Timestamp'),
   ).toBeInTheDocument();
 });

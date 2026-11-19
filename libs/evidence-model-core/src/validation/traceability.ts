@@ -54,7 +54,7 @@ export interface TraceabilityConstraint {
 }
 
 export interface TraceabilityDocument {
-  schemaVersion: '5.0';
+  schemaVersion: '6.0';
   modelId: unknown;
   nodes: readonly TraceabilityNode[];
   edges: readonly TraceabilityEdge[];
@@ -428,7 +428,7 @@ export const analyzeTraceability = (
 
   return {
     document: {
-      schemaVersion: '5.0',
+      schemaVersion: '6.0',
       modelId: model.manifest.id,
       nodes: [...nodes].sort((left, right) =>
         left.path.localeCompare(right.path),

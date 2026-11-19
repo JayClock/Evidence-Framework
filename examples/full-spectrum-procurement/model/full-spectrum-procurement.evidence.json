@@ -1,9 +1,9 @@
 {
   "type": "fm_bundle",
-  "schemaVersion": "5.0",
+  "schemaVersion": "6.0",
   "manifest": {
     "type": "fm_model",
-    "schemaVersion": "5.0",
+    "schemaVersion": "6.0",
     "id": "full-spectrum-procurement",
     "name": "工业智能制造装备跨境采购与托管清结算全生命周期履约模型",
     "version": "1.0.0",
@@ -288,6 +288,7 @@
         },
         {
           "name": "started_at",
+          "timeRole": "start",
           "label": "招标启动时间",
           "meaning": "全球招标平台公开发布标书的起始时刻",
           "valueType": "timestamp",
@@ -296,6 +297,7 @@
         },
         {
           "name": "expired_at",
+          "timeRole": "deadline",
           "label": "截标时间",
           "meaning": "供应商提交密封投标文件的最晚截止时刻",
           "valueType": "timestamp",
@@ -376,6 +378,7 @@
         },
         {
           "name": "started_at",
+          "timeRole": "start",
           "label": "报价承诺生效时间",
           "meaning": "投标文件提交并锁定承诺的起始时刻",
           "valueType": "timestamp",
@@ -384,6 +387,7 @@
         },
         {
           "name": "expired_at",
+          "timeRole": "deadline",
           "label": "报价有效截止日",
           "meaning": "该投标文件报价承诺具有约束力的最终时刻",
           "valueType": "timestamp",
@@ -481,6 +485,7 @@
         },
         {
           "name": "signed_at",
+          "timeRole": "occurrence",
           "label": "契约签署生效时刻",
           "meaning": "双方加盖电子印章正式生效时刻",
           "valueType": "timestamp",
@@ -558,6 +563,7 @@
         },
         {
           "name": "signed_at",
+          "timeRole": "occurrence",
           "label": "托管协议签署时刻",
           "meaning": "托管银行完成账户开立并签署监管协议生效时刻",
           "valueType": "timestamp",
@@ -638,6 +644,7 @@
         },
         {
           "name": "started_at",
+          "timeRole": "start",
           "label": "催付开放时间",
           "meaning": "预付款支付通知书送达买方的时限起始时刻",
           "valueType": "timestamp",
@@ -646,6 +653,7 @@
         },
         {
           "name": "expired_at",
+          "timeRole": "deadline",
           "label": "支付最迟截止时间",
           "meaning": "买方必须完成首期电汇的最迟时限",
           "valueType": "timestamp",
@@ -714,6 +722,7 @@
         },
         {
           "name": "confirmed_at",
+          "timeRole": "occurrence",
           "label": "电汇入账确认时刻",
           "meaning": "银行系统清算入账并生成回执时刻",
           "valueType": "timestamp",
@@ -785,6 +794,7 @@
         },
         {
           "name": "started_at",
+          "timeRole": "start",
           "label": "提货窗口起始时间",
           "meaning": "承运商进入工厂集港提货作业最早时间",
           "valueType": "timestamp",
@@ -793,6 +803,7 @@
         },
         {
           "name": "expired_at",
+          "timeRole": "deadline",
           "label": "交货合同最后时限",
           "meaning": "合同约定的不可延误之最终交货到港截止时刻",
           "valueType": "timestamp",
@@ -860,6 +871,7 @@
         },
         {
           "name": "confirmed_at",
+          "timeRole": "occurrence",
           "label": "码头卸货签收时刻",
           "meaning": "多式联运大副提单收据签发时刻",
           "valueType": "timestamp",
@@ -920,6 +932,7 @@
         },
         {
           "name": "started_at",
+          "timeRole": "start",
           "label": "索赔主张发起时间",
           "meaning": "买方正式递交违约追偿通知书时刻",
           "valueType": "timestamp",
@@ -928,6 +941,7 @@
         },
         {
           "name": "expired_at",
+          "timeRole": "deadline",
           "label": "清偿宽限期截止时间",
           "meaning": "卖方支付或签署划拨确认的最后救济期限",
           "valueType": "timestamp",
@@ -973,6 +987,7 @@
         },
         {
           "name": "confirmed_at",
+          "timeRole": "occurrence",
           "label": "违约清结确认时刻",
           "meaning": "双方在违约结清协议上双签盖章确认时刻",
           "valueType": "timestamp",
@@ -1041,6 +1056,7 @@
         },
         {
           "name": "created_at",
+          "timeRole": "occurrence",
           "label": "证书颁发盖章时刻",
           "meaning": "检测实验室签发防伪报告的电子签章时刻",
           "valueType": "timestamp",
@@ -1105,6 +1121,7 @@
         },
         {
           "name": "started_at",
+          "timeRole": "start",
           "label": "放款窗口开始",
           "meaning": "买方提交验收凭证后放款窗口的起点",
           "valueType": "timestamp",
@@ -1113,6 +1130,7 @@
         },
         {
           "name": "expired_at",
+          "timeRole": "deadline",
           "label": "放款窗口截止",
           "meaning": "托管银行应完成尾款清算的最后时限",
           "valueType": "timestamp",
@@ -1168,6 +1186,7 @@
         },
         {
           "name": "confirmed_at",
+          "timeRole": "occurrence",
           "label": "放款确认时刻",
           "meaning": "银行完成最终划拨并生成回执的时刻",
           "valueType": "timestamp",
@@ -1187,6 +1206,7 @@
       "attributes": [
         {
           "name": "started_at",
+          "timeRole": "start",
           "label": "冻结申请开始",
           "meaning": "收到不合格证书后申请冻结托管资金的时刻",
           "valueType": "timestamp",
@@ -1195,6 +1215,7 @@
         },
         {
           "name": "expired_at",
+          "timeRole": "deadline",
           "label": "仲裁受理期限",
           "meaning": "独立托管代理应受理冻结请求的截止时刻",
           "valueType": "timestamp",
@@ -1241,6 +1262,7 @@
         },
         {
           "name": "confirmed_at",
+          "timeRole": "occurrence",
           "label": "冻结受理时刻",
           "meaning": "托管行正式确认冻结并出具仲裁受理凭据的时刻",
           "valueType": "timestamp",

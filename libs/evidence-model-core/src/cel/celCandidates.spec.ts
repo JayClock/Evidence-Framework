@@ -13,7 +13,7 @@ import {
 const document = (): DomainModelDocument => ({
   manifest: {
     type: 'fm_model',
-    schemaVersion: '5.0',
+    schemaVersion: '6.0',
     id: 'cel-candidates',
     name: 'CEL 候选夹具（CEL Candidates Fixture）',
     version: '1.0.0',

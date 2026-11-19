@@ -9,6 +9,7 @@
   "attributes": [
     {
       "name": "signed_at",
+      "timeRole": "occurrence",
       "label": "协议签署时间",
       "valueType": "timestamp",
       "required": true,

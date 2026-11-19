@@ -17,6 +17,7 @@
     },
     {
       "name": "confirmed_at",
+      "timeRole": "occurrence",
       "label": "确认时间",
       "valueType": "timestamp",
       "required": true,

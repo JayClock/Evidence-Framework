@@ -46,7 +46,7 @@ Evidence 不仅是一个桌面设计器，更是贯穿**业务意图澄清 ➔ �
 │                              端到端 AI Coding 研发工作流                                │
 │                                                                                        │
 │  [阶段 1: 业务意图]    [阶段 2: 履约建模]    [阶段 3: 架构师门禁]    [阶段 4: 契约向下投影]    [阶段 5: AI 驱动编码]     [阶段 6: HTTP 验收]  │
-│    需求澄清访谈  ──>    FM v5 形式化模型 ──>   桌面图谱与故事  ──>   OpenAPI + Bruno  ──>   多语言 TDD 实现  ──>   运行时黑盒验证   │
+│    需求澄清访谈  ──>    FM v6 形式化模型 ──>   桌面图谱与故事  ──>   OpenAPI + Bruno  ──>   多语言 TDD 实现  ──>   运行时黑盒验证   │
 │   (AI Copilot)        (AST + CEL 守护)      (Human Gate)         (Evidence Export)      (Red-Green 循环)       (Bruno + oasdiff)│
 │                                                                                        │
 │   ── 宏观由 Evidence 门禁锁死安全边界与验收用例；微观由 AI Coding 自由探索具体语言实现 ──      │

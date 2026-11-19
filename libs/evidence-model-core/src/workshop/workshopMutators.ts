@@ -22,13 +22,19 @@ const nextId = (model: DomainModelDocument, prefix: string): string => {
   while (ids.has(`${prefix}.${i}`)) i++;
   return `${prefix}.${i}`;
 };
-const time = (name: string, label: string, meaning = label): AttributeAST => ({
+const time = (
+  role: import('@evidence-poc/evidence-schema').TimeRole,
+  name: string,
+  label: string,
+  meaning = label,
+): AttributeAST => ({
   name,
   label,
   meaning,
   valueType: 'timestamp',
   required: true,
   keyData: true,
+  timeRole: role,
 });
 
 /** Invoke inside session.mutate: Context, two roles and root are one undo unit. */
@@ -69,7 +75,7 @@ export const anchorWorkshopContract = (
     label,
     contextRef,
     roleRefs,
-    attributes: [time('signed_at', '签署时间')],
+    attributes: [time('occurrence', 'signed_at', '签署时间')],
   });
   draft.manifest.entryContextRefs.push(contextRef);
   return { contextRef, contractRef: id };
@@ -101,8 +107,8 @@ export const addWorkshopFulfillment = (
       label,
       responsibleRoleRef: input.claimantRef,
       attributes: [
-        time('started_at', '请求提出时间'),
-        time('expired_at', '截止时间', deadlineBasis),
+        time('start', 'started_at', '请求提出时间'),
+        time('deadline', 'expired_at', '截止时间', deadlineBasis),
       ],
       notes: `截止依据：${deadlineBasis}；如可由已建模输入计算，请继续绑定派生规则。`,
     },
@@ -110,7 +116,7 @@ export const addWorkshopFulfillment = (
       id: confirmationId,
       label: confirmationLabel,
       responsibleRoleRef: input.obligorRef,
-      attributes: [time('confirmed_at', '履约确认时间')],
+      attributes: [time('occurrence', 'confirmed_at', '履约确认时间')],
     },
     contractReferenceId: nextId(draft, 'relation.workshop-contract'),
   });

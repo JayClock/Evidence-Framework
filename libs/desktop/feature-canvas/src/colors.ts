@@ -2,7 +2,7 @@ import type { EntityAST } from '@evidence-poc/evidence-schema';
 import {
   CONTEXT_KIND_LABELS,
   EVIDENCE_KIND_LABELS,
-  EVIDENCE_TIME_ATTRIBUTE_LABELS,
+  timeAttributeOf,
   PARTICIPANT_KIND_LABELS,
   ROLE_KIND_LABELS,
 } from '@evidence-poc/evidence-schema';
@@ -73,18 +73,6 @@ export const entityRadius = (entity: EntityAST): number =>
     : CATEGORY_TOKENS[entity.category].radius;
 
 /**
- * Short form of a recognised business-time attribute name.
- *
- * Used only as a fallback when a project modeled the attribute without a label.
- * The modeled label wins, because a workshop board has to say what the model
- * says; a long label is truncated by the card and revealed on hover.
- */
-const timeShortLabel = (name: string): string =>
-  EVIDENCE_TIME_ATTRIBUTE_LABELS[
-    name as keyof typeof EVIDENCE_TIME_ATTRIBUTE_LABELS
-  ] ?? name;
-
-/**
  * The business time a card shows, in reading order.
  *
  * A window joins its two ends with an arrow (`开始 → 截止`) so the card states a
@@ -99,21 +87,12 @@ export const formatBusinessTimeWindow = (
     return null;
   }
 
-  return names.map((name) => labelOf(name) ?? timeShortLabel(name)).join(' → ');
+  return names.map((name) => labelOf(name) ?? name).join(' → ');
 };
 
 /** How a node states its relationship to the clock. */
 export type NodeShape = 'interval' | 'moment' | 'capability' | 'card';
 
-/**
- * Shape of one card: a period, an instant, or neither.
- *
- * RFP, Proposal and Fulfillment Request all require both `started_at` and
- * `expired_at`, so they are the same shape — a window. Contract and Fulfillment
- * Confirmation require one timestamp, so they are stamps. `other_evidence` needs
- * only `created_at` and carries no claim about obligations, so it stays a plain
- * note.
- */
 export const entityShape = (entity: EntityAST): NodeShape => {
   if (entity.category !== 'evidence') {
     return entity.category === 'participant' && entity.domainRole
@@ -122,8 +101,9 @@ export const entityShape = (entity: EntityAST): NodeShape => {
   }
 
   switch (entity.kind) {
-    case 'rfp':
     case 'proposal':
+      return timeAttributeOf(entity, 'occurrence') ? 'moment' : 'interval';
+    case 'rfp':
     case 'fulfillment_request':
       return 'interval';
     case 'contract':

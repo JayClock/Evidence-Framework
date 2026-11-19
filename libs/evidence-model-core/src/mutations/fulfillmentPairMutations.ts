@@ -6,13 +6,11 @@ import {
   isFulfillmentConfirmation,
   isFulfillmentRequest,
 } from '@evidence-poc/evidence-schema';
+import { completionExpressionFor } from '../model/fulfillmentTime.js';
 
 import { fail, requireContractContext, requireEntity } from './guards.js';
 import { createRelationshipMutator } from './relationshipMutations.js';
 import { createRuleMutator } from './ruleMutations.js';
-const DEFAULT_COMPLETION_EXPRESSION =
-  'confirmations.exists(c, c.confirmed_at >= request.started_at && c.confirmed_at <= request.expired_at)';
-
 export interface PairFulfillmentInput {
   /** Request whose result side is being paired. */
   requestRef: string;
@@ -119,6 +117,13 @@ export const pairFulfillmentMutator = (
 
   const reference =
     existingReference(draft, request.id, confirmation.id) ?? null;
+  const expression =
+    input.expression ?? completionExpressionFor(request, confirmation);
+  if (expression === undefined)
+    fail(
+      'attribute.time.missing',
+      'A default completion rule needs the request window and confirmation time.',
+    );
   const rule: RuleAST = {
     type: 'rule',
     id: input.ruleId ?? `rule.${request.id}-completed`,
@@ -132,7 +137,7 @@ export const pairFulfillmentMutator = (
       request: { ref: request.id },
       confirmations: { ref: confirmation.id, cardinality: 'many' },
     },
-    expression: input.expression ?? DEFAULT_COMPLETION_EXPRESSION,
+    expression,
     resultType: 'bool',
   };
   const createdReference: RelationshipAST = {

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-/** Value types accepted by FM v5 attributes, CEL rule results and bindings. */
+/** Value types accepted by FM v6 attributes, CEL rule results and bindings. */
 export const VALUE_TYPES = [
   'bool',
   'int',

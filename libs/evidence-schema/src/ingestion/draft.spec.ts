@@ -85,6 +85,7 @@ describe('entity provenance', () => {
         attributes: [
           {
             name: 'signed_at',
+            timeRole: 'occurrence',
             label: '签署时间',
             meaning: '双方签署协议的业务时间',
             valueType: 'timestamp',

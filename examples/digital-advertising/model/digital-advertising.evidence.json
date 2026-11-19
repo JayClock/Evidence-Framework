@@ -1,9 +1,9 @@
 {
   "type": "fm_bundle",
-  "schemaVersion": "5.0",
+  "schemaVersion": "6.0",
   "manifest": {
     "type": "fm_model",
-    "schemaVersion": "5.0",
+    "schemaVersion": "6.0",
     "id": "digital-advertising",
     "name": "数字广告投放",
     "version": "1.0.0",
@@ -67,6 +67,7 @@
         },
         {
           "name": "signed_at",
+          "timeRole": "occurrence",
           "label": "签署时刻",
           "valueType": "timestamp",
           "required": true,
@@ -162,6 +163,7 @@
         },
         {
           "name": "started_at",
+          "timeRole": "start",
           "label": "开启时刻",
           "valueType": "timestamp",
           "required": true,
@@ -170,6 +172,7 @@
         },
         {
           "name": "expired_at",
+          "timeRole": "deadline",
           "label": "截止时刻",
           "valueType": "timestamp",
           "required": true,
@@ -228,6 +231,7 @@
         },
         {
           "name": "started_at",
+          "timeRole": "start",
           "label": "开启时刻",
           "valueType": "timestamp",
           "required": true,
@@ -236,6 +240,7 @@
         },
         {
           "name": "expired_at",
+          "timeRole": "deadline",
           "label": "截止时刻",
           "valueType": "timestamp",
           "required": true,
@@ -295,6 +300,7 @@
         },
         {
           "name": "started_at",
+          "timeRole": "start",
           "label": "开启时刻",
           "valueType": "timestamp",
           "required": true,
@@ -303,6 +309,7 @@
         },
         {
           "name": "expired_at",
+          "timeRole": "deadline",
           "label": "截止时刻",
           "valueType": "timestamp",
           "required": true,
@@ -360,6 +367,7 @@
         },
         {
           "name": "confirmed_at",
+          "timeRole": "occurrence",
           "label": "形成时刻",
           "valueType": "timestamp",
           "required": true,
@@ -434,6 +442,7 @@
         },
         {
           "name": "started_at",
+          "timeRole": "start",
           "label": "开启时刻",
           "valueType": "timestamp",
           "required": true,
@@ -442,6 +451,7 @@
         },
         {
           "name": "expired_at",
+          "timeRole": "deadline",
           "label": "截止时刻",
           "valueType": "timestamp",
           "required": true,
@@ -493,6 +503,7 @@
         },
         {
           "name": "confirmed_at",
+          "timeRole": "occurrence",
           "label": "形成时刻",
           "valueType": "timestamp",
           "required": true,
@@ -542,6 +553,7 @@
         },
         {
           "name": "started_at",
+          "timeRole": "start",
           "label": "开启时刻",
           "valueType": "timestamp",
           "required": true,
@@ -550,6 +562,7 @@
         },
         {
           "name": "expired_at",
+          "timeRole": "deadline",
           "label": "截止时刻",
           "valueType": "timestamp",
           "required": true,
@@ -606,6 +619,7 @@
         },
         {
           "name": "confirmed_at",
+          "timeRole": "occurrence",
           "label": "形成时刻",
           "valueType": "timestamp",
           "required": true,

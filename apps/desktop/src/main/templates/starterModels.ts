@@ -27,6 +27,7 @@ export interface StarterContext {
 export const STARTER_MODEL_VERSION = '0.1.0';
 
 const timeAttribute = (
+  role: import('@evidence-poc/evidence-schema').TimeRole,
   name: string,
   label: string,
   meaning: string,
@@ -37,6 +38,7 @@ const timeAttribute = (
   valueType: 'timestamp',
   required: true,
   keyData: true,
+  timeRole: role,
 });
 
 const keyAttribute = (
@@ -207,7 +209,12 @@ const sourcingContext = (
   parentContextRef: string,
   rfpRef: string,
 ): ContextEntityAST =>
-  preContractContext('context.sourcing', '询报价上下文', [rfpRef], parentContextRef);
+  preContractContext(
+    'context.sourcing',
+    '询报价上下文',
+    [rfpRef],
+    parentContextRef,
+  );
 
 const sourcingEntities = (): EntityAST[] => [
   {
@@ -219,8 +226,18 @@ const sourcingEntities = (): EntityAST[] => [
     contextRef: 'context.sourcing',
     responsibleRoleRef: 'role.buyer',
     attributes: [
-      timeAttribute('started_at', '询价开始时间', '买方发出询价单的业务时间'),
-      timeAttribute('expired_at', '报价截止时间', '本次询价接收报价的业务截止时间'),
+      timeAttribute(
+        'start',
+        'started_at',
+        '询价开始时间',
+        '买方发出询价单的业务时间',
+      ),
+      timeAttribute(
+        'deadline',
+        'expired_at',
+        '报价截止时间',
+        '本次询价接收报价的业务截止时间',
+      ),
       keyAttribute('quantity', '询价数量', '本次希望采购的商品数量', 'int'),
     ],
   },
@@ -233,8 +250,18 @@ const sourcingEntities = (): EntityAST[] => [
     contextRef: 'context.sourcing',
     responsibleRoleRef: 'role.seller',
     attributes: [
-      timeAttribute('started_at', '报价开始时间', '卖方形成报价的业务时间'),
-      timeAttribute('expired_at', '报价有效期截止时间', '本次报价失效的业务时间'),
+      timeAttribute(
+        'start',
+        'started_at',
+        '报价开始时间',
+        '卖方形成报价的业务时间',
+      ),
+      timeAttribute(
+        'deadline',
+        'expired_at',
+        '报价有效期截止时间',
+        '本次报价失效的业务时间',
+      ),
       keyAttribute(
         'quoted_minor_units',
         '报价金额',
@@ -248,7 +275,7 @@ const sourcingEntities = (): EntityAST[] => [
 const procurementTemplate = (context: StarterContext): DomainModelDocument => ({
   manifest: {
     type: 'fm_model',
-    schemaVersion: '5.0',
+    schemaVersion: '6.0',
     id: context.modelId,
     name: context.name,
     version: STARTER_MODEL_VERSION,
@@ -274,7 +301,12 @@ const procurementTemplate = (context: StarterContext): DomainModelDocument => ({
       contextRef: 'context.procurement',
       roleRefs: ['role.buyer', 'role.seller'],
       attributes: [
-        timeAttribute('signed_at', '协议签署时间', '买卖双方形成采购协议的业务时间'),
+        timeAttribute(
+          'occurrence',
+          'signed_at',
+          '协议签署时间',
+          '买卖双方形成采购协议的业务时间',
+        ),
         keyAttribute('quantity', '采购数量', '协议约定的采购数量', 'int'),
         keyAttribute(
           'total_minor_units',
@@ -297,8 +329,18 @@ const procurementTemplate = (context: StarterContext): DomainModelDocument => ({
       'context.procurement',
       'role.seller',
       [
-        timeAttribute('started_at', '支付申请时间', '卖方提出支付申请的业务时间'),
-        timeAttribute('expired_at', '支付截止时间', '买方完成支付的业务截止时间'),
+        timeAttribute(
+          'start',
+          'started_at',
+          '支付申请时间',
+          '卖方提出支付申请的业务时间',
+        ),
+        timeAttribute(
+          'deadline',
+          'expired_at',
+          '支付截止时间',
+          '买方完成支付的业务截止时间',
+        ),
         keyAttribute(
           'requested_minor_units',
           '申请支付金额',
@@ -314,7 +356,12 @@ const procurementTemplate = (context: StarterContext): DomainModelDocument => ({
       'context.procurement',
       'role.buyer',
       [
-        timeAttribute('confirmed_at', '支付确认时间', '买方形成支付结果的业务时间'),
+        timeAttribute(
+          'occurrence',
+          'confirmed_at',
+          '支付确认时间',
+          '买方形成支付结果的业务时间',
+        ),
         keyAttribute(
           'paid_minor_units',
           '确认支付金额',
@@ -330,9 +377,24 @@ const procurementTemplate = (context: StarterContext): DomainModelDocument => ({
       'context.procurement',
       'role.buyer',
       [
-        timeAttribute('started_at', '发货申请时间', '买方提出发货要求的业务时间'),
-        timeAttribute('expired_at', '发货截止时间', '卖方完成发货的业务截止时间'),
-        keyAttribute('delivery_address', '收货地址', '本次发货的收货地址', 'string'),
+        timeAttribute(
+          'start',
+          'started_at',
+          '发货申请时间',
+          '买方提出发货要求的业务时间',
+        ),
+        timeAttribute(
+          'deadline',
+          'expired_at',
+          '发货截止时间',
+          '卖方完成发货的业务截止时间',
+        ),
+        keyAttribute(
+          'delivery_address',
+          '收货地址',
+          '本次发货的收货地址',
+          'string',
+        ),
       ],
     ),
     evidence(
@@ -342,7 +404,12 @@ const procurementTemplate = (context: StarterContext): DomainModelDocument => ({
       'context.procurement',
       'role.seller',
       [
-        timeAttribute('confirmed_at', '发货确认时间', '卖方形成发货结果的业务时间'),
+        timeAttribute(
+          'occurrence',
+          'confirmed_at',
+          '发货确认时间',
+          '卖方形成发货结果的业务时间',
+        ),
         keyAttribute('carrier', '承运方', '承担本次运输的承运方名称', 'string'),
       ],
     ),
@@ -352,7 +419,14 @@ const procurementTemplate = (context: StarterContext): DomainModelDocument => ({
       '发货单',
       'context.procurement',
       'role.seller',
-      [timeAttribute('created_at', '发货单形成时间', '承运方开出运输单据的业务时间')],
+      [
+        timeAttribute(
+          'occurrence',
+          'created_at',
+          '发货单形成时间',
+          '承运方开出运输单据的业务时间',
+        ),
+      ],
     ),
     evidence(
       'request.invoice',
@@ -361,9 +435,24 @@ const procurementTemplate = (context: StarterContext): DomainModelDocument => ({
       'context.procurement',
       'role.buyer',
       [
-        timeAttribute('started_at', '开票申请时间', '买方提出开票申请的业务时间'),
-        timeAttribute('expired_at', '开票截止时间', '卖方开出票据的业务截止时间'),
-        keyAttribute('tax_number', '纳税人识别号', '买方用于开票的纳税人识别号', 'string'),
+        timeAttribute(
+          'start',
+          'started_at',
+          '开票申请时间',
+          '买方提出开票申请的业务时间',
+        ),
+        timeAttribute(
+          'deadline',
+          'expired_at',
+          '开票截止时间',
+          '卖方开出票据的业务截止时间',
+        ),
+        keyAttribute(
+          'tax_number',
+          '纳税人识别号',
+          '买方用于开票的纳税人识别号',
+          'string',
+        ),
       ],
     ),
     evidence(
@@ -373,8 +462,18 @@ const procurementTemplate = (context: StarterContext): DomainModelDocument => ({
       'context.procurement',
       'role.seller',
       [
-        timeAttribute('confirmed_at', '开票确认时间', '卖方开出票据的业务时间'),
-        keyAttribute('invoice_number', '票据号码', '开出的票据业务号码', 'string'),
+        timeAttribute(
+          'occurrence',
+          'confirmed_at',
+          '开票确认时间',
+          '卖方开出票据的业务时间',
+        ),
+        keyAttribute(
+          'invoice_number',
+          '票据号码',
+          '开出的票据业务号码',
+          'string',
+        ),
       ],
     ),
     evidence(
@@ -383,7 +482,14 @@ const procurementTemplate = (context: StarterContext): DomainModelDocument => ({
       '发票',
       'context.procurement',
       'role.seller',
-      [timeAttribute('created_at', '发票形成时间', '票据交付买方的业务时间')],
+      [
+        timeAttribute(
+          'occurrence',
+          'created_at',
+          '发票形成时间',
+          '票据交付买方的业务时间',
+        ),
+      ],
     ),
     domainContext('context.catalog', '商品目录上下文', ['thing.product']),
     {
@@ -394,7 +500,12 @@ const procurementTemplate = (context: StarterContext): DomainModelDocument => ({
       label: '商品',
       contextRef: 'context.catalog',
       attributes: [
-        keyAttribute('product_code', '商品编码', '商品目录中区分商品的编码', 'string'),
+        keyAttribute(
+          'product_code',
+          '商品编码',
+          '商品目录中区分商品的编码',
+          'string',
+        ),
         keyAttribute('name', '商品名称', '商品的业务名称', 'string'),
       ],
     },
@@ -520,10 +631,12 @@ const procurementTemplate = (context: StarterContext): DomainModelDocument => ({
   ],
 });
 
-const subscriptionTemplate = (context: StarterContext): DomainModelDocument => ({
+const subscriptionTemplate = (
+  context: StarterContext,
+): DomainModelDocument => ({
   manifest: {
     type: 'fm_model',
-    schemaVersion: '5.0',
+    schemaVersion: '6.0',
     id: context.modelId,
     name: context.name,
     version: STARTER_MODEL_VERSION,
@@ -549,8 +662,18 @@ const subscriptionTemplate = (context: StarterContext): DomainModelDocument => (
       contextRef: 'context.subscription',
       roleRefs: ['role.reader', 'role.publisher'],
       attributes: [
-        timeAttribute('signed_at', '订阅签署时间', '读者与内容方形成订阅合同的业务时间'),
-        keyAttribute('term_days', '订阅期天数', '合同约定的内容访问期限', 'int'),
+        timeAttribute(
+          'occurrence',
+          'signed_at',
+          '订阅签署时间',
+          '读者与内容方形成订阅合同的业务时间',
+        ),
+        keyAttribute(
+          'term_days',
+          '订阅期天数',
+          '合同约定的内容访问期限',
+          'int',
+        ),
         keyAttribute(
           'price_minor_units',
           '订阅价格',
@@ -570,8 +693,18 @@ const subscriptionTemplate = (context: StarterContext): DomainModelDocument => (
       'context.subscription',
       'role.publisher',
       [
-        timeAttribute('started_at', '付款申请时间', '内容方提出付款要求的业务时间'),
-        timeAttribute('expired_at', '付款截止时间', '读者完成付款的业务截止时间'),
+        timeAttribute(
+          'start',
+          'started_at',
+          '付款申请时间',
+          '内容方提出付款要求的业务时间',
+        ),
+        timeAttribute(
+          'deadline',
+          'expired_at',
+          '付款截止时间',
+          '读者完成付款的业务截止时间',
+        ),
         keyAttribute(
           'requested_minor_units',
           '申请支付金额',
@@ -587,7 +720,12 @@ const subscriptionTemplate = (context: StarterContext): DomainModelDocument => (
       'context.subscription',
       'role.reader',
       [
-        timeAttribute('confirmed_at', '付款确认时间', '读者形成付款结果的业务时间'),
+        timeAttribute(
+          'occurrence',
+          'confirmed_at',
+          '付款确认时间',
+          '读者形成付款结果的业务时间',
+        ),
         keyAttribute(
           'paid_minor_units',
           '确认支付金额',
@@ -603,8 +741,18 @@ const subscriptionTemplate = (context: StarterContext): DomainModelDocument => (
       'context.subscription',
       'role.reader',
       [
-        timeAttribute('started_at', '访问申请时间', '读者发起付费内容访问的业务时间'),
-        timeAttribute('expired_at', '访问截止时间', '内容方放行付费内容的业务截止时间'),
+        timeAttribute(
+          'start',
+          'started_at',
+          '访问申请时间',
+          '读者发起付费内容访问的业务时间',
+        ),
+        timeAttribute(
+          'deadline',
+          'expired_at',
+          '访问截止时间',
+          '内容方放行付费内容的业务截止时间',
+        ),
       ],
     ),
     evidence(
@@ -613,7 +761,14 @@ const subscriptionTemplate = (context: StarterContext): DomainModelDocument => (
       '付费内容放行确认',
       'context.subscription',
       'role.publisher',
-      [timeAttribute('confirmed_at', '放行确认时间', '内容方放行付费内容的业务时间')],
+      [
+        timeAttribute(
+          'occurrence',
+          'confirmed_at',
+          '放行确认时间',
+          '内容方放行付费内容的业务时间',
+        ),
+      ],
     ),
     evidence(
       'request.discontinue-refund',
@@ -622,8 +777,18 @@ const subscriptionTemplate = (context: StarterContext): DomainModelDocument => (
       'context.subscription',
       'role.reader',
       [
-        timeAttribute('started_at', '退款申请时间', '读者因断更提出退款的业务时间'),
-        timeAttribute('expired_at', '退款截止时间', '内容方完成退款的业务截止时间'),
+        timeAttribute(
+          'start',
+          'started_at',
+          '退款申请时间',
+          '读者因断更提出退款的业务时间',
+        ),
+        timeAttribute(
+          'deadline',
+          'expired_at',
+          '退款截止时间',
+          '内容方完成退款的业务截止时间',
+        ),
         keyAttribute(
           'refund_minor_units',
           '申请退款金额',
@@ -639,7 +804,12 @@ const subscriptionTemplate = (context: StarterContext): DomainModelDocument => (
       'context.subscription',
       'role.publisher',
       [
-        timeAttribute('confirmed_at', '退款完成时间', '内容方完成退款的业务时间'),
+        timeAttribute(
+          'occurrence',
+          'confirmed_at',
+          '退款完成时间',
+          '内容方完成退款的业务时间',
+        ),
         keyAttribute(
           'refunded_minor_units',
           '实际退款金额',
@@ -660,7 +830,12 @@ const subscriptionTemplate = (context: StarterContext): DomainModelDocument => (
       contextRef: 'context.payment-support',
       roleRefs: ['role.payer', 'role.payment-provider'],
       attributes: [
-        timeAttribute('signed_at', '协议签署时间', '用户开通移动支付服务的业务时间'),
+        timeAttribute(
+          'occurrence',
+          'signed_at',
+          '协议签署时间',
+          '用户开通移动支付服务的业务时间',
+        ),
       ],
     },
     partyRole('role.payer', '付款用户', 'context.payment-support'),
@@ -673,8 +848,18 @@ const subscriptionTemplate = (context: StarterContext): DomainModelDocument => (
       'context.payment-support',
       'role.payment-provider',
       [
-        timeAttribute('started_at', '扣款申请时间', '支付服务商发起扣款的业务时间'),
-        timeAttribute('expired_at', '扣款截止时间', '扣款结果返回的业务截止时间'),
+        timeAttribute(
+          'start',
+          'started_at',
+          '扣款申请时间',
+          '支付服务商发起扣款的业务时间',
+        ),
+        timeAttribute(
+          'deadline',
+          'expired_at',
+          '扣款截止时间',
+          '扣款结果返回的业务截止时间',
+        ),
         keyAttribute(
           'charge_minor_units',
           '扣款金额',
@@ -690,7 +875,12 @@ const subscriptionTemplate = (context: StarterContext): DomainModelDocument => (
       'context.payment-support',
       'role.payer',
       [
-        timeAttribute('confirmed_at', '扣款确认时间', '支付渠道返回扣款结果的业务时间'),
+        timeAttribute(
+          'occurrence',
+          'confirmed_at',
+          '扣款确认时间',
+          '支付渠道返回扣款结果的业务时间',
+        ),
         keyAttribute(
           'charged_minor_units',
           '扣款成功金额',
@@ -708,7 +898,12 @@ const subscriptionTemplate = (context: StarterContext): DomainModelDocument => (
       label: '专栏',
       contextRef: 'context.course-catalog',
       attributes: [
-        keyAttribute('column_code', '专栏编码', '专栏目录中区分专栏的编码', 'string'),
+        keyAttribute(
+          'column_code',
+          '专栏编码',
+          '专栏目录中区分专栏的编码',
+          'string',
+        ),
         keyAttribute('title', '专栏标题', '专栏的业务标题', 'string'),
       ],
     },
@@ -847,7 +1042,7 @@ const serviceBlueprintTemplate = (
 ): DomainModelDocument => ({
   manifest: {
     type: 'fm_model',
-    schemaVersion: '5.0',
+    schemaVersion: '6.0',
     id: context.modelId,
     name: context.name,
     version: STARTER_MODEL_VERSION,
@@ -873,7 +1068,12 @@ const serviceBlueprintTemplate = (
       contextRef: 'context.engagement',
       roleRefs: ['role.client', 'role.provider'],
       attributes: [
-        timeAttribute('signed_at', '合同签署时间', '客户与服务方形成合同的业务时间'),
+        timeAttribute(
+          'occurrence',
+          'signed_at',
+          '合同签署时间',
+          '客户与服务方形成合同的业务时间',
+        ),
         keyAttribute('scope', '服务范围', '合同约定的服务范围', 'string'),
         keyAttribute(
           'fee_minor_units',
@@ -902,8 +1102,18 @@ const serviceBlueprintTemplate = (
       contextRef: 'context.sourcing',
       responsibleRoleRef: 'role.client',
       attributes: [
-        timeAttribute('started_at', '征询开始时间', '客户发出方案征询的业务时间'),
-        timeAttribute('expired_at', '方案提交截止时间', '服务方提交方案的业务截止时间'),
+        timeAttribute(
+          'start',
+          'started_at',
+          '征询开始时间',
+          '客户发出方案征询的业务时间',
+        ),
+        timeAttribute(
+          'deadline',
+          'expired_at',
+          '方案提交截止时间',
+          '服务方提交方案的业务截止时间',
+        ),
       ],
     },
     {
@@ -915,8 +1125,18 @@ const serviceBlueprintTemplate = (
       contextRef: 'context.sourcing',
       responsibleRoleRef: 'role.provider',
       attributes: [
-        timeAttribute('started_at', '方案形成时间', '服务方形成方案的业务时间'),
-        timeAttribute('expired_at', '方案有效期截止时间', '方案失效的业务时间'),
+        timeAttribute(
+          'start',
+          'started_at',
+          '方案形成时间',
+          '服务方形成方案的业务时间',
+        ),
+        timeAttribute(
+          'deadline',
+          'expired_at',
+          '方案有效期截止时间',
+          '方案失效的业务时间',
+        ),
       ],
     },
     evidence(
@@ -926,8 +1146,18 @@ const serviceBlueprintTemplate = (
       'context.engagement',
       'role.client',
       [
-        timeAttribute('started_at', '交付申请时间', '客户要求开始交付的业务时间'),
-        timeAttribute('expired_at', '交付截止时间', '服务方完成交付的业务截止时间'),
+        timeAttribute(
+          'start',
+          'started_at',
+          '交付申请时间',
+          '客户要求开始交付的业务时间',
+        ),
+        timeAttribute(
+          'deadline',
+          'expired_at',
+          '交付截止时间',
+          '服务方完成交付的业务截止时间',
+        ),
       ],
     ),
     evidence(
@@ -937,8 +1167,18 @@ const serviceBlueprintTemplate = (
       'context.engagement',
       'role.provider',
       [
-        timeAttribute('confirmed_at', '验收确认时间', '服务方形成交付结果的业务时间'),
-        keyAttribute('acceptance_result', '验收结论', '本次交付的验收结论', 'string'),
+        timeAttribute(
+          'occurrence',
+          'confirmed_at',
+          '验收确认时间',
+          '服务方形成交付结果的业务时间',
+        ),
+        keyAttribute(
+          'acceptance_result',
+          '验收结论',
+          '本次交付的验收结论',
+          'string',
+        ),
       ],
     ),
     evidence(
@@ -947,7 +1187,14 @@ const serviceBlueprintTemplate = (
       '验收单',
       'context.engagement',
       'role.provider',
-      [timeAttribute('created_at', '验收单形成时间', '客户签署验收单的业务时间')],
+      [
+        timeAttribute(
+          'occurrence',
+          'created_at',
+          '验收单形成时间',
+          '客户签署验收单的业务时间',
+        ),
+      ],
     ),
     domainContext('context.service-catalog', '服务目录上下文', [
       'thing.service',
@@ -960,7 +1207,12 @@ const serviceBlueprintTemplate = (
       label: '服务项',
       contextRef: 'context.service-catalog',
       attributes: [
-        keyAttribute('service_code', '服务编码', '服务目录中区分服务的编码', 'string'),
+        keyAttribute(
+          'service_code',
+          '服务编码',
+          '服务目录中区分服务的编码',
+          'string',
+        ),
         keyAttribute('title', '服务名称', '服务的业务名称', 'string'),
       ],
     },
@@ -1039,7 +1291,8 @@ const blankTemplate = (context: StarterContext): DomainModelDocument =>
     id: context.modelId,
     name: context.name,
     version: STARTER_MODEL_VERSION,
-    description: '空白起点：先确定合同上下文的当事双方，再从主要履约项开始补齐凭证。',
+    description:
+      '空白起点：先确定合同上下文的当事双方，再从主要履约项开始补齐凭证。',
   });
 
 interface TemplateDefinition {

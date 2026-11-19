@@ -1,6 +1,7 @@
 import { breachFlowGaps } from './breachFlow.js';
 import {
-  REQUIRED_EVIDENCE_TIME_ATTRIBUTES,
+  evidenceTimeRolesOf,
+  timeAttributeOf,
   type DomainModelDocument,
   type EntityAST,
   entitySignature,
@@ -340,18 +341,10 @@ export const completenessIssues = (
       } else if (entity.responsibleRoleRef === undefined) {
         issues.push(`${entity.id}: ${entity.kind} requires responsibleRoleRef`);
       }
-      const attributes = new Map(
-        (entity.attributes ?? []).map(
-          (attribute) => [attribute.name, attribute] as const,
-        ),
-      );
-
-      for (const name of REQUIRED_EVIDENCE_TIME_ATTRIBUTES[entity.kind] ?? []) {
-        const attribute = attributes.get(name);
-
-        if (attribute === undefined) {
+      for (const role of evidenceTimeRolesOf(entity)) {
+        if (timeAttributeOf(entity, role) === undefined) {
           issues.push(
-            `${entity.id}: ${entity.kind} requires explicit time attribute '${name}'`,
+            `${entity.id}: ${entity.kind} requires business time role '${role}'`,
           );
         }
       }

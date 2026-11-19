@@ -236,7 +236,7 @@ describe('inspectSummary', () => {
     const { index } = await loadFm(fmRoot, await checkReportOf(fmRoot));
     const summary = inspectSummary(index as NonNullable<typeof index>);
 
-    expect(summary.schemaVersion).toBe('5.0');
+    expect(summary.schemaVersion).toBe('6.0');
     expect(summary.contexts).toEqual([
       'context.product-catalog',
       'context.product-procurement',

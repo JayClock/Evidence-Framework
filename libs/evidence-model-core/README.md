@@ -20,7 +20,7 @@ canvas and inspector consume, and the only sanctioned way to change it.
 // <model>.evidence.json
 {
   "type": "fm_bundle",
-  "schemaVersion": "5.0",
+  "schemaVersion": "6.0",
   "manifest": { /* model.json */ },
   "entities": [],
   "relationships": [],

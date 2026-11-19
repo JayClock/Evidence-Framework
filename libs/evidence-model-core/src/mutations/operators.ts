@@ -16,6 +16,7 @@ export type {
   DomainCalculatorIntent,
 } from '@evidence-poc/evidence-schema';
 
+import { timeoutExpressionFor } from '../model/fulfillmentTime.js';
 import type { CreateFulfillmentPairInput } from './fulfillmentMutations.js';
 import { createFulfillmentPairMutator } from './fulfillmentMutations.js';
 import {
@@ -32,6 +33,7 @@ export interface OperatorResult {
 }
 
 const timestamp = (
+  role: import('@evidence-poc/evidence-schema').TimeRole,
   name: string,
   label: string,
   meaning: string,
@@ -42,10 +44,12 @@ const timestamp = (
   valueType: 'timestamp',
   required: true,
   keyData: true,
+  timeRole: role,
 });
 
 const startedAt = (window: string | undefined): AttributeAST =>
   timestamp(
+    'start',
     'started_at',
     '发起时间',
     window === undefined
@@ -55,6 +59,7 @@ const startedAt = (window: string | undefined): AttributeAST =>
 
 const expiredAt = (window: string | undefined): AttributeAST =>
   timestamp(
+    'deadline',
     'expired_at',
     '履约截止时间',
     window === undefined
@@ -63,13 +68,24 @@ const expiredAt = (window: string | undefined): AttributeAST =>
   );
 
 const confirmedAt = (label: string): AttributeAST =>
-  timestamp('confirmed_at', '确认时间', `${label}形成时的业务时间。`);
+  timestamp(
+    'occurrence',
+    'confirmed_at',
+    '确认时间',
+    `${label}形成时的业务时间。`,
+  );
 
 const createdAt = (label: string): AttributeAST =>
-  timestamp('created_at', '形成时间', `${label}形成时的业务时间。`);
+  timestamp(
+    'occurrence',
+    'created_at',
+    '形成时间',
+    `${label}形成时的业务时间。`,
+  );
 
 const signedAt = (meaning: string | undefined): AttributeAST =>
   timestamp(
+    'occurrence',
     'signed_at',
     '签署时间',
     meaning ?? '当事双方签订该协议的业务时间。',
@@ -209,6 +225,16 @@ export const addBreachCompensationMutator = (
   if (breaching.contextRef === undefined) {
     throw new Error('请先确定原履约请求所属的合同上下文。');
   }
+  const confirmation = document.entities.find(
+    ({ id }) => id === intent.confirmationRef,
+  );
+  const expression =
+    confirmation?.category === 'evidence' &&
+    confirmation.kind === 'fulfillment_confirmation'
+      ? timeoutExpressionFor(breaching, confirmation)
+      : undefined;
+  if (expression === undefined)
+    throw new Error('请先确定原履约截止时间和确认时刻。');
   bindBreachRuleMutator(document, {
     requestRef: intent.requestRef,
     rule: {
@@ -226,7 +252,7 @@ export const addBreachCompensationMutator = (
       // A window that closed with no confirmation inside it: the request
       // is breached, and the compensation below is what the model offers
       // instead of an implicit retry.
-      expression: `now > request.expired_at && !confirmations.exists(c, c.confirmed_at <= request.expired_at)`,
+      expression,
       resultType: 'bool',
     },
   });

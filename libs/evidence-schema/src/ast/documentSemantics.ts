@@ -1,7 +1,9 @@
 import type { RefinementCtx } from 'zod';
 
 import {
-  EVIDENCE_TIME_ATTRIBUTE_NAMES,
+  EVIDENCE_KIND_DEFINITIONS,
+  evidenceTimeRolesOf,
+  type TimeRole,
   type ContextEntityAST,
   type EntityAST,
   type EvidenceEntityAST,
@@ -116,6 +118,7 @@ const validateAttributes = (
   ctx: RefinementCtx,
 ): void => {
   const seen = new Set<string>();
+  const timeRoles = new Set<TimeRole>();
   for (const [attributeIndex, attribute] of (
     entity.attributes ?? []
   ).entries()) {
@@ -131,21 +134,34 @@ const validateAttributes = (
     }
     seen.add(attribute.name);
 
-    if (
-      (EVIDENCE_TIME_ATTRIBUTE_NAMES as readonly string[]).includes(
-        attribute.name,
-      ) &&
-      (attribute.valueType !== 'timestamp' ||
+    if (attribute.timeRole !== undefined) {
+      if (
+        entity.category !== 'evidence' ||
+        !evidenceTimeRolesOf(entity).includes(attribute.timeRole) ||
+        timeRoles.has(attribute.timeRole)
+      ) {
+        addIssue(
+          ctx,
+          'attribute.shape',
+          [...path, 'timeRole'],
+          'Business time roles must be unique and match the Evidence time shape.',
+          entity.id,
+        );
+      }
+      timeRoles.add(attribute.timeRole);
+      if (
+        attribute.valueType !== 'timestamp' ||
         attribute.required !== true ||
-        attribute.keyData !== true)
-    ) {
-      addIssue(
-        ctx,
-        'attribute.time.notKeyTimestamp',
-        path,
-        `attribute '${attribute.name}' must be a required keyData timestamp.`,
-        entity.id,
-      );
+        attribute.keyData !== true
+      ) {
+        addIssue(
+          ctx,
+          'attribute.time.notKeyTimestamp',
+          path,
+          `attribute '${attribute.name}' must be a required keyData timestamp.`,
+          entity.id,
+        );
+      }
     }
 
     if (
@@ -362,6 +378,20 @@ const validateEntities = (
   for (const [position, entity] of document.entities.entries()) {
     validateExamples(entity, position, ctx);
     validateAttributes(entity, position, index, ctx);
+    if (
+      entity.category === 'evidence' &&
+      entity.kind !== 'other_evidence' &&
+      entity.stage !== undefined &&
+      entity.stage !== EVIDENCE_KIND_DEFINITIONS[entity.kind].stage
+    ) {
+      addIssue(
+        ctx,
+        'entity.shape',
+        ['entities', position, 'stage'],
+        'Evidence stage must match its kind.',
+        entity.id,
+      );
+    }
 
     if (entity.category === 'context') {
       validateContextEntity(entity, position, index, ctx);

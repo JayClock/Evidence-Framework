@@ -9,6 +9,7 @@
   "attributes": [
     {
       "name": "created_at",
+      "timeRole": "occurrence",
       "label": "发票形成时间",
       "valueType": "timestamp",
       "required": true,

@@ -14,7 +14,7 @@ import {
 const document = (): DomainModelDocument => ({
   manifest: {
     type: 'fm_model',
-    schemaVersion: '5.0',
+    schemaVersion: '6.0',
     id: 'fulfillment-pair',
     name: '履约配对夹具（Fulfillment Pair Fixture）',
     version: '1.0.0',
@@ -58,6 +58,7 @@ const document = (): DomainModelDocument => ({
       attributes: [
         {
           name: 'started_at',
+          timeRole: 'start',
           label: '开始时间（Started At）',
           meaning: '请求方登记。',
           valueType: 'timestamp',
@@ -66,6 +67,7 @@ const document = (): DomainModelDocument => ({
         },
         {
           name: 'expired_at',
+          timeRole: 'deadline',
           label: '截止时间（Expired At）',
           meaning: '合同约定。',
           valueType: 'timestamp',
@@ -85,6 +87,7 @@ const document = (): DomainModelDocument => ({
       attributes: [
         {
           name: 'confirmed_at',
+          timeRole: 'occurrence',
           label: '确认时间（Confirmed At）',
           meaning: '签署确认时登记。',
           valueType: 'timestamp',
@@ -104,6 +107,7 @@ const document = (): DomainModelDocument => ({
       attributes: [
         {
           name: 'confirmed_at',
+          timeRole: 'occurrence',
           label: '确认时间（Confirmed At）',
           meaning: '签署确认时登记。',
           valueType: 'timestamp',
@@ -123,6 +127,7 @@ const document = (): DomainModelDocument => ({
       attributes: [
         {
           name: 'created_at',
+          timeRole: 'occurrence',
           label: '形成时间（Created At）',
           meaning: '承运方开具。',
           valueType: 'timestamp',
@@ -182,6 +187,28 @@ describe('pairFulfillmentMutator', () => {
 
     expect(restored.rules).toHaveLength(0);
     expect(restored.relationships).toHaveLength(0);
+  });
+
+  it('builds the completion rule from the declared time roles', () => {
+    const model = document();
+    const rename: Record<string, string> = {
+      started_at: 'requested_on',
+      expired_at: 'due_by',
+      confirmed_at: 'accepted_on',
+    };
+    for (const entity of model.entities) {
+      for (const attr of entity.attributes ?? [])
+        attr.name = rename[attr.name] ?? attr.name;
+    }
+    const { result } = runMutation(model, (draft) =>
+      pairFulfillmentMutator(draft, {
+        requestRef: 'evidence.request',
+        confirmationRef: 'evidence.confirmation',
+      }),
+    );
+    expect(result.rule.expression).toBe(
+      'confirmations.exists(c, c.accepted_on >= request.requested_on && c.accepted_on <= request.due_by)',
+    );
   });
 
   it('reuses an existing reference instead of duplicating it', () => {

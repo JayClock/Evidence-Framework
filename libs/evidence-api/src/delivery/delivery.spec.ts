@@ -130,7 +130,7 @@ describe('buildDeliveryDeployment', () => {
 const openEndedModel = (): DomainModelDocument => ({
   manifest: {
     type: 'fm_model',
-    schemaVersion: '5.0',
+    schemaVersion: '6.0',
     id: 'open-ended',
     name: '未闭合模型',
     version: '1.0.0',
@@ -157,6 +157,7 @@ const openEndedModel = (): DomainModelDocument => ({
       attributes: [
         {
           name: 'signed_at',
+          timeRole: 'occurrence',
           label: '签署时间',
           meaning: '签约时刻。',
           valueType: 'timestamp',
@@ -208,6 +209,7 @@ const openEndedModel = (): DomainModelDocument => ({
       attributes: [
         {
           name: 'started_at',
+          timeRole: 'start',
           label: '发起时间',
           meaning: '权利方发起时刻。',
           valueType: 'timestamp',
@@ -215,6 +217,7 @@ const openEndedModel = (): DomainModelDocument => ({
         },
         {
           name: 'expired_at',
+          timeRole: 'deadline',
           label: '截止时间',
           meaning: '履约窗口终点。',
           valueType: 'timestamp',
