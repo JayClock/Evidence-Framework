@@ -1,9 +1,10 @@
 import { useMemo } from 'react';
 
-import { Command as CommandIcon } from 'lucide-react';
+import { Search } from 'lucide-react';
 
 import type { DomainGraph } from '@evidence-poc/evidence-model-core';
 import type { ModelSelection } from '@evidence-poc/evidence-model-core';
+import { ENTITY_CATEGORY_LABELS } from '@evidence-poc/evidence-schema';
 import {
   Button,
   KbdChord,
@@ -59,49 +60,63 @@ export const TopHeader = ({
 
     return {
       trail: path.map((context) => context.label),
-      name: entity.label,
+      name: `${entity.label} (${ENTITY_CATEGORY_LABELS[entity.category]})`,
     };
   }, [graph, selection.nodeId]);
 
   return (
-    <header className="evidence-drag-region col-span-2 flex h-12 shrink-0 items-center justify-between border-b border-evidence-line bg-white/85 pr-4 pl-[var(--evidence-traffic-light-space)]">
-      <div className="evidence-no-drag flex min-w-0 items-center gap-2 text-[12px]">
-        <span className="shrink-0 font-medium text-evidence-ink">
+    <header
+      data-workbench-chrome=""
+      className="evidence-drag-region flex h-12 shrink-0 items-center justify-between gap-3 border-b border-workbench-border bg-white pr-4 pl-[var(--evidence-traffic-light-space)]"
+    >
+      <div className="evidence-no-drag flex min-w-0 items-center gap-1 text-xs">
+        <span
+          className="truncate font-semibold text-evidence-ink"
+          title={projectName}
+        >
           {projectName}
-          {dirty ? (
-            <span className="ml-1 text-evidence-evidence" title="有未保存修改">
-              *
-            </span>
-          ) : null}
         </span>
+        {dirty ? (
+          <span
+            className="shrink-0 text-evidence-evidence"
+            title="有未保存修改"
+          >
+            *
+          </span>
+        ) : null}
         {breadcrumb !== null ? (
-          <span className="flex min-w-0 items-center gap-1 truncate text-evidence-muted">
+          <span
+            className="flex min-w-0 items-center gap-1 text-workbench-muted"
+            title={[...breadcrumb.trail, breadcrumb.name].join(' / ')}
+          >
+            <span aria-hidden="true" className="text-workbench-border-strong">
+              /
+            </span>
             {breadcrumb.trail.map((label, index) => (
               <span key={`${label}-${index}`} className="truncate">
                 {label} /
               </span>
             ))}
-            <span className="truncate text-evidence-ink">
-              {breadcrumb.name}
-            </span>
+            <span className="truncate">{breadcrumb.name}</span>
           </span>
         ) : null}
       </div>
 
-      <div className="evidence-no-drag flex items-center gap-1.5">
+      <div className="evidence-no-drag flex shrink-0 items-center gap-2">
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <button
+              <Button
                 type="button"
+                variant="secondary"
                 onClick={onOpenCommandPalette}
                 aria-label="打开快速命令"
-                className="flex h-7 items-center gap-1.5 rounded-md border border-evidence-line bg-evidence-surface pr-1 pl-2 text-[11px] text-evidence-muted transition-colors hover:border-evidence-accent hover:text-evidence-ink"
+                className="rounded-md border-workbench-border bg-workbench-background pr-1.5 text-workbench-muted"
               >
-                <CommandIcon aria-hidden="true" className="size-3.5" />
+                <Search aria-hidden="true" className="size-3.5" />
                 <span>快速命令</span>
                 <KbdChord chord="⌘+K" />
-              </button>
+              </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">搜索命令与业务对象</TooltipContent>
           </Tooltip>
@@ -112,10 +127,11 @@ export const TopHeader = ({
 
         <Button
           variant="default"
+          className="rounded-md px-3 text-xs font-medium"
           onClick={onSave}
           title="保存到磁盘（Cmd/Ctrl+S）"
         >
-          保存
+          保存模型
         </Button>
       </div>
     </header>

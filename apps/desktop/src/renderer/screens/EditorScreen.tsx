@@ -27,6 +27,7 @@ import { DomainLedgerTable } from '../components/ledger/DomainLedgerTable';
 import { CanvasFloatingHud } from '../components/canvas/CanvasFloatingHud';
 import { ActivityDrawer } from '../components/layout/ActivityDrawer';
 import { ActivityRail } from '../components/layout/ActivityRail';
+import { ViewModeBar } from '../components/layout/ViewModeBar';
 import {
   AgentCopilot,
   InlinePatchCopilot,
@@ -644,79 +645,56 @@ const EditorWorkspace = ({
           onOpenCommandPalette={() => setPaletteOpen(true)}
         />
 
-        <div
-          data-canvas-control=""
-          data-evidence-capture-hide=""
-          data-story-toolbar=""
-          className="flex flex-wrap items-center gap-3 border-b border-evidence-line bg-white px-4 py-2"
-        >
-          <div
-            role="group"
-            aria-label="画布放映模式"
-            className="flex shrink-0 gap-1 text-[11px]"
-          >
-            <button
-              type="button"
-              aria-pressed={workspaceView.mode === 'journey'}
-              onClick={() => workspaceView.setMode('journey')}
-              className="rounded border border-evidence-line px-2 py-1 aria-pressed:bg-evidence-active"
-            >
-              🧭 业务旅程
-            </button>
-            <button
-              type="button"
-              aria-pressed={storyActive}
-              onClick={() => workspaceView.setMode('story')}
-              className="rounded border border-evidence-line px-2 py-1 aria-pressed:bg-evidence-active"
-            >
-              🎬 业务流放映
-            </button>
-          </div>
-          {storyActive ? (
-            <>
-              <StoryPlayerBar
-                playback={story}
-                onExit={workspaceView.returnToGraph}
-                aiConfigured={ai?.aiConfigured}
-                onConfigureAi={ai?.openSettings}
-              />
-              <Popover>
-                <PopoverTrigger asChild>
-                  <button
-                    type="button"
-                    className="rounded border border-evidence-line px-2 py-1 text-[11px]"
+        <ViewModeBar
+          mode={workspaceView.mode}
+          onChange={workspaceView.setMode}
+          storyControls={
+            storyActive ? (
+              <>
+                <StoryPlayerBar
+                  playback={story}
+                  onExit={workspaceView.returnToGraph}
+                  aiConfigured={ai?.aiConfigured}
+                  onConfigureAi={ai?.openSettings}
+                />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      className="rounded border border-evidence-line px-2 py-1 text-[11px]"
+                    >
+                      剧情详情
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    align="end"
+                    aria-label="剧情详情"
+                    onInteractOutside={(event) => {
+                      if (
+                        event.target instanceof Element &&
+                        event.target.closest('[data-story-toolbar]')
+                      ) {
+                        // Let readers step through scenes with details open.
+                        event.preventDefault();
+                      }
+                    }}
+                    className="h-[min(70vh,var(--radix-popover-content-available-height))] w-[min(32rem,calc(100vw-2rem))] p-0"
                   >
-                    剧情详情
-                  </button>
-                </PopoverTrigger>
-                <PopoverContent
-                  align="end"
-                  aria-label="剧情详情"
-                  onInteractOutside={(event) => {
-                    if (
-                      event.target instanceof Element &&
-                      event.target.closest('[data-story-toolbar]')
-                    ) {
-                      // Let readers step through scenes with details open.
-                      event.preventDefault();
-                    }
-                  }}
-                  className="h-[min(70vh,var(--radix-popover-content-available-height))] w-[min(32rem,calc(100vw-2rem))] p-0"
-                >
-                  <StoryDrawer
-                    aiConfigured={ai?.aiConfigured}
-                    onConfigureAi={ai?.openSettings}
-                    playback={story}
-                    dirty={state.dirty}
-                    externalConflict={
-                      state.dirty && state.externalChangeAt !== null
-                    }
-                  />
-                </PopoverContent>
-              </Popover>
-            </>
-          ) : null}
-        </div>
+                    <StoryDrawer
+                      aiConfigured={ai?.aiConfigured}
+                      onConfigureAi={ai?.openSettings}
+                      playback={story}
+                      dirty={state.dirty}
+                      externalConflict={
+                        state.dirty && state.externalChangeAt !== null
+                      }
+                    />
+                  </PopoverContent>
+                </Popover>
+              </>
+            ) : null
+          }
+        />
 
         {liveModel.error === null ? null : (
           <p role="alert">实时诊断同步失败：{liveModel.error}</p>

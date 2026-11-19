@@ -69,7 +69,13 @@ body {
 
 /* Workbench controls use their utility type scale. Keep the legacy reset for
    editor surfaces and dialogs that have not migrated yet. */
-button:not(:where([data-dashboard] button, [data-workbench-dialog] button)) {
+button:not(
+  :where(
+    [data-dashboard] button,
+    [data-workbench-dialog] button,
+    [data-workbench-chrome] button
+  )
+) {
   font: inherit;
 }
 

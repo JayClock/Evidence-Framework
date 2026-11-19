@@ -242,7 +242,16 @@ describe('EditorScreen', () => {
     fireEvent.change(screen.getByLabelText('聚焦范围'), {
       target: { value: 'context.catalog' },
     });
-    fireEvent.click(screen.getByRole('button', { name: /业务流放映/ }));
+    const modes = within(screen.getByRole('group', { name: '画布放映模式' }));
+    expect(modes.getByRole('button', { name: '业务旅程' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    fireEvent.click(modes.getByRole('button', { name: '业务流放映' }));
+    expect(modes.getByRole('button', { name: '业务流放映' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
     expect(screen.queryByLabelText('副视口')).toBeNull();
     expect(screen.queryByRole('region', { name: '业务故事' })).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: '剧情详情' }));
@@ -415,7 +424,7 @@ describe('EditorScreen', () => {
       expect(screen.queryByRole('dialog', { name: '快速命令' })).toBeNull(),
     );
     expect(screen.queryByTitle('有未保存修改')).toBeNull();
-    fireEvent.click(screen.getByText('保存'));
+    fireEvent.click(screen.getByRole('button', { name: '保存模型' }));
     await waitFor(() => expect(api.calls.save).toHaveLength(1));
     expect(screen.queryByTitle('有未保存修改')).toBeNull();
   });
@@ -452,7 +461,7 @@ describe('EditorScreen', () => {
     render(<EditorScreen rootPath="/models/procurement" />);
 
     await readyCanvas();
-    fireEvent.click(screen.getByText('保存'));
+    fireEvent.click(screen.getByRole('button', { name: '保存模型' }));
 
     await waitFor(() => {
       expect(api.calls.save).toEqual(['/models/procurement']);
@@ -531,7 +540,7 @@ describe('EditorScreen', () => {
     render(<EditorScreen rootPath="/models/procurement" />);
 
     await readyCanvas();
-    fireEvent.click(screen.getByText('保存'));
+    fireEvent.click(screen.getByRole('button', { name: '保存模型' }));
 
     expect(await screen.findByText('磁盘不可写。')).toBeInTheDocument();
   });
@@ -608,7 +617,7 @@ describe('EditorScreen sensors', () => {
     render(<EditorScreen rootPath="/models/procurement" />);
     await screen.findByText('商品采购（Product Procurement）');
 
-    fireEvent.click(screen.getByText('保存'));
+    fireEvent.click(screen.getByRole('button', { name: '保存模型' }));
 
     expect(await screen.findByText(/已保存/)).toBeInTheDocument();
     expect(api.calls.save).toEqual(['/models/procurement']);

@@ -39,18 +39,26 @@ export const AiModelStatusPill = ({
   }
 
   return (
-    <button
+    <Button
       type="button"
       onClick={ai.openSettings}
       aria-label="配置大模型"
       title="配置大模型（⌘/Ctrl+,）"
-      className="evidence-no-drag max-w-48 truncate rounded-full border border-evidence-line px-3 py-1 text-xs text-evidence-muted hover:text-evidence-accent"
+      className="max-w-48 rounded-md border-workbench-border px-2.5 font-medium hover:bg-workbench-subtle"
     >
-      {ai.status === null
-        ? 'AI · 正在检测'
-        : ai.aiConfigured
-          ? `AI · ${ai.status.activeModelId}`
-          : 'AI · 未配置'}
-    </button>
+      {ai.aiConfigured ? (
+        <span
+          aria-hidden="true"
+          className="size-1.5 shrink-0 rounded-full bg-workbench-status-dot"
+        />
+      ) : null}
+      <span className="truncate">
+        {ai.status === null
+          ? 'AI · 正在检测'
+          : ai.aiConfigured
+            ? ai.status.activeModelId
+            : 'AI · 未配置'}
+      </span>
+    </Button>
   );
 };
