@@ -349,46 +349,62 @@ const EditorWorkspace = ({
     [state.session, scope],
   );
 
-  /**
-   * Jumps from a finding to the object it belongs to.
-   *
-   * `entity#attribute` targets select the attribute row; Contexts and
-   * relationships pan to their actual geometry without selecting a made-up object.
-   */
-  const focusIssue = useCallback(
+  const resolveIssueTarget = useCallback(
     (issue: SensorIssue) => {
-      const target = issue.targetNodeId;
-
-      if (target !== undefined) {
-        const [nodeId, attributeName] = target.split('#');
-
-        if (nodeId !== undefined && state.layout.nodeById.has(nodeId)) {
-          if (scope !== null && !scope.nodeIds.has(nodeId))
-            setSelectedScope(null);
-          state.session.selectAttribute(nodeId, attributeName ?? null);
-          tokenRef.current += 1;
-          setFocusRequest({ nodeId, token: tokenRef.current });
-
-          return;
-        }
-      }
-
-      const id = target?.split('#')[0];
-      const contextRef = issue.contextRef ?? id;
+      const [id, attribute] = issue.targetNodeId?.split('#') ?? [];
+      const node = id === undefined ? undefined : state.layout.nodeById.get(id);
+      if (node !== undefined)
+        return {
+          kind: 'node' as const,
+          id: node.nodeId,
+          attributeName: node.entity.attributes?.some(
+            ({ name }) => name === attribute,
+          )
+            ? attribute!
+            : null,
+        };
       const group = state.layout.contextGroups.find(
-        (candidate) => candidate.contextId === contextRef,
+        (item) => item.contextId === (issue.contextRef ?? id),
       );
       const edge = state.layout.edges.find(
-        (candidate) => candidate.relationshipId === id,
+        (item) => item.relationshipId === id,
       );
       const ref = edge?.relationshipId ?? group?.contextId;
-      if (ref) {
-        setSelectedScope(null);
-        tokenRef.current += 1;
-        setFocusRequest({ nodeId: ref, token: tokenRef.current });
-      }
+      return ref === undefined ? null : { kind: 'geometry' as const, id: ref };
     },
-    [state.layout, state.session, scope],
+    [state.layout],
+  );
+
+  // Findings select modeled fields, but Context/edge targets only move the camera.
+  const focusIssue = useCallback(
+    (issue: SensorIssue) => {
+      const target = resolveIssueTarget(issue);
+      if (target === null) return;
+      if (target.kind === 'node') {
+        if (scope !== null && !scope.nodeIds.has(target.id))
+          setSelectedScope(null);
+        state.session.selectAttribute(target.id, target.attributeName);
+        if (target.attributeName !== null) {
+          layout.showInspector();
+          if (!ledgerActive) expandRightRail();
+        }
+      } else {
+        setSelectedScope(null);
+        if (ledgerActive) state.session.clearSelection();
+      }
+      tokenRef.current += 1;
+      setFocusRequest({ nodeId: target.id, token: tokenRef.current });
+      if (ledgerActive) workspaceView.returnToGraph();
+    },
+    [
+      expandRightRail,
+      layout.showInspector,
+      ledgerActive,
+      resolveIssueTarget,
+      scope,
+      state.session,
+      workspaceView.returnToGraph,
+    ],
   );
 
   // What the next question will be about: the canvas selection, reduced to what
@@ -588,6 +604,8 @@ const EditorWorkspace = ({
       reportLoading={sensors.loading}
       reportError={sensors.error}
       activeIssueId={layout.activeIssueId}
+      docked={ledgerActive}
+      canFocusIssue={(issue) => resolveIssueTarget(issue) !== null}
       onFocusIssue={(issue) => {
         layout.openProblemsWithIssue(issue.issueId);
         focusIssue(issue);
@@ -745,7 +763,7 @@ const EditorWorkspace = ({
             }}
             onSelect={layout.toggleRailTab}
             badges={{
-              ...(sensors.report === null
+              ...(sensors.report === null || diagnosticsStale
                 ? {}
                 : {
                     diagnostics: {

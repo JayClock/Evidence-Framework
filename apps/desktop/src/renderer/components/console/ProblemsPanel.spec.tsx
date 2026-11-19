@@ -43,6 +43,8 @@ const setup = (
   overrides: {
     report?: ReturnType<typeof healthyReport> | null;
     stale?: boolean;
+    loading?: boolean;
+    error?: string;
     activeIssueId?: string | null;
   } = {},
 ) => {
@@ -57,8 +59,9 @@ const setup = (
       {...handlers}
       report={overrides.report === undefined ? report() : overrides.report}
       reportStale={overrides.stale ?? false}
-      reportLoading={false}
-      reportError={null}
+      reportLoading={overrides.loading ?? false}
+      reportError={overrides.error ?? null}
+      canFocusIssue={(issue) => issue.targetNodeId !== undefined}
       activeIssueId={overrides.activeIssueId ?? null}
     />,
   );
@@ -79,7 +82,9 @@ describe('ProblemsPanel', () => {
   it('filters to one severity at a time', () => {
     setup();
 
-    fireEvent.click(screen.getByRole('tab', { name: '警告 1' }));
+    const warning = screen.getByRole('button', { name: '警告 1' });
+    fireEvent.click(warning);
+    expect(warning).toHaveAttribute('aria-pressed', 'true');
 
     expect(screen.getByText('派生规则重复')).toBeInTheDocument();
     expect(screen.queryByText('采购协议缺少确认端')).toBeNull();
@@ -101,6 +106,9 @@ describe('ProblemsPanel', () => {
       screen.getByRole('button', { name: '定位到 采购协议缺少确认端' }),
     );
 
+    expect(
+      screen.queryByRole('button', { name: '定位到 派生规则重复' }),
+    ).toBeNull();
     expect(handlers.onFocusIssue).toHaveBeenCalledWith(
       expect.objectContaining({ issueId: 'block-1' }),
     );
@@ -126,11 +134,28 @@ describe('ProblemsPanel', () => {
   });
 
   it('reports a missing run instead of pretending it passed', () => {
-    setup({ report: null });
-
-    expect(screen.getAllByText('尚未运行检查器').length).toBeGreaterThan(0);
-    fireEvent.click(screen.getByText('重新检查'));
-
+    const handlers = setup({ report: null, stale: true });
+    expect(screen.getByRole('status')).toHaveTextContent('尚未运行检查器');
+    fireEvent.click(screen.getByRole('button', { name: '重新扫描' }));
+    expect(handlers.onRerun).toHaveBeenCalledOnce();
     expect(screen.getByRole('button', { name: '收合问题面板' })).toBeVisible();
+  });
+
+  it('does not treat a stale empty scan as a clean current scan', () => {
+    setup({ report: healthyReport({ issues: [] }), stale: true });
+    expect(screen.getByRole('status')).toHaveTextContent('结果已过期');
+    expect(screen.queryByText(/本轮没有发现项/)).toBeNull();
+  });
+
+  it('shows loading and prevents a duplicate scan', () => {
+    setup({ report: null, loading: true });
+    expect(screen.getByRole('status')).toHaveTextContent('正在运行检查器');
+    expect(screen.getByRole('button', { name: '重新扫描' })).toBeDisabled();
+  });
+
+  it('reports a failed scan without issuing a clean verdict', () => {
+    setup({ report: healthyReport({ issues: [] }), error: '扫描失败' });
+    expect(screen.getByRole('alert')).toHaveTextContent('扫描失败');
+    expect(screen.queryByText(/本轮没有发现项/)).toBeNull();
   });
 });

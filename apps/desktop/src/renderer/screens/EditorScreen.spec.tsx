@@ -711,12 +711,14 @@ describe('EditorScreen sensors', () => {
 
     render(<EditorScreen rootPath="/models/procurement" />);
 
-    await screen.findByText('商品采购（Product Procurement）');
+    await screen.findByLabelText('聚焦范围');
     expect(await screen.findByText('阻塞 1')).toBeInTheDocument();
     expect(api.calls.triggerSensors).toEqual(['/models/procurement']);
 
     fireEvent.click(screen.getByTitle('展开检查结果'));
     expect(await screen.findByLabelText('门禁问题面板')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: '总台账' }));
+    expect(screen.getByLabelText('领域模型总台账')).toBeVisible();
 
     fireEvent.click(
       screen.getByRole('button', { name: '定位到 采购协议缺少确认端' }),
@@ -725,7 +727,11 @@ describe('EditorScreen sensors', () => {
     expect(
       await screen.findByDisplayValue('采购协议（Procurement Contract）'),
     ).toBeInTheDocument();
-    expect(screen.getByDisplayValue('签署时间')).toBeInTheDocument();
+    expect(screen.queryByLabelText('领域模型总台账')).toBeNull();
+    expect(screen.getByDisplayValue('签署时间').closest('tr')).toHaveAttribute(
+      'aria-current',
+      'true',
+    );
   });
 
   it('tells the main process when the model changes', async () => {

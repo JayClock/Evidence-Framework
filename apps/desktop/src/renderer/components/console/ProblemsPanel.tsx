@@ -1,53 +1,48 @@
 import { useMemo, useState } from 'react';
-import { Activity, Crosshair, X } from 'lucide-react';
+import { Crosshair, RefreshCw, X, Zap } from 'lucide-react';
 
 import type {
   SensorIssue,
   SensorReport,
 } from '@evidence-poc/evidence-agent/browser';
-import { cn } from '@evidence-poc/desktop-ui-kit';
+import { Button, cn } from '@evidence-poc/desktop-ui-kit';
 
-import type { SensorSeverity } from './problemFilters';
-import { filterIssues } from './problemFilters';
+import { filterIssues, type SensorSeverity } from './problemFilters';
 
 export interface ProblemsPanelProps {
   report: SensorReport | null;
   reportStale: boolean;
   reportLoading: boolean;
   reportError: string | null;
-  /** Row the modeler picked; the canvas may already be showing its object. */
   activeIssueId: string | null;
+  docked?: boolean;
+  canFocusIssue: (issue: SensorIssue) => boolean;
   onFocusIssue: (issue: SensorIssue) => void;
   onRerun: () => void;
   onClose: () => void;
 }
 
-const SEVERITY_LABELS: Record<SensorSeverity, string> = {
-  block: '阻塞',
+const LEVELS = ['all', 'block', 'warn', 'info'] as const;
+const LABELS = {
+  all: '全部',
+  block: '阻断',
   warn: '警告',
-  info: '提示',
+  info: '信息',
+} as const;
+const TONES = {
+  block: 'bg-red-50 text-red-800',
+  warn: 'bg-amber-100 text-amber-900',
+  info: 'bg-workbench-subtle text-workbench-label',
 };
 
-const SEVERITY_CLASSES: Record<SensorSeverity, string> = {
-  block: 'text-[#b42318]',
-  warn: 'text-[#8d6200]',
-  info: 'text-evidence-muted',
-};
-
-/**
- * The gate's findings, in a strip the canvas keeps.
- *
- * It replaced a four-tab console: a finding is something you fix while looking
- * at the model, so the list docks under the canvas only while asked and never
- * takes canvas pixels the rest of the time. Filtering by severity is the first
- * thing a modeler does with forty rows, so it is a tab row rather than a menu.
- */
 export const ProblemsPanel = ({
   report,
   reportStale,
   reportLoading,
   reportError,
   activeIssueId,
+  docked = false,
+  canFocusIssue,
   onFocusIssue,
   onRerun,
   onClose,
@@ -57,131 +52,150 @@ export const ProblemsPanel = ({
     () => filterIssues(report?.issues ?? [], severity),
     [report, severity],
   );
-
-  const counts: Record<SensorSeverity | 'all', number> = {
+  const counts = {
     all: report?.issues.length ?? 0,
     block: report?.blockCount ?? 0,
     warn: report?.warnCount ?? 0,
     info: report?.infoCount ?? 0,
   };
+  const status = reportLoading
+    ? '正在运行检查器…'
+    : reportError !== null
+      ? null
+      : report === null
+        ? '尚未运行检查器'
+        : reportStale
+          ? '结果已过期'
+          : issues.length !== 0
+            ? null
+            : severity === 'all'
+              ? '本轮没有发现项。机器检查不等于业务批准。'
+              : `没有${LABELS[severity]}级别的问题。`;
 
   return (
     <section
       aria-label="门禁问题面板"
       data-region="problems-panel"
-      className="absolute inset-x-0 bottom-0 z-30 flex h-[200px] max-h-1/2 flex-col border-t border-workbench-border bg-white shadow-[0_-8px_24px_#00000012]"
+      data-evidence-capture-hide=""
+      data-workbench-chrome=""
+      className={cn(
+        'absolute z-30 flex h-[200px] max-h-[55%] min-w-0 flex-col overflow-hidden border-workbench-border bg-white shadow-overlay',
+        docked
+          ? 'inset-x-0 bottom-0 border-t'
+          : 'inset-x-5 bottom-4 rounded-lg border',
+      )}
     >
-      <header className="flex h-8 shrink-0 items-center justify-between gap-2 border-b border-evidence-line bg-evidence-surface/70 px-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <span className="flex items-center gap-1 text-[10px] tracking-wide text-evidence-muted uppercase">
-            <Activity aria-hidden="true" className="size-3" />
-            门禁问题
-          </span>
-          <div
-            role="tablist"
-            aria-label="问题等级"
-            className="flex items-center gap-0.5"
-          >
-            {(['all', 'block', 'warn', 'info'] as const).map((id) => (
-              <button
-                key={id}
-                type="button"
-                role="tab"
-                aria-selected={severity === id}
-                onClick={() => setSeverity(id)}
-                className={cn(
-                  'rounded px-1.5 py-0.5 text-[10px] transition-colors',
-                  severity === id
-                    ? 'bg-evidence-accent text-white'
-                    : 'text-evidence-muted hover:text-evidence-ink',
-                )}
-              >
-                {id === 'all' ? '全部' : SEVERITY_LABELS[id]} {counts[id]}
-              </button>
-            ))}
-          </div>
-          {reportStale ? (
-            <span className="text-[10px] text-[#8d6200]">结果已过期</span>
-          ) : null}
-        </div>
-
-        <span className="flex shrink-0 items-center gap-1">
-          <button
+      <header className="flex shrink-0 flex-wrap items-center justify-between gap-x-2 gap-y-1 border-b border-workbench-border bg-[#fafafa] px-3 py-1.5">
+        <h2 className="flex min-w-0 items-center gap-1.5 text-xs font-semibold text-evidence-ink">
+          <Zap
+            aria-hidden="true"
+            className="size-3.5 shrink-0 text-evidence-accent"
+          />
+          门禁与诊断{report === null ? '' : `（${counts.all} 项发现）`}
+        </h2>
+        <div className="flex shrink-0 items-center gap-1">
+          <Button
             type="button"
+            variant="ghost"
+            size="xs"
             onClick={onRerun}
-            className="rounded px-1.5 py-0.5 text-[10px] text-evidence-muted hover:bg-evidence-line/60 hover:text-evidence-ink"
+            disabled={reportLoading}
+            title="重新扫描（Cmd/Ctrl+Shift+R）"
           >
-            重新检查
-          </button>
-          <button
+            <RefreshCw aria-hidden="true" />
+            重新扫描
+          </Button>
+          <Button
             type="button"
+            variant="ghost"
+            size="icon-xs"
             aria-label="收合问题面板"
             onClick={onClose}
-            className="rounded p-1 text-evidence-muted hover:bg-evidence-line/60 hover:text-evidence-ink"
           >
-            <X aria-hidden="true" className="size-3" />
-          </button>
-        </span>
+            <X aria-hidden="true" />
+          </Button>
+        </div>
       </header>
-
+      {report === null ? null : (
+        <div
+          role="group"
+          aria-label="问题等级"
+          className="flex shrink-0 flex-wrap items-center gap-1 border-b border-workbench-subtle px-3 py-1"
+        >
+          {LEVELS.map((level) => (
+            <Button
+              key={level}
+              type="button"
+              variant="ghost"
+              size="xs"
+              aria-pressed={severity === level}
+              onClick={() => setSeverity(level)}
+              className="aria-pressed:bg-workbench-subtle aria-pressed:font-semibold"
+            >
+              {LABELS[level]} {counts[level]}
+            </Button>
+          ))}
+        </div>
+      )}
       <div className="min-h-0 flex-1 overflow-y-auto">
         {reportError === null ? null : (
-          <p role="alert" className="px-3 py-2 text-[11px] text-[#b42318]">
+          <p role="alert" className="px-3 py-2 text-[11px] text-red-800">
             {reportError}
           </p>
         )}
-
-        {report === null ? (
-          <p className="px-3 py-4 text-[11px] text-evidence-muted">
-            {reportLoading ? '正在运行检查器…' : '尚未运行检查器'}
+        {status === null ? null : (
+          <p
+            role="status"
+            className={cn(
+              'px-3 py-2 text-[11px]',
+              reportStale && report !== null
+                ? 'text-amber-900'
+                : 'text-workbench-muted',
+            )}
+          >
+            {status}
           </p>
-        ) : issues.length === 0 ? (
-          <p className="px-3 py-4 text-[11px] text-evidence-muted">
-            {severity === 'all'
-              ? '本轮没有发现项。机器检查不等于业务批准。'
-              : `没有${SEVERITY_LABELS[severity]}级别的问题。`}
-          </p>
-        ) : (
-          <ul className="divide-y divide-evidence-line/60">
+        )}
+        {issues.length === 0 ? null : (
+          <ul className="divide-y divide-workbench-subtle">
             {issues.map((issue) => (
               <li
                 key={issue.issueId}
                 data-issue-id={issue.issueId}
                 data-active={issue.issueId === activeIssueId ? 'true' : 'false'}
                 className={cn(
-                  'flex items-start gap-2 px-3 py-1.5 text-[11px]',
-                  issue.issueId === activeIssueId && 'bg-[#eef2f7]',
+                  'flex items-start gap-2 px-3 py-2 text-[11px]',
+                  issue.issueId === activeIssueId && 'bg-evidence-active',
                 )}
               >
                 <span
                   className={cn(
-                    'w-8 shrink-0 text-[10px] font-medium',
-                    SEVERITY_CLASSES[issue.severity],
+                    'shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium',
+                    TONES[issue.severity],
                   )}
                 >
-                  {SEVERITY_LABELS[issue.severity]}
+                  {LABELS[issue.severity]}
                 </span>
-                <div className="min-w-0 flex-1">
-                  <p className="text-evidence-ink">{issue.message}</p>
-                  <p className="truncate text-[10px] text-evidence-muted">
+                <div className="min-w-0 flex-1 wrap-anywhere">
+                  <p className="text-workbench-body">{issue.message}</p>
+                  <p className="mt-0.5 text-[10px] text-workbench-muted">
                     {issue.code}
-                    {issue.targetNodeId === undefined
-                      ? ''
-                      : ` · ${issue.targetNodeId}`}
-                    {issue.suggestion === undefined
-                      ? ''
-                      : ` · ${issue.suggestion}`}
+                    {issue.targetNodeId ? ` · ${issue.targetNodeId}` : ''}
+                    {issue.suggestion ? ` · ${issue.suggestion}` : ''}
                   </p>
                 </div>
-                <button
-                  type="button"
-                  aria-label={`定位到 ${issue.message}`}
-                  onClick={() => onFocusIssue(issue)}
-                  className="flex shrink-0 items-center gap-1 rounded border border-evidence-line px-1.5 py-0.5 text-[10px] text-evidence-muted hover:border-evidence-accent hover:text-evidence-ink"
-                >
-                  <Crosshair aria-hidden="true" className="size-2.5" />
-                  定位
-                </button>
+                {canFocusIssue(issue) ? (
+                  <Button
+                    type="button"
+                    size="xs"
+                    variant="outline"
+                    aria-label={`定位到 ${issue.message}`}
+                    onClick={() => onFocusIssue(issue)}
+                  >
+                    <Crosshair aria-hidden="true" />
+                    定位
+                  </Button>
+                ) : null}
               </li>
             ))}
           </ul>
