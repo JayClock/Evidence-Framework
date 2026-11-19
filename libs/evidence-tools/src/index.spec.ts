@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
   createDomainGraph,
+  keyDataEntryOf,
   createModelSession,
 } from '@evidence-poc/evidence-model-core';
 import { createEmptyDomainModel } from '@evidence-poc/evidence-schema';
@@ -22,6 +23,7 @@ const payment = {
       meaning: '申请所列金额',
       valueType: 'int',
     },
+    { name: 'receipt_no', label: '回执编号', meaning: '支付成功时生成的编号' },
   ],
 };
 const setup = () => {
@@ -80,10 +82,18 @@ describe('shared model tool registry', () => {
         { id: 'contract.sale', stage: 'contract', label: '买卖合同' },
       ],
     });
+    const entry = (attribute: string) =>
+      keyDataEntryOf(session.getDocument(), payment.id, attribute);
+    expect(entry('receipt_no')?.decisionOwed).toBe(true);
+    expect(entry('amount')?.decisionOwed).toBe(true);
     await run(names.bindKeyDataSource, {
       evidenceRef: payment.id,
-      attribute: 'amount',
-      decision: { kind: 'unknown' },
+      attribute: 'receipt_no',
+      decision: { kind: 'direct', source: { kind: 'result-fact' } },
+    });
+    expect(entry('receipt_no')).toMatchObject({
+      source: 'result-fact',
+      decisionOwed: false,
     });
     await run(names.splitEvidenceToPair, {
       evidenceRef: payment.id,
@@ -95,10 +105,28 @@ describe('shared model tool registry', () => {
         },
       ],
     });
+    expect(entry('amount')).toMatchObject({
+      source: 'preceding-evidence',
+      decisionOwed: false,
+      providers: [
+        expect.objectContaining({
+          ref: 'request.payment',
+          attribute: 'requested_amount',
+        }),
+      ],
+    });
     const beforeProbe = session.getDocument();
-    await run(names.simulateWhatIfChallenge, { requestRef: 'request.payment' });
+    const challenge = await tool(names.simulateWhatIfChallenge).run({
+      requestRef: 'request.payment',
+    });
+    expect(challenge.value).toMatchObject({
+      requestRef: 'request.payment',
+      hypotheses: expect.arrayContaining([
+        expect.objectContaining({ kind: 'timeout' }),
+      ]),
+    });
     expect(session.getDocument()).toBe(beforeProbe);
-    expect(applyModelPatch).toHaveBeenCalledTimes(2);
+    expect(applyModelPatch).toHaveBeenCalledTimes(3);
     await run(names.growBreachCompensation, {
       requestRef: 'request.payment',
       condition: '超时后启动退款',
