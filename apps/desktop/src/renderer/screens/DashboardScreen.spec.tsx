@@ -181,7 +181,7 @@ describe('DashboardScreen', () => {
       await screen.findByRole('button', { name: '配置大模型：deepseek-chat' }),
     );
     expect(
-      await screen.findByRole('dialog', { name: /AI Settings/ }),
+      await screen.findByRole('dialog', { name: /AI Model Settings/ }),
     ).toBeInTheDocument();
   });
 });

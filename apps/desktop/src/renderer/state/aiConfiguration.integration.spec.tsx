@@ -55,10 +55,10 @@ describe('new-install AI onboarding integration', () => {
     fireEvent.click(screen.getByRole('button', { name: 'AI 协同' }));
     expect(screen.getByLabelText('访谈内容')).toBeDisabled();
     fireEvent.click(screen.getByRole('button', { name: '立刻配置 API Key' }));
-    fireEvent.change(screen.getByLabelText('API Key'), {
+    fireEvent.change(screen.getByLabelText(/API 密钥/), {
       target: { value: 'private-input-only' },
     });
-    fireEvent.click(screen.getByRole('button', { name: '保存并生效' }));
+    fireEvent.click(screen.getByRole('button', { name: '保存并立即生效' }));
     await waitFor(() =>
       expect(screen.getByLabelText('访谈内容')).not.toBeDisabled(),
     );
@@ -86,7 +86,9 @@ describe('new-install AI onboarding integration', () => {
     const offline = screen.getByRole('checkbox', { name: '仅模型事实' });
     expect(offline).toBeChecked();
     fireEvent.click(offline);
-    expect(screen.getByRole('dialog')).toHaveTextContent('AI Settings');
+    expect(
+      screen.getByRole('dialog', { name: /AI Model Settings/ }),
+    ).toBeVisible();
     expect(api.calls.prompt).toEqual([]);
   });
   it('exposes model settings through the command palette', async () => {

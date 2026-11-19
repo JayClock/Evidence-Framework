@@ -36,7 +36,9 @@ describe('AI application shell', () => {
     );
     expect(await screen.findByText('needs setup')).toBeInTheDocument();
     fireEvent.keyDown(window, { key: ',', ctrlKey: true });
-    expect(screen.getByRole('dialog')).toHaveTextContent('AI Settings');
+    expect(
+      screen.getByRole('dialog', { name: /AI Model Settings/ }),
+    ).toBeVisible();
     fireEvent.keyDown(screen.getByRole('dialog'), { key: 'Escape' });
     act(() =>
       listener({

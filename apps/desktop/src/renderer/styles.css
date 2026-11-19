@@ -67,10 +67,17 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Dashboard controls use the type scale from their utilities. Preserve the
-   legacy reset for the editor and existing dialogs until those are migrated. */
-button:not(:where([data-dashboard] button)) {
+/* Workbench controls use their utility type scale. Keep the legacy reset for
+   editor surfaces and dialogs that have not migrated yet. */
+button:not(:where([data-dashboard] button, [data-workbench-dialog] button)) {
   font: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-workbench-dialog],
+  [data-workbench-dialog] [data-slot='button-spinner'] {
+    animation: none;
+  }
 }
 
 .evidence-drag-region {
