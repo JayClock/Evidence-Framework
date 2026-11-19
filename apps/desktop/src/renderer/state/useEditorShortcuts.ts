@@ -58,7 +58,7 @@ export const useEditorShortcuts = (handlers: ShortcutHandlers): void => {
       // A surface that already consumed the key owns it: Escape in the ledger
       // studio closes the studio, and must not also clear the selection the
       // inspector behind it is showing.
-      if (event.defaultPrevented) {
+      if (event.defaultPrevented || event.isComposing) {
         return;
       }
 

@@ -1,5 +1,12 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Bot, CornerDownLeft, Sparkles, Square } from 'lucide-react';
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { Bot, CornerDownLeft, Sparkles, Square, X } from 'lucide-react';
 
 import {
   REVERSE_CONTRACT_MODE,
@@ -16,7 +23,7 @@ import {
   type AgentWorkshopSelection,
 } from './WorkshopStepSelector';
 import { parseStreamedTranscript } from './thinkingParser';
-import { cn } from '@evidence-poc/desktop-ui-kit';
+import { Button } from '@evidence-poc/desktop-ui-kit';
 
 /** What the next prompt is about, when the modeler has something selected. */
 export interface PromptFocus {
@@ -71,6 +78,7 @@ export const AgentCopilot = ({
 }: AgentCopilotProps) => {
   const { state, submit, stop, dismissError } = controller;
   const [value, setValue] = useState('');
+  const composerId = useId();
   const [selection, setSelection] = useState<AgentWorkshopSelection>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
@@ -132,18 +140,22 @@ export const AgentCopilot = ({
   return (
     <section
       aria-label="AI 建模副驾"
-      className="flex h-full min-h-0 flex-col bg-white/70"
+      className="flex h-full min-h-0 min-w-0 flex-col bg-white"
     >
-      <header className="flex h-8 shrink-0 items-center justify-between gap-2 border-b border-evidence-line px-2">
-        <span className="flex items-center gap-1.5 text-[10px] tracking-wide text-evidence-muted uppercase">
-          <Bot aria-hidden="true" className="h-3 w-3 text-evidence-accent" />
-          AI 建模副驾
+      <header className="flex min-h-9 shrink-0 flex-wrap items-center justify-between gap-x-2 gap-y-1 border-b border-workbench-border px-3 py-1">
+        <span className="flex items-center gap-1.5 text-[11px] font-semibold text-evidence-ink">
+          <Bot aria-hidden="true" className="size-3.5 text-evidence-accent" />
+          Evidence Copilot
         </span>
         <span className="truncate text-[10px] text-evidence-muted">
           {state.running ? (
             <span className="flex items-center gap-1">
               <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-evidence-accent" />
-              <span data-testid="agent-copilot-status">
+              <span
+                role="status"
+                className="truncate"
+                data-testid="agent-copilot-status"
+              >
                 {state.activeToolName === null
                   ? 'AI 正在推演…'
                   : `正在执行 ${state.activeToolName}`}
@@ -156,24 +168,28 @@ export const AgentCopilot = ({
       </header>
 
       {!aiConfigured ? (
-        <div className="space-y-2 border-b border-evidence-line p-4 text-xs">
+        <div className="mx-3 mt-3 flex shrink-0 flex-col gap-2 rounded-lg border border-workbench-border bg-workbench-background p-3 text-xs">
           <h3 className="font-medium">欢迎使用 Evidence 智能建模助理</h3>
           <p>
             开始前，请先配置大模型提供商与 API
             Key，即可开启业务流推演与智能补丁补全。
           </p>
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="xs"
             onClick={onConfigureAi}
-            className="text-evidence-accent underline"
+            className="self-start"
           >
             立刻配置 API Key
-          </button>
+          </Button>
         </div>
       ) : null}
       {state.error === null ? null : (
         <div className="flex items-center justify-between gap-2 border-b border-[#b42318]/30 bg-[#b42318]/5 px-2 py-1.5 text-[11px] text-[#b42318]">
-          <span className="min-w-0 truncate">{state.error}</span>
+          <span role="alert" className="min-w-0 wrap-anywhere">
+            {state.error}
+          </span>
           <button
             type="button"
             onClick={dismissError}
@@ -184,9 +200,9 @@ export const AgentCopilot = ({
         </div>
       )}
 
-      <div className="min-h-0 flex-1 overflow-y-auto px-2 py-2">
+      <div className="min-h-0 flex-1 overflow-y-auto px-3 py-3">
         {empty ? (
-          <div className="mt-6 flex flex-col items-center gap-1 px-4 text-center text-[11px] text-evidence-muted">
+          <div className="mb-3 flex flex-col items-start gap-1.5 rounded-lg border border-workbench-border bg-workbench-background p-3 text-[11px] text-workbench-body">
             <Sparkles
               aria-hidden="true"
               className="h-4 w-4 text-evidence-accent/50"
@@ -204,7 +220,7 @@ export const AgentCopilot = ({
           {content === '' ? null : (
             <pre
               aria-label="AI 回复"
-              className="max-h-96 overflow-y-auto rounded border border-evidence-line bg-white px-2 py-1.5 text-[11px] leading-relaxed whitespace-pre-wrap text-[#414751] select-text"
+              className="rounded-lg border border-workbench-border bg-workbench-background px-3 py-2 font-sans text-xs leading-relaxed wrap-anywhere whitespace-pre-wrap text-workbench-body select-text"
             >
               {content}
             </pre>
@@ -234,49 +250,72 @@ export const AgentCopilot = ({
         </div>
       </div>
 
-      <div className="shrink-0 space-y-1.5 border-t border-evidence-line px-2 py-2">
+      <form
+        data-workbench-chrome=""
+        className="flex shrink-0 flex-col gap-2 border-t border-workbench-border bg-white p-3"
+        onSubmit={(event) => {
+          event.preventDefault();
+          void send();
+        }}
+      >
         <WorkshopStepSelector selection={selection} onSelect={setSelection} />
-
         {focus === null ? null : (
-          <div className="flex items-center gap-1.5">
+          <div className="flex flex-wrap items-center gap-1.5">
             <span
               data-testid="agent-copilot-focus"
-              className="inline-flex max-w-full items-center gap-1 rounded-full bg-evidence-accent/10 px-2 py-0.5 text-[10px] text-evidence-accent"
+              className="inline-flex max-w-full min-w-0 items-center gap-1 rounded-full bg-workbench-subtle px-2 py-0.5 text-[10px] text-workbench-label"
+              title={focus.nodeId}
             >
-              <span aria-hidden="true">🎯</span>
               <span className="truncate">
-                焦点：{focus.label}
-                <span className="text-evidence-accent/70">
-                  （{focus.kind}）
-                </span>
+                焦点：{focus.label}（{focus.kind}）
               </span>
             </span>
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon-xs"
               aria-label="清除焦点"
               onClick={onClearFocus}
-              className="shrink-0 text-[10px] text-evidence-muted hover:text-evidence-ink"
             >
-              ×
-            </button>
+              <X aria-hidden="true" />
+            </Button>
+            {aiConfigured ? (
+              <Button
+                type="button"
+                variant="outline"
+                size="xs"
+                disabled={value.trim() !== ''}
+                onClick={() => {
+                  setValue((current) =>
+                    current.trim() !== ''
+                      ? current
+                      : `请检查当前实体 ${focus.label}（${focus.nodeId}）的 CEL 不变量，并为明确的业务约束提供补丁建议。`,
+                  );
+                  textareaRef.current?.focus();
+                }}
+              >
+                <Sparkles aria-hidden="true" /> 生成 CEL 补丁
+              </Button>
+            ) : null}
           </div>
         )}
-
+        <label htmlFor={composerId} className="sr-only">
+          访谈内容
+        </label>
         <textarea
           ref={textareaRef}
-          aria-label="访谈内容"
+          id={composerId}
           value={value}
           disabled={!aiConfigured}
           rows={2}
           onChange={(event) => setValue(event.target.value)}
           onKeyDown={(event) => {
-            if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
+            if (event.nativeEvent.isComposing) return;
+            if (event.key === 'Enter' && !event.shiftKey && !event.altKey) {
               event.preventDefault();
-              void send();
+              event.currentTarget.form?.requestSubmit();
             }
-
-            // Escape belongs to the live run while one is streaming: stopping is
-            // the only action that cannot wait for the agent to settle.
+            // Escape stops a streaming run, not the selection behind it.
             if (event.key === 'Escape' && state.running) {
               event.preventDefault();
               void stop();
@@ -289,43 +328,34 @@ export const AgentCopilot = ({
                 ? '插话纠偏：运费由买方承担，不是卖方'
                 : '描述经营事实，或提出要澄清的履约与凭证'
           }
-          className={cn(
-            'max-h-40 w-full resize-none rounded border border-evidence-line bg-white px-2 py-1 text-[12px] leading-relaxed text-evidence-ink outline-none',
-            'placeholder:text-evidence-muted focus:border-evidence-accent',
-          )}
+          className="max-h-40 w-full resize-none rounded-md border border-workbench-border bg-workbench-background px-2.5 py-2 text-xs leading-relaxed text-evidence-ink outline-none placeholder:text-workbench-muted focus-visible:border-evidence-accent focus-visible:ring-1 focus-visible:ring-evidence-accent"
         />
-
-        <div className="flex items-center justify-between gap-2">
-          <span className="min-w-0 text-[10px] text-evidence-muted">
-            ⌘/Ctrl + Enter 发送 · 运行中发送即插话
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <span className="min-w-0 text-[10px] text-workbench-muted">
+            Enter 发送 · Shift+Enter 换行
           </span>
-
-          <span className="flex shrink-0 items-center gap-1.5">
+          <span className="ml-auto flex shrink-0 items-center gap-1.5">
             {state.running ? (
-              <button
+              <Button
                 type="button"
+                variant="outline"
+                size="xs"
                 onClick={() => void stop()}
-                className="flex items-center gap-1 rounded border border-[#b42318]/40 px-2 py-1 text-[10px] text-[#b42318] hover:bg-[#b42318]/10"
               >
-                <Square
-                  aria-hidden="true"
-                  className="h-2.5 w-2.5 fill-current"
-                />
-                停止
-              </button>
+                <Square aria-hidden="true" className="fill-current" /> 停止
+              </Button>
             ) : null}
-            <button
-              type="button"
-              onClick={() => void send()}
+            <Button
+              type="submit"
+              size="xs"
               disabled={!aiConfigured || value.trim() === ''}
-              className="flex items-center gap-1 rounded bg-evidence-accent px-2.5 py-1 text-[10px] text-white hover:bg-[#274c76] disabled:cursor-not-allowed disabled:opacity-40"
             >
               {state.running ? '插话' : '发送'}
-              <CornerDownLeft aria-hidden="true" className="h-2.5 w-2.5" />
-            </button>
+              <CornerDownLeft aria-hidden="true" />
+            </Button>
           </span>
         </div>
-      </div>
+      </form>
     </section>
   );
 };

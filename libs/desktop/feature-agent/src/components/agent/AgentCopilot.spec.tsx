@@ -81,18 +81,20 @@ describe('AgentCopilot composer', () => {
     expect(input.value).toBe('');
   });
 
-  it('submits with Cmd+Enter and leaves plain Enter alone', () => {
+  it('submits with Enter after composition and leaves Shift+Enter to insert a newline', () => {
     const agent = controller();
 
     render(<AgentCopilot controller={agent} />);
 
     const input = type('第一行\n第二行');
 
-    fireEvent.keyDown(input, { key: 'Enter' });
+    fireEvent.keyDown(input, { key: 'Enter', isComposing: true });
+    fireEvent.keyDown(input, { key: 'Enter', shiftKey: true });
     expect(agent.submit).not.toHaveBeenCalled();
+    expect(input).toHaveValue('第一行\n第二行');
 
-    fireEvent.keyDown(input, { key: 'Enter', metaKey: true });
-    expect(agent.submit).toHaveBeenCalledWith('第一行\n第二行');
+    fireEvent.keyDown(input, { key: 'Enter' });
+    expect(agent.submit).toHaveBeenCalledExactlyOnceWith('第一行\n第二行');
   });
 
   it('submits with Ctrl+Enter on non-mac platforms', () => {
@@ -138,7 +140,7 @@ describe('AgentCopilot composer', () => {
 
     expect(screen.queryByTestId('agent-copilot-status')).toBeNull();
     expect(
-      screen.getByText('⌘/Ctrl + Enter 发送 · 运行中发送即插话'),
+      screen.getByText('Enter 发送 · Shift+Enter 换行'),
     ).toBeInTheDocument();
   });
 
@@ -225,6 +227,30 @@ describe('AgentCopilot focus and workshop moves', () => {
     fireEvent.click(screen.getByRole('button', { name: '清除焦点' }));
 
     expect(onClearFocus).toHaveBeenCalledTimes(1);
+  });
+
+  it('prefills a CEL request for the selected entity without sending or overwriting a draft', () => {
+    const agent = controller();
+    render(
+      <AgentCopilot
+        controller={agent}
+        focus={{
+          nodeId: 'request.payment',
+          label: '支付申请',
+          kind: 'evidence',
+        }}
+      />,
+    );
+    const proposal = screen.getByRole('button', { name: '生成 CEL 补丁' });
+    type('现有草稿');
+    expect(proposal).toBeDisabled();
+    type('');
+    fireEvent.click(proposal);
+    expect(
+      (screen.getByLabelText('访谈内容') as HTMLTextAreaElement).value,
+    ).toContain('request.payment');
+    expect(screen.getByLabelText('访谈内容')).toHaveFocus();
+    expect(agent.submit).not.toHaveBeenCalled();
   });
 
   it('shows no focus pill when nothing is selected', () => {

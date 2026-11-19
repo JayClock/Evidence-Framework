@@ -60,7 +60,7 @@ export const InlinePatchCopilot = ({
   // clear the selection the card is talking about.
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== 'Escape' || pending !== null) {
+      if (event.key !== 'Escape' || pending !== null || event.isComposing) {
         return;
       }
 
@@ -176,6 +176,7 @@ export const InlinePatchCopilot = ({
         rows={2}
         onChange={(event) => setValue(event.target.value)}
         onKeyDown={(event) => {
+          if (event.nativeEvent.isComposing) return;
           if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
             event.preventDefault();
             void send();
