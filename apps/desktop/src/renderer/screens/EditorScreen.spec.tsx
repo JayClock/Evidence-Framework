@@ -296,6 +296,19 @@ describe('EditorScreen', () => {
     expect(api.story.project).toHaveBeenLastCalledWith(
       expect.objectContaining({ document }),
     );
+    expect(
+      container.querySelector('[data-node-id="evidence.contract"]'),
+    ).toHaveAttribute('data-story-step', 'completed');
+    expect(
+      container.querySelector('[data-node-id="evidence.request"]'),
+    ).toHaveAttribute('data-story-step', 'active');
+    fireEvent.keyDown(screen.getByRole('dialog', { name: '剧情详情' }), {
+      key: 'Escape',
+    });
+    expect(screen.queryByRole('dialog', { name: '剧情详情' })).toBeNull();
+    expect(
+      screen.getByRole('progressbar', { name: '放映进度' }),
+    ).toHaveAttribute('value', '2');
     fireEvent.click(screen.getByRole('button', { name: '退出放映' }));
     expect(screen.queryByLabelText('业务流放映控制')).toBeNull();
     expect(screen.queryByRole('region', { name: '业务故事' })).toBeNull();
@@ -677,6 +690,25 @@ describe('EditorScreen', () => {
     expect(
       screen.getByRole('button', { name: '保存模型' }),
     ).toBeInTheDocument();
+    fireEvent.keyDown(window, { key: 'k', ctrlKey: true });
+    const palette = await screen.findByRole('dialog', { name: '快速命令' });
+    fireEvent.change(within(palette).getByRole('combobox'), {
+      target: { value: '交付' },
+    });
+    fireEvent.click(
+      within(palette).getByRole('option', { name: /打开交付契约/ }),
+    );
+    const reopened = await screen.findByRole('dialog', {
+      name: '交付与导出中枢',
+    });
+    fireEvent.keyDown(reopened, { code: 'Digit2', altKey: true });
+    fireEvent.click(
+      within(reopened).getByRole('button', { name: '返回工作台' }),
+    );
+    expect(screen.getByRole('button', { name: '业务旅程' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
   });
 
   it('shows a save failure without claiming success', async () => {

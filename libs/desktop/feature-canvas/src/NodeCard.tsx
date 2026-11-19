@@ -231,7 +231,7 @@ export const NodeCard = ({
       data-category={entity.category}
       data-node-shape={shape}
       className={[
-        'absolute flex cursor-pointer flex-col overflow-hidden rounded-lg border bg-white text-left shadow-sm transition-[opacity,box-shadow] duration-150 focus-visible:outline-2 focus-visible:outline-evidence-accent motion-reduce:transition-none',
+        'absolute flex cursor-pointer flex-col overflow-hidden rounded-lg border border-[color:var(--canvas-card-stroke)] bg-white text-left shadow-sm transition-[opacity,box-shadow] duration-150 focus-visible:outline-2 focus-visible:outline-evidence-accent motion-reduce:transition-none',
         selected ? 'ring-2 ring-evidence-accent ring-offset-1' : '',
         highlighted && !selected ? 'shadow-[0_0_0_2px_#2f5d8f55]' : '',
         dimmed ? 'opacity-20' : 'opacity-100',
@@ -244,11 +244,11 @@ export const NodeCard = ({
           top: box.y,
           width: box.width,
           height: box.height,
-          '--canvas-card-stroke':
-            shape === 'moment' ? color : 'var(--color-workbench-border)',
-          borderColor: selected
+          '--canvas-card-stroke': selected
             ? 'var(--color-evidence-accent)'
-            : 'var(--canvas-card-stroke)',
+            : shape === 'moment'
+              ? color
+              : 'var(--color-workbench-border)',
           borderWidth: shape === 'moment' ? 2 : 1,
           borderLeftWidth: 3,
           borderLeftColor: color,

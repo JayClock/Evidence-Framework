@@ -82,7 +82,9 @@ export const DeliveryHub = ({
       variant="default"
       size="xs"
       loading={hub.busy}
-      disabled={!current || !analysis.canExportDraft || !artifacts.length}
+      disabled={
+        hub.busy || !current || !analysis.canExportDraft || !artifacts.length
+      }
       onClick={() => void hub.exportDelivery()}
     >
       {hub.busy ? '导出中…' : '导出当前草稿'}

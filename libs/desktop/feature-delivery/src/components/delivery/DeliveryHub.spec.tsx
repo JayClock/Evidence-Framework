@@ -84,12 +84,45 @@ describe('DeliveryHub', () => {
     expect(hub.exportDelivery).toHaveBeenCalledOnce();
   });
 
+  it('keeps export disabled while the native picker or write is pending', () => {
+    show(controller({ busy: true }));
+    expect(screen.getByRole('button', { name: '导出中…' })).toBeDisabled();
+  });
+
   it('disables copy and export for stale snapshots', () => {
     show(controller({ stale: true, loading: true }));
     expect(screen.getByText(/上一次投影/)).toBeVisible();
     expect(screen.getByRole('button', { name: '复制代码' })).toBeDisabled();
     expect(screen.getByRole('button', { name: '导出当前草稿' })).toBeDisabled();
     expect(screen.queryByText('无 API 阻断')).not.toBeInTheDocument();
+  });
+
+  it('shows live API blockers and breaking changes without treating them as production drift', () => {
+    const hub = controller({
+      analysis: {
+        ...analysis,
+        canExportDraft: false,
+        apiSummary: {
+          ...analysis.apiSummary,
+          hasBaseline: true,
+          breakingChangeCount: 2,
+        },
+        issues: [
+          {
+            issueId: 'api-invalid',
+            source: 'audit_api',
+            severity: 'block',
+            code: 'API_INVALID',
+            message: 'Cannot project',
+          },
+        ],
+      },
+    });
+    show(hub, false, true);
+    expect(screen.getByText('1 项阻断')).toBeVisible();
+    expect(screen.getByText('2 项')).toBeVisible();
+    expect(screen.getByText(/检测到磁盘变更/)).toBeVisible();
+    expect(screen.getByRole('button', { name: '导出当前草稿' })).toBeDisabled();
   });
 
   it('shows preview errors and allows returning without exporting', async () => {
