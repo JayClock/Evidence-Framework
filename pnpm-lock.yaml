@@ -511,6 +511,9 @@ importers:
       '@evidence-poc/desktop-contracts':
         specifier: workspace:*
         version: link:../contracts
+      '@evidence-poc/desktop-ui-kit':
+        specifier: workspace:*
+        version: link:../ui-kit
       '@evidence-poc/evidence-model-core':
         specifier: workspace:*
         version: link:../../evidence-model-core

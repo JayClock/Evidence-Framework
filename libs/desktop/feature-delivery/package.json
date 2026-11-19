@@ -28,6 +28,7 @@
     "react": "^19.2.8",
     "tslib": "^2.3.0",
     "@evidence-poc/desktop-contracts": "workspace:*",
+    "@evidence-poc/desktop-ui-kit": "workspace:*",
     "@evidence-poc/evidence-schema": "workspace:*",
     "@evidence-poc/evidence-model-core": "workspace:*"
   },

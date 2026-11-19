@@ -12,6 +12,7 @@
 @source '../../../../libs/desktop/feature-inspector/src';
 @source '../../../../libs/desktop/feature-agent/src';
 @source '../../../../libs/desktop/feature-story/src';
+@source '../../../../libs/desktop/feature-delivery/src';
 
 @theme {
   --color-evidence-ink: #1f2329;

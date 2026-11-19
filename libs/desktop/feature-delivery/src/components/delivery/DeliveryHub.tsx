@@ -1,286 +1,286 @@
 import { useState } from 'react';
+import {
+  Button,
+  cn,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTitle,
+} from '@evidence-poc/desktop-ui-kit';
+import { CodePreviewPane } from './CodePreviewPane';
+import { ContractOverview } from './ContractOverview';
 import { IncrementalDiffPanel } from './IncrementalDiffPanel';
 import type { DeliveryHubController } from '../../state/useDeliveryHub';
 
-const KIND_LABELS: Record<string, string> = {
-  channel: '渠道前置',
-  fulfillment: '核心履约',
-  domain: '领域计算',
-  capability: '能力支撑',
-};
-
-const LINK_MODE_LABELS: Record<string, string> = {
-  sync: '同步调用',
-  async: '异步回调',
-};
+const artifactTitles = new Map([
+  ['openapi.json', 'OpenAPI 契约'],
+  ['topology.json', '服务拓扑'],
+  ['routes.json', '路由清单'],
+  ['deployment.compose.json', '部署拓扑'],
+  ['projection.json', '完整模型投影'],
+  ['http-journeys.json', 'HTTP 旅程定义'],
+  ['limitations.md', '尚未闭环的能力'],
+  ['api-changes.md', 'API 变更日志'],
+  ['draft-status.json', '草稿状态与诊断'],
+]);
 
 export interface DeliveryHubProps {
   hub: DeliveryHubController;
+  projectName: string;
+  dirty: boolean;
+  externalChange: boolean;
   onFocusEntity?: (entityRef: string) => void;
   onClose: () => void;
-  /** Docks the hub into the bottom console instead of covering the canvas. */
-  embedded?: boolean;
+  onRestoreFocus: () => void;
 }
 
-/**
- * The delivery hand-off, in one panel.
- *
- * It answers the question a modeler asks after the model closes: what does this
- * become? One row per service, one row per crossing, and the work the model still
- * owes stated as an obligation rather than hidden behind a green check.
- */
 export const DeliveryHub = ({
   hub,
+  projectName,
+  dirty,
+  externalChange,
   onClose,
   onFocusEntity,
-  embedded = false,
+  onRestoreFocus,
 }: DeliveryHubProps) => {
-  const [tab, setTab] = useState<'full' | 'diff'>('full');
-  const preview = hub.preview;
+  const [view, setView] = useState<'artifacts' | 'overview' | 'diff'>(
+    'artifacts',
+  );
+  const [path, setPath] = useState('openapi.json');
+  const { analysis } = hub;
+  const artifacts = analysis?.artifacts ?? [];
+  const artifact = artifacts.find((item) => item.path === path) ?? artifacts[0];
+  const current = analysis !== null && !hub.loading && !hub.stale && !hub.error;
+  const status = hub.error
+    ? '投影失败'
+    : !current
+      ? '正在投影当前模型…'
+      : externalChange
+        ? '检测到磁盘变更 · 仍基于编辑会话'
+        : dirty
+          ? '基于未保存的模型草稿'
+          : '基于当前编辑会话';
+  const blocked = current
+    ? analysis.issues.filter((issue) => issue.severity === 'block').length
+    : 0;
+  const warnings = current
+    ? analysis.issues.filter((issue) => issue.severity === 'warn').length
+    : 0;
+  const gateLabel = !current
+    ? '—'
+    : blocked
+      ? `${blocked} 项阻断`
+      : warnings
+        ? `${warnings} 项警告`
+        : '无 API 阻断';
+  const diffLabel =
+    !current || !analysis.apiSummary.hasBaseline
+      ? '—'
+      : `${analysis.apiSummary.breakingChangeCount} 项`;
+  const exportButton = (
+    <Button
+      variant="default"
+      size="xs"
+      loading={hub.busy}
+      disabled={!current || !analysis.canExportDraft || !artifacts.length}
+      onClick={() => void hub.exportDelivery()}
+    >
+      {hub.busy ? '导出中…' : '导出当前草稿'}
+    </Button>
+  );
 
   return (
-    <div
-      role={embedded ? 'region' : 'dialog'}
-      aria-modal={embedded ? undefined : 'true'}
-      aria-label="交付中心"
-      className={
-        embedded
-          ? 'flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden bg-white'
-          : 'fixed inset-0 z-40 flex items-center justify-center bg-[#0b1a2a33] p-6'
-      }
+    <Dialog
+      open
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
     >
-      <div
-        className={
-          embedded
-            ? 'flex min-h-0 w-full flex-1 flex-col overflow-hidden'
-            : 'flex max-h-[80vh] w-[860px] max-w-full flex-col overflow-hidden rounded-xl border border-evidence-line bg-white shadow-[0_12px_48px_#00000024]'
-        }
+      <DialogContent
+        fullScreen
+        showClose={false}
+        aria-describedby={undefined}
+        className="flex min-h-0 flex-col bg-workbench-background"
+        onCloseAutoFocus={(event) => {
+          event.preventDefault();
+          onRestoreFocus();
+        }}
+        onKeyDown={(event) => {
+          event.stopPropagation();
+        }}
       >
-        <header className="flex shrink-0 items-center justify-between border-b border-evidence-line px-5 py-3">
-          <div>
-            <p className="text-[10px] tracking-[0.14em] text-evidence-muted">
-              DELIVERY HUB
-            </p>
-            <h2 className="text-[14px] font-medium text-evidence-ink">
-              交付物
-              {preview === null ? null : (
-                <span className="ml-2 text-[11px] text-evidence-muted">
-                  {preview.modelName} · {preview.modelVersion}
-                </span>
-              )}
-            </h2>
+        <header className="evidence-drag-region flex min-h-12 shrink-0 items-center justify-between gap-4 border-b border-workbench-border bg-white py-1 pr-4 pl-[var(--evidence-traffic-light-space)]">
+          <div className="evidence-no-drag flex min-w-0 items-center gap-2 text-xs">
+            <span className="truncate font-semibold" title={projectName}>
+              {projectName}
+            </span>
+            <span aria-hidden="true" className="text-workbench-border-strong">
+              /
+            </span>
+            <DialogTitle className="shrink-0 text-xs">
+              交付与导出中枢
+            </DialogTitle>
           </div>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => void hub.exportDelivery()}
-              disabled={hub.busy || hub.stale || !hub.analysis?.canExportDraft}
-              className="rounded bg-evidence-accent px-2.5 py-1 text-[11px] font-medium text-white disabled:opacity-40"
+          <div className="evidence-no-drag flex shrink-0 items-center gap-3">
+            <span
+              role="status"
+              className={cn(
+                'rounded-full border px-2 py-1 text-[11px]',
+                current && !externalChange
+                  ? 'border-evidence-line bg-workbench-background text-workbench-muted'
+                  : 'border-amber-200 bg-amber-50 text-amber-900',
+              )}
             >
-              {hub.busy ? '导出中…' : '导出当前草稿'}
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded border border-evidence-line px-2 py-1 text-[11px] text-evidence-muted hover:text-evidence-ink"
-            >
-              关闭
-            </button>
+              {status}
+            </span>
+            <DialogClose asChild>
+              <Button>返回工作台</Button>
+            </DialogClose>
           </div>
         </header>
-        <div
-          role="tablist"
-          aria-label="交付视图"
-          className="flex gap-2 border-b px-5 py-2 text-[11px]"
-        >
-          <button
-            role="tab"
-            aria-selected={tab === 'full'}
-            onClick={() => setTab('full')}
+        <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,min(34%,440px))_minmax(0,1fr)] gap-4 p-4 xl:gap-6 xl:px-8 xl:py-6">
+          <aside
+            className="min-h-0 min-w-0 overflow-auto overscroll-contain p-0.5"
+            aria-label="交付导航"
           >
-            契约全览
-          </button>
-          <button
-            role="tab"
-            aria-selected={tab === 'diff'}
-            onClick={() => setTab('diff')}
-          >
-            本次增量变更
-            {hub.analysis?.diff.hasBreakingChanges ? ' ⚠' : ''}
-          </button>
-        </div>
-        <p role="status" className="px-5 py-2 text-[11px] text-evidence-muted">
-          会话基线：打开编辑器时的模型；保存不会重置差异。
-          {hub.stale
-            ? '正在重新计算，旧预览不可导出。'
-            : '当前为内存草稿，未授权发布。'}
-        </p>
-
-        {hub.notice === null ? null : (
-          <p
-            role="status"
-            className={[
-              'border-b px-5 py-2 text-[11px]',
-              hub.notice.tone === 'saved'
-                ? 'border-evidence-line bg-evidence-surface text-evidence-muted'
-                : 'border-evidence-evidence bg-[#fdf3f1] text-evidence-evidence',
-            ].join(' ')}
-          >
-            {hub.notice.message}
-          </p>
-        )}
-
-        <div className="min-h-0 flex-1 overflow-auto px-5 py-4 text-[11px] text-evidence-ink">
-          {hub.loading ? (
-            <p className="text-evidence-muted">正在读取模型并投影交付边界…</p>
-          ) : null}
-
-          {hub.error === null ? null : (
-            <p className="whitespace-pre-wrap text-[#b42318]">{hub.error}</p>
-          )}
-
-          {tab !== 'diff' || hub.analysis === null ? null : (
-            <IncrementalDiffPanel
-              analysis={hub.analysis}
-              stale={hub.stale}
-              onFocusEntity={onFocusEntity}
-            />
-          )}
-          {tab !== 'full' || preview === null ? null : (
-            <div className="flex flex-col gap-5">
-              <section>
-                <h3 className="mb-1 text-[11px] font-medium text-evidence-muted">
-                  服务边界 {preview.services.length}
-                </h3>
-                <table className="w-full border-collapse">
-                  <thead>
-                    <tr className="text-left text-evidence-muted">
-                      <th className="border-b border-evidence-line py-1">
-                        服务
-                      </th>
-                      <th className="border-b border-evidence-line py-1">
-                        类型
-                      </th>
-                      <th className="border-b border-evidence-line py-1">
-                        上下文
-                      </th>
-                      <th className="border-b border-evidence-line py-1">
-                        路由
-                      </th>
-                      <th className="border-b border-evidence-line py-1">
-                        说明
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {preview.services.map((service) => (
-                      <tr key={service.id} data-service={service.id}>
-                        <td className="border-b border-evidence-line py-1 pr-2">
-                          {service.name}
-                        </td>
-                        <td className="border-b border-evidence-line py-1 pr-2">
-                          {KIND_LABELS[service.kind] ?? service.kind}
-                        </td>
-                        <td className="border-b border-evidence-line py-1 pr-2">
-                          {service.contextRef}
-                        </td>
-                        <td className="border-b border-evidence-line py-1 pr-2">
-                          {service.routeCount}
-                          <div className="font-mono text-[10px] text-evidence-muted">
-                            {service.routePrefixes.join(' · ')}
-                          </div>
-                        </td>
-                        <td className="border-b border-evidence-line py-1 text-evidence-muted">
-                          {service.notes}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </section>
-
-              <section>
-                <h3 className="mb-1 text-[11px] font-medium text-evidence-muted">
-                  跨边界调用 {preview.links.length}
-                </h3>
-                {preview.links.length === 0 ? (
-                  <p className="text-evidence-muted">
-                    各服务之间没有直接调用。
-                  </p>
-                ) : (
-                  <table className="w-full border-collapse">
-                    <thead>
-                      <tr className="text-left text-evidence-muted">
-                        <th className="border-b border-evidence-line py-1">
-                          从
-                        </th>
-                        <th className="border-b border-evidence-line py-1">
-                          到
-                        </th>
-                        <th className="border-b border-evidence-line py-1">
-                          语义
-                        </th>
-                        <th className="border-b border-evidence-line py-1">
-                          方式
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {preview.links.map((link) => (
-                        <tr key={link.id} data-link={link.id}>
-                          <td className="border-b border-evidence-line py-1 pr-2">
-                            {link.from}
-                          </td>
-                          <td className="border-b border-evidence-line py-1 pr-2">
-                            {link.to}
-                          </td>
-                          <td className="border-b border-evidence-line py-1 pr-2">
-                            {link.label}
-                          </td>
-                          <td className="border-b border-evidence-line py-1">
-                            {LINK_MODE_LABELS[link.mode] ?? link.mode}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-              </section>
-
-              <section aria-label="路由契约">
-                <h3 className="font-medium">
-                  路由契约 {preview.routes.length}
-                </h3>
-                {(hub.analysis?.bindings ?? []).map((route) => (
-                  <p key={route.id} className="mt-1 break-all">
-                    <code>
-                      {route.method} {route.path}
-                    </code>{' '}
-                    ·{' '}
-                    {route.exposure === 'internal'
-                      ? '内部操作'
-                      : route.roleRefs.join('、')}
-                  </p>
-                ))}
-              </section>
-              <section>
-                <h3 className="mb-1 text-[11px] font-medium text-evidence-muted">
-                  尚未闭环的能力 {preview.limitations.length}
-                </h3>
-                {preview.limitations.length === 0 ? (
-                  <p className="text-evidence-muted">没有未闭环项。</p>
-                ) : (
-                  <ul className="list-disc pl-4 text-evidence-muted">
-                    {preview.limitations.map((limitation) => (
-                      <li key={limitation}>{limitation}</li>
-                    ))}
-                  </ul>
-                )}
-              </section>
+            <dl className="mb-4 grid grid-cols-2 gap-3">
+              <div className="rounded-lg border border-workbench-border bg-white p-3">
+                <dt className="text-[11px] text-workbench-muted">
+                  API 草稿校验
+                </dt>
+                <dd className="text-lg font-semibold">{gateLabel}</dd>
+              </div>
+              <div className="rounded-lg border border-workbench-border bg-white p-3">
+                <dt className="text-[11px] text-workbench-muted">
+                  会话破坏性变更
+                </dt>
+                <dd className="text-lg font-semibold">{diffLabel}</dd>
+              </div>
+            </dl>
+            <div
+              role="group"
+              aria-label="交付视图"
+              className="mb-4 flex flex-wrap gap-2"
+            >
+              <Button
+                aria-pressed={view === 'overview'}
+                variant={view === 'overview' ? 'default' : 'outline'}
+                onClick={() => setView('overview')}
+              >
+                契约全览
+              </Button>
+              <Button
+                aria-pressed={view === 'diff'}
+                variant={view === 'diff' ? 'default' : 'outline'}
+                onClick={() => setView('diff')}
+              >
+                本次增量变更
+                {current && analysis.diff.hasBreakingChanges ? ' ⚠' : ''}
+              </Button>
             </div>
-          )}
+            <h2 className="mb-2 text-sm font-semibold">可导出工程产物</h2>
+            {artifacts.length ? (
+              <ul className="flex flex-col gap-2">
+                {artifacts.map((item) => (
+                  <li key={item.path}>
+                    <button
+                      type="button"
+                      aria-pressed={
+                        view === 'artifacts' && item.path === artifact?.path
+                      }
+                      className="flex w-full flex-col gap-0.5 rounded-lg border border-workbench-border bg-white px-3 py-2 text-left hover:bg-workbench-subtle focus-visible:outline-2 focus-visible:outline-evidence-accent aria-pressed:border-evidence-accent aria-pressed:bg-evidence-active"
+                      onClick={() => {
+                        setPath(item.path);
+                        setView('artifacts');
+                      }}
+                    >
+                      <span className="text-xs font-semibold">
+                        {artifactTitles.get(item.path) ?? item.path}
+                      </span>
+                      <code
+                        className="max-w-full truncate text-[11px] text-workbench-muted"
+                        title={item.path}
+                      >
+                        {item.path}
+                      </code>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-xs text-workbench-muted">
+                {hub.error ? '暂无法读取产物。' : '等待产物投影。'}
+              </p>
+            )}
+          </aside>
+          <div className="flex min-h-0 min-w-0 flex-col overflow-clip rounded-lg border border-workbench-border bg-white">
+            <p className="border-b border-workbench-border px-4 py-2 text-[11px] text-workbench-muted">
+              会话基线：打开编辑器时的模型；保存不会重置差异。当前产物仅供草稿交付，不代表已授权发布。
+              {hub.stale && artifact
+                ? ' 当前显示上一次投影，暂不可复制或导出。'
+                : ''}
+            </p>
+            {hub.notice ? (
+              <p
+                role={hub.notice.tone === 'failed' ? 'alert' : 'status'}
+                className="border-b border-workbench-border px-4 py-2 text-xs [overflow-wrap:anywhere]"
+              >
+                {hub.notice.message}
+              </p>
+            ) : null}
+            {hub.error ? (
+              <p
+                role="alert"
+                className="px-4 py-2 text-xs whitespace-pre-wrap text-red-800"
+              >
+                {hub.error}
+              </p>
+            ) : null}
+            {view === 'artifacts' && artifact ? (
+              <CodePreviewPane
+                key={`${analysis?.revision}:${artifact.path}`}
+                artifact={artifact}
+                version={
+                  artifact.path === 'openapi.json'
+                    ? analysis?.openapi.openapi
+                    : undefined
+                }
+                stale={!current}
+                actions={exportButton}
+              />
+            ) : (
+              <>
+                <div className="flex min-h-11 shrink-0 items-center justify-between gap-2 border-b border-workbench-border px-4 py-1">
+                  <h2 className="text-xs font-semibold">
+                    {view === 'diff'
+                      ? '本次增量变更'
+                      : view === 'overview'
+                        ? '契约全览'
+                        : '产物预览'}
+                  </h2>
+                  {exportButton}
+                </div>
+                <div className="min-h-0 flex-1 overflow-auto overscroll-contain">
+                  {view === 'diff' && analysis ? (
+                    <IncrementalDiffPanel
+                      analysis={analysis}
+                      stale={!current}
+                      {...(onFocusEntity ? { onFocusEntity } : {})}
+                    />
+                  ) : view === 'overview' && hub.preview ? (
+                    <ContractOverview
+                      preview={hub.preview}
+                      bindings={analysis?.bindings ?? []}
+                    />
+                  ) : (
+                    <p className="p-4 text-xs text-workbench-muted">暂无预览</p>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };

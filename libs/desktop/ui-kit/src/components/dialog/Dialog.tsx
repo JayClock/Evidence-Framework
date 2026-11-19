@@ -37,20 +37,26 @@ export const DialogContent = ({
   className,
   children,
   showClose = true,
+  fullScreen = false,
   ...props
 }: ComponentProps<typeof DialogPrimitive.Content> & {
   /** The command palette draws its own header and keeps the corner free. */
   showClose?: boolean;
+  fullScreen?: boolean;
 }) => (
   <DialogPortal>
-    <DialogOverlay />
+    {fullScreen ? null : <DialogOverlay />}
     <DialogPrimitive.Content
       data-slot="dialog-content"
       className={cn(
-        'fixed top-1/2 left-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2',
-        'rounded-lg border border-evidence-line bg-white shadow-overlay',
-        'data-[state=open]:animate-[evidence-zoom-in_130ms_ease-out]',
-        'data-[state=closed]:animate-[evidence-zoom-out_100ms_ease-in]',
+        fullScreen
+          ? 'fixed inset-0 z-50 bg-white outline-none'
+          : [
+              'fixed top-1/2 left-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2',
+              'rounded-lg border border-evidence-line bg-white shadow-overlay',
+              'data-[state=open]:animate-[evidence-zoom-in_130ms_ease-out]',
+              'data-[state=closed]:animate-[evidence-zoom-out_100ms_ease-in]',
+            ],
         className,
       )}
       {...props}

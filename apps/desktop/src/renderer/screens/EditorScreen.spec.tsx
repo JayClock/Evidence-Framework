@@ -639,15 +639,44 @@ describe('EditorScreen', () => {
       },
     });
 
+    const project = api.projects;
+    const originalPreview = project.deliveryLivePreview;
+    const preview = vi
+      .spyOn(project, 'deliveryLivePreview')
+      .mockImplementation(async (input) => {
+        const result = await originalPreview(input);
+        return result.success && input.includeArtifacts
+          ? {
+              success: true,
+              analysis: {
+                ...result.analysis,
+                artifacts: [
+                  { path: 'openapi.json', content: '{"openapi":"3.1.0"}' },
+                ],
+              },
+            }
+          : result;
+      });
     render(<EditorScreen rootPath="/models/procurement" />);
 
     await readyCanvas();
     fireEvent.keyDown(window, { code: 'KeyD', altKey: true });
 
-    expect(await screen.findByLabelText('交付中心')).toBeInTheDocument();
-    expect(await screen.findByText('核心履约')).toBeInTheDocument();
-    expect(api.calls.deliveryLivePreview).toEqual(['/models/procurement']);
+    const hub = await screen.findByRole('dialog', { name: '交付与导出中枢' });
+    expect(
+      await within(hub).findByRole('button', { name: /OpenAPI 契约/ }),
+    ).toBeInTheDocument();
+    expect(preview).toHaveBeenLastCalledWith(
+      expect.objectContaining({ includeArtifacts: true }),
+    );
+    fireEvent.click(within(hub).getByRole('button', { name: '契约全览' }));
+    expect(within(hub).getByText('核心履约')).toBeInTheDocument();
     expect(api.calls.deliveryPreview).toEqual([]);
+    fireEvent.keyDown(hub, { key: 'Escape' });
+    expect(screen.queryByRole('dialog', { name: '交付与导出中枢' })).toBeNull();
+    expect(
+      screen.getByRole('button', { name: '保存模型' }),
+    ).toBeInTheDocument();
   });
 
   it('shows a save failure without claiming success', async () => {

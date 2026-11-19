@@ -171,6 +171,7 @@ const EditorWorkspace = ({
   const storyActive = workspaceView.mode === 'story';
   const rightRail = useRef<ImperativePanelHandle>(null);
   const canvasStageRef = useRef<HTMLDivElement>(null);
+  const workspaceRef = useRef<HTMLDivElement>(null);
   const returnToCanvas = useCallback(() => {
     const canvas = canvasStageRef.current;
     if (canvas === null) return;
@@ -672,7 +673,11 @@ const EditorWorkspace = ({
 
   return (
     <LiveApiProvider analysis={delivery.analysis} stale={delivery.stale}>
-      <div className="flex h-full flex-col bg-evidence-surface">
+      <div
+        ref={workspaceRef}
+        tabIndex={-1}
+        className="flex h-full flex-col bg-evidence-surface focus:outline-none"
+      >
         <TopHeader
           projectName={state.project.name}
           dirty={state.dirty}
@@ -950,8 +955,18 @@ const EditorWorkspace = ({
         {layout.isDeliveryOpen ? (
           <DeliveryHub
             hub={delivery}
+            projectName={state.project.name}
+            dirty={state.dirty}
+            externalChange={state.externalChangeAt !== null}
             onClose={layout.closeDelivery}
-            onFocusEntity={focusNode}
+            onRestoreFocus={() =>
+              workspaceRef.current?.focus({ preventScroll: true })
+            }
+            onFocusEntity={(entityRef) => {
+              layout.closeDelivery();
+              workspaceView.returnToGraph();
+              focusNode(entityRef);
+            }}
           />
         ) : null}
 
