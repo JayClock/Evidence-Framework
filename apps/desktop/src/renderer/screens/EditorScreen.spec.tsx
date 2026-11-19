@@ -420,6 +420,24 @@ describe('EditorScreen', () => {
     expect(pane).toHaveTextContent('选择画布上的业务对象查看属性。');
   });
 
+  it('returns keyboard focus to the selected node without clearing selection', async () => {
+    readyProject();
+    const { container } = render(
+      <EditorScreen rootPath="/models/procurement" />,
+    );
+    await readyCanvas();
+    const node = container.querySelector<HTMLElement>(
+      '[data-node-id="evidence.contract"]',
+    )!;
+    fireEvent.click(node);
+    const pane = screen.getByRole('region', { name: '检查与协同' });
+    const back = within(pane).getByRole('button', { name: '返回画布' });
+    back.focus();
+    fireEvent.keyDown(back, { key: 'Escape' });
+    expect(node).toHaveFocus();
+    expect(node).toHaveAttribute('aria-pressed', 'true');
+  });
+
   it('switches the ledger and still opens rail tools with Mod+1 to Mod+4', async () => {
     readyProject();
     render(<EditorScreen rootPath="/models/procurement" />);

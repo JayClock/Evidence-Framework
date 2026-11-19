@@ -35,7 +35,9 @@ describe('RightInspector', () => {
 
     expect(screen.getByText('基础信息')).toBeInTheDocument();
     expect(screen.getByText('责任锚定')).toBeInTheDocument();
-    expect(screen.getByText('业务属性与关键数据')).toBeInTheDocument();
+    expect(
+      screen.getByRole('region', { name: '模型属性' }),
+    ).toBeInTheDocument();
     expect(screen.getByText('evidence.request')).toBeInTheDocument();
     expect(screen.getAllByText('关键数据').length).toBeGreaterThan(0);
   });
@@ -219,6 +221,12 @@ describe('RightInspector', () => {
   it('opens the ledger sheet with Alt+L', () => {
     setup('evidence.contract').renderInspector();
 
+    fireEvent.keyDown(screen.getByRole('textbox', { name: '业务名称' }), {
+      key: 'l',
+      altKey: true,
+      code: 'KeyL',
+    });
+    expect(screen.queryByRole('dialog')).toBeNull();
     fireEvent.keyDown(window, { key: 'l', altKey: true, code: 'KeyL' });
 
     expect(

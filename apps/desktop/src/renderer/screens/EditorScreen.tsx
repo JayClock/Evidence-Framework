@@ -168,6 +168,15 @@ const EditorWorkspace = ({
   const ledgerActive = workspaceView.mode === 'table';
   const storyActive = workspaceView.mode === 'story';
   const rightRail = useRef<ImperativePanelHandle>(null);
+  const canvasStageRef = useRef<HTMLDivElement>(null);
+  const returnToCanvas = useCallback(() => {
+    const canvas = canvasStageRef.current;
+    if (canvas === null) return;
+    const selected = canvas.querySelector<HTMLElement>(
+      '[data-node-id][aria-pressed="true"]',
+    );
+    (selected ?? canvas).focus({ preventScroll: true });
+  }, []);
   const [rightRailCollapsed, setRightRailCollapsed] = useState(false);
   const expandRightRail = useCallback(() => {
     const panel = rightRail.current;
@@ -590,6 +599,8 @@ const EditorWorkspace = ({
 
   const graphStage = (
     <div
+      ref={canvasStageRef}
+      tabIndex={-1}
       className="relative flex h-full min-h-0 flex-1"
       aria-busy={state.layoutPending}
     >
@@ -838,6 +849,13 @@ const EditorWorkspace = ({
                     pane={layout.rightPane}
                     onShowInspector={layout.showInspector}
                     onShowCopilot={layout.openCopilot}
+                    onReturnToCanvas={
+                      layout.rightPane === 'inspector' &&
+                      !storyActive &&
+                      patchReview.review === null
+                        ? returnToCanvas
+                        : undefined
+                    }
                   >
                     {layout.rightPane === 'inspector' ? (
                       <RightInspector
@@ -845,6 +863,7 @@ const EditorWorkspace = ({
                         session={state.session}
                         selection={state.selection}
                         showHeading={false}
+                        active={!rightRailCollapsed}
                       />
                     ) : (
                       <AgentCopilot

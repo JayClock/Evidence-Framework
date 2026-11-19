@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Button } from '@evidence-poc/desktop-ui-kit';
 
 import {
   type EntityAST,
@@ -18,10 +19,12 @@ import { RelationshipFlowSection } from './inspector/RelationshipFlowSection';
 import { AttributeDataGrid } from './inspector/AttributeDataGrid';
 import { FulfillmentPairSection } from './inspector/FulfillmentPairSection';
 import { KeyDataLedgerSheet } from './inspector/KeyDataLedgerSheet';
+import { InvariantRulesSection } from './inspector/InvariantRulesSection';
 
 interface RightInspectorProps {
   /** The workspace shell can provide its own heading/switcher. */
   showHeading?: boolean;
+  active?: boolean;
   graph: DomainGraph;
   session: ModelSession;
   selection: ModelSelection;
@@ -64,101 +67,120 @@ const referenceOptions = (
   });
 };
 
-/**
- * Right-hand inspector generated from the Phase 1 registry, so a new category
- * field only has to be declared once in `evidence-schema`.
- */
+/** Schema-driven entity editor inside the workbench's existing right pane. */
 export const RightInspector = ({
   showHeading = true,
+  active = true,
   graph,
   session,
   selection,
 }: RightInspectorProps) => {
   const entity =
     selection.nodeId === null ? undefined : graph.getEntity(selection.nodeId);
+  return entity === undefined ? (
+    <InspectorShell showHeading={showHeading}>
+      选择画布上的业务对象查看属性。
+    </InspectorShell>
+  ) : (
+    <SelectedInspector
+      key={entity.id}
+      entity={entity}
+      showHeading={showHeading}
+      active={active}
+      graph={graph}
+      session={session}
+      selection={selection}
+    />
+  );
+};
+
+const SelectedInspector = ({
+  entity,
+  showHeading,
+  active,
+  graph,
+  session,
+  selection,
+}: RightInspectorProps & {
+  entity: EntityAST;
+  showHeading: boolean;
+  active: boolean;
+}) => {
   const [studioOpen, setStudioOpen] = useState(false);
+  const attributeCount = entity.attributes?.length ?? 0;
 
-  // Alt+L opens the wide ledger, but only while an object is being inspected:
-  // the sheet has nothing to show without one.
   useEffect(() => {
-    if (entity === undefined) {
-      return undefined;
-    }
-
+    if (!active || attributeCount === 0) return;
     const onKeyDown = (event: KeyboardEvent) => {
-      if (!event.altKey || event.code !== 'KeyL') {
+      const target = event.target;
+      if (
+        event.defaultPrevented ||
+        event.isComposing ||
+        !event.altKey ||
+        event.code !== 'KeyL' ||
+        (target instanceof Element &&
+          target.closest(
+            'input, textarea, select, [contenteditable="true"], [role="dialog"]',
+          ))
+      )
         return;
-      }
-
       event.preventDefault();
       setStudioOpen(true);
     };
-
     window.addEventListener('keydown', onKeyDown);
-
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [entity]);
-
-  if (entity === undefined) {
-    return (
-      <InspectorShell showHeading={showHeading}>
-        选择画布上的业务对象查看属性。
-      </InspectorShell>
-    );
-  }
-
-  const attributeCount = entity.attributes?.length ?? 0;
+  }, [active, attributeCount]);
 
   return (
     <>
       <InspectorShell
         showHeading={showHeading}
         footer={
-          attributeCount === 0 ? null : (
-            <button
+          attributeCount === 0 ? undefined : (
+            <Button
               type="button"
+              size="sm"
+              variant="outline"
+              className="w-full justify-between"
               onClick={() => setStudioOpen(true)}
-              className="flex w-full items-center justify-between gap-2 rounded border border-evidence-line bg-white px-2 py-1.5 text-left text-[11px] text-evidence-ink transition-colors hover:border-evidence-accent"
-              title="在宽屏台账中编辑全部字段与 CEL 规则（Alt+L）"
             >
-              <span className="truncate">
-                展开数据台账与 CEL 规则
-                <span className="ml-1 text-[10px] text-evidence-muted">
-                  {attributeCount} 个字段
-                </span>
-              </span>
-              <span
-                aria-hidden="true"
-                className="shrink-0 text-evidence-accent"
-              >
-                →
-              </span>
-            </button>
+              <span className="truncate">展开数据台账与 CEL 规则</span>
+              <kbd className="shrink-0 text-[10px] text-workbench-muted">
+                Alt+L
+              </kbd>
+            </Button>
           )
         }
       >
+        <div className="flex min-w-0 items-baseline gap-2 text-workbench-muted">
+          <span>ID:</span>
+          <code title={entity.id} className="min-w-0 truncate">
+            {entity.id}
+          </code>
+        </div>
         {entity.sourceSnippet === undefined ? null : (
           <section
             aria-label="依据条款原文"
-            className="mb-3 rounded border border-evidence-line bg-[#fbfcfe] p-2"
+            className="flex flex-col gap-1.5 rounded-md border border-workbench-border bg-workbench-background p-3"
           >
             <h3 className="font-semibold">依据条款原文</h3>
-            <p className="whitespace-pre-wrap">{entity.sourceSnippet.text}</p>
-            <p className="text-evidence-muted">
+            <p className="text-workbench-body wrap-anywhere whitespace-pre-wrap">
+              {entity.sourceSnippet.text}
+            </p>
+            <p className="wrap-anywhere text-workbench-muted">
               {entity.sourceSnippet.locator ?? '未记录定位信息'}
             </p>
           </section>
         )}
         <InspectorBody
-          key={entity.id}
           graph={graph}
           session={session}
           entity={entity}
+          selectedAttribute={selection.attributeName}
           onOpenStudio={() => setStudioOpen(true)}
         />
       </InspectorShell>
-
-      {studioOpen ? (
+      {active && studioOpen ? (
         <KeyDataLedgerSheet
           entity={entity}
           graph={graph}
@@ -180,17 +202,17 @@ const InspectorShell = ({
   footer?: React.ReactNode;
   showHeading: boolean;
 }) => (
-  <aside className="flex h-full min-h-0 w-full flex-col bg-white/70">
+  <aside className="flex h-full min-h-0 w-full flex-col bg-white">
     {showHeading ? (
       <div className="border-b border-evidence-line px-3 py-2 text-[10px] tracking-wide text-evidence-muted uppercase">
         检视器
       </div>
     ) : null}
-    <div className="min-h-0 flex-1 overflow-y-auto px-3 py-2 text-[11px]">
+    <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 py-3 text-xs">
       {children}
     </div>
     {footer === undefined ? null : (
-      <div className="shrink-0 border-t border-evidence-line px-3 py-2">
+      <div className="flex h-12 shrink-0 items-center border-t border-workbench-border px-4">
         {footer}
       </div>
     )}
@@ -201,18 +223,19 @@ const InspectorBody = ({
   graph,
   session,
   entity,
+  selectedAttribute,
   onOpenStudio,
 }: {
   graph: DomainGraph;
   session: ModelSession;
   entity: EntityAST;
-  onOpenStudio?: () => void;
+  selectedAttribute: string | null;
+  onOpenStudio: () => void;
 }) => {
   const groups = useMemo(
     () => getInspectorGroups(entity.category),
     [entity.category],
   );
-
   const patch = (fields: Readonly<Partial<EntityAST>>) => {
     session.mutate(
       (draft) => updateEntityMutator(draft, entity.id, fields),
@@ -220,8 +243,59 @@ const InspectorBody = ({
     );
   };
 
+  const renderGroup = (group: (typeof groups)[number]) => {
+    const properties = group.properties.filter(
+      (property) =>
+        property.editor !== 'readonly-id' &&
+        property.editor !== 'attribute-table',
+    );
+    if (properties.length === 0) return null;
+    return (
+      <section key={group.id} className="flex flex-col gap-2">
+        <h3 className="text-[11px] font-semibold text-workbench-label">
+          {group.label}
+        </h3>
+        {properties.map((property) => (
+          <PropertyRow
+            key={property.field}
+            graph={graph}
+            entity={entity}
+            property={property}
+            constraint={getReferenceConstraint(entity.category, property.field)}
+            onPatch={patch}
+          />
+        ))}
+      </section>
+    );
+  };
+
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col gap-4">
+      {groups.filter((group) => group.id === 'general').map(renderGroup)}
+      {groups.some((group) =>
+        group.properties.some(
+          (property) => property.editor === 'attribute-table',
+        ),
+      ) ? (
+        <section aria-label="模型属性" className="flex flex-col gap-2">
+          <h3 className="text-[11px] font-semibold text-workbench-label">
+            业务属性与关键数据（{entity.attributes?.length ?? 0} 个字段）
+          </h3>
+          <AttributeDataGrid
+            entity={entity}
+            graph={graph}
+            session={session}
+            selectedAttribute={selectedAttribute}
+            onOpenStudio={onOpenStudio}
+          />
+        </section>
+      ) : null}
+      <InvariantRulesSection
+        entityId={entity.id}
+        graph={graph}
+        session={session}
+      />
+      {groups.filter((group) => group.id !== 'general').map(renderGroup)}
       <RelationshipFlowSection
         entityId={entity.id}
         graph={graph}
@@ -235,31 +309,6 @@ const InspectorBody = ({
           session={session}
         />
       ) : null}
-
-      {groups.map((group) => (
-        <section key={group.id}>
-          <h3 className="mb-1.5 text-[10px] font-semibold tracking-wide text-[#59606c] uppercase">
-            {group.label}
-          </h3>
-          <div className="space-y-1.5">
-            {group.properties.map((property) => (
-              <PropertyRow
-                key={property.field}
-                graph={graph}
-                entity={entity}
-                property={property}
-                constraint={getReferenceConstraint(
-                  entity.category,
-                  property.field,
-                )}
-                onPatch={patch}
-                session={session}
-                {...(onOpenStudio === undefined ? {} : { onOpenStudio })}
-              />
-            ))}
-          </div>
-        </section>
-      ))}
     </div>
   );
 };
@@ -269,9 +318,7 @@ interface PropertyRowProps {
   entity: EntityAST;
   property: InspectorPropertyDefinition;
   constraint: InspectorReferenceConstraint | undefined;
-  session: ModelSession;
   onPatch: (fields: Readonly<Partial<EntityAST>>) => void;
-  onOpenStudio?: () => void;
 }
 
 const PropertyRow = ({
@@ -279,25 +326,17 @@ const PropertyRow = ({
   entity,
   property,
   constraint,
-  session,
   onPatch,
-  onOpenStudio,
 }: PropertyRowProps) => {
   const value = fieldValue(entity, property.field);
 
   switch (property.editor) {
-    case 'readonly-id':
-      return (
-        <Labeled label={property.label} helper={property.helper}>
-          <code className="block truncate font-mono text-[10px] text-evidence-muted">
-            {String(value ?? '')}
-          </code>
-        </Labeled>
-      );
     case 'text':
       return (
         <Labeled label={property.label} helper={property.helper}>
           <TextInput
+            key={String(value ?? '')}
+            label={property.label}
             value={typeof value === 'string' ? value : ''}
             onCommit={(next) => onPatch({ [property.field]: next })}
           />
@@ -392,15 +431,6 @@ const PropertyRow = ({
           </div>
         </Labeled>
       );
-    case 'attribute-table':
-      return (
-        <AttributeDataGrid
-          entity={entity}
-          graph={graph}
-          session={session}
-          {...(onOpenStudio === undefined ? {} : { onOpenStudio })}
-        />
-      );
     case 'cel-editor':
       return (
         <span className="text-[10px] text-evidence-muted">
@@ -431,9 +461,11 @@ const Labeled = ({
 );
 
 const TextInput = ({
+  label,
   value,
   onCommit,
 }: {
+  label: string;
   value: string;
   onCommit: (next: string) => void;
 }) => {
@@ -441,6 +473,7 @@ const TextInput = ({
 
   return (
     <input
+      aria-label={label}
       value={draft}
       onChange={(event) => setDraft(event.target.value)}
       onBlur={() => {
@@ -449,7 +482,7 @@ const TextInput = ({
         }
       }}
       onKeyDown={(event) => {
-        if (event.key === 'Enter') {
+        if (event.key === 'Enter' && !event.nativeEvent.isComposing) {
           event.currentTarget.blur();
         }
       }}

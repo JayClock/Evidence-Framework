@@ -1,4 +1,4 @@
-import { Fragment, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
   createColumnHelper,
@@ -35,6 +35,7 @@ interface AttributeDataGridProps {
   session: ModelSession;
   /** Opens the wide ledger studio; the compact grid stays for the rail. */
   onOpenStudio?: () => void;
+  selectedAttribute?: string | null;
 }
 
 const columnHelper = createColumnHelper<AttributeAST>();
@@ -67,7 +68,12 @@ export const AttributeDataGrid = ({
   graph,
   session,
   onOpenStudio,
+  selectedAttribute = null,
 }: AttributeDataGridProps) => {
+  const selectedRow = useRef<HTMLTableRowElement>(null);
+  useEffect(() => {
+    selectedRow.current?.scrollIntoView?.({ block: 'nearest' });
+  }, [selectedAttribute]);
   const [expanded, setExpanded] = useState<ExpandedState>({});
   const [bindingAttribute, setBindingAttribute] = useState<string | null>(null);
 
@@ -308,9 +314,19 @@ export const AttributeDataGrid = ({
                 <Fragment key={row.id}>
                   <tr
                     data-attribute-name={attribute.name}
+                    ref={
+                      selectedAttribute === attribute.name
+                        ? selectedRow
+                        : undefined
+                    }
+                    aria-current={
+                      selectedAttribute === attribute.name || undefined
+                    }
                     className={cn(
                       'border-t border-evidence-line/70 align-top',
-                      open && 'bg-[#fbfbfc]',
+                      selectedAttribute === attribute.name
+                        ? 'bg-evidence-active'
+                        : open && 'bg-workbench-background',
                     )}
                   >
                     {row.getVisibleCells().map((cell) => (

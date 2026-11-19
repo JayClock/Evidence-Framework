@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { ArrowLeft } from 'lucide-react';
 
 import { Button } from '@evidence-poc/desktop-ui-kit';
 
@@ -9,6 +10,7 @@ interface RightPaneShellProps {
   collapsed: boolean;
   onShowInspector: () => void;
   onShowCopilot: () => void;
+  onReturnToCanvas?: () => void;
   children: ReactNode;
 }
 
@@ -17,6 +19,7 @@ export const RightPaneShell = ({
   collapsed,
   onShowInspector,
   onShowCopilot,
+  onReturnToCanvas,
   children,
 }: RightPaneShellProps) => {
   const switchClass =
@@ -26,13 +29,28 @@ export const RightPaneShell = ({
     <section
       aria-label="检查与协同"
       inert={collapsed}
+      onKeyDown={(event) => {
+        if (
+          event.key !== 'Escape' ||
+          event.defaultPrevented ||
+          event.nativeEvent.isComposing ||
+          !onReturnToCanvas ||
+          (event.target instanceof Element &&
+            event.target.closest(
+              'input, textarea, select, [contenteditable="true"], [role="dialog"]',
+            ))
+        )
+          return;
+        event.preventDefault();
+        onReturnToCanvas();
+      }}
       className="flex h-full min-h-0 flex-col bg-white"
     >
       <div
         role="group"
         aria-label="右侧面板"
         data-workbench-chrome=""
-        className="flex h-10 shrink-0 items-center gap-1 border-b border-workbench-border px-2"
+        className="flex h-11 shrink-0 items-center gap-1 border-b border-workbench-border bg-[#fafafa] px-3"
       >
         <Button
           type="button"
@@ -52,6 +70,18 @@ export const RightPaneShell = ({
         >
           <span className="truncate">AI Copilot</span>
         </Button>
+        {onReturnToCanvas === undefined ? null : (
+          <Button
+            type="button"
+            size="icon"
+            variant="ghost"
+            aria-label="返回画布"
+            title="返回画布（Esc）"
+            onClick={onReturnToCanvas}
+          >
+            <ArrowLeft aria-hidden="true" />
+          </Button>
+        )}
       </div>
       <div className="min-h-0 flex-1">{children}</div>
     </section>

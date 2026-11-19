@@ -28,8 +28,9 @@ export interface CelCodeMirrorEditorProps {
   value: string;
   candidates: readonly CelCandidate[];
   ariaLabel: string;
-  /** Called when the draft should become the modeled expression. */
-  onCommit: (expression: string) => void;
+  /** When provided, auto-commit on blur / Mod+Enter. Omit for explicit apply. */
+  onCommit?: (expression: string) => void;
+  onDraftChange?: (expression: string) => void;
   /** Called with the aliases the expression reads, for bindings. */
   onCommitAliases?: (aliases: readonly string[]) => void;
   placeholder?: string;
@@ -95,6 +96,7 @@ export const CelCodeMirrorEditor = ({
   candidates,
   ariaLabel,
   onCommit,
+  onDraftChange,
   onCommitAliases,
   placeholder,
   autoFocus = false,
@@ -106,6 +108,7 @@ export const CelCodeMirrorEditor = ({
   const valueRef = useRef(value);
   const candidatesRef = useRef(candidates);
   const onCommitRef = useRef(onCommit);
+  const onDraftChangeRef = useRef(onDraftChange);
   const onCommitAliasesRef = useRef(onCommitAliases);
   const [diagnostics, setDiagnostics] = useState<readonly CelDiagnostic[]>(
     () => analyzeCelExpression({ expression: value, candidates }).diagnostics,
@@ -117,13 +120,14 @@ export const CelCodeMirrorEditor = ({
 
   useEffect(() => {
     onCommitRef.current = onCommit;
+    onDraftChangeRef.current = onDraftChange;
     onCommitAliasesRef.current = onCommitAliases;
-  }, [onCommit, onCommitAliases]);
+  }, [onCommit, onDraftChange, onCommitAliases]);
 
   const commit = useCallback(() => {
     const current = view.current;
 
-    if (current === null) {
+    if (current === null || onCommitRef.current === undefined) {
       return;
     }
 
@@ -212,9 +216,11 @@ export const CelCodeMirrorEditor = ({
           return;
         }
 
+        const expression = update.state.doc.toString();
+        onDraftChangeRef.current?.(expression);
         setDiagnostics(
           analyzeCelExpression({
-            expression: update.state.doc.toString(),
+            expression,
             candidates: candidatesRef.current,
           }).diagnostics,
         );
@@ -223,6 +229,7 @@ export const CelCodeMirrorEditor = ({
         {
           key: 'Mod-Enter',
           run: (editor) => {
+            if (onCommitRef.current === undefined) return true;
             commit();
             editor.contentDOM.blur();
 
@@ -281,10 +288,16 @@ export const CelCodeMirrorEditor = ({
       changes: { from: 0, to: current.state.doc.length, insert: value },
       selection: { anchor: value.length },
     });
-    setDiagnostics(
-      analyzeCelExpression({ expression: value, candidates }).diagnostics,
-    );
-  }, [value, candidates]);
+  }, [value]);
+
+  useEffect(() => {
+    const expression = view.current?.state.doc.toString();
+    if (expression !== undefined) {
+      setDiagnostics(
+        analyzeCelExpression({ expression, candidates }).diagnostics,
+      );
+    }
+  }, [candidates]);
 
   return (
     <div className="relative">
@@ -300,6 +313,8 @@ export const CelCodeMirrorEditor = ({
             </li>
           ))}
         </ul>
+      ) : onCommit === undefined ? (
+        <p className="mt-1 text-[10px] text-workbench-label">本地检查通过</p>
       ) : null}
       {candidates.length > 0 ? (
         <p className="mt-0.5 text-[8px] text-[#9aa1ac]">
