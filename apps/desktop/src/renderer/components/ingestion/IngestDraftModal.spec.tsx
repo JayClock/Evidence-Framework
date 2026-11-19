@@ -2,7 +2,10 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import { IngestDraftModal } from './IngestDraftModal';
-import { installDesktopApi, projectSummary } from '@evidence-poc/desktop-testing/desktopApi';
+import {
+  installDesktopApi,
+  projectSummary,
+} from '@evidence-poc/desktop-testing/desktopApi';
 import type { IngestionDraft } from '@evidence-poc/evidence-schema';
 
 const draft = (): IngestionDraft => ({
@@ -18,7 +21,12 @@ const draft = (): IngestionDraft => ({
   ],
   participants: [{ id: 'party.buyer', label: '甲方采购方', kind: 'party' }],
   roles: [
-    { id: 'role.buyer', label: '买方', kind: 'party', contextRef: 'context.contract' },
+    {
+      id: 'role.buyer',
+      label: '买方',
+      kind: 'party',
+      contextRef: 'context.contract',
+    },
   ],
   things: [],
   evidences: [
@@ -89,10 +97,20 @@ describe('IngestDraftModal', () => {
       }),
     ]);
     expect(screen.getByText(/读自模型/)).toBeInTheDocument();
+    expect(screen.getByText('凭证主体：支付申请、支付确认')).toBeVisible();
+    expect(screen.getByText('权责角色：买方')).toBeVisible();
+    expect(screen.getByText('1 组履约对')).toBeVisible();
+    expect(api.calls.compileDraft).toEqual([]);
+    fireEvent.click(screen.getByRole('button', { name: '返回编辑原文' }));
+    expect(screen.getByLabelText('业务原文')).toHaveValue(
+      '甲乙双方签订《企业级云服务采购协议》…',
+    );
+    expect(screen.getByLabelText('业务原文')).toHaveFocus();
   });
 
   it('shows the sentence each evidence came from', async () => {
     await openReview();
+    fireEvent.click(screen.getByText('展开校对凭证与原文'));
 
     expect(
       screen.getByText(/甲方需在 5 个工作日内完成首期技术服务费支付/),
@@ -104,16 +122,17 @@ describe('IngestDraftModal', () => {
     await openReview(['「支付申请」在合约上下文中缺少履约确认。']);
 
     expect(screen.getByText('读法留下了这些缺口')).toBeInTheDocument();
-    expect(
-      screen.getByText(/缺少履约确认/),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/缺少履约确认/)).toBeInTheDocument();
   });
 
   it('refuses to read an empty textarea', async () => {
     installDesktopApi({});
 
     render(
-      <IngestDraftModal onClose={() => undefined} onCompiled={() => undefined} />,
+      <IngestDraftModal
+        onClose={() => undefined}
+        onCompiled={() => undefined}
+      />,
     );
 
     fireEvent.click(screen.getByText('读成草稿'));
@@ -131,11 +150,20 @@ describe('IngestDraftModal', () => {
         reader: 'text-rules',
         issues: [],
       },
-      createDialogResult: { success: true, targetPath: '/models/new', kind: 'directory' },
+      createDialogResult: {
+        success: true,
+        targetPath: '/models/new',
+        kind: 'directory',
+      },
       compileResult: {
         success: true,
         project: projectSummary({ rootPath: '/models/new' }),
-        document: { manifest: {}, entities: [], relationships: [], rules: [] } as never,
+        document: {
+          manifest: {},
+          entities: [],
+          relationships: [],
+          rules: [],
+        } as never,
         layout: {},
         issues: [],
       },
@@ -156,6 +184,7 @@ describe('IngestDraftModal', () => {
     fireEvent.click(screen.getByText('读成草稿'));
     await screen.findByLabelText('校对导入的草稿');
 
+    fireEvent.click(screen.getByText('展开校对凭证与原文'));
     // One select per evidence row, in the order the reader produced them.
     fireEvent.change(screen.getAllByLabelText('凭证类型')[0] as HTMLElement, {
       target: { value: 'other_evidence' },
@@ -182,25 +211,38 @@ describe('IngestDraftModal', () => {
         reader: 'text-model',
         issues: [],
       },
-      createDialogResult: { success: true, targetPath: '/models/new', kind: 'directory' },
+      createDialogResult: {
+        success: true,
+        targetPath: '/models/new',
+        kind: 'directory',
+      },
       compileResult: {
         success: true,
         project: projectSummary({ rootPath: '/models/new' }),
-        document: { manifest: {}, entities: [], relationships: [], rules: [] } as never,
+        document: {
+          manifest: {},
+          entities: [],
+          relationships: [],
+          rules: [],
+        } as never,
         layout: {},
         issues: [],
       },
     });
 
     render(
-      <IngestDraftModal onClose={() => undefined} onCompiled={() => undefined} />,
+      <IngestDraftModal
+        onClose={() => undefined}
+        onCompiled={() => undefined}
+      />,
     );
 
     fireEvent.change(screen.getByLabelText('业务原文'), {
       target: { value: '文本' },
     });
     fireEvent.click(screen.getByText('读成草稿'));
-    await screen.findByLabelText('校对导入的草稿');
+    await screen.findByRole('dialog', { name: '校对导入的草稿' });
+    fireEvent.click(screen.getByText('展开校对凭证与原文'));
 
     fireEvent.change(screen.getAllByLabelText('凭证名称')[0] as HTMLElement, {
       target: { value: '首期服务费支付申请' },
@@ -224,25 +266,38 @@ describe('IngestDraftModal', () => {
         reader: 'text-rules',
         issues: [],
       },
-      createDialogResult: { success: true, targetPath: '/models/new', kind: 'directory' },
+      createDialogResult: {
+        success: true,
+        targetPath: '/models/new',
+        kind: 'directory',
+      },
       compileResult: {
         success: true,
         project: projectSummary({ rootPath: '/models/new' }),
-        document: { manifest: {}, entities: [], relationships: [], rules: [] } as never,
+        document: {
+          manifest: {},
+          entities: [],
+          relationships: [],
+          rules: [],
+        } as never,
         layout: {},
         issues: [],
       },
     });
 
     render(
-      <IngestDraftModal onClose={() => undefined} onCompiled={() => undefined} />,
+      <IngestDraftModal
+        onClose={() => undefined}
+        onCompiled={() => undefined}
+      />,
     );
 
     fireEvent.change(screen.getByLabelText('业务原文'), {
       target: { value: '文本' },
     });
     fireEvent.click(screen.getByText('读成草稿'));
-    await screen.findByLabelText('校对导入的草稿');
+    await screen.findByRole('dialog', { name: '校对导入的草稿' });
+    fireEvent.click(screen.getByText('展开校对凭证与原文'));
 
     fireEvent.click(screen.getAllByText('移除')[0] as HTMLElement);
     fireEvent.click(screen.getByText('选择位置并生成模型'));
@@ -252,8 +307,8 @@ describe('IngestDraftModal', () => {
     });
 
     expect(api.calls.compileDraft[0]?.draft.evidences).toHaveLength(1);
-    // Both sides of the pair are no longer there, so the panel stops counting it.
-    expect(screen.queryByText(/组履约对/)).toBeInTheDocument();
+    // Removing one side excludes the pair from the summary.
+    expect(screen.getByText('0 组履约对 · 1 组因删改断开')).toBeVisible();
   });
 
   it('reads a contract by its clauses, not as one more paragraph', async () => {
@@ -264,15 +319,33 @@ describe('IngestDraftModal', () => {
         reader: 'contract',
         issues: [],
         annotations: [
-          { index: 1, text: '甲乙双方签订《云服务采购协议》', category: 'business', reason: '约定了业务动作' },
-          { index: 2, text: '因本协议产生的争议提交仲裁', category: 'boilerplate', reason: '争议解决' },
-          { index: 3, text: '服务费按 30% 计算', category: 'domain', reason: '计算口径' },
+          {
+            index: 1,
+            text: '甲乙双方签订《云服务采购协议》',
+            category: 'business',
+            reason: '约定了业务动作',
+          },
+          {
+            index: 2,
+            text: '因本协议产生的争议提交仲裁',
+            category: 'boilerplate',
+            reason: '争议解决',
+          },
+          {
+            index: 3,
+            text: '服务费按 30% 计算',
+            category: 'domain',
+            reason: '计算口径',
+          },
         ],
       },
     });
 
     render(
-      <IngestDraftModal onClose={() => undefined} onCompiled={() => undefined} />,
+      <IngestDraftModal
+        onClose={() => undefined}
+        onCompiled={() => undefined}
+      />,
     );
 
     fireEvent.change(screen.getByLabelText('业务原文'), {
@@ -284,6 +357,7 @@ describe('IngestDraftModal', () => {
     expect(api.calls.ingestDraft[0]?.kind).toBe('contract');
     expect(screen.getByText(/读自合同条款/)).toBeInTheDocument();
 
+    fireEvent.click(screen.getByText('展开校对凭证与原文'));
     const split = screen.getByLabelText('条款分类');
 
     expect(split).toHaveTextContent('业务逻辑 1');
@@ -304,13 +378,18 @@ describe('IngestDraftModal', () => {
     });
 
     render(
-      <IngestDraftModal onClose={() => undefined} onCompiled={() => undefined} />,
+      <IngestDraftModal
+        onClose={() => undefined}
+        onCompiled={() => undefined}
+      />,
     );
 
     // The tab comes before the preset of the same name in the DOM.
     fireEvent.click(screen.getAllByText('服务蓝图表格')[0] as HTMLElement);
     fireEvent.change(screen.getByLabelText('业务原文'), {
-      target: { value: '| 阶段 | 业务凭证 |\n| --- | --- |\n| 履约 | 支付申请 |' },
+      target: {
+        value: '| 阶段 | 业务凭证 |\n| --- | --- |\n| 履约 | 支付申请 |',
+      },
     });
     fireEvent.click(screen.getByText('读成草稿'));
     await screen.findByLabelText('校对导入的草稿');

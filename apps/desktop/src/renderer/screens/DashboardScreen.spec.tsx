@@ -133,7 +133,7 @@ describe('DashboardScreen', () => {
     render(<DashboardScreen />);
     fireEvent.click(screen.getByRole('button', { name: '开始智能提取向导' }));
     const dialog = await screen.findByRole('dialog', {
-      name: '从业务文本生成模型',
+      name: /Smart Ingestion/,
     });
 
     fireEvent.keyDown(dialog, { key: 'o', metaKey: true });
@@ -313,7 +313,7 @@ describe('DashboardScreen starters', () => {
     fireEvent.click(screen.getByRole('button', { name: '开始智能提取向导' }));
 
     expect(
-      await screen.findByRole('dialog', { name: '从业务文本生成模型' }),
+      await screen.findByRole('dialog', { name: /Smart Ingestion/ }),
     ).toBeInTheDocument();
   });
 

@@ -1,5 +1,5 @@
 import { useAiConfiguration } from '../../state/AiConfiguration';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import type {
   ClauseAnnotation,
@@ -13,6 +13,8 @@ import type {
 } from '@evidence-poc/desktop-contracts/ingestion';
 import type { EvidenceProjectSummary } from '@evidence-poc/desktop-contracts/projects';
 
+import { Button, DialogClose } from '@evidence-poc/desktop-ui-kit';
+import { WorkbenchDialog } from '../layout/WorkbenchDialog';
 import { DraftReviewPanel } from './DraftReviewPanel';
 
 /**
@@ -96,8 +98,17 @@ export const IngestDraftModal = ({
   const [draft, setDraft] = useState<DraftState | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const sourceField = useRef<HTMLTextAreaElement>(null);
+  const returningToSource = useRef(false);
+  useEffect(() => {
+    if (!draft && returningToSource.current) {
+      returningToSource.current = false;
+      sourceField.current?.focus();
+    }
+  }, [draft]);
 
   const read = async () => {
+    if (busy) return;
     const text = content.trim();
 
     if (text.length === 0) {
@@ -137,153 +148,177 @@ export const IngestDraftModal = ({
     }
   };
 
-  if (draft !== null) {
-    return (
-      <DraftReviewPanel
-        draft={draft.draft}
-        issues={draft.issues}
-        onCancel={onClose}
-        onCompiled={onCompiled}
-        reader={draft.reader}
-        {...(draft.annotations === undefined
-          ? {}
-          : { annotations: draft.annotations })}
-      />
-    );
-  }
-
   return (
-    <div
-      aria-label="从业务文本生成模型"
-      aria-modal="true"
-      className="fixed inset-0 z-40 flex items-center justify-center bg-[#0b1220]/40 px-6 py-8"
-      role="dialog"
+    <WorkbenchDialog
+      size="ingestion"
+      title={draft ? '校对导入的草稿' : '智能文档摄取 (Smart Ingestion)'}
+      description={
+        draft
+          ? '核对提取结果，再选择位置生成新的履约模型。'
+          : '将业务说明、合同原文或服务蓝图转换为可校对的履约模型草稿。'
+      }
+      busy={busy}
+      onClose={onClose}
     >
-      <div className="flex max-h-full w-full max-w-[720px] flex-col rounded-xl border border-evidence-line bg-white shadow-[0_24px_60px_#0f172a2e]">
-        <header className="border-b border-evidence-line px-6 py-4">
-          <h2 className="text-[15px] font-semibold text-evidence-ink">
-            从业务文本生成模型
-          </h2>
-          <p className="mt-1 text-[11px] text-evidence-muted">
-            粘贴业务原文，工作台按履约建模法先找合约，再分成对的履约项，违约读成新的履约项；解读结果会先给你校对。
-          </p>
-        </header>
-
-        <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4">
-          {ai && !ai.aiConfigured ? (
-            <aside className="mb-3 rounded border border-evidence-line p-3 text-xs">
-              未配置大模型：仍可使用离线合同、蓝图和规则解读。要启用 AI
-              文本解读，请先
-              <button
-                type="button"
-                className="text-evidence-accent underline"
-                onClick={ai.openSettings}
+      {draft ? (
+        <DraftReviewPanel
+          {...draft}
+          busy={busy}
+          onBusyChange={setBusy}
+          onBack={() => {
+            returningToSource.current = true;
+            setDraft(null);
+          }}
+          onCompiled={onCompiled}
+        />
+      ) : (
+        <form
+          className="flex min-h-0 flex-col gap-4"
+          onSubmit={(event) => {
+            event.preventDefault();
+            void read();
+          }}
+        >
+          <div className="min-h-0 overflow-y-auto overscroll-contain p-1">
+            <fieldset className="min-w-0" disabled={busy}>
+              <legend className="sr-only">业务资料</legend>
+              {ai && !ai.aiConfigured ? (
+                <aside className="mb-3 rounded border border-workbench-border p-3 text-xs">
+                  未配置大模型：仍可使用离线合同、蓝图和规则解读。要启用 AI
+                  文本解读，请先
+                  <button
+                    type="button"
+                    className="text-evidence-accent underline"
+                    onClick={ai.openSettings}
+                  >
+                    配置 API Key
+                  </button>
+                  。
+                </aside>
+              ) : null}
+              <div
+                role="group"
+                aria-label="业务原文类型"
+                className="grid gap-2 min-[480px]:grid-cols-3"
               >
-                配置 API Key
-              </button>
-              。
-            </aside>
-          ) : null}
-          <div className="flex gap-2">
-            {INPUT_KINDS.map((option) => (
-              <button
-                aria-pressed={kind === option.kind}
-                className={`flex-1 rounded-lg border px-3 py-2 text-left transition ${
-                  kind === option.kind
-                    ? 'border-evidence-accent bg-[#f2f6fb]'
-                    : 'border-evidence-line bg-white hover:border-evidence-accent'
-                }`}
-                key={option.kind}
-                onClick={() => {
-                  setKind(option.kind);
+                {INPUT_KINDS.map((option) => (
+                  <button
+                    aria-pressed={kind === option.kind}
+                    className={`flex-1 rounded-lg border px-3 py-2 text-left transition ${
+                      kind === option.kind
+                        ? 'border-evidence-accent bg-[#f2f6fb]'
+                        : 'border-evidence-line bg-white hover:border-evidence-accent'
+                    }`}
+                    key={option.kind}
+                    onClick={() => {
+                      setKind(option.kind);
+                      setError(null);
+                    }}
+                    type="button"
+                  >
+                    <span className="block text-[12px] font-medium text-evidence-ink">
+                      {option.label}
+                    </span>
+                    <span className="mt-0.5 block text-[11px] text-workbench-muted">
+                      {option.hint}
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              <label
+                className="mt-4 block text-[11px] font-medium text-evidence-ink"
+                htmlFor="ingest-content"
+              >
+                业务原文
+              </label>
+              <textarea
+                className="mt-1.5 min-h-36 w-full resize-y rounded-md border border-evidence-line px-3 py-2 font-mono text-[11px] leading-5 text-evidence-ink outline-none focus:border-evidence-accent"
+                id="ingest-content"
+                ref={sourceField}
+                name="content"
+                data-dialog-autofocus=""
+                onChange={(event) => {
+                  setContent(event.target.value);
+                  setError(null);
                 }}
-                type="button"
+                placeholder="把合同条款、需求段落或服务蓝图表格粘贴在这里…"
+                value={content}
+              />
+
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                <span className="text-[10px] text-evidence-muted">示例：</span>
+                {PRESETS.map((preset) => (
+                  <button
+                    className="rounded-md border border-evidence-line px-2 py-1 text-[10px] text-evidence-ink hover:border-evidence-accent"
+                    key={preset.id}
+                    onClick={() => {
+                      setKind(
+                        preset.id === 'blueprint' ? 'blueprint' : 'contract',
+                      );
+                      setContent(preset.content);
+                      setError(null);
+                    }}
+                    type="button"
+                  >
+                    {preset.label}
+                  </button>
+                ))}
+              </div>
+
+              <label
+                className="mt-4 block text-[11px] font-medium text-evidence-ink"
+                htmlFor="ingest-name"
               >
-                <span className="block text-[12px] font-medium text-evidence-ink">
-                  {option.label}
-                </span>
-                <span className="mt-0.5 block text-[10px] text-evidence-muted">
-                  {option.hint}
-                </span>
-              </button>
-            ))}
-          </div>
-
-          <label
-            className="mt-4 block text-[11px] font-medium text-evidence-ink"
-            htmlFor="ingest-content"
-          >
-            业务原文
-          </label>
-          <textarea
-            className="mt-1.5 h-[240px] w-full resize-none rounded-md border border-evidence-line px-3 py-2 font-mono text-[11px] leading-5 text-evidence-ink outline-none focus:border-evidence-accent"
-            id="ingest-content"
-            onChange={(event) => {
-              setContent(event.target.value);
-            }}
-            placeholder="把合同条款、需求段落或服务蓝图表格粘贴在这里…"
-            value={content}
-          />
-
-          <div className="mt-2 flex flex-wrap items-center gap-2">
-            <span className="text-[10px] text-evidence-muted">示例：</span>
-            {PRESETS.map((preset) => (
-              <button
-                className="rounded-md border border-evidence-line px-2 py-1 text-[10px] text-evidence-ink hover:border-evidence-accent"
-                key={preset.id}
-                onClick={() => {
-                  setKind(preset.id === 'blueprint' ? 'blueprint' : 'contract');
-                  setContent(preset.content);
+                模型名称
+              </label>
+              <input
+                className="mt-1.5 w-full rounded-md border border-evidence-line px-3 py-1.5 text-[12px] text-evidence-ink outline-none focus:border-evidence-accent"
+                id="ingest-name"
+                name="modelName"
+                onChange={(event) => {
+                  setModelName(event.target.value);
                 }}
-                type="button"
-              >
-                {preset.label}
-              </button>
-            ))}
+                value={modelName}
+              />
+            </fieldset>
           </div>
-
-          <label
-            className="mt-4 block text-[11px] font-medium text-evidence-ink"
-            htmlFor="ingest-name"
-          >
-            模型名称
-          </label>
-          <input
-            className="mt-1.5 w-full rounded-md border border-evidence-line px-3 py-1.5 text-[12px] text-evidence-ink outline-none focus:border-evidence-accent"
-            id="ingest-name"
-            onChange={(event) => {
-              setModelName(event.target.value);
-            }}
-            value={modelName}
-          />
-        </div>
-
-        <footer className="border-t border-evidence-line px-6 py-4">
-          {error === null ? null : (
-            <p className="mb-3 rounded-md border border-[#f3c6c6] bg-[#fdf2f2] px-3 py-2 text-[11px] whitespace-pre-wrap text-[#b42318]">
+          {error ? (
+            <p
+              role="alert"
+              className="text-xs whitespace-pre-wrap break-words text-red-700"
+            >
               {error}
             </p>
-          )}
-          <div className="flex justify-end gap-2">
-            <button
-              className="rounded-md border border-evidence-line px-3 py-1.5 text-[12px] text-evidence-ink hover:border-evidence-accent"
-              disabled={busy}
-              onClick={onClose}
-              type="button"
+          ) : null}
+          {busy ? (
+            <p role="status" className="text-xs text-workbench-muted">
+              正在解读业务原文…
+            </p>
+          ) : null}
+          <div className="flex shrink-0 flex-wrap justify-end gap-2">
+            <DialogClose asChild>
+              <Button
+                className="rounded-md px-3.5 text-xs"
+                size="md"
+                type="button"
+                disabled={busy}
+              >
+                放弃
+              </Button>
+            </DialogClose>
+            <Button
+              className="rounded-md px-4 text-xs font-medium"
+              size="md"
+              type="submit"
+              variant="default"
+              loading={busy}
             >
-              取消
-            </button>
-            <button
-              className="rounded-md bg-evidence-accent px-3 py-1.5 text-[12px] font-medium text-white hover:bg-[#274c76] disabled:opacity-60"
-              disabled={busy}
-              onClick={() => void read()}
-              type="button"
-            >
-              {busy ? '正在阅读…' : '读成草稿'}
-            </button>
+              读成草稿
+            </Button>
           </div>
-        </footer>
-      </div>
-    </div>
+        </form>
+      )}
+    </WorkbenchDialog>
   );
 };
