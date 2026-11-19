@@ -8,7 +8,6 @@ import {
   type OpenDialogOptions,
 } from 'electron';
 
-import { buildDelivery } from '@evidence-poc/evidence-api';
 import type { DeliveryBundle } from '@evidence-poc/evidence-api';
 
 import type {
@@ -120,12 +119,11 @@ export const registerDeliveryIpc = ({
         validateLiveDeliveryInput(input);
         // Freeze before the asynchronous directory picker; no later canvas/disk read.
         const frozen = structuredClone(input);
-        const analysis = await livePreviewOf(frozen);
+        const analysis = await livePreviewOf(frozen, true);
         if (!analysis.canExportDraft)
           throw new Error('API 存在阻塞项，不能导出草稿。');
         if (analysis.modelDigest !== frozen.expectedModelDigest)
           throw new Error('预览已过期，请等待重新计算后导出。');
-        const bundle = buildDelivery(frozen.document);
         const chosen = await showDirectoryDialog({
           parent: BrowserWindow.fromWebContents(event.sender),
           defaultPath: suggestedDeliveryDirectory(
@@ -134,31 +132,14 @@ export const registerDeliveryIpc = ({
         });
         if (chosen.canceled || chosen.directory === undefined)
           return { status: 'cancelled' };
-        const files = [
-          ...deliveryFilesOf(bundle),
-          { path: 'api-changes.md', content: analysis.changeLog },
-          {
-            path: 'draft-status.json',
-            content: JSON.stringify(
-              {
-                mode: 'draft',
-                releaseAuthorized: false,
-                modelDigest: analysis.modelDigest,
-                baseModelDigest: analysis.baseModelDigest,
-                issues: analysis.issues,
-              },
-              null,
-              2,
-            ),
-          },
-        ];
-        await write(chosen.directory, files);
+        const files = analysis.artifacts!;
+        await write(chosen.directory, [...files]);
         return {
           status: 'saved',
           directory: chosen.directory,
           files: files.map((file) => file.path),
-          serviceCount: bundle.services.length,
-          routeCount: bundle.routes.length,
+          serviceCount: analysis.preview.services.length,
+          routeCount: analysis.preview.routes.length,
         };
       } catch (error) {
         return { status: 'failed', error: errorMessage(error) };

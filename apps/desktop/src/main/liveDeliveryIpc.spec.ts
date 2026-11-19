@@ -53,7 +53,9 @@ describe('live delivery IPC', () => {
       analysis: { revision: 7, canExportDraft: true },
     });
     expect(build).not.toHaveBeenCalled();
-    expect((await livePreviewOf(value)).diff.details).not.toEqual({});
+    const analysis = await livePreviewOf(value);
+    expect(analysis.diff.details).not.toEqual({});
+    expect(analysis.artifacts).toBeUndefined();
   });
 
   it('reports invalid input and refuses stale or invalid exports before writing', async () => {
@@ -86,7 +88,15 @@ describe('live delivery IPC', () => {
 
   it('freezes the previewed document across the directory dialog and exports draft diagnostics', async () => {
     const value = await input();
-    const analysis = await livePreviewOf(value);
+    const analysis = await livePreviewOf({ ...value, includeArtifacts: true });
+    expect(analysis.artifacts?.map((file) => file.path)).toEqual(
+      expect.arrayContaining([
+        'openapi.json',
+        'topology.json',
+        'api-changes.md',
+        'draft-status.json',
+      ]),
+    );
     const write = vi.fn(
       async (_directory: string, _files: { path: string; content: string }[]) =>
         undefined,
@@ -104,6 +114,7 @@ describe('live delivery IPC', () => {
     });
     expect(result).toMatchObject({ status: 'saved' });
     const files = write.mock.calls[0]![1];
+    expect(files).toEqual(analysis.artifacts);
     expect(
       JSON.parse(
         files.find((file) => file.path === 'draft-status.json')!.content,

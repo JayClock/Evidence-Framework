@@ -51,7 +51,10 @@ export const useDeliveryHub = (
   rootPath: string,
   session: ModelSession,
   baseDocument: DomainModelDocument,
-  enabled = true,
+  {
+    enabled = true,
+    includeArtifacts = false,
+  }: { enabled?: boolean; includeArtifacts?: boolean } = {},
 ): DeliveryHubController => {
   const [loading, setLoading] = useState(false);
   const [stale, setStale] = useState(true);
@@ -84,6 +87,7 @@ export const useDeliveryHub = (
           revision,
           document: session.getDocument(),
           baseDocument,
+          ...(includeArtifacts ? { includeArtifacts: true } : {}),
         };
         void api
           .deliveryLivePreview(input)
@@ -117,7 +121,7 @@ export const useDeliveryHub = (
       clearTimeout(timer);
       unsubscribe();
     };
-  }, [api, rootPath, session, baseDocument, enabled]);
+  }, [api, rootPath, session, baseDocument, enabled, includeArtifacts]);
 
   const exportDelivery = useCallback(async () => {
     const current = accepted.current;

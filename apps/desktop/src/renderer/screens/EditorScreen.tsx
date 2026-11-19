@@ -222,6 +222,7 @@ const EditorWorkspace = ({
     project.rootPath,
     state.session,
     initialDocument,
+    { includeArtifacts: layout.isDeliveryOpen },
   );
   const [selectedScope, setSelectedScope] = useState<string | null>(null);
   const scope = useMemo(

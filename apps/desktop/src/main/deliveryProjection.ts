@@ -1,5 +1,6 @@
 import { checkNativeApiSensor } from '@evidence-poc/evidence-agent';
 import type {
+  LiveDeliveryArtifact,
   LiveDeliveryInput,
   LiveDeliveryPreview,
 } from '@evidence-poc/desktop-contracts/delivery';
@@ -145,8 +146,37 @@ export const validateLiveDeliveryInput = (input: LiveDeliveryInput): void => {
   }
 };
 
+type DraftMetadata = Pick<
+  LiveDeliveryPreview,
+  'modelDigest' | 'baseModelDigest' | 'issues' | 'changeLog'
+>;
+
+/** Preview and export use the same paths and bytes. */
+const draftFilesOf = (
+  bundle: DeliveryBundle,
+  metadata: DraftMetadata,
+): LiveDeliveryArtifact[] => [
+  ...deliveryFilesOf(bundle),
+  { path: 'api-changes.md', content: metadata.changeLog },
+  {
+    path: 'draft-status.json',
+    content: JSON.stringify(
+      {
+        mode: 'draft',
+        releaseAuthorized: false,
+        modelDigest: metadata.modelDigest,
+        baseModelDigest: metadata.baseModelDigest,
+        issues: metadata.issues,
+      },
+      null,
+      2,
+    ),
+  },
+];
+
 export const livePreviewOf = async (
   input: LiveDeliveryInput,
+  includeArtifacts = input?.includeArtifacts === true,
 ): Promise<LiveDeliveryPreview> => {
   validateLiveDeliveryInput(input);
   const outcome = await checkNativeApiSensor({
@@ -154,16 +184,22 @@ export const livePreviewOf = async (
     baseDocument: input.baseDocument,
   });
   const diff = outcome.diff!;
-  return {
-    revision: input.revision,
+  const metadata = {
     modelDigest: outcome.snapshot.digests.model,
     baseModelDigest: diff.baseModelDigest,
+    changeLog: diff.changelog,
+    issues: outcome.issues,
+  };
+  return {
+    revision: input.revision,
+    ...metadata,
     preview: previewOf(outcome.snapshot),
     openapi: outcome.snapshot.openapi,
+    ...(includeArtifacts
+      ? { artifacts: draftFilesOf(outcome.snapshot, metadata) }
+      : {}),
     diff,
-    changeLog: diff.changelog,
     apiSummary: outcome.summary,
-    issues: outcome.issues,
     canExportDraft: !outcome.issues.some((issue) => issue.severity === 'block'),
     bindings: outcome.snapshot.routes.map((route) => ({
       id: route.id,

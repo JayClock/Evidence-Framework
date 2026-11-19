@@ -16,6 +16,13 @@ export interface LiveDeliveryInput {
   revision: number;
   document: DomainModelDocument;
   baseDocument: DomainModelDocument;
+  /** Serialize draft files only for the delivery workspace, not the canvas rail. */
+  includeArtifacts?: boolean;
+}
+
+export interface LiveDeliveryArtifact {
+  path: string;
+  content: string;
 }
 
 export interface LiveRouteBinding {
@@ -38,6 +45,7 @@ export interface LiveDeliveryPreview {
    * revision the diff beside it describes instead of re-projecting locally.
    */
   openapi: DeliveryContract;
+  artifacts?: readonly LiveDeliveryArtifact[];
   diff: ContractComparison;
   changeLog: string;
   apiSummary: ApiCoverageSummary;
