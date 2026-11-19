@@ -204,7 +204,7 @@ describe('AgentCopilot composer', () => {
   });
 });
 
-describe('AgentCopilot focus and workshop moves', () => {
+describe('AgentCopilot evidence focus', () => {
   it('names the object the next question is about and can drop the focus', () => {
     const onClearFocus = vi.fn();
 
@@ -259,46 +259,26 @@ describe('AgentCopilot focus and workshop moves', () => {
     expect(screen.queryByTestId('agent-copilot-focus')).toBeNull();
   });
 
-  it('sends the step the modeler picked with the message', () => {
+  it('binds the message to the selected node ID', () => {
     const agent = controller();
-
-    render(<AgentCopilot controller={agent} />);
-
-    fireEvent.click(
-      screen.getByRole('button', { name: '3. 补上标的物与领域组件' }),
+    render(
+      <AgentCopilot
+        controller={agent}
+        focus={{
+          nodeId: 'evidence.payment',
+          label: '付款确认',
+          kind: 'evidence',
+        }}
+      />,
     );
-    type('会员等级怎么算出来的？');
+    type('实付金额来自哪里？');
     fireEvent.click(screen.getByRole('button', { name: /发送/ }));
-
-    expect(agent.submit).toHaveBeenCalledWith(
-      '【第 3 步 · 补上标的物与领域组件】\n会员等级怎么算出来的？',
-    );
+    expect(agent.submit).toHaveBeenCalledWith('实付金额来自哪里？', {
+      nodeId: 'evidence.payment',
+    });
   });
 
-  it('keeps the step for the next turn and can clear it again', () => {
-    const agent = controller();
-
-    render(<AgentCopilot controller={agent} />);
-
-    const chip = screen.getByRole('button', { name: '2. 成对挖掘履约项' });
-
-    fireEvent.click(chip);
-    expect(chip).toHaveAttribute('aria-pressed', 'true');
-
-    type('发货确认呢？');
-    fireEvent.click(screen.getByRole('button', { name: /发送/ }));
-    expect(agent.submit).toHaveBeenLastCalledWith(
-      '【第 2 步 · 成对挖掘履约项】\n发货确认呢？',
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: '清除当前步骤' }));
-    type('那违约呢？');
-    fireEvent.click(screen.getByRole('button', { name: /发送/ }));
-
-    expect(agent.submit).toHaveBeenLastCalledWith('那违约呢？');
-  });
-
-  it('sends plain text when no step is chosen', () => {
+  it('sends plain text when there is no focus', () => {
     const agent = controller();
 
     render(<AgentCopilot controller={agent} />);
@@ -308,20 +288,6 @@ describe('AgentCopilot focus and workshop moves', () => {
 
     expect(agent.submit).toHaveBeenCalledWith('先把故事讲一遍');
   });
-
-  it('lets the modeler say the business has no agreement to read', () => {
-    const agent = controller();
-
-    render(<AgentCopilot controller={agent} />);
-
-    fireEvent.click(screen.getByRole('button', { name: '无合同逆推' }));
-    type('我们只有回执和退款的微信聊天记录');
-    fireEvent.click(screen.getByRole('button', { name: /发送/ }));
-
-    expect(agent.submit).toHaveBeenCalledWith(
-      '【无合同逆推 · 从凭证与追责推导合约】\n我们只有回执和退款的微信聊天记录',
-    );
-  });
 });
 
 describe('AgentCopilot stream', () => {
@@ -329,7 +295,9 @@ describe('AgentCopilot stream', () => {
     render(<AgentCopilot controller={controller()} />);
 
     expect(
-      screen.getByText('从画布选一个业务对象，或直接描述经营事实。'),
+      screen.getByText(
+        '描述一个业务例子来铺设凭证，或打开画布上的凭证追溯关键数据。',
+      ),
     ).toBeInTheDocument();
   });
 

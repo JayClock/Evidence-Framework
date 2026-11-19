@@ -1,4 +1,7 @@
-import type { EvidenceAgentApi } from '@evidence-poc/desktop-contracts/agentIpc';
+import type {
+  AgentTurnFocus,
+  EvidenceAgentApi,
+} from '@evidence-poc/desktop-contracts/agentIpc';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import type { AgentStreamEvent } from '@evidence-poc/evidence-agent/browser';
@@ -25,7 +28,7 @@ export interface AgentSessionState {
 export interface AgentSessionController {
   state: AgentSessionState;
   /** Prompts when idle; steers the live run when busy. */
-  submit: (text: string) => Promise<void>;
+  submit: (text: string, focus?: AgentTurnFocus) => Promise<void>;
   stop: () => Promise<void>;
   dismissError: () => void;
 }
@@ -119,12 +122,15 @@ export const useAgentSession = (
   }, [api, rootPath]);
 
   const submit = useCallback(
-    async (text: string) => {
+    async (text: string, focus?: AgentTurnFocus) => {
       const trimmed = text.trim();
 
       if (trimmed === '') {
         return;
       }
+
+      const running = stateRef.current.running;
+      if (running && focus?.inquiry !== undefined) return;
 
       setState((current) => ({
         ...current,
@@ -135,7 +141,7 @@ export const useAgentSession = (
       }));
 
       try {
-        if (stateRef.current.running) {
+        if (running) {
           const result = await api.steer({
             rootPath,
             text: trimmed,
@@ -151,6 +157,7 @@ export const useAgentSession = (
         const result = await api.prompt({
           rootPath,
           text: trimmed,
+          ...(focus === undefined ? {} : { focus }),
         });
 
         if (result.success === false) {
@@ -163,15 +170,16 @@ export const useAgentSession = (
       } catch (error) {
         setState((current) => ({
           ...current,
-          running: false,
           error: error instanceof Error ? error.message : '访谈请求失败。',
         }));
       } finally {
-        setState((current) => ({
-          ...current,
-          running: false,
-          activeToolName: null,
-        }));
+        if (!running) {
+          setState((current) => ({
+            ...current,
+            running: false,
+            activeToolName: null,
+          }));
+        }
       }
     },
     [api, rootPath],

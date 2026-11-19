@@ -82,7 +82,7 @@ export const InlinePatchCopilot = ({
     if (text === '' || focus === null) return;
 
     setValue('');
-    await submit(`关于 ${focus.label}（${focus.kind}）：${text}`);
+    await submit(text, { nodeId: focus.nodeId });
   };
 
   return (

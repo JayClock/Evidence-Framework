@@ -8,20 +8,11 @@ import {
 } from 'react';
 import { Bot, CornerDownLeft, Sparkles, Square, X } from 'lucide-react';
 
-import {
-  REVERSE_CONTRACT_MODE,
-  workshopStepFocus,
-} from '@evidence-poc/evidence-schema';
-
 import type { AgentSessionController } from '../../state/useAgentSession';
 import type { PatchReviewController } from '../../state/usePatchReview';
 import { InlinePatchCard } from './InlinePatchCard';
 import { ThinkingBlock } from './ThinkingBlock';
 import { ToolActivityItem } from './ToolActivityItem';
-import {
-  WorkshopStepSelector,
-  type AgentWorkshopSelection,
-} from './WorkshopStepSelector';
 import { parseStreamedTranscript } from './thinkingParser';
 import { Button } from '@evidence-poc/desktop-ui-kit';
 
@@ -59,10 +50,6 @@ export interface AgentCopilotProps {
  * tool log. A modeler reads one column — what was asked, what the agent reasoned,
  * which tools ran, what the model now says — and settles the patch where it was
  * proposed instead of hunting for a bar over the canvas.
- *
- * The composer is a single slot: one workshop move, one focus, one message. The
- * move is sticky so a facilitator can keep asking about the same step, and the
- * prefix travels with the prompt because the session keeps no step state.
  */
 export const AgentCopilot = ({
   controller,
@@ -79,7 +66,6 @@ export const AgentCopilot = ({
   const { state, submit, stop, dismissError } = controller;
   const [value, setValue] = useState('');
   const composerId = useId();
-  const [selection, setSelection] = useState<AgentWorkshopSelection>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
@@ -122,15 +108,9 @@ export const AgentCopilot = ({
     if (!aiConfigured || text === '') return;
 
     setValue('');
-    const prefix =
-      selection === null
-        ? ''
-        : selection === REVERSE_CONTRACT_MODE.id
-          ? REVERSE_CONTRACT_MODE.focus
-          : workshopStepFocus(selection);
-
-    await submit(prefix === '' ? text : `${prefix}\n${text}`);
-  }, [aiConfigured, selection, submit, value]);
+    if (focus === null) await submit(text);
+    else await submit(text, { nodeId: focus.nodeId });
+  }, [aiConfigured, focus, submit, value]);
 
   const empty =
     state.transcript === '' &&
@@ -161,9 +141,7 @@ export const AgentCopilot = ({
                   : `正在执行 ${state.activeToolName}`}
               </span>
             </span>
-          ) : selection === null ? null : (
-            '本轮已带阶段前缀'
-          )}
+          ) : null}
         </span>
       </header>
 
@@ -207,10 +185,7 @@ export const AgentCopilot = ({
               aria-hidden="true"
               className="h-4 w-4 text-evidence-accent/50"
             />
-            <p>从画布选一个业务对象，或直接描述经营事实。</p>
-            <p className="text-[10px]">
-              选一个工坊阶段，这句话就带着它进入访谈。
-            </p>
+            <p>描述一个业务例子来铺设凭证，或打开画布上的凭证追溯关键数据。</p>
           </div>
         ) : null}
 
@@ -258,7 +233,6 @@ export const AgentCopilot = ({
           void send();
         }}
       >
-        <WorkshopStepSelector selection={selection} onSelect={setSelection} />
         {focus === null ? null : (
           <div className="flex flex-wrap items-center gap-1.5">
             <span

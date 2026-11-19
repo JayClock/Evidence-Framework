@@ -28,6 +28,7 @@ interface RightInspectorProps {
   graph: DomainGraph;
   session: ModelSession;
   selection: ModelSelection;
+  evidenceActions?: { onTrace: () => void; onWhatIf?: () => void };
 }
 
 const fieldValue = (entity: EntityAST, field: string): unknown =>
@@ -74,6 +75,7 @@ export const RightInspector = ({
   graph,
   session,
   selection,
+  evidenceActions,
 }: RightInspectorProps) => {
   const entity =
     selection.nodeId === null ? undefined : graph.getEntity(selection.nodeId);
@@ -90,6 +92,7 @@ export const RightInspector = ({
       graph={graph}
       session={session}
       selection={selection}
+      evidenceActions={evidenceActions}
     />
   );
 };
@@ -101,6 +104,7 @@ const SelectedInspector = ({
   graph,
   session,
   selection,
+  evidenceActions,
 }: RightInspectorProps & {
   entity: EntityAST;
   showHeading: boolean;
@@ -158,6 +162,28 @@ const SelectedInspector = ({
             {entity.id}
           </code>
         </div>
+        {evidenceActions === undefined ? null : (
+          <div className="flex flex-wrap gap-2">
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={evidenceActions.onTrace}
+            >
+              AI 追溯关键数据
+            </Button>
+            {evidenceActions.onWhatIf === undefined ? null : (
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={evidenceActions.onWhatIf}
+              >
+                探问 What-If
+              </Button>
+            )}
+          </div>
+        )}
         {entity.sourceSnippet === undefined ? null : (
           <section
             aria-label="依据条款原文"

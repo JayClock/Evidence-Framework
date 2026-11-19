@@ -11,10 +11,7 @@ const ACTIVITY_RAIL_TABS = [
 export type ActivityRailTabId = (typeof ACTIVITY_RAIL_TABS)[number];
 
 export interface WorkspaceLayoutState {
-  readonly isWorkshopOpen: boolean;
   readonly rightPane: RightPane;
-  /** A pinned workshop takes layout width; an unpinned one floats over canvas. */
-  readonly isWorkshopPinned: boolean;
   readonly isDirectoryOpen: boolean;
   readonly isProblemsPanelOpen: boolean;
   readonly activeIssueId: string | null;
@@ -23,9 +20,6 @@ export interface WorkspaceLayoutState {
 }
 
 export interface WorkspaceLayoutActions {
-  openWorkshop: () => void;
-  closeWorkshop: () => void;
-  toggleWorkshopPinned: () => void;
   openCopilot: () => void;
   showInspector: () => void;
   toggleRailTab: (tab: ActivityRailTabId) => void;
@@ -81,23 +75,12 @@ export const useWorkspaceLayoutState = (
   ledger?: { active: boolean; returnToGraph: () => void },
 ): WorkspaceLayoutController => {
   const leaveLedger = ledger?.active ? ledger.returnToGraph : undefined;
-  const [isWorkshopOpen, setWorkshopOpen] = useState(false);
   const [rightPane, setRightPane] = useState<RightPane>('inspector');
-  const [isWorkshopPinned, setWorkshopPinned] = useState(false);
   const [isDirectoryOpen, setDirectoryOpen] = useState(true);
   const [isProblemsPanelOpen, setProblemsPanelOpen] = useState(false);
   const [activeIssueId, setActiveIssueId] = useState<string | null>(null);
   const [isInlineCopilotOpen, setInlineCopilotOpen] = useState(false);
   const [isDeliveryOpen, setDeliveryOpen] = useState(false);
-
-  const openWorkshop = useCallback(() => {
-    leaveLedger?.();
-    setWorkshopOpen(true);
-  }, [leaveLedger]);
-  const closeWorkshop = useCallback(() => setWorkshopOpen(false), []);
-  const toggleWorkshopPinned = useCallback(() => {
-    setWorkshopPinned((current) => !current);
-  }, []);
 
   const openCopilot = useCallback(() => {
     leaveLedger?.();
@@ -205,17 +188,12 @@ export const useWorkspaceLayoutState = (
   }, [toggleRailTab]);
 
   return {
-    isWorkshopOpen,
     rightPane,
-    isWorkshopPinned,
     isDirectoryOpen,
     isProblemsPanelOpen,
     activeIssueId,
     isInlineCopilotOpen,
     isDeliveryOpen,
-    openWorkshop,
-    closeWorkshop,
-    toggleWorkshopPinned,
     openCopilot,
     showInspector,
     toggleRailTab,

@@ -1,4 +1,6 @@
 import type { LiveDeliveryInput } from '@evidence-poc/desktop-contracts/delivery';
+import type { AgentTurnFocus } from '@evidence-poc/desktop-contracts/agentIpc';
+import { DomainIdSchema } from '@evidence-poc/evidence-schema';
 import { validateLiveDeliveryInput } from './deliveryProjection';
 import path from 'node:path';
 
@@ -58,7 +60,7 @@ export interface AgentRuntimeOptions {
 export interface AgentRuntime {
   readonly rootPath: string;
   readonly modelRoot: string;
-  prompt: (text: string) => Promise<void>;
+  prompt: (text: string, focus?: AgentTurnFocus) => Promise<void>;
   steer: (text: string) => Promise<'handled' | 'queued'>;
   abort: () => Promise<void>;
   /** Explicit sensor run, returning the verdict the caller awaits. */
@@ -111,6 +113,8 @@ export const createAgentRuntime = ({
     projectRoot: projectDirectory,
     selection: emptySelection,
   };
+
+  let activeTurn: { canvas: CanvasContext; readOnly: boolean } | null = null;
 
   const runSensors = async (
     scopeRefs?: readonly string[],
@@ -185,6 +189,7 @@ export const createAgentRuntime = ({
         ? {}
         : { sessionFile }),
       customTools: [],
+      tools: Object.values(TOOL_NAMES),
       extensionFactories: [
         createEvidenceToolsExtension({
           modelRoot,
@@ -199,8 +204,14 @@ export const createAgentRuntime = ({
           refreshApi: async () => {
             await runSensors();
           },
-          applyModelPatch: (patch) => transport.requestPatch(patch),
-          getCanvasContext: async () => canvasContext,
+          applyModelPatch: (patch) =>
+            activeTurn?.readOnly
+              ? Promise.resolve({
+                  success: false,
+                  error: '本轮只读探问，不提交模型变更。',
+                })
+              : transport.requestPatch(patch),
+          getCanvasContext: async () => activeTurn?.canvas ?? canvasContext,
           loadDocument,
         }),
       ],
@@ -222,10 +233,37 @@ export const createAgentRuntime = ({
   return {
     rootPath: resolvedRoot,
     modelRoot,
-    prompt: async (text) => {
-      const active = await ensureSession();
-
-      await active.prompt(text);
+    prompt: async (text, focus) => {
+      if (activeTurn !== null) throw new Error('本轮访谈尚未结束。');
+      const nodeId =
+        focus === undefined ? null : DomainIdSchema.parse(focus.nodeId);
+      const turn = {
+        canvas:
+          nodeId === null || nodeId === canvasContext.selection.nodeId
+            ? canvasContext
+            : {
+                projectRoot: canvasContext.projectRoot,
+                modelId: canvasContext.modelId,
+                selection: { nodeId, attributeName: null },
+              },
+        readOnly: focus?.inquiry !== undefined,
+      };
+      activeTurn = turn;
+      try {
+        const active = await ensureSession();
+        const prefix = nodeId === null ? '' : `【凭证焦点：${nodeId}】\n`;
+        const inquiry =
+          focus?.inquiry === 'trace'
+            ? '本轮任务：只读节点溯源。'
+            : focus?.inquiry === 'what-if'
+              ? '本轮任务：只读异常探问。'
+              : '';
+        await active.prompt(
+          prefix + (inquiry === '' ? '' : `${inquiry}\n`) + text,
+        );
+      } finally {
+        if (activeTurn === turn) activeTurn = null;
+      }
     },
     steer: async (text) => {
       if (session === null) {

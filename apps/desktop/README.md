@@ -207,13 +207,19 @@ a library's `/browser` entry whenever a Node-only adapter exists.
 - Wheel pans, Ctrl/Cmd+wheel zooms at the pointer, space+drag pans, dragging the
   background draws a marquee selection.
 
+Use **铺设凭证** to bring a business example into Copilot. Select a piece of
+evidence and choose **AI 追溯关键数据** in the inspector to ask where its unknown
+fields come from. A paired request or confirmation also offers **探问 What-If**.
+The opening inquiries are read-only and keep their node focus even when the
+canvas selection changes. Follow-up answers can propose model patches for review.
+
 ## Agent and sensors (phase 3)
 
 ```text
 AgentCopilot ──IPC: agent:prompt──▶ agentRuntime (main)
                                     │ Pi AgentSession + built-in instructions
-                                    │ custom tools: run_sensors,
-                                    │   apply_model_patch, get_canvas_selection
+                                    │ custom tools: get_focused_node_context,
+                                    │   evidence growth, apply_model_patch
                                     ▼
                      IPC: agent:apply-patch ──▶ ModelSession (renderer)
                                     ▲

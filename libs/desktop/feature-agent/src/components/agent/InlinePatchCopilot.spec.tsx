@@ -91,9 +91,9 @@ describe('InlinePatchCopilot', () => {
     fireEvent.click(screen.getByRole('button', { name: '发送' }));
 
     await waitFor(() =>
-      expect(controller.submit).toHaveBeenCalledWith(
-        '关于 采购协议（Procurement Contract）（evidence）：补一个履约确认动作',
-      ),
+      expect(controller.submit).toHaveBeenCalledWith('补一个履约确认动作', {
+        nodeId: 'evidence.contract',
+      }),
     );
   });
 

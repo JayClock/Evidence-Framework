@@ -161,7 +161,7 @@ export const registerAgentIpc = ({
       try {
         await (
           await runtimeFor(event.sender, input.rootPath)
-        ).prompt(input.text);
+        ).prompt(input.text, input.focus);
 
         return { success: true };
       } catch (error) {

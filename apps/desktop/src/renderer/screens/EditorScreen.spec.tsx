@@ -91,7 +91,7 @@ describe('EditorScreen', () => {
     vi.unstubAllGlobals();
   });
 
-  it('opens swimlanes and the workshop, then saves a scenario into the existing story pipeline', async () => {
+  it('opens swimlanes and saves a scenario into the story pipeline', async () => {
     const api = readyProject();
     api.projects.save = vi.fn(api.projects.save);
     api.story.listFlows = vi.fn(async ({ document }) =>
@@ -114,13 +114,6 @@ describe('EditorScreen', () => {
         container.querySelector('[data-swimlane-kind="lane"]'),
       ).not.toBeNull(),
     );
-    fireEvent.click(
-      within(screen.getByRole('complementary', { name: '实体目录' })).getByRole(
-        'button',
-        { name: '新建' },
-      ),
-    );
-    expect(screen.getByLabelText('工作坊步骤')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: '更多画布工具' }));
     fireEvent.click(screen.getByRole('button', { name: '业务场景推演' }));
     fireEvent.change(screen.getByLabelText('新场景名称'), {
@@ -147,30 +140,77 @@ describe('EditorScreen', () => {
     expect(screen.getByLabelText('选择业务流')).toHaveValue('正常签约案例');
     expect(api.projects.save).not.toHaveBeenCalled();
   });
-  it('prefills the Copilot composer from the workshop without submitting or saving', async () => {
+  it('starts storming in the Copilot without submitting an empty business example', async () => {
     const api = readyProject();
     render(<EditorScreen rootPath="/models/procurement" />);
     await readyCanvas();
-
     fireEvent.click(
       within(screen.getByRole('complementary', { name: '实体目录' })).getByRole(
         'button',
-        { name: '新建' },
+        { name: '铺设凭证' },
       ),
     );
-    fireEvent.click(
-      screen.getByRole('button', { name: /5. 给违约一条补偿路径/ }),
-    );
-    fireEvent.click(
-      screen.getByRole('button', { name: /带着当前问题进入 AI 协同/ }),
-    );
-
-    await waitFor(() => {
-      expect(screen.getByLabelText('访谈内容')).toHaveValue(
-        '给违约一条补偿路径：超时、断供、拒付后如何补偿？继续违约最终由谁处理？',
-      );
-    });
+    expect(
+      await screen.findByLabelText<HTMLTextAreaElement>('访谈内容'),
+    ).toHaveProperty('value', expect.stringContaining('业务例子：'));
     expect(api.calls.prompt).toEqual([]);
+    expect(api.calls.save).toEqual([]);
+  });
+
+  it('opens a read-only sourcing turn for the exact selected evidence', async () => {
+    const api = readyProject();
+    const { container } = render(
+      <EditorScreen rootPath="/models/procurement" />,
+    );
+    await readyCanvas();
+    fireEvent.click(
+      container.querySelector('[data-node-id="evidence.request"]')!,
+    );
+    fireEvent.click(
+      await screen.findByRole('button', { name: 'AI 追溯关键数据' }),
+    );
+    await waitFor(() =>
+      expect(api.calls.prompt).toEqual([
+        expect.objectContaining({
+          focus: { nodeId: 'evidence.request', inquiry: 'trace' },
+          text: expect.stringContaining('待决数据项'),
+        }),
+      ]),
+    );
+    expect(api.calls.save).toEqual([]);
+  });
+
+  it('offers What-If for a pair and keeps the follow-up attached when selection moves', async () => {
+    const api = readyProject();
+    render(<EditorScreen rootPath="/models/procurement" />);
+    await readyCanvas();
+    const directory = within(
+      screen.getByRole('complementary', { name: '实体目录' }),
+    );
+    const evidence = (id: string) =>
+      directory.getByTitle(new RegExp(` · ${id}$`));
+    fireEvent.click(evidence('evidence.contract'));
+    expect(screen.queryByRole('button', { name: '探问 What-If' })).toBeNull();
+    fireEvent.click(evidence('evidence.confirmation'));
+    fireEvent.click(
+      await screen.findByRole('button', { name: '探问 What-If' }),
+    );
+    await waitFor(() =>
+      expect(api.calls.prompt[0]?.focus).toEqual({
+        nodeId: 'evidence.confirmation',
+        inquiry: 'what-if',
+      }),
+    );
+    fireEvent.click(evidence('evidence.contract'));
+    fireEvent.change(await screen.findByLabelText('访谈内容'), {
+      target: { value: '超时则通知采购方。' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: '发送' }));
+    await waitFor(() =>
+      expect(api.calls.prompt[1]?.focus).toEqual({
+        nodeId: 'evidence.confirmation',
+      }),
+    );
     expect(api.calls.save).toEqual([]);
   });
 
@@ -371,37 +411,6 @@ describe('EditorScreen', () => {
     ).not.toContainElement(screen.getByLabelText('门禁问题面板'));
     fireEvent.keyDown(window, { code: 'KeyX', altKey: true });
     expect(screen.queryByLabelText('门禁问题面板')).toBeNull();
-  });
-
-  it('contains canvas control layers below floating drawers', async () => {
-    readyProject();
-    const { container } = render(
-      <EditorScreen rootPath="/models/procurement" />,
-    );
-    await readyCanvas();
-
-    const directory = within(
-      screen.getByRole('complementary', { name: '实体目录' }),
-    );
-    fireEvent.click(directory.getByRole('button', { name: '新建' }));
-    const close = screen.getByRole('button', { name: '关闭面板' });
-    const drawer = close.closest<HTMLElement>(
-      '[data-region="activity-drawer"]',
-    );
-    const stage = container.querySelector('[data-region="workspace-stage"]');
-
-    // jsdom cannot paint overlaps; enforce the stacking boundary instead.
-    expect(stage).toHaveClass('isolate');
-    expect(stage).toContainElement(screen.getByLabelText('聚焦范围'));
-    expect(stage).not.toContainElement(drawer);
-    expect(drawer?.parentElement).toHaveClass('absolute', 'z-30');
-
-    fireEvent.click(close);
-    expect(screen.queryByRole('button', { name: '关闭面板' })).toBeNull();
-    fireEvent.change(screen.getByLabelText('聚焦范围'), {
-      target: { value: 'context.catalog' },
-    });
-    expect(screen.getByLabelText('聚焦范围')).toHaveValue('context.catalog');
   });
 
   it('shares one resizable right pane between inspection and Copilot and reopens it from the rail', async () => {

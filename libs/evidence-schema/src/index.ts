@@ -143,18 +143,6 @@ export {
 } from './ast/lifecycle.js';
 
 export {
-  REVERSE_CONTRACT_MODE,
-  WORKSHOP_STEPS,
-  WORKSHOP_STEP_IDS,
-  isWorkshopStepId,
-  workshopStepFocus,
-  workshopStepRank,
-  type ReverseContractMode,
-  type WorkshopStep,
-  type WorkshopStepId,
-} from './ast/workshop.js';
-
-export {
   KEY_DATA_SOURCE_DEFINITIONS,
   KEY_DATA_SOURCE_KINDS,
   KEY_DATA_SOURCE_LABELS,

@@ -29,7 +29,7 @@ const handlers = (): CommandHandlers => ({
   rerunSensors: vi.fn(),
   askAgent: vi.fn(),
   openCopilot: vi.fn(),
-  openWorkshop: vi.fn(),
+  startStorming: vi.fn(),
   openProblems: vi.fn(),
   toggleProblems: vi.fn(),
 });
@@ -64,14 +64,14 @@ describe('buildCommands', () => {
     expect(spy.openCopilot).toHaveBeenCalledOnce();
   });
 
-  it('keeps the workshop discoverable and opens diagnostics in the problems panel', () => {
+  it('keeps evidence storming discoverable and opens diagnostics in the problems panel', () => {
     const spy = handlers();
     const commands = buildCommands(capabilities(), spy);
-    commands.find((command) => command.id === 'model.workshop')?.perform();
+    commands.find((command) => command.id === 'model.storming')?.perform();
     commands
       .find((command) => command.id === 'view.rail-diagnostics')
       ?.perform();
-    expect(spy.openWorkshop).toHaveBeenCalledOnce();
+    expect(spy.startStorming).toHaveBeenCalledOnce();
     expect(spy.openProblems).toHaveBeenCalledOnce();
   });
 

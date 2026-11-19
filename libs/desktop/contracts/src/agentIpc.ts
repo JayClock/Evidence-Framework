@@ -36,11 +36,19 @@ export interface AgentProjectInput {
   rootPath: string;
 }
 
-export interface AgentPromptInput extends AgentProjectInput {
+export interface AgentTurnFocus {
+  nodeId: string;
+  /** Opening a sourcing or What-If question is a read-only turn. */
+  inquiry?: 'trace' | 'what-if';
+}
+
+export interface AgentSteerInput extends AgentProjectInput {
   text: string;
 }
 
-export type AgentSteerInput = AgentPromptInput;
+export interface AgentPromptInput extends AgentSteerInput {
+  focus?: AgentTurnFocus;
+}
 
 export type AgentActionResult =
   | { success: true }

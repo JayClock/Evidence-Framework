@@ -6,6 +6,7 @@ import { computeContextScope } from '@evidence-poc/evidence-canvas-interaction';
 import type { SensorIssue } from '@evidence-poc/evidence-agent/browser';
 import {
   ENTITY_CATEGORY_LABELS,
+  isEvidenceEntity,
   type DomainModelDocument,
 } from '@evidence-poc/evidence-schema';
 
@@ -20,7 +21,6 @@ import { DomainLedgerTable } from '../components/ledger/DomainLedgerTable';
 import { downloadLedgerCsv } from '../components/ledger/domainLedgerCsv';
 import { useEntityLedger } from '../components/ledger/useEntityLedger';
 import { CanvasFloatingHud } from '../components/canvas/CanvasFloatingHud';
-import { ActivityDrawer } from '../components/layout/ActivityDrawer';
 import { ActivityRail } from '../components/layout/ActivityRail';
 import { EntityDrawer } from '../components/layout/EntityDrawer';
 import { RightPaneShell } from '../components/layout/RightPaneShell';
@@ -31,9 +31,9 @@ import {
   useAgentPatchBridge,
   useAgentSession,
   usePatchReview,
+  type PromptFocus,
 } from '@evidence-poc/desktop-feature-agent';
 import { ScenarioStudioModal } from '../components/scenario/ScenarioStudioModal';
-import { WorkshopWizardDrawer } from '../components/wizard/WorkshopWizardDrawer';
 import {
   StoryPlayerBar,
   StoryDrawer,
@@ -286,6 +286,7 @@ const EditorWorkspace = ({
   useEffect(() => {
     if (state.savedAt !== null) void sensors.refresh();
   }, [state.savedAt, sensors.refresh]);
+  const [inquiryFocus, setInquiryFocus] = useState<PromptFocus | null>(null);
   const [copilotPrefill, setCopilotPrefill] = useState<{
     token: number;
     text: string;
@@ -426,6 +427,48 @@ const EditorWorkspace = ({
           kind: selectedEntity.category,
         };
 
+  const startStorming = useCallback(() => {
+    setInquiryFocus(null);
+    state.session.clearSelection();
+    workspaceView.setMode('journey');
+    tokenRef.current += 1;
+    setCopilotPrefill({
+      token: tokenRef.current,
+      text: '请根据下面的业务例子做头脑风暴，按邀请投标、投标、签约、履约批量铺设有依据的凭证。\n\n业务例子：',
+    });
+    layout.openCopilot();
+  }, [layout.openCopilot, state.session, workspaceView.setMode]);
+
+  const askAboutEvidence = (inquiry: 'trace' | 'what-if') => {
+    if (
+      !isEvidenceEntity(selectedEntity) ||
+      promptFocus === null ||
+      ai?.aiConfigured === false ||
+      agent.state.running
+    )
+      return;
+    setInquiryFocus(promptFocus);
+    layout.openCopilot();
+    setAgentFocusToken((token) => token + 1);
+    const question =
+      inquiry === 'trace'
+        ? '先问我这张凭证最关键的待决数据项从哪里来；有来源的不要重复问。'
+        : '针对这张凭证关联的履约对，提出一个与现有约定最相关的 What-If 问题。如果有多个请求，先问我推演哪一项。';
+    void agent.submit(question, { nodeId: selectedEntity.id, inquiry });
+  };
+  const hasFocusedPair =
+    isEvidenceEntity(selectedEntity) &&
+    (selectedEntity.kind === 'fulfillment_request'
+      ? (state.graph.fulfillmentPair(selectedEntity.id)?.confirmations.length ??
+          0) > 0
+      : selectedEntity.kind === 'fulfillment_confirmation' &&
+        state.graph
+          .fulfillmentConfirmations()
+          .some(
+            ({ entity, incomingRequests }) =>
+              entity.id === selectedEntity.id && incomingRequests.length > 0,
+          ));
+
   const requestZoom = useCallback((direction: ZoomDirection) => {
     tokenRef.current += 1;
     setZoomCommand({ direction, token: tokenRef.current });
@@ -471,17 +514,18 @@ const EditorWorkspace = ({
       openDelivery: layout.openDelivery,
       rerunSensors: () => void sensors.refresh(),
       askAgent: () => {
+        setInquiryFocus(null);
         layout.openCopilot();
         setAgentFocusToken((token) => token + 1);
       },
       openCopilot: layout.openCopilot,
-      openWorkshop: layout.openWorkshop,
+      startStorming,
       openProblems: layout.openProblemsPanel,
       toggleProblems: layout.toggleProblemsPanel,
     }),
     [
       layout.openCopilot,
-      layout.openWorkshop,
+      startStorming,
       layout.openDelivery,
       layout.openProblemsPanel,
       layout.toggleProblemsPanel,
@@ -816,38 +860,10 @@ const EditorWorkspace = ({
               graph={state.graph}
               selectedNodeId={state.selection.nodeId}
               onReveal={revealOnGraph}
-              onCreate={layout.openWorkshop}
+              onCreate={startStorming}
             />
           ) : null}
 
-          {!ledgerActive && layout.isWorkshopOpen ? (
-            <div
-              className={
-                layout.isWorkshopPinned
-                  ? 'h-full w-[300px] shrink-0'
-                  : `absolute inset-y-0 z-30 w-[320px] ${layout.isDirectoryOpen ? 'left-[268px]' : 'left-12'}`
-              }
-            >
-              <ActivityDrawer
-                title="共创工作坊"
-                pinned={layout.isWorkshopPinned}
-                onTogglePinned={layout.toggleWorkshopPinned}
-                onClose={layout.closeWorkshop}
-              >
-                <WorkshopWizardDrawer
-                  session={state.session}
-                  onFocus={revealOnGraph}
-                  onReview={(text) => {
-                    setCopilotPrefill({ token: Date.now(), text });
-                    layout.closeWorkshop();
-                    layout.openCopilot();
-                  }}
-                />
-              </ActivityDrawer>
-            </div>
-          ) : null}
-
-          {/* Keep canvas control layers below the floating activity drawer. */}
           <div
             data-region="workspace-stage"
             className="isolate flex min-h-0 min-w-0 flex-1"
@@ -909,6 +925,21 @@ const EditorWorkspace = ({
                         selection={state.selection}
                         showHeading={false}
                         active={!rightRailCollapsed}
+                        evidenceActions={
+                          ai?.aiConfigured === false ||
+                          agent.state.running ||
+                          !isEvidenceEntity(selectedEntity)
+                            ? undefined
+                            : {
+                                onTrace: () => askAboutEvidence('trace'),
+                                ...(hasFocusedPair
+                                  ? {
+                                      onWhatIf: () =>
+                                        askAboutEvidence('what-if'),
+                                    }
+                                  : {}),
+                              }
+                        }
                       />
                     ) : (
                       <AgentCopilot
@@ -916,8 +947,11 @@ const EditorWorkspace = ({
                         onConfigureAi={ai?.openSettings}
                         controller={agent}
                         patchReview={patchReview}
-                        focus={promptFocus}
-                        onClearFocus={() => state.session.clearSelection()}
+                        focus={inquiryFocus ?? promptFocus}
+                        onClearFocus={() => {
+                          setInquiryFocus(null);
+                          state.session.clearSelection();
+                        }}
                         onFocusEntity={revealOnGraph}
                         focusToken={agentFocusToken}
                         prefill={copilotPrefill}

@@ -430,7 +430,101 @@ describe('createAgentRuntime', () => {
   });
 });
 
+type ToolStub = {
+  name: string;
+  execute: (
+    id: string,
+    params: Record<string, unknown>,
+  ) => Promise<{ details: unknown; isError?: boolean }>;
+};
+
+const registeredTool = (name: string) => {
+  const tools: ToolStub[] = [];
+  const extension = sessionOptions.at(-1)?.extensionFactories?.[0];
+  if (typeof extension !== 'function')
+    throw new Error('Evidence tools extension not registered');
+  extension({ registerTool: (tool: ToolStub) => tools.push(tool) } as never);
+  const tool = tools.find((entry) => entry.name === name);
+  if (!tool) throw new Error(`Tool not registered: ${name}`);
+  return tool;
+};
+
 describe('agent patch transport', () => {
+  it.each(['trace', 'what-if'] as const)(
+    'pins focus and refuses all patch writes during a %s inquiry',
+    async (inquiry) => {
+      const { transport, patches } = createTransport();
+      const fake = createFakeSession();
+      const runtime = runtimeWith({ transport, fake });
+      const document = createDesktopFixture();
+      runtime.notifyModelChanged({
+        rootPath: runtime.rootPath,
+        revision: 1,
+        document,
+        baseDocument: document,
+      });
+      const modelPatch = {
+        rationale: '补齐付款',
+        patches: [{ op: 'replace', path: '/manifest/name', value: '不要写入' }],
+      };
+      fake.session.prompt = async (text) => {
+        fake.prompts.push(text);
+        const apply = registeredTool('apply_model_patch');
+        if (fake.prompts.length === 1) {
+          runtime.setCanvasContext({
+            projectRoot: runtime.rootPath,
+            selection: { nodeId: 'evidence.contract', attributeName: null },
+          });
+          const focus = await registeredTool(
+            'get_focused_node_context',
+          ).execute('read', {});
+          expect(focus.isError).toBeUndefined();
+          expect(focus.details).toMatchObject({
+            entity: { id: 'evidence.confirmation' },
+          });
+          expect((await apply.execute('write', modelPatch)).isError).toBe(true);
+          expect(
+            (
+              await registeredTool('batch_add_evidence_stubs').execute(
+                'operator',
+                {
+                  evidences: [
+                    {
+                      id: 'evidence.refund',
+                      label: '退款确认',
+                      stage: 'fulfillment',
+                    },
+                  ],
+                },
+              )
+            ).isError,
+          ).toBe(true);
+        } else {
+          expect(
+            (await apply.execute('write', modelPatch)).isError,
+          ).toBeUndefined();
+        }
+      };
+      try {
+        await runtime.prompt('打开凭证', {
+          nodeId: 'evidence.confirmation',
+          inquiry,
+        });
+        expect(fake.prompts[0]).toContain(
+          '【凭证焦点：evidence.confirmation】',
+        );
+        expect(fake.prompts[0]).toContain(
+          inquiry === 'trace' ? '只读节点溯源' : '只读异常探问',
+        );
+        expect(patches).toEqual([]);
+        await runtime.prompt('确认更改', { nodeId: 'evidence.confirmation' });
+        expect(patches).toHaveLength(1);
+      } finally {
+        runtime.dispose();
+      }
+    },
+  );
+
   it('returns the renderer verdict to the tool', async () => {
     const applied: ModelPatchResult = {
       success: false,
@@ -447,43 +541,10 @@ describe('agent patch transport', () => {
 
     await runtime.prompt('开工');
 
-    const extension = sessionOptions.at(-1)?.extensionFactories?.[0];
-
-    if (typeof extension !== 'function') {
-      throw new Error('the evidence tools extension was not registered');
-    }
-    type ToolStub = {
-      name: string;
-      execute: (
-        callId: string,
-        params: Record<string, unknown>,
-        signal: undefined,
-        onUpdate: undefined,
-        context: unknown,
-      ) => Promise<{ details: unknown; isError?: boolean }>;
-    };
-    const tools: ToolStub[] = [];
-    const pi = {
-      registerTool: (tool: ToolStub) => tools.push(tool),
-    };
-
-    extension?.(pi as never);
-    const apply = tools.find(({ name }) => name === 'apply_model_patch');
-
-    if (apply === undefined) {
-      throw new Error('apply_model_patch was not registered');
-    }
-
-    const result = await apply.execute(
-      'call-1',
-      {
-        rationale: '补齐退货',
-        patches: [{ op: 'add', path: '/entities/-', value: {} }],
-      },
-      undefined,
-      undefined,
-      {} as never,
-    );
+    const result = await registeredTool('apply_model_patch').execute('call-1', {
+      rationale: '补齐退货',
+      patches: [{ op: 'add', path: '/entities/-', value: {} }],
+    });
 
     expect(result.details).toEqual(applied);
     expect(result.isError).toBe(true);
@@ -505,30 +566,7 @@ describe('agent patch transport', () => {
     try {
       await runtime.prompt('补一组退款履约');
 
-      const extension = sessionOptions.at(-1)?.extensionFactories?.[0];
-
-      if (typeof extension !== 'function') {
-        throw new Error('the evidence tools extension was not registered');
-      }
-
-      type ToolStub = {
-        name: string;
-        execute: (
-          callId: string,
-          params: Record<string, unknown>,
-        ) => Promise<{ details: unknown; isError?: boolean }>;
-      };
-      const tools: ToolStub[] = [];
-
-      extension({
-        registerTool: (tool: ToolStub) => tools.push(tool),
-      } as never);
-
-      const operator = tools.find(
-        ({ name }) => name === 'batch_add_evidence_stubs',
-      );
-      if (operator === undefined)
-        throw new Error('Evidence batch tool was not registered');
+      const operator = registeredTool('batch_add_evidence_stubs');
       const result = await operator.execute('call-1', {
         evidences: [
           { id: 'evidence.refund', label: '退款确认', stage: 'fulfillment' },

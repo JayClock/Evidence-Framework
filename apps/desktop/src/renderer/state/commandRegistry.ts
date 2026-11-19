@@ -1,7 +1,6 @@
 import {
   Activity,
   Bot,
-  ListChecks,
   Network,
   Redo2,
   Save,
@@ -100,7 +99,7 @@ export interface CommandHandlers {
   rerunSensors: () => void;
   askAgent: () => void;
   openCopilot: () => void;
-  openWorkshop: () => void;
+  startStorming: () => void;
   openProblems: () => void;
   toggleProblems: () => void;
 }
@@ -200,13 +199,13 @@ export const buildCommands = (
       perform: handlers.openCopilot,
     },
     {
-      id: 'model.workshop',
-      title: '打开共创工作坊',
-      subtitle: '七步业务提问与履约建模',
+      id: 'model.storming',
+      title: '铺设业务凭证',
+      subtitle: '从业务例子开始头脑风暴',
       category: 'model',
-      icon: ListChecks,
-      keywords: ['workshop', 'new', '新建', '向导'],
-      perform: handlers.openWorkshop,
+      icon: Sparkles,
+      keywords: ['evidence', 'storming', '新建', '头脑风暴'],
+      perform: handlers.startStorming,
     },
     {
       id: 'delivery.contract',

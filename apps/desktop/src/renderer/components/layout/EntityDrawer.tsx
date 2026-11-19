@@ -54,7 +54,7 @@ export const EntityDrawer = ({
         </h2>
         <Button type="button" size="xs" variant="ghost" onClick={onCreate}>
           <Plus aria-hidden="true" className="size-3" />
-          新建
+          铺设凭证
         </Button>
       </header>
       <div className="min-h-0 flex-1 overflow-y-auto p-2">

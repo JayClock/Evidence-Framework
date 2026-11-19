@@ -1,12 +1,4 @@
 export {
-  inspectWorkshop,
-  type WorkshopProgress,
-} from './workshop/workshopProgress.js';
-export {
-  anchorWorkshopContract,
-  addWorkshopFulfillment,
-} from './workshop/workshopMutators.js';
-export {
   scenarioExamples,
   cloneScenarioExamples,
   replaceScenarioExamples,

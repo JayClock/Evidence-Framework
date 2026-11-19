@@ -19,8 +19,7 @@ describe('useWorkspaceLayoutState', () => {
     const { result } = setup();
 
     expect(result.current.rightPane).toBe('inspector');
-    expect(result.current.isWorkshopOpen).toBe(false);
-    expect(result.current.isWorkshopPinned).toBe(false);
+
     expect(result.current.isDirectoryOpen).toBe(true);
     expect(result.current.isProblemsPanelOpen).toBe(false);
     expect(result.current.isDeliveryOpen).toBe(false);
@@ -34,7 +33,7 @@ describe('useWorkspaceLayoutState', () => {
     press({ key: '1', metaKey: true });
 
     expect(toggleLedger).toHaveBeenCalledTimes(2);
-    expect(result.current.isWorkshopOpen).toBe(false);
+    expect(result.current.rightPane).toBe('inspector');
   });
 
   it('puts the diagnostics list under the canvas, not in a drawer', () => {
@@ -43,7 +42,6 @@ describe('useWorkspaceLayoutState', () => {
     press({ key: '2', metaKey: true });
 
     expect(result.current.isProblemsPanelOpen).toBe(true);
-    expect(result.current.isWorkshopOpen).toBe(false);
 
     press({ key: '2', metaKey: true });
     expect(result.current.isProblemsPanelOpen).toBe(false);
@@ -72,17 +70,6 @@ describe('useWorkspaceLayoutState', () => {
     expect(result.current.rightPane).toBe('copilot');
     press({ key: '3', metaKey: true });
     expect(result.current.rightPane).toBe('inspector');
-  });
-
-  it('pins a floating workshop into the layout', () => {
-    const { result } = setup();
-
-    act(() => result.current.openWorkshop());
-    expect(result.current.isWorkshopOpen).toBe(true);
-    act(() => result.current.toggleWorkshopPinned());
-    expect(result.current.isWorkshopPinned).toBe(true);
-    act(() => result.current.toggleWorkshopPinned());
-    expect(result.current.isWorkshopPinned).toBe(false);
   });
 
   it('opens the problems panel on the finding it was asked for', () => {
@@ -115,7 +102,7 @@ describe('useWorkspaceLayoutState', () => {
       );
     });
 
-    expect(result.current.isWorkshopOpen).toBe(false);
+    expect(result.current.rightPane).toBe('inspector');
     expect(toggleLedger).not.toHaveBeenCalled();
     act(() => input.remove());
   });
