@@ -1,3 +1,5 @@
+import type { CSSProperties } from 'react';
+
 import { useLiveApi } from './LiveApiContext';
 import {
   EVIDENCE_TIME_ATTRIBUTE_NAMES,
@@ -205,6 +207,9 @@ export const NodeCard = ({
   const time = businessTime(entity, storyValues);
   const shape = entityShape(entity);
   const standard = viewMode !== 'simplified';
+  const fields = summary.attributes.slice(0, viewMode === 'expanded' ? 3 : 1);
+  const remaining =
+    summary.remainingAttributes + summary.attributes.length - fields.length;
 
   return (
     <div
@@ -212,48 +217,36 @@ export const NodeCard = ({
       tabIndex={outOfScope ? -1 : 0}
       aria-disabled={outOfScope || undefined}
       aria-label={`${entity.label}（${entityKindLabel(entity)}）`}
+      aria-pressed={selected}
       data-node-id={entity.id}
       data-category={entity.category}
       data-node-shape={shape}
       className={[
-        'absolute flex cursor-pointer flex-col gap-1 overflow-hidden border px-2 py-1.5 text-center transition-[opacity,box-shadow] duration-150 outline-none',
+        'absolute flex cursor-pointer flex-col overflow-hidden rounded-lg border bg-white text-left shadow-sm transition-[opacity,box-shadow] duration-150 focus-visible:outline-2 focus-visible:outline-evidence-accent motion-reduce:transition-none',
         selected ? 'ring-2 ring-evidence-accent ring-offset-1' : '',
         highlighted && !selected ? 'shadow-[0_0_0_2px_#2f5d8f55]' : '',
         dimmed ? 'opacity-20' : 'opacity-100',
       ].join(' ')}
-      style={{
-        opacity: outOfScope ? 0.15 : undefined,
-        pointerEvents: outOfScope ? 'none' : undefined,
-        left: box.x,
-        top: box.y,
-        width: box.width,
-        height: box.height,
-        borderRadius: entityRadius(entity),
-        borderTopColor: selected
-          ? '#2f5d8f'
-          : shape === 'moment'
-            ? color
-            : token.stroke,
-        borderRightColor: selected
-          ? '#2f5d8f'
-          : shape === 'moment'
-            ? color
-            : token.stroke,
-        borderBottomColor: selected
-          ? '#2f5d8f'
-          : shape === 'moment'
-            ? color
-            : token.stroke,
-        borderTopWidth: shape === 'moment' ? 2 : 1,
-        borderRightWidth: shape === 'moment' ? 2 : 1,
-        borderBottomWidth: shape === 'moment' ? 2 : 1,
-        borderLeftWidth: 3,
-        borderLeftColor: color,
-        backgroundColor: token.fill,
-        boxShadow: selected
-          ? undefined
-          : '0 1px 2px rgba(16, 24, 40, 0.08), 0 1px 3px rgba(16, 24, 40, 0.06)',
-      }}
+      style={
+        {
+          opacity: outOfScope ? 0.15 : undefined,
+          pointerEvents: outOfScope ? 'none' : undefined,
+          left: box.x,
+          top: box.y,
+          width: box.width,
+          height: box.height,
+          '--canvas-card-stroke':
+            shape === 'moment' ? color : 'var(--color-workbench-border)',
+          borderColor: selected
+            ? 'var(--color-evidence-accent)'
+            : 'var(--canvas-card-stroke)',
+          borderWidth: shape === 'moment' ? 2 : 1,
+          borderLeftWidth: 3,
+          borderLeftColor: color,
+          borderRadius:
+            entity.category === 'evidence' ? 8 : entityRadius(entity),
+        } as CSSProperties
+      }
       onMouseEnter={() => !outOfScope && onHover(entity.id)}
       onMouseLeave={() => !outOfScope && onHover(null)}
       onFocus={() => !outOfScope && onHover(entity.id)}
@@ -267,11 +260,23 @@ export const NodeCard = ({
         }
       }}
     >
-      <div className="flex min-w-0 items-center justify-between gap-1 text-[9px] leading-tight">
-        <span className="shrink-0" style={{ color }}>
+      <header className="flex min-w-0 shrink-0 items-center justify-between gap-2 border-b border-workbench-border bg-workbench-background px-2 py-1.5">
+        <span
+          className="truncate text-[12px] leading-tight font-semibold text-evidence-ink"
+          title={entity.label}
+        >
+          {entity.label}
+        </span>
+        <span
+          className="max-w-[42%] shrink-0 truncate rounded px-1.5 py-0.5 text-[9px] leading-tight font-medium"
+          style={{ color, backgroundColor: token.fill }}
+          title={`${token.label} · ${entityKindLabel(entity)}`}
+        >
           {entityKindLabel(entity)}
         </span>
-        <span className="flex min-w-0 items-center justify-end gap-1">
+      </header>
+      <div className="flex min-h-0 flex-1 flex-col justify-center gap-0.5 overflow-hidden px-2 text-[9px] leading-tight">
+        <div className="flex min-w-0 items-center gap-1 empty:hidden">
           {entity.category === 'evidence' &&
           entity.kind === 'fulfillment_request' ? (
             <span
@@ -306,19 +311,7 @@ export const NodeCard = ({
               ⚑ {summary.responsibility}
             </span>
           ) : null}
-        </span>
-      </div>
-      <div className="flex min-h-0 flex-1 flex-col items-center justify-center">
-        <span
-          className={[
-            'line-clamp-2 leading-tight font-medium text-evidence-ink',
-            // The workshop reading has one job: say what the object is.
-            standard ? 'text-[11px]' : 'text-[13px]',
-          ].join(' ')}
-          title={entity.label}
-        >
-          {entity.label}
-        </span>
+        </div>
         {standard ? (
           <span
             className="max-w-full truncate text-[8px] text-evidence-muted"
@@ -368,21 +361,26 @@ export const NodeCard = ({
       {standard ? (
         <div
           data-card-meta=""
-          className="shrink-0 space-y-0.5 border-t border-evidence-line/60 pt-1 text-left text-[9px] leading-tight text-evidence-muted"
+          className="flex shrink-0 flex-col gap-0.5 border-t border-workbench-border px-2 py-1 text-[9px] leading-tight text-workbench-muted"
         >
           {time !== null ? (
             <div className="truncate" title={time}>
               时间：{time}
             </div>
           ) : null}
-          <div className="truncate" title={summary.attributes.join('、')}>
-            {summary.attributes.length
-              ? summary.attributes.join(' · ')
-              : '无属性'}
-            {summary.remainingAttributes > 0
-              ? ` +${summary.remainingAttributes}`
-              : ''}
-          </div>
+          {fields.map((field) => (
+            <div
+              key={field.name}
+              className="truncate font-mono text-workbench-body"
+              title={field.label}
+            >
+              {field.name}
+              {field.valueType === undefined ? '' : `: ${field.valueType}`}
+              {field.key ? ' · Key' : ''}
+            </div>
+          ))}
+          {fields.length === 0 ? <span>无属性</span> : null}
+          {remaining > 0 ? <span>另有 {remaining} 个字段</span> : null}
           {[...(summary.ruleFormulas ?? [])]
             .sort(
               (a, b) =>

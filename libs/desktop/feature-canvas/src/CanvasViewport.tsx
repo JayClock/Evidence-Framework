@@ -515,7 +515,7 @@ const CanvasSurface = ({
 
   return (
     <div
-      className="relative h-full w-full min-h-0 min-w-0 flex-1 overflow-hidden bg-[#fbfbfc]"
+      className="relative h-full w-full min-h-0 min-w-0 flex-1 overflow-hidden bg-workbench-background"
       data-region="canvas-viewport"
       data-canvas-mode={viewMode}
     >
@@ -680,7 +680,7 @@ const CanvasSurface = ({
         />
       ) : null}
 
-      <BusinessLegend viewMode={viewMode} />
+      <BusinessLegend compact viewMode={viewMode} />
 
       {/* The radar is a pill until it is asked for. */}
       <button
@@ -700,7 +700,7 @@ const CanvasSurface = ({
         <div
           data-canvas-control=""
           data-evidence-capture-hide=""
-          className="pointer-events-none absolute inset-x-0 bottom-4 z-30 flex justify-center px-4"
+          className="pointer-events-none absolute top-4 left-5 z-30"
         >
           {hud({
             zoom,

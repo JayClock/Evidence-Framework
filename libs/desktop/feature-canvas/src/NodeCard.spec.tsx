@@ -42,7 +42,11 @@ describe('business card summaries', () => {
     });
     const summary = summarizeCards(document).get(request.id)!;
     expect(summary.responsibility).toBe('供应方（Supplier）');
-    expect(summary.attributes).toEqual(['开始时间', '截止时间', '金额']);
+    expect(summary.attributes.map(({ label }) => label)).toEqual([
+      '开始时间',
+      '截止时间',
+      '金额',
+    ]);
     expect(summary.remainingAttributes).toBe(2);
     expect(summary.rules).toEqual([
       '交付完成（Delivery Completion）',
@@ -135,6 +139,7 @@ describe('NodeCard modes', () => {
         summary={summaries.get('evidence.request')!}
       />,
     );
+    expect(screen.getByText('started_at: timestamp · Key')).toBeInTheDocument();
     expect(screen.getByText('权利方主张')).toHaveAttribute(
       'title',
       expect.stringContaining('主张方：供应方企业'),

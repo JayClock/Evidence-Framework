@@ -106,6 +106,12 @@ body[data-evidence-capture='true'] [data-node-id] {
   outline: none !important;
 }
 
+body[data-evidence-capture='true'] [data-node-id][aria-pressed='true'] {
+  border-top-color: var(--canvas-card-stroke) !important;
+  border-right-color: var(--canvas-card-stroke) !important;
+  border-bottom-color: var(--canvas-card-stroke) !important;
+}
+
 body[data-evidence-capture='true'] [data-evidence-capture-hide] {
   display: none !important;
 }

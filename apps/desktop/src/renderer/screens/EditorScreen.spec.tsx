@@ -105,7 +105,7 @@ describe('EditorScreen', () => {
       <EditorScreen rootPath="/models/procurement" />,
     );
     await readyCanvas();
-    expect(screen.getByRole('button', { name: /业务旅程⌥1/ })).toHaveAttribute(
+    expect(screen.getByRole('button', { name: '业务旅程' })).toHaveAttribute(
       'aria-pressed',
       'true',
     );
@@ -121,6 +121,7 @@ describe('EditorScreen', () => {
       ),
     );
     expect(screen.getByLabelText('工作坊步骤')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: '更多画布工具' }));
     fireEvent.click(screen.getByRole('button', { name: '业务场景推演' }));
     fireEvent.change(screen.getByLabelText('新场景名称'), {
       target: { value: '正常签约案例' },
@@ -501,7 +502,9 @@ describe('EditorScreen', () => {
     fireEvent.change(screen.getByLabelText('聚焦范围'), {
       target: { value: 'context.catalog' },
     });
-    fireEvent.click(screen.getByText('标准图'));
+    fireEvent.change(screen.getByLabelText('密度'), {
+      target: { value: 'standard' },
+    });
     const world = container.querySelector(
       '.react-flow__viewport',
     ) as HTMLElement;
@@ -944,7 +947,9 @@ describe('EditorScreen stage navigation', () => {
     );
     await readyCanvas();
 
-    fireEvent.click(screen.getByRole('button', { name: '简化图' }));
+    fireEvent.change(screen.getByLabelText('密度'), {
+      target: { value: 'simplified' },
+    });
     const rail = within(screen.getByRole('navigation', { name: '活动导轨' }));
     const ledger = rail.getByRole('button', { name: '总台账' });
     expect(screen.getAllByRole('button', { name: '总台账' })).toEqual([ledger]);
@@ -964,10 +969,7 @@ describe('EditorScreen stage navigation', () => {
     fireEvent.click(ledger);
     expect(ledger).toHaveAttribute('aria-pressed', 'false');
     expect(screen.queryByLabelText('领域模型总台账')).toBeNull();
-    expect(screen.getByRole('button', { name: '简化图' })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    );
+    expect(screen.getByLabelText('密度')).toHaveValue('simplified');
     expect(api.calls.save).toEqual([]);
   });
 
@@ -1107,7 +1109,7 @@ describe('EditorScreen stage navigation', () => {
         container.querySelector('[data-region="canvas-viewport"]'),
       ).not.toBeNull(),
     );
-    expect(screen.getByRole('button', { name: /业务旅程⌥1/ })).toHaveAttribute(
+    expect(screen.getByRole('button', { name: '业务旅程' })).toHaveAttribute(
       'aria-pressed',
       'true',
     );

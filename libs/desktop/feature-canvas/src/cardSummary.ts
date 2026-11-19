@@ -8,7 +8,12 @@ export interface CardSummary {
   responsibilityRef: string | null;
   /** The concrete party that signs or stamps this evidence, if one is known. */
   partyBadge: PartyBadge | null;
-  attributes: string[];
+  attributes: readonly {
+    name: string;
+    label: string;
+    valueType: string | undefined;
+    key: boolean;
+  }[];
   remainingAttributes: number;
   keyDataCount: number;
   rules: string[];
@@ -142,7 +147,12 @@ export const summarizeCards = (
           partyBadge: partyBadges.get(entity.id) ?? null,
           attributes: attributes
             .slice(0, 3)
-            .map((attribute) => attribute.label ?? attribute.name),
+            .map(({ name, label, valueType, keyData }) => ({
+              name,
+              label,
+              valueType,
+              key: keyData === true,
+            })),
           remainingAttributes: Math.max(0, attributes.length - 3),
           keyDataCount: attributes.filter(
             (attribute) => attribute.keyData === true,

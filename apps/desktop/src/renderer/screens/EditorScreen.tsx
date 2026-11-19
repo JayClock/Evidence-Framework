@@ -596,7 +596,7 @@ const EditorWorkspace = ({
       {state.layoutPending || state.layoutError ? (
         <div
           role={state.layoutError ? 'alert' : 'status'}
-          className="absolute left-4 top-4 z-40 rounded bg-white px-3 py-2 text-sm shadow"
+          className="absolute top-24 left-5 z-40 rounded bg-white px-3 py-2 text-sm shadow"
         >
           {state.layoutError
             ? `画布布局失败：${state.layoutError}`
@@ -616,8 +616,6 @@ const EditorWorkspace = ({
         hud={(controls) => (
           <CanvasFloatingHud
             {...controls}
-            viewMode={workspaceView.graphMode}
-            onViewModeChange={workspaceView.setMode}
             density={viewMode}
             onOpenScenarios={() => setScenarioOpen(true)}
             onDensityChange={setViewMode}

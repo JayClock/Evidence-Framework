@@ -15,7 +15,7 @@ export const ScopeFilterControl = ({
     <div
       data-canvas-control=""
       data-evidence-capture-hide=""
-      className="absolute top-9 left-9 z-30 flex max-w-[calc(100%-48px)] items-center gap-2 rounded-md border border-evidence-line bg-white/95 px-2 py-1 text-[11px] shadow-sm"
+      className="absolute top-14 left-5 z-30 flex max-w-[calc(100%-48px)] items-center gap-2 rounded-md border border-evidence-line bg-white/95 px-2 py-1 text-[11px] shadow-sm"
     >
       <label htmlFor={id} className="shrink-0 text-evidence-muted">
         聚焦范围
