@@ -1,87 +1,42 @@
 import { describe, expect, it } from 'vitest';
-
+import { evidenceToolNames } from '../tools/evidenceTools.js';
 import {
-  EVIDENCE_INSTRUCTIONS,
   EVIDENCE_SYSTEM_PROMPT,
-  MODELING_PROMPT,
-  OPERATOR_PROMPT,
-  ROLE_PROMPT,
+  STORMING_PROMPT,
+  SOURCING_PROMPT,
+  WHAT_IF_PROMPT,
   WORKFLOW_PROMPT,
 } from './index.js';
 
-describe('the built-in instructions', () => {
-  it('cover the four things a turn needs: role, red lines, operators, loop', () => {
-    expect(EVIDENCE_INSTRUCTIONS).toEqual([
-      ROLE_PROMPT,
-      MODELING_PROMPT,
-      OPERATOR_PROMPT,
-      WORKFLOW_PROMPT,
-    ]);
-    expect(EVIDENCE_SYSTEM_PROMPT).toBe(EVIDENCE_INSTRUCTIONS.join('\n\n'));
-  });
-
-  it('name the tools the desktop registers, and nothing that has to be found', () => {
-    for (const tool of [
-      'apply_model_patch',
-      'run_sensors',
-      'get_canvas_selection',
-      'introduce_fulfillment_pair',
-      'add_breach_compensation',
-      'roleify_and_invert_dependency',
-      'annotate_contract_clauses',
-      'read_service_blueprint',
-      'isolate_domain_calculator',
-    ]) {
-      expect(EVIDENCE_SYSTEM_PROMPT).toContain(tool);
+describe('evidence modeling instructions', () => {
+  it('associates each local intent with registered tools', () => {
+    for (const [prompt, names] of [
+      [STORMING_PROMPT, ['batch_add_evidence_stubs']],
+      [
+        SOURCING_PROMPT,
+        [
+          'get_focused_node_context',
+          'bind_key_data_source',
+          'split_evidence_to_pair',
+          'assign_fulfillment_context',
+        ],
+      ],
+      [
+        WHAT_IF_PROMPT,
+        ['simulate_what_if_challenge', 'grow_breach_compensation'],
+      ],
+    ] as const) {
+      for (const name of names) {
+        expect(prompt).toContain(name);
+        expect(evidenceToolNames).toContain(name);
+      }
     }
-
-    // A skill tree, a reference directory or a CLI command would send the model
-    // looking for something the install does not ship.
-    for (const relic of ['SKILL.md', '.agents', 'references/', 'npx ', '$']) {
-      expect(EVIDENCE_SYSTEM_PROMPT).not.toContain(relic);
-    }
+    expect(WORKFLOW_PROMPT).toContain('不强制顺序');
   });
-
-  it('walks the seven workshop steps in the order the board shows them', () => {
-    const anchors = [
-      '锚定合约与双方',
-      '成对挖掘履约项',
-      '补上标的物与领域组件',
-      '反转易变依赖',
-      '给违约一条补偿路径',
-      '让每个数字有来源',
-      '串起业务宏流程',
-    ];
-    const positions = anchors.map((anchor) => WORKFLOW_PROMPT.indexOf(anchor));
-
-    expect(positions.every((position) => position >= 0)).toBe(true);
-    expect([...positions].sort((left, right) => left - right)).toEqual(
-      positions,
-    );
-  });
-
-  it('reads a contract before it writes one', () => {
-    // A facilitator who starts from an empty canvas invents the business; the
-    // reading tool is what keeps the first turn grounded in the text.
-    const reading = OPERATOR_PROMPT.indexOf('annotate_contract_clauses');
-    const writing = OPERATOR_PROMPT.indexOf('introduce_fulfillment_pair');
-
-    expect(reading).toBeGreaterThanOrEqual(0);
-    expect(reading).toBeLessThan(writing);
-  });
-
-  it('never turns the workshop into an interrogation', () => {
-    expect(ROLE_PROMPT).toContain('主持，不是审讯');
-    expect(ROLE_PROMPT).toContain('允许粗糙');
-    expect(ROLE_PROMPT).not.toContain('审讯员');
-  });
-
-  it('can open a workshop from receipts when there is no agreement to read', () => {
-    // Without an agreement the question order reverses: the documents come
-    // first, and the contract is what the three answers converge on.
-    expect(WORKFLOW_PROMPT).toContain('没有合约时：从凭证逆推');
-    expect(WORKFLOW_PROMPT).toContain('哪些凭证必须留存与追溯');
-    expect(WORKFLOW_PROMPT).toContain('违约时凭什么追责');
-    expect(WORKFLOW_PROMPT).toContain('根合同');
+  it('distinguishes persistence, provenance, hypotheses and delivery', () => {
+    expect(EVIDENCE_SYSTEM_PROMPT).toContain('业务缺口不是保存的阻塞条件');
+    expect(SOURCING_PROMPT).toContain('打开节点本身只读');
+    expect(WHAT_IF_PROMPT).toContain('不因存在假设就写入规则或节点');
+    expect(WORKFLOW_PROMPT).toContain('真实 HTTP 验收');
   });
 });

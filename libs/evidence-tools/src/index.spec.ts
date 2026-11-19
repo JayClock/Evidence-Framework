@@ -1,62 +1,68 @@
 import { describe, expect, it, vi } from 'vitest';
-import { applyModelPatches } from '@evidence-poc/evidence-model-core';
-import { createProcurementModel } from '@evidence-poc/evidence-model-core/testing';
+import {
+  createDomainGraph,
+  createModelSession,
+} from '@evidence-poc/evidence-model-core';
+import { createEmptyDomainModel } from '@evidence-poc/evidence-schema';
 import {
   createModelTools,
-  MODEL_TOOL_NAMES,
-  MODEL_WRITE_ANNOTATIONS,
+  MODEL_TOOL_NAMES as names,
   type ModelPatchRequest,
   type ModelPatchResult,
 } from './index.js';
 
-const intent = {
-  contextRef: 'context.procurement',
-  request: {
-    id: 'request.refund',
-    label: '退款申请',
-    responsibleRoleRef: 'role.buyer',
-  },
-  confirmation: {
-    id: 'confirmation.refund',
-    label: '退款确认',
-    responsibleRoleRef: 'role.seller',
-  },
+const payment = {
+  id: 'evidence.payment',
+  label: '付款确认',
+  stage: 'fulfillment',
+  keyData: [
+    {
+      name: 'amount',
+      label: '金额',
+      meaning: '申请所列金额',
+      valueType: 'int',
+    },
+  ],
 };
 const setup = () => {
-  const document = createProcurementModel();
-  const loadDocument = vi.fn(async () => document);
+  const session = createModelSession({
+    document: createEmptyDomainModel(),
+    validateOnDispatch: true,
+  });
+  const loadDocument = vi.fn(async () => session.getDocument());
   const applyModelPatch = vi.fn(
-    async (patch: ModelPatchRequest): Promise<ModelPatchResult> => ({
-      success: true,
-      appliedCommands: patch.patches.map(({ op }) => op),
-    }),
+    async (patch: ModelPatchRequest): Promise<ModelPatchResult> => {
+      try {
+        session.applyPatchBatch(patch.patches, patch.rationale);
+        return {
+          success: true,
+          appliedCommands: patch.patches.map(({ op }) => op),
+        };
+      } catch (error) {
+        return { success: false, error: String(error) };
+      }
+    },
   );
   const tools = createModelTools({ loadDocument, applyModelPatch });
-  const tool = (name: string) => {
-    const found = tools.find((candidate) => candidate.name === name);
-    if (!found) throw new Error(`Missing tool: ${name}`);
-    return found;
-  };
-  return { document, tools, tool, loadDocument, applyModelPatch };
+  const tool = (name: string) =>
+    tools.find((candidate) => candidate.name === name)!;
+  return { session, tools, tool, loadDocument, applyModelPatch };
 };
 
 describe('shared model tool registry', () => {
-  it('defines one guarded writer surface for both SDK adapters', () => {
-    const { tools } = setup();
-    expect(tools.map(({ name }) => name)).toEqual(
-      Object.values(MODEL_TOOL_NAMES),
-    );
-    for (const tool of tools)
-      expect(tool.annotations).toEqual(MODEL_WRITE_ANNOTATIONS);
-    expect(MODEL_WRITE_ANNOTATIONS).toEqual({
-      readOnlyHint: false,
-      destructiveHint: true,
-      idempotentHint: false,
-      openWorldHint: false,
+  it('exposes one tool list with a read-only What-If', () => {
+    const { tools, tool } = setup();
+    expect(tools.map(({ name }) => name)).toEqual(Object.values(names));
+    expect(tool(names.simulateWhatIfChallenge).annotations).toMatchObject({
+      readOnlyHint: true,
+      destructiveHint: false,
     });
+    expect(
+      tools.filter(({ annotations }) => annotations.readOnlyHint),
+    ).toHaveLength(1);
   });
 
-  it('rejects invalid inputs before any host read or write', async () => {
+  it('rejects malformed inputs before any host operation', async () => {
     const { tools, loadDocument, applyModelPatch } = setup();
     for (const tool of tools)
       await expect(tool.run({ unexpected: true })).rejects.toThrow();
@@ -64,63 +70,74 @@ describe('shared model tool registry', () => {
     expect(applyModelPatch).not.toHaveBeenCalled();
   });
 
-  it('passes one validated patch batch through the host guard, not direct mutation', async () => {
-    const { tool, document, loadDocument, applyModelPatch } = setup();
-    const before = structuredClone(document);
-    const input = {
-      rationale: '改名',
-      patches: [
-        { op: 'test', path: '/entities/0/id', value: document.entities[0]?.id },
-        { op: 'replace', path: '/entities/0/label', value: '新标签' },
+  it('grows the same graph through storming, source decisions, pairing and confirmed compensation', async () => {
+    const { tool, session, applyModelPatch } = setup();
+    const run = async (name: string, input: unknown) =>
+      expect((await tool(name).run(input)).isError).toBeUndefined();
+    await run(names.batchAddEvidence, {
+      evidences: [
+        payment,
+        { id: 'contract.sale', stage: 'contract', label: '买卖合同' },
       ],
-    };
-    const result = await tool(MODEL_TOOL_NAMES.applyModelPatch).run(input);
-    expect(result.isError).toBeUndefined();
-    expect(applyModelPatch).toHaveBeenCalledExactlyOnceWith(input);
-    expect(loadDocument).not.toHaveBeenCalled();
-    expect(document).toEqual(before);
-  });
-
-  it('builds operators on a draft and submits all generated patches once', async () => {
-    const { tool, document, applyModelPatch } = setup();
-    const before = structuredClone(document);
-    const result = await tool(MODEL_TOOL_NAMES.introduceFulfillmentPair).run(
-      intent,
-    );
-    expect(result.isError).toBeUndefined();
-    expect(result.value).toMatchObject({
-      createdIds: ['request.refund', 'confirmation.refund'],
     });
-    expect(applyModelPatch).toHaveBeenCalledTimes(1);
-    const request = applyModelPatch.mock.calls[0]?.[0];
-    if (!request) throw new Error('Operator did not submit its transaction');
+    await run(names.bindKeyDataSource, {
+      evidenceRef: payment.id,
+      attribute: 'amount',
+      decision: { kind: 'unknown' },
+    });
+    await run(names.splitEvidenceToPair, {
+      evidenceRef: payment.id,
+      request: { mode: 'create', id: 'request.payment', label: '付款申请' },
+      inputAttributes: [
+        {
+          confirmationAttribute: 'amount',
+          requestAttribute: 'requested_amount',
+        },
+      ],
+    });
+    const beforeProbe = session.getDocument();
+    await run(names.simulateWhatIfChallenge, { requestRef: 'request.payment' });
+    expect(session.getDocument()).toBe(beforeProbe);
+    expect(applyModelPatch).toHaveBeenCalledTimes(2);
+    await run(names.growBreachCompensation, {
+      requestRef: 'request.payment',
+      condition: '超时后启动退款',
+      request: { id: 'request.refund', label: '退款请求' },
+      confirmation: { id: 'confirmation.refund', label: '退款确认' },
+    });
     expect(
-      applyModelPatches(document, request.patches).entities.some(
-        ({ id }) => id === 'request.refund',
-      ),
-    ).toBe(true);
-    expect(document).toEqual(before);
+      createDomainGraph(session.getDocument()).fulfillmentPair('request.refund')
+        ?.confirmations[0]?.id,
+    ).toBe('confirmation.refund');
+    expect(session.getDocument().relationships).toContainEqual(
+      expect.objectContaining({
+        flowKind: 'breach_compensation',
+        targetRef: 'request.payment',
+      }),
+    );
+    expect(session.undo()).toBe(true);
+    expect(session.getDocument()).toEqual(beforeProbe);
   });
 
-  it('does not write on operator refusal or report success when the host rejects', async () => {
-    const { tool, applyModelPatch } = setup();
-    const refused = await tool(MODEL_TOOL_NAMES.introduceFulfillmentPair).run({
-      ...intent,
-      contextRef: 'context.missing',
+  it('does not write a partially invalid batch or overwrite a stale host snapshot', async () => {
+    const { tool, session, applyModelPatch } = setup();
+    const refused = await tool(names.batchAddEvidence).run({
+      evidences: [payment, payment],
     });
     expect(refused.isError).toBe(true);
     expect(applyModelPatch).not.toHaveBeenCalled();
-    applyModelPatch.mockResolvedValue({
-      success: false,
-      error: 'stale snapshot',
+    const persist = applyModelPatch.getMockImplementation()!;
+    applyModelPatch.mockImplementationOnce(async (patch) => {
+      session.mutate((draft) => {
+        draft.manifest.name = '手工修改';
+      });
+      return persist(patch);
     });
-    const rejected = await tool(MODEL_TOOL_NAMES.introduceFulfillmentPair).run(
-      intent,
-    );
-    expect(rejected).toMatchObject({
-      isError: true,
-      text: '补丁被拒绝：stale snapshot',
-      value: { success: false },
+    const rejected = await tool(names.batchAddEvidence).run({
+      evidences: [payment],
     });
+    expect(rejected.isError).toBe(true);
+    expect(session.getDocument().entities).toEqual([]);
+    expect(session.getDocument().manifest.name).toBe('手工修改');
   });
 });

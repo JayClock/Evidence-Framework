@@ -8,8 +8,12 @@ label, description, Zod input schema, write-safety annotations and execution pat
 for:
 
 - `apply_model_patch`
-- `introduce_fulfillment_pair`
-- `add_breach_compensation`
+- `batch_add_evidence_stubs`
+- `split_evidence_to_pair`
+- `bind_key_data_source`
+- `assign_fulfillment_context`
+- `simulate_what_if_challenge` (read-only)
+- `grow_breach_compensation`
 - `roleify_and_invert_dependency`
 - `isolate_domain_calculator`
 
@@ -25,8 +29,7 @@ snapshot protection. Write annotations are deliberately destructive and
 Pi (`evidence-agent`) adapts Zod to its JSON Schema ABI and narrative results.
 MCP (`evidence-mcp`) adapts the same definitions to protocol annotations and
 structured results. Transport-specific tools (canvas screenshots, sensor runs,
-API projection, etc.) stay in their respective adapters. Both now expose the
-calculator recipe; MCP no longer maintains a separate implementation.
+API projection, etc.) stay in their respective adapters.
 
 ```bash
 pnpm exec nx run-many -t lint,typecheck,test -p evidence-tools,evidence-agent,evidence-mcp

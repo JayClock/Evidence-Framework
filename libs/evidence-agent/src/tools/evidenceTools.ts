@@ -14,12 +14,17 @@ import type {
 } from '@earendil-works/pi-coding-agent';
 import {
   DomainIdSchema,
+  evidenceStageOf,
+  isEvidenceEntity,
+  isFulfillmentConfirmation,
   JsonPatchSchema,
   type DomainModelDocument,
 } from '@evidence-poc/evidence-schema';
 import {
   applyModelPatches,
   annotateContractClauses,
+  buildKeyDataLedger,
+  createDomainGraph,
   domainNounOf,
   parseBlueprint,
 } from '@evidence-poc/evidence-model-core';
@@ -48,7 +53,9 @@ const sensorParameters = z
     ).optional(),
   })
   .strict();
-const emptyParameters = z.object({}).strict();
+const focusedParameters = z
+  .object({ nodeRef: DomainIdSchema.optional() })
+  .strict();
 const clauseParameters = z
   .object({
     text: nonEmptyText('协议或合同原文，整段粘贴，不需要预先分句。'),
@@ -105,14 +112,10 @@ export const TOOL_NAMES = {
   getApiDiff: 'get_api_diff',
   syncApiProjection: 'sync_api_projection',
   runSensors: 'run_sensors',
-  applyModelPatch: MODEL_TOOL_NAMES.applyModelPatch,
-  getCanvasSelection: 'get_canvas_selection',
-  introduceFulfillmentPair: MODEL_TOOL_NAMES.introduceFulfillmentPair,
-  addBreachCompensation: MODEL_TOOL_NAMES.addBreachCompensation,
-  roleifyAndInvertDependency: MODEL_TOOL_NAMES.roleifyAndInvertDependency,
+  ...MODEL_TOOL_NAMES,
+  getFocusedNodeContext: 'get_focused_node_context',
   annotateContractClauses: 'annotate_contract_clauses',
   readServiceBlueprint: 'read_service_blueprint',
-  isolateDomainCalculator: MODEL_TOOL_NAMES.isolateDomainCalculator,
 } as const;
 
 const textResult = <T>(value: T, text: string) => ({
@@ -130,10 +133,7 @@ const textResult = <T>(value: T, text: string) => ({
 export const createEvidenceToolsExtension =
   (handlers: EvidenceToolsHandlers) =>
   (pi: ExtensionAPI): void => {
-    const modelTools = createModelTools(handlers);
-    const registerModelTool = (name: string): void => {
-      const tool = modelTools.find((candidate) => candidate.name === name);
-      if (!tool) throw new Error(`Unknown model tool: ${name}`);
+    for (const tool of createModelTools(handlers)) {
       registerZodTool(pi, {
         name: tool.name,
         label: tool.label,
@@ -147,7 +147,7 @@ export const createEvidenceToolsExtension =
           };
         },
       });
-    };
+    }
 
     registerZodTool(pi, {
       name: TOOL_NAMES.getApiDiff,
@@ -228,18 +228,60 @@ export const createEvidenceToolsExtension =
       },
     });
 
-    registerModelTool(TOOL_NAMES.applyModelPatch);
-
     registerZodTool(pi, {
-      name: TOOL_NAMES.getCanvasSelection,
-      label: '读取画布选中项',
+      name: TOOL_NAMES.getFocusedNodeContext,
+      label: '读取当前凭证与关键数据',
       description:
-        '读取用户当前在画布上选中的业务对象与属性，用于“所选即所聊”的追问。',
-      parameters: emptyParameters,
-      execute: async () => {
-        const context = await handlers.getCanvasContext();
-
-        return textResult(context, JSON.stringify(context, null, 2));
+        '读取指定节点（或当前选中节点）、关键数据来源、关联请求与确认。没有焦点时返回现有凭证索引。',
+      parameters: focusedParameters,
+      execute: async (_id, { nodeRef }) => {
+        const canvas = await handlers.getCanvasContext();
+        const document = await handlers.loadDocument();
+        const graph = createDomainGraph(document);
+        const ref = nodeRef ?? canvas.selection.nodeId;
+        const entity = ref === null ? undefined : graph.getEntity(ref);
+        if (ref !== null && entity === undefined) {
+          return {
+            ...textResult(
+              { ref, missing: true },
+              `节点 ${ref} 已不存在，请重新选择。`,
+            ),
+            isError: true,
+          };
+        }
+        const requestRefs =
+          ref === null
+            ? []
+            : isFulfillmentConfirmation(entity)
+              ? (graph
+                  .fulfillmentConfirmations()
+                  .find(({ entity }) => entity.id === ref)
+                  ?.incomingRequests.map(({ id }) => id) ?? [])
+              : graph.fulfillmentPair(ref)
+                ? [ref]
+                : [];
+        const context = {
+          selection: canvas.selection,
+          entity: entity ?? null,
+          keyData:
+            ref === null
+              ? []
+              : buildKeyDataLedger(document).entries.filter(
+                  (entry) => entry.entityRef === ref,
+                ),
+          pairs: requestRefs.map((id) => graph.fulfillmentPair(id)),
+          evidences: document.entities
+            .filter(isEvidenceEntity)
+            .map((evidence) => ({
+              id: evidence.id,
+              label: evidence.label,
+              stage: evidenceStageOf(evidence),
+            })),
+          contexts: document.entities
+            .filter((entity) => entity.category === 'context')
+            .map(({ id, label, kind }) => ({ id, label, kind })),
+        };
+        return textResult<unknown>(context, JSON.stringify(context));
       },
     });
 
@@ -330,11 +372,6 @@ export const createEvidenceToolsExtension =
         return textResult(summary, JSON.stringify(summary, null, 2));
       },
     });
-
-    registerModelTool(TOOL_NAMES.introduceFulfillmentPair);
-    registerModelTool(TOOL_NAMES.addBreachCompensation);
-    registerModelTool(TOOL_NAMES.roleifyAndInvertDependency);
-    registerModelTool(TOOL_NAMES.isolateDomainCalculator);
   };
 
 /** The tool definitions the extension registers, for list-based registration. */

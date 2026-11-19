@@ -2,7 +2,7 @@ import { createModelTools } from '@evidence-poc/evidence-tools';
 import { describe, expect, it, vi } from 'vitest';
 
 import {
-  FulfillmentPairIntentSchema,
+  SplitEvidenceToPairInputSchema,
   type DomainModelDocument,
 } from '@evidence-poc/evidence-schema';
 
@@ -43,7 +43,7 @@ const createClient = (
         name: '商品采购（Product Procurement）',
         version: '1.0.0',
         ruleLanguage: 'CEL' as const,
-        entryContextRefs: ['context.procurement'],
+        entryContextRefs: [],
       },
       entities: [],
       relationships: [],
@@ -120,37 +120,20 @@ describe('shared Zod input contracts', () => {
   it('uses the schema object directly and rejects malformed input before any model access', async () => {
     const client = createClient();
     const tool = createEvidenceTools(client).find(
-      (tool) => tool.name === TOOL_NAMES.introduceFulfillmentPair,
+      (tool) => tool.name === TOOL_NAMES.splitEvidenceToPair,
     );
     if (tool === undefined) throw new Error('expected pair tool');
-    expect(tool.inputSchema).toBe(FulfillmentPairIntentSchema);
+    expect(tool.inputSchema).toBe(SplitEvidenceToPairInputSchema);
     const valid = {
-      contextRef: 'context.procurement',
-      request: {
-        id: 'request.refund',
-        label: 'Refund',
-        responsibleRoleRef: 'role.buyer',
-      },
-      confirmation: {
-        id: 'confirmation.refund',
-        label: 'Refunded',
-        responsibleRoleRef: 'role.seller',
-      },
+      evidenceRef: 'evidence.refund',
+      request: { mode: 'create', id: 'request.refund', label: 'Refund' },
     };
     for (const input of [
       { ...valid, request: { ...valid.request, id: 'Invalid Id' } },
-      {
-        ...valid,
-        confirmation: { ...valid.confirmation, responsibleRoleRef: undefined },
-      },
+      { ...valid, request: { mode: 'reuse' } },
       { ...valid, extra: true },
-      {
-        ...valid,
-        proof: { id: 'proof.refund', label: 'Proof', invented: true },
-      },
-    ]) {
+    ])
       await expect(tool.run(input)).rejects.toThrow();
-    }
     expect(client.getDomainModel).not.toHaveBeenCalled();
     expect(client.applyModelPatch).not.toHaveBeenCalled();
   });
@@ -160,7 +143,7 @@ describe('shared Zod input contracts', () => {
     const tools = createEvidenceTools(client);
     const stageGate = tools.find((tool) => tool.name === TOOL_NAMES.stageGate);
     const applyPatch = tools.find(
-      (tool) => tool.name === TOOL_NAMES.applyPatch,
+      (tool) => tool.name === TOOL_NAMES.applyModelPatch,
     );
     if (!stageGate || !applyPatch)
       throw new Error('expected gate and patch tools');
@@ -259,7 +242,9 @@ describe('createEvidenceTools', () => {
     const exposed = createEvidenceTools(client);
     for (const definition of registry) {
       const tool = exposed.find(({ name }) => name === definition.name);
-      expect(tool?.inputSchema).toBe(definition.parameters);
+      expect(tool?.inputSchema.safeParse({ unexpected: true }).success).toBe(
+        false,
+      );
       expect(tool?.annotations).toEqual(definition.annotations);
       expect(tool?.description).toBe(definition.description);
     }
@@ -272,16 +257,20 @@ describe('createEvidenceTools', () => {
       TOOL_NAMES.selectedEntity,
       TOOL_NAMES.keyDataAudit,
       TOOL_NAMES.screenshot,
-      TOOL_NAMES.applyPatch,
       TOOL_NAMES.stageGate,
-      TOOL_NAMES.introduceFulfillmentPair,
-      TOOL_NAMES.addBreachCompensation,
+      TOOL_NAMES.applyModelPatch,
+      TOOL_NAMES.batchAddEvidence,
+      TOOL_NAMES.splitEvidenceToPair,
+      TOOL_NAMES.bindKeyDataSource,
+      TOOL_NAMES.assignFulfillmentContext,
+      TOOL_NAMES.simulateWhatIfChallenge,
+      TOOL_NAMES.growBreachCompensation,
       TOOL_NAMES.roleifyAndInvertDependency,
       TOOL_NAMES.isolateDomainCalculator,
       TOOL_NAMES.deliveryTopology,
       TOOL_NAMES.openApiContract,
     ]);
-    expect(createEvidenceTools(createClient())).toHaveLength(13);
+    expect(createEvidenceTools(createClient())).toHaveLength(17);
   });
 
   it('hands an outside agent the delivery boundaries and the contract', async () => {
@@ -313,35 +302,26 @@ describe('createEvidenceTools', () => {
     );
 
     expect(writers.map((tool) => tool.name)).toEqual([
-      TOOL_NAMES.applyPatch,
-      TOOL_NAMES.introduceFulfillmentPair,
-      TOOL_NAMES.addBreachCompensation,
+      TOOL_NAMES.applyModelPatch,
+      TOOL_NAMES.batchAddEvidence,
+      TOOL_NAMES.splitEvidenceToPair,
+      TOOL_NAMES.bindKeyDataSource,
+      TOOL_NAMES.assignFulfillmentContext,
+      TOOL_NAMES.growBreachCompensation,
       TOOL_NAMES.roleifyAndInvertDependency,
       TOOL_NAMES.isolateDomainCalculator,
     ]);
   });
 
-  it('reads the model before an operator resolves a reference', async () => {
-    const { client, tool } = toolOf(TOOL_NAMES.introduceFulfillmentPair);
+  it('reads the model before trying to pair a missing proof', async () => {
+    const { client, tool } = toolOf(TOOL_NAMES.splitEvidenceToPair);
     const result = await tool.run({
-      contextRef: 'context.procurement',
-      request: {
-        id: 'request.refund',
-        label: '退款申请',
-        responsibleRoleRef: 'role.buyer',
-      },
-      confirmation: {
-        id: 'confirmation.refund',
-        label: '退款确认',
-        responsibleRoleRef: 'role.seller',
-      },
+      evidenceRef: 'evidence.missing',
+      request: { mode: 'create', id: 'request.refund', label: '退款申请' },
     });
-
     expect(client.getDomainModel).toHaveBeenCalledWith({ includeRules: true });
-    // The fixture model has no such Context, so the builder refuses and nothing
-    // reaches the patch channel.
     expect(result.isError).toBe(true);
-    expect(result.text).toContain("未知的上下文 'context.procurement'");
+    expect(result.text).toContain('evidence.missing');
     expect(client.applyModelPatch).not.toHaveBeenCalled();
   });
 
@@ -385,7 +365,7 @@ describe('createEvidenceTools', () => {
       })),
     });
     const tool = createEvidenceTools(client).find(
-      (candidate) => candidate.name === TOOL_NAMES.applyPatch,
+      (candidate) => candidate.name === TOOL_NAMES.applyModelPatch,
     )!;
     const result = await tool.run({
       rationale: '补充关键数据来源',
@@ -406,43 +386,25 @@ describe('createEvidenceTools', () => {
     });
   });
 
-  it('commits an operator patch through the same channel as a command batch', async () => {
-    const client = createClient({
-      getDomainModel: vi.fn(async () => ({
-        document: procurementDocument(),
-        summary: { contracts: 1, fulfillments: 0, entities: 4, rules: 0 },
-      })),
-    });
-    const tool = createEvidenceTools(client).find(
-      (candidate) => candidate.name === TOOL_NAMES.introduceFulfillmentPair,
-    )!;
+  it('commits an evidence batch through the same channel as a command batch', async () => {
+    const { client, tool } = toolOf(TOOL_NAMES.batchAddEvidence);
     const result = await tool.run({
-      contextRef: 'context.procurement',
-      request: {
-        id: 'request.refund',
-        label: '退款申请',
-        responsibleRoleRef: 'role.buyer',
-        window: '3 个工作日',
-      },
-      confirmation: {
-        id: 'confirmation.refund',
-        label: '退款确认',
-        responsibleRoleRef: 'role.seller',
-      },
+      evidences: [
+        { id: 'evidence.refund', stage: 'fulfillment', label: '退款确认' },
+      ],
     });
-
     expect(client.applyModelPatch).toHaveBeenCalledWith({
-      rationale: '新增履约项：退款申请 / 退款确认',
+      rationale: '铺设业务凭证',
       patches: expect.arrayContaining([
         expect.objectContaining({
           op: 'add',
-          value: expect.objectContaining({ id: 'request.refund' }),
+          value: expect.objectContaining({ id: 'evidence.refund' }),
         }),
       ]),
     });
     expect(result.isError).toBeUndefined();
     expect(JSON.parse(result.text)).toMatchObject({
-      createdIds: ['request.refund', 'confirmation.refund'],
+      createdIds: ['evidence.refund'],
     });
   });
 
@@ -454,11 +416,10 @@ describe('createEvidenceTools', () => {
       })),
     });
     const tool = createEvidenceTools(client).find(
-      (candidate) => candidate.name === TOOL_NAMES.addBreachCompensation,
+      (candidate) => candidate.name === TOOL_NAMES.growBreachCompensation,
     )!;
     const result = await tool.run({
       requestRef: 'request.unknown',
-      confirmationRef: 'confirmation.unknown',
       condition: '根本不存在',
       request: {
         id: 'request.penalty',
@@ -473,7 +434,7 @@ describe('createEvidenceTools', () => {
     });
 
     expect(result.isError).toBe(true);
-    expect(result.text).toContain('不是履约请求');
+    expect(result.text).toContain('已配对');
     expect(client.applyModelPatch).not.toHaveBeenCalled();
   });
 });

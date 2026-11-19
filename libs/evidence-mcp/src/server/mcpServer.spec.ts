@@ -106,9 +106,10 @@ describe('createEvidenceMcpServer', () => {
     const { tools } = await mcp.listTools();
 
     expect(tools.map((tool) => tool.name)).toContain(TOOL_NAMES.appState);
-    expect(tools).toHaveLength(13);
+    expect(tools).toHaveLength(17);
     expect(
-      tools.find((tool) => tool.name === TOOL_NAMES.applyPatch)?.annotations,
+      tools.find((tool) => tool.name === TOOL_NAMES.applyModelPatch)
+        ?.annotations,
     ).toMatchObject({ readOnlyHint: false });
   });
 
@@ -123,24 +124,15 @@ describe('createEvidenceMcpServer', () => {
     await mcp.connect(clientTransport);
 
     const pair = {
-      contextRef: 'context.procurement',
-      request: {
-        id: 'request.refund',
-        label: 'Refund',
-        responsibleRoleRef: 'role.buyer',
-      },
-      confirmation: {
-        id: 'confirmation.refund',
-        label: 'Refunded',
-        responsibleRoleRef: 'role.seller',
-      },
+      evidenceRef: 'evidence.refund',
+      request: { mode: 'create', id: 'request.refund', label: 'Refund' },
     };
     for (const input of [
       { ...pair, request: { ...pair.request, id: 'Invalid Id' } },
       { ...pair, extra: true },
     ]) {
       const result = await mcp.callTool({
-        name: TOOL_NAMES.introduceFulfillmentPair,
+        name: TOOL_NAMES.splitEvidenceToPair,
         arguments: input,
       });
       expect(result.isError).toBe(true);

@@ -284,19 +284,9 @@ describe('createEvidenceToolsExtension', () => {
 
     createEvidenceToolsExtension(handlers)(fake.pi);
 
-    expect(fake.tools.map(({ name }) => name)).toEqual([
-      TOOL_NAMES.getApiDiff,
-      TOOL_NAMES.syncApiProjection,
-      TOOL_NAMES.runSensors,
-      TOOL_NAMES.applyModelPatch,
-      TOOL_NAMES.getCanvasSelection,
-      TOOL_NAMES.annotateContractClauses,
-      TOOL_NAMES.readServiceBlueprint,
-      TOOL_NAMES.introduceFulfillmentPair,
-      TOOL_NAMES.addBreachCompensation,
-      TOOL_NAMES.roleifyAndInvertDependency,
-      TOOL_NAMES.isolateDomainCalculator,
-    ]);
+    expect(fake.tools.map(({ name }) => name).sort()).toEqual(
+      Object.values(TOOL_NAMES).sort(),
+    );
   });
 
   it('runs the sensors over the project model root', async () => {
@@ -391,154 +381,31 @@ describe('createEvidenceToolsExtension', () => {
     expect(patches).toEqual([]);
   });
 
-  it('reports the current canvas selection', async () => {
-    const fake = createFakePi();
-    const { handlers } = createHandlers();
-    createEvidenceToolsExtension(handlers)(fake.pi);
-
-    const result = await invoke(fake.tool(TOOL_NAMES.getCanvasSelection), {});
-
-    expect(result.details).toEqual(canvasContext);
-    expect(JSON.parse(result.content[0]?.text ?? '{}')).toEqual(canvasContext);
-  });
-
-  it('turns one pair intent into a single patch the session can validate', async () => {
-    const fake = createFakePi();
-    const { handlers, patches } = createHandlers();
-    createEvidenceToolsExtension(handlers)(fake.pi);
-
-    const result = await invoke(
-      fake.tool(TOOL_NAMES.introduceFulfillmentPair),
-      {
-        contextRef: 'context.procurement',
-        request: {
-          id: 'request.refund',
-          label: '退款申请',
-          responsibleRoleRef: 'role.buyer',
-          window: '3 个工作日',
-        },
-        confirmation: {
-          id: 'confirmation.refund',
-          label: '退款到账确认',
-          responsibleRoleRef: 'role.seller',
-        },
-      },
-    );
-
-    expect(patches).toEqual([
-      {
-        rationale: '新增履约项：退款申请 / 退款到账确认',
-        patches: expect.arrayContaining([
-          expect.objectContaining({
-            op: 'add',
-            value: expect.objectContaining({ id: 'request.refund' }),
-          }),
-          expect.objectContaining({
-            op: 'add',
-            value: expect.objectContaining({ id: 'confirmation.refund' }),
-          }),
-        ]),
-      },
-    ]);
-    expect(result.isError).toBeUndefined();
-    expect(result.content[0]?.text).toBe(
-      '已写入：request.refund, confirmation.refund。',
-    );
-  });
-
-  it('reads the model before an operator resolves a reference', async () => {
-    const fake = createFakePi();
-    const reads: unknown[] = [];
-    const { handlers } = createHandlers({
-      loadDocument: async () => {
-        reads.push('read');
-
-        return createOrchestratorModel();
-      },
-    });
-    createEvidenceToolsExtension(handlers)(fake.pi);
-
-    await invoke(fake.tool(TOOL_NAMES.addBreachCompensation), {
-      requestRef: 'request.payment',
-      confirmationRef: 'confirmation.payment',
-      condition: '超过约定窗口仍未到账',
-      request: {
-        id: 'request.penalty',
-        label: '逾期违约金申请',
-        responsibleRoleRef: 'role.seller',
-      },
-      confirmation: {
-        id: 'confirmation.penalty',
-        label: '违约金到账确认',
-        responsibleRoleRef: 'role.buyer',
-      },
-    });
-
-    expect(reads).toEqual(['read']);
-  });
-
-  it('answers a refused operator with a readable error instead of a command batch', async () => {
-    const fake = createFakePi();
-    const { handlers, patches } = createHandlers();
-    createEvidenceToolsExtension(handlers)(fake.pi);
-
-    const result = await invoke(
-      fake.tool(TOOL_NAMES.roleifyAndInvertDependency),
-      {
-        targetConfirmationRef: 'request.payment',
-        socket: { id: 'role.payment-capability', label: '付款能力' },
-        supporting: {
-          context: { id: 'context.wallet', label: '钱包支付服务' },
-          contract: { id: 'contract.wallet', label: '钱包支付服务协议' },
-          provider: { id: 'role.wallet-provider', label: '钱包服务商' },
-          consumer: { id: 'role.wallet-user', label: '付款用户' },
-          request: { id: 'request.wallet-charge', label: '钱包扣款请求' },
-          confirmation: {
-            id: 'confirmation.wallet-charge',
-            label: '钱包扣款确认',
-          },
-        },
-      },
-    );
-
-    expect(patches).toEqual([]);
-    expect(result.isError).toBe(true);
-    expect(result.content[0]?.text).toContain('是时段凭证');
-  });
-
-  it('reports a rejected operator patch as an error, not as a silent success', async () => {
-    const fake = createFakePi();
-    const { handlers } = createHandlers({
-      applyModelPatch: async () => ({
-        success: false,
-        error: 'role.notBound',
+  it('reads the current evidence and resolves an explicit focus independently of selection', async () => {
+    const { handlers, patches } = createHandlers({
+      getCanvasContext: async () => ({
+        ...canvasContext,
+        selection: { nodeId: null, attributeName: null },
       }),
     });
+    const fake = createFakePi();
     createEvidenceToolsExtension(handlers)(fake.pi);
-
-    const result = await invoke(
-      fake.tool(TOOL_NAMES.introduceFulfillmentPair),
-      {
-        contextRef: 'context.procurement',
-        request: {
-          id: 'request.refund',
-          label: '退款申请',
-          responsibleRoleRef: 'role.buyer',
-        },
-        confirmation: {
-          id: 'confirmation.refund',
-          label: '退款确认',
-          responsibleRoleRef: 'role.seller',
-        },
-      },
-    );
-
-    expect(result.isError).toBe(true);
-    expect(result.content[0]?.text).toBe('补丁被拒绝：role.notBound');
+    const current = await handlers.loadDocument();
+    const evidence = current.entities.find(
+      ({ category }) => category === 'evidence',
+    )!;
+    const result = await invoke(fake.tool(TOOL_NAMES.getFocusedNodeContext), {
+      nodeRef: evidence.id,
+    });
+    expect(result.details).toMatchObject({
+      entity: { id: evidence.id },
+      selection: { nodeId: null },
+    });
+    expect(patches).toEqual([]);
   });
 });
 
-describe('the workshop readings', () => {
+describe('reading business material', () => {
   const AGREEMENT = `甲乙双方签订《企业级云服务采购协议》。
 因本协议产生的争议，提交深圳仲裁委员会仲裁。
 乙方应在收到款项后 2 个工作日内开通企业账号权限，并出具开通确认函。

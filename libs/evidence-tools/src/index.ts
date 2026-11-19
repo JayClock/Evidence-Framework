@@ -1,26 +1,40 @@
 import { z } from 'zod';
 import {
-  BreachCompensationIntentSchema,
+  AssignFulfillmentContextInputSchema,
+  BatchAddEvidenceInputSchema,
+  BindKeyDataSourceInputSchema,
   DomainCalculatorIntentSchema,
-  FulfillmentPairIntentSchema,
+  DomainIdSchema,
+  DomainModelDocumentSchema,
+  GrowBreachCompensationInputSchema,
   ModelPatchRequestSchema,
   RoleInversionIntentSchema,
+  SplitEvidenceToPairInputSchema,
+  timeAttributeOf,
   type DomainModelDocument,
   type JsonPatchOperation,
 } from '@evidence-poc/evidence-schema';
 import {
-  addBreachCompensationMutator,
+  assignFulfillmentContextMutator,
+  batchAddEvidenceMutator,
+  bindKeyDataSourceMutator,
+  createDomainGraph,
   createModelPatch,
-  introduceFulfillmentPairMutator,
+  growBreachCompensationMutator,
   isolateDomainCalculatorMutator,
   roleifyAndInvertDependencyMutator,
+  splitEvidenceToPairMutator,
   type OperatorResult,
 } from '@evidence-poc/evidence-model-core';
 
 export const MODEL_TOOL_NAMES = {
   applyModelPatch: 'apply_model_patch',
-  introduceFulfillmentPair: 'introduce_fulfillment_pair',
-  addBreachCompensation: 'add_breach_compensation',
+  batchAddEvidence: 'batch_add_evidence_stubs',
+  splitEvidenceToPair: 'split_evidence_to_pair',
+  bindKeyDataSource: 'bind_key_data_source',
+  assignFulfillmentContext: 'assign_fulfillment_context',
+  simulateWhatIfChallenge: 'simulate_what_if_challenge',
+  growBreachCompensation: 'grow_breach_compensation',
   roleifyAndInvertDependency: 'roleify_and_invert_dependency',
   isolateDomainCalculator: 'isolate_domain_calculator',
 } as const;
@@ -30,6 +44,13 @@ export const MODEL_WRITE_ANNOTATIONS = {
   readOnlyHint: false,
   destructiveHint: true,
   idempotentHint: false,
+  openWorldHint: false,
+} as const;
+
+const MODEL_READ_ANNOTATIONS = {
+  readOnlyHint: true,
+  destructiveHint: false,
+  idempotentHint: true,
   openWorldHint: false,
 } as const;
 
@@ -56,7 +77,7 @@ export interface ModelTool {
   label: string;
   description: string;
   parameters: z.AnyZodObject;
-  annotations: typeof MODEL_WRITE_ANNOTATIONS;
+  annotations: typeof MODEL_WRITE_ANNOTATIONS | typeof MODEL_READ_ANNOTATIONS;
   /** Validates before touching any host port, including in-process callers. */
   run: (input: unknown) => Promise<ModelToolResult>;
 }
@@ -64,13 +85,17 @@ export interface ModelTool {
 const define = <Schema extends z.AnyZodObject>(
   definition: Omit<ModelTool, 'run' | 'parameters' | 'annotations'> & {
     parameters: Schema;
+    readOnly?: boolean;
     run: (input: z.infer<Schema>) => Promise<ModelToolResult>;
   },
-): ModelTool => ({
-  ...definition,
-  annotations: MODEL_WRITE_ANNOTATIONS,
-  run: async (input) => definition.run(definition.parameters.parse(input)),
-});
+): ModelTool => {
+  const { readOnly, ...tool } = definition;
+  return {
+    ...tool,
+    annotations: readOnly ? MODEL_READ_ANNOTATIONS : MODEL_WRITE_ANNOTATIONS,
+    run: async (input) => definition.run(definition.parameters.parse(input)),
+  };
+};
 
 /** A single registry of domain mutations; no Pi, MCP, Node or renderer imports. */
 export const createModelTools = (
@@ -81,8 +106,14 @@ export const createModelTools = (
     build: (document: DomainModelDocument) => OperatorResult,
   ): Promise<ModelToolResult> => {
     let patch: ReturnType<typeof createModelPatch<OperatorResult>>;
+    let document: DomainModelDocument;
     try {
-      patch = createModelPatch(await ports.loadDocument(), build);
+      document = await ports.loadDocument();
+      patch = createModelPatch(document, (draft) => {
+        const result = build(draft);
+        DomainModelDocumentSchema.parse(draft);
+        return result;
+      });
     } catch (error) {
       const message = error instanceof Error ? error.message : '未知原因';
       return {
@@ -91,13 +122,16 @@ export const createModelTools = (
         isError: true,
       };
     }
+    if (patch.patches.length === 0) {
+      return { text: '模型已经包含这些内容。', value: { createdIds: [] } };
+    }
     const result = await ports.applyModelPatch({
       rationale,
-      patches: patch.patches,
+      patches: [{ op: 'test', path: '', value: document }, ...patch.patches],
     });
     return result.success
       ? {
-          text: `已写入：${patch.result.createdIds.join(', ')}。`,
+          text: ['已写入模型。', ...patch.result.createdIds].join(' '),
           value: { ...result, createdIds: patch.result.createdIds },
         }
       : { text: `补丁被拒绝：${result.error}`, value: result, isError: true };
@@ -125,26 +159,110 @@ export const createModelTools = (
       },
     }),
     define({
-      name: MODEL_TOOL_NAMES.introduceFulfillmentPair,
-      label: '新增成对履约项',
+      name: MODEL_TOOL_NAMES.batchAddEvidence,
+      label: '铺设凭证',
       description:
-        '在一个合同上下文里新增一组履约请求（时段）与履约确认（时刻），自动补齐业务时间、引用根合同并装配完成判断规则。有请求就必须有确认，不要分两次建。',
-      parameters: FulfillmentPairIntentSchema,
-      run: (intent) =>
-        runOperator(
-          `新增履约项：${intent.request.label} / ${intent.confirmation.label}`,
-          (document) => introduceFulfillmentPairMutator(document, intent),
+        '按邀请投标、投标、合同、履约批量写入已识别的凭证。不要求合同、角色或时标齐全，不生成样例事实。',
+      parameters: BatchAddEvidenceInputSchema,
+      run: (input) =>
+        runOperator('铺设业务凭证', (draft) =>
+          batchAddEvidenceMutator(draft, input),
         ),
     }),
     define({
-      name: MODEL_TOOL_NAMES.addBreachCompensation,
-      label: '新增违约补偿分支',
+      name: MODEL_TOOL_NAMES.splitEvidenceToPair,
+      label: '从凭证形成履约对',
       description:
-        '为一个已有履约请求声明违约条件，并同时新增该违约触发的补偿履约对。违约不是回滚，而是在同一合同上下文中触发新的履约项。',
-      parameters: BreachCompensationIntentSchema,
-      run: (intent) =>
-        runOperator(`违约补偿：${intent.condition}`, (document) =>
-          addBreachCompensationMutator(document, intent),
+        '复用原凭证 ID 作为确认；只有业务确实有对应的履约主张时才新建或复用请求。填报项只绑定实际传递的字段，两端保持同一合同归属。',
+      parameters: SplitEvidenceToPairInputSchema,
+      run: (input) =>
+        runOperator(`补齐履约请求：${input.evidenceRef}`, (draft) =>
+          splitEvidenceToPairMutator(draft, input),
+        ),
+    }),
+    define({
+      name: MODEL_TOOL_NAMES.bindKeyDataSource,
+      label: '绑定关键数据来源',
+      description:
+        '绑定一个凭证字段的来源：本身产出、申请输入、合同参数、领域属性、前序凭证或带真实绑定的 CEL 规则。不清楚时可撤销来源而保留字段。',
+      parameters: BindKeyDataSourceInputSchema,
+      run: (input) =>
+        runOperator(`追溯 ${input.evidenceRef}#${input.attribute}`, (draft) =>
+          bindKeyDataSourceMutator(draft, input),
+        ),
+    }),
+    define({
+      name: MODEL_TOOL_NAMES.assignFulfillmentContext,
+      label: '为整组履约关联同一合同',
+      description:
+        '将请求、确认及同合同的补偿分支一并挂到已存在的合同上下文。不覆盖另一份合同的归属。',
+      parameters: AssignFulfillmentContextInputSchema,
+      run: (input) =>
+        runOperator(`确定履约归属：${input.requestRef}`, (draft) =>
+          assignFulfillmentContextMutator(draft, input),
+        ),
+    }),
+    define({
+      name: MODEL_TOOL_NAMES.simulateWhatIfChallenge,
+      label: '查看履约的 What-If 问题',
+      description:
+        '只读检查指定履约请求、截止时标、确认和已经记录的补偿，给出待确认的超时、拒收与中断假设。不写入，不执行后端。',
+      readOnly: true,
+      parameters: z.object({ requestRef: DomainIdSchema }).strict(),
+      run: async ({ requestRef }) => {
+        const model = await ports.loadDocument();
+        const pair = createDomainGraph(model).fulfillmentPair(requestRef);
+        if (pair === undefined || pair.confirmations.length === 0) {
+          const error = '没有找到该请求所对应的履约对。';
+          return { text: error, value: { error }, isError: true };
+        }
+        const deadline = timeAttributeOf(pair.request, 'deadline');
+        const value = {
+          requestRef,
+          label: pair.request.label,
+          contextRef: pair.request.contextRef,
+          deadline,
+          confirmations: pair.confirmations.map(({ id, label }) => ({
+            id,
+            label,
+          })),
+          existingResponses: model.relationships.filter(
+            (edge) =>
+              edge.targetRef === requestRef &&
+              (edge.flowKind === 'breach_compensation' ||
+                edge.flowKind === 'escalation'),
+          ),
+          breachRules: pair.breachRules,
+          hypotheses: [
+            {
+              kind: 'timeout',
+              question: deadline
+                ? '超过这一履约截止时间还未完成，如何判定、由谁处理？'
+                : '什么情况才算逾期？哪条约定定义了截止时间？',
+            },
+            {
+              kind: 'rejection',
+              question: '拒绝或交付不合格时，凭什么判定，由谁处置？',
+            },
+            {
+              kind: 'interruption',
+              question:
+                '义务中途无法继续时，有补偿、人工处理，还是无需另行处置？',
+            },
+          ],
+        };
+        return { text: JSON.stringify(value), value };
+      },
+    }),
+    define({
+      name: MODEL_TOOL_NAMES.growBreachCompensation,
+      label: '生长违约补偿分支',
+      description:
+        '仅将已确认的违约触发条件与补偿动作写成同合同的独立履约对。假设不写入；没有可执行规则时不要补造 CEL。',
+      parameters: GrowBreachCompensationInputSchema,
+      run: (input) =>
+        runOperator(`违约补偿：${input.condition}`, (draft) =>
+          growBreachCompensationMutator(draft, input),
         ),
     }),
     define({

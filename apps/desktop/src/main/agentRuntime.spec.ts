@@ -489,7 +489,7 @@ describe('agent patch transport', () => {
     expect(result.isError).toBe(true);
   });
 
-  it('reads the project tree so an operator can name the root contract', async () => {
+  it('reads the project tree to guard an evidence batch against concurrent edits', async () => {
     const tempRoot = await mkdtemp(
       path.join(os.tmpdir(), 'evidence-operator-'),
     );
@@ -525,46 +525,27 @@ describe('agent patch transport', () => {
       } as never);
 
       const operator = tools.find(
-        ({ name }) => name === 'introduce_fulfillment_pair',
+        ({ name }) => name === 'batch_add_evidence_stubs',
       );
-
-      if (operator === undefined) {
-        throw new Error('introduce_fulfillment_pair was not registered');
-      }
-
+      if (operator === undefined)
+        throw new Error('Evidence batch tool was not registered');
       const result = await operator.execute('call-1', {
-        contextRef: 'context.procurement',
-        request: {
-          id: 'request.refund',
-          label: '退款申请',
-          responsibleRoleRef: 'role.buyer',
-        },
-        confirmation: {
-          id: 'confirmation.refund',
-          label: '退款确认',
-          responsibleRoleRef: 'role.supplier',
-        },
+        evidences: [
+          { id: 'evidence.refund', label: '退款确认', stage: 'fulfillment' },
+        ],
       });
-
       expect(result.isError).toBeUndefined();
-      expect(patches[0]?.patches).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            op: 'add',
-            path: expect.stringMatching(/^\/entities\//),
-            value: expect.objectContaining({
-              id: 'request.refund',
-              contextRef: 'context.procurement',
-            }),
-          }),
-          expect.objectContaining({
-            op: 'add',
-            value: expect.objectContaining({
-              id: 'relation.request.refund-references-contract',
-            }),
-          }),
-        ]),
-      );
+      expect(patches[0]?.patches).toEqual([
+        expect.objectContaining({
+          op: 'test',
+          path: '',
+          value: expect.objectContaining({ entities: expect.any(Array) }),
+        }),
+        expect.objectContaining({
+          op: 'add',
+          value: expect.objectContaining({ id: 'evidence.refund' }),
+        }),
+      ]);
     } finally {
       await rm(tempRoot, { recursive: true, force: true });
     }

@@ -149,17 +149,21 @@ describe('phase 3 control loop', () => {
     const sensors = tools.get('run_sensors');
 
     expect([...tools.keys()]).toEqual([
+      'apply_model_patch',
+      'batch_add_evidence_stubs',
+      'split_evidence_to_pair',
+      'bind_key_data_source',
+      'assign_fulfillment_context',
+      'simulate_what_if_challenge',
+      'grow_breach_compensation',
+      'roleify_and_invert_dependency',
+      'isolate_domain_calculator',
       'get_api_diff',
       'sync_api_projection',
       'run_sensors',
-      'apply_model_patch',
-      'get_canvas_selection',
+      'get_focused_node_context',
       'annotate_contract_clauses',
       'read_service_blueprint',
-      'introduce_fulfillment_pair',
-      'add_breach_compensation',
-      'roleify_and_invert_dependency',
-      'isolate_domain_calculator',
     ]);
 
     const appliedResult = await apply?.execute('call-1', {

@@ -52,12 +52,8 @@ export const TOOL_NAMES = {
   selectedEntity: 'get_selected_entity',
   keyDataAudit: 'get_key_data_audit',
   screenshot: 'get_canvas_screenshot',
-  applyPatch: MODEL_TOOL_NAMES.applyModelPatch,
   stageGate: 'run_stage_gate',
-  introduceFulfillmentPair: MODEL_TOOL_NAMES.introduceFulfillmentPair,
-  addBreachCompensation: MODEL_TOOL_NAMES.addBreachCompensation,
-  roleifyAndInvertDependency: MODEL_TOOL_NAMES.roleifyAndInvertDependency,
-  isolateDomainCalculator: MODEL_TOOL_NAMES.isolateDomainCalculator,
+  ...MODEL_TOOL_NAMES,
   deliveryTopology: 'get_delivery_topology',
   openApiContract: 'export_openapi_contract',
 } as const;
@@ -240,4 +236,4 @@ export const createEvidenceTools = (
 export const evidenceToolNames: readonly string[] = Object.values(TOOL_NAMES);
 
 export const SERVER_INSTRUCTIONS =
-  'These tools read the Evidence business model that is open in the desktop app. Read get_app_state first, then get_selected_entity or get_domain_model before proposing changes. Prefer the fulfillment operators over hand-written patches: introduce_fulfillment_pair for a request plus the confirmation that closes it, add_breach_compensation for a missed deadline and the pair it triggers, roleify_and_invert_dependency when a capability moves behind its own contract. Anything else goes through apply_model_patch using { rationale, patches } with RFC 6902 operations and RFC 6901 string pointers (not array paths or typed commands). Before positional edits, test the expected object id to reject a stale snapshot. The modeler can undo each batch; never write .evidence/fm files directly. After a patch, check get_key_data_audit and run_stage_gate before claiming the work is done. When the question is what the model becomes, read get_delivery_topology and export_openapi_contract instead of inventing a service split. Acceptance cases live in entity examples[].test; export them as a Bruno collection with evidence export --tests and run them against a real backend with evidence test, not in-memory replay.';
+  'Read get_app_state, then get_selected_entity or get_domain_model. Start with business evidence using batch_add_evidence_stubs, then clarify field provenance with bind_key_data_source. Use split_evidence_to_pair only when a real request and its confirmation are known. Assign contract context to the group with assign_fulfillment_context; cite external evidence instead of pairing across contracts. simulate_what_if_challenge is read-only; grow_breach_compensation records an agreed remedy, not a hypothesis. Other edits use apply_model_patch with RFC 6902 operations and RFC 6901 pointers. Guard positional edits with test operations. The modeler can undo each write batch; never edit .evidence/fm directly. An incomplete graph can be saved. Check get_key_data_audit and run_stage_gate before API delivery; view get_delivery_topology or export_openapi_contract to inspect delivery. Run exported Bruno acceptance cases on a real backend with evidence test.';
