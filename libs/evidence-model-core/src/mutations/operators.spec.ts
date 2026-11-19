@@ -178,6 +178,14 @@ describe('addBreachCompensation', () => {
     const { document } = patch;
 
     expect(patch.result.createdIds[0]).toBe('rule.request.payment-breached');
+    expect(document.relationships).toContainEqual(
+      expect.objectContaining({
+        kind: 'references',
+        flowKind: 'breach_compensation',
+        sourceRef: 'request.penalty',
+        targetRef: 'request.payment',
+      }),
+    );
     expect(
       document.rules.find(
         (rule) => rule.id === 'rule.request.payment-breached',

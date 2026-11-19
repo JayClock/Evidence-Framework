@@ -41,11 +41,13 @@ const structuralCode = (
 
   if (collection === 'entities') {
     if (field === 'attributes')
-      return path.at(-1) === 'name'
-        ? 'attribute.name'
-        : path.at(-1) === 'derivedByRuleRef'
-          ? 'attribute.derivedByRuleRef.unresolved'
-          : 'attribute.shape';
+      return path[4] === 'source'
+        ? 'attribute.source'
+        : path.at(-1) === 'name'
+          ? 'attribute.name'
+          : path.at(-1) === 'derivedByRuleRef'
+            ? 'attribute.derivedByRuleRef.unresolved'
+            : 'attribute.shape';
     if (field === 'examples') return 'entity.shape';
     if (field === 'category') return 'entity.category';
     if (field === 'kind') return 'entity.kind';
@@ -63,13 +65,12 @@ const structuralCode = (
         : 'entity.contextRef.unresolved';
     }
     if (field === 'parentContextRef') return 'entity.contextRef.unresolved';
-    if (field === 'rootRefs') return 'entity.contextRoots.missing';
     if (field === 'responsibleRoleRef' || field === 'roleRefs') {
       if (owner?.category === 'role')
         return 'entity.roleResponsibility.forbidden';
       return field === 'responsibleRoleRef'
         ? 'entity.responsibleRole.unresolved'
-        : 'entity.roleRefs.missing';
+        : 'entity.roleRefs.unresolved';
     }
     return issue.code === 'unrecognized_keys'
       ? 'entity.unknownField'

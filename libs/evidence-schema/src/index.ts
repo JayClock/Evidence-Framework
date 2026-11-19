@@ -90,6 +90,7 @@ export {
   RoleKindSchema,
   entitySignature,
   findAttribute,
+  isAttributeSourceReference,
   isContextEntity,
   isContractContext,
   isContractEntity,
@@ -104,6 +105,8 @@ export {
   isRoleEntity,
   type AttributeAST,
   AttributeASTSchema,
+  AttributeSourceSchema,
+  type AttributeSource,
   type ContextEntityAST,
   ContextEntitySchema,
   type ContextKind,
@@ -152,17 +155,14 @@ export {
 } from './ast/workshop.js';
 
 export {
-  KEY_DATA_PROVIDER_CHOICES,
   KEY_DATA_SOURCE_DEFINITIONS,
   KEY_DATA_SOURCE_KINDS,
   KEY_DATA_SOURCE_LABELS,
-  REQUEST_FORMATION_FIELDS,
   RESOLVED_KEY_DATA_SOURCES,
   classifyKeyDataSource,
   isKeyDataDecisionOwed,
   isKeyDataResolved,
   isKeyDataSourceKind,
-  type KeyDataProviderChoice,
   type KeyDataSourceDefinition,
   type KeyDataSourceKind,
 } from './ast/keyData.js';

@@ -1,8 +1,9 @@
-import type {
-  ContextEntityAST,
-  DomainModelDocument,
-  EntityAST,
-  EvidenceEntityAST,
+import {
+  isAttributeSourceReference,
+  type ContextEntityAST,
+  type DomainModelDocument,
+  type EntityAST,
+  type EvidenceEntityAST,
 } from '@evidence-poc/evidence-schema';
 
 import {
@@ -108,6 +109,16 @@ export const entityReferences = (
   }
   for (const entity of document.entities) {
     if (entity.id === entityId) continue;
+    for (const attribute of entity.attributes ?? []) {
+      const source = attribute.source;
+      if (isAttributeSourceReference(source) && source.entityRef === entityId) {
+        references.push({
+          id: entity.id,
+          description: `source of '${entity.id}#${attribute.name}'`,
+          removable: false,
+        });
+      }
+    }
     for (const field of [
       'contextRef',
       'parentContextRef',

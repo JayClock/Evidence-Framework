@@ -32,14 +32,7 @@
     },
     "node": {
       "type": "object",
-      "required": [
-        "path",
-        "entityRef",
-        "attribute",
-        "valueType",
-        "keyData",
-        "origin"
-      ],
+      "required": ["path", "entityRef", "attribute", "keyData", "origin"],
       "properties": {
         "path": { "$ref": "#/$defs/attributePath" },
         "entityRef": { "$ref": "#/$defs/id" },
@@ -66,10 +59,14 @@
     },
     "edge": {
       "type": "object",
-      "required": ["source", "target", "ruleRef"],
+      "required": ["source", "target"],
+      "oneOf": [{ "required": ["ruleRef"] }, { "required": ["sourceKind"] }],
       "properties": {
         "source": { "$ref": "#/$defs/attributePath" },
         "target": { "$ref": "#/$defs/attributePath" },
+        "sourceKind": {
+          "enum": ["contract-term", "domain-source", "preceding-evidence"]
+        },
         "ruleRef": { "$ref": "#/$defs/id" }
       },
       "additionalProperties": false

@@ -4,6 +4,7 @@ import {
   type RuleBinding,
   type ValueType,
   classifyKeyDataSource,
+  isAttributeSourceReference,
   isKeyDataDecisionOwed,
 } from '@evidence-poc/evidence-schema';
 
@@ -55,6 +56,7 @@ const emptyCounts = (): Record<KeyDataSourceKind, number> => ({
   'contract-term': 0,
   'domain-source': 0,
   'negotiation-source': 0,
+  'preceding-evidence': 0,
   'result-fact': 0,
   'request-input': 0,
   'needs-decision': 0,
@@ -100,6 +102,19 @@ export const buildKeyDataLedger = (
         attribute.derivedByRuleRef === undefined
           ? undefined
           : ruleById.get(attribute.derivedByRuleRef);
+      const declared = attribute.source;
+      const providers: KeyDataProvider[] =
+        rule !== undefined
+          ? bindingProviders(rule.bindings)
+          : isAttributeSourceReference(declared)
+            ? [
+                {
+                  alias: declared.attribute,
+                  ref: declared.entityRef,
+                  attribute: declared.attribute,
+                },
+              ]
+            : [];
       counts[source] += 1;
 
       entries.push({
@@ -118,12 +133,9 @@ export const buildKeyDataLedger = (
           : { valueType: attribute.valueType }),
         source,
         ...(rule === undefined
-          ? { providers: [] as readonly KeyDataProvider[] }
-          : {
-              ruleRef: rule.id,
-              expression: rule.expression,
-              providers: bindingProviders(rule.bindings),
-            }),
+          ? {}
+          : { ruleRef: rule.id, expression: rule.expression }),
+        providers,
         decisionOwed: isKeyDataDecisionOwed(source),
       });
     }

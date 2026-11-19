@@ -45,6 +45,7 @@ export const bindDerivedRuleMutator = (
     target: { entityRef: entity.id, attribute: attribute.name },
   };
   createRuleMutator(draft, rule);
+  delete attribute.source;
   attribute.derivedByRuleRef = rule.id;
   return rule;
 };

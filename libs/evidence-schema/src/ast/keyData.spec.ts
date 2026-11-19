@@ -41,11 +41,17 @@ describe('classifyKeyDataSource', () => {
     ).toBe('negotiation-source');
   });
 
-  it('classifies confirmations as result facts', () => {
+  it('does not assume all confirmation data is observed', () => {
     expect(
       classifyKeyDataSource(
         { category: 'evidence', kind: 'fulfillment_confirmation' },
         { name: 'accepted_quantity' },
+      ),
+    ).toBe('needs-decision');
+    expect(
+      classifyKeyDataSource(
+        { category: 'evidence', kind: 'fulfillment_confirmation' },
+        { name: 'accepted_quantity', source: { kind: 'result-fact' } },
       ),
     ).toBe('result-fact');
   });
@@ -54,13 +60,13 @@ describe('classifyKeyDataSource', () => {
     expect(
       classifyKeyDataSource(
         { category: 'evidence', kind: 'fulfillment_request' },
-        { name: 'delivery_address' },
+        { name: 'receiving_address', source: { kind: 'request-input' } },
       ),
     ).toBe('request-input');
     expect(
       classifyKeyDataSource(
         { category: 'evidence', kind: 'fulfillment_request' },
-        { name: 'penalty_amount' },
+        { name: 'delivery_address' },
       ),
     ).toBe('needs-decision');
   });

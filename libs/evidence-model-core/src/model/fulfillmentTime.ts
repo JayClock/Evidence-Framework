@@ -19,9 +19,10 @@ export const timeoutExpressionFor = (
   request: Pick<EvidenceEntityAST, 'attributes'>,
   confirmation: Pick<EvidenceEntityAST, 'attributes'>,
 ): string | undefined => {
+  const start = timeAttributeOf(request, 'start');
   const deadline = timeAttributeOf(request, 'deadline');
   const occurrence = timeAttributeOf(confirmation, 'occurrence');
-  return deadline && occurrence
-    ? `now > request.${deadline.name} && !confirmations.exists(c, c.${occurrence.name} <= request.${deadline.name})`
+  return start && deadline && occurrence
+    ? `now > request.${deadline.name} && !confirmations.exists(c, c.${occurrence.name} >= request.${start.name} && c.${occurrence.name} <= request.${deadline.name})`
     : undefined;
 };

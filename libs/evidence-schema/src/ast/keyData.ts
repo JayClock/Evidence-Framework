@@ -39,6 +39,10 @@ export const KEY_DATA_SOURCE_DEFINITIONS = {
     label: '协商来源（Negotiation Source）',
     resolved: true,
   },
+  'preceding-evidence': {
+    label: '前序凭证（Preceding Evidence）',
+    resolved: true,
+  },
   'result-fact': {
     label: '结果事实（Result Fact）',
     resolved: true,
@@ -71,22 +75,6 @@ export const RESOLVED_KEY_DATA_SOURCES: readonly KeyDataSourceKind[] =
     (kind) => KEY_DATA_SOURCE_DEFINITIONS[kind].resolved,
   );
 
-/**
- * Values a requesting party records when it forms the request itself.
- *
- * An unknown name falls into `needs-decision` until the business decision lands.
- */
-export const REQUEST_FORMATION_FIELDS: readonly string[] = [
-  'started_at',
-  'request_number',
-  'delivery_address',
-  'return_address',
-  'fault_description',
-  'asset_code',
-  'billing_period',
-  'settlement_period',
-];
-
 export const isKeyDataSourceKind = (
   value: unknown,
 ): value is KeyDataSourceKind =>
@@ -108,11 +96,16 @@ export const isKeyDataResolved = (kind: KeyDataSourceKind): boolean =>
  */
 export const classifyKeyDataSource = (
   entity: Pick<EntityAST, 'category' | 'kind'>,
-  attribute: Pick<AttributeAST, 'name' | 'derivedByRuleRef'>,
+  attribute: Pick<
+    AttributeAST,
+    'name' | 'derivedByRuleRef' | 'source' | 'timeRole'
+  >,
 ): KeyDataSourceKind => {
   if (attribute.derivedByRuleRef !== undefined) {
     return 'derived';
   }
+  const explicit = attribute.source?.kind;
+  if (explicit !== undefined && isKeyDataSourceKind(explicit)) return explicit;
 
   if (entity.category === 'evidence' && entity.kind === 'contract') {
     return 'contract-term';
@@ -134,24 +127,14 @@ export const classifyKeyDataSource = (
     (entity.kind === 'fulfillment_confirmation' ||
       entity.kind === 'other_evidence')
   ) {
-    return 'result-fact';
+    return attribute.timeRole === 'occurrence'
+      ? 'result-fact'
+      : 'needs-decision';
   }
 
   if (entity.category === 'evidence' && entity.kind === 'fulfillment_request') {
-    return REQUEST_FORMATION_FIELDS.includes(attribute.name)
-      ? 'request-input'
-      : 'needs-decision';
+    return attribute.timeRole === 'start' ? 'request-input' : 'needs-decision';
   }
 
   return 'other';
 };
-
-/** The four providers a human may pick in the inspector. */
-export const KEY_DATA_PROVIDER_CHOICES = [
-  'contract-term',
-  'result-fact',
-  'derived',
-  'request-input',
-] as const satisfies readonly KeyDataSourceKind[];
-
-export type KeyDataProviderChoice = (typeof KEY_DATA_PROVIDER_CHOICES)[number];

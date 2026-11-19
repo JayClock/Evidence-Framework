@@ -4,6 +4,7 @@ import {
   EVIDENCE_KIND_DEFINITIONS,
   evidenceTimeRolesOf,
   type TimeRole,
+  type AttributeAST,
   type ContextEntityAST,
   type EntityAST,
   type EvidenceEntityAST,
@@ -111,6 +112,63 @@ const validateExamples = (
   }
 };
 
+const validateAttributeSource = (
+  entity: EntityAST,
+  attribute: AttributeAST,
+  path: Path,
+  index: ModelIndex,
+  ctx: RefinementCtx,
+): void => {
+  const { source } = attribute;
+  if (source === undefined) return;
+  const reject = (message: string) =>
+    addIssue(ctx, 'attribute.source', [...path, 'source'], message, entity.id);
+  if (attribute.derivedByRuleRef !== undefined) {
+    reject(
+      'An attribute cannot declare a direct source and a derivation rule.',
+    );
+  }
+  if (!('entityRef' in source)) {
+    const valid =
+      entity.category === 'evidence' &&
+      (source.kind === 'request-input'
+        ? entity.kind === 'fulfillment_request'
+        : entity.kind === 'fulfillment_confirmation' ||
+          entity.kind === 'other_evidence');
+    if (!valid)
+      reject(`'${source.kind}' must be declared on its producing Evidence.`);
+    return;
+  }
+
+  const provider = entityOf(index, source.entityRef);
+  const input = provider?.attributes?.find(
+    ({ name }) => name === source.attribute,
+  );
+  if (input === undefined) {
+    reject(
+      `Unknown source attribute '${source.entityRef}#${source.attribute}'.`,
+    );
+    return;
+  }
+  const providerFits =
+    source.kind === 'contract-term'
+      ? provider?.category === 'evidence' && provider.kind === 'contract'
+      : source.kind === 'domain-source'
+        ? provider?.category === 'participant' && provider.kind === 'thing'
+        : provider?.category === 'evidence' && provider.id !== entity.id;
+  if (!providerFits)
+    reject(`'${source.entityRef}' is not a valid ${source.kind} provider.`);
+  if (
+    attribute.valueType !== undefined &&
+    input.valueType !== undefined &&
+    attribute.valueType !== input.valueType
+  ) {
+    reject(
+      'A direct source must have the same value type; use a derivation for a conversion.',
+    );
+  }
+};
+
 const validateAttributes = (
   entity: EntityAST,
   position: number,
@@ -133,6 +191,7 @@ const validateAttributes = (
       );
     }
     seen.add(attribute.name);
+    validateAttributeSource(entity, attribute, path, index, ctx);
 
     if (attribute.timeRole !== undefined) {
       if (
@@ -859,6 +918,45 @@ const validateDerivedAttributes = (
   }
 };
 
+const validateSourceCycles = (index: ModelIndex, ctx: RefinementCtx): void => {
+  const links = new Map<
+    string,
+    { source: string; entityId: string; path: Path }
+  >();
+  for (const { value: entity, position } of index.entities.values()) {
+    for (const [i, attribute] of (entity.attributes ?? []).entries()) {
+      const source = attribute.source;
+      if (source === undefined || !('entityRef' in source)) continue;
+      links.set(`${entity.id}#${attribute.name}`, {
+        source: `${source.entityRef}#${source.attribute}`,
+        entityId: entity.id,
+        path: ['entities', position, 'attributes', i, 'source'],
+      });
+    }
+  }
+  const done = new Set<string>();
+  for (const id of links.keys()) {
+    const chain = new Set<string>();
+    let cursor = id;
+    while (links.has(cursor) && !done.has(cursor)) {
+      const link = links.get(cursor)!;
+      if (chain.has(cursor)) {
+        addIssue(
+          ctx,
+          'attribute.source',
+          link.path,
+          `Attribute source chain is cyclic at '${cursor}'.`,
+          link.entityId,
+        );
+        break;
+      }
+      chain.add(cursor);
+      cursor = link.source;
+    }
+    for (const visited of chain) done.add(visited);
+  }
+};
+
 /** Graph-level FM checks run only after every input has a typed Zod AST. */
 export function refineDomainModel(
   document: DomainModelDocument,
@@ -947,6 +1045,7 @@ export function refineDomainModel(
   }
 
   validateEntities(document, index, ctx);
+  validateSourceCycles(index, ctx);
   validateRelationships(document, index, ctx);
   validateRules(document, index, ctx);
   validateDerivedAttributes(index, ctx);

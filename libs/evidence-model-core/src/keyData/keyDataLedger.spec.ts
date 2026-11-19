@@ -52,6 +52,7 @@ const document = (): DomainModelDocument => ({
       attributes: [
         {
           name: 'delivery_address',
+          source: { kind: 'request-input' },
           label: '送货地址（Delivery Address）',
           meaning: '请求方填写。',
           valueType: 'string',

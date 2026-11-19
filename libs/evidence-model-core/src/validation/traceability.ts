@@ -1,8 +1,9 @@
-import type {
-  AttributeAST,
-  DomainModelDocument,
-  EntityAST,
-  RuleAST,
+import {
+  isAttributeSourceReference,
+  type AttributeAST,
+  type DomainModelDocument,
+  type EntityAST,
+  type RuleAST,
 } from '@evidence-poc/evidence-schema';
 
 import { ParseError, type ASTNode } from '@marcbachmann/cel-js';
@@ -41,11 +42,13 @@ export interface TraceabilityNode {
   derivedByRuleRef?: string;
 }
 
-export interface TraceabilityEdge {
-  source: string;
-  target: string;
-  ruleRef: string;
-}
+export type TraceabilityEdge = { source: string; target: string } & (
+  | { ruleRef: string; sourceKind?: never }
+  | {
+      ruleRef?: never;
+      sourceKind: 'contract-term' | 'domain-source' | 'preceding-evidence';
+    }
+);
 
 export interface TraceabilityConstraint {
   ruleRef: string;
@@ -345,6 +348,20 @@ export const analyzeTraceability = (
     });
   }
 
+  for (const entity of model.entities) {
+    for (const attribute of entity.attributes ?? []) {
+      const source = attribute.source;
+      if (!isAttributeSourceReference(source)) continue;
+      const sourcePath = attributePath(source.entityRef, source.attribute);
+      const target = attributePath(entity.id, attribute.name);
+      if (!attributesOf(entities.get(source.entityRef)).has(source.attribute))
+        continue;
+      accessedPaths.add(sourcePath);
+      accessedPaths.add(target);
+      edges.push({ source: sourcePath, target, sourceKind: source.kind });
+    }
+  }
+
   const nodes: TraceabilityNode[] = [];
 
   for (const entity of [...model.entities].sort((left, right) =>
@@ -437,7 +454,9 @@ export const analyzeTraceability = (
         (left, right) =>
           left.target.localeCompare(right.target) ||
           left.source.localeCompare(right.source) ||
-          left.ruleRef.localeCompare(right.ruleRef),
+          (left.ruleRef ?? left.sourceKind).localeCompare(
+            right.ruleRef ?? right.sourceKind,
+          ),
       ),
       constraints: [...constraints].sort((left, right) =>
         left.ruleRef.localeCompare(right.ruleRef),

@@ -2,6 +2,7 @@ import {
   type AttributeAST,
   type DomainModelDocument,
   isAttributeName,
+  isAttributeSourceReference,
 } from '@evidence-poc/evidence-schema';
 import { assignFields } from './entityMutations.js';
 import { fail, requireAttribute, requireEntity } from './guards.js';
@@ -45,6 +46,29 @@ export const addAttributeMutator = (
   return attribute;
 };
 
+const requireUnreferencedSource = (
+  model: DomainModelDocument,
+  entityRef: string,
+  name: string,
+): void => {
+  const readers = model.entities.flatMap((entity) =>
+    (entity.attributes ?? []).flatMap((attribute) => {
+      const source = attribute.source;
+      return isAttributeSourceReference(source) &&
+        source.entityRef === entityRef &&
+        source.attribute === name
+        ? [`${entity.id}#${attribute.name}`]
+        : [];
+    }),
+  );
+  if (readers.length > 0)
+    fail(
+      'attribute.referenced',
+      `Source attribute '${entityRef}#${name}' is still referenced.`,
+      readers,
+    );
+};
+
 export interface RemoveAttributeOptions {
   cascade?: boolean;
 }
@@ -57,6 +81,7 @@ export const removeAttributeMutator = (
 ): boolean => {
   const entity = requireEntity(draft, entityId);
   const attribute = requireAttribute(entity, attributeName);
+  requireUnreferencedSource(draft, entityId, attributeName);
   if (attribute.derivedByRuleRef !== undefined) {
     if (!options.cascade)
       fail(
@@ -83,6 +108,7 @@ export const updateAttributeMutator = (
   const entity = requireEntity(draft, entityId);
   const attribute = requireAttribute(entity, attributeName);
   if (patch.name !== undefined && patch.name !== attribute.name) {
+    requireUnreferencedSource(draft, entityId, attributeName);
     const writers = draft.rules.filter(
       (rule) =>
         rule.target?.entityRef === entity.id &&

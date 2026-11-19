@@ -16,28 +16,24 @@ export type ValidationCode =
   | 'entity.contextRef.unresolved'
   | 'entity.contextRef.notContext'
   | 'entity.parentContextRef.cycle'
-  | 'entity.contextRoots.missing'
   | 'entity.contextRoots.contractCount'
   | 'entity.contextRoots.foreign'
-  | 'entity.responsibleRole.missing'
   | 'entity.responsibleRole.unresolved'
   | 'entity.responsibleRole.notPartyRole'
   | 'entity.responsibleRole.foreign'
-  | 'entity.roleRefs.missing'
   | 'entity.roleRefs.count'
   | 'entity.roleRefs.unresolved'
   | 'entity.roleRefs.notPartyRole'
   | 'entity.roleRefs.foreign'
   | 'entity.roleResponsibility.forbidden'
   | 'entity.evidenceContext.kind'
-  | 'entity.contract.rootMissing'
   | 'entity.participantParty.contextRef'
   | 'entity.domainRole.thingOnly'
   | 'attribute.shape'
+  | 'attribute.source'
   | 'attribute.name'
   | 'attribute.duplicate'
   | 'attribute.derivedByRuleRef.unresolved'
-  | 'attribute.time.missing'
   | 'attribute.time.notKeyTimestamp'
   | 'relationship.shape'
   | 'relationship.endpoint.unresolved'
@@ -97,7 +93,9 @@ export function issueKey(issue: ValidationIssue): string {
   return `${issue.code}\u0000${issue.path}\u0000${issue.message}`;
 }
 
-export function dedupeIssues(issues: readonly ValidationIssue[]): ValidationIssue[] {
+export function dedupeIssues(
+  issues: readonly ValidationIssue[],
+): ValidationIssue[] {
   const seen = new Set<string>();
   const result: ValidationIssue[] = [];
 

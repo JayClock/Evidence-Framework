@@ -155,6 +155,7 @@ export function createProcurementModel(): DomainModelDocument {
         ),
         {
           name: 'paid_minor_units',
+          source: { kind: 'result-fact' },
           label: '确认金额',
           meaning: '买方确认支付的最小货币单位整数金额',
           valueType: 'int',

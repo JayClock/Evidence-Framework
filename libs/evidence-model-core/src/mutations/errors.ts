@@ -7,6 +7,7 @@ export type MutationErrorCode =
   | 'entity.referenced'
   | 'attribute.notFound'
   | 'attribute.duplicate'
+  | 'attribute.referenced'
   | 'attribute.time.missing'
   | 'context.notFound'
   | 'context.notDomain'

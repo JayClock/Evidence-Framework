@@ -3,7 +3,10 @@ import {
   type AttributeAST,
   type EntityAST,
 } from '@evidence-poc/evidence-schema';
-import type { DomainGraph, KeyDataEntry } from '@evidence-poc/evidence-model-core';
+import type {
+  DomainGraph,
+  KeyDataEntry,
+} from '@evidence-poc/evidence-model-core';
 
 interface KeyDataProvenancePickerProps {
   entity: EntityAST;
@@ -23,21 +26,19 @@ const providerLabel = (
   }
 
   const entity = graph.getEntity(provider.ref);
-  const suffix =
-    provider.cardinality === 'many'
-      ? '（集合）'
-      : '';
+  const suffix = provider.cardinality === 'many' ? '（集合）' : '';
 
-  return `${provider.alias} → ${entity?.label ?? provider.ref}${suffix}`;
+  const name = entity?.label ?? provider.ref;
+  return provider.attribute === undefined
+    ? `${provider.alias} → ${name}${suffix}`
+    : `${name}.${provider.attribute}${suffix}`;
 };
 
 /**
  * Shows how one key data item is provided.
  *
  * The verdict comes from the same classification the pinned checker uses, so a
- * green badge means "the ledger accepts this source", never "someone filled a
- * field". Nothing here is persisted: changing the source means changing the
- * model (binding a derivation rule) or retracting the key-data claim.
+ * green badge means the ledger recognises the declared provider.
  */
 export const KeyDataProvenancePicker = ({
   entity,
@@ -89,7 +90,8 @@ export const KeyDataProvenancePicker = ({
       {entry === undefined || entry.decisionOwed ? (
         <div className="mt-1 space-y-1">
           <p className="text-[8px] leading-snug text-evidence-evidence">
-            {entity.label}.{attribute.name} 仍待决策：金额、期限、数量与时间差必须有
+            {entity.label}.{attribute.name}{' '}
+            仍待决策：金额、期限、数量与时间差必须有
             合同参数、前序凭证属性、派生规则或结果事实作为提供方。
           </p>
           <div className="flex flex-wrap gap-1">

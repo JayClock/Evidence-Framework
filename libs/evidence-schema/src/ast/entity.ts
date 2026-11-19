@@ -117,6 +117,26 @@ export const ContextKindSchema = z.enum(
   CONTEXT_KINDS as unknown as [ContextKind, ...ContextKind[]],
 );
 
+const AttributeSourceReferenceSchema = z
+  .object({
+    kind: z.enum(['contract-term', 'domain-source', 'preceding-evidence']),
+    entityRef: DomainIdSchema,
+    attribute: AttributeNameSchema,
+  })
+  .strict();
+
+export const AttributeSourceSchema = z.discriminatedUnion('kind', [
+  z.object({ kind: z.enum(['request-input', 'result-fact']) }).strict(),
+  AttributeSourceReferenceSchema,
+]);
+export type AttributeSource = z.infer<typeof AttributeSourceSchema>;
+
+export const isAttributeSourceReference = (
+  source: unknown,
+): source is z.infer<typeof AttributeSourceReferenceSchema> =>
+  source !== undefined &&
+  AttributeSourceReferenceSchema.safeParse(source).success;
+
 export const AttributeASTSchema = z
   .object({
     name: AttributeNameSchema,
@@ -127,6 +147,7 @@ export const AttributeASTSchema = z
     required: z.boolean().optional(),
     keyData: z.boolean().optional(),
     derivedByRuleRef: DomainIdSchema.optional(),
+    source: AttributeSourceSchema.optional(),
     notes: z.string().min(1).optional(),
   })
   .strict();

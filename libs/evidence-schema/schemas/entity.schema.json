@@ -259,9 +259,36 @@
       },
       "additionalProperties": false
     },
+    "attributeSource": {
+      "type": "object",
+      "required": ["kind"],
+      "oneOf": [
+        {
+          "properties": {
+            "kind": { "enum": ["request-input", "result-fact"] }
+          },
+          "additionalProperties": false
+        },
+        {
+          "required": ["entityRef", "attribute"],
+          "properties": {
+            "kind": {
+              "enum": ["contract-term", "domain-source", "preceding-evidence"]
+            },
+            "entityRef": { "$ref": "#/$defs/id" },
+            "attribute": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9]*(?:_[a-z0-9]+)*$"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
     "attribute": {
       "type": "object",
       "required": ["name", "label", "meaning"],
+      "not": { "required": ["derivedByRuleRef", "source"] },
       "if": { "required": ["timeRole"] },
       "then": {
         "required": ["valueType", "required", "keyData"],
@@ -302,6 +329,7 @@
         "keyData": { "type": "boolean" },
         "meaning": { "type": "string", "minLength": 1 },
         "derivedByRuleRef": { "$ref": "#/$defs/id" },
+        "source": { "$ref": "#/$defs/attributeSource" },
         "notes": { "type": "string", "minLength": 1 }
       },
       "additionalProperties": false

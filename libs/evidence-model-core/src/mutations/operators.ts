@@ -16,6 +16,7 @@ export type {
   DomainCalculatorIntent,
 } from '@evidence-poc/evidence-schema';
 
+import { createDomainGraph } from '../model/graph.js';
 import { timeoutExpressionFor } from '../model/fulfillmentTime.js';
 import type { CreateFulfillmentPairInput } from './fulfillmentMutations.js';
 import { createFulfillmentPairMutator } from './fulfillmentMutations.js';
@@ -225,9 +226,12 @@ export const addBreachCompensationMutator = (
   if (breaching.contextRef === undefined) {
     throw new Error('请先确定原履约请求所属的合同上下文。');
   }
-  const confirmation = document.entities.find(
+  const pair = createDomainGraph(document).fulfillmentPair(breaching.id);
+  const confirmation = pair?.confirmations.find(
     ({ id }) => id === intent.confirmationRef,
   );
+  if (confirmation === undefined)
+    throw new Error('所选凭证尚未关联到被违反的履约请求。');
   const expression =
     confirmation?.category === 'evidence' &&
     confirmation.kind === 'fulfillment_confirmation'
@@ -262,10 +266,21 @@ export const addBreachCompensationMutator = (
     confirmation: intent.confirmation,
     ...(intent.proof === undefined ? {} : { proof: intent.proof }),
   });
+  const edge = createRelationshipMutator(document, {
+    type: 'relationship',
+    id: `relation.${intent.request.id}-compensates-${breaching.id}`,
+    kind: 'references',
+    flowKind: 'breach_compensation',
+    sourceRef: intent.request.id,
+    targetRef: breaching.id,
+    label: '补偿原履约请求',
+    notes: intent.condition,
+  });
   return {
     createdIds: [
       `rule.${intent.requestRef}-breached`,
       ...compensation.createdIds,
+      edge.id,
     ],
   };
 };
