@@ -28,7 +28,8 @@ const handlers = (): CommandHandlers => ({
   openDelivery: vi.fn(),
   rerunSensors: vi.fn(),
   askAgent: vi.fn(),
-  openRail: vi.fn(),
+  openCopilot: vi.fn(),
+  openWorkshop: vi.fn(),
   openProblems: vi.fn(),
   toggleProblems: vi.fn(),
 });
@@ -54,16 +55,13 @@ describe('buildCommands', () => {
     expect(find('delivery.contract')?.shortcut).toBe(CHORDS.delivery);
   });
 
-  it('opens a rail drawer without touching the document', () => {
-    const onRail = vi.fn();
-    const commands = buildCommands(capabilities(), {
-      ...handlers(),
-      openRail: onRail,
-    });
+  it('opens the Copilot pane without touching the document', () => {
+    const spy = handlers();
+    const commands = buildCommands(capabilities(), spy);
 
     commands.find((command) => command.id === 'view.rail-copilot')?.perform();
 
-    expect(onRail).toHaveBeenCalledWith('copilot');
+    expect(spy.openCopilot).toHaveBeenCalledOnce();
   });
 
   it('keeps the workshop discoverable and opens diagnostics in the problems panel', () => {
@@ -73,7 +71,7 @@ describe('buildCommands', () => {
     commands
       .find((command) => command.id === 'view.rail-diagnostics')
       ?.perform();
-    expect(spy.openRail).toHaveBeenCalledWith('workshop');
+    expect(spy.openWorkshop).toHaveBeenCalledOnce();
     expect(spy.openProblems).toHaveBeenCalledOnce();
   });
 

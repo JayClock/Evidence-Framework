@@ -69,7 +69,7 @@ export const ProblemsPanel = ({
     <section
       aria-label="门禁问题面板"
       data-region="problems-panel"
-      className="absolute inset-x-0 bottom-0 z-30 flex h-[38%] min-h-40 flex-col border-t border-evidence-line bg-white shadow-[0_-8px_24px_#00000012]"
+      className="absolute inset-x-0 bottom-0 z-30 flex h-[200px] max-h-1/2 flex-col border-t border-workbench-border bg-white shadow-[0_-8px_24px_#00000012]"
     >
       <header className="flex h-8 shrink-0 items-center justify-between gap-2 border-b border-evidence-line bg-evidence-surface/70 px-2">
         <div className="flex min-w-0 items-center gap-2">

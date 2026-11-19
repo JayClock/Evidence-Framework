@@ -15,7 +15,7 @@ import {
 
 import type { GraphViewMode } from '@evidence-poc/desktop-ui-kit';
 
-import { RAIL_TAB_CHORDS, type RailTabId } from './useWorkspaceLayoutState';
+import { RAIL_TAB_CHORDS } from './useWorkspaceLayoutState';
 import type { WorkspaceViewMode } from './useWorkspaceViewMode';
 
 /**
@@ -99,7 +99,8 @@ export interface CommandHandlers {
   openDelivery: () => void;
   rerunSensors: () => void;
   askAgent: () => void;
-  openRail: (tab: RailTabId) => void;
+  openCopilot: () => void;
+  openWorkshop: () => void;
   openProblems: () => void;
   toggleProblems: () => void;
 }
@@ -190,13 +191,13 @@ export const buildCommands = (
     },
     {
       id: 'view.rail-copilot',
-      title: '打开 AI 协同抽屉',
+      title: '打开 AI 协同面板',
       subtitle: '多轮访谈、工具调用与补丁复核',
       category: 'view',
       shortcut: RAIL_TAB_CHORDS.copilot,
       icon: Bot,
       keywords: ['rail', 'agent', 'copilot', '协同'],
-      perform: () => handlers.openRail('copilot'),
+      perform: handlers.openCopilot,
     },
     {
       id: 'model.workshop',
@@ -205,7 +206,7 @@ export const buildCommands = (
       category: 'model',
       icon: ListChecks,
       keywords: ['workshop', 'new', '新建', '向导'],
-      perform: () => handlers.openRail('workshop'),
+      perform: handlers.openWorkshop,
     },
     {
       id: 'delivery.contract',

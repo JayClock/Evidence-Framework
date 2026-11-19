@@ -10,6 +10,8 @@
 @source '../../../../libs/desktop/ui-kit/src';
 @source '../../../../libs/desktop/feature-canvas/src';
 @source '../../../../libs/desktop/feature-inspector/src';
+@source '../../../../libs/desktop/feature-agent/src';
+@source '../../../../libs/desktop/feature-story/src';
 
 @theme {
   --color-evidence-ink: #1f2329;

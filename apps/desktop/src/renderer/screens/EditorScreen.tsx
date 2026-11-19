@@ -1,11 +1,4 @@
-import {
-  type RefObject,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { ImperativePanelHandle } from 'react-resizable-panels';
 
@@ -28,6 +21,7 @@ import { CanvasFloatingHud } from '../components/canvas/CanvasFloatingHud';
 import { ActivityDrawer } from '../components/layout/ActivityDrawer';
 import { ActivityRail } from '../components/layout/ActivityRail';
 import { EntityDrawer } from '../components/layout/EntityDrawer';
+import { RightPaneShell } from '../components/layout/RightPaneShell';
 import { ViewModeBar } from '../components/layout/ViewModeBar';
 import {
   AgentCopilot,
@@ -76,10 +70,7 @@ import { useEditorSession } from '../state/useEditorSession';
 import { useEditorShortcuts } from '../state/useEditorShortcuts';
 import { useMcpBridge } from '../state/useMcpBridge';
 import { useSensorsState } from '../state/useSensorsState';
-import {
-  type RailTabId,
-  useWorkspaceLayoutState,
-} from '../state/useWorkspaceLayoutState';
+import { useWorkspaceLayoutState } from '../state/useWorkspaceLayoutState';
 import { useAiConfiguration } from '../state/AiConfiguration';
 import { useWorkspaceViewMode } from '../state/useWorkspaceViewMode';
 
@@ -160,11 +151,6 @@ interface EditorWorkspaceProps {
   initialDocument: DomainModelDocument;
 }
 
-const RAIL_TITLES: Record<RailTabId, string> = {
-  copilot: 'AI 协同',
-  workshop: '共创工作坊',
-};
-
 const EditorWorkspace = ({
   project,
   initialDocument,
@@ -178,7 +164,21 @@ const EditorWorkspace = ({
     workspaceView.graphMode === 'topology' ? 'topology' : 'swimlane';
   const ledgerActive = workspaceView.mode === 'table';
   const storyActive = workspaceView.mode === 'story';
-  const layout = useWorkspaceLayoutState(workspaceView.toggleLedger);
+  const rightRail = useRef<ImperativePanelHandle>(null);
+  const [rightRailCollapsed, setRightRailCollapsed] = useState(false);
+  const expandRightRail = useCallback(() => {
+    const panel = rightRail.current;
+    if (!panel?.isCollapsed()) return false;
+    panel.expand();
+    return true;
+  }, []);
+  const toggleRightRail = useCallback(() => {
+    if (!expandRightRail()) rightRail.current?.collapse();
+  }, [expandRightRail]);
+  const layout = useWorkspaceLayoutState(
+    workspaceView.toggleLedger,
+    expandRightRail,
+  );
   const {
     state,
     save,
@@ -321,20 +321,6 @@ const EditorWorkspace = ({
     setFocusRequest({ nodeId, token: tokenRef.current });
   }, [workspaceView.mode, state.selection.nodeId]);
 
-  // The inspector is also collapsed from the keyboard, and the imperative handle
-  // is the only way to move a panel without a pointer drag.
-  const rightRail = useRef<ImperativePanelHandle>(null);
-  const toggleRail = useCallback(
-    (rail: RefObject<ImperativePanelHandle | null>) => {
-      const panel = rail.current;
-
-      if (panel === null) return;
-      if (panel.isCollapsed()) panel.expand();
-      else panel.collapse();
-    },
-    [],
-  );
-
   const focusNode = useCallback(
     (nodeId: string) => {
       if (scope !== null && !scope.nodeIds.has(nodeId)) setSelectedScope(null);
@@ -447,15 +433,17 @@ const EditorWorkspace = ({
       openDelivery: layout.openDelivery,
       rerunSensors: () => void sensors.refresh(),
       askAgent: () => {
-        layout.setActiveRailTab('copilot');
+        layout.openCopilot();
         setAgentFocusToken((token) => token + 1);
       },
-      openRail: layout.setActiveRailTab,
+      openCopilot: layout.openCopilot,
+      openWorkshop: layout.openWorkshop,
       openProblems: layout.openProblemsPanel,
       toggleProblems: layout.toggleProblemsPanel,
     }),
     [
-      layout.setActiveRailTab,
+      layout.openCopilot,
+      layout.openWorkshop,
       layout.openDelivery,
       layout.openProblemsPanel,
       layout.toggleProblemsPanel,
@@ -509,9 +497,7 @@ const EditorWorkspace = ({
       resetZoom: () => requestZoom('reset'),
       fitCanvas: () => requestZoom('fit'),
       zoomToSelection: () => requestZoom('selection'),
-      toggleRightRail: () => {
-        toggleRail(rightRail);
-      },
+      toggleRightRail,
       openInlineCopilot: layout.openInlineCopilot,
       toggleProblems: layout.toggleProblemsPanel,
       ...(storyActive ? { closeStory: workspaceView.returnToGraph } : {}),
@@ -529,7 +515,7 @@ const EditorWorkspace = ({
       sensors.refresh,
       state.session,
       storyActive,
-      toggleRail,
+      toggleRightRail,
       workspaceView.returnToGraph,
     ],
   );
@@ -709,7 +695,7 @@ const EditorWorkspace = ({
             pressed={{
               ledger: ledgerActive,
               diagnostics: layout.isProblemsPanelOpen,
-              copilot: layout.activeRailTab === 'copilot',
+              copilot: !rightRailCollapsed && layout.rightPane === 'copilot',
               directory: layout.isDirectoryOpen,
             }}
             onSelect={layout.toggleRailTab}
@@ -739,51 +725,36 @@ const EditorWorkspace = ({
               graph={state.graph}
               selectedNodeId={state.selection.nodeId}
               onReveal={revealOnGraph}
-              onCreate={() => layout.setActiveRailTab('workshop')}
+              onCreate={layout.openWorkshop}
             />
           ) : null}
 
-          {layout.activeRailTab === null ? null : (
+          {layout.isWorkshopOpen ? (
             <div
               className={
-                layout.isRailPinned
+                layout.isWorkshopPinned
                   ? 'h-full w-[300px] shrink-0'
                   : `absolute inset-y-0 z-30 w-[320px] ${layout.isDirectoryOpen ? 'left-[268px]' : 'left-12'}`
               }
             >
               <ActivityDrawer
-                title={RAIL_TITLES[layout.activeRailTab]}
-                pinned={layout.isRailPinned}
-                onTogglePinned={layout.toggleRailPinned}
-                onClose={() => layout.setActiveRailTab(null)}
+                title="共创工作坊"
+                pinned={layout.isWorkshopPinned}
+                onTogglePinned={layout.toggleWorkshopPinned}
+                onClose={layout.closeWorkshop}
               >
-                {layout.activeRailTab === 'workshop' ? (
-                  <WorkshopWizardDrawer
-                    session={state.session}
-                    onFocus={focusNode}
-                    onReview={(text) => {
-                      setCopilotPrefill({ token: Date.now(), text });
-                      layout.setActiveRailTab('copilot');
-                    }}
-                  />
-                ) : null}
-
-                {layout.activeRailTab === 'copilot' ? (
-                  <AgentCopilot
-                    aiConfigured={ai?.aiConfigured}
-                    onConfigureAi={ai?.openSettings}
-                    controller={agent}
-                    patchReview={patchReview}
-                    focus={promptFocus}
-                    onClearFocus={() => state.session.clearSelection()}
-                    focusToken={agentFocusToken}
-                    prefill={copilotPrefill}
-                    onPrefillConsumed={() => setCopilotPrefill(null)}
-                  />
-                ) : null}
+                <WorkshopWizardDrawer
+                  session={state.session}
+                  onFocus={revealOnGraph}
+                  onReview={(text) => {
+                    setCopilotPrefill({ token: Date.now(), text });
+                    layout.closeWorkshop();
+                    layout.openCopilot();
+                  }}
+                />
               </ActivityDrawer>
             </div>
-          )}
+          ) : null}
 
           {/* Keep canvas control layers below the floating activity drawer. */}
           <div
@@ -795,7 +766,24 @@ const EditorWorkspace = ({
               autoSaveId="evidence-studio-horizontal-v2"
             >
               <ResizablePanel id="center-stage" order={1} minSize={35}>
-                {ledgerActive ? ledgerStage : graphStage}
+                <div className="relative h-full min-h-0">
+                  {ledgerActive ? ledgerStage : graphStage}
+                  {layout.isProblemsPanelOpen ? (
+                    <ProblemsPanel
+                      report={sensors.report}
+                      reportStale={diagnosticsStale}
+                      reportLoading={sensors.loading}
+                      reportError={sensors.error}
+                      activeIssueId={layout.activeIssueId}
+                      onFocusIssue={(issue) => {
+                        layout.openProblemsWithIssue(issue.issueId);
+                        focusIssue(issue);
+                      }}
+                      onRerun={() => void sensors.refresh()}
+                      onClose={layout.closeProblemsPanel}
+                    />
+                  ) : null}
+                </div>
               </ResizablePanel>
 
               <ResizableHandle withHandle />
@@ -803,18 +791,43 @@ const EditorWorkspace = ({
               <ResizablePanel
                 id="right-rail"
                 order={2}
-                defaultSize={20}
-                minSize={14}
-                maxSize={26}
+                defaultSize={27.3}
+                minSize={18}
+                maxSize={40}
                 collapsible
                 collapsedSize={0}
+                onCollapse={() => setRightRailCollapsed(true)}
+                onExpand={() => setRightRailCollapsed(false)}
                 ref={rightRail}
               >
-                <RightInspector
-                  graph={state.graph}
-                  session={state.session}
-                  selection={state.selection}
-                />
+                <RightPaneShell
+                  collapsed={rightRailCollapsed}
+                  pane={layout.rightPane}
+                  onShowInspector={layout.showInspector}
+                  onShowCopilot={layout.openCopilot}
+                >
+                  {layout.rightPane === 'inspector' ? (
+                    <RightInspector
+                      graph={state.graph}
+                      session={state.session}
+                      selection={state.selection}
+                      showHeading={false}
+                    />
+                  ) : (
+                    <AgentCopilot
+                      aiConfigured={ai?.aiConfigured}
+                      onConfigureAi={ai?.openSettings}
+                      controller={agent}
+                      patchReview={patchReview}
+                      focus={promptFocus}
+                      onClearFocus={() => state.session.clearSelection()}
+                      onFocusEntity={revealOnGraph}
+                      focusToken={agentFocusToken}
+                      prefill={copilotPrefill}
+                      onPrefillConsumed={() => setCopilotPrefill(null)}
+                    />
+                  )}
+                </RightPaneShell>
               </ResizablePanel>
             </ResizablePanelGroup>
           </div>
@@ -833,27 +846,11 @@ const EditorWorkspace = ({
                 onClose={layout.closeInlineCopilot}
                 onOpenFullInterview={() => {
                   layout.closeInlineCopilot();
-                  layout.setActiveRailTab('copilot');
+                  layout.openCopilot();
                   setAgentFocusToken((token) => token + 1);
                 }}
               />
             </div>
-          ) : null}
-
-          {layout.isProblemsPanelOpen ? (
-            <ProblemsPanel
-              report={sensors.report}
-              reportStale={diagnosticsStale}
-              reportLoading={sensors.loading}
-              reportError={sensors.error}
-              activeIssueId={layout.activeIssueId}
-              onFocusIssue={(issue) => {
-                layout.openProblemsWithIssue(issue.issueId);
-                focusIssue(issue);
-              }}
-              onRerun={() => void sensors.refresh()}
-              onClose={layout.closeProblemsPanel}
-            />
           ) : null}
         </div>
 

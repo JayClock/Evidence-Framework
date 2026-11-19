@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
-/** Drawer destinations; ledger and diagnostics have their own surfaces. */
-export type RailTabId = 'copilot' | 'workshop';
+export type RightPane = 'inspector' | 'copilot';
 
 const ACTIVITY_RAIL_TABS = [
   'ledger',
@@ -12,10 +11,10 @@ const ACTIVITY_RAIL_TABS = [
 export type ActivityRailTabId = (typeof ACTIVITY_RAIL_TABS)[number];
 
 export interface WorkspaceLayoutState {
-  /** Open drawer; null leaves the rail as the only rail-width chrome. */
-  readonly activeRailTab: RailTabId | null;
-  /** A pinned drawer takes layout width; an unpinned one floats over canvas. */
-  readonly isRailPinned: boolean;
+  readonly isWorkshopOpen: boolean;
+  readonly rightPane: RightPane;
+  /** A pinned workshop takes layout width; an unpinned one floats over canvas. */
+  readonly isWorkshopPinned: boolean;
   readonly isDirectoryOpen: boolean;
   readonly isProblemsPanelOpen: boolean;
   readonly activeIssueId: string | null;
@@ -24,9 +23,12 @@ export interface WorkspaceLayoutState {
 }
 
 export interface WorkspaceLayoutActions {
-  setActiveRailTab: (tab: RailTabId | null) => void;
+  openWorkshop: () => void;
+  closeWorkshop: () => void;
+  toggleWorkshopPinned: () => void;
+  openCopilot: () => void;
+  showInspector: () => void;
   toggleRailTab: (tab: ActivityRailTabId) => void;
-  toggleRailPinned: () => void;
   toggleProblemsPanel: () => void;
   openProblemsPanel: () => void;
   openProblemsWithIssue: (issueId: string) => void;
@@ -75,27 +77,30 @@ const isEditable = (target: EventTarget | null): boolean => {
  */
 export const useWorkspaceLayoutState = (
   toggleLedger: () => void,
+  expandRightRail: () => boolean,
 ): WorkspaceLayoutController => {
-  const [activeRailTab, setActiveRailTab] = useState<RailTabId | null>(null);
-  const [isRailPinned, setRailPinned] = useState(false);
+  const [isWorkshopOpen, setWorkshopOpen] = useState(false);
+  const [rightPane, setRightPane] = useState<RightPane>('inspector');
+  const [isWorkshopPinned, setWorkshopPinned] = useState(false);
   const [isDirectoryOpen, setDirectoryOpen] = useState(true);
   const [isProblemsPanelOpen, setProblemsPanelOpen] = useState(false);
   const [activeIssueId, setActiveIssueId] = useState<string | null>(null);
   const [isInlineCopilotOpen, setInlineCopilotOpen] = useState(false);
   const [isDeliveryOpen, setDeliveryOpen] = useState(false);
 
-  const toggleRailPinned = useCallback(() => {
-    setRailPinned((current) => !current);
+  const openWorkshop = useCallback(() => setWorkshopOpen(true), []);
+  const closeWorkshop = useCallback(() => setWorkshopOpen(false), []);
+  const toggleWorkshopPinned = useCallback(() => {
+    setWorkshopPinned((current) => !current);
   }, []);
 
-  /**
-   * One rail button, one surface.
-   *
-   * Diagnostics is the exception on purpose: its list is a strip under the
-   * canvas rather than a drawer beside it, because a finding is read *while*
-   * looking at the object it names. The rail still owns the button, so the
-   * chord and the highlight behave like every other tab.
-   */
+  const openCopilot = useCallback(() => {
+    expandRightRail();
+    setRightPane('copilot');
+  }, [expandRightRail]);
+  const showInspector = useCallback(() => setRightPane('inspector'), []);
+
+  /** Route clicks and shortcuts to the same workspace surfaces. */
   const toggleRailTab = useCallback(
     (tab: ActivityRailTabId) => {
       if (tab === 'ledger') {
@@ -114,9 +119,12 @@ export const useWorkspaceLayoutState = (
         return;
       }
 
-      setActiveRailTab((current) => (current === tab ? null : tab));
+      const reopened = expandRightRail();
+      setRightPane((current) =>
+        reopened || current === 'inspector' ? 'copilot' : 'inspector',
+      );
     },
-    [toggleLedger],
+    [expandRightRail, toggleLedger],
   );
 
   const toggleProblemsPanel = useCallback(() => {
@@ -182,16 +190,20 @@ export const useWorkspaceLayoutState = (
   }, [toggleRailTab]);
 
   return {
-    activeRailTab,
-    isRailPinned,
+    isWorkshopOpen,
+    rightPane,
+    isWorkshopPinned,
     isDirectoryOpen,
     isProblemsPanelOpen,
     activeIssueId,
     isInlineCopilotOpen,
     isDeliveryOpen,
-    setActiveRailTab,
+    openWorkshop,
+    closeWorkshop,
+    toggleWorkshopPinned,
+    openCopilot,
+    showInspector,
     toggleRailTab,
-    toggleRailPinned,
     toggleProblemsPanel,
     openProblemsPanel,
     openProblemsWithIssue,

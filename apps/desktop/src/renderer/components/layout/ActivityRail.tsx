@@ -79,7 +79,7 @@ export const ActivityRail = ({
     aria-label="活动导轨"
     data-region="activity-rail"
     data-workbench-chrome=""
-    className="flex h-full w-12 shrink-0 flex-col items-center gap-2 border-r border-workbench-border bg-white py-2.5"
+    className="flex h-full w-12 shrink-0 flex-col items-center gap-1.5 border-r border-workbench-border bg-white py-2"
   >
     <TooltipProvider>
       {RAIL_ITEMS.map((item) => {

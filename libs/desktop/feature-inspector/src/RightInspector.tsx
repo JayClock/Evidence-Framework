@@ -20,6 +20,8 @@ import { FulfillmentPairSection } from './inspector/FulfillmentPairSection';
 import { KeyDataLedgerSheet } from './inspector/KeyDataLedgerSheet';
 
 interface RightInspectorProps {
+  /** The workspace shell can provide its own heading/switcher. */
+  showHeading?: boolean;
   graph: DomainGraph;
   session: ModelSession;
   selection: ModelSelection;
@@ -67,6 +69,7 @@ const referenceOptions = (
  * field only has to be declared once in `evidence-schema`.
  */
 export const RightInspector = ({
+  showHeading = true,
   graph,
   session,
   selection,
@@ -97,7 +100,11 @@ export const RightInspector = ({
   }, [entity]);
 
   if (entity === undefined) {
-    return <InspectorShell>选择画布上的业务对象查看属性。</InspectorShell>;
+    return (
+      <InspectorShell showHeading={showHeading}>
+        选择画布上的业务对象查看属性。
+      </InspectorShell>
+    );
   }
 
   const attributeCount = entity.attributes?.length ?? 0;
@@ -105,6 +112,7 @@ export const RightInspector = ({
   return (
     <>
       <InspectorShell
+        showHeading={showHeading}
         footer={
           attributeCount === 0 ? null : (
             <button
@@ -166,14 +174,18 @@ export const RightInspector = ({
 const InspectorShell = ({
   children,
   footer,
+  showHeading,
 }: {
   children: React.ReactNode;
   footer?: React.ReactNode;
+  showHeading: boolean;
 }) => (
   <aside className="flex h-full min-h-0 w-full flex-col bg-white/70">
-    <div className="border-b border-evidence-line px-3 py-2 text-[10px] tracking-wide text-evidence-muted uppercase">
-      检视器
-    </div>
+    {showHeading ? (
+      <div className="border-b border-evidence-line px-3 py-2 text-[10px] tracking-wide text-evidence-muted uppercase">
+        检视器
+      </div>
+    ) : null}
     <div className="min-h-0 flex-1 overflow-y-auto px-3 py-2 text-[11px]">
       {children}
     </div>

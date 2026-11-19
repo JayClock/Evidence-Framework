@@ -222,7 +222,7 @@ describe('EditorScreen', () => {
       container.querySelector('[data-node-id="evidence.contract"]'),
     ).not.toBeNull();
     expect(screen.getByText('业务对象 8')).toBeInTheDocument();
-    // Inspection owns the right rail by default; the copilot is a drawer.
+    // Inspection owns the right pane until the modeler switches to Copilot.
     expect(
       screen.getByText('选择画布上的业务对象查看属性。'),
     ).toBeInTheDocument();
@@ -346,7 +346,15 @@ describe('EditorScreen', () => {
 
     expect(screen.queryByLabelText('门禁问题面板')).toBeNull();
     fireEvent.keyDown(window, { code: 'KeyX', altKey: true });
-    expect(await screen.findByLabelText('门禁问题面板')).toBeInTheDocument();
+    const stage = screen
+      .getByLabelText('聚焦范围')
+      .closest('[data-region="workspace-stage"]');
+    expect(stage).toContainElement(
+      await screen.findByLabelText('门禁问题面板'),
+    );
+    expect(
+      screen.getByRole('region', { name: '检查与协同' }),
+    ).not.toContainElement(screen.getByLabelText('门禁问题面板'));
     fireEvent.keyDown(window, { code: 'KeyX', altKey: true });
     expect(screen.queryByLabelText('门禁问题面板')).toBeNull();
   });
@@ -358,22 +366,57 @@ describe('EditorScreen', () => {
     );
     await readyCanvas();
 
-    fireEvent.click(screen.getByRole('button', { name: 'AI 协同' }));
-    const drawer = screen.getByRole('region', { name: 'AI 协同' });
+    const directory = within(
+      screen.getByRole('complementary', { name: '实体目录' }),
+    );
+    fireEvent.click(directory.getByRole('button', { name: '新建' }));
+    const close = screen.getByRole('button', { name: '关闭面板' });
+    const drawer = close.closest<HTMLElement>(
+      '[data-region="activity-drawer"]',
+    );
     const stage = container.querySelector('[data-region="workspace-stage"]');
 
     // jsdom cannot paint overlaps; enforce the stacking boundary instead.
     expect(stage).toHaveClass('isolate');
     expect(stage).toContainElement(screen.getByLabelText('聚焦范围'));
     expect(stage).not.toContainElement(drawer);
-    expect(drawer.parentElement).toHaveClass('absolute', 'z-30');
+    expect(drawer?.parentElement).toHaveClass('absolute', 'z-30');
 
-    fireEvent.click(screen.getByRole('button', { name: '关闭面板' }));
-    expect(screen.queryByRole('region', { name: 'AI 协同' })).toBeNull();
+    fireEvent.click(close);
+    expect(screen.queryByRole('button', { name: '关闭面板' })).toBeNull();
     fireEvent.change(screen.getByLabelText('聚焦范围'), {
       target: { value: 'context.catalog' },
     });
     expect(screen.getByLabelText('聚焦范围')).toHaveValue('context.catalog');
+  });
+
+  it('shares one resizable right pane between inspection and Copilot and reopens it from the rail', async () => {
+    readyProject();
+    render(<EditorScreen rootPath="/models/procurement" />);
+    await readyCanvas();
+
+    const pane = screen.getByRole('region', { name: '检查与协同' });
+    const inspector = within(pane).getByRole('button', {
+      name: '实体属性检查',
+    });
+    const copilot = within(pane).getByRole('button', { name: 'AI Copilot' });
+    const rail = screen.getByRole('button', { name: 'AI 协同' });
+    expect(inspector).toHaveAttribute('aria-pressed', 'true');
+    fireEvent.click(copilot);
+    expect(copilot).toHaveAttribute('aria-pressed', 'true');
+    expect(rail).toHaveAttribute('aria-pressed', 'true');
+    expect(pane).toContainElement(screen.getByLabelText('访谈内容'));
+
+    fireEvent.keyDown(window, { key: 'i', metaKey: true });
+    expect(pane).toHaveAttribute('inert');
+    expect(rail).toHaveAttribute('aria-pressed', 'false');
+    fireEvent.click(rail);
+    expect(pane).not.toHaveAttribute('inert');
+    expect(copilot).toHaveAttribute('aria-pressed', 'true');
+    fireEvent.click(inspector);
+    expect(inspector).toHaveAttribute('aria-pressed', 'true');
+    expect(rail).toHaveAttribute('aria-pressed', 'false');
+    expect(pane).toHaveTextContent('选择画布上的业务对象查看属性。');
   });
 
   it('switches the ledger and still opens rail tools with Mod+1 to Mod+4', async () => {
@@ -424,9 +467,12 @@ describe('EditorScreen', () => {
     ).toBeVisible();
     const contract = directory.getByRole('button', { name: /采购协议/ });
     const request = directory.getByRole('button', { name: /交付请求/ });
-    fireEvent.click(
-      container.querySelector('[data-node-id="evidence.contract"]')!,
+    const contractNode = container.querySelector(
+      '[data-node-id="evidence.contract"]',
     );
+    if (contractNode === null)
+      throw new Error('Expected the contract on canvas');
+    fireEvent.click(contractNode);
     expect(contract).toHaveAttribute('aria-current', 'true');
     fireEvent.change(screen.getByLabelText('聚焦范围'), {
       target: { value: 'context.catalog' },
