@@ -78,7 +78,9 @@ const isEditable = (target: EventTarget | null): boolean => {
 export const useWorkspaceLayoutState = (
   toggleLedger: () => void,
   expandRightRail: () => boolean,
+  ledger?: { active: boolean; returnToGraph: () => void },
 ): WorkspaceLayoutController => {
+  const leaveLedger = ledger?.active ? ledger.returnToGraph : undefined;
   const [isWorkshopOpen, setWorkshopOpen] = useState(false);
   const [rightPane, setRightPane] = useState<RightPane>('inspector');
   const [isWorkshopPinned, setWorkshopPinned] = useState(false);
@@ -88,16 +90,20 @@ export const useWorkspaceLayoutState = (
   const [isInlineCopilotOpen, setInlineCopilotOpen] = useState(false);
   const [isDeliveryOpen, setDeliveryOpen] = useState(false);
 
-  const openWorkshop = useCallback(() => setWorkshopOpen(true), []);
+  const openWorkshop = useCallback(() => {
+    leaveLedger?.();
+    setWorkshopOpen(true);
+  }, [leaveLedger]);
   const closeWorkshop = useCallback(() => setWorkshopOpen(false), []);
   const toggleWorkshopPinned = useCallback(() => {
     setWorkshopPinned((current) => !current);
   }, []);
 
   const openCopilot = useCallback(() => {
+    leaveLedger?.();
     expandRightRail();
     setRightPane('copilot');
-  }, [expandRightRail]);
+  }, [expandRightRail, leaveLedger]);
   const showInspector = useCallback(() => setRightPane('inspector'), []);
 
   /** Route clicks and shortcuts to the same workspace surfaces. */
@@ -109,7 +115,12 @@ export const useWorkspaceLayoutState = (
       }
 
       if (tab === 'directory') {
-        setDirectoryOpen((open) => !open);
+        if (leaveLedger !== undefined) {
+          leaveLedger();
+          setDirectoryOpen(true);
+        } else {
+          setDirectoryOpen((open) => !open);
+        }
         return;
       }
 
@@ -119,12 +130,16 @@ export const useWorkspaceLayoutState = (
         return;
       }
 
+      if (leaveLedger !== undefined) {
+        openCopilot();
+        return;
+      }
       const reopened = expandRightRail();
       setRightPane((current) =>
         reopened || current === 'inspector' ? 'copilot' : 'inspector',
       );
     },
-    [expandRightRail, toggleLedger],
+    [expandRightRail, leaveLedger, openCopilot, toggleLedger],
   );
 
   const toggleProblemsPanel = useCallback(() => {

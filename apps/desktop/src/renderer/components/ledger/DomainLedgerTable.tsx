@@ -1,349 +1,228 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-
+import { useEffect, useId, useMemo, useRef } from 'react';
 import {
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
+import { cn } from '@evidence-poc/desktop-ui-kit';
 
-import type { AttributeAST } from '@evidence-poc/evidence-schema';
-import {
-  updateAttributeMutator,
-  type ModelSession,
-} from '@evidence-poc/evidence-model-core';
-
-import type { DiagnosticIndex } from '@evidence-poc/desktop-feature-canvas';
-import {
-  filterLedgerRows,
-  projectDocumentToLedgerRows,
-  summarizeLedger,
-  type LedgerRow,
-} from './domainLedgerAdapter';
 import { createLedgerColumns } from './domainLedgerColumns';
+import type { useEntityLedger } from './useEntityLedger';
+import type { LedgerCategory } from './entityLedgerProjection';
 
-import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
+const CATEGORY_OPTIONS = [
+  ['all', '全部实体'],
+  ['evidence', '核心凭证 Evidence'],
+  ['participant', '参与角色 Participant'],
+  ['thread', '履约线索 Thread'],
+] as const satisfies readonly (readonly [LedgerCategory, string])[];
+const HEADER_HEIGHT = 40;
+const ROW_HEIGHT = 48;
 
-export interface DomainLedgerTableProps {
-  document: DomainModelDocument;
-  session: ModelSession;
-  diagnostics?: DiagnosticIndex | null;
+interface DomainLedgerTableProps {
+  ledger: ReturnType<typeof useEntityLedger>;
   selectedNodeId: string | null;
-  /** Attribute the canvas or inspector selected, highlighted on its row. */
-  selectedAttributeName?: string | null;
-  /** Pans the graph to the object and leaves the table mode. */
-  onRevealOnGraph?: (entityId: string) => void;
+  onRevealOnGraph: (entityId: string) => void;
 }
 
-const HEADER_HEIGHT = 30;
-const ROW_HEIGHT = 34;
-const CONTEXT_ROW_HEIGHT = 30;
-
-/**
- * The whole model as one dense ledger.
- *
- * A canvas answers "how does this business hold together"; forty fields on eight
- * objects answer a different question — "which contract is still missing a
- * provider". The table reads the same session the canvas reads, so editing a
- * label here is the same command (and the same undo step) as editing it in the
- * inspector; the context line and the entity line are summaries that keep the
- * list navigable without a second outline.
- */
 export const DomainLedgerTable = ({
-  document,
-  session,
-  diagnostics = null,
+  ledger,
   selectedNodeId,
-  selectedAttributeName = null,
   onRevealOnGraph,
 }: DomainLedgerTableProps) => {
-  const [query, setQuery] = useState('');
-  const [onlyIssues, setOnlyIssues] = useState(false);
-  const [collapsed, setCollapsed] = useState<ReadonlySet<string>>(new Set());
-  const scrollRef = useRef<HTMLDivElement | null>(null);
-
-  const projected = useMemo(
-    () => projectDocumentToLedgerRows(document, diagnostics),
-    [document, diagnostics],
-  );
-  const summary = useMemo(() => summarizeLedger(projected), [projected]);
-
-  const visibleRows = useMemo(
-    () =>
-      filterLedgerRows(projected, {
-        query,
-        onlyIssues,
-        collapsedContextIds: collapsed,
-      }),
-    [projected, query, onlyIssues, collapsed],
-  );
-
-  const toggleContext = (rowId: string) => {
-    setCollapsed((current) => {
-      const next = new Set(current);
-      if (next.has(rowId)) next.delete(rowId);
-      else next.add(rowId);
-      return next;
-    });
-  };
-
-  const updateAttribute = useCallback(
-    (entityId: string, attributeName: string, patch: Partial<AttributeAST>) => {
-      session.mutate(
-        (draft) =>
-          updateAttributeMutator(draft, entityId, attributeName, patch),
-        'update-attribute',
-      );
-    },
-    [session],
-  );
-
+  const { category, setCategory, query, setQuery, counts, rows } = ledger;
+  const categoryGroup = useId();
+  const scrollRef = useRef<HTMLDivElement>(null);
   const columns = useMemo(
-    () =>
-      createLedgerColumns({
-        onSelect: (row) => {
-          if (row.entityId === null) return;
-          session.selectAttribute(row.entityId, row.attribute?.name ?? null);
-        },
-        ...(onRevealOnGraph === undefined ? {} : { onRevealOnGraph }),
-        onUpdateAttribute: updateAttribute,
-      }),
-    [session, updateAttribute, onRevealOnGraph],
+    () => createLedgerColumns(onRevealOnGraph),
+    [onRevealOnGraph],
   );
-
   const table = useReactTable({
-    data: visibleRows,
+    data: rows,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getRowId: (row) => row.id,
   });
-
-  const rows = table.getRowModel().rows;
-  const columnWidth =
-    table
-      .getVisibleLeafColumns()
-      .reduce((total, column) => total + column.getSize(), 0) + 24;
-
+  const bodyRows = table.getRowModel().rows;
+  const leaves = table.getVisibleLeafColumns();
   const virtualizer = useVirtualizer({
-    count: rows.length,
+    count: bodyRows.length,
     getScrollElement: () => scrollRef.current,
-    estimateSize: (index) =>
-      rows[index]?.original.rowKind === 'context'
-        ? CONTEXT_ROW_HEIGHT
-        : ROW_HEIGHT,
-    overscan: 12,
-    // jsdom has no layout, and the first paint before the observer reports one
-    // should already show rows instead of an empty scroll surface.
+    getItemKey: (index) => bodyRows[index]?.id ?? index,
+    estimateSize: () => ROW_HEIGHT,
+    paddingStart: HEADER_HEIGHT,
+    scrollPaddingStart: HEADER_HEIGHT,
+    overscan: 10,
     initialRect: { width: 1200, height: 640 },
   });
-
-  const selectedIndex = useMemo(
-    () =>
-      selectedNodeId === null
-        ? -1
-        : rows.findIndex(
-            ({ original }) =>
-              original.rowKind === 'entity' &&
-              original.entityId === selectedNodeId,
-          ),
-    [rows, selectedNodeId],
-  );
-
-  // Opening the ledger from a canvas selection lands on the selected object.
+  const selectedIndex = rows.findIndex(({ id }) => id === selectedNodeId);
   useEffect(() => {
-    if (selectedIndex >= 0) {
+    if (selectedIndex >= 0)
       virtualizer.scrollToIndex(selectedIndex, { align: 'auto' });
-    }
-  }, [selectedIndex, virtualizer]);
+    else virtualizer.scrollToOffset(0);
+  }, [category, query, selectedIndex, virtualizer]);
 
-  const selected = (row: LedgerRow): boolean => {
-    if (row.entityId === null || row.entityId !== selectedNodeId) return false;
-    if (row.rowKind === 'entity') return selectedAttributeName === null;
-    return row.attribute?.name === selectedAttributeName;
-  };
+  const items = virtualizer.getVirtualItems();
+  const before = (items[0]?.start ?? HEADER_HEIGHT) - HEADER_HEIGHT;
+  const after =
+    virtualizer.getTotalSize() - (items.at(-1)?.end ?? HEADER_HEIGHT);
 
   return (
     <section
       aria-label="领域模型总台账"
       data-region="domain-ledger"
-      className="flex h-full w-full min-h-0 flex-col bg-white"
+      className="flex h-full min-h-0 w-full min-w-0 flex-col gap-4 bg-workbench-background px-4 py-6 lg:px-8"
     >
-      <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-evidence-line bg-evidence-surface/60 px-3 py-1.5">
-        <div className="flex min-w-0 items-center gap-2">
-          <span className="text-[11px] font-semibold text-evidence-ink">
-            领域总台账
-          </span>
-          <span className="rounded bg-white px-1.5 py-0.5 text-[10px] text-evidence-muted">
-            {summary.entities} 个实体 · {summary.attributes} 个字段
-          </span>
-          {summary.decisionOwed === 0 ? (
-            <span className="rounded-full bg-[#eaf3ee] px-2 py-0.5 text-[10px] text-evidence-participant">
-              台账已闭合
-            </span>
-          ) : (
-            <span className="rounded-full bg-[#fdeef2] px-2 py-0.5 text-[10px] font-medium text-evidence-evidence">
-              {summary.decisionOwed} 项待决
-            </span>
-          )}
-        </div>
-
-        <div className="flex items-center gap-1.5">
-          <input
-            type="search"
-            value={query}
-            aria-label="台账筛选"
-            placeholder="按实体、属性或上下文筛选…"
-            onChange={(event) => setQuery(event.target.value)}
-            className="w-56 rounded border border-evidence-line bg-white px-2 py-1 text-[11px] text-evidence-ink placeholder:text-evidence-muted focus:border-evidence-accent focus:outline-none"
-          />
-          <button
-            type="button"
-            aria-pressed={onlyIssues}
-            onClick={() => setOnlyIssues((current) => !current)}
-            className={[
-              'rounded border px-2 py-1 text-[11px]',
-              onlyIssues
-                ? 'border-[#b42318] bg-[#fdf3f1] text-[#b42318]'
-                : 'border-evidence-line text-evidence-muted hover:text-evidence-ink',
-            ].join(' ')}
-          >
-            {onlyIssues ? '● 仅看门禁发现' : '全部门禁'}
-          </button>
-        </div>
+      <div className="flex shrink-0 flex-wrap items-center justify-between gap-3">
+        <fieldset className="flex min-w-0 flex-wrap gap-1.5">
+          <legend className="sr-only">实体分类</legend>
+          {CATEGORY_OPTIONS.map(([value, label]) => (
+            <label key={value} className="inline-flex cursor-pointer">
+              <input
+                type="radio"
+                name={categoryGroup}
+                checked={category === value}
+                onChange={() => setCategory(value)}
+                className="peer sr-only"
+              />
+              <span className="inline-flex h-8 items-center rounded-md border border-workbench-border bg-white px-3 text-[11px] text-evidence-ink hover:bg-workbench-subtle peer-checked:border-evidence-accent peer-checked:bg-evidence-accent peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-evidence-ring">
+                {label} ({counts[value]})
+              </span>
+            </label>
+          ))}
+        </fieldset>
+        <input
+          type="search"
+          aria-label="过滤实体或 CEL 规则"
+          placeholder="过滤实体或 CEL 规则..."
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          className="h-8 w-60 max-w-full rounded-md border border-workbench-border bg-white px-2.5 text-[11px] text-evidence-ink placeholder:text-workbench-muted focus-visible:border-evidence-accent focus-visible:ring-2 focus-visible:ring-evidence-ring focus-visible:outline-none"
+        />
       </div>
 
-      <div ref={scrollRef} className="min-h-0 flex-1 overflow-auto">
-        <div style={{ minWidth: columnWidth }}>
-          <div
-            role="row"
-            className="sticky top-0 z-10 grid border-b border-evidence-line bg-[#f6f8fa]"
-            style={{
-              gridTemplateColumns: table
-                .getVisibleLeafColumns()
-                .map((column) => `${column.getSize()}px`)
-                .join(' '),
-              height: HEADER_HEIGHT,
-            }}
-          >
-            {table.getFlatHeaders().map((header) => (
-              <div
-                key={header.id}
-                role="columnheader"
-                className="flex items-center overflow-hidden px-2 text-[10px] font-medium tracking-wide text-evidence-muted uppercase"
-              >
-                {flexRender(
-                  header.column.columnDef.header,
-                  header.getContext(),
-                )}
-              </div>
+      <div
+        ref={scrollRef}
+        role="region"
+        aria-label="实体表格滚动区域"
+        tabIndex={0}
+        className="min-h-0 flex-1 overflow-auto scroll-pt-10 rounded-lg border border-workbench-border bg-white focus-visible:ring-2 focus-visible:ring-evidence-ring focus-visible:outline-none"
+      >
+        <table
+          aria-rowcount={rows.length + 1}
+          className="w-full table-fixed border-separate border-spacing-0 text-left text-xs text-evidence-ink"
+          style={{ minWidth: table.getTotalSize() }}
+        >
+          <caption className="sr-only">领域实体与门禁发现</caption>
+          <colgroup>
+            {leaves.map((column) => (
+              <col
+                key={column.id}
+                style={
+                  column.id === 'invariants'
+                    ? undefined
+                    : { width: column.getSize() }
+                }
+              />
             ))}
-          </div>
-
-          <div
-            style={{
-              height: virtualizer.getTotalSize(),
-              position: 'relative',
-            }}
-          >
-            {virtualizer.getVirtualItems().map((virtualRow) => {
-              const row = rows[virtualRow.index]?.original;
-              if (row === undefined) return null;
-
-              const gridStyle = {
-                gridTemplateColumns: table
-                  .getVisibleLeafColumns()
-                  .map((column) => `${column.getSize()}px`)
-                  .join(' '),
-                height: virtualRow.size,
-                transform: `translateY(${virtualRow.start}px)`,
-              };
-
-              if (row.rowKind === 'context') {
-                const isCollapsed = collapsed.has(row.rowId);
-
-                return (
-                  <button
-                    key={row.rowId}
-                    type="button"
-                    role="row"
-                    aria-expanded={!isCollapsed}
-                    data-ledger-row={row.rowId}
-                    onClick={() => toggleContext(row.rowId)}
-                    style={gridStyle}
-                    className="absolute top-0 left-0 flex w-full items-center gap-2 border-b border-evidence-line/60 bg-[#fbfcfd] px-2 text-left hover:bg-[#f2f5f9]"
+          </colgroup>
+          <thead className="sticky top-0 z-20 bg-workbench-background">
+            {table.getHeaderGroups().map((group) => (
+              <tr
+                key={group.id}
+                aria-rowindex={1}
+                style={{ height: HEADER_HEIGHT }}
+              >
+                {group.headers.map((header) => (
+                  <th
+                    key={header.id}
+                    scope="col"
+                    className={cn(
+                      'border-b border-workbench-border px-4 text-[11px] font-semibold text-workbench-muted',
+                      header.column.id === 'id' &&
+                        'sticky left-0 z-10 bg-workbench-background',
+                    )}
                   >
-                    <span className="w-3 text-[9px] text-evidence-muted">
-                      {isCollapsed ? '▶' : '▼'}
-                    </span>
-                    <span className="truncate text-[11px] font-semibold text-evidence-ink">
-                      {row.contextLabel}
-                    </span>
-                    <span className="text-[10px] text-evidence-muted">
-                      {row.childCount} 个实体
-                    </span>
-                    {row.decisionOwedCount > 0 ? (
-                      <span className="text-[10px] text-evidence-evidence">
-                        {row.decisionOwedCount} 项待决
-                      </span>
-                    ) : null}
-                    {row.issueCount > 0 ? (
-                      <span className="text-[10px] text-[#8d6200]">
-                        {row.issueCount} 项发现
-                      </span>
-                    ) : null}
-                  </button>
-                );
-              }
-
-              const cells = rows[virtualRow.index]?.getVisibleCells() ?? [];
-
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext(),
+                    )}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            <SpacerRow height={before} columns={leaves.length} />
+            {items.map((item) => {
+              const row = bodyRows[item.index];
+              if (row === undefined) return null;
+              const selected = row.id === selectedNodeId;
               return (
-                <div
-                  key={row.rowId}
-                  role="row"
-                  data-ledger-row={row.rowId}
-                  onClick={() => {
-                    if (row.entityId === null) return;
-
-                    session.selectAttribute(
-                      row.entityId,
-                      row.attribute?.name ?? null,
-                    );
-                  }}
-                  style={gridStyle}
-                  data-row-entity={row.entityId ?? undefined}
-                  className={[
-                    'absolute top-0 left-0 grid w-full cursor-default items-center border-b border-evidence-line/40',
-                    selected(row)
-                      ? 'bg-evidence-accent/10'
-                      : row.rowKind === 'entity'
-                        ? 'bg-white hover:bg-evidence-surface/70'
-                        : 'bg-white hover:bg-evidence-surface/40',
-                  ].join(' ')}
+                <tr
+                  key={row.id}
+                  aria-rowindex={item.index + 2}
+                  data-ledger-row={row.id}
+                  data-selected={selected || undefined}
+                  className={cn(
+                    selected
+                      ? 'bg-evidence-active'
+                      : item.index % 2 === 0
+                        ? 'bg-white'
+                        : 'bg-[#fcfcfd]',
+                    !selected && 'hover:bg-workbench-background',
+                  )}
+                  style={{ height: ROW_HEIGHT }}
                 >
-                  {cells.map((cell) => (
-                    <div
-                      key={cell.id}
-                      role="gridcell"
-                      className="flex min-w-0 items-center px-2 py-1"
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </div>
-                  ))}
-                </div>
+                  {row.getVisibleCells().map((cell) => {
+                    const isId = cell.column.id === 'id';
+                    const Cell = isId ? 'th' : 'td';
+                    return (
+                      <Cell
+                        key={cell.id}
+                        scope={isId ? 'row' : undefined}
+                        className={cn(
+                          'truncate border-b border-workbench-subtle px-4',
+                          isId && 'sticky left-0 z-10 bg-inherit font-normal',
+                          isId &&
+                            selected &&
+                            'shadow-[inset_2px_0_var(--color-evidence-accent)]',
+                        )}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </Cell>
+                    );
+                  })}
+                </tr>
               );
             })}
-          </div>
-        </div>
-
-        {visibleRows.length === 0 ? (
-          <p className="px-4 py-6 text-center text-[11px] text-evidence-muted">
-            没有匹配的实体或字段。
+            <SpacerRow height={after} columns={leaves.length} />
+          </tbody>
+        </table>
+        {rows.length === 0 ? (
+          <p className="px-4 py-8 text-center text-xs text-workbench-muted">
+            {category === 'thread'
+              ? '当前履约模型没有独立的 Thread 实体。'
+              : query.trim() === ''
+                ? '此分类暂无实体。'
+                : '未找到匹配的实体或 CEL 规则。'}
           </p>
         ) : null}
       </div>
+      <p role="status" className="sr-only">
+        {rows.length} 个匹配实体
+      </p>
     </section>
   );
 };
+
+const SpacerRow = ({ height, columns }: { height: number; columns: number }) =>
+  height > 0 ? (
+    <tr aria-hidden="true">
+      <td colSpan={columns} className="p-0" style={{ height }} />
+    </tr>
+  ) : null;

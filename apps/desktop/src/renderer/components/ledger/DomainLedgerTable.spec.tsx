@@ -1,235 +1,118 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { fireEvent, render, screen, within } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { createModelSession } from '@evidence-poc/evidence-model-core';
-
-import type {
-  DiagnosticIndex,
-  DiagnosticStatus,
-} from '@evidence-poc/desktop-feature-canvas';
+import type { DiagnosticIndex } from '@evidence-poc/desktop-feature-canvas';
 import { createDesktopFixture } from '@evidence-poc/desktop-testing';
 import { DomainLedgerTable } from './DomainLedgerTable';
+import { useEntityLedger } from './useEntityLedger';
 
-// jsdom reports every element as zero-sized, and the virtual list only renders
-// the rows inside its measured viewport. A real window measures itself.
-beforeAll(() => {
-  Object.defineProperty(HTMLElement.prototype, 'clientHeight', {
-    configurable: true,
-    value: 640,
-  });
-  Object.defineProperty(HTMLElement.prototype, 'clientWidth', {
-    configurable: true,
-    value: 1200,
-  });
+const model = createDesktopFixture();
+model.rules.push({
+  type: 'rule',
+  id: 'rule.contract-date',
+  label: '合同时间',
+  description: '合同签署先于请求',
+  kind: 'invariant',
+  contextRef: 'context.procurement',
+  bindings: {
+    contract: { ref: 'evidence.contract' },
+    limit: { type: 'timestamp' },
+  },
+  expression: 'contract.signed_at < limit',
+  resultType: 'bool',
 });
 
-afterAll(() => {
-  Reflect.deleteProperty(HTMLElement.prototype, 'clientHeight');
-  Reflect.deleteProperty(HTMLElement.prototype, 'clientWidth');
-});
-
-const sessionOf = () =>
-  createModelSession({ document: createDesktopFixture() });
-
-const ledgerRow = (container: HTMLElement, id: string): HTMLElement => {
-  const element = container.querySelector<HTMLElement>(
-    `[data-ledger-row="${id}"]`,
+const renderLedger = (diagnostics: DiagnosticIndex | null = null) => {
+  const reveal = vi.fn();
+  const Ledger = () => (
+    <DomainLedgerTable
+      ledger={useEntityLedger(model, diagnostics, true)}
+      selectedNodeId="evidence.contract"
+      onRevealOnGraph={reveal}
+    />
   );
-
-  if (element === null) throw new Error(`missing ledger row: ${id}`);
-
-  return element;
+  render(<Ledger />);
+  return reveal;
 };
 
-const renderTable = (
-  session: ReturnType<typeof sessionOf>,
-  overrides: Partial<Parameters<typeof DomainLedgerTable>[0]> = {},
-) =>
-  render(
-    <DomainLedgerTable
-      document={session.getDocument()}
-      session={session}
-      selectedNodeId={null}
-      {...overrides}
-    />,
-  );
-
-const diagnostics = (): DiagnosticIndex =>
-  new Map<string, DiagnosticStatus>([
-    [
-      'evidence.contract',
-      {
-        severity: 'warn' as const,
-        issues: [
-          {
-            issueId: 'issue.contract',
-            severity: 'warn' as const,
-            source: 'check_fm' as const,
-            code: 'FM_CONTRACT_ROLE',
-            message: '合同角色缺失。',
-            targetNodeId: 'evidence.contract',
-          },
-        ],
-      },
-    ],
-  ]);
+const rowFor = (id: string) => {
+  const row = screen.getByRole('rowheader', { name: id }).closest('tr');
+  if (row === null) throw new Error(`Missing row for ${id}`);
+  return row;
+};
 
 describe('DomainLedgerTable', () => {
-  it('reads the whole model as contexts, entities and fields', () => {
-    const session = sessionOf();
-
-    const { container } = renderTable(session);
-
-    expect(screen.getByLabelText('领域模型总台账')).toBeInTheDocument();
-    expect(screen.getByText('8 个实体 · 4 个字段')).toBeInTheDocument();
+  // TanStack measures client dimensions after mounting; jsdom has no layout.
+  beforeEach(() => {
+    vi.spyOn(HTMLElement.prototype, 'clientHeight', 'get').mockReturnValue(640);
+  });
+  afterEach(() => vi.restoreAllMocks());
+  it('renders a semantic table with the seven design columns, not field editor rows', () => {
+    renderLedger();
+    const table = screen.getByRole('table', { name: '领域实体与门禁发现' });
+    expect(table).toHaveAttribute('aria-rowcount', '9');
     expect(
-      container.querySelector('[data-ledger-row="context.procurement"]'),
-    ).not.toBeNull();
-    expect(
-      container.querySelector(
-        '[data-ledger-row="evidence.contract#signed_at"]',
-      ),
-    ).not.toBeNull();
-    // Every fixture field is a recorded fact, none is derived.
-    expect(screen.getAllByText('—— 事实录入 ——')).toHaveLength(4);
-    expect(screen.getByDisplayValue('签署时间')).toBeInTheDocument();
+      within(table)
+        .getAllByRole('columnheader')
+        .map((header) => header.textContent),
+    ).toEqual([
+      '实体标识 (ID)',
+      '中文名称 / 分类',
+      '所属上下文 (Context)',
+      '字段数',
+      '业务不变量 (CEL 规则)',
+      '门禁状态',
+      '操作',
+    ]);
+    const row = rowFor('evidence.contract');
+    expect(row).toHaveAttribute('data-selected', 'true');
+    expect(row).toHaveTextContent('context.procurement');
+    expect(row).toHaveTextContent('1 个字段');
+    expect(row).toHaveTextContent('contract.signed_at < limit');
+    expect(row).toHaveTextContent('待检查');
+    expect(within(table).queryByRole('textbox')).toBeNull();
   });
 
-  it('narrows the ledger to the field that matched and keeps its owner', () => {
-    const session = sessionOf();
-
-    const { container } = renderTable(session);
-    fireEvent.change(screen.getByLabelText('台账筛选'), {
-      target: { value: '交付请求' },
+  it('combines category counts and CEL filtering and explains the Thread empty state', () => {
+    renderLedger();
+    const search = screen.getByRole('searchbox', {
+      name: '过滤实体或 CEL 规则',
     });
-
-    expect(
-      container.querySelector('[data-ledger-row="evidence.request"]'),
-    ).not.toBeNull();
-    expect(
-      container.querySelector(
-        '[data-ledger-row="evidence.request#started_at"]',
-      ),
-    ).not.toBeNull();
-    // The contract is filtered out, and so is its field.
-    expect(
-      container.querySelector('[data-ledger-row="evidence.contract"]'),
-    ).toBeNull();
-    expect(
-      container.querySelector(
-        '[data-ledger-row="evidence.contract#signed_at"]',
-      ),
-    ).toBeNull();
-  });
-
-  it('narrows a matched block to the matching field', () => {
-    const session = sessionOf();
-
-    const { container } = renderTable(session);
-    fireEvent.change(screen.getByLabelText('台账筛选'), {
-      target: { value: '签署时间' },
-    });
-
-    expect(
-      container.querySelector(
-        '[data-ledger-row="evidence.contract#signed_at"]',
-      ),
-    ).not.toBeNull();
-    expect(
-      container.querySelector('[data-ledger-row="evidence.request"]'),
-    ).toBeNull();
-  });
-
-  it('commits a label edit through the command bus and undoes it', async () => {
-    const session = sessionOf();
-
-    renderTable(session);
-
-    const input = screen.getByLabelText('业务名: 签署时间');
-    fireEvent.focus(input);
-    fireEvent.change(input, { target: { value: '合同签署时间' } });
-    fireEvent.blur(input);
-
-    await waitFor(() => {
-      const contract = session.getGraph().getEntity('evidence.contract');
-      expect(contract?.attributes?.[0]?.label).toBe('合同签署时间');
-    });
-    expect(session.canUndo()).toBe(true);
-
-    session.undo();
-    expect(
-      session.getGraph().getEntity('evidence.contract')?.attributes?.[0]?.label,
-    ).toBe('签署时间');
-  });
-
-  it('selects the attribute a row stands for', () => {
-    const session = sessionOf();
-
-    const { container } = renderTable(session);
-    fireEvent.click(ledgerRow(container, 'evidence.contract#signed_at'));
-
-    expect(session.getSelection()).toEqual({
-      nodeId: 'evidence.contract',
-      attributeName: 'signed_at',
-    });
-  });
-
-  it('collapses a context to its summary line', () => {
-    const session = sessionOf();
-
-    const { container } = renderTable(session);
-    const contextRow = () => ledgerRow(container, 'context.procurement');
-
-    expect(contextRow()).toHaveAttribute('aria-expanded', 'true');
-    fireEvent.click(contextRow());
-
-    expect(contextRow()).toHaveAttribute('aria-expanded', 'false');
-    expect(
-      container.querySelector('[data-ledger-row="evidence.contract"]'),
-    ).toBeNull();
-    // The summary keeps the count the hidden children would have shown.
-    expect(contextRow().textContent).toContain('5 个实体');
-
-    fireEvent.click(contextRow());
-    expect(
-      container.querySelector('[data-ledger-row="evidence.contract"]'),
-    ).not.toBeNull();
-  });
-
-  it('shows only findings when the toolbar asks for issues', () => {
-    const session = sessionOf();
-
-    const { container } = renderTable(session, {
-      diagnostics: diagnostics(),
-    });
-    // The default grid still shows a clean entity.
-    expect(
-      container.querySelector('[data-ledger-row="evidence.confirmation"]'),
-    ).not.toBeNull();
-
-    fireEvent.click(screen.getByText('全部门禁'));
-
-    expect(screen.getByText(/仅看门禁发现/)).toBeInTheDocument();
-    expect(
-      container.querySelector('[data-ledger-row="evidence.contract"]'),
-    ).not.toBeNull();
-    expect(
-      container.querySelector('[data-ledger-row="evidence.confirmation"]'),
-    ).toBeNull();
-  });
-
-  it('highlights the attribute selected on another surface', () => {
-    const session = sessionOf();
-    const { container } = renderTable(session, {
-      selectedNodeId: 'evidence.contract',
-      selectedAttributeName: 'signed_at',
-    });
-
-    expect(ledgerRow(container, 'evidence.contract#signed_at')).toHaveClass(
-      'bg-evidence-accent/10',
+    fireEvent.click(
+      screen.getByRole('radio', { name: '核心凭证 Evidence (3)' }),
     );
-    expect(ledgerRow(container, 'evidence.contract')).not.toHaveClass(
-      'bg-evidence-accent/10',
+    expect(screen.getAllByRole('rowheader')).toHaveLength(3);
+    fireEvent.change(search, { target: { value: 'SIGNED_AT <' } });
+    expect(screen.getAllByRole('rowheader')).toHaveLength(1);
+    expect(rowFor('evidence.contract')).toBeInTheDocument();
+    fireEvent.click(
+      screen.getByRole('radio', { name: '参与角色 Participant (5)' }),
     );
+    expect(screen.getByText('未找到匹配的实体或 CEL 规则。')).toBeVisible();
+    fireEvent.change(search, { target: { value: '' } });
+    expect(screen.getAllByRole('rowheader')).toHaveLength(5);
+    fireEvent.click(screen.getByRole('radio', { name: '履约线索 Thread (0)' }));
+    expect(
+      screen.getByText('当前履约模型没有独立的 Thread 实体。'),
+    ).toBeVisible();
+    fireEvent.click(screen.getByRole('radio', { name: '全部实体 (8)' }));
+    expect(screen.getAllByRole('rowheader')).toHaveLength(8);
+  });
+
+  it('renders current diagnostics and sends the entity ID to the graph', () => {
+    const reveal = renderLedger(
+      new Map([
+        ['evidence.request', { severity: 'warn', issues: [] }],
+        ['evidence.contract', { severity: 'block', issues: [] }],
+      ]),
+    );
+    const contract = rowFor('evidence.contract');
+    expect(contract).toHaveTextContent('阻断');
+    expect(rowFor('evidence.request')).toHaveTextContent('警告');
+    expect(screen.getAllByText('通过')).toHaveLength(6);
+    fireEvent.click(
+      within(contract).getByRole('button', { name: /在画布中定位/ }),
+    );
+    expect(reveal).toHaveBeenCalledExactlyOnceWith('evidence.contract');
   });
 });

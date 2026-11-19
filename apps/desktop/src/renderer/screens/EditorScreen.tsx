@@ -17,6 +17,8 @@ import {
   type CommandTarget,
 } from '../components/command/CommandPalette';
 import { DomainLedgerTable } from '../components/ledger/DomainLedgerTable';
+import { downloadLedgerCsv } from '../components/ledger/domainLedgerCsv';
+import { useEntityLedger } from '../components/ledger/useEntityLedger';
 import { CanvasFloatingHud } from '../components/canvas/CanvasFloatingHud';
 import { ActivityDrawer } from '../components/layout/ActivityDrawer';
 import { ActivityRail } from '../components/layout/ActivityRail';
@@ -59,6 +61,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
   Toaster,
+  toast,
 } from '@evidence-poc/desktop-ui-kit';
 import type {
   CommandCapabilities,
@@ -178,6 +181,7 @@ const EditorWorkspace = ({
   const layout = useWorkspaceLayoutState(
     workspaceView.toggleLedger,
     expandRightRail,
+    { active: ledgerActive, returnToGraph: workspaceView.returnToGraph },
   );
   const {
     state,
@@ -260,6 +264,11 @@ const EditorWorkspace = ({
         state.document,
       ),
     [diagnosticsStale, sensors.report, state.document],
+  );
+  const entityLedger = useEntityLedger(
+    state.document,
+    diagnosticsStale ? null : diagnostics,
+    ledgerActive,
   );
   useEffect(() => {
     if (state.savedAt !== null) void sensors.refresh();
@@ -555,21 +564,29 @@ const EditorWorkspace = ({
     state.document.manifest.id,
   ]);
 
-  const revealOnGraph = (nodeId: string) => {
-    focusNode(nodeId);
-    workspaceView.returnToGraph();
-  };
-
-  const ledgerStage = (
-    <DomainLedgerTable
-      document={state.document}
-      session={state.session}
-      diagnostics={diagnostics}
-      selectedNodeId={state.selection.nodeId}
-      selectedAttributeName={state.selection.attributeName}
-      onRevealOnGraph={revealOnGraph}
-    />
+  const revealOnGraph = useCallback(
+    (nodeId: string) => {
+      focusNode(nodeId);
+      workspaceView.returnToGraph();
+    },
+    [focusNode, workspaceView.returnToGraph],
   );
+
+  const problemsPanel = layout.isProblemsPanelOpen ? (
+    <ProblemsPanel
+      report={sensors.report}
+      reportStale={diagnosticsStale}
+      reportLoading={sensors.loading}
+      reportError={sensors.error}
+      activeIssueId={layout.activeIssueId}
+      onFocusIssue={(issue) => {
+        layout.openProblemsWithIssue(issue.issueId);
+        focusIssue(issue);
+      }}
+      onRerun={() => void sensors.refresh()}
+      onClose={layout.closeProblemsPanel}
+    />
+  ) : null;
 
   const graphStage = (
     <div
@@ -633,58 +650,74 @@ const EditorWorkspace = ({
           selection={state.selection}
           onSave={() => void save()}
           onOpenCommandPalette={() => setPaletteOpen(true)}
-        />
-
-        <ViewModeBar
-          mode={workspaceView.mode}
-          onChange={workspaceView.setMode}
-          storyControls={
-            storyActive ? (
-              <>
-                <StoryPlayerBar
-                  playback={story}
-                  onExit={workspaceView.returnToGraph}
-                  aiConfigured={ai?.aiConfigured}
-                  onConfigureAi={ai?.openSettings}
-                />
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <button
-                      type="button"
-                      className="rounded border border-evidence-line px-2 py-1 text-[11px]"
-                    >
-                      剧情详情
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent
-                    align="end"
-                    aria-label="剧情详情"
-                    onInteractOutside={(event) => {
-                      if (
-                        event.target instanceof Element &&
-                        event.target.closest('[data-story-toolbar]')
-                      ) {
-                        // Let readers step through scenes with details open.
-                        event.preventDefault();
-                      }
-                    }}
-                    className="h-[min(70vh,var(--radix-popover-content-available-height))] w-[min(32rem,calc(100vw-2rem))] p-0"
-                  >
-                    <StoryDrawer
-                      aiConfigured={ai?.aiConfigured}
-                      onConfigureAi={ai?.openSettings}
-                      playback={story}
-                      dirty={state.dirty}
-                      externalConflict={
-                        state.dirty && state.externalChangeAt !== null
-                      }
-                    />
-                  </PopoverContent>
-                </Popover>
-              </>
-            ) : null
+          ledgerExport={
+            ledgerActive
+              ? {
+                  enabled: entityLedger.rows.length > 0,
+                  onExport: () => {
+                    try {
+                      downloadLedgerCsv(state.project.name, entityLedger.rows);
+                    } catch {
+                      toast.error('无法导出总台账 CSV');
+                    }
+                  },
+                }
+              : undefined
           }
         />
+
+        {!ledgerActive ? (
+          <ViewModeBar
+            mode={workspaceView.mode}
+            onChange={workspaceView.setMode}
+            storyControls={
+              storyActive ? (
+                <>
+                  <StoryPlayerBar
+                    playback={story}
+                    onExit={workspaceView.returnToGraph}
+                    aiConfigured={ai?.aiConfigured}
+                    onConfigureAi={ai?.openSettings}
+                  />
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button
+                        type="button"
+                        className="rounded border border-evidence-line px-2 py-1 text-[11px]"
+                      >
+                        剧情详情
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      align="end"
+                      aria-label="剧情详情"
+                      onInteractOutside={(event) => {
+                        if (
+                          event.target instanceof Element &&
+                          event.target.closest('[data-story-toolbar]')
+                        ) {
+                          // Let readers step through scenes with details open.
+                          event.preventDefault();
+                        }
+                      }}
+                      className="h-[min(70vh,var(--radix-popover-content-available-height))] w-[min(32rem,calc(100vw-2rem))] p-0"
+                    >
+                      <StoryDrawer
+                        aiConfigured={ai?.aiConfigured}
+                        onConfigureAi={ai?.openSettings}
+                        playback={story}
+                        dirty={state.dirty}
+                        externalConflict={
+                          state.dirty && state.externalChangeAt !== null
+                        }
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </>
+              ) : null
+            }
+          />
+        ) : null}
 
         {liveModel.error === null ? null : (
           <p role="alert">实时诊断同步失败：{liveModel.error}</p>
@@ -695,8 +728,11 @@ const EditorWorkspace = ({
             pressed={{
               ledger: ledgerActive,
               diagnostics: layout.isProblemsPanelOpen,
-              copilot: !rightRailCollapsed && layout.rightPane === 'copilot',
-              directory: layout.isDirectoryOpen,
+              copilot:
+                !ledgerActive &&
+                !rightRailCollapsed &&
+                layout.rightPane === 'copilot',
+              directory: !ledgerActive && layout.isDirectoryOpen,
             }}
             onSelect={layout.toggleRailTab}
             badges={{
@@ -720,7 +756,7 @@ const EditorWorkspace = ({
             }}
           />
 
-          {layout.isDirectoryOpen ? (
+          {!ledgerActive && layout.isDirectoryOpen ? (
             <EntityDrawer
               graph={state.graph}
               selectedNodeId={state.selection.nodeId}
@@ -729,7 +765,7 @@ const EditorWorkspace = ({
             />
           ) : null}
 
-          {layout.isWorkshopOpen ? (
+          {!ledgerActive && layout.isWorkshopOpen ? (
             <div
               className={
                 layout.isWorkshopPinned
@@ -761,28 +797,26 @@ const EditorWorkspace = ({
             data-region="workspace-stage"
             className="isolate flex min-h-0 min-w-0 flex-1"
           >
+            {ledgerActive ? (
+              <div className="relative h-full min-h-0 w-full min-w-0">
+                <DomainLedgerTable
+                  ledger={entityLedger}
+                  selectedNodeId={state.selection.nodeId}
+                  onRevealOnGraph={revealOnGraph}
+                />
+                {problemsPanel}
+              </div>
+            ) : null}
+            {/* Keep the panel sizes and collapse state when the ledger takes over. */}
             <ResizablePanelGroup
               direction="horizontal"
               autoSaveId="evidence-studio-horizontal-v2"
+              style={ledgerActive ? { display: 'none' } : undefined}
             >
               <ResizablePanel id="center-stage" order={1} minSize={35}>
                 <div className="relative h-full min-h-0">
-                  {ledgerActive ? ledgerStage : graphStage}
-                  {layout.isProblemsPanelOpen ? (
-                    <ProblemsPanel
-                      report={sensors.report}
-                      reportStale={diagnosticsStale}
-                      reportLoading={sensors.loading}
-                      reportError={sensors.error}
-                      activeIssueId={layout.activeIssueId}
-                      onFocusIssue={(issue) => {
-                        layout.openProblemsWithIssue(issue.issueId);
-                        focusIssue(issue);
-                      }}
-                      onRerun={() => void sensors.refresh()}
-                      onClose={layout.closeProblemsPanel}
-                    />
-                  ) : null}
+                  {!ledgerActive ? graphStage : null}
+                  {!ledgerActive ? problemsPanel : null}
                 </div>
               </ResizablePanel>
 
@@ -800,34 +834,36 @@ const EditorWorkspace = ({
                 onExpand={() => setRightRailCollapsed(false)}
                 ref={rightRail}
               >
-                <RightPaneShell
-                  collapsed={rightRailCollapsed}
-                  pane={layout.rightPane}
-                  onShowInspector={layout.showInspector}
-                  onShowCopilot={layout.openCopilot}
-                >
-                  {layout.rightPane === 'inspector' ? (
-                    <RightInspector
-                      graph={state.graph}
-                      session={state.session}
-                      selection={state.selection}
-                      showHeading={false}
-                    />
-                  ) : (
-                    <AgentCopilot
-                      aiConfigured={ai?.aiConfigured}
-                      onConfigureAi={ai?.openSettings}
-                      controller={agent}
-                      patchReview={patchReview}
-                      focus={promptFocus}
-                      onClearFocus={() => state.session.clearSelection()}
-                      onFocusEntity={revealOnGraph}
-                      focusToken={agentFocusToken}
-                      prefill={copilotPrefill}
-                      onPrefillConsumed={() => setCopilotPrefill(null)}
-                    />
-                  )}
-                </RightPaneShell>
+                {!ledgerActive ? (
+                  <RightPaneShell
+                    collapsed={rightRailCollapsed}
+                    pane={layout.rightPane}
+                    onShowInspector={layout.showInspector}
+                    onShowCopilot={layout.openCopilot}
+                  >
+                    {layout.rightPane === 'inspector' ? (
+                      <RightInspector
+                        graph={state.graph}
+                        session={state.session}
+                        selection={state.selection}
+                        showHeading={false}
+                      />
+                    ) : (
+                      <AgentCopilot
+                        aiConfigured={ai?.aiConfigured}
+                        onConfigureAi={ai?.openSettings}
+                        controller={agent}
+                        patchReview={patchReview}
+                        focus={promptFocus}
+                        onClearFocus={() => state.session.clearSelection()}
+                        onFocusEntity={revealOnGraph}
+                        focusToken={agentFocusToken}
+                        prefill={copilotPrefill}
+                        onPrefillConsumed={() => setCopilotPrefill(null)}
+                      />
+                    )}
+                  </RightPaneShell>
+                ) : null}
               </ResizablePanel>
             </ResizablePanelGroup>
           </div>
@@ -862,23 +898,27 @@ const EditorWorkspace = ({
           />
         ) : null}
 
-        <BottomStatusBar
-          layout={state.layout}
-          validation={state.validation}
-          report={sensors.report}
-          reportStale={diagnosticsStale}
-          sensorLoading={sensors.loading}
-          sensorError={sensors.error}
-          diagnosticsOpen={layout.isProblemsPanelOpen}
-          onToggleDiagnostics={layout.toggleProblemsPanel}
-          onRerunSensors={() => void sensors.refresh()}
-          dirty={state.dirty}
-          savedAt={state.savedAt}
-          saveError={state.saveError}
-          externalChangeAt={state.externalChangeAt}
-          onReload={() => void reloadFromDisk()}
-          onDismissExternalChange={dismissExternalChange}
-        />
+        {!ledgerActive ||
+        state.externalChangeAt !== null ||
+        state.saveError !== null ? (
+          <BottomStatusBar
+            layout={state.layout}
+            validation={state.validation}
+            report={sensors.report}
+            reportStale={diagnosticsStale}
+            sensorLoading={sensors.loading}
+            sensorError={sensors.error}
+            diagnosticsOpen={layout.isProblemsPanelOpen}
+            onToggleDiagnostics={layout.toggleProblemsPanel}
+            onRerunSensors={() => void sensors.refresh()}
+            dirty={state.dirty}
+            savedAt={state.savedAt}
+            saveError={state.saveError}
+            externalChangeAt={state.externalChangeAt}
+            onReload={() => void reloadFromDisk()}
+            onDismissExternalChange={dismissExternalChange}
+          />
+        ) : null}
 
         <CommandPalette
           open={paletteOpen}

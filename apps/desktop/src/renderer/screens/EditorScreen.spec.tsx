@@ -952,7 +952,11 @@ describe('EditorScreen stage navigation', () => {
     fireEvent.click(ledger);
     expect(ledger).toHaveAttribute('aria-pressed', 'true');
     expect(await screen.findByLabelText('领域模型总台账')).toBeInTheDocument();
-    expect(screen.getByText('8 个实体 · 4 个字段')).toBeInTheDocument();
+    expect(screen.getByRole('radio', { name: '全部实体 (8)' })).toBeChecked();
+    expect(screen.getByRole('button', { name: '导出 CSV' })).toBeEnabled();
+    expect(
+      screen.queryByRole('complementary', { name: '实体目录' }),
+    ).toBeNull();
     expect(
       container.querySelector('[data-region="canvas-viewport"]'),
     ).toBeNull();
@@ -1008,6 +1012,81 @@ describe('EditorScreen stage navigation', () => {
     expect(
       container.querySelectorAll('[data-region="canvas-viewport"]'),
     ).toHaveLength(1);
+  });
+
+  it('opens diagnostics from the ledger and returns to the graph for graph-side rail tools', async () => {
+    readyProject();
+    render(<EditorScreen rootPath="/models/procurement" />);
+    await readyCanvas();
+    const ledger = screen.getByRole('button', { name: '总台账' });
+    fireEvent.click(ledger);
+    fireEvent.keyDown(window, { key: '2', metaKey: true });
+    expect(await screen.findByLabelText('门禁问题面板')).toBeVisible();
+    expect(ledger).toHaveAttribute('aria-pressed', 'true');
+    fireEvent.keyDown(window, { key: '3', metaKey: true });
+    expect(await screen.findByLabelText('访谈内容')).toBeVisible();
+    expect(ledger).toHaveAttribute('aria-pressed', 'false');
+    fireEvent.click(ledger);
+    fireEvent.keyDown(window, { key: '4', metaKey: true });
+    expect(
+      screen.getByRole('complementary', { name: '实体目录' }),
+    ).toBeVisible();
+    expect(ledger).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  it('exports just the filtered ledger rows through the top bar', async () => {
+    readyProject();
+    render(<EditorScreen rootPath="/models/procurement" />);
+    await readyCanvas();
+    fireEvent.click(screen.getByRole('button', { name: '总台账' }));
+    const topBar = screen.getByRole('banner', { name: '工作台顶栏' });
+    expect(topBar).toHaveTextContent('领域总台账 (Domain Model Ledger)');
+    expect(
+      within(topBar).queryByRole('button', { name: '保存模型' }),
+    ).toBeNull();
+    const exportButton = within(topBar).getByRole('button', {
+      name: '导出 CSV',
+    });
+    const search = screen.getByRole('searchbox', {
+      name: '过滤实体或 CEL 规则',
+    });
+    fireEvent.change(search, { target: { value: 'non-existing-entity' } });
+    expect(exportButton).toBeDisabled();
+    fireEvent.change(search, { target: { value: 'evidence.request' } });
+
+    const blobs: Blob[] = [];
+    const createObjectURL = vi.fn((blob: Blob) => {
+      blobs.push(blob);
+      return 'blob:ledger-test';
+    });
+    vi.stubGlobal(
+      'URL',
+      Object.assign(class extends URL {}, {
+        createObjectURL,
+        revokeObjectURL: vi.fn(),
+      }),
+    );
+    const click = vi
+      .spyOn(HTMLAnchorElement.prototype, 'click')
+      .mockImplementation(() => undefined);
+    try {
+      fireEvent.click(exportButton);
+      expect(click).toHaveBeenCalledOnce();
+      const [blob] = blobs;
+      if (blob === undefined) throw new Error('Missing CSV Blob');
+      const csv = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result));
+        reader.onerror = () => reject(reader.error);
+        reader.readAsText(blob);
+      });
+      expect(csv).toContain('"evidence.request"');
+      expect(csv).not.toContain('"evidence.contract"');
+      expect(csv.trim().split('\r\n')).toHaveLength(2);
+    } finally {
+      click.mockRestore();
+      vi.unstubAllGlobals();
+    }
   });
 
   it('walks from a ledger row back to the same object on the canvas', async () => {

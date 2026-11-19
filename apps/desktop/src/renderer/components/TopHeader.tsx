@@ -7,6 +7,7 @@ import type { ModelSelection } from '@evidence-poc/evidence-model-core';
 import { ENTITY_CATEGORY_LABELS } from '@evidence-poc/evidence-schema';
 import {
   Button,
+  cn,
   KbdChord,
   Tooltip,
   TooltipContent,
@@ -25,6 +26,7 @@ interface TopHeaderProps {
   onSave: () => void;
   /** Opens the command hub for editor actions and navigation. */
   onOpenCommandPalette: () => void;
+  ledgerExport?: { enabled: boolean; onExport: () => void } | undefined;
 }
 
 /**
@@ -41,8 +43,13 @@ export const TopHeader = ({
   selection,
   onSave,
   onOpenCommandPalette,
+  ledgerExport,
 }: TopHeaderProps) => {
+  const ledgerActive = ledgerExport !== undefined;
   const breadcrumb = useMemo(() => {
+    if (ledgerActive) {
+      return { trail: [], name: '领域总台账 (Domain Model Ledger)' };
+    }
     const nodeId = selection.nodeId;
 
     if (nodeId === null) {
@@ -62,7 +69,7 @@ export const TopHeader = ({
       trail: path.map((context) => context.label),
       name: `${entity.label} (${ENTITY_CATEGORY_LABELS[entity.category]})`,
     };
-  }, [graph, selection.nodeId]);
+  }, [graph, ledgerActive, selection.nodeId]);
 
   return (
     <header
@@ -103,7 +110,24 @@ export const TopHeader = ({
         ) : null}
       </div>
 
-      <div className="evidence-no-drag flex shrink-0 items-center gap-2">
+      {ledgerExport !== undefined ? (
+        <Button
+          type="button"
+          variant="outline"
+          className="evidence-no-drag rounded-md border-workbench-border px-2.5"
+          disabled={!ledgerExport.enabled}
+          onClick={ledgerExport.onExport}
+        >
+          导出 CSV
+        </Button>
+      ) : null}
+      <div
+        hidden={ledgerActive}
+        className={cn(
+          'evidence-no-drag shrink-0 items-center gap-2',
+          !ledgerActive && 'flex',
+        )}
+      >
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>

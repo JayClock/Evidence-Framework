@@ -25,7 +25,10 @@ nx make desktop         # installers in apps/desktop/out/make
 ## Editor navigation
 
 - Select **总台账** in the left sidebar (Cmd/Ctrl+1) to replace the canvas with
-  the model ledger. Select it again to return to the previous canvas layout.
+  the read-only entity ledger. Filter by category, entity, context, or CEL
+  invariant; **导出 CSV** downloads every matching entity, not just the visible
+  rows. **定位画布**, or selecting **总台账** again, returns to the previous canvas
+  layout. Use the inspector to edit fields or rules.
 - Use **Cmd/Ctrl+K** to search for business objects and jump to them.
 - **业务流放映** runs on the canvas. Open **剧情详情** for narration, scene details
   and What-If questions without adding a second viewport.
