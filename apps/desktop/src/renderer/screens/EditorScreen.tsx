@@ -27,6 +27,7 @@ import { DomainLedgerTable } from '../components/ledger/DomainLedgerTable';
 import { CanvasFloatingHud } from '../components/canvas/CanvasFloatingHud';
 import { ActivityDrawer } from '../components/layout/ActivityDrawer';
 import { ActivityRail } from '../components/layout/ActivityRail';
+import { EntityDrawer } from '../components/layout/EntityDrawer';
 import { ViewModeBar } from '../components/layout/ViewModeBar';
 import {
   AgentCopilot,
@@ -160,7 +161,6 @@ interface EditorWorkspaceProps {
 }
 
 const RAIL_TITLES: Record<RailTabId, string> = {
-  diagnostics: '门禁与诊断',
   copilot: 'AI 协同',
   workshop: '共创工作坊',
 };
@@ -451,11 +451,13 @@ const EditorWorkspace = ({
         setAgentFocusToken((token) => token + 1);
       },
       openRail: layout.setActiveRailTab,
+      openProblems: layout.openProblemsPanel,
       toggleProblems: layout.toggleProblemsPanel,
     }),
     [
       layout.setActiveRailTab,
       layout.openDelivery,
+      layout.openProblemsPanel,
       layout.toggleProblemsPanel,
       requestZoom,
       save,
@@ -567,6 +569,11 @@ const EditorWorkspace = ({
     state.document.manifest.id,
   ]);
 
+  const revealOnGraph = (nodeId: string) => {
+    focusNode(nodeId);
+    workspaceView.returnToGraph();
+  };
+
   const ledgerStage = (
     <DomainLedgerTable
       document={state.document}
@@ -574,10 +581,7 @@ const EditorWorkspace = ({
       diagnostics={diagnostics}
       selectedNodeId={state.selection.nodeId}
       selectedAttributeName={state.selection.attributeName}
-      onRevealOnGraph={(nodeId) => {
-        focusNode(nodeId);
-        workspaceView.returnToGraph();
-      }}
+      onRevealOnGraph={revealOnGraph}
     />
   );
 
@@ -702,10 +706,12 @@ const EditorWorkspace = ({
 
         <div className="relative flex min-h-0 flex-1">
           <ActivityRail
-            ledgerActive={ledgerActive}
-            activeTab={
-              layout.isProblemsPanelOpen ? 'diagnostics' : layout.activeRailTab
-            }
+            pressed={{
+              ledger: ledgerActive,
+              diagnostics: layout.isProblemsPanelOpen,
+              copilot: layout.activeRailTab === 'copilot',
+              directory: layout.isDirectoryOpen,
+            }}
             onSelect={layout.toggleRailTab}
             badges={{
               ...(sensors.report === null
@@ -728,12 +734,21 @@ const EditorWorkspace = ({
             }}
           />
 
+          {layout.isDirectoryOpen ? (
+            <EntityDrawer
+              graph={state.graph}
+              selectedNodeId={state.selection.nodeId}
+              onReveal={revealOnGraph}
+              onCreate={() => layout.setActiveRailTab('workshop')}
+            />
+          ) : null}
+
           {layout.activeRailTab === null ? null : (
             <div
               className={
                 layout.isRailPinned
                   ? 'h-full w-[300px] shrink-0'
-                  : 'absolute inset-y-0 left-12 z-30 w-[320px]'
+                  : `absolute inset-y-0 z-30 w-[320px] ${layout.isDirectoryOpen ? 'left-[268px]' : 'left-12'}`
               }
             >
               <ActivityDrawer

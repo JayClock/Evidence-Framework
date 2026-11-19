@@ -15,11 +15,12 @@ const press = (init: KeyboardEventInit) => {
 };
 
 describe('useWorkspaceLayoutState', () => {
-  it('starts with the rail closed and nothing covering the canvas', () => {
+  it('starts with the entity directory open but no tool drawer or overlay', () => {
     const { result } = setup();
 
     expect(result.current.activeRailTab).toBeNull();
     expect(result.current.isRailPinned).toBe(false);
+    expect(result.current.isDirectoryOpen).toBe(true);
     expect(result.current.isProblemsPanelOpen).toBe(false);
     expect(result.current.isDeliveryOpen).toBe(false);
   });
@@ -47,14 +48,17 @@ describe('useWorkspaceLayoutState', () => {
     expect(result.current.isProblemsPanelOpen).toBe(false);
   });
 
-  it('switches drawers instead of stacking them', () => {
+  it('toggles the directory independently of the active tool drawer', () => {
     const { result } = setup();
 
     press({ key: '3', metaKey: true });
-    expect(result.current.activeRailTab).toBe('copilot');
     press({ key: '4', metaKey: true });
 
-    expect(result.current.activeRailTab).toBe('workshop');
+    expect(result.current.isDirectoryOpen).toBe(false);
+    expect(result.current.activeRailTab).toBe('copilot');
+
+    press({ key: '4', ctrlKey: true });
+    expect(result.current.isDirectoryOpen).toBe(true);
   });
 
   it('pins a floating drawer into the layout', () => {

@@ -1,10 +1,4 @@
-import {
-  Activity,
-  Bot,
-  ListChecks,
-  Table2,
-  type LucideIcon,
-} from 'lucide-react';
+import { Bot, ListTree, Table2, Zap, type LucideIcon } from 'lucide-react';
 
 import {
   Tooltip,
@@ -17,7 +11,6 @@ import {
 import {
   RAIL_TAB_CHORDS,
   type ActivityRailTabId,
-  type RailTabId,
 } from '../../state/useWorkspaceLayoutState';
 
 /** What a rail button says when it is not just an icon. */
@@ -28,8 +21,7 @@ export interface RailBadge {
 }
 
 export interface ActivityRailProps {
-  activeTab: RailTabId | null;
-  ledgerActive: boolean;
+  pressed: Readonly<Record<ActivityRailTabId, boolean>>;
   onSelect: (tab: ActivityRailTabId) => void;
   badges?: Partial<Record<ActivityRailTabId, RailBadge>>;
 }
@@ -50,7 +42,7 @@ const RAIL_ITEMS: readonly {
     id: 'diagnostics',
     label: '门禁与诊断',
     hint: 'AST 检查、悬空引用与派生对称性',
-    icon: Activity,
+    icon: Zap,
   },
   {
     id: 'copilot',
@@ -59,10 +51,10 @@ const RAIL_ITEMS: readonly {
     icon: Bot,
   },
   {
-    id: 'workshop',
-    label: '共创工作坊',
-    hint: '七步业务提问与成对履约创建',
-    icon: ListChecks,
+    id: 'directory',
+    label: '实体目录',
+    hint: '浏览并定位模型实体',
+    icon: ListTree,
   },
 ];
 
@@ -79,21 +71,20 @@ const badgeToneClass = (tone: RailBadge['tone']): string =>
  * The rail switches between canvas and ledger and opens the studio tools.
  */
 export const ActivityRail = ({
-  activeTab,
-  ledgerActive,
+  pressed,
   onSelect,
   badges = {},
 }: ActivityRailProps) => (
   <nav
     aria-label="活动导轨"
     data-region="activity-rail"
-    className="flex h-full w-12 shrink-0 flex-col items-center gap-1 border-r border-evidence-line bg-[#f6f8fa] py-2"
+    data-workbench-chrome=""
+    className="flex h-full w-12 shrink-0 flex-col items-center gap-2 border-r border-workbench-border bg-white py-2.5"
   >
     <TooltipProvider>
       {RAIL_ITEMS.map((item) => {
         const Icon = item.icon;
-        const active =
-          item.id === 'ledger' ? ledgerActive : item.id === activeTab;
+        const active = pressed[item.id];
         const badge = badges[item.id];
 
         return (
@@ -105,12 +96,7 @@ export const ActivityRail = ({
                 aria-pressed={active}
                 data-rail-tab={item.id}
                 onClick={() => onSelect(item.id)}
-                className={cn(
-                  'relative flex size-9 items-center justify-center rounded-md transition-colors',
-                  active
-                    ? 'bg-white text-evidence-accent shadow-xs ring-1 ring-evidence-line'
-                    : 'text-evidence-muted hover:bg-white hover:text-evidence-ink',
-                )}
+                className="relative flex size-8 shrink-0 items-center justify-center rounded-md text-workbench-muted transition-colors hover:bg-workbench-subtle hover:text-evidence-ink focus-visible:ring-2 focus-visible:ring-evidence-accent focus-visible:outline-none aria-pressed:bg-evidence-accent aria-pressed:text-white aria-pressed:hover:bg-evidence-accent-hover"
               >
                 <Icon aria-hidden="true" className="size-4" />
                 {badge === undefined ? null : badge.count === undefined ? (

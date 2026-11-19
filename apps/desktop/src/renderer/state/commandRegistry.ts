@@ -1,6 +1,7 @@
 import {
   Activity,
   Bot,
+  ListChecks,
   Network,
   Redo2,
   Save,
@@ -99,6 +100,7 @@ export interface CommandHandlers {
   rerunSensors: () => void;
   askAgent: () => void;
   openRail: (tab: RailTabId) => void;
+  openProblems: () => void;
   toggleProblems: () => void;
 }
 
@@ -178,13 +180,13 @@ export const buildCommands = (
     },
     {
       id: 'view.rail-diagnostics',
-      title: '打开门禁与诊断抽屉',
+      title: '打开门禁与诊断面板',
       subtitle: 'AST 检查、悬空引用与派生对称性',
       category: 'view',
       shortcut: RAIL_TAB_CHORDS.diagnostics,
       icon: ShieldCheck,
       keywords: ['rail', 'diagnostics', 'lint', '门禁'],
-      perform: () => handlers.openRail('diagnostics'),
+      perform: handlers.openProblems,
     },
     {
       id: 'view.rail-copilot',
@@ -195,6 +197,15 @@ export const buildCommands = (
       icon: Bot,
       keywords: ['rail', 'agent', 'copilot', '协同'],
       perform: () => handlers.openRail('copilot'),
+    },
+    {
+      id: 'model.workshop',
+      title: '打开共创工作坊',
+      subtitle: '七步业务提问与履约建模',
+      category: 'model',
+      icon: ListChecks,
+      keywords: ['workshop', 'new', '新建', '向导'],
+      perform: () => handlers.openRail('workshop'),
     },
     {
       id: 'delivery.contract',

@@ -114,7 +114,12 @@ describe('EditorScreen', () => {
         container.querySelector('[data-swimlane-kind="lane"]'),
       ).not.toBeNull(),
     );
-    fireEvent.click(screen.getByRole('button', { name: '共创工作坊' }));
+    fireEvent.click(
+      within(screen.getByRole('complementary', { name: '实体目录' })).getByRole(
+        'button',
+        { name: '新建' },
+      ),
+    );
     expect(screen.getByLabelText('工作坊步骤')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: '业务场景推演' }));
     fireEvent.change(screen.getByLabelText('新场景名称'), {
@@ -146,7 +151,12 @@ describe('EditorScreen', () => {
     render(<EditorScreen rootPath="/models/procurement" />);
     await readyCanvas();
 
-    fireEvent.click(screen.getByRole('button', { name: '共创工作坊' }));
+    fireEvent.click(
+      within(screen.getByRole('complementary', { name: '实体目录' })).getByRole(
+        'button',
+        { name: '新建' },
+      ),
+    );
     fireEvent.click(
       screen.getByRole('button', { name: /5. 给违约一条补偿路径/ }),
     );
@@ -385,8 +395,55 @@ describe('EditorScreen', () => {
     fireEvent.keyDown(window, { key: '3', metaKey: true });
     await waitFor(() => expect(screen.queryByLabelText('访谈内容')).toBeNull());
 
+    const directory = screen.getByRole('button', { name: '实体目录' });
+    expect(directory).toHaveAttribute('aria-pressed', 'true');
     fireEvent.keyDown(window, { key: '4', metaKey: true });
-    expect(await screen.findByLabelText('工作坊合约')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('complementary', { name: '实体目录' }),
+    ).toBeNull();
+    fireEvent.click(directory);
+    expect(
+      screen.getByRole('complementary', { name: '实体目录' }),
+    ).toBeVisible();
+  });
+
+  it('keeps the directory and canvas selection in sync, revealing nodes beyond the current scope', async () => {
+    const api = readyProject();
+    const { container } = render(
+      <EditorScreen rootPath="/models/procurement" />,
+    );
+    await readyCanvas();
+    const directory = within(
+      screen.getByRole('complementary', { name: '实体目录' }),
+    );
+    expect(
+      directory.getByRole('heading', { name: '实体目录 (8)' }),
+    ).toBeVisible();
+    expect(
+      directory.getByRole('heading', { name: '角色 (Role)' }),
+    ).toBeVisible();
+    const contract = directory.getByRole('button', { name: /采购协议/ });
+    const request = directory.getByRole('button', { name: /交付请求/ });
+    fireEvent.click(
+      container.querySelector('[data-node-id="evidence.contract"]')!,
+    );
+    expect(contract).toHaveAttribute('aria-current', 'true');
+    fireEvent.change(screen.getByLabelText('聚焦范围'), {
+      target: { value: 'context.catalog' },
+    });
+    fireEvent.click(request);
+    expect(request).toHaveAttribute('aria-current', 'true');
+    expect(contract).not.toHaveAttribute('aria-current');
+    expect(screen.getByLabelText('聚焦范围')).toHaveValue('');
+    expect(
+      container.querySelector('[data-node-id="evidence.request"]'),
+    ).toHaveClass('ring-2');
+    expect(
+      within(screen.getByRole('banner', { name: '工作台顶栏' })).getByText(
+        /交付请求.*凭证/,
+      ),
+    ).toBeVisible();
+    expect(api.calls.save).toEqual([]);
   });
 
   it('keeps scope and view mode out of the document and undo history', async () => {

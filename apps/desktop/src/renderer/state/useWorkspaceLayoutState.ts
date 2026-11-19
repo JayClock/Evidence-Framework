@@ -1,11 +1,14 @@
 import { useCallback, useEffect, useState } from 'react';
 
-/** Drawer and panel destinations, excluding the ledger's main-stage switch. */
-const RAIL_TABS = ['diagnostics', 'copilot', 'workshop'] as const;
+/** Drawer destinations; ledger and diagnostics have their own surfaces. */
+export type RailTabId = 'copilot' | 'workshop';
 
-export type RailTabId = (typeof RAIL_TABS)[number];
-
-const ACTIVITY_RAIL_TABS = ['ledger', ...RAIL_TABS] as const;
+const ACTIVITY_RAIL_TABS = [
+  'ledger',
+  'diagnostics',
+  'copilot',
+  'directory',
+] as const;
 export type ActivityRailTabId = (typeof ACTIVITY_RAIL_TABS)[number];
 
 export interface WorkspaceLayoutState {
@@ -13,6 +16,7 @@ export interface WorkspaceLayoutState {
   readonly activeRailTab: RailTabId | null;
   /** A pinned drawer takes layout width; an unpinned one floats over canvas. */
   readonly isRailPinned: boolean;
+  readonly isDirectoryOpen: boolean;
   readonly isProblemsPanelOpen: boolean;
   readonly activeIssueId: string | null;
   readonly isInlineCopilotOpen: boolean;
@@ -24,6 +28,7 @@ export interface WorkspaceLayoutActions {
   toggleRailTab: (tab: ActivityRailTabId) => void;
   toggleRailPinned: () => void;
   toggleProblemsPanel: () => void;
+  openProblemsPanel: () => void;
   openProblemsWithIssue: (issueId: string) => void;
   closeProblemsPanel: () => void;
   openInlineCopilot: () => void;
@@ -40,7 +45,7 @@ export const RAIL_TAB_CHORDS: Record<ActivityRailTabId, string> = {
   ledger: '⌘+1',
   diagnostics: '⌘+2',
   copilot: '⌘+3',
-  workshop: '⌘+4',
+  directory: '⌘+4',
 };
 
 const isEditable = (target: EventTarget | null): boolean => {
@@ -73,6 +78,7 @@ export const useWorkspaceLayoutState = (
 ): WorkspaceLayoutController => {
   const [activeRailTab, setActiveRailTab] = useState<RailTabId | null>(null);
   const [isRailPinned, setRailPinned] = useState(false);
+  const [isDirectoryOpen, setDirectoryOpen] = useState(true);
   const [isProblemsPanelOpen, setProblemsPanelOpen] = useState(false);
   const [activeIssueId, setActiveIssueId] = useState<string | null>(null);
   const [isInlineCopilotOpen, setInlineCopilotOpen] = useState(false);
@@ -97,8 +103,12 @@ export const useWorkspaceLayoutState = (
         return;
       }
 
+      if (tab === 'directory') {
+        setDirectoryOpen((open) => !open);
+        return;
+      }
+
       if (tab === 'diagnostics') {
-        setActiveRailTab(null);
         setActiveIssueId(null);
         setProblemsPanelOpen((open) => !open);
         return;
@@ -111,6 +121,10 @@ export const useWorkspaceLayoutState = (
 
   const toggleProblemsPanel = useCallback(() => {
     setProblemsPanelOpen((current) => !current);
+  }, []);
+
+  const openProblemsPanel = useCallback(() => {
+    setProblemsPanelOpen(true);
   }, []);
 
   const openProblemsWithIssue = useCallback((issueId: string) => {
@@ -170,6 +184,7 @@ export const useWorkspaceLayoutState = (
   return {
     activeRailTab,
     isRailPinned,
+    isDirectoryOpen,
     isProblemsPanelOpen,
     activeIssueId,
     isInlineCopilotOpen,
@@ -178,6 +193,7 @@ export const useWorkspaceLayoutState = (
     toggleRailTab,
     toggleRailPinned,
     toggleProblemsPanel,
+    openProblemsPanel,
     openProblemsWithIssue,
     closeProblemsPanel,
     openInlineCopilot,

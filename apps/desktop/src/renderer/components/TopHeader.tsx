@@ -67,6 +67,7 @@ export const TopHeader = ({
   return (
     <header
       data-workbench-chrome=""
+      aria-label="工作台顶栏"
       className="evidence-drag-region flex h-12 shrink-0 items-center justify-between gap-3 border-b border-workbench-border bg-white pr-4 pl-[var(--evidence-traffic-light-space)]"
     >
       <div className="evidence-no-drag flex min-w-0 items-center gap-1 text-xs">
