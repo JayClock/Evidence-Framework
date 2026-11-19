@@ -29,6 +29,7 @@ export const EntityNode = ({ data }: NodeProps<EntityFlowNode>) => {
         viewMode={viewMode}
         summary={data.summary}
         storyValues={data.storyValues}
+        storyStep={data.storyStep}
         triggeredRuleIds={data.triggeredRuleIds}
         selected={data.selected}
         highlighted={data.highlighted}

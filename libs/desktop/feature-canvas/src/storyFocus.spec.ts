@@ -35,8 +35,26 @@ const focus: CanvasStoryFocus = {
 
 describe('story canvas projection', () => {
   it('pulses the active document, keeps dependencies and roles readable, and dims unrelated nodes to .35', () => {
-    const result = applyStoryFocus(canvas, focus);
+    const result = applyStoryFocus(canvas, {
+      ...focus,
+      activeStep: 3,
+      completedSteps: new Map([
+        ['evidence.contract', 1],
+        ['evidence.request', 2],
+        ['evidence.confirmation', 1],
+      ]),
+    });
     const node = (id: string) => result.nodes.find((node) => node.id === id);
+    expect(node('evidence.confirmation')?.data).toMatchObject({
+      storyStep: { status: 'active', sequence: 3 },
+    });
+    expect(node('evidence.contract')?.data).toMatchObject({
+      storyStep: { status: 'completed', sequence: 1 },
+    });
+    expect(node('evidence.contract')?.style?.opacity).toBe(1);
+    expect(node('role.buyer')?.data).not.toMatchObject({
+      storyStep: { status: 'completed' },
+    });
     expect(node('evidence.confirmation')?.className).toBe(
       'evidence-story-active',
     );

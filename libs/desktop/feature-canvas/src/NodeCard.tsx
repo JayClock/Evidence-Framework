@@ -10,6 +10,7 @@ import type {
   LayoutNode,
 } from '@evidence-poc/evidence-canvas-interaction';
 import type { CardSummary } from './cardSummary';
+import type { StoryStepMarker } from './storyFocus';
 
 import {
   CATEGORY_TOKENS,
@@ -28,6 +29,7 @@ interface NodeCardProps {
   viewMode: CanvasViewMode;
   summary: CardSummary;
   storyValues?: Readonly<Record<string, unknown>>;
+  storyStep?: StoryStepMarker;
   triggeredRuleIds?: readonly string[];
   outOfScope?: boolean;
   onHover: (nodeId: string | null) => void;
@@ -193,6 +195,7 @@ export const NodeCard = ({
   viewMode,
   summary,
   storyValues,
+  storyStep,
   triggeredRuleIds,
   outOfScope = false,
   onHover,
@@ -210,14 +213,20 @@ export const NodeCard = ({
   const fields = summary.attributes.slice(0, viewMode === 'expanded' ? 3 : 1);
   const remaining =
     summary.remainingAttributes + summary.attributes.length - fields.length;
+  const storyLabel =
+    storyStep &&
+    (storyStep.status === 'active'
+      ? `当前步骤 ${storyStep.sequence}`
+      : `步骤 ${storyStep.sequence} 完成`);
 
   return (
     <div
       role="button"
       tabIndex={outOfScope ? -1 : 0}
       aria-disabled={outOfScope || undefined}
-      aria-label={`${entity.label}（${entityKindLabel(entity)}）`}
+      aria-label={`${entity.label}（${entityKindLabel(entity)}）${storyLabel ? ` · ${storyLabel}` : ''}`}
       aria-pressed={selected}
+      data-story-step={storyStep?.status}
       data-node-id={entity.id}
       data-category={entity.category}
       data-node-shape={shape}
@@ -260,19 +269,33 @@ export const NodeCard = ({
         }
       }}
     >
-      <header className="flex min-w-0 shrink-0 items-center justify-between gap-2 border-b border-workbench-border bg-workbench-background px-2 py-1.5">
+      <header
+        className={[
+          'flex min-w-0 shrink-0 items-center justify-between gap-2 border-b border-workbench-border px-2 py-1.5',
+          storyStep?.status === 'active'
+            ? 'bg-evidence-accent text-white'
+            : storyStep?.status === 'completed'
+              ? 'bg-green-50 text-green-800'
+              : 'bg-workbench-background text-evidence-ink',
+        ].join(' ')}
+      >
         <span
-          className="truncate text-[12px] leading-tight font-semibold text-evidence-ink"
+          className="truncate text-[12px] leading-tight font-semibold"
           title={entity.label}
         >
+          {storyStep ? (
+            <span aria-hidden="true">
+              {storyStep.status === 'active' ? '▶ ' : '✓ '}
+            </span>
+          ) : null}
           {entity.label}
         </span>
         <span
-          className="max-w-[42%] shrink-0 truncate rounded px-1.5 py-0.5 text-[9px] leading-tight font-medium"
-          style={{ color, backgroundColor: token.fill }}
-          title={`${token.label} · ${entityKindLabel(entity)}`}
+          className="max-w-[48%] shrink-0 truncate rounded px-1.5 py-0.5 text-[9px] leading-tight font-medium"
+          style={storyStep ? undefined : { color, backgroundColor: token.fill }}
+          title={storyLabel ?? `${token.label} · ${entityKindLabel(entity)}`}
         >
-          {entityKindLabel(entity)}
+          {storyLabel ?? entityKindLabel(entity)}
         </span>
       </header>
       <div className="flex min-h-0 flex-1 flex-col justify-center gap-0.5 overflow-hidden px-2 text-[9px] leading-tight">
@@ -368,17 +391,29 @@ export const NodeCard = ({
               时间：{time}
             </div>
           ) : null}
-          {fields.map((field) => (
-            <div
-              key={field.name}
-              className="truncate font-mono text-workbench-body"
-              title={field.label}
-            >
-              {field.name}
-              {field.valueType === undefined ? '' : `: ${field.valueType}`}
-              {field.key ? ' · Key' : ''}
-            </div>
-          ))}
+          {fields.map((field) => {
+            const value =
+              storyValues && Object.hasOwn(storyValues, field.name)
+                ? storyValues[field.name]
+                : undefined;
+            const detail =
+              typeof value === 'string' ||
+              typeof value === 'number' ||
+              typeof value === 'boolean'
+                ? String(value)
+                : field.valueType;
+            return (
+              <div
+                key={field.name}
+                className="truncate font-mono text-workbench-body"
+                title={`${field.label}${detail === undefined ? '' : `: ${detail}`}`}
+              >
+                {field.name}
+                {detail === undefined ? '' : `: ${detail}`}
+                {field.key ? ' · Key' : ''}
+              </div>
+            );
+          })}
           {fields.length === 0 ? <span>无属性</span> : null}
           {remaining > 0 ? <span>另有 {remaining} 个字段</span> : null}
           {[...(summary.ruleFormulas ?? [])]

@@ -22,6 +22,7 @@ export interface EntityNodeData extends Record<string, unknown> {
   /** Precomputed so the card does not scan the document while panning. */
   summary: CardSummary;
   storyValues?: Readonly<Record<string, unknown>>;
+  storyStep?: import('./storyFocus').StoryStepMarker;
   triggeredRuleIds?: readonly string[];
   selected: boolean;
   highlighted: boolean;

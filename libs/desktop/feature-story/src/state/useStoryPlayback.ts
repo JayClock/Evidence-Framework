@@ -118,8 +118,16 @@ export const useStoryPlayback = ({
         );
       return dependency ? [dependency.entityId] : [];
     });
+    // Last completed step wins for repeated entities; active still takes precedence.
+    const completedSteps = new Map(
+      flow.steps
+        .slice(0, index)
+        .map(({ entityId, sequence }) => [entityId, sequence]),
+    );
     return {
       activeEntityId: step.entityId,
+      activeStep: step.sequence,
+      completedSteps,
       dependencyEntityIds: [...new Set(dependencyEntityIds)],
       relatedEntityIds: journeyPreview.relatedEntityIds,
       activeRelationshipIds: journeyPreview.activeRelationshipIds,
@@ -128,7 +136,7 @@ export const useStoryPlayback = ({
       activeValues: step.values,
       focusKey: `${flow.flowId}:${stepRef(step)}:${step.sequence}:${step.stepHash}`,
     };
-  }, [ready, flow, step, journeyPreview]);
+  }, [ready, flow, step, index, journeyPreview]);
 
   const projectedFlowId = useRef<string | undefined>(undefined);
   useEffect(() => {

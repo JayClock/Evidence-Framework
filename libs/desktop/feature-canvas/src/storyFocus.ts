@@ -1,9 +1,16 @@
 import type { RelationshipFlowKind } from '@evidence-poc/evidence-schema';
 import type { CanvasFlowEdge, CanvasFlowNode } from './useReactFlowAdapter';
 
+export type StoryStepMarker = {
+  status: 'active' | 'completed';
+  sequence: number;
+};
+
 /** Renderer-independent camera/highlight contract; no agent runtime in canvas. */
 export interface CanvasStoryFocus {
   readonly activeEntityId: string;
+  readonly activeStep?: number;
+  readonly completedSteps?: ReadonlyMap<string, number>;
   readonly dependencyEntityIds: readonly string[];
   readonly relatedEntityIds?: readonly string[];
   readonly activeRelationshipIds?: readonly string[];
@@ -27,6 +34,7 @@ export const applyStoryFocus = (
   const involved = new Set([
     focus.activeEntityId,
     ...focus.dependencyEntityIds,
+    ...(focus.completedSteps?.keys() ?? []),
     ...(focus.relatedEntityIds ?? []),
   ]);
   const explicitEdges = new Set(focus.activeRelationshipIds ?? []);
@@ -52,6 +60,7 @@ export const applyStoryFocus = (
   return {
     nodes: canvas.nodes.map((node): CanvasFlowNode => {
       const active = node.id === focus.activeEntityId;
+      const completed = focus.completedSteps?.get(node.id);
       if (node.type === 'contextGroup')
         return {
           ...node,
@@ -75,6 +84,11 @@ export const applyStoryFocus = (
           ...node.data,
           highlighted: involved.has(node.id),
           dimmed: false,
+          storyStep: active
+            ? { status: 'active', sequence: focus.activeStep ?? 1 }
+            : completed === undefined
+              ? undefined
+              : { status: 'completed', sequence: completed },
           storyValues: active ? focus.activeValues : undefined,
           triggeredRuleIds: involved.has(node.id)
             ? focus.triggeredRuleIds

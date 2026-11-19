@@ -149,9 +149,20 @@ describe('story playback', () => {
     act(() => hook.result.current.next());
     expect(hook.result.current.canvasFocus).toMatchObject({
       activeEntityId: 'evidence.confirmation',
+      activeStep: 3,
       dependencyEntityIds: ['evidence.request', 'evidence.contract'],
       relatedEntityIds: ['role.buyer'],
     });
+    expect(hook.result.current.canvasFocus?.completedSteps).toEqual(
+      new Map([
+        ['evidence.contract', 1],
+        ['evidence.request', 2],
+      ]),
+    );
+    act(() => hook.result.current.previous());
+    expect(hook.result.current.canvasFocus?.completedSteps).toEqual(
+      new Map([['evidence.contract', 1]]),
+    );
   });
 
   it('automatically advances, stops at the end and cleans up timers on exit', async () => {
