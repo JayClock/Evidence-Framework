@@ -86,10 +86,15 @@ describe('buildDeliveryRoutes', () => {
       {
         method: 'POST',
         path: '/payment-confirmations',
-        requestRefs: ['request.payment', 'request.wechat-charge'],
+        requestRefs: ['request.payment', 'request.payment-balance'],
         fields: expect.arrayContaining([
           expect.objectContaining({ name: 'request_ids', required: true }),
         ]),
+      },
+      {
+        method: 'GET',
+        path: '/product-procurements/{contractId}/payment-balance/payment-confirmations',
+        responseShape: 'collection',
       },
       {
         method: 'GET',
@@ -100,11 +105,6 @@ describe('buildDeliveryRoutes', () => {
         method: 'GET',
         path: '/payment-confirmations/{paymentConfirmationId}',
         responseShape: 'item',
-      },
-      {
-        method: 'GET',
-        path: '/wechat-payments/{contractId}/wechat-charge/payment-confirmations',
-        responseShape: 'collection',
       },
     ]);
   });

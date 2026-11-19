@@ -185,7 +185,7 @@ it('links each shared request to its own trace view and one canonical confirmati
   expect(
     operationFor(projection, confirm).responses['201']!.headers!['Location'],
   ).toMatchObject({ 'x-evidence-uri-template': path });
-  for (const ref of ['request.payment', 'request.wechat-charge']) {
+  for (const ref of ['request.payment', 'request.payment-balance']) {
     const request = projection.routes.find(
       ({ id }) => id === 'route.read.' + ref,
     )!;

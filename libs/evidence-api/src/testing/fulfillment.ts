@@ -2,7 +2,7 @@ import { readModelRoot } from '@evidence-poc/evidence-model-io';
 
 import { API_FIXTURES } from './fixtures.js';
 
-/** A shared confirmation whose requests have different cardinalities and owners. */
+/** Two payment requests in the same contract can share one confirmation. */
 export const sharedConfirmationModel = async () => {
   const { bundle } = await readModelRoot(`${API_FIXTURES}full-lifecycle/fm`);
   const payment = bundle.relationships.find(
@@ -12,14 +12,24 @@ export const sharedConfirmationModel = async () => {
     ({ id }) => id === 'relation.contract-precedes-payment-request',
   )!;
   paymentRequest.sourceCardinality = { min: 0, max: 'many' };
-  const chargeRequest = bundle.relationships.find(
-    ({ id }) => id === 'relation.wechat-contract-precedes-charge-request',
-  )!;
-  chargeRequest.sourceCardinality = { min: 0, max: 1 };
-  bundle.relationships.push({
-    ...payment,
-    id: 'relation.shared-payment',
-    targetRef: 'request.wechat-charge',
+  const balance = 'request.payment-balance';
+  bundle.entities.push({
+    ...bundle.entities.find(({ id }) => id === 'request.payment')!,
+    id: balance,
+    label: '尾款请求',
   });
+  bundle.relationships.push(
+    {
+      ...paymentRequest,
+      id: 'relation.contract-precedes-payment-balance',
+      sourceRef: balance,
+      sourceCardinality: { min: 0, max: 1 },
+    },
+    {
+      ...payment,
+      id: 'relation.shared-payment',
+      targetRef: balance,
+    },
+  );
   return bundle;
 };

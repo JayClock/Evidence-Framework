@@ -87,18 +87,17 @@ describe('buildDeliveryTopology', () => {
   });
 });
 
-it('serves shared confirmation creation and reverse lookup in their owning services', async () => {
+it('serves shared confirmation creation and reverse lookup in the same contract service', async () => {
   const delivery = buildModelDelivery(await sharedConfirmationModel());
   const procurement = delivery.deployment.services['product-procurement']!;
-  const wechat = delivery.deployment.services['wechat-payment']!;
   expect(Object.values(procurement.labels!)).toContain(
     'Method(`POST`) && PathRegexp(`^/payment-confirmations$`)',
   );
   expect(Object.values(procurement.labels!)).toContain(
     'Method(`GET`) && PathRegexp(`^/payment-confirmations/[^/]+$`)',
   );
-  expect(Object.values(wechat.labels!)).toContain(
-    'Method(`GET`) && PathRegexp(`^/wechat-payments/[^/]+/wechat-charge/payment-confirmations$`)',
+  expect(Object.values(procurement.labels!)).toContain(
+    'Method(`GET`) && PathRegexp(`^/product-procurements/[^/]+/payment-balance/payment-confirmations$`)',
   );
 });
 

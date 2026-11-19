@@ -217,6 +217,7 @@ export {
   type RoleInversionIntent,
   type DomainCalculatorIntent,
 } from './tools/operatorInputs.js';
+export * from './tools/evidenceGrowthInputs.js';
 
 export {
   DomainModelDocumentSchema,

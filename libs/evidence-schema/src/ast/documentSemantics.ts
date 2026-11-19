@@ -747,16 +747,28 @@ const validateRelationships = (
     const evidenceToThing =
       source.category === 'evidence' &&
       signatureOf(target) === 'participant.thing';
-    const confirmsRequest =
-      signatureOf(source) === 'evidence.fulfillment_confirmation' &&
-      signatureOf(target) === 'evidence.fulfillment_request';
+    const sameContractRequired =
+      (signatureOf(source) === 'evidence.fulfillment_confirmation' &&
+        signatureOf(target) === 'evidence.fulfillment_request') ||
+      (relationship.flowKind === 'breach_compensation' &&
+        signatureOf(source) === 'evidence.fulfillment_request' &&
+        signatureOf(target) === 'evidence.fulfillment_request');
+    if (sameContractRequired && sourceContext !== targetContext) {
+      addIssue(
+        ctx,
+        'relationship.references.crossContext',
+        path,
+        'Fulfillment members must share one Contract Context or both be unassigned.',
+        relationship.id,
+      );
+    }
     if (
       sourceContext !== undefined &&
       targetContext !== undefined &&
       sourceContext !== targetContext &&
       !contractToProposal &&
       !evidenceToThing &&
-      !confirmsRequest &&
+      !sameContractRequired &&
       !(
         source.category === 'evidence' &&
         target.category === 'evidence' &&
