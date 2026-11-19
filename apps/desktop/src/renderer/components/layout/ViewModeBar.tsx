@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Clapperboard, Compass, Network } from 'lucide-react';
 
-import { Button } from '@evidence-poc/desktop-ui-kit';
+import { Button, cn } from '@evidence-poc/desktop-ui-kit';
 
 import type { WorkspaceViewMode } from '../../state/useWorkspaceViewMode';
 
@@ -29,7 +29,10 @@ export const ViewModeBar = ({
       data-evidence-capture-hide=""
       data-story-toolbar=""
       data-workbench-chrome=""
-      className="flex min-h-[38px] shrink-0 flex-wrap items-center gap-x-3 gap-y-1 border-b border-workbench-border bg-white px-4 py-1"
+      className={cn(
+        'flex min-h-[38px] shrink-0 flex-wrap items-center gap-x-3 gap-y-1 border-b border-workbench-border bg-white px-4 py-1',
+        mode === 'story' && 'min-h-11',
+      )}
     >
       <div
         role="group"
@@ -62,7 +65,11 @@ export const ViewModeBar = ({
           type="button"
           variant="ghost"
           size="xs"
-          className={segmentClass}
+          className={
+            mode === 'story'
+              ? 'rounded-sm bg-evidence-accent px-2.5 text-white hover:bg-evidence-accent-hover hover:text-white'
+              : segmentClass
+          }
           aria-pressed={mode === 'story'}
           onClick={() => onChange('story')}
         >

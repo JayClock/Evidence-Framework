@@ -34,7 +34,7 @@ const setup = async ({ empty = false, failure = false } = {}) => {
     });
     return (
       <>
-        <StoryPlayerBar playback={playback} onExit={vi.fn()} />
+        <StoryPlayerBar playback={playback} />
         <StoryDrawer playback={playback} dirty externalConflict />
       </>
     );
@@ -114,6 +114,12 @@ describe('StoryDrawer', () => {
   it('submits a read-only current-step question and clears the answer after stepping', async () => {
     const { api } = await setup();
     expect(screen.getByRole('button', { name: '推演假设' })).toBeDisabled();
+    fireEvent.click(screen.getByRole('button', { name: '填入示例问题' }));
+    expect(
+      screen.getByRole<HTMLTextAreaElement>('textbox', { name: '假设问题' })
+        .value,
+    ).toContain('无法按期完成');
+    expect(api.story.whatIf).not.toHaveBeenCalled();
     fireEvent.change(screen.getByRole('textbox', { name: '假设问题' }), {
       target: { value: '如果只付300会怎样？' },
     });

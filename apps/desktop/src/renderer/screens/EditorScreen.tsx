@@ -54,7 +54,9 @@ import {
 } from '@evidence-poc/desktop-feature-canvas';
 import { RightInspector } from '@evidence-poc/desktop-feature-inspector';
 import {
+  Button,
   Popover,
+  PopoverClose,
   PopoverContent,
   PopoverTrigger,
   ResizableHandle,
@@ -677,6 +679,17 @@ const EditorWorkspace = ({
           selection={state.selection}
           onSave={() => void save()}
           onOpenCommandPalette={() => setPaletteOpen(true)}
+          storyHeader={
+            storyActive
+              ? {
+                  title:
+                    story.ready && story.projection
+                      ? `业务流放映：${story.projection.storyTitle}（${story.stepNumber}/${story.stepCount}）`
+                      : '业务流放映',
+                  onExit: workspaceView.returnToGraph,
+                }
+              : undefined
+          }
           ledgerExport={
             ledgerActive
               ? {
@@ -702,18 +715,14 @@ const EditorWorkspace = ({
                 <>
                   <StoryPlayerBar
                     playback={story}
-                    onExit={workspaceView.returnToGraph}
                     aiConfigured={ai?.aiConfigured}
                     onConfigureAi={ai?.openSettings}
                   />
                   <Popover>
                     <PopoverTrigger asChild>
-                      <button
-                        type="button"
-                        className="rounded border border-evidence-line px-2 py-1 text-[11px]"
-                      >
+                      <Button type="button" variant="default">
                         剧情详情
-                      </button>
+                      </Button>
                     </PopoverTrigger>
                     <PopoverContent
                       align="end"
@@ -727,8 +736,21 @@ const EditorWorkspace = ({
                           event.preventDefault();
                         }
                       }}
-                      className="h-[min(70vh,var(--radix-popover-content-available-height))] w-[min(32rem,calc(100vw-2rem))] p-0"
+                      collisionPadding={12}
+                      className="flex h-[min(720px,var(--radix-popover-content-available-height))] w-[min(360px,var(--radix-popover-content-available-width))] flex-col rounded-xl p-0"
                     >
+                      <div className="flex shrink-0 items-center justify-between border-b border-workbench-border px-4 py-2">
+                        <h2 className="text-sm font-semibold">剧情详情</h2>
+                        <PopoverClose asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon-xs"
+                            aria-label="关闭剧情详情"
+                          >
+                            ×
+                          </Button>
+                        </PopoverClose>
+                      </div>
                       <StoryDrawer
                         aiConfigured={ai?.aiConfigured}
                         onConfigureAi={ai?.openSettings}

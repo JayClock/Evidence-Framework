@@ -18,7 +18,6 @@ const setup = async () => {
     storyResult(flows.find((flow) => flow.flowId === flowId)),
   );
   const document = createDesktopFixture();
-  const exit = vi.fn();
   const Harness = () => {
     const playback = useStoryPlayback({
       api: window.evidenceAPI.story,
@@ -28,7 +27,7 @@ const setup = async () => {
     });
     return (
       <>
-        <StoryPlayerBar playback={playback} onExit={exit} />
+        <StoryPlayerBar playback={playback} />
         <output aria-label="当前步骤序号">
           {playback.currentStepSequence}
         </output>
@@ -39,7 +38,7 @@ const setup = async () => {
   await act(async () => {
     await vi.advanceTimersByTimeAsync(STORY_REFRESH_DELAY);
   });
-  return { api, exit };
+  return api;
 };
 afterEach(() => vi.useRealTimers());
 
@@ -50,14 +49,17 @@ describe('StoryPlayerBar', () => {
     fireEvent.click(screen.getByRole('button', { name: /下一步/ }));
     expect(screen.getByLabelText('当前步骤序号')).toHaveTextContent('2');
     expect(screen.getByText('步骤 2/3：办理交付请求')).toBeInTheDocument();
+    expect(
+      screen.getByRole('progressbar', { name: '放映进度' }),
+    ).toHaveAttribute('value', '2');
     fireEvent.click(screen.getByRole('button', { name: /下一步/ }));
     expect(screen.getByRole('button', { name: /下一步/ })).toBeDisabled();
     fireEvent.click(screen.getByRole('button', { name: /上一步/ }));
     expect(screen.getByLabelText('当前步骤序号')).toHaveTextContent('2');
   });
 
-  it('switches flows, toggles playback/facts mode and exits', async () => {
-    const { api, exit } = await setup();
+  it('switches flows and toggles playback/facts mode', async () => {
+    const api = await setup();
     fireEvent.click(screen.getByRole('button', { name: '自动播放' }));
     expect(screen.getByRole('button', { name: '暂停放映' })).toHaveAttribute(
       'aria-pressed',
@@ -80,7 +82,5 @@ describe('StoryPlayerBar', () => {
     expect(api.story.project).toHaveBeenLastCalledWith(
       expect.objectContaining({ skipAi: true }),
     );
-    fireEvent.click(screen.getByRole('button', { name: '退出放映' }));
-    expect(exit).toHaveBeenCalledOnce();
   });
 });

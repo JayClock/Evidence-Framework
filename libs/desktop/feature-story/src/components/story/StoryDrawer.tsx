@@ -175,7 +175,7 @@ const WhatIfQuestion = ({
   return (
     <section
       aria-label="What-If 业务沙盘"
-      className="rounded-lg border border-evidence-line p-4"
+      className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-amber-950"
     >
       <h3 className="mb-1 font-medium">What-If 业务沙盘</h3>
       <p className="mb-3 text-[11px] leading-5 text-evidence-muted">
@@ -200,15 +200,29 @@ const WhatIfQuestion = ({
           placeholder="如果付款金额只有 300 会怎样？"
           className="w-full resize-y rounded border border-evidence-line bg-white p-2 text-[12px]"
         />
-        <button
-          type="submit"
-          className={`${buttonClass} mt-2`}
-          disabled={
-            !playback.ready || playback.sandbox?.loading || !question.trim()
-          }
-        >
-          {playback.sandbox?.loading ? '正在推演…' : '推演假设'}
-        </button>
+        <div className="mt-2 flex flex-wrap gap-2">
+          <button
+            type="submit"
+            className={buttonClass}
+            disabled={
+              !playback.ready || playback.sandbox?.loading || !question.trim()
+            }
+          >
+            {playback.sandbox?.loading ? '正在推演…' : '推演假设'}
+          </button>
+          <button
+            type="button"
+            className={buttonClass}
+            disabled={!playback.ready || Boolean(question.trim())}
+            onClick={() =>
+              setQuestion(
+                `如果「${playback.scene?.phaseTitle}」无法按期完成，会影响哪些后续步骤？`,
+              )
+            }
+          >
+            填入示例问题
+          </button>
+        </div>
       </form>
       {playback.sandbox?.error ? (
         <p role="alert" className="mt-3 whitespace-pre-wrap text-red-700">
@@ -249,7 +263,7 @@ export const StoryDrawer = ({
   <section
     aria-label="业务故事"
     aria-busy={playback.loading}
-    className="h-full overflow-auto p-4 text-[12px] text-evidence-ink"
+    className="min-h-0 flex-1 overflow-auto overscroll-contain p-4 text-[12px] text-evidence-ink"
   >
     <div className="mx-auto flex max-w-2xl flex-col gap-4">
       <header>

@@ -49,9 +49,7 @@ it('walks across responsibility lanes, resets branch focus when switching scenar
   expect(hook.result.current.canvasFocus?.triggeredRuleIds).toContain(
     'rule-breach-detection-overdue',
   );
-  const bar = render(
-    <StoryPlayerBar playback={hook.result.current} onExit={vi.fn()} />,
-  );
+  const bar = render(<StoryPlayerBar playback={hook.result.current} />);
   expect(screen.getByLabelText('当前旅程分支')).toHaveTextContent('违约补偿');
   expect(screen.getByText(/发货交期逾期自动判定/)).toBeInTheDocument();
   act(() => hook.result.current.selectFlow('defect-escalation'));
@@ -68,9 +66,7 @@ it('walks across responsibility lanes, resets branch focus when switching scenar
   act(() => hook.result.current.selectFlow('happy-path'));
   await load();
   advanceTo('conf-escrow-release');
-  bar.rerender(
-    <StoryPlayerBar playback={hook.result.current} onExit={vi.fn()} />,
-  );
+  bar.rerender(<StoryPlayerBar playback={hook.result.current} />);
   expect(screen.getByLabelText('当前旅程分支')).toHaveTextContent('正常履约');
   expect(hook.result.current.canvasFocus?.triggeredRuleIds).toEqual([]);
   expect(JSON.stringify(document)).toBe(before);
