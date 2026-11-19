@@ -99,7 +99,6 @@ export {
   MODEL_MANIFEST_PATH,
   MODEL_NON_SOURCE_TREES,
   MODEL_SOURCE_TREES,
-  EMPTY_MODEL_ISSUE_CODE,
   modelSourcePaths,
   parseModelSourceFiles,
   serializeDomainModel,

@@ -84,7 +84,9 @@ export const inferJourneyPlacements = (
         const vocabulary = [
           entity.label,
           ...(entity.attributes?.map((a) => a.name) ?? []),
-          graph.getEntity(entity.contextRef)?.label ?? '',
+          (entity.contextRef === undefined
+            ? undefined
+            : graph.getEntity(entity.contextRef)?.label) ?? '',
         ].join(' ');
         if (
           /escrow|clearing|release|settlement|托管|清算|放款|尾款/i.test(

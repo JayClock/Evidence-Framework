@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://jayclock.dev/fm/v5/entity.schema.json",
-  "title": "Progressively modeled Entity with mandatory responsibility",
+  "title": "Business model entity",
   "type": "object",
   "required": ["type", "id", "category", "label"],
   "properties": {
@@ -22,7 +22,6 @@
     "rootRefs": {
       "type": "array",
       "items": { "$ref": "#/$defs/id" },
-      "minItems": 1,
       "uniqueItems": true
     },
     "responsibleRoleRef": { "$ref": "#/$defs/id" },
@@ -38,9 +37,8 @@
       "enum": ["calculator", "checker"]
     },
     "roleRefs": {
-      "description": "A Contract is stored together with exactly two contextual Party Roles; actual players may be unknown.",
+      "description": "Contextual Party Roles named by the Contract.",
       "type": "array",
-      "minItems": 2,
       "maxItems": 2,
       "items": { "$ref": "#/$defs/id" },
       "uniqueItems": true
@@ -84,7 +82,6 @@
         "required": ["category"]
       },
       "then": {
-        "required": ["contextRef"],
         "properties": {
           "kind": {
             "enum": [
@@ -123,34 +120,6 @@
           }
         }
       }
-    },
-    {
-      "if": {
-        "properties": {
-          "category": { "const": "evidence" },
-          "kind": {
-            "enum": [
-              "rfp",
-              "proposal",
-              "fulfillment_request",
-              "fulfillment_confirmation",
-              "other_evidence"
-            ]
-          }
-        },
-        "required": ["category", "kind"]
-      },
-      "then": { "required": ["responsibleRoleRef"] }
-    },
-    {
-      "if": {
-        "properties": {
-          "category": { "const": "evidence" },
-          "kind": { "const": "contract" }
-        },
-        "required": ["category", "kind"]
-      },
-      "then": { "required": ["roleRefs"] }
     },
     {
       "if": {
@@ -209,16 +178,6 @@
           "kind": { "enum": ["contract", "pre_contract", "domain"] }
         }
       }
-    },
-    {
-      "if": {
-        "properties": {
-          "category": { "const": "context" },
-          "kind": { "enum": ["contract", "domain"] }
-        },
-        "required": ["category", "kind"]
-      },
-      "then": { "required": ["rootRefs"] }
     },
     {
       "if": {

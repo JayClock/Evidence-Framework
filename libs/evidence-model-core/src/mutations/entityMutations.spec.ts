@@ -147,23 +147,8 @@ describe('createEntityMutator', () => {
     );
   });
 
-  it('requires a responsible Party Role', () => {
+  it('checks the kind of a supplied responsible role', () => {
     const document = base();
-
-    expectCode(
-      () =>
-        runMutation(document, (draft: Parameters<ModelRecipe>[0]) =>
-          createEntityMutator(draft, {
-            type: 'entity',
-            id: 'request.refund',
-            category: 'evidence',
-            kind: 'fulfillment_request',
-            label: '退款请求',
-            contextRef: 'context.procurement',
-          }),
-        ),
-      'context.responsibility',
-    );
     expectCode(
       () =>
         runMutation(document, (draft: Parameters<ModelRecipe>[0]) =>
@@ -181,7 +166,7 @@ describe('createEntityMutator', () => {
     );
   });
 
-  it('rejects a Contract without two Party Roles', () => {
+  it('rejects a Contract with a non-Party Role', () => {
     const document = base();
 
     expectCode(
@@ -194,7 +179,7 @@ describe('createEntityMutator', () => {
             kind: 'contract',
             label: '补充协议',
             contextRef: 'context.procurement',
-            roleRefs: ['role.buyer'],
+            roleRefs: ['role.catalogue-item'],
           }),
         ),
       'role.notParty',

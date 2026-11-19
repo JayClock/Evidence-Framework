@@ -19,7 +19,7 @@ export const DomainModelManifestSchema = z
     name: z.string().min(1),
     version: ModelVersionSchema,
     ruleLanguage: z.literal(FM_RULE_LANGUAGE),
-    entryContextRefs: z.array(DomainIdSchema).min(1),
+    entryContextRefs: z.array(DomainIdSchema),
     description: z.string().min(1).optional(),
     // Private authoring material; deliberately excluded from published projections.
     sourceDocument: ContractSourceDocumentSchema.optional(),

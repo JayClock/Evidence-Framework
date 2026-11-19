@@ -1,4 +1,7 @@
-import type { DomainModelDocument, EntityAST } from '@evidence-poc/evidence-schema';
+import type {
+  DomainModelDocument,
+  EntityAST,
+} from '@evidence-poc/evidence-schema';
 
 /** Canvas coordinate of one entity. */
 export interface LayoutPoint {
@@ -33,7 +36,11 @@ const isPreContractEvidence = (
   entity: EntityAST,
   preContractContextIds: ReadonlySet<string>,
 ): boolean =>
-  entity.category === 'evidence' && preContractContextIds.has(entity.contextRef);
+  entity.category === 'evidence' &&
+  (entity.kind === 'rfp' ||
+    entity.kind === 'proposal' ||
+    (entity.contextRef !== undefined &&
+      preContractContextIds.has(entity.contextRef)));
 
 const isContractEvidence = (entity: EntityAST): boolean =>
   entity.category === 'evidence' && entity.kind === 'contract';
@@ -55,7 +62,8 @@ export const layoutDomainModel = (
   const preContractContextIds = new Set(
     document.entities
       .filter(
-        (entity) => entity.category === 'context' && entity.kind === 'pre_contract',
+        (entity) =>
+          entity.category === 'context' && entity.kind === 'pre_contract',
       )
       .map((entity) => entity.id),
   );

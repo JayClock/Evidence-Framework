@@ -54,13 +54,6 @@ const cases: [string, ValidationCode, (doc: DomainModelDocument) => void][] = [
     },
   ],
   [
-    'missing evidence context',
-    'entity.contextRef.missing',
-    (d) => {
-      delete entity(d).contextRef;
-    },
-  ],
-  [
     'non-context target',
     'entity.contextRef.notContext',
     (d) => {
@@ -110,13 +103,6 @@ const cases: [string, ValidationCode, (doc: DomainModelDocument) => void][] = [
     'entity.shape',
     (d) => {
       raw(requireEvidence(d, 'confirmation.payment')).asyncAcceptance = true;
-    },
-  ],
-  [
-    'missing contract roles',
-    'entity.roleRefs.missing',
-    (d) => {
-      delete raw(requireEntity(d, 'contract.product-procurement')).roleRefs;
     },
   ],
   [

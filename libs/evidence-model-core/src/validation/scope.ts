@@ -241,14 +241,16 @@ export const pairingGaps = (model: DomainModelDocument): string[] => {
   const requests = model.entities.filter(isFulfillmentRequest);
 
   for (const request of requests) {
-    contextsWithRequests.add(request.contextRef);
+    const contextRef = request.contextRef;
+    if (contextRef === undefined) continue;
+    contextsWithRequests.add(contextRef);
 
     const roleRef = request.responsibleRoleRef;
 
     if (roleRef !== undefined) {
-      const claimed = claimants.get(request.contextRef) ?? new Set<string>();
+      const claimed = claimants.get(contextRef) ?? new Set<string>();
       claimed.add(roleRef);
-      claimants.set(request.contextRef, claimed);
+      claimants.set(contextRef, claimed);
     }
   }
 
@@ -305,8 +307,39 @@ export const completenessIssues = (
   const issues: string[] = [];
   const confirmations = new Set<string>();
 
+  const byId = new Map(model.entities.map((entity) => [entity.id, entity]));
+
   for (const entity of model.entities) {
+    if (
+      entity.category === 'context' &&
+      entity.kind !== 'pre_contract' &&
+      !entity.rootRefs?.length
+    ) {
+      issues.push(`${entity.id}: ${entity.kind} Context requires a root`);
+    }
     if (entity.category === 'evidence') {
+      if (entity.contextRef === undefined) {
+        issues.push(`${entity.id}: ${entity.kind} requires contextRef`);
+      }
+      if (entity.kind === 'contract') {
+        if (entity.roleRefs?.length !== 2) {
+          issues.push(
+            `${entity.id}: Contract requires two distinct Party Roles`,
+          );
+        }
+        const context =
+          entity.contextRef === undefined
+            ? undefined
+            : byId.get(entity.contextRef);
+        if (
+          context?.category === 'context' &&
+          !context.rootRefs?.includes(entity.id)
+        ) {
+          issues.push(`${entity.id}: Contract must be the root of its Context`);
+        }
+      } else if (entity.responsibleRoleRef === undefined) {
+        issues.push(`${entity.id}: ${entity.kind} requires responsibleRoleRef`);
+      }
       const attributes = new Map(
         (entity.attributes ?? []).map(
           (attribute) => [attribute.name, attribute] as const,
@@ -339,6 +372,26 @@ export const completenessIssues = (
       continue;
     }
 
+    if (
+      entity.kind === 'fulfillment_request' &&
+      entity.contextRef !== undefined
+    ) {
+      const context = byId.get(entity.contextRef);
+      const root =
+        context?.category === 'context' ? context.rootRefs?.[0] : undefined;
+      if (
+        root === undefined ||
+        !model.relationships.some(
+          (edge) =>
+            edge.kind === 'references' &&
+            edge.sourceRef === entity.id &&
+            edge.targetRef === root,
+        )
+      )
+        issues.push(
+          `${entity.id}: Fulfillment Request requires a direct reference to its root Contract`,
+        );
+    }
     const pair = fulfillmentResults(model, entity.id);
 
     if (pair.confirmations.length === 0 && pair.roles.length === 0) {

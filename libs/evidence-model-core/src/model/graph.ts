@@ -210,7 +210,10 @@ export function createDomainGraph(document: DomainModelDocument): DomainGraph {
 
     return {
       request,
-      contract: rootContractOf(request.contextRef) ?? null,
+      contract:
+        request.contextRef === undefined
+          ? null
+          : (rootContractOf(request.contextRef) ?? null),
       confirmations,
       proofs,
       completionRules: document.rules.filter(

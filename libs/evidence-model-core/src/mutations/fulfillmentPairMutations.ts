@@ -37,7 +37,11 @@ export interface PairFulfillmentResult {
 const requirePairMembers = (
   document: DomainModelDocument,
   input: Pick<PairFulfillmentInput, 'requestRef' | 'confirmationRef'>,
-): { request: EvidenceEntityAST; confirmation: EvidenceEntityAST } => {
+): {
+  request: EvidenceEntityAST;
+  confirmation: EvidenceEntityAST;
+  contextRef: string;
+} => {
   const request = requireEntity(document, input.requestRef);
   const confirmation = requireEntity(document, input.confirmationRef);
 
@@ -55,17 +59,20 @@ const requirePairMembers = (
     );
   }
 
-  if (request.contextRef !== confirmation.contextRef) {
+  if (
+    request.contextRef === undefined ||
+    request.contextRef !== confirmation.contextRef
+  ) {
     fail(
       'context.responsibility',
       'request and confirmation must belong to the same Contract Context.',
-      [request.contextRef, confirmation.contextRef],
+      [request.id, confirmation.id],
     );
   }
 
   requireContractContext(document, request.contextRef);
 
-  return { request, confirmation };
+  return { request, confirmation, contextRef: request.contextRef };
 };
 
 const existingReference = (
@@ -96,7 +103,10 @@ export const pairFulfillmentMutator = (
   draft: DomainModelDocument,
   input: PairFulfillmentInput,
 ): PairFulfillmentResult => {
-  const { request, confirmation } = requirePairMembers(draft, input);
+  const { request, confirmation, contextRef } = requirePairMembers(
+    draft,
+    input,
+  );
   const existingRule = completionRuleOf(draft, request.id);
 
   if (existingRule !== undefined) {
@@ -117,7 +127,7 @@ export const pairFulfillmentMutator = (
     description:
       input.description ??
       `${confirmation.label}在请求有效期内形成时，${request.label}履约完成。`,
-    contextRef: request.contextRef,
+    contextRef,
     bindings: {
       request: { ref: request.id },
       confirmations: { ref: confirmation.id, cardinality: 'many' },
@@ -177,6 +187,12 @@ export const bindBreachRuleMutator = (
     );
   }
 
+  if (request.contextRef === undefined) {
+    fail(
+      'rule.context',
+      'A breach rule needs a request in a Contract Context.',
+    );
+  }
   const existing = breachRuleOf(draft, request.id);
 
   if (existing !== undefined) {

@@ -38,7 +38,6 @@ export interface ModelSourceIssue {
  * this code instead of matching the message, so every other finding stays
  * fatal.
  */
-export const EMPTY_MODEL_ISSUE_CODE = 'model.empty';
 
 export interface ModelSourceParseResult {
   document: DomainModelDocument;
@@ -318,14 +317,6 @@ export function parseModelSourceFiles(
     });
   } else {
     document.manifest = manifest;
-  }
-
-  if (document.entities.length === 0) {
-    issues.push({
-      path: 'entities',
-      message: 'model must contain at least one entity.',
-      code: EMPTY_MODEL_ISSUE_CODE,
-    });
   }
 
   if (options.validate === true) {

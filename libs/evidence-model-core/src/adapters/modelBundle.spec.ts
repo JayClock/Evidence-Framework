@@ -92,7 +92,7 @@ describe('parseModelBundleText', () => {
     );
     expect(
       parseModelBundleText('{}').issues.map((issue) => issue.path),
-    ).toEqual(expect.arrayContaining(['type', 'manifest', 'entities']));
+    ).toEqual(['type', 'manifest']);
   });
 
   it('reports schema version, item type and duplicate id problems', () => {

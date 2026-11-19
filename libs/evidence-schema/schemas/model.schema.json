@@ -24,7 +24,6 @@
     "ruleLanguage": { "const": "CEL" },
     "entryContextRefs": {
       "type": "array",
-      "minItems": 1,
       "items": { "$ref": "#/$defs/id" },
       "uniqueItems": true
     },

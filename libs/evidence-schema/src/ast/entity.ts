@@ -183,7 +183,7 @@ const EntityBaseSchema = z.object({
 export const EvidenceEntitySchema = EntityBaseSchema.extend({
   category: z.literal('evidence'),
   kind: EvidenceKindSchema,
-  contextRef: DomainIdSchema,
+  contextRef: DomainIdSchema.optional(),
   responsibleRoleRef: DomainIdSchema.optional(),
   /** Explicit delegates for recording this confirmation; they do not own the obligation. */
   callbackRoleRefs: z.array(DomainIdSchema).min(1).optional(),

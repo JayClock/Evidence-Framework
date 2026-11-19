@@ -223,10 +223,17 @@ const assertEvidenceInsertable = (
   document: DomainModelDocument,
   entity: EvidenceEntityAST,
 ): void => {
-  const context = requireContext(document, entity.contextRef);
+  const context =
+    entity.contextRef === undefined
+      ? undefined
+      : requireContext(document, entity.contextRef);
   const expectedKind = CONTEXT_KIND_BY_EVIDENCE[entity.kind];
 
-  if (expectedKind !== undefined && context.kind !== expectedKind) {
+  if (
+    expectedKind !== undefined &&
+    context !== undefined &&
+    context.kind !== expectedKind
+  ) {
     fail(
       'context.responsibility',
       `${entity.kind} must belong to a ${expectedKind} Context.`,
@@ -236,13 +243,6 @@ const assertEvidenceInsertable = (
   if (entity.kind === 'contract') {
     const roleRefs = entity.roleRefs ?? [];
 
-    if (roleRefs.length !== 2 || new Set(roleRefs).size !== 2) {
-      fail(
-        'role.notParty',
-        'Contract requires exactly two distinct Party Roles.',
-      );
-    }
-
     for (const roleRef of roleRefs) {
       requirePartyRole(document, roleRef);
     }
@@ -250,14 +250,8 @@ const assertEvidenceInsertable = (
     return;
   }
 
-  if (entity.responsibleRoleRef === undefined) {
-    fail(
-      'context.responsibility',
-      `${entity.kind} requires responsibleRoleRef provided by the contract parties.`,
-    );
-  }
-
-  requirePartyRole(document, entity.responsibleRoleRef);
+  if (entity.responsibleRoleRef !== undefined)
+    requirePartyRole(document, entity.responsibleRoleRef);
 };
 
 export const isEvidenceWithContract = (

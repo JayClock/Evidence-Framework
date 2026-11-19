@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  EMPTY_MODEL_ISSUE_CODE,
   MODEL_NON_SOURCE_TREES,
   modelSourcePaths,
   parseModelSourceFiles,
@@ -135,23 +134,11 @@ describe('parseModelSourceFiles', () => {
     expect(parsed.document.entities.length).toBeGreaterThan(0);
   });
 
-  it('reports a missing manifest and an empty model', () => {
+  it('reports a missing manifest', () => {
     const parsed = parseModelSourceFiles([]);
 
     expect(parsed.issues.map((issue) => issue.message)).toEqual([
       'model.json is required at the model root.',
-      'model must contain at least one entity.',
-    ]);
-  });
-
-  it('codes the empty-model finding so a blank start is recognisable', () => {
-    const parsed = parseModelSourceFiles([]);
-    const empty = parsed.issues.filter(
-      (issue) => issue.code === EMPTY_MODEL_ISSUE_CODE,
-    );
-
-    expect(empty.map((issue) => issue.message)).toEqual([
-      'model must contain at least one entity.',
     ]);
   });
 

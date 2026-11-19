@@ -10,7 +10,8 @@ const confirm = 'route.confirm.confirmation.payment';
 const model = (played: boolean, delegated: boolean) => {
   const doc = createAcceptanceModel();
   const payment = doc.entities.find(({ id }) => id === 'confirmation.payment');
-  if (payment?.category !== 'evidence') throw new Error('Missing payment');
+  if (payment?.category !== 'evidence' || payment.contextRef === undefined)
+    throw new Error('Missing payment Context');
   doc.entities.push(
     {
       type: 'entity',

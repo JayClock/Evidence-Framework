@@ -532,7 +532,11 @@ export const buildDeliveryRoutes = (
           if (edge.kind !== 'references' || edge.targetRef !== proposal.id)
             continue;
           const contract = graph.getEntity(edge.sourceRef);
-          if (contract?.category !== 'evidence' || contract.kind !== 'contract')
+          if (
+            contract?.category !== 'evidence' ||
+            contract.kind !== 'contract' ||
+            contract.contextRef === undefined
+          )
             continue;
           const primary = address(
             '/' + rootSegments.segmentOf(contract.id),
@@ -578,6 +582,7 @@ export const buildDeliveryRoutes = (
   }
   for (const { entity, incomingRequests, topologyKind } of confirmations) {
     const { id, contextRef, label } = entity;
+    if (contextRef === undefined) continue;
     const refs = { confirmationRef: id };
     const segment = rootSegments.segmentOf(id);
     const parameter = operationIdFor('', confirmationNounOf(id)) + 'Id';
@@ -598,7 +603,7 @@ export const buildDeliveryRoutes = (
       });
       for (const request of incomingRequests) {
         const parent = requestAddresses.get(request.id);
-        if (parent === undefined) continue;
+        if (parent === undefined || request.contextRef === undefined) continue;
         const reverse = address(
           parent.child.itemPath + '/' + segment,
           id,
@@ -683,7 +688,7 @@ export const buildDeliveryRoutes = (
     (entity) =>
       entity.category === 'evidence' && entity.kind === 'other_evidence',
   )) {
-    if (entity.category === 'evidence')
+    if (entity.category === 'evidence' && entity.contextRef !== undefined)
       reads(
         entity.id,
         entity.contextRef,

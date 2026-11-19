@@ -151,12 +151,12 @@ describe('document shape', () => {
     expectIssue(null, 'document.shape');
   });
 
-  it('rejects a model without entities', () => {
+  it('rejects entry references left behind when entities are removed', () => {
     const document = baseDocument();
 
     document.entities = [];
 
-    expectIssue(document, 'document.shape');
+    expectIssue(document, 'manifest.entryContextRef');
   });
 
   it('rejects missing collections', () => {
@@ -194,12 +194,12 @@ describe('manifest checks', () => {
     expectIssue(document, 'manifest.entryContextRef');
   });
 
-  it('rejects an empty entryContextRefs list', () => {
+  it('accepts an empty entryContextRefs list', () => {
     const document = baseDocument();
 
     document.manifest.entryContextRefs = [];
 
-    expectIssue(document, 'manifest.field');
+    expect(validate(document).valid).toBe(true);
   });
 });
 
@@ -308,7 +308,7 @@ describe('attribute checks', () => {
     expectIssue(document, 'attribute.time.notKeyTimestamp');
   });
 
-  it('requires the mandated time attribute to exist', () => {
+  it('accepts a confirmation before its timestamp has been identified', () => {
     const document = baseDocument();
     const confirmation = requireEvidence(document, 'confirmation.payment');
 
@@ -316,7 +316,7 @@ describe('attribute checks', () => {
       (attribute) => attribute.name !== 'confirmed_at',
     );
 
-    expectIssue(document, 'attribute.time.missing');
+    expect(validate(document).valid).toBe(true);
   });
 
   it('rejects a derivation rule that targets another attribute', () => {
@@ -346,12 +346,12 @@ describe('attribute checks', () => {
 });
 
 describe('context checks', () => {
-  it('rejects a domain context without roots', () => {
+  it('accepts a domain context before its roots have been identified', () => {
     const document = baseDocument();
 
     delete requireContext(document, 'context.product-catalog').rootRefs;
 
-    expectIssue(document, 'entity.contextRoots.missing');
+    expect(validate(document).valid).toBe(true);
   });
 
   it('requires exactly one root contract per contract context', () => {
@@ -401,12 +401,12 @@ describe('context checks', () => {
 });
 
 describe('responsibility checks', () => {
-  it('requires responsibleRoleRef on non-contract evidence', () => {
+  it('accepts a request before its responsible role has been identified', () => {
     const document = baseDocument();
 
     delete requireEvidence(document, 'request.payment').responsibleRoleRef;
 
-    expectIssue(document, 'entity.responsibleRole.missing');
+    expect(validate(document).valid).toBe(true);
   });
 
   it('requires the responsible role to be a Party Role', () => {
@@ -418,13 +418,13 @@ describe('responsibility checks', () => {
     expectIssue(document, 'entity.responsibleRole.notPartyRole');
   });
 
-  it('requires contracts to bind exactly two party roles', () => {
+  it('accepts a contract with one party role identified', () => {
     const document = baseDocument();
     const contract = requireEvidence(document, 'contract.product-procurement');
 
     contract.roleRefs = ['role.buyer'];
 
-    expectIssue(document, 'entity.roleRefs.count');
+    expect(validate(document).valid).toBe(true);
   });
 
   it('rejects roleRefs that are not Party Roles', () => {
@@ -486,14 +486,14 @@ describe('evidence context checks', () => {
     expectIssue(document, 'entity.evidenceContext.kind');
   });
 
-  it('requires the contract to be listed in its context roots', () => {
+  it('rejects a root contract from another context', () => {
     const document = baseDocument();
 
     requireContext(document, 'context.product-procurement').rootRefs = [
       'contract.wechat-payment',
     ];
 
-    expectIssue(document, 'entity.contract.rootMissing');
+    expectIssue(document, 'entity.contextRoots.foreign');
   });
 });
 
@@ -800,7 +800,8 @@ describe('assertValidDomainModel', () => {
   it('throws a typed error carrying every issue', () => {
     const document = baseDocument();
 
-    delete requireEvidence(document, 'request.payment').responsibleRoleRef;
+    requireEvidence(document, 'request.payment').responsibleRoleRef =
+      'role.unknown';
 
     try {
       assertValidDomainModel(document);

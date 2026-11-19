@@ -43,6 +43,11 @@ export const createContractMutator = (
       'context.responsibility',
       'createContractMutator requires a Contract.',
     );
+  if (entity.contextRef === undefined)
+    fail(
+      'context.notFound',
+      'createContractMutator requires a Contract Context.',
+    );
   const context = requireContext(draft, entity.contextRef);
   if ((context.rootRefs ?? []).length > 0) {
     fail(

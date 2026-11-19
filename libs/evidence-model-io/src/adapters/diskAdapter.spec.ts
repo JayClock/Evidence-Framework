@@ -190,7 +190,6 @@ describe('writeModelDirectory', () => {
     expect(parsed.document.entities).toEqual([]);
     expect(parsed.issues.map((issue) => issue.message)).toEqual([
       'model.json is required at the model root.',
-      'model must contain at least one entity.',
     ]);
   });
 });

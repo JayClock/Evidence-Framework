@@ -2,7 +2,6 @@ import type { RefinementCtx } from 'zod';
 
 import {
   EVIDENCE_TIME_ATTRIBUTE_NAMES,
-  REQUIRED_EVIDENCE_TIME_ATTRIBUTES,
   type ContextEntityAST,
   type EntityAST,
   type EvidenceEntityAST,
@@ -162,19 +161,6 @@ const validateAttributes = (
       );
     }
   }
-
-  if (entity.category !== 'evidence') return;
-  for (const requiredName of REQUIRED_EVIDENCE_TIME_ATTRIBUTES[entity.kind]) {
-    if (!seen.has(requiredName)) {
-      addIssue(
-        ctx,
-        'attribute.time.missing',
-        ['entities', position, 'attributes'],
-        `${entity.kind} requires explicit time attribute '${requiredName}'.`,
-        entity.id,
-      );
-    }
-  }
 };
 
 const validateContextEntity = (
@@ -198,20 +184,7 @@ const validateContextEntity = (
   }
 
   const roots = entity.rootRefs;
-  if (
-    (entity.kind === 'contract' || entity.kind === 'domain') &&
-    (!roots || roots.length === 0)
-  ) {
-    addIssue(
-      ctx,
-      'entity.contextRoots.missing',
-      [...path, 'rootRefs'],
-      `${entity.kind} Context must declare rootRefs with real content.`,
-      entity.id,
-    );
-    return;
-  }
-  if (roots === undefined) return;
+  if (!roots?.length) return;
 
   if (entity.kind === 'contract') {
     const contractRoots = roots.filter(
@@ -258,16 +231,7 @@ const validateEvidenceResponsibility = (
   ctx: RefinementCtx,
 ): void => {
   const path = ['entities', position, 'responsibleRoleRef'] as Path;
-  if (entity.responsibleRoleRef === undefined) {
-    addIssue(
-      ctx,
-      'entity.responsibleRole.missing',
-      path,
-      'non-contract Evidence requires responsibleRoleRef.',
-      entity.id,
-    );
-    return;
-  }
+  if (entity.responsibleRoleRef === undefined) return;
 
   const role = entityOf(index, entity.responsibleRoleRef);
   if (role === undefined) {
@@ -299,7 +263,10 @@ const validateEvidenceResponsibility = (
       ? parent
       : context;
   const expectedContext = owner?.id ?? entity.contextRef;
-  if (ownerContextOf(role) !== expectedContext) {
+  if (
+    expectedContext !== undefined &&
+    ownerContextOf(role) !== expectedContext
+  ) {
     addIssue(
       ctx,
       'entity.responsibleRole.foreign',
@@ -313,8 +280,8 @@ const validateEvidenceResponsibility = (
   const contract = rootContractOf(owner, index);
   if (
     owner?.kind === 'contract' &&
-    contract &&
-    !contract.roleRefs?.includes(entity.responsibleRoleRef)
+    contract?.roleRefs?.length === 2 &&
+    !contract.roleRefs.includes(entity.responsibleRoleRef)
   ) {
     addIssue(
       ctx,
@@ -334,7 +301,7 @@ const validateContractEntity = (
   ctx: RefinementCtx,
 ): void => {
   const path = ['entities', position] as Path;
-  if (context?.kind !== 'contract') {
+  if (context !== undefined && context.kind !== 'contract') {
     addIssue(
       ctx,
       'entity.evidenceContext.kind',
@@ -343,33 +310,14 @@ const validateContractEntity = (
       entity.id,
     );
   }
-  if (!context?.rootRefs?.includes(entity.id)) {
-    addIssue(
-      ctx,
-      'entity.contract.rootMissing',
-      [...path, 'contextRef'],
-      'Contract must be listed in the rootRefs of its Context.',
-      entity.id,
-    );
-  }
-
   const roleRefs = entity.roleRefs;
-  if (roleRefs === undefined) {
-    addIssue(
-      ctx,
-      'entity.roleRefs.missing',
-      [...path, 'roleRefs'],
-      'Contract requires exactly two distinct contextual Party Roles.',
-      entity.id,
-    );
-    return;
-  }
-  if (new Set(roleRefs).size !== 2 || roleRefs.length !== 2) {
+  if (roleRefs === undefined) return;
+  if (new Set(roleRefs).size !== roleRefs.length || roleRefs.length > 2) {
     addIssue(
       ctx,
       'entity.roleRefs.count',
       [...path, 'roleRefs'],
-      'Contract requires exactly two distinct Party Roles.',
+      'A Contract cannot declare duplicate Party Roles or more than two.',
       entity.id,
     );
   }
@@ -391,7 +339,10 @@ const validateContractEntity = (
         `roleRef '${ref}' must reference a Party Role.`,
         entity.id,
       );
-    } else if (ownerContextOf(role) !== entity.contextRef) {
+    } else if (
+      entity.contextRef !== undefined &&
+      ownerContextOf(role) !== entity.contextRef
+    ) {
       addIssue(
         ctx,
         'entity.roleRefs.foreign',
@@ -420,7 +371,6 @@ const validateEntities = (
     const path = ['entities', position] as Path;
     const context = contextOf(index, entity);
     const needsContext =
-      entity.category === 'evidence' ||
       entity.category === 'role' ||
       (entity.category === 'participant' && entity.kind === 'thing');
 
@@ -433,7 +383,7 @@ const validateEntities = (
         entity.id,
       );
     } else if (
-      needsContext &&
+      entity.contextRef !== undefined &&
       entityOf(index, entity.contextRef) === undefined
     ) {
       addIssue(
@@ -443,7 +393,7 @@ const validateEntities = (
         `unknown contextRef '${entity.contextRef}'.`,
         entity.id,
       );
-    } else if (needsContext && context === undefined) {
+    } else if (entity.contextRef !== undefined && context === undefined) {
       addIssue(
         ctx,
         'entity.contextRef.notContext',
@@ -503,7 +453,8 @@ const validateEntities = (
         if (
           entity.kind !== 'fulfillment_confirmation' ||
           signatureOf(role) !== 'role.third_party' ||
-          ownerContextOf(role) !== entity.contextRef ||
+          (entity.contextRef !== undefined &&
+            ownerContextOf(role) !== entity.contextRef) ||
           seen.has(ref)
         ) {
           addIssue(
@@ -527,7 +478,8 @@ const validateEntities = (
       if (
         (entity.kind === 'fulfillment_request' ||
           entity.kind === 'fulfillment_confirmation') &&
-        context?.kind !== 'contract'
+        context !== undefined &&
+        context.kind !== 'contract'
       ) {
         addIssue(
           ctx,
@@ -537,18 +489,10 @@ const validateEntities = (
           entity.id,
         );
       }
-      if (entity.kind === 'other_evidence' && context === undefined) {
-        addIssue(
-          ctx,
-          'entity.evidenceContext.kind',
-          [...path, 'contextRef'],
-          'other_evidence must belong to a Contract, Pre-contract or Domain Context.',
-          entity.id,
-        );
-      }
       if (
         (entity.kind === 'rfp' || entity.kind === 'proposal') &&
-        context?.kind !== 'pre_contract'
+        context !== undefined &&
+        context.kind !== 'pre_contract'
       ) {
         addIssue(
           ctx,
@@ -718,6 +662,8 @@ const validateRelationships = (
       signatureOf(source) === 'evidence.fulfillment_confirmation' &&
       signatureOf(target) === 'evidence.fulfillment_request';
     if (
+      sourceContext !== undefined &&
+      targetContext !== undefined &&
       sourceContext !== targetContext &&
       !contractToProposal &&
       !evidenceToThing &&
@@ -736,7 +682,11 @@ const validateRelationships = (
         relationship.id,
       );
     }
-    if (contractToProposal) {
+    if (
+      contractToProposal &&
+      sourceContext !== undefined &&
+      targetContext !== undefined
+    ) {
       const proposalContext = entityOf(index, targetContext);
       if (
         proposalContext?.category !== 'context' ||
@@ -884,15 +834,6 @@ export function refineDomainModel(
   document: DomainModelDocument,
   ctx: RefinementCtx,
 ): void {
-  if (document.entities.length === 0) {
-    addIssue(
-      ctx,
-      'document.shape',
-      ['entities'],
-      'model must contain at least one entity.',
-    );
-  }
-
   const index: ModelIndex = {
     entities: new Map(),
     rules: new Map(),

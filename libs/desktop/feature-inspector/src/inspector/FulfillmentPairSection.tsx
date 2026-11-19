@@ -44,7 +44,10 @@ export const FulfillmentPairSection = ({
   const [error, setError] = useState<string | null>(null);
   const pair = graph.fulfillmentPair(entity.id);
 
-  if (entity.kind !== 'fulfillment_request') {
+  if (
+    entity.kind !== 'fulfillment_request' ||
+    entity.contextRef === undefined
+  ) {
     return null;
   }
 

@@ -2,10 +2,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import { mkdir, readFile, rename, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
-import {
-  EMPTY_MODEL_ISSUE_CODE,
-  isModelBundlePath,
-} from '@evidence-poc/evidence-model-core';
+import { isModelBundlePath } from '@evidence-poc/evidence-model-core';
 import {
   isModelBundleFile,
   readModelBundle,
@@ -109,27 +106,11 @@ const exists = async (absolute: string): Promise<boolean> =>
     () => false,
   );
 
-/**
- * A freshly created project holds a manifest and no entity yet.
- *
- * The parser reports that as a finding so a reader can tell a blank start from a
- * broken tree; opening one must not turn that notice into an error.
- */
-const isBlankStart = (issues: readonly { code?: string }[]): boolean =>
-  issues.length > 0 &&
-  issues.every((issue) => issue.code === EMPTY_MODEL_ISSUE_CODE);
-
-/**
- * Whether a parsed source can feed the canvas.
- *
- * A tree that reports findings but holds objects is still worth showing, and so
- * is a blank start; only a source that failed to yield anything else is refused.
- */
 const isReadableSource = (parsed: {
   document: { entities: readonly unknown[] };
-  issues: readonly { code?: string }[];
+  issues: readonly unknown[];
 }): boolean =>
-  parsed.document.entities.length > 0 || isBlankStart(parsed.issues);
+  parsed.issues.length === 0 || parsed.document.entities.length > 0;
 
 /** Where a starter document lands, before anything is written. */
 interface StarterTarget {

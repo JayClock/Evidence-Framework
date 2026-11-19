@@ -10,7 +10,6 @@ import {
   type RuleAST,
 } from '@evidence-poc/evidence-schema';
 import {
-  EMPTY_MODEL_ISSUE_CODE,
   serializeDomainModel,
   stringifyModelJson,
   parseModelSourceFiles,
@@ -218,14 +217,6 @@ export function parseModelBundleText(
     }).issues)
       issues.push(failure(issue.path, issue.message, issue.code));
   }
-  if (document.entities.length === 0)
-    issues.push(
-      failure(
-        'entities',
-        'model must contain at least one entity.',
-        EMPTY_MODEL_ISSUE_CODE,
-      ),
-    );
   return { document, issues };
 }
 

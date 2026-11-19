@@ -9,7 +9,6 @@ import {
   type EvidenceModelOptions,
 } from '@evidence-poc/evidence-agent';
 import {
-  EMPTY_MODEL_ISSUE_CODE,
   buildFmCheckReport,
   collectFlowScenarios,
 } from '@evidence-poc/evidence-model-core';
@@ -49,7 +48,7 @@ const readSavedModel = async (
     ? await readModelBundle(modelSourceOf(rootPath))
     : await readModelDirectory(modelSourceOf(rootPath));
   // Structural failures cannot be narrated as a legitimate empty story.
-  if (parsed.issues.some((issue) => issue.code !== EMPTY_MODEL_ISSUE_CODE))
+  if (parsed.issues.length > 0)
     throw new Error(parsed.issues.map((issue) => issue.message).join('\n'));
   return parsed.document;
 };

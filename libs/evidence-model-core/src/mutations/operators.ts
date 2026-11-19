@@ -206,6 +206,9 @@ export const addBreachCompensationMutator = (
     throw new Error(`'${intent.requestRef}' 不是履约请求，无法声明违约补偿。`);
   }
 
+  if (breaching.contextRef === undefined) {
+    throw new Error('请先确定原履约请求所属的合同上下文。');
+  }
   bindBreachRuleMutator(document, {
     requestRef: intent.requestRef,
     rule: {
@@ -266,6 +269,9 @@ export const roleifyAndInvertDependencyMutator = (
     );
   }
 
+  if (target.contextRef === undefined) {
+    throw new Error('请先确定履约确认所属的合同上下文。');
+  }
   const { supporting } = intent;
   const socketRole: RoleEntityAST = {
     type: 'entity',
