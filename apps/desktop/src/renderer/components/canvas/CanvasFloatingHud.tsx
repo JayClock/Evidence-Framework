@@ -21,7 +21,7 @@ interface CanvasFloatingHudProps extends CanvasHudControls {
   onClearSelection: () => void;
 }
 
-const zoomButtonClass = 'size-6 rounded-full p-0';
+const zoomButtonClass = 'size-6 rounded-full p-0 [&_svg]:size-3.5';
 
 export const CanvasFloatingHud = ({
   density,
@@ -73,7 +73,7 @@ export const CanvasFloatingHud = ({
     <Button
       type="button"
       variant="ghost"
-      className="h-6 gap-1 rounded-full px-1.5"
+      className="h-6 gap-1 rounded-full px-1.5 [&_svg]:size-3.5"
       onClick={fitToContent}
     >
       <Maximize2 aria-hidden="true" />

@@ -11,6 +11,7 @@ interface RightPaneShellProps {
   onShowInspector: () => void;
   onShowCopilot: () => void;
   onReturnToCanvas?: () => void;
+  returnOnEscape?: boolean;
   children: ReactNode;
 }
 
@@ -20,6 +21,7 @@ export const RightPaneShell = ({
   onShowInspector,
   onShowCopilot,
   onReturnToCanvas,
+  returnOnEscape = true,
   children,
 }: RightPaneShellProps) => {
   const switchClass =
@@ -35,6 +37,7 @@ export const RightPaneShell = ({
           event.defaultPrevented ||
           event.nativeEvent.isComposing ||
           !onReturnToCanvas ||
+          !returnOnEscape ||
           (event.target instanceof Element &&
             event.target.closest(
               'input, textarea, select, [contenteditable="true"], [role="dialog"]',
@@ -75,8 +78,9 @@ export const RightPaneShell = ({
             type="button"
             size="icon"
             variant="ghost"
+            className="[&_svg]:size-3.5"
             aria-label="返回画布"
-            title="返回画布（Esc）"
+            title={returnOnEscape ? '返回画布（Esc）' : '返回画布'}
             onClick={onReturnToCanvas}
           >
             <ArrowLeft aria-hidden="true" />

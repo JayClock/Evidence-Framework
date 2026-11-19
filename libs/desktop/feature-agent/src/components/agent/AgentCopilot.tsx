@@ -252,7 +252,7 @@ export const AgentCopilot = ({
 
       <form
         data-workbench-chrome=""
-        className="flex shrink-0 flex-col gap-2 border-t border-workbench-border bg-white p-3"
+        className="flex shrink-0 flex-col gap-2 border-t border-workbench-border bg-white p-3 [&_button_svg]:size-3.5"
         onSubmit={(event) => {
           event.preventDefault();
           void send();

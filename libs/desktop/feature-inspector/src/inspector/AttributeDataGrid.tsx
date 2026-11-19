@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import { Trash2 } from 'lucide-react';
 
 import {
   createColumnHelper,
@@ -199,7 +200,10 @@ export const AttributeDataGrid = ({
           const keyData = attribute.keyData === true;
 
           return (
-            <label className="flex cursor-pointer items-center gap-1 py-0.5 text-[9px]">
+            <label
+              className="flex cursor-pointer items-center justify-center py-0.5"
+              title={keyData ? '关键数据' : '普通字段'}
+            >
               <input
                 type="checkbox"
                 aria-label={`${attribute.name} 关键数据`}
@@ -208,11 +212,7 @@ export const AttributeDataGrid = ({
                   patchAttribute(attribute, { keyData: event.target.checked })
                 }
               />
-              <span
-                className={keyData ? 'text-evidence-role' : 'text-[#8c959f]'}
-              >
-                {keyData ? '关键数据' : '普通'}
-              </span>
+              <span className="sr-only">{keyData ? '关键数据' : '普通'}</span>
             </label>
           );
         },
@@ -236,9 +236,10 @@ export const AttributeDataGrid = ({
                   'remove-attribute',
                 )
               }
-              className="rounded border border-evidence-line px-1 py-0.5 text-[9px] text-evidence-muted hover:border-evidence-evidence hover:text-evidence-evidence"
+              title="删除属性"
+              className="mx-auto flex size-5 items-center justify-center rounded text-workbench-muted hover:bg-workbench-subtle hover:text-evidence-evidence focus-visible:ring-2 focus-visible:ring-evidence-accent"
             >
-              删除
+              <Trash2 aria-hidden="true" className="size-3" />
             </button>
           );
         },
@@ -290,10 +291,10 @@ export const AttributeDataGrid = ({
                     key={header.id}
                     className={cn(
                       'border-b border-evidence-line px-1.5 py-1 font-normal',
-                      header.column.id === 'name' && 'w-[38%]',
-                      header.column.id === 'label' && 'w-[36%]',
-                      header.column.id === 'keyData' && 'w-[14%]',
-                      header.column.id === 'actions' && 'w-[12%]',
+                      header.column.id === 'name' && 'w-[37%]',
+                      (header.column.id === 'keyData' ||
+                        header.column.id === 'actions') &&
+                        'w-8 text-center whitespace-nowrap',
                     )}
                   >
                     {flexRender(

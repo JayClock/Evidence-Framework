@@ -852,7 +852,7 @@ const EditorWorkspace = ({
               <ResizablePanel
                 id="right-rail"
                 order={2}
-                defaultSize={27.3}
+                defaultSize={30}
                 minSize={18}
                 maxSize={40}
                 collapsible
@@ -868,12 +868,11 @@ const EditorWorkspace = ({
                     onShowInspector={layout.showInspector}
                     onShowCopilot={layout.openCopilot}
                     onReturnToCanvas={
-                      layout.rightPane === 'inspector' &&
-                      !storyActive &&
-                      patchReview.review === null
+                      layout.rightPane === 'inspector'
                         ? returnToCanvas
                         : undefined
                     }
+                    returnOnEscape={!storyActive && patchReview.review === null}
                   >
                     {layout.rightPane === 'inspector' ? (
                       <RightInspector

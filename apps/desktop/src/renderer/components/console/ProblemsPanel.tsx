@@ -93,7 +93,7 @@ export const ProblemsPanel = ({
           />
           门禁与诊断{report === null ? '' : `（${counts.all} 项发现）`}
         </h2>
-        <div className="flex shrink-0 items-center gap-1">
+        <div className="flex shrink-0 items-center gap-1 [&_svg]:size-3.5">
           <Button
             type="button"
             variant="ghost"
@@ -189,6 +189,7 @@ export const ProblemsPanel = ({
                     type="button"
                     size="xs"
                     variant="outline"
+                    className="[&_svg]:size-3"
                     aria-label={`定位到 ${issue.message}`}
                     onClick={() => onFocusIssue(issue)}
                   >

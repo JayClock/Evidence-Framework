@@ -31,7 +31,14 @@ nx make desktop         # installers in apps/desktop/out/make
   layout. Use the inspector to edit fields or rules.
 - Use **Cmd/Ctrl+K** to search for business objects and jump to them.
 - **业务流放映** runs on the canvas. Open **剧情详情** for narration, scene details
-  and What-If questions without adding a second viewport.
+  and What-If questions without adding a second viewport. The upper-left canvas
+  toolbar controls zoom, fit and density; its **更多画布工具** contains the grid
+  and scenario actions.
+- Use **实体属性检查** in the right pane to edit the selected object. **返回画布**
+  returns keyboard focus without dropping the selection. **Alt+L** opens the
+  selected entity’s field ledger. Applying an edited CEL invariant updates the
+  current model and can be undone; passing the inline syntax/reference check
+  does not imply the model passed the gate. **Cmd/Ctrl+Shift+R** reruns checks.
 
 ## AI configuration (no Pi CLI required)
 

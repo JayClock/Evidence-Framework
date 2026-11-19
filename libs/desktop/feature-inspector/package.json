@@ -37,6 +37,7 @@
     "@evidence-poc/evidence-schema": "workspace:*",
     "@lezer/highlight": "^1.2.5",
     "@tanstack/react-table": "^8.21.3",
+    "lucide-react": "^1.72.0",
     "react": "^19.2.8",
     "tslib": "^2.3.0"
   }
