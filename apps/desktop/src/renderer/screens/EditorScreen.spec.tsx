@@ -10,7 +10,14 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import type { StoryInvalidatedEvent } from '@evidence-poc/desktop-contracts/story';
 import { storyFlow, storyResult } from '@evidence-poc/desktop-testing/story';
 
-import { collectFlowScenarios } from '@evidence-poc/evidence-model-core';
+import {
+  applyModelPatches,
+  batchAddEvidenceMutator,
+  collectFlowScenarios,
+  createModelPatch,
+  growBreachCompensationMutator,
+  splitEvidenceToPairMutator,
+} from '@evidence-poc/evidence-model-core';
 import { EditorScreen } from './EditorScreen';
 import {
   healthyReport,
@@ -217,6 +224,178 @@ describe('EditorScreen', () => {
       }),
     );
     expect(api.calls.save).toEqual([]);
+  });
+
+  it('grows a saved-model canvas from stormed evidence through a real pair and a compensation branch', async () => {
+    let document = createDesktopFixture();
+    document.manifest.entryContextRefs = [];
+    document.entities = [];
+    document.relationships = [];
+    document.rules = [];
+    const api = installDesktopApi({
+      openResult: {
+        success: true,
+        project: projectSummary({ name: '桌面端夹具（Desktop Fixture）' }),
+        document,
+        issues: [],
+      },
+    });
+    const { container } = render(
+      <EditorScreen rootPath="/models/procurement" />,
+    );
+    await readyCanvas();
+    const canvas = screen.getByRole('group', {
+      name: '业务全生命周期四阶段泳道',
+    });
+    expect(canvas.querySelectorAll('[data-milestone-stage]')).toHaveLength(4);
+    const apply = (
+      requestId: string,
+      build: Parameters<typeof createModelPatch>[1],
+    ) => {
+      const { patches } = createModelPatch(document, build);
+      act(() =>
+        api.agentMock.requestPatch({
+          requestId,
+          patch: { rationale: requestId, patches },
+        }),
+      );
+      expect(api.agentMock.patchResponses.at(-1)).toMatchObject({
+        requestId,
+        result: { success: true },
+      });
+      document = applyModelPatches(document, patches);
+    };
+    apply('头脑风暴', (draft) =>
+      batchAddEvidenceMutator(draft, {
+        evidences: [
+          { id: 'evidence.enquiry', label: '询价', stage: 'rfp' },
+          { id: 'evidence.quotation', label: '报价', stage: 'proposal' },
+          { id: 'evidence.sale', label: '口头合同', stage: 'contract' },
+          {
+            id: 'evidence.payment',
+            label: '付款凭证',
+            stage: 'fulfillment',
+            times: [
+              {
+                name: 'paid_at',
+                label: '付款时间',
+                meaning: '到账时刻',
+                timeRole: 'occurrence',
+              },
+            ],
+            keyData: [
+              {
+                name: 'amount',
+                label: '实付金额',
+                meaning: '实际付款金额',
+                valueType: 'decimal',
+              },
+            ],
+          },
+        ],
+      }),
+    );
+    const trace = await screen.findByRole('button', { name: '溯源：付款凭证' });
+    expect(
+      screen.queryByRole('button', { name: 'What-If：付款凭证' }),
+    ).toBeNull();
+    expect(api.calls.prompt).toEqual([]);
+    expect(api.calls.save).toEqual([]);
+    const positionedX = (id: string) =>
+      Number(
+        (
+          container.querySelector(`[data-id="${id}"]`) as HTMLElement
+        ).style.transform.match(/translate\(([-.\d]+)px,/)?.[1],
+      );
+    expect(positionedX('evidence.enquiry')).toBeLessThan(
+      positionedX('evidence.quotation'),
+    );
+    expect(positionedX('evidence.quotation')).toBeLessThan(
+      positionedX('evidence.sale'),
+    );
+    expect(positionedX('evidence.sale')).toBeLessThan(
+      positionedX('evidence.payment'),
+    );
+
+    fireEvent.click(trace);
+    const sourcing = await screen.findByRole('dialog', {
+      name: '关键数据溯源：付款凭证',
+    });
+    act(() =>
+      api.agentMock.emitEvent({
+        type: 'text-delta',
+        delta: '实付金额来自哪里？',
+      }),
+    );
+    expect(within(sourcing).getByLabelText('AI 回复')).toHaveTextContent(
+      '实付金额来自哪里？',
+    );
+    const answer = async (dialog: HTMLElement, text: string) => {
+      const panel = within(dialog);
+      fireEvent.change(panel.getByLabelText('访谈内容'), {
+        target: { value: text },
+      });
+      const send = panel.getByRole('button', { name: '发送' });
+      await waitFor(() => expect(send).toBeEnabled());
+      fireEvent.click(send);
+    };
+    await answer(sourcing, '金额由买方在付款申请中填写。');
+    apply('溯源并配对', (draft) =>
+      splitEvidenceToPairMutator(draft, {
+        evidenceRef: 'evidence.payment',
+        request: { mode: 'create', id: 'request.payment', label: '付款申请' },
+        inputAttributes: [
+          {
+            confirmationAttribute: 'amount',
+            requestAttribute: 'requested_amount',
+          },
+        ],
+      }),
+    );
+    const request = await screen.findByRole('button', {
+      name: '溯源：付款申请',
+    });
+    expect(request).toBeInTheDocument();
+    expect(positionedX('request.payment')).toBeLessThan(
+      positionedX('evidence.payment'),
+    );
+    expect(trace).toHaveAttribute('aria-expanded', 'true');
+    expect(sourcing).toBeInTheDocument();
+    expect(container.querySelector('[data-pair-link]')).not.toBeNull();
+    fireEvent.click(within(sourcing).getByRole('button', { name: '关闭' }));
+
+    fireEvent.click(screen.getByRole('button', { name: 'What-If：付款凭证' }));
+    const whatIf = await screen.findByRole('dialog', {
+      name: 'What-If 异常履约：付款凭证',
+    });
+    expect(screen.queryByRole('button', { name: '溯源：退款确认' })).toBeNull();
+    await answer(whatIf, '超时之后按约定启动退款。');
+    apply('生长补偿', (draft) =>
+      growBreachCompensationMutator(draft, {
+        requestRef: 'request.payment',
+        condition: '超时之后按约定启动退款',
+        request: { id: 'request.refund', label: '退款请求' },
+        confirmation: { id: 'evidence.refund', label: '退款确认' },
+      }),
+    );
+    expect(
+      await screen.findByRole('button', { name: '溯源：退款确认' }),
+    ).toBeInTheDocument();
+    expect(
+      container.querySelector('[data-corridor-kind="remedy_corridor"]'),
+    ).not.toBeNull();
+    expect(api.calls.prompt.map(({ focus }) => focus)).toEqual([
+      { nodeId: 'evidence.payment', inquiry: 'trace' },
+      { nodeId: 'evidence.payment' },
+      { nodeId: 'evidence.payment', inquiry: 'what-if' },
+      { nodeId: 'evidence.payment' },
+    ]);
+    expect(api.calls.save).toEqual([]);
+    fireEvent.click(within(whatIf).getByRole('button', { name: '关闭' }));
+    fireEvent.click(screen.getByRole('button', { name: '保存模型' }));
+    await waitFor(() =>
+      expect(api.calls.save).toEqual(['/models/procurement']),
+    );
   });
 
   it('shows the selected object’s source excerpt in the inspector', async () => {
