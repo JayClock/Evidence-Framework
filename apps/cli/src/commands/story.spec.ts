@@ -60,7 +60,6 @@ describe('story command dispatch', () => {
       ).toBe(0);
       expect(createFlowStoryProjector).toHaveBeenCalledWith({
         skipAi: offline,
-        projectRoot: root,
       });
       expect(project).toHaveBeenCalledTimes(1);
       expect(project.mock.calls[0]![0]).toMatchObject({

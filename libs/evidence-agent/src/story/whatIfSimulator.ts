@@ -28,7 +28,6 @@ import type {
 
 export interface WhatIfSimulatorOptions {
   readonly agent?: StoryAgent;
-  readonly projectRoot?: string;
 }
 
 type DerivationRule = RuleAST & { target: NonNullable<RuleAST['target']> };
@@ -143,7 +142,7 @@ export async function simulateWhatIf(
   const inputAttributes = (entity.attributes ?? []).filter(
     ({ name }) => !isDerived(name),
   );
-  const agent = options.agent ?? createStoryAgent(options);
+  const agent = options.agent ?? createStoryAgent();
   const hypothesis = HypothesisSchema.parse(
     responseObject(
       suppliedHypothesis ??

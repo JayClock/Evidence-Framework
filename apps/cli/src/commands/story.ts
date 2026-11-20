@@ -45,7 +45,6 @@ export async function storyCommand(
   // cac parses --no-ai as { ai: false }, not { noAi: true }.
   const projector = createFlowStoryProjector({
     skipAi: options.ai === false,
-    projectRoot: context.cwd,
   });
   const projections = [];
   for (const flow of flows)

@@ -22,7 +22,6 @@ export interface FlowStoryProjectorOptions {
   readonly skipAi?: boolean;
   readonly agent?: StoryAgent;
   readonly cache?: StorySceneCache;
-  readonly projectRoot?: string;
 }
 
 export interface FlowStoryProjector {
@@ -43,7 +42,7 @@ export const createFlowStoryProjector = (
 ): FlowStoryProjector => {
   const agent = options.skipAi
     ? undefined
-    : (options.agent ?? createStoryAgent(options));
+    : (options.agent ?? createStoryAgent());
   const cache = options.cache ?? new StorySceneCache();
   const pending = new Map<string, Promise<StoryScene>>();
 

@@ -28,11 +28,7 @@ import {
   type StoryProjectResult,
   type StoryWhatIfInput,
 } from '@evidence-poc/desktop-contracts/story';
-import {
-  isBundleProject,
-  modelSourceOf,
-  projectDirectoryOf,
-} from './modelSource';
+import { isBundleProject, modelSourceOf } from './modelSource';
 
 export interface StoryIpcOptions {
   readModel?: (rootPath: string) => Promise<DomainModelDocument>;
@@ -121,17 +117,10 @@ export const registerStoryIpc = ({
       const skipAi = input.skipAi === true;
       let projector = cache.modes.get(skipAi);
       if (!projector) {
-        const projectRoot = projectDirectoryOf(input.rootPath);
         projector = createProjector({
           skipAi,
-          projectRoot,
           ...(!skipAi && getModelOptions
-            ? {
-                agent: createStoryAgent({
-                  projectRoot,
-                  ...(await getModelOptions()),
-                }),
-              }
+            ? { agent: createStoryAgent(await getModelOptions()) }
             : {}),
         });
         if (!skipAi && generation !== modelGeneration)
@@ -169,10 +158,7 @@ export const registerStoryIpc = ({
           hypothesisQuestion: input.question.trim(),
         },
         {
-          agent: createStoryAgent({
-            ...(await getModelOptions?.()),
-            projectRoot: projectDirectoryOf(input.rootPath),
-          }),
+          agent: createStoryAgent(await getModelOptions?.()),
         },
       );
     },

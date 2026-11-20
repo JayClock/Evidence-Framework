@@ -1,115 +1,128 @@
+import type { ModelRuntime } from '@earendil-works/pi-coding-agent';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-
 import { createStoryAgent } from './storyAgent.js';
 
-const fake = vi.hoisted(() => ({
-  reload: vi.fn(),
-  prompt: vi.fn(),
-  dispose: vi.fn(),
-  getLastAssistantText: vi.fn(),
-  createAgentSession: vi.fn(),
-  inMemory: vi.fn(),
-  resourceOptions: {} as Record<string, unknown>,
-  messages: [{ role: 'assistant', stopReason: 'stop' }],
+const sdk = vi.hoisted(() => ({
+  createRuntime: vi.fn(),
+  createSettings: vi.fn(),
+}));
+vi.mock('@earendil-works/pi-coding-agent', () => ({
+  getAgentDir: () => '/pi/agent',
+  ModelRuntime: { create: sdk.createRuntime },
+  SettingsManager: { create: sdk.createSettings },
 }));
 
-vi.mock('@earendil-works/pi-coding-agent', () => ({
-  getAgentDir: () => '/agent',
-  DefaultResourceLoader: class {
-    constructor(options: Record<string, unknown>) {
-      fake.resourceOptions = options;
-    }
-    reload = fake.reload;
-  },
-  SessionManager: { inMemory: fake.inMemory },
-  createAgentSession: fake.createAgentSession,
-}));
+const model = { provider: 'deepseek', id: 'private-model' } as Parameters<
+  ModelRuntime['completeSimple']
+>[0];
+const completeSimple = vi.fn();
+const getAvailable = vi.fn();
+const modelRuntime = {
+  completeSimple,
+  getAvailable,
+} as unknown as ModelRuntime;
+const request = {
+  systemPrompt: 'story instructions',
+  userPrompt: 'local facts',
+};
 
 beforeEach(() => {
-  vi.clearAllMocks();
-  fake.messages = [{ role: 'assistant', stopReason: 'stop' }];
-  fake.prompt.mockResolvedValue(undefined);
-  fake.reload.mockResolvedValue(undefined);
-  fake.getLastAssistantText.mockReturnValue('{"narrative":"故事"}');
-  fake.createAgentSession.mockImplementation(async () => ({
-    session: {
-      messages: fake.messages,
-      prompt: fake.prompt,
-      dispose: fake.dispose,
-      getLastAssistantText: fake.getLastAssistantText,
-    },
-  }));
+  vi.resetAllMocks();
+  completeSimple.mockResolvedValue({
+    stopReason: 'stop',
+    content: [
+      { type: 'thinking', thinking: 'not part of the answer' },
+      { type: 'text', text: '{"narrative":' },
+      { type: 'text', text: '"故事"}' },
+    ],
+  });
+  getAvailable.mockResolvedValue([{ id: 'other' }, model]);
+  sdk.createRuntime.mockResolvedValue(modelRuntime);
+  sdk.createSettings.mockReturnValue({
+    getDefaultProvider: () => model.provider,
+    getDefaultModel: () => model.id,
+    getDefaultThinkingLevel: () => 'medium',
+  });
 });
 
-describe('tool-free story agent adapter', () => {
-  it('passes explicit model dependencies to the SDK', async () => {
-    const options = {
-      agentDir: '/desktop/ai',
-      modelRuntime: {} as never,
-      model: { id: 'private-model' } as never,
-      thinkingLevel: 'off' as const,
-    };
-    await createStoryAgent(options).generate({
-      systemPrompt: 's',
-      userPrompt: 'u',
+describe('stateless story completion', () => {
+  it('uses explicit desktop dependencies and sends no history or tools', async () => {
+    const agent = createStoryAgent({
+      modelRuntime,
+      model,
+      thinkingLevel: 'high',
     });
-    expect(fake.resourceOptions.agentDir).toBe('/desktop/ai');
-    expect(fake.createAgentSession).toHaveBeenCalledWith(
-      expect.objectContaining(options),
+    expect(completeSimple).not.toHaveBeenCalled();
+    expect(JSON.parse((await agent.generate(request)) as string)).toEqual({
+      narrative: '故事',
+    });
+    await agent.generate({ ...request, userPrompt: 'next scene' });
+    expect(completeSimple).toHaveBeenLastCalledWith(
+      model,
+      {
+        systemPrompt: request.systemPrompt,
+        messages: [
+          {
+            role: 'user',
+            content: 'next scene',
+            timestamp: expect.any(Number),
+          },
+        ],
+      },
+      { reasoning: 'high' },
     );
+    expect(completeSimple).toHaveBeenCalledTimes(2);
+    expect(sdk.createRuntime).not.toHaveBeenCalled();
+    expect(sdk.createSettings).not.toHaveBeenCalled();
   });
-  it('loads lazily, uses isolated in-memory sessions and disables project discovery', async () => {
-    const agent = createStoryAgent({ projectRoot: '/project' });
-    expect(fake.createAgentSession).not.toHaveBeenCalled();
-    const request = {
-      systemPrompt: 'story instructions',
-      userPrompt: 'local facts',
-    };
-    expect(await agent.generate(request)).toBe('{"narrative":"故事"}');
+
+  it('lazily resolves the CLI model from global Pi settings, without project discovery', async () => {
+    const agent = createStoryAgent();
+    expect(sdk.createRuntime).not.toHaveBeenCalled();
     await agent.generate(request);
-    expect(fake.createAgentSession).toHaveBeenCalledTimes(2);
-    expect(fake.inMemory).toHaveBeenCalledWith('/project');
-    expect(fake.resourceOptions).toMatchObject({
-      noExtensions: true,
-      noSkills: true,
-      noPromptTemplates: true,
-      noContextFiles: true,
-      noThemes: true,
+    expect(sdk.createSettings).toHaveBeenCalledWith(
+      process.cwd(),
+      '/pi/agent',
+      { projectTrusted: false },
+    );
+    expect(sdk.createRuntime).toHaveBeenCalledWith({
+      authPath: '/pi/agent/auth.json',
+      modelsPath: '/pi/agent/models.json',
+      allowModelNetwork: false,
     });
-    expect((fake.resourceOptions.systemPromptOverride as () => string)()).toBe(
-      request.systemPrompt,
-    );
-    expect(fake.createAgentSession).toHaveBeenCalledWith(
-      expect.objectContaining({ cwd: '/project', noTools: 'all', tools: [] }),
-    );
-    expect(fake.prompt).toHaveBeenCalledWith('local facts');
-    expect(fake.dispose).toHaveBeenCalledTimes(2);
+    expect(completeSimple).toHaveBeenCalledWith(model, expect.anything(), {
+      reasoning: 'medium',
+    });
   });
 
-  it('disposes a session after a provider failure', async () => {
-    fake.prompt.mockRejectedValueOnce(new Error('provider unavailable'));
-    await expect(
-      createStoryAgent().generate({ systemPrompt: 's', userPrompt: 'u' }),
-    ).rejects.toThrow('provider unavailable');
-    expect(fake.dispose).toHaveBeenCalledOnce();
+  it('does not call the provider if no model is available', async () => {
+    getAvailable.mockResolvedValue([]);
+    await expect(createStoryAgent().generate(request)).rejects.toThrow(
+      'AI_NOT_CONFIGURED',
+    );
+    expect(completeSimple).not.toHaveBeenCalled();
   });
 
-  it.each(['error', 'aborted'])(
-    'refuses a partial %s response',
+  it.each(['error', 'aborted', 'length', 'toolUse'])(
+    'rejects a partial %s response',
     async (stopReason) => {
-      fake.messages = [{ role: 'assistant', stopReason }];
+      completeSimple.mockResolvedValue({
+        stopReason,
+        content: [{ type: 'text', text: 'partial' }],
+      });
       await expect(
-        createStoryAgent().generate({ systemPrompt: 's', userPrompt: 'u' }),
+        createStoryAgent({ modelRuntime, model }).generate(request),
       ).rejects.toThrow('did not complete');
-      expect(fake.dispose).toHaveBeenCalledOnce();
     },
   );
 
-  it('rejects empty model output rather than caching a success', async () => {
-    fake.getLastAssistantText.mockReturnValue(' ');
+  it('rejects empty or reasoning-only output', async () => {
+    completeSimple.mockResolvedValue({
+      stopReason: 'stop',
+      content: [{ type: 'thinking', thinking: 'hidden' }],
+    });
     await expect(
-      createStoryAgent().generate({ systemPrompt: 's', userPrompt: 'u' }),
+      createStoryAgent({ modelRuntime, model }).generate(request),
     ).rejects.toThrow('empty response');
-    expect(fake.dispose).toHaveBeenCalledOnce();
   });
 });
