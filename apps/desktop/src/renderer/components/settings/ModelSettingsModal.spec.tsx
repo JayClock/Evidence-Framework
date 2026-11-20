@@ -35,8 +35,7 @@ const status: AiConfigStatus = {
 
 const setup = (initial: AiConfigStatus | null = status) => {
   const api = installDesktopApi().aiConfig;
-  api.getStatus = vi.fn(async () => status);
-  api.selectModel = vi.fn(async () => undefined);
+  api.selectModel = vi.fn(async () => status);
   api.testConnection = vi.fn(async () => ({ success: true, latencyMs: 12 }));
   const onStatus = vi.fn();
   const onClose = vi.fn();
@@ -84,6 +83,27 @@ describe('Pi model settings', () => {
       providerId: 'local-gateway',
       modelId: 'route/flash',
     });
+    expect(api.selectModel).not.toHaveBeenCalled();
+  });
+
+  it('opens the Pi directory and refreshes available models without changing the default', async () => {
+    const { api, onStatus } = setup({
+      ...status,
+      availableModels: [],
+      isConfigured: false,
+    });
+    api.openConfigDirectory = vi.fn(async () => undefined);
+    api.reload = vi.fn(async () => status);
+    fireEvent.click(screen.getByRole('button', { name: '打开 Pi 配置目录' }));
+    await waitFor(() =>
+      expect(
+        screen.getByRole('button', { name: '重新加载 Pi 配置' }),
+      ).toBeEnabled(),
+    );
+    expect(api.openConfigDirectory).toHaveBeenCalledExactlyOnceWith();
+    fireEvent.click(screen.getByRole('button', { name: '重新加载 Pi 配置' }));
+    expect(await screen.findByText('已重新读取 Pi 配置。')).toBeVisible();
+    expect(onStatus).toHaveBeenCalledExactlyOnceWith(status);
     expect(api.selectModel).not.toHaveBeenCalled();
   });
 

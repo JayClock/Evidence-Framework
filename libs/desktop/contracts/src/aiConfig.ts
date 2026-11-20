@@ -47,6 +47,8 @@ export interface TestAiConnectionResult {
 export const AI_NOT_CONFIGURED = 'AI_NOT_CONFIGURED';
 export const EVIDENCE_AI_CONFIG_IPC_CHANNELS = {
   getStatus: 'evidence:ai-config:get-status',
+  reload: 'evidence:ai-config:reload',
+  openConfigDirectory: 'evidence:ai-config:open-config-directory',
   selectModel: 'evidence:ai-config:select-model',
   testConnection: 'evidence:ai-config:test-connection',
   changed: 'evidence:ai-config:changed',
@@ -54,7 +56,9 @@ export const EVIDENCE_AI_CONFIG_IPC_CHANNELS = {
 
 export interface EvidenceAiConfigApi {
   getStatus(): Promise<AiConfigStatus>;
-  selectModel(request: SelectModelRequest): Promise<void>;
+  reload(): Promise<AiConfigStatus>;
+  openConfigDirectory(): Promise<void>;
+  selectModel(request: SelectModelRequest): Promise<AiConfigStatus>;
   testConnection(request: ModelRef): Promise<TestAiConnectionResult>;
   onChanged(listener: (status: AiConfigStatus) => void): () => void;
 }

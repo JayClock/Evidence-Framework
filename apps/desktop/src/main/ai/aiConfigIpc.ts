@@ -1,4 +1,5 @@
-import { BrowserWindow, ipcMain } from 'electron';
+import { stat } from 'node:fs/promises';
+import { BrowserWindow, ipcMain, shell } from 'electron';
 import { EVIDENCE_AI_CONFIG_IPC_CHANNELS as AI } from '@evidence-poc/desktop-contracts/aiConfig';
 import type { AiConfigService } from './aiConfigService';
 
@@ -20,21 +21,39 @@ export const registerAiConfigIpc = (
   };
 
   ipcMain.handle(AI.getStatus, () => service.getStatus());
+  ipcMain.handle(AI.reload, async () => {
+    await service.reload();
+    return publishSelection();
+  });
+  ipcMain.handle(AI.openConfigDirectory, async () => {
+    try {
+      const { agentDir } = service;
+      if (
+        (await stat(agentDir)).isDirectory() &&
+        !(await shell.openPath(agentDir))
+      )
+        return;
+    } catch {
+      // Expose only the public error to the renderer.
+    }
+    throw new Error('无法打开 Pi 配置目录。请确认目录存在。');
+  });
   ipcMain.handle(AI.selectModel, async (_event, request: unknown) => {
     try {
       await service.selectModel(request);
     } catch {
       throw new Error('无法保存 Pi 模型选择，请检查模型可用性和配置目录权限。');
     }
-    await publishSelection();
+    return publishSelection();
   });
   ipcMain.handle(AI.testConnection, (_event, request: unknown) =>
     service.testConnection(request),
   );
   return {
     dispose: () => {
-      for (const channel of [AI.getStatus, AI.selectModel, AI.testConnection])
-        ipcMain.removeHandler(channel);
+      for (const channel of Object.values(AI)) {
+        if (channel !== AI.changed) ipcMain.removeHandler(channel);
+      }
     },
   };
 };

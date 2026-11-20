@@ -55,7 +55,8 @@ editor command palette. The panel shows the effective model and groups the
 available models by provider. **设为默认模型** updates the shared Pi default;
 choosing a thinking level also updates Pi settings. **测试连通性** sends a small,
 potentially billable completion request and times out after 15 seconds. It does
-not change the model selection.
+not change the model selection. Use **打开 Pi 配置目录** to locate the files and
+**重新加载 Pi 配置** after editing them or logging in from Pi.
 
 Selecting a model refreshes the agent and story sessions; canvas edits and undo
 history are unaffected. Desktop transcripts are stored by project under

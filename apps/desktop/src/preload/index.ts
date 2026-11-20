@@ -33,6 +33,8 @@ import {
 const api: EvidenceDesktopApi = {
   aiConfig: {
     getStatus: () => ipcRenderer.invoke(AI.getStatus),
+    reload: () => ipcRenderer.invoke(AI.reload),
+    openConfigDirectory: () => ipcRenderer.invoke(AI.openConfigDirectory),
     selectModel: (request) => ipcRenderer.invoke(AI.selectModel, request),
     testConnection: (request) => ipcRenderer.invoke(AI.testConnection, request),
     onChanged: (listener) => {

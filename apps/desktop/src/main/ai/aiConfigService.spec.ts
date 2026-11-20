@@ -212,6 +212,33 @@ describe('desktop Pi configuration', () => {
     }
   });
 
+  it('reloads the SDK model definitions, credentials and default from disk', async () => {
+    const f = await setup();
+    expect((await f.service.getModelOptions()).model?.id).toBe(model.modelId);
+    const models = JSON.parse(await f.read('models.json'));
+    const provider = models.providers[model.providerId];
+    provider.baseUrl = 'http://127.0.0.1:17/v1';
+    provider.models[1].name = 'Updated Gateway';
+    await Promise.all([
+      f.write('models.json', models),
+      f.write('settings.json', { ...f.settings, defaultModel: other.modelId }),
+      f.write('auth.json', {
+        [other.providerId]: { type: 'api_key', key: 'updated-key' },
+      }),
+    ]);
+    expect((await f.service.getStatus()).activeModelId).toBe(model.modelId);
+    await f.service.reload();
+    const options = await f.service.getModelOptions();
+    expect(options.model).toMatchObject({
+      id: other.modelId,
+      name: 'Updated Gateway',
+      baseUrl: provider.baseUrl,
+    });
+    expect(
+      (await options.modelRuntime?.getAuth(other.providerId))?.auth.apiKey,
+    ).toBe('updated-key');
+  });
+
   it('aborts a stalled connection test', async () => {
     const { agentDir } = await setup();
     const service = new AiConfigService({ agentDir, connectionTimeoutMs: 5 });

@@ -52,7 +52,7 @@ const thinkingLevel = (model: Model, settings: SettingsManager) =>
   );
 
 export class AiConfigService {
-  private runtime?: Promise<ModelRuntime>;
+  private state?: Promise<{ runtime: ModelRuntime; settings: SettingsManager }>;
   private queue: Promise<unknown> = Promise.resolve();
 
   constructor(
@@ -61,6 +61,10 @@ export class AiConfigService {
       connectionTimeoutMs?: number;
     },
   ) {}
+
+  get agentDir() {
+    return this.options.agentDir;
+  }
 
   private async readSettings() {
     const { SettingsManager } = await import('@earendil-works/pi-coding-agent');
@@ -89,20 +93,28 @@ export class AiConfigService {
     return runtime;
   }
 
-  private getRuntime() {
-    this.runtime ??= this.loadRuntime().catch((error: unknown) => {
-      this.runtime = undefined;
-      throw error;
+  private load() {
+    this.state ??= Promise.all([this.loadRuntime(), this.readSettings()]).then(
+      ([runtime, settings]) => ({ runtime, settings }),
+    );
+    return this.state;
+  }
+
+  private serialize<T>(action: () => Promise<T>) {
+    const work = this.queue.then(action);
+    this.queue = work.catch(() => undefined);
+    return work;
+  }
+
+  reload() {
+    return this.serialize(async () => {
+      this.state = undefined;
     });
-    return this.runtime;
   }
 
   private async loadSelection() {
     await this.queue;
-    const [runtime, settings] = await Promise.all([
-      this.getRuntime(),
-      this.readSettings(),
-    ]);
+    const { runtime, settings } = await this.load();
     const available = runtime.getAvailableSnapshot();
     const saved = savedModel(available, settings);
     return {
@@ -168,11 +180,9 @@ export class AiConfigService {
 
   async selectModel(input: unknown): Promise<void> {
     const request = parseSelection(input);
-    const work = this.queue.then(async () => {
-      const [runtime, settings] = await Promise.all([
-        this.getRuntime(),
-        this.readSettings(),
-      ]);
+    return this.serialize(async () => {
+      const { runtime } = await this.load();
+      const settings = await this.readSettings();
       const model = runtime
         .getAvailableSnapshot()
         .find((m) => matches(m, request));
@@ -193,9 +203,8 @@ export class AiConfigService {
       }
       await settings.flush();
       if (settings.drainErrors().length) throw new Error('无法保存 Pi 设置。');
+      this.state = Promise.resolve({ runtime, settings });
     });
-    this.queue = work.catch(() => undefined);
-    return work;
   }
 
   async testConnection(input: unknown): Promise<TestAiConnectionResult> {
@@ -203,7 +212,8 @@ export class AiConfigService {
     let timer: ReturnType<typeof setTimeout> | undefined;
     try {
       const request = parseSelection(input);
-      const runtime = await this.getRuntime();
+      await this.queue;
+      const { runtime } = await this.load();
       const model = runtime
         .getAvailableSnapshot()
         .find((m) => matches(m, request));

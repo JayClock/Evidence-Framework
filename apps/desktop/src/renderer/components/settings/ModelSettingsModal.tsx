@@ -37,7 +37,9 @@ export const ModelSettingsModal = ({
 }) => {
   const [key, setKey] = useState('');
   const [level, setLevel] = useState('');
-  const [pending, setPending] = useState<'select' | 'test' | null>(null);
+  const [pending, setPending] = useState<
+    'select' | 'test' | 'reload' | 'open' | null
+  >(null);
   const [message, setMessage] = useState('');
   const models = status?.availableModels ?? [];
   const active = models.find(
@@ -66,11 +68,12 @@ export const ModelSettingsModal = ({
     setPending('select');
     setMessage('');
     try {
-      await api.selectModel({
-        ...request,
-        ...(thinkingLevel && { thinkingLevel }),
-      });
-      onStatus(await api.getStatus());
+      onStatus(
+        await api.selectModel({
+          ...request,
+          ...(thinkingLevel && { thinkingLevel }),
+        }),
+      );
       onClose();
     } catch {
       setMessage('无法保存模型选择，请检查 Pi 模型和配置目录权限。');
@@ -97,6 +100,30 @@ export const ModelSettingsModal = ({
     }
   };
 
+  const accessPi = async (action: 'reload' | 'open') => {
+    if (busy) return;
+    setPending(action);
+    setMessage('');
+    try {
+      if (action === 'open') await api.openConfigDirectory();
+      else {
+        const next = await api.reload();
+        onStatus(next);
+        setKey('');
+        setLevel('');
+        if (!next.error) setMessage('已重新读取 Pi 配置。');
+      }
+    } catch {
+      setMessage(
+        action === 'open'
+          ? '无法打开 Pi 配置目录。请确认目录存在。'
+          : '无法重新读取 Pi 配置。',
+      );
+    } finally {
+      setPending(null);
+    }
+  };
+
   return (
     <WorkbenchDialog
       size="settings"
@@ -116,6 +143,26 @@ export const ModelSettingsModal = ({
         ) : (
           <p role="status">正在读取 Pi 配置…</p>
         )}
+        <div className="flex flex-wrap gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={busy}
+            onClick={() => void accessPi('open')}
+          >
+            打开 Pi 配置目录
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={busy}
+            onClick={() => void accessPi('reload')}
+          >
+            {pending === 'reload' ? '正在读取…' : '重新加载 Pi 配置'}
+          </Button>
+        </div>
         {status?.error && <p role="alert">{status.error}</p>}
         {status?.notice && <p role="status">{status.notice}</p>}
         {active ? (
