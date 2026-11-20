@@ -1,4 +1,12 @@
 export {
+  NodeSourcingPopover,
+  type NodeSourcingPopoverProps,
+} from './NodeSourcingPopover.js';
+export {
+  WhatIfStressPanel,
+  type WhatIfStressPanelProps,
+} from './WhatIfStressPanel.js';
+export {
   EvidenceNodeCard,
   type EvidenceNodeCardProps,
 } from './EvidenceNodeCard.js';
