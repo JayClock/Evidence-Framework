@@ -5,7 +5,7 @@ description: 外部 IDE 和 CLI Agent 如何经本地 socket 访问桌面实时�
 tags: [mcp, desktop, bridge, ipc, agent, security]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-18T12:34:41.390Z
+    at: 2026-11-20T12:30:09.424Z
 sources:
   - id: openwiki-source-fc371e1f84c3b5d478075b07
     resource: repo://apps/desktop/src/main/deliveryProjection.ts
@@ -55,11 +55,9 @@ sources:
     resource: repo://libs/evidence-mcp/src/server/toolset.spec.ts
   - id: openwiki-source-aac6631a251b846350b2d550
     resource: repo://libs/evidence-mcp/src/server/toolset.ts
-  - id: openwiki-source-4c008c3497d98e90590e5286
-    resource: repo://libs/evidence-tools/README.md
   - id: openwiki-source-f3dd6cff8734842de5630223
     resource: repo://libs/evidence-tools/src/index.ts
-generated: { by: "pi", at: "2026-11-18T12:34:41.390Z" }
+generated: { by: "pi", at: "2026-11-20T12:30:09.424Z" }
 ---
 
 # MCP 工具与桌面桥
@@ -70,7 +68,7 @@ generated: { by: "pi", at: "2026-11-18T12:34:41.390Z" }
 
 桌面可执行文件带 `--mcp-stdio` 时只启动 stdio 服务，不打开窗口、不读取项目存储，也不注册客户端；它仍需要另一个运行中的桌面宿主。启动失败写 stderr 并退出 1。`runEvidenceMcpStdio` 用桥客户端连接 `McpServer`，stdin 结束即结束；服务器把工具异常包装成错误结果。
 
-当前注册 **13 个工具**：8 个只读和 5 个共享写工具。
+当前注册 **17 个工具**：9 个只读和 8 个共享写工具。
 
 | 所有者 | 工具 |
 | --- | --- |
@@ -78,11 +76,11 @@ generated: { by: "pi", at: "2026-11-18T12:34:41.390Z" }
 | 主进程传感器 | `get_key_data_audit`、`run_stage_gate` |
 | 主进程交付服务 | `get_delivery_topology`、`export_openapi_contract` |
 | 截图协作 | `get_canvas_screenshot` |
-| 生成补丁的领域算子 | `introduce_fulfillment_pair`、`add_breach_compensation`、`roleify_and_invert_dependency`、`isolate_domain_calculator` |
+| 共享领域工具 | `batch_add_evidence_stubs`、`split_evidence_to_pair`、`bind_key_data_source`、`assign_fulfillment_context`、`grow_breach_compensation`、`roleify_and_invert_dependency`、`isolate_domain_calculator`，以及只读的 `simulate_what_if_challenge` |
 
-补丁工具和四个算子由 `evidence-tools` 的统一 registry 提供，Pi 和 MCP 共用 schema、描述与执行路径；这些写工具标为非幂等（idempotentHint=false），并标为 `readOnlyHint: false`、`destructiveHint: true`。所有工具先用实际 Zod schema 解析输入，未知字段或畸形参数不会进入模型访问。`run_scenario_replay` 已删除；旧方法到达 handler 会收到 `UNSUPPORTED_METHOD`，不会伪造空成功。验收来自实体 `examples[].test`：用 `evidence export --tests` 导出 Bruno 集合，再以 `evidence test` 对真实后端执行，而不是在 MCP 中回放。
+通用补丁工具和领域工具由 `evidence-tools` 的统一 registry 提供，Pi 和 MCP 共用 schema、描述与执行路径；其中写工具标为非幂等（idempotentHint=false），并标为 `readOnlyHint: false`、`destructiveHint: true`。所有工具先用实际 Zod schema 解析输入，未知字段或畸形参数不会进入模型访问。`run_scenario_replay` 已删除；旧方法到达 handler 会收到 `UNSUPPORTED_METHOD`，不会伪造空成功。验收来自实体 `examples[].test`：用 `evidence export --tests` 导出 Bruno 集合，再以 `evidence test` 对真实后端执行，而不是在 MCP 中回放。
 
-`SERVER_INSTRUCTIONS` 要求先读应用状态、再读选区或模型；优先用领域算子，其他变更走 `{ rationale, patches }`，禁止直接写 `.evidence/fm`。位置索引编辑应先 `test` 预期对象 ID，避免过期快照改错对象；改后复查台账和阶段门禁。
+`SERVER_INSTRUCTIONS` 要求先读应用状态、再读选区或模型；先铺设凭证并澄清来源，在有真实请求和确认时配对，在合约内确定归属；假设只做模拟，确定的补偿才建模。其他变更走 `{ rationale, patches }`，禁止直接写 `.evidence/fm`。位置索引编辑应先 `test` 预期对象 ID，避免过期快照改错对象；改后复查台账和阶段门禁。
 
 证据入口：`libs/evidence-mcp/src/server/toolset.ts`、`server/mcpServer.ts`。
 
@@ -128,7 +126,7 @@ renderer 测量可见画布或目标节点裁剪矩形；无布局/节点在屏�
 | bridge 启动失败 | stderr 记录，桌面继续但没有 MCP |
 | 模型/门禁不可用 | 显式 unavailable 或失败 |
 
-`bridge/bridge.spec.ts` 覆盖真实 socket 往返、0600、超时和端点复用；`toolset.spec.ts` 覆盖输入先验拒绝、13 工具及五个写工具、PNG、算子提交与拒绝。桌面 `mcpBridgeRuntime.spec.ts` 验证调用计数、renderer 错误、截图恢复和无窗口；`mcpRequestHandler.spec.ts` 验证路由、active root、空截图、移除 replay 和计数。传感器、交付及客户端注册各有独立测试。
+`bridge/bridge.spec.ts` 覆盖真实 socket 往返、0600、超时和端点复用；`toolset.spec.ts` 覆盖输入先验拒绝、17 个工具及其中八个写工具、PNG、算子提交与拒绝。桌面 `mcpBridgeRuntime.spec.ts` 验证调用计数、renderer 错误、截图恢复和无窗口；`mcpRequestHandler.spec.ts` 验证路由、active root、空截图、移除 replay 和计数。传感器、交付及客户端注册各有独立测试。
 
 ## 相关页面
 

@@ -5,7 +5,7 @@ description: Node/pnpm/Nx工具链、显式oasdiff准备、source条件与层边
 tags: [build, packaging, nx, pnpm, eslint, boundaries, electron-forge, ci, openwiki]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-18T09:45:40.969Z
+    at: 2026-11-20T12:30:09.424Z
 sources:
   - id: openwiki-source-164e2da859b5277df81c7d94
     resource: repo://.github/workflows/ci.yml
@@ -67,7 +67,7 @@ sources:
     resource: repo://tools/workspace-rules/boundary-drill.mjs
   - id: openwiki-source-df1e4d0dc0a35c64fd0e652b
     resource: repo://tsconfig.base.json
-generated: { by: "pi", at: "2026-11-18T09:45:40.969Z" }
+generated: { by: "pi", at: "2026-11-20T12:30:09.424Z" }
 ---
 
 # 构建、打包与维护
@@ -76,7 +76,7 @@ generated: { by: "pi", at: "2026-11-18T09:45:40.969Z" }
 
 ## Workspace与解析边界
 
-pnpm globs为apps/*、libs/*、libs/desktop/*（嵌套UI库需要第三glob），当前两app=desktop/cli、十八库。workspace-layout 已记录 contracts/features/shared tools/acceptance 提取边界，agent 已合并，cli 是 type:app/scope:cli。
+pnpm globs为apps/*、libs/*、libs/desktop/*（嵌套UI库需要第三glob），当前两 app（desktop/cli）、十七库。workspace-layout 已记录 contracts/features/shared tools/acceptance 提取边界，agent 已合并，cli 是 type:app/scope:cli。
 
 settings在pnpm-workspace.yaml：hoisted linker服务Forge flora-colossus，blockExoticSubdeps=false允许installer的git依赖；allowBuilds白名单允许Electron/Nx/SWC等生命周期，Pi1.5.2 quarantine豁免按精确版本。hoisting会掩盖未声明依赖，必须importer manifest runtime依赖+workspace:*，root仅dev tooling，dependency-checks双向检查。
 
@@ -116,7 +116,7 @@ CI（main push/PR、Node 22、frozen lock）：安装依赖并检查工作区 `b
 
 .github/workflows/openwiki-update.yml 当前仅手动 workflow_dispatch，定时更新已暂停，全历史checkout供base diff；独立npm安装OpenWiki0.9.0（可选mermaid/jsdom），DeepSeek的OpenAI-compatible endpoint/flash模型，运行openwiki code --update --print。不是pnpm依赖，也不是源修改后本地自动hook。
 
-workflow对生成步骤continue-on-error，非取消时清transient .run.json并以openwiki、AGENTS、workflow及存在的CLAUDE建PR；即使失败也保存已完成页面，再最后传播失败，让下一次按页面baseline继续。上次.last-update的interrupted说明尚有未复核债务，不是完整更新证明。不要手改claims/index/log/provenance；host lifecycle顺序begin→plan→逐页read/research/write/submit→next complete→finish，以finish complete为完成依据。
+workflow对生成步骤continue-on-error，非取消时清transient .run.json并以openwiki、AGENTS、workflow及存在的CLAUDE建PR；即使失败也保存已完成页面，再最后传播失败，让下一次按页面baseline继续。`.last-update.json` 若标记 interrupted，说明尚有未复核债务，不是完整更新证明。不要手改claims/index/log/provenance；host lifecycle顺序begin→plan→逐页read/research/write/submit→next complete→finish，以finish complete为完成依据。
 
 ## 常见排错
 

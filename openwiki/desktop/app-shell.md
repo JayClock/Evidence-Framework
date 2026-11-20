@@ -5,14 +5,16 @@ description: Electron 启动、窗口/IPC、安全边界、树与 Bundle 项目�
 tags: [desktop, electron, ipc, preload, project-store, windows]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-18T12:34:41.390Z
+    at: 2026-11-20T12:30:09.424Z
 sources:
   - id: openwiki-source-f85ce0e3a462797434d822a8
     resource: repo://apps/desktop/src/main/agentIpcHandlers.ts
+  - id: openwiki-source-55138c775f581f8c989ca7dc
+    resource: repo://apps/desktop/src/main/agentRuntime.ts
+  - id: openwiki-source-db59d33fa24fde2a30d85df7
+    resource: repo://apps/desktop/src/main/ai/aiConfigIpc.ts
   - id: openwiki-source-bac6e4737fa193d3a8a82a82
     resource: repo://apps/desktop/src/main/ai/aiConfigService.ts
-  - id: openwiki-source-021805d902f8bcb67c56367c
-    resource: repo://apps/desktop/src/main/ai/safeStorageStore.ts
   - id: openwiki-source-c8d6c908e749a45544b1e625
     resource: repo://apps/desktop/src/main/deliveryIpc.ts
   - id: openwiki-source-71f7c0262d5ba642c71843ea
@@ -23,14 +25,10 @@ sources:
     resource: repo://apps/desktop/src/main/modelSource.ts
   - id: openwiki-source-934367cee5dc2ef07c9fb835
     resource: repo://apps/desktop/src/main/modelWatcher.ts
-  - id: openwiki-source-7bb156d03ddba2cff4399f8b
-    resource: repo://apps/desktop/src/main/projectIpc.ts
   - id: openwiki-source-5b34bee2ec1dee5c3ad249ac
     resource: repo://apps/desktop/src/main/projectStore.spec.ts
   - id: openwiki-source-7d6301f8bedb09df7ce20329
     resource: repo://apps/desktop/src/main/projectStore.ts
-  - id: openwiki-source-ee67360b547d6559739a21c9
-    resource: repo://apps/desktop/src/main/templates/starterModels.ts
   - id: openwiki-source-96631daa0b2c8e332a97ecb3
     resource: repo://apps/desktop/src/main/windows.ts
   - id: openwiki-source-e7883d7e0923e51ae8b6bf50
@@ -39,11 +37,17 @@ sources:
     resource: repo://apps/desktop/src/renderer/App.spec.tsx
   - id: openwiki-source-11fabacb6c2c8bcce85a2dd4
     resource: repo://apps/desktop/src/renderer/App.tsx
+  - id: openwiki-source-8cf0a9a71aa931358b6f4ffc
+    resource: repo://apps/desktop/src/renderer/components/dashboard/CreateProjectModal.tsx
   - id: openwiki-source-22956292b0951fa33ef92a77
     resource: repo://apps/desktop/src/renderer/screens/DashboardScreen.tsx
+  - id: openwiki-source-9459ee1a8fc917f2d94619ce
+    resource: repo://apps/desktop/src/renderer/screens/EditorScreen.tsx
   - id: openwiki-source-f0f06a0981a7ca97c510b44d
     resource: repo://apps/desktop/src/renderer/state/useEditorSession.ts
-generated: { by: "pi", at: "2026-11-18T12:34:41.390Z" }
+  - id: openwiki-source-87e5669496e1e215691f3e0c
+    resource: repo://apps/desktop/src/renderer/state/useLiveModelBridge.ts
+generated: { by: "pi", at: "2026-11-20T12:30:09.424Z" }
 ---
 
 # 桌面宿主与项目生命周期
@@ -58,13 +62,13 @@ ready 后创建 recent-projects.json store，注册 Agent、项目、摄取、st
 
 Dashboard 1024×680（min900×600），editor1440×900（min1180×760），无框隐藏标题栏。Map 以 rootPath 去重 editor，重复打开 focus，closed 只清自己条目；MCP 取 Map 首窗而非 focus 顺序。hash routing 支持 dev URL 与 packaged file：#/editor?rootPath=encoded，其余回 dashboard，缺 root 明确错误。
 
-Dashboard mount 同时读 recents/templates，模板数量来自真实构造；open 后更新 recent 再 openEditorWindow。blank 不重复作为 starter 卡。创建 dialog 可选目录或 Bundle save path；create 后开 editor。摄取 compile 也通过同一 store/createFromDocument 落地。
+Dashboard mount 同时读 recents/templates，模板数量来自真实构造；open 后更新 recent 再 openEditorWindow。精选模板卡包括 procurement 和 blank。创建 dialog 可选目录或 Bundle save path；create 后开 editor。摄取 compile 也通过同一 store/createFromDocument 落地。
 
 ## Preload 合同
 
-EvidenceDesktopApi 分 projects、agent、mcp、ingestion、story、aiConfig、system；旧 simulation/replay group 已删除，也没有 interview branches API。projects 包含保存/变更通知与 live/saved delivery；agent 负责会话、实时镜像、sensors、选区和补丁往返；mcp 负责状态/request/response/capture-mode。
+EvidenceDesktopApi 分 projects、agent、mcp、ingestion、story、aiConfig、system；旧 simulation/replay group 已删除，也没有 interview branches API。projects 包含保存/变更通知与 live/saved delivery；agent 负责会话、实时镜像、sensors、选区和已提交补丁事务；mcp 负责状态/request/response/capture-mode。
 
-请求多为 invoke，订阅均返回 unsubscribe；agent.respondPatch 和 mcp.respond 用单向 send 回答 main 发起请求。channel 与 DTO 由 desktop-contracts 统一；features 通过参数取得窄 API port，只有 app shell 读取 window.evidenceAPI。renderer tests 注入 evidenceAPI 假实现，不启动 Electron。
+请求多为 invoke，订阅均返回 unsubscribe；mcp.respond 用单向 send 回答 main 发起请求。Agent 事务由 main 单向发布，也随 prompt 返回。channel 与 DTO 由 desktop-contracts 统一；features 通过参数取得窄 API port，只有 app shell 读取 window.evidenceAPI。renderer tests 注入 evidenceAPI 假实现，不启动 Electron。
 
 ## 文件存储与源路径
 
@@ -76,7 +80,7 @@ save Bundle 用 writeModelBundle，保留 readme 和内联 examples（无旧 val
 
 modelSource.ts 统一：树 modelSourceOf=<root>/.evidence/fm、projectDirectoryOf=root；Bundle source=file、directory=parent。所有导出/监控/运行时应复用它，不往 Bundle 路径下拼目录。
 
-## Chokidar 监控是提示，不是静默替换
+## Chokidar 监控与有条件重载
 
 打开/创建按 WebContents id 建立 watcher，新 open 关闭旧 watcher，窗口销毁释放。现在 watchModelSource 使用 **Chokidar v4 实际路径**，不是旧三个 non-recursive fs.watch：
 
@@ -86,17 +90,17 @@ modelSource.ts 统一：树 modelSourceOf=<root>/.evidence/fm、projectDirectory
 - ignoreInitial、不跟 symlink、atomic、awaitWriteFinish（150ms稳定/50ms轮询），再默认200ms合批；paths 去重排序。
 - ready promise 表示初始发现完成；error 仅警告降级；close 取消 timer、清 pending、await 底层 close，之后不得通知。
 
-projectIpc 将 {rootPath,changedAt,paths} 送 evidence:project:changed；renderer 只记 externalChangeAt 并提示重新加载。reloadFromDisk 明确 projects.open，绝不在有未保存工作时偷偷替换画布。
+projectIpc 将 {rootPath,changedAt,paths} 送 evidence:project:changed；renderer 记录 externalChangeAt 并提供重载提示。文件失效时，干净会话可经 reloadFromDiskIfClean 重新打开；有未保存更改或等待期间发生修改则不覆盖。
 
 ## 主进程服务边界
 
-旧 review/workbench 已撤除。原生 story IPC 支持故事与 what-if，AI 依赖由 main 的统一 AiConfigService 注入。配置可通过 AI badge、Cmd/Ctrl+, 或命令面板打开；测试连接用临时 runtime、15 秒超时且不保存。凭证经 OS safeStorage 加密写入 userData/ai-auth.bin（0600），模型选项保存在不含密钥的 ai-settings.json。renderer 只取得公共状态，Pi CLI 凭证仅显式导入；不安全 keyring 不回退明文。保存配置会重置旧会话，模型编辑和撤销历史继续保留。
+旧 review/workbench 已撤除。原生 story IPC 支持故事与 what-if，AI 依赖由 main 的统一 AiConfigService 注入。配置可通过 AI badge、Cmd/Ctrl+, 或命令面板打开。主进程使用共享 Pi 配置目录；renderer 仅接收公共状态，可选模型、调思考级别、测试连接、重载配置或打开配置目录。测试连接不保存，默认 15 秒超时；选择或重载后重置旧 Agent/story 模型，保留画布状态和 Agent transcript。
 
 Delivery live pair 分析显式 revision；export 在 async picker 前冻结，校验 expectedModelDigest/零 blocking，附 draft-status.json 的 releaseAuthorized=false；saved pair 重新读磁盘。都返回 saved/cancelled/failed。
 
 摄取可选模型 reader 和规则 fallback，compile 拒绝空实体，再写项目/开窗。
 
-Agent runtime 按 root single-flight，绑定创建窗口，补丁发 renderer UUID/15秒往返，关窗立即失败并释放 runtime。MCP 同一 WebContents 回答模型和截图矩形，status 推送所有窗口并可拉取，见专页。
+Agent runtime 按规范化 root 绑定唯一 editor owner，关窗释放。补丁在 main 原子提交，再由 renderer 按 revision 重放；不再等待 renderer 确认。MCP 同一 WebContents 回答模型和截图矩形，status 推送所有窗口并可拉取，见专页。
 
 ## 验证入口
 

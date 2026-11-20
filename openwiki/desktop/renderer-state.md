@@ -5,7 +5,7 @@ description: 一个编辑窗口如何保持单一 ModelSession、异步 ELK 几�
 tags: [desktop, renderer, state, model-session, ipc, mcp, react]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-18T12:34:41.390Z
+    at: 2026-11-20T12:30:09.424Z
 sources:
   - id: openwiki-source-55138c775f581f8c989ca7dc
     resource: repo://apps/desktop/src/main/agentRuntime.ts
@@ -29,8 +29,6 @@ sources:
     resource: repo://apps/desktop/src/renderer/state/useMcpBridge.ts
   - id: openwiki-source-694f14a9d64dcf9f23bb8a3b
     resource: repo://apps/desktop/src/renderer/state/useSensorsState.ts
-  - id: openwiki-source-07d3a3a523a823055d2c6b41
-    resource: repo://apps/desktop/src/renderer/state/useWorkspaceLayoutState.spec.ts
   - id: openwiki-source-5c9b3359cf58a8175a7e8c84
     resource: repo://apps/desktop/src/renderer/state/useWorkspaceLayoutState.ts
   - id: openwiki-source-4390945ee74c598cb51e8f18
@@ -39,8 +37,6 @@ sources:
     resource: repo://apps/desktop/src/renderer/state/useWorkspaceViewMode.ts
   - id: openwiki-source-55662d405492cfd3a6e7e1bd
     resource: repo://libs/desktop/contracts/src/delivery.ts
-  - id: openwiki-source-8a3964422b76faf8b78c4915
-    resource: repo://libs/desktop/feature-agent/src/state/useAgentPatchBridge.ts
   - id: openwiki-source-120084d825f111cc158d4202
     resource: repo://libs/desktop/feature-agent/src/state/useAgentSession.ts
   - id: openwiki-source-0c662531e68a2db936eccc7f
@@ -53,7 +49,7 @@ sources:
     resource: repo://libs/desktop/feature-story/src/state/useStoryPlayback.ts
   - id: openwiki-source-29536c90f762c67d4e41b9c9
     resource: repo://libs/desktop/testing/src/desktopApi.ts
-generated: { by: "pi", at: "2026-11-18T12:34:41.390Z" }
+generated: { by: "pi", at: "2026-11-20T12:30:09.424Z" }
 ---
 
 # 渲染会话、异步布局与实时同步
@@ -68,15 +64,15 @@ useGraphLayout 为每次 effect 建 cancellation 标记，只有未清理的请�
 
 任何 document-changed 置 dirty，selection/history 也刷新快照但不凭空编辑。save 读取当前 session document 发 projects.save，失败保留 dirty 并显 saveError，成功记录 savedAt，且保存期间没有新编辑才清 dirty；reload 显式 projects.open 并 replaceDocument(resetHistory=true)，清错误/外部提示。磁盘 watcher 先标 externalChangeAt。显式 reload 可替换文档；story invalidation 的 reloadFromDiskIfClean 只有读前读后都无编辑才自动更新，相等内容不重置历史，避免自身保存通知抹掉 undo。
 
-所有 Inspector、键盘、Agent、MCP 编辑使用 mutate/applyPatchBatch，共享历史；baseline 是 initialDocument，保存不接受变更、不重置 baseline。
+Inspector、键盘、MCP 编辑及已提交 Agent 事务共享会话历史；baseline 是 initialDocument，保存不接受变更、不重置 baseline。
 
 ## 对象定位
 
 台账和画布共用会话选区。台账的定位按钮切回画布并聚焦对应对象；统一的定位函数会清理阻挡目标对象的范围过滤。
 
-## 实时发布先于补丁答复
+## 实时发布与写流所有权
 
-useLiveModelBridge mount 发布一次，每 document-changed（非 selection）递增 revision，发送 rootPath/document/baseDocument。session emit 同步执行：applyPatchBatch 内已通知 live bridge，返回后 Agent respondPatch，因此下一 tool read 看到刚编辑的镜像而非上次 React render。最新发送失败显示 alert，旧 revision 晚到失败不覆盖新状态。
+useLiveModelBridge 注册独立 editorId，mount 和本地 document-changed（非 selection）递增 revision 并发布当前与基线文档。发起 prompt 前锁定本地编辑并等待最新发布；发布失败阻止写轮。重放主进程事务时不回发镜像，主进程已持有新 revision。
 
 main agentRuntime 接受同 root 且更高 revision 的 mirror，工具/传感器优先读它；新 revision 清 latestReport 并重启 debounce，first baseline 保留。sensor run 以 sequence+captured live snapshot 防过期发布，报告带 documentRevision；editor 在 report missing/loading/error、live bridge error 或 revision 不等时不给 canvas diagnostics。
 
@@ -84,7 +80,7 @@ live bridge revision、editor 的 MCP revisionRef、delivery generation 各守�
 
 ## Agent、MCP 与 review
 
-Agent patch bridge layout effect 接收请求，snapshot before → 共享 Zod 解析 → 一次 applyPatchBatch(agent:rationale) → respond op names → 真变更才 onApplied。失败不改文档、不建 review；no-op/test-only 不产生虚假修改。usePatchReview 用引用判断 after 是否仍在屏，最新才 undo，一旦后续编辑发生只关闭 review，accept 永不再写模型。
+主进程解析并提交真实变更，推送及提示回执共用一条事务序列。Renderer 按 root/editorId 过滤、按 revision 去重、缓冲并顺序重放；基线不符或回执后仍有缺口则报告同步失败。每个成功重放用 forward/inverse patch 形成一条历史，再据前后文档建立 review；失败和 no-op 不产生虚假修改。usePatchReview 用引用判断 after 是否仍在屏，最新才 undo，一旦后续编辑发生只关闭 review，accept 永不再写模型。
 
 MCP 常驻 onRequest 订阅，但每次请求**直接从 session 取 document/graph**，不是只信 render 更新的 ref；layout-effect session 订阅同步递增 revision，prop 只以 max 对齐，同一 React commit 前连续补丁仍正确。支持 state/model/selection/captureRect/patch，未知方法 INTERNAL_ERROR，无选区 NO_SELECTION。
 
@@ -94,13 +90,13 @@ MCP RFC 6902 batch 以 mcp:rationale 一步历史，失败保持 revision；成�
 
 useDeliveryHub 在整个 editor 生命周期订阅，150ms debounce；新 change 立即使旧 generation 失效，包括下一请求尚在 debounce 时。主进程 reply revision 须匹配，失败清 analysis/error/stale；accepted input+analysis 才能 export，携 expectedModelDigest，busy/stale/block 时不写。打开 hub 不重新定义 baseline 或另订阅模型。
 
-useSensorsState 先 latestReport，只有空才触发 fresh，push 按 root 过滤；refresh 绕 debounce。useAgentSession 折叠五事件，transcript 最末8000字符，toolCallId 状态表，运行中 submit=steer、finally 清 running，root 变化重置。story playback 按启用状态接收 debounced 快照，管理故事播放/What-If 与画布 focus；保存来源 invalidation 通过 clean reload 保护新编辑。各 controller 都不成为第二模型源。
+useSensorsState 先 latestReport，只有空才触发 fresh，push 按 root 过滤；refresh 绕 debounce。useAgentSession 分开累计文本和思考，并用最终助理消息校正，保留每类最多 8000 字符；按 toolCallId 跟踪活动，结束清 running，根路径切换重置。提交期间防止重复 prompt。story playback 按启用状态接收 debounced 快照，管理故事播放/What-If 与画布 focus；保存来源 invalidation 通过 clean reload 保护新编辑。各 controller 都不成为第二模型源。
 
 ## Chrome 与命令能力
 
-`useWorkspaceLayoutState` 管理导轨抽屉、固定状态、底部问题面板、内联副驾和交付对话框。Mod+1 至 Mod+4 依次是总台账、门禁与诊断、AI 协同和共创工作坊；导轨快捷键尊重输入焦点与已处理事件。
+`useWorkspaceLayoutState` 管理对象目录、问题面板和交付 Hub。Mod+1、Mod+2、Mod+4 分别切换实体表、诊断和目录；无独立 Copilot 导轨，导轨快捷键尊重输入焦点与已处理事件。
 
-`useWorkspaceViewMode` 默认业务旅程，Alt+1/2 用物理按键切换旅程与拓扑。台账替换中央画布；返回时恢复上次图形布局。两种图形布局、台账和放映都不写入模型或撤销历史。
+`useWorkspaceViewMode` 默认业务旅程，Alt+1/2 切换旅程与拓扑。台账替换中央画布；返回时恢复上次图形布局。两种图形布局、台账和放映都不写入模型或撤销历史。
 
 buildCommands 是 capabilities+handlers 的纯函数，disabled rows 保留解释；CHORDS 是显示键帽唯一源，groupCommands 固定分类，useCommandRegistry 依 caller memo 对象稳定结果。palette 和 header 复用 handler，不复制业务逻辑。
 

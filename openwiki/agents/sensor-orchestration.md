@@ -5,7 +5,7 @@ description: 共享 SensorReport 如何承载 FM 静态检查、关键数据和 
 tags: [sensors, stage-gate, diagnostics]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-18T12:34:41.390Z
+    at: 2026-11-20T12:30:09.424Z
 sources:
   - id: openwiki-source-f85ce0e3a462797434d822a8
     resource: repo://apps/desktop/src/main/agentIpcHandlers.ts
@@ -17,10 +17,6 @@ sources:
     resource: repo://apps/desktop/src/main/sensorRuntime.ts
   - id: openwiki-source-34616781ee43c94607ccca92
     resource: repo://apps/desktop/src/renderer/components/BottomStatusBar.tsx
-  - id: openwiki-source-badae4d8a43ef4489bf1657f
-    resource: repo://apps/desktop/src/renderer/components/console/problemFilters.ts
-  - id: openwiki-source-807d0c599c1444f26f974d8d
-    resource: repo://apps/desktop/src/renderer/components/console/ProblemsPanel.spec.tsx
   - id: openwiki-source-54bfa14340461b5df12c5a93
     resource: repo://apps/desktop/src/renderer/components/console/ProblemsPanel.tsx
   - id: openwiki-source-9459ee1a8fc917f2d94619ce
@@ -49,7 +45,7 @@ sources:
     resource: repo://libs/evidence-agent/src/sensors/sensorsEngine.spec.ts
   - id: openwiki-source-ebeef9d445379fe3773732df
     resource: repo://libs/evidence-agent/src/sensors/sensorsEngine.ts
-generated: { by: "pi", at: "2026-11-18T12:34:41.390Z" }
+generated: { by: "pi", at: "2026-11-20T12:30:09.424Z" }
 ---
 
 # 原生传感器与阶段门禁
@@ -85,7 +81,7 @@ engine 的 target 仅 api，每次都跑 fresh sensors，并使用 release 模�
 
 editor 在 loading/error、live bridge 错误或 report revision 不等于当前 revision 时，给画布空报告，防旧诊断污染。`createDiagnosticIndex` 仅接受明确引用：targetNodeId 的 # 前缀须存在，否则 contextRef 必须真是 context；不从消息猜 ID。每节点去重并取最高 severity。
 
-ProblemsPanel 展示严重级别 tabs、报告计数、过期标记、active row、code/target/建议和定位动作；filterIssues 在组件外可独立测试。定位支持 entity#attribute、context 或关系。空状态明确“机器检查不等于业务批准”。旧 reviewPreview/离线审查入口已移除。
+ProblemsPanel 以悬浮或停靠布局展示严重级别筛选、报告计数、过期标记、active row、code/target/建议；仅对可定位的行展示定位动作。filterIssues 在组件外可独立测试。定位支持 entity#attribute、context 或关系。空状态明确“机器检查不等于业务批准”。旧 reviewPreview/离线审查入口已移除。
 
 ## 验证与邻接
 

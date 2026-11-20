@@ -1,34 +1,38 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:a4f7587a45ca396ca86df6e0b586bd76f1a052a83a16ed98faf7516641dcaf7b",
+  "pageVersion": "sha256:f79af008ff5ee3698e6a50b6b1405e92d5fbac78e55b089c11930b8213cb629a",
   "claims": [
     {
       "id": "claim_ee126c5ec7e54e45ba574ec335210e21",
-      "statement": "Key data has one eight-kind vocabulary — derived, contract-term, domain-source, negotiation-source, result-fact, request-input, needs-decision and other — declared once as KEY_DATA_SOURCE_DEFINITIONS and derived into kinds, labels and the resolved set, so the inspector, the ledger and the sensors classify an item by the same authority.",
+      "statement": "共享九类来源词表定义标签和 resolved 集合，新增 preceding-evidence，台账与传感器复用分类。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/ast/keyData.ts#L8-L71",
-          "version": "repo-lines-v1:sha256:16715326969f1a74dcd521f4e2cab53503e570c0f12d9c6d3a2bbd6de9bba50a:eyJzZWxlY3RlZExpbmVDb3VudCI6NjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkZDMxMjFmZDU3NTJlODU1N2FhZDQxNGQ5MmQ5Y2Q4OWNiOGM4OWVlM2NkODA1YTcwNjYyODBmODdkM2FmMzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ1YzJlNWYxMzViZWMyNGVhYjliNzlkZTI2ZWMzOGMyMWM4ZjhmNWFiYjczZDQ4MWM2YTcyNDU0ZDgyMjEyMTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFmYjI4NTc0MzFlNmJhM2Q0NzkwNDUzOGRkMTdlMjQwOWQ3N2Q4ZjZmMzIzNDQyMWQwYWNhNzE3NGEzNDAwM2IifQ"
+          "resource": "repo://libs/evidence-model-core/src/keyData/keyDataLedger.ts#L87-L149",
+          "version": "repo-lines-v1:sha256:a224484fa3f5079095d62108ad82f742a6aad59fbe377cb2d1611bdd02e7711c:eyJzZWxlY3RlZExpbmVDb3VudCI6NjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiNjVmY2IzYmM4Mjc5ZDBkMThlOWJhNGRjMjhlZGMzNjEyNGEyN2M5Nzk4YTA0Yjg3YWY2MWYyMmRjMzY1YjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUyM2M4ZGY1OTkxNGU4NWNmZTI5MWIzODAxZTQ5MTc1Mjc0ZTc3YWI3NTkyNmM0NGEyOTFmMmI2ZWI0ZDRmZjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEyZmU1MTcyZDcxZjY2NzdmYzJlMDBhNjg4MWQxMmY2Y2NkZjY5NjYyOGNiNWUzYzA2NjY3MzYwYzRlNGQ5NDgifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/keyData.ts#L25-L89",
+          "version": "repo-lines-v1:sha256:1d9272e65dadc727c2cd925283a32a9b197f8bb42fc1ba6ebe99fe5922081719:eyJzZWxlY3RlZExpbmVDb3VudCI6NjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAyNjA4ZWEzYzIwMGM3ZWIxNzI1Y2YxNzNlYTQyZjVkZTM5NzFiYzg3YzY1MDIyZTRjZjc3OTM5NTZmMTU3ODYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjMmU3NjNkNmZlYTI5MzljMmQ1N2E2ZDVjMjgzYjlkYmNjZjhiMDYxZjcyMDg1MjIwMGY2Nzk3YTY5MWYzN2MiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA4YTY3NmFhZTgwOTU1NTMwNTlhOWIwZDU5MDIzZDEwOTRlMGNhZGVlOWQ3YjBmNzA3YmYzN2NhMDQ2ZGVkMmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFlZjA4N2ZlMmVkMjQ3NzAwOGY2M2U2ZjQ3NDBhNjgzNDZhNzRjMDhhMzI4OGJkOTgyMGNlNWMyNGU0NTk1MDIifQ"
         }
       ]
     },
     {
       "id": "claim_9e7110013986451a81d51e64fe75caf6",
-      "statement": "classifyKeyDataSource is a pure precedence rule: a derivedByRuleRef makes an item derived, otherwise contract attributes are contract-term, thing participants domain-source, rfp/proposal attributes negotiation-source, fulfillment_confirmation/other_evidence attributes result-fact, and fulfillment_request attributes request-input or needs-decision.",
+      "statement": "来源先判派生，再用显式 attribute.source，再按对象类别和语义 timeRole 推断；确认不再默认全是结果事实。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/ast/keyData.ts#L100-L143",
-          "version": "repo-lines-v1:sha256:ba2248ac7435e847e68402c4351caf8844cfb1617c14307ec62e594b45c20fd4:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU3NDBmNDE5Yzk1YWI2ODhlZTA2NWU3MGRmODUwMjA2MTI3Y2I4YTQwMDg0NjY2ZDk1MDFmNmFjZTlhZDdhYjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJlOGNmNzJjODNlZWRkMDA3Mzg1YTZlYTI2NzZmYmYwNzZkODVkNDkxMDY5YTQxOTE2Y2MwMWVjODhiNWMyMTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkwMzMxZDM0YmM5MzI3ZWI4M2NiNzE0ZDk4ZDc0OGQ4MDM4YTZkMjNiYjNiZjgyMDgxYmJhNWQzYTU5ZTgzM2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVkODc5YjZlMzhhY2I5NTIzNGVmODU0NjFkMTVhYTIxNmFiODE5Y2JkNmIzNTgzNDc1NmY5NGQyN2ZjYjU2NjMifQ"
+          "resource": "repo://libs/evidence-schema/src/ast/keyData.ts#L91-L140",
+          "version": "repo-lines-v1:sha256:91940bca31672b53b16a13ff7598f55c61a7ca7c71db33f17dbf47899e3633d5:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM5N2NlYjA4Yjk4YTIwZDhjYTZhMzcyMmQ5MzA4YzgxNmIyMTM0N2VjNGI4NmJmYmM4MTUwYWFjZjI2YzFkN2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
     {
       "id": "claim_ecefa3973d3d4e1a8e9f6ca24eaa758f",
-      "statement": "Request attributes count as request-input only when named in the small request-formation whitelist (started_at, request_number, delivery_address, return_address, fault_description, asset_code, billing_period, settlement_period); every other request attribute remains needs-decision.",
+      "statement": "请求默认仅 timeRole=start 归为 request-input，其余需要显式来源或派生，不再按名称白名单推断。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/ast/keyData.ts#L77-L88",
-          "version": "repo-lines-v1:sha256:4ed85f6b308188238906bfd029efe6b6b1bea76fc5ab65cce9d8cc32f9bbe335:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQzMzVjMWUxNzk5ZGI5ODBhY2Q2OTI2MmY0Y2RmMDg5YjQ4Mzk1YTQwYzA4YWJiMWE3YWVmMjZmMzUyMjUyOTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwMmQyYzBkNmRjNWU3NGQ5MmZhMTRiOTFkYmVhMjY0MDkwYmViMzVmZGI5MTg4ZDliMzQxMTgxZGNlOWY0Y2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMxYzZjYjhhYjBhOWY3N2FlOTZlNDNiYjE2ZjM5NDE2Zjc3YTg2ODhmOGZjZTExYjJiMjViZDFlMzMxYzFjOTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ4M2FkNmU5NGEyZGJiNzZjNWIyYTY0NGY2Y2I2YTM5MmVmMWNlM2QwY2JhMjg2MGI1MjdkZjgwYWVmMzdiYzgifQ"
+          "resource": "repo://libs/evidence-schema/src/ast/keyData.ts#L96-L140",
+          "version": "repo-lines-v1:sha256:da452ca77005bbed070744733970a18954811416431ba2b52f48a03aa56f00ab:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE4MDY1MDBhZjRmOGUxZGVhNjA1ZDg1MmFjYzU4OWJhOTQ0ODdmODM4M2I3MGM1NjJmYmZiN2Q3OGEwOGNhZjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -37,26 +41,26 @@
       "statement": "Every source kind whose declaration carries resolved: true counts as resolved — which is every kind except needs-decision and other — and isKeyDataDecisionOwed is true only for needs-decision, so isKeyDataResolved('other') is false while 'other' still owes no decision.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/ast/keyData.ts#L63-L71",
+          "resource": "repo://libs/evidence-schema/src/ast/keyData.ts#L67-L75",
           "version": "repo-lines-v1:sha256:05aa62fa56bdc84f9791799da36b44928b1963a934fef1712432841009781e3f:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWRkMzEyMWZkNTc1MmU4NTU3YWFkNDE0ZDkyZDljZDg5Y2I4Yzg5ZWUzY2Q4MDVhNzA2NjI4MGY4N2QzYWYzNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjViZTdkODBmM2RkOTI0NTMzOGQ5MDM3NzM0Yzg1ZmFhMTAyNGRmYzlkMmRkYjljZThiYjU5YzA4YjMwYmZhNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWZiMjg1NzQzMWU2YmEzZDQ3OTA0NTM4ZGQxN2UyNDA5ZDc3ZDhmNmYzMjM0NDIxZDBhY2E3MTc0YTM0MDAzYiJ9"
         },
         {
-          "resource": "repo://libs/evidence-schema/src/ast/keyData.ts#L92-L98",
+          "resource": "repo://libs/evidence-schema/src/ast/keyData.ts#L80-L86",
           "version": "repo-lines-v1:sha256:43af8e3bacbbcdca4ca5dd43d0b514219c50a1602a8f5a755661817e219e5995:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2ZlZGUxNDBhNzFlNjM3MjE5NzFjNWQwMWJmNDE2ZDQxNWI4MjMzMTU3YjIwNDYzYjMxMGY4MWMzOWMwNzhhMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjc3YzI3OGY1N2NmZGFkZTY3NzhkMWM3NzBjODkwNWRkNzUwNTk0NTRhOGM0MGI5Y2Q4OWQ3MjA2ZDE5ZjJhZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWI1ZjEzNDUxYjIzZDAyMGIxOWVlYmIwYTdlYzE0Yjc2OGRjZjI0YjllODYzZmE0YmNhNmQwYjJkYzE1NzI3YyJ9"
         }
       ]
     },
     {
       "id": "claim_a030335759e6420895e2eacb4a157203",
-      "statement": "The ledger inventories only attributes whose keyData flag is exactly true, so an amount, deadline or quantity that is not marked keyData never enters the decision list and cannot block downstream work.",
+      "statement": "台账只纳入显式 keyData=true，不按字段名推断。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/keyData/keyDataLedger.spec.ts#L147-L160",
-          "version": "repo-lines-v1:sha256:f358eb242de6f71f0d690489322855398745545ef5ff636ba846b810b82a83b7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM4MTMzMjQwYzY2OTA1ZWUwZWViZGRmYzVmZmYzOTgzMDQ1MzlhNWVkMjI2YzMyOTZlYmU4ZDZmMjAwYjU2MjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJiZGJmMmE1NDcxNDIzNWI1N2ViNjg2YjI4NDhjYTk0MjU0YjhmZmE1ZjhkZDIzMjUwZTcyYzIxOTc0ZjE3ZjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://libs/evidence-model-core/src/keyData/keyDataLedger.spec.ts",
+          "version": "repo-file-v1:sha256:bff64409a8fc86a0e3ef6f29510db3997a945d6dab741a54555742d0e412e5fa"
         },
         {
-          "resource": "repo://libs/evidence-model-core/src/keyData/keyDataLedger.ts#L85-L140",
-          "version": "repo-lines-v1:sha256:17e0580d3c96e6ac3501aba3303b9ccb439705bdc10b878ba953c26551078707:eyJzZWxlY3RlZExpbmVDb3VudCI6NTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiNjVmY2IzYmM4Mjc5ZDBkMThlOWJhNGRjMjhlZGMzNjEyNGEyN2M5Nzk4YTA0Yjg3YWY2MWYyMmRjMzY1YjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1YjY4OWVjYzMyY2JiNjMxNTQzMGZjY2E3YWQyNWFkZGQwN2I2YWNjN2FiMmQ0Njk5OTg5OTMxOWIyMTQyNjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUyM2M4ZGY1OTkxNGU4NWNmZTI5MWIzODAxZTQ5MTc1Mjc0ZTc3YWI3NTkyNmM0NGEyOTFmMmI2ZWI0ZDRmZjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ0YmViNmI0ZjQ4M2NmMWZjODA5OTI3NTJhZGJjYjBjMjM5Y2ZiMjliNDA3NzI3NTMxNTYyMDdmMzM1NDA4NjkifQ"
+          "resource": "repo://libs/evidence-model-core/src/keyData/keyDataLedger.ts#L87-L103",
+          "version": "repo-lines-v1:sha256:b5642bef5de4ab4acaf23c4bbfeb577070765a4063e3e0d3446b3ff30c042ddb:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiNjVmY2IzYmM4Mjc5ZDBkMThlOWJhNGRjMjhlZGMzNjEyNGEyN2M5Nzk4YTA0Yjg3YWY2MWYyMmRjMzY1YjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwYmJlNDM1Y2NiNzlhZWYwNjhmNTU1NGUzZTUwOTNiZTVhOTM1ODIzNWZkYWM0Y2ZhYTNhYjQ0OTIzMTE5MTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUyM2M4ZGY1OTkxNGU4NWNmZTI5MWIzODAxZTQ5MTc1Mjc0ZTc3YWI3NTkyNmM0NGEyOTFmMmI2ZWI0ZDRmZjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlmYWEwOTA3N2FlMzgwYjUzZDQ2YWZmOTk3M2FmYzUyOWZkZTA5YjdlYzA2Mjk3MGRmNGFmNDNjYmM3MTExM2IifQ"
         }
       ]
     },
@@ -65,7 +69,7 @@
       "statement": "A derived ledger entry carries its rule id, expression and providers derived from the rule bindings, where each alias resolves either to a modeled ref (with optional cardinality) or to a runtime value type.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/keyData/keyDataLedger.ts#L64-L82",
+          "resource": "repo://libs/evidence-model-core/src/keyData/keyDataLedger.ts#L66-L84",
           "version": "repo-lines-v1:sha256:26319ac75dd074a8f4a75727957ff8531a8e453a5fa474620c8873f7f2f066e0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlMjU5MWQzOGQ1NTYwMDVhZTMyMmIwMmNmODQ1ZDcwNTA2ZDNkOTdiN2U0NmYwM2Q1YWI4OGQzZThmYTFkZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVhOGNiMDIzYzE5ZDQyYzRlNGY4NjkwNmE4NWM0Mzg5ZTFmNTQ3YzhlMzc3NzAzY2QxZDE3ZWY2ZTEwMzY1MDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjliNDUzNWZlYmEzMjgyNmQ0NGY2OTk1NjY1ZjI2N2E0YmU3NTY1ZTY4OTRiZjRmODAxODk1MjljNWY0NDY0ODQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIyMGEyYmM1NWY0OGMyMDlhNzVjMWNjYmUyZWFmOWJjZjFkMjU3ZGQ0ODkzZDcxMjY1YTYyNDZiM2E2YTFkYjUifQ"
         }
       ]
@@ -90,11 +94,15 @@
     },
     {
       "id": "claim_9129f6f7e61f42c1a5398a5a3b68ce98",
-      "statement": "各Evidence kind要求明确业务时间，认出的时间须required/keyData/timestamp，缺失/错误为稳定FM诊断。",
+      "statement": "语义时标须匹配凭证形状且为 required keyData timestamp；缺时标由 scope 完整性检查报告。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/ast/documentSemantics.ts#L113-L178",
-          "version": "repo-lines-v1:sha256:19b124241322f470799219e6ebb6b6e61b524c0b3730da2056342558bcf5a057:eyJzZWxlY3RlZExpbmVDb3VudCI6NjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiNjE3MDNlN2Q4NjM5ODc4ZGY1NmFhNGYxMTM4ODdhNjI4ZWQ4NjQ0OWE0MmU4NDA5ZDRjNzlhMjk3OWEwMjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyMTI5YzI3MzUyYjQ5NTU0OGIwNzFhZTM0YWI5MDgxMTcyODczNDI4ZjZmODdmNTRiNTgwZTUxNTNjOWFhMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVmNmIyNjYxMjYzOTFmNzIyNjk2ZDk5YTFkYWVhZTc1YTU0MDM0Y2M2MTZmNzE1OTliNjQ5ZWIzMjlmNWYwZTkifQ"
+          "resource": "repo://libs/evidence-model-core/src/validation/scope.ts",
+          "version": "repo-file-v1:sha256:e1c17513499d42b14422b9a1c88a7f5a3845ee7cfe8f3d873049e31ecac8bc99"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/documentSemantics.ts#L172-L239",
+          "version": "repo-lines-v1:sha256:5b5b7a36c54c6fac360f22484db476435afcc0690a8ce23ec50b9ee579e23387:eyJzZWxlY3RlZExpbmVDb3VudCI6NjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiNjE3MDNlN2Q4NjM5ODc4ZGY1NmFhNGYxMTM4ODdhNjI4ZWQ4NjQ0OWE0MmU4NDA5ZDRjNzlhMjk3OWEwMjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyMTI5YzI3MzUyYjQ5NTU0OGIwNzFhZTM0YWI5MDgxMTcyODczNDI4ZjZmODdmNTRiNTgwZTUxNTNjOWFhMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVmNmIyNjYxMjYzOTFmNzIyNjk2ZDk5YTFkYWVhZTc1YTU0MDM0Y2M2MTZmNzE1OTliNjQ5ZWIzMjlmNWYwZTkifQ"
         }
       ]
     },
@@ -103,7 +111,7 @@
       "statement": "lineage直接walk native CEL scoped AST，静态dot/index成员解析到binding实体属性，many须macro，动态索引与one/many误用拒绝。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/validation/traceability.ts#L104-L177",
+          "resource": "repo://libs/evidence-model-core/src/validation/traceability.ts#L107-L180",
           "version": "repo-lines-v1:sha256:43bf9821f7a67bbc7c472ffafbf56b2259ce0eb3c989d3fa01781ac4417edf01:eyJzZWxlY3RlZExpbmVDb3VudCI6NzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJmY2JkYjFhOTg1OTJhMTU5MmQ4MzI0YzU2MWE5YmExNzMxMzZjMDMyZmEwODVhYzQ4NjA2YTZhZjA4MmIxOWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwMmM0MTRiNTRjZjg2ZGZiNGY5MGRmZTdkN2JkYmZhNjY2YjdkZGRkMzJmMTI4NmYyMzBhNWI1MzI0MTgxOGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRmM2M5Njk3YWFkMmE3OWRkZTdjMTQ1N2NhNmU4MGMxMjg1OTQ2ZmU5ZWQwOTcyZWQ1MzQ4NjMyOWMyMGExY2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIzY2ZhMWY1ZjZlYmE0NDk4OTM2NjM1NWQ4YjliNjg3ZTg3N2ZjMDc2OTQzMzgzYmI5NjEyY2I5NjIwOWIzZDgifQ"
         }
       ]
@@ -113,8 +121,8 @@
       "statement": "追溯拒绝未知read、binding mismatch、多derivation target、反向声明不符及属性cycle，并稳定排序。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/validation/traceability.ts#L253-L444",
-          "version": "repo-lines-v1:sha256:7bf3b5202ea78ca8d178b711fb8eeb7514e5c90c9440685642700b7e36f2b119:eyJzZWxlY3RlZExpbmVDb3VudCI6MTkyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIzZGQxNjY4MTA4M2FiOGQwNDk4OWFkODU1NTI2NjdhZWJiNTFlN2NhY2RlZGMwMTYwY2YwNDI5ZmJiZjhlMWUzIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIxN2U5M2EwZDZjMzcxNTRjNjhhMTIyYmI5MjNiNTRmNjZlZTVjYjgzNDQ5YjllYjRiMmQ0MTI4ODBiYmNjYzIwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI1MDlhZmE1ZjdjOWVmZmNiZWIzNGUzY2VjZDlhNzk2ZmZkNjNmOTA3ZTc1ZjdkNGM1NDk4ZTY3ZGQ0YWNlMGI5IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIyY2QzOTIxMTJhNWM0M2UxMDc3NTk4YzAwZjJlNTMyZTE2Y2ViNDM2NWYxNmI2Mjk5OTcyY2VmMDExZmIwZjM1In0"
+          "resource": "repo://libs/evidence-model-core/src/validation/traceability.ts#L256-L463",
+          "version": "repo-lines-v1:sha256:87c9cabb4ec402e2b4a7e3813839266be9ec8a6b382103cb1c1427205b4c67fa:eyJzZWxlY3RlZExpbmVDb3VudCI6MjA4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIzZGQxNjY4MTA4M2FiOGQwNDk4OWFkODU1NTI2NjdhZWJiNTFlN2NhY2RlZGMwMTYwY2YwNDI5ZmJiZjhlMWUzIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIxN2U5M2EwZDZjMzcxNTRjNjhhMTIyYmI5MjNiNTRmNjZlZTVjYjgzNDQ5YjllYjRiMmQ0MTI4ODBiYmNjYzIwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI1MDlhZmE1ZjdjOWVmZmNiZWIzNGUzY2VjZDlhNzk2ZmZkNjNmOTA3ZTc1ZjdkNGM1NDk4ZTY3ZGQ0YWNlMGI5IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIyY2QzOTIxMTJhNWM0M2UxMDc3NTk4YzAwZjJlNTMyZTE2Y2ViNDM2NWYxNmI2Mjk5OTcyY2VmMDExZmIwZjM1In0"
         }
       ]
     },
@@ -123,7 +131,7 @@
       "statement": "key derivation必须至少读一模型属性，实际使用的type-only scalar须建模；这并非禁止所有内联数值字面量。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/validation/traceability.ts#L385-L414",
+          "resource": "repo://libs/evidence-model-core/src/validation/traceability.ts#L402-L431",
           "version": "repo-lines-v1:sha256:9782ffc8ea02a5c04155bb22bab2cae5dbba772fe836f2b2df9fbd3b49d077ee:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliNjJmNjBkODU5MGE1NzljZjQ2ZjhkNjczNzhjNGM1NzJiOTYyY2VjY2RiOTBjN2E1ZjdiNDJiOTYwNzgyYTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyMGEzOTI3ZTA3OTk1Y2U1MTg1NGNjN2JiNDFjYWZiMmZmNWE0MmU1YjRjMDg1YzVlZWM5NjZmZWYxNTU3ODIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFlYjhjMTI2MzZjYzk0ZGNjZGU5OTM4ODkwMDBmZGZiNGFmMmExYjY3NzYwZmE0NThhZDYxYmZkYzE3MmVmODkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZmYjMzYzU4YzhhZTAwY2RlODc4NzM3MmZjN2RjNjZjMmI3ZjMyMmI0NmMzMGExOWNiNDdmNjU5ZDMwNjQ1ZTQifQ"
         }
       ]
@@ -134,11 +142,11 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-model-core/src/ingestion/compileDraft.ts",
-          "version": "repo-file-v1:sha256:92b808b62e388c4f1b7440244a142b9e63f9d2f8e54d510640c750e80d0fd2b1"
+          "version": "repo-file-v1:sha256:ee7e928d5278ef2c8861ac164c5a2d51a28a0ce2587d04f1abbeddbf6dd62d85"
         },
         {
           "resource": "repo://libs/evidence-schema/src/ast/entity.ts",
-          "version": "repo-file-v1:sha256:32860024081946a781a095076f3fbe84a568d24da036d3ec6062258fbf279a9c"
+          "version": "repo-file-v1:sha256:5dc9df1a05c91da67fcdd73596e6d54e5ca6957a2beba87c8ec8e4ef43a7747f"
         },
         {
           "resource": "repo://libs/evidence-schema/src/ast/provenance.ts",
@@ -151,74 +159,54 @@
       "statement": "台账只统计keyData=true，金额不会按名字自动打标；撤回keyData通过Inspector的guarded mutator/session.mutate作为一次可撤销编辑，不再UpdateAttributeCommand。",
       "evidence": [
         {
-          "resource": "repo://libs/desktop/feature-inspector/src/inspector/KeyDataProvenancePicker.tsx#L88-L116",
-          "version": "repo-lines-v1:sha256:234091426216b536ff585737e3abeb683c453e15b66d857c3ffa42173f3b87d2:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhiNDJjNjQzY2IwZDIwMjNmYWM5NWFlMGE3MGNhNmNjZWE2ZTcyNzM4OTA5MTc4NmU2ZmU3NzVlZDU4ZTFjMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://libs/desktop/feature-inspector/src/inspector/KeyDataProvenancePicker.tsx#L89-L118",
+          "version": "repo-lines-v1:sha256:216871a3d24ee2bbe6bd04418663f57c56f899b2cc0ca63fa03d7dd7887fc91d:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhiNDJjNjQzY2IwZDIwMjNmYWM5NWFlMGE3MGNhNmNjZWE2ZTcyNzM4OTA5MTc4NmU2ZmU3NzVlZDU4ZTFjMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         },
         {
-          "resource": "repo://libs/evidence-model-core/src/keyData/keyDataLedger.ts#L78-L142",
-          "version": "repo-lines-v1:sha256:e4777be47c4e1c3a14509dec6f770a5d8f3d078b9683243e3d9527ad52a84b98:eyJzZWxlY3RlZExpbmVDb3VudCI6NjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmZmUzNGY2Mzk0Y2Y1NjdlZTc4ZmFiYTYzZjA3NDhmNmQ5OThiZDljOGMxOGNhYjg4MmMzNDgxZGViNGI3YTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE5NDJjNWZhMDViOWZjNDVlNzE1YTYzZDA0NjQyMjJiMjEyNGMyNGZmNjc2ODQ4YmQ0M2RhNTlhZGM2MTUyNDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMzOGE2Mzk0ZDJhNWRlZjY3ODNlZjliNmM0MjVhMWE5MTc2NzI5MmM2MzljODViZmYzYWUyNzViNmE5ZDA5NmUifQ"
+          "resource": "repo://libs/evidence-model-core/src/keyData/keyDataLedger.ts#L80-L154",
+          "version": "repo-lines-v1:sha256:0940d8af74a8cf4c0c94516c205712abbd3277ebbd01ab6ff6d9fc3ae7219b0a:eyJzZWxlY3RlZExpbmVDb3VudCI6NzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmZmUzNGY2Mzk0Y2Y1NjdlZTc4ZmFiYTYzZjA3NDhmNmQ5OThiZDljOGMxOGNhYjg4MmMzNDgxZGViNGI3YTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE5NDJjNWZhMDViOWZjNDVlNzE1YTYzZDA0NjQyMjJiMjEyNGMyNGZmNjc2ODQ4YmQ0M2RhNTlhZGM2MTUyNDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMzOGE2Mzk0ZDJhNWRlZjY3ODNlZjliNmM0MjVhMWE5MTc2NzI5MmM2MzljODViZmYzYWUyNzViNmE5ZDA5NmUifQ"
         }
       ]
     },
     {
       "id": "claim_2f7906c8619d44cd9ec27064b2b6a1d3",
-      "statement": "The `other` bucket is a blind spot: isKeyDataResolved rejects it but only needs-decision sets decisionOwed, and the sensor summary computes resolvedCount as total items minus the owed list, so a key-data attribute on a role or context entity is reported as resolved and produces no issue at all.",
+      "statement": "other 不在 resolved 词表，但只有 needs-decision 进入待决清单；计数不证明提供方完整。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-agent/src/sensors/sensorReport.ts#L204-L243",
-          "version": "repo-lines-v1:sha256:e02f4d8150957121ea4635ce36128e5b8fdf04073011b404c0801f843eaf4c5d:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAyNTdmM2I3NTVlNWNhZWIzZmM1YTZiODk0NGI4ZjlkYmVjOTEzYTYwODhhNWM2MzJjNzY3ODY0NDNiYTliOTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM4N2M5MzU5ZDliOGJiOTgzZTkwMmRkOTZhZWM5YzQ3YzYxYjM2NWFiY2NiMDc1NGU1ZjViMThkNGY3NzMzNTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFjNTc1YjM1ZTdiN2VhMmE1OTc1YTg5MjUzODVjMDEwNWE3NWE0Y2I1MzU1MzU2ZmZiZWFlZTliOWM1ODY0MjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE5MjViMTNjOGUzNzRmODkyNTQxNGQxNzViMGI2NGZjOWJmNWQyZjA5YzkyZWExZDk1Njc0NDU5MmI0NjJjYzIifQ"
+          "resource": "repo://libs/evidence-model-core/src/keyData/keyDataLedger.ts#L128-L149",
+          "version": "repo-lines-v1:sha256:7c654f5b8fb13008903683eebbb0bce3ab6d173baaf5b49485279711e2fcb4d9:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM1OWI0ODNlMDVmZTMxYTdlN2IxZWI4MGJiOTRjZWFlMDlhY2MwMzZhOGZlMWEzYWIwYzBmYjI1OGY1YzQ3YzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZmY2FkMzhhOTY3YTJjYWE3YTAwZWRlY2FmMjM0YWI2ZDgyNWYzZDhhM2VmNWQ1MmI5M2IwMzgwNjNjNDgzNDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEyZmU1MTcyZDcxZjY2NzdmYzJlMDBhNjg4MWQxMmY2Y2NkZjY5NjYyOGNiNWUzYzA2NjY3MzYwYzRlNGQ5NDgifQ"
         },
         {
-          "resource": "repo://libs/evidence-model-core/src/keyData/keyDataLedger.ts#L100-L125",
-          "version": "repo-lines-v1:sha256:5e193b4d087f995794cc05493a70bd06f093279714811b95b2bf7fe210622d54:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA4NGZkMzUzYmM3NTZiNTllNDZiMzYyZTllZjQ2M2YwNTQ2MmM1ZmU1YThmOTY1NGRlZmRmYjJkM2U4Njk2ZTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEyMmJiYmE4NDdlYjI3MDlkNDI2OGM4NjM2YWFkMzRhNmRjZjA5N2U1ODFkNmRmYjM1NTc5NzgzYTA1OTVlNTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI1YjgyY2E5MjUxNTkyZmQ1YzVhMTQzMDQ1MTQ4OWQwYWFhM2FmZGZkNzlkZGFhNmI0YTc0ZDEzYTA3NWYyZGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBhNzI4NDg4MmU1ZWI3ODljZGZhODgwNWI3NWFjZDA2OTBjYjI2MjIxZDFiODU4NTg0NWU4YzQ3M2NhOTI4NmMifQ"
-        },
-        {
-          "resource": "repo://libs/evidence-schema/src/ast/keyData.spec.ts#L70-L86",
-          "version": "repo-lines-v1:sha256:2839ca43ec6650baab69568018c46f7d5be312cdd08787606b1bae334bf43945:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc4NjA5NjIwNDFhYmIyNDk5MjQzMTM4Zjg1NjdkNTU2YmVlZDdlNjM3NjY3MTdmZmI2MzQxNjEzY2U0MmNkZjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMwMGRiMTZmZDAyNDdmNDUzODA3NmFhZTBkZGM5ZTI3OGViYzJjZTQ5YTUxY2E0ZGI3OWY0NTNmMmI4ZTJiYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
-        },
-        {
-          "resource": "repo://libs/evidence-schema/src/ast/keyData.ts#L92-L98",
-          "version": "repo-lines-v1:sha256:43af8e3bacbbcdca4ca5dd43d0b514219c50a1602a8f5a755661817e219e5995:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2ZlZGUxNDBhNzFlNjM3MjE5NzFjNWQwMWJmNDE2ZDQxNWI4MjMzMTU3YjIwNDYzYjMxMGY4MWMzOWMwNzhhMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjc3YzI3OGY1N2NmZGFkZTY3NzhkMWM3NzBjODkwNWRkNzUwNTk0NTRhOGM0MGI5Y2Q4OWQ3MjA2ZDE5ZjJhZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWI1ZjEzNDUxYjIzZDAyMGIxOWVlYmIwYTdlYzE0Yjc2OGRjZjI0YjllODYzZmE0YmNhNmQwYjJkYzE1NzI3YyJ9"
+          "resource": "repo://libs/evidence-schema/src/ast/keyData.ts#L54-L89",
+          "version": "repo-lines-v1:sha256:f902dc3da9b0c06a165600e84ce8245ba48cbe538f04f2dca260cda5ecdffce4:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5OTU4MjM4MzY5ODI0ZjVlNDM4YzMzYjRkZmY5NzcwMzk2Y2EyYmZjMWNlNzM5ZDRmMzc4YzYzYzY5OWQxMTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjMmU3NjNkNmZlYTI5MzljMmQ1N2E2ZDVjMjgzYjlkYmNjZjhiMDYxZjcyMDg1MjIwMGY2Nzk3YTY5MWYzN2MiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUxYjU3OWMzOWU0NWEyMmQzMGM5MGI4ZGRhNDg4NTg3YjZjOTFkMWNhYTg0YzNhZGViZGE1M2NmM2VlZGVkNTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFlZjA4N2ZlMmVkMjQ3NzAwOGY2M2U2ZjQ3NDBhNjgzNDZhNzRjMDhhMzI4OGJkOTgyMGNlNWMyNGU0NTk1MDIifQ"
         }
       ]
     },
     {
       "id": "claim_3516bdca21d14f5c8381587278408cc8",
-      "statement": "The desktop inspector and the native audit consume the same ledger: the attribute grid builds buildKeyDataLedger from the live session document and expands a row into KeyDataProvenancePicker, which prints the ledger's source label and derivation providers and offers only two actions — bind a derivation rule or retract the key-data claim — because no provider choice is ever persisted; the wide KeyDataLedgerSheet reads the same ledger for its per-entity owed count and rule editing.",
+      "statement": "Inspector 与 native audit 共享台账；Inspector 可绑定规则或撤回 keyData，结构化来源可由画布 Inquiry 工具持久化。",
       "evidence": [
         {
-          "resource": "repo://libs/desktop/feature-inspector/src/inspector/AttributeDataGrid.tsx#L256-L270",
-          "version": "repo-lines-v1:sha256:ac4b6bfd0e6ff051dfefb55c753dc27274b593551d0d98d2e8f67cb184045d3d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUzZWI3YzU2OGNhNDc3NDY2MWNlOGRlYzg2NzY3ZjYzZDFlOTAzMTkzNDM0NWYxNWQ2MWViNzA5ZTUwN2EwNjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRiNzE4NDEyZjRlMTRjYTE0MTJiZmM4Mjc3YjkyOTYyZTkxMjAyZmIzNTJkYzI4YzZlNjVjMDM5YzFjODYzNTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFhNTYzN2ZlN2RlOTQzODA4Y2I3YTEyZDdkOGIyMjBhMjJlYTE0ZmU0NzA1OTZkYTI1OWI0MTc4MWIzMDkzODUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZhOGFmYjQxMTkxNGNkNzI5OGJhNzk5OTg0ZTgyMzg5YmRhOGQwODQ5OWRkOGM4YzQ3N2MxNTVhYzU4NDIyYTUifQ"
+          "resource": "repo://libs/desktop/feature-inspector/src/inspector/KeyDataProvenancePicker.tsx",
+          "version": "repo-file-v1:sha256:16353cb2e95e98ea4c1034c8c2d0155ccedcd99ac3c598e22b6c00f69d2ced31"
         },
         {
-          "resource": "repo://libs/desktop/feature-inspector/src/inspector/AttributeDataGrid.tsx#L76-L102",
-          "version": "repo-lines-v1:sha256:1380529f0b0dbb91a136eb30efa7314c1c1111928cc6c88e16e00e85cffdf911:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc4ODFiMjM0ZGY2ZDU5NTUwNTdmYzI5Zjg3NjQ1ODBlMTU2M2RjOGMzNTUyZjU0NWEyYTlmZTM2ZDMwZGYyZTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5N2FiMDg1NDBhMGVjMjExYmU3OWIwZTIzZmE4NWRmODllM2IzYTU0OTVkODZkYTNmOWVmNzRmNzA5MzYyNGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgzZDg4ODAyMTQ5ZTJiNjY5YTgzOWJhYTRmYzJjM2ZlZDcwOGEwODVlNTY5M2Y0MDBlZTVhOTBiODZmODliNDEifQ"
+          "resource": "repo://libs/evidence-model-core/src/keyData/keyDataLedger.ts#L98-L149",
+          "version": "repo-lines-v1:sha256:a3c8004b3e2010fc494a2398a28cf09abaf32811ec4e7c6bd685316fdfd3a37a:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliNjJmNjBkODU5MGE1NzljZjQ2ZjhkNjczNzhjNGM1NzJiOTYyY2VjY2RiOTBjN2E1ZjdiNDJiOTYwNzgyYTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIwYWMzMzVkY2EzNWQwYTAyNTA5M2M2MjFjZjdiOWEyMDZkMTA3NDlkNDJhM2VhNjZhOTFkN2UxZGI5NGM2ZjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEyZmU1MTcyZDcxZjY2NzdmYzJlMDBhNjg4MWQxMmY2Y2NkZjY5NjYyOGNiNWUzYzA2NjY3MzYwYzRlNGQ5NDgifQ"
         },
         {
-          "resource": "repo://libs/desktop/feature-inspector/src/inspector/KeyDataLedgerSheet.tsx#L70-L140",
-          "version": "repo-lines-v1:sha256:4f43beebc11c1bba115619ae0f5937df9b461d203a483bd539e68be084bd4f6a:eyJzZWxlY3RlZExpbmVDb3VudCI6NzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI4ZDNiZDQyODM2YTA0ZjE5NjNmOGZlYjUyYzI3YTEwODM3OWVlMmRiMWUwMTc0MjM5YTIxY2Q0OTM3NjU4YTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE0NDRhMzFkOGVjN2U4OGY4NTU3MTUyNmJmMjdjOTU4ODIwZGZmZDI5ZjY4NTIxZDBjMDViNzcwNWExZjE4YjQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU1NjIzOWQ1YzM4ZmMxODdjNDNmYjY0ODExYmZhNWIxNDBhNzZlOTkyOTI1N2YxYjdjZDY3ZGYyOWMxMDQzYTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc4ZmNmYjMwYTQ1ODZjM2JhZjNkMTQwMzhjNTJmYWMzZjVhNjBkMjdhMTUyYThjNTBkMjZiY2UyMGZkZjdiY2QifQ"
-        },
-        {
-          "resource": "repo://libs/desktop/feature-inspector/src/inspector/KeyDataProvenancePicker.tsx#L36-L52",
-          "version": "repo-lines-v1:sha256:cd3386677b4bb4455fe36bfb2a96d13a54414ff2f854410cb8bcfeaee3a1f36e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyM2NiNGMxM2Q2Nzc1OWQ1NGY3NjcxZDQ0MDM0OTcyZDA5MDNhMzlkMDhhZmFlNzNiYjk4MWViOWFiMGRjZjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhiNjM5NDhhNTQyZTgzNTJhM2MxNzMzMjllM2Q3NGEyNWIxNmM0MmQyZTRiNmYwZDFmZDA2ZTc0Y2IzNDc1ZDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFjOWVmOTUxNzcwMWNjNjI5MjMzODI3MDEwZjAyNDZiYWQ5MmQ3YzQ4ZWYxMThjZjg0YjA1MzdjN2I3NzU2NDcifQ"
+          "resource": "repo://libs/evidence-tools/src/index.ts#L183-L193",
+          "version": "repo-lines-v1:sha256:0f5649bb9542bd4548f1b360b85df64ef22cec2550bc0c7e4467739d70040a88:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVkMGQwNDJmM2RhYWM2NzBlZTllNzc3NmQ2MDZiNDFlMDc2OTJjZWZlMmZlMTEyZGM2MjVjOGNjMmU2YTA5NDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5OTBlYjZjY2RiMGZlZmNjM2M5YTg4M2M4NzljOTg2NmJlMzM5MzFjYWFhYmYzNjYyZDdhYzRjNDEzZWM4YjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI3OTEyMzY5MzNlNGFiNzg2N2QxNTMyMDliM2Y3YTI5ZmZjZTExY2ExZWY4ODU5ZGQ3MGIzMjM3MjE2ZTUxZTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM2YzRhMDQxOWQ0YmQxNTg3OWU4ZWI2NTZhNmI5ZTQ1ZGJlZGIzYWMwZTYxMDE1YTlkODcwNzExMjUzZTIzNTYifQ"
         }
       ]
     },
     {
       "id": "claim_a27d8991ff0f49699333d5a5a5ad7e9b",
-      "statement": "The mandated `expired_at` on a fulfillment_request is not a request-formation field, so it classifies as needs-decision until a derivation provides it; the golden fixture shows both cases, with request.content-access#expired_at the audit's single owed item and request.content-payment#expired_at derived by rule.payment-deadline.",
+      "statement": "deadline 不会自动视为请求输入；无显式来源或派生时列为 needs-decision。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-agent/src/sensors/native/nativeSensors.spec.ts#L57-L99",
-          "version": "repo-lines-v1:sha256:446b2f3584963ccb1ed2a76a8744a0cb99239c30585ee246cd6c7dea05712868:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkZDA3M2E2ZGQxMzM0NGY4ZTBlNDI4YzY0OWJiZGRhNWYyNzAxZDc2ODdiNGJkNzI3N2NiZTU3NTNhYzZmNjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdkYWY3NzVlMTEwODM2NGQ1OGJhZjg2MGE3ODg4MDBmNGZhNGMwYmJiYTBiMzUyNmNkZDdiODVkNjJjYzU2MzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhkNWNjOTA3NzQxMmYyMzJiNmI3ZDE0YjdkMDUyYThiOGExYjhlMTU2OTAzODI0N2E2ODE3ZjhjNTcyOGFhMTcifQ"
-        },
-        {
-          "resource": "repo://libs/evidence-schema/src/ast/keyData.ts#L134-L143",
-          "version": "repo-lines-v1:sha256:93e8f5954e89484b412d5669a2af7dd547e9a7110406abe3f0d437079187f400:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2NzYzMjE5ZDhlNjM3YmIxMGM1YWU0OTBhZDMyODMxOTY1YTFhMjIyOGUwMDZmODFlMjg5YzA3Y2ZhMGRhNTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJlOGNmNzJjODNlZWRkMDA3Mzg1YTZlYTI2NzZmYmYwNzZkODVkNDkxMDY5YTQxOTE2Y2MwMWVjODhiNWMyMTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdkNGExYTE5ZmI5ODUwNWRjZmY0ZmZhNDk4MTA4OWQ2MWYzMDRkOWZmMmRhMTFkZjBhNzdjZjkyODk2ZmI2OWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVkODc5YjZlMzhhY2I5NTIzNGVmODU0NjFkMTVhYTIxNmFiODE5Y2JkNmIzNTgzNDc1NmY5NGQyN2ZjYjU2NjMifQ"
-        },
-        {
-          "resource": "repo://libs/evidence-schema/src/ast/keyData.ts#L73-L85",
-          "version": "repo-lines-v1:sha256:b5025edcc8ce893e463d5124cc049d09289a9a5f9fb3198b0ccf1c44afba2da8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA3ZDM4M2YxOGUzMjJmMmE0MTNhMzJmMjgxOTNmYjE5ZGVjMzk1ZjUxOThiMzBmYjIwNTQwODY0NDgxMTdiZTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdkMzM5NDY1MzE5YzdiMjA3MGJiYWIzMTk4MGZlYjcxZjcyYzgyYjM2M2ZmNWI0NmFjZTY1ZjgwZTNmZTg4NmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMyY2Q1NTIyZDRjN2E2YmYxOGViMzlkOTNhODliMGIyNzEzMDcyY2U2Yjg2YmRkOTUxODhjM2FhNGExNGFjNDMifQ"
+          "resource": "repo://libs/evidence-schema/src/ast/keyData.ts#L97-L140",
+          "version": "repo-lines-v1:sha256:61853df873f172db459229e6b9efcdd2947d00a5922099fa1451baf95df584a7:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkyMDM0OTU2MjEzOGQxYTk1YTE2OGI1YTI1OTQzMDg0NDU3MDFkMGI5YTg0OWQzMDcyMTM4M2U3Y2Y4ODBmOTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM4NTJmNzYyZGJhYjhjZjM0Yzk1NTcxOTExMDgxMmI5NGY1ZGFhZjFiZTU3N2Q4MWY1MWYzZjJmYjM0ZGU4NjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -251,12 +239,12 @@
       "statement": "native lineage结合词法scope检查read/many、唯一目标和反向声明、cycle及key派生模型来源/type-only scalar纪律。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/validation/traceability.ts#L104-L177",
+          "resource": "repo://libs/evidence-model-core/src/validation/traceability.ts#L107-L180",
           "version": "repo-lines-v1:sha256:43bf9821f7a67bbc7c472ffafbf56b2259ce0eb3c989d3fa01781ac4417edf01:eyJzZWxlY3RlZExpbmVDb3VudCI6NzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJmY2JkYjFhOTg1OTJhMTU5MmQ4MzI0YzU2MWE5YmExNzMxMzZjMDMyZmEwODVhYzQ4NjA2YTZhZjA4MmIxOWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwMmM0MTRiNTRjZjg2ZGZiNGY5MGRmZTdkN2JkYmZhNjY2YjdkZGRkMzJmMTI4NmYyMzBhNWI1MzI0MTgxOGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRmM2M5Njk3YWFkMmE3OWRkZTdjMTQ1N2NhNmU4MGMxMjg1OTQ2ZmU5ZWQwOTcyZWQ1MzQ4NjMyOWMyMGExY2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIzY2ZhMWY1ZjZlYmE0NDk4OTM2NjM1NWQ4YjliNjg3ZTg3N2ZjMDc2OTQzMzgzYmI5NjEyY2I5NjIwOWIzZDgifQ"
         },
         {
-          "resource": "repo://libs/evidence-model-core/src/validation/traceability.ts#L305-L433",
-          "version": "repo-lines-v1:sha256:e6d1e309828245358bd146e81ad8a9b96777453589badc7e1100a2b4ea4e37f1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTI5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIwMWJhNDcxOWM4MGI2ZmU5MTFiMDkxYTdjMDUxMjRiNjRlZWVjZTk2NGUwOWMwNThlZjhmOTgwNWRhY2E1NDZiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJjMTM4NGJmODQ5ZTNlNDc4MjIzZWQ0NmQyMTU1OTJlYzM2YzRmMjhmYTU0OGFmMDYwZmNkNGQ3ZTliNjQwN2Q3IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJkYTExMjdlOThiNGNkMWM1NmUxMmM4OTZkN2M2YmVhNTFiMzFlZjJiODUzNDZhODc2Y2Y0Njk2NjQ5OGI3ZmRlIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlNDdkNjMyZWFjZDA0YzM2MmQyY2I4NTcwNDZhY2QwMzUwOTgwMGFkM2U4NjBhNDc5NmZmZmJkMDY2YTg4ZDE0In0"
+          "resource": "repo://libs/evidence-model-core/src/validation/traceability.ts#L308-L450",
+          "version": "repo-lines-v1:sha256:113f6e49a8e74a0329c2e66ab87662d6307d658deff5c46663a00d4765c6b718:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIwMWJhNDcxOWM4MGI2ZmU5MTFiMDkxYTdjMDUxMjRiNjRlZWVjZTk2NGUwOWMwNThlZjhmOTgwNWRhY2E1NDZiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJjMTM4NGJmODQ5ZTNlNDc4MjIzZWQ0NmQyMTU1OTJlYzM2YzRmMjhmYTU0OGFmMDYwZmNkNGQ3ZTliNjQwN2Q3IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJkYTExMjdlOThiNGNkMWM1NmUxMmM4OTZkN2M2YmVhNTFiMzFlZjJiODUzNDZhODc2Y2Y0Njk2NjQ5OGI3ZmRlIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlNDdkNjMyZWFjZDA0YzM2MmQyY2I4NTcwNDZhY2QwMzUwOTgwMGFkM2U4NjBhNDc5NmZmZmJkMDY2YTg4ZDE0In0"
         }
       ]
     },
@@ -290,11 +278,11 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-agent/src/story/flowStoryProjector.ts",
-          "version": "repo-file-v1:sha256:63f9a12f8b14d97dac859762b57be27068fc3d1f608597e80daf84cb16f40878"
+          "version": "repo-file-v1:sha256:84c9d23da00ba71e0b69c0f0c25ad63a0abc8343a42517cda1fc3a513578235e"
         },
         {
           "resource": "repo://libs/evidence-agent/src/story/storyAgent.ts",
-          "version": "repo-file-v1:sha256:28301843af812be5ebb44f53f53040cf1ba424b0f0bdf215463d0334a0290ed0"
+          "version": "repo-file-v1:sha256:32eb133c4f5b62c10a24d71fa6005f04e579e4dc79c6e5da578569458f448fd1"
         },
         {
           "resource": "repo://libs/evidence-api/src/delivery/modelDelivery.ts",
@@ -322,17 +310,35 @@
         },
         {
           "resource": "repo://libs/evidence-model-core/src/keyData/keyDataLedger.spec.ts",
-          "version": "repo-file-v1:sha256:e58a505c8817381cffa91cb9a194668e702b382ea51a2dc426bc09ae7bd007bc"
+          "version": "repo-file-v1:sha256:bff64409a8fc86a0e3ef6f29510db3997a945d6dab741a54555742d0e412e5fa"
         },
         {
           "resource": "repo://libs/evidence-schema/src/ast/keyData.spec.ts",
-          "version": "repo-file-v1:sha256:3a09c020c22acab4e1e6bf4951352a33ad0d394dc20a2fbc4c29141311aa84df"
+          "version": "repo-file-v1:sha256:44fdb9d91307e4c20f74429309fb402db9220ffc6ec8aa5373229d327b21b06d"
+        }
+      ]
+    },
+    {
+      "id": "claim_cfdc6441077d4286aa47ac814cdc4580",
+      "statement": "显式来源要求真实属性、正确提供方和匹配类型，不能与派生并存；直接链及派生血缘检查环。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/validation/traceability.ts#L351-L462",
+          "version": "repo-lines-v1:sha256:db019a828ab0932aa7804e13b6727652042505e87f112246b922262dcff63b24:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIzZGQxNjY4MTA4M2FiOGQwNDk4OWFkODU1NTI2NjdhZWJiNTFlN2NhY2RlZGMwMTYwY2YwNDI5ZmJiZjhlMWUzIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJiY2QwNGEzMDM1ZGQ3N2ZmMzkxYjZmM2QwYWYxNGNkNmFiYzdjZjVlNGJkY2IwOGZkNjhjMTlmYjE5NWFhODVjIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI1ZTEyYjYxMTg5NDNlMzBjMDA2ODMzZTc4MTYzMGE1M2IzMmY0MTdlZjVmOTc5NWMzZjEyZjMzMDgwMjRjNWQ5IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI3ZjQwNjc4NzAyYWJjMzMxM2VjOWJhY2QyMmZmYjlkZWNkZjA2Y2VlZWZmODM2ZTVhNGI2YWE0ZjRlODY1ZjE3In0"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/documentSemantics.ts#L115-L170",
+          "version": "repo-lines-v1:sha256:640078639863cfd585c37f7b188fcdb3efa29f11dbacfa3239f7a8d8c07c1ad5:eyJzZWxlY3RlZExpbmVDb3VudCI6NTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmMmFmNDhhOGUxNWIwMDkwYWNiZWFiNWQxMzc1OGY3MGNmZGJhMTAzNDc2M2Q0ZmY1ZmFiMWRkMzE4OTI2OTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyMTI5YzI3MzUyYjQ5NTU0OGIwNzFhZTM0YWI5MDgxMTcyODczNDI4ZjZmODdmNTRiNTgwZTUxNTNjOWFhMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM0MTg3N2I4YzFkZGI0OGU2M2RiOTMxNTAzNTU0OThkMGE4YmFjYjIyYTliNWExYzI5MWU4MjllNWNiYzMwYTIifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/documentSemantics.ts#L933-L971",
+          "version": "repo-lines-v1:sha256:739ccc804f2f37499c8e8ecbfd62eb0d7b2f965b43468c57f0838bef075ca3b3:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUyMmRhZWE0Njc5MDAwMGQ4ODFmYWI2MzVmMDgxNDhlMTJjNzE5NTA0YzkwNWNlNmJmMjUyNGI5Y2M4NTFlNDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyMTI5YzI3MzUyYjQ5NTU0OGIwNzFhZTM0YWI5MDgxMTcyODczNDI4ZjZmODdmNTRiNTgwZTUxNTNjOWFhMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRlNDY1MGE5ZDAyYzk2YzhiN2FjMDhiZjM1OTdkOTRjMTVkZjcxMjYyOWQ0MGU2ZmU1YTNhYTkxOTcyMDQwMGUifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-18T12:34:41.390Z"
+    "at": "2026-11-20T12:30:09.424Z"
   }
 }

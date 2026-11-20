@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:31deb71f2577ef705ddbcac5afb145636746246e9a9cb0a7f3ffcc9c1596fc20",
+  "pageVersion": "sha256:c7c346c1448f5938c16ab43b1a2059417cb934a8d4e1e2bbefe1fdc108e4b7ab",
   "claims": [
     {
       "id": "claim_de996ad544f1499497b7f31cd3846666",
@@ -12,7 +12,7 @@
         },
         {
           "resource": "repo://apps/desktop/src/main/main.ts",
-          "version": "repo-file-v1:sha256:42b4ffc91faab6739d8b429421737e9ba298d53a678b43db5956f4f971137aef"
+          "version": "repo-file-v1:sha256:320808a8bc54cc3627aabc4e61d24d08e900c58ce2b64340063fe9b12f14c4eb"
         },
         {
           "resource": "repo://pnpm-workspace.yaml",
@@ -26,21 +26,21 @@
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/main/deliveryIpc.ts",
-          "version": "repo-file-v1:sha256:dbabd79c6015dd3705b481aae965093212321f728e29118579a14a2a2f7dceb4"
+          "version": "repo-file-v1:sha256:533a9c130eaa737df00e5e6ad6825bcdd460de78f7a57c1e3b1d13ef8b2c11f5"
         },
         {
           "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx",
-          "version": "repo-file-v1:sha256:941b09d88c3a3b6a2ab2f4d3a6e487d76ec671cabde4412a404baf0188cacbad"
+          "version": "repo-file-v1:sha256:d8b8c09310947611b6d2cc8e71cf9a864124191d9b922547793438d36fe0edd8"
         },
         {
           "resource": "repo://libs/desktop/feature-delivery/src/state/useDeliveryHub.ts",
-          "version": "repo-file-v1:sha256:76c9b7ce7f57989d8ab9a7eb179344e5f2c47b780c5a934c065850363bec6f12"
+          "version": "repo-file-v1:sha256:dd1fa5dd696b125ac3c281321a5209dabc7465a899e6c7042656157e7e1ebd4c"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-18T09:45:40.969Z"
+    "at": "2026-11-20T12:30:09.424Z"
   }
 }

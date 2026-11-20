@@ -5,14 +5,14 @@ description: 按Zod契约、Immer事务、native CEL、ELK、Node I/O、桌面IP
 tags: [testing, vitest, fixtures, digests, injection, desktop, cli, acceptance]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-18T12:34:41.390Z
+    at: 2026-11-20T12:30:09.424Z
 sources:
   - id: openwiki-source-164e2da859b5277df81c7d94
     resource: repo://.github/workflows/ci.yml
   - id: openwiki-source-66c2ef915cc65b281496d068
     resource: repo://apps/cli/vitest.config.mts
-  - id: openwiki-source-55138c775f581f8c989ca7dc
-    resource: repo://apps/desktop/src/main/agentRuntime.ts
+  - id: openwiki-source-fe198b09c0b1eeb6a6ebe4d9
+    resource: repo://apps/desktop/src/main/agentRuntime.spec.ts
   - id: openwiki-source-c8d6c908e749a45544b1e625
     resource: repo://apps/desktop/src/main/deliveryIpc.ts
   - id: openwiki-source-5a8bb195f6c36951b548492b
@@ -29,8 +29,8 @@ sources:
     resource: repo://libs/evidence-acceptance/README.md
   - id: openwiki-source-87c8cacafc41063592c13c80
     resource: repo://libs/evidence-acceptance/src/acceptance.e2e.spec.ts
-  - id: openwiki-source-a905a355f408774f2cb0edc5
-    resource: repo://libs/evidence-agent/src/session/evidenceAgentSession.ts
+  - id: openwiki-source-d916b31bf94d895d48e443c4
+    resource: repo://libs/evidence-agent/src/session/evidenceAgentSession.spec.ts
   - id: openwiki-source-062416ee8e7e3d6d3b09aaad
     resource: repo://libs/evidence-api/package.json
   - id: openwiki-source-48c413ac4f0282e1b0126f20
@@ -49,7 +49,7 @@ sources:
     resource: repo://tools/workspace-rules/boundary-drill.mjs
   - id: openwiki-source-b58f839a189d87a7e1f37d39
     resource: repo://vitest.config.mts
-generated: { by: "pi", at: "2026-11-18T12:34:41.390Z" }
+generated: { by: "pi", at: "2026-11-20T12:30:09.424Z" }
 ---
 
 # 测试边界与验证策略
@@ -79,14 +79,14 @@ pnpm exec nx run-many -t typecheck lint --all
 | headless布局 | canvas engine/layoutEngine、adapter/elkToLayout、serializable | compound/空Context/cycle、container偏移/section连接、pair routes、密度/不改源 |
 | 画布/Inspector | feature-canvas adapter/CanvasViewport、Inspector/CEL specs | local/world一致、早期handles、scope/diagnostics/token、单批undo、原生CEL诊断 |
 | 文件与发现 | model-io adapters/legacyRemoval、desktop projectStore/modelWatcher | tree/Bundle/readme/examples、幂等save/canonical unpack、旧validation拒绝、atomic-save/root-rebuild/close |
-| 桥与竞态 | Agent/MCP/runtime/useGraphLayout/useDeliveryHub |同步revision、旧reply丢弃、ack顺序、超时、冻结export、过期review不撤后续工作 |
+| 桥与竞态 | Agent/MCP/runtime/useGraphLayout/useDeliveryHub |同步revision、旧reply丢弃、主进程提交与 renderer 重放顺序、超时、冻结export、过期review不撤后续工作 |
 | API与兼容性 | projection/openapi/outputRenderer、oasdiffRunner/breakingScenarios |最终contract/overlay、schema/consumer types、稳定bytes/manifest、原生工具版本/错误闭合 |
 | HTTP验收 | `brunoRenderer.spec`、`acceptance.e2e`、`runner/suiteSelection`、`cli governance.e2e` | 固定 Bruno 对真实 SUT 执行；检查捕获、派生断言、双门禁、漂移、退出码与报告 |
-| 放映、来源、AI | flowAggregator/story/whatIf/journeyPreview、EditorScreen、aiConfig/safeStorage | 声明的流程与前缀隔离、选中对象的来源片段、凭证隔离及模型切换 |
+| 放映、来源、AI | flowAggregator/story/whatIf/journeyPreview、EditorScreen、aiConfig/agentIpc | 声明的流程与前缀隔离、选中对象的来源片段、共享 Pi 配置、凭据不经 renderer 及模型切换 |
 
 ## 注入昂贵依赖，不伪造被测合同
 
-PiSdkPort和runtime sessionFactory/sensors/transport让会话测试无需模型凭据；delivery/dialog 和 AI runtime 注入避免真实 OS 弹窗与模型调用。installDesktopApi是renderer channel log+Agent/MCP模拟器，UI不启动Electron。时钟/文件/engine可注入保证可复现。
+会话单测 mock Pi 原生 session runtime；桌面注入 sessionFactory/sensors/transport，测试无需模型凭据；delivery/dialog 和 AI runtime 注入避免真实 OS 弹窗与模型调用。installDesktopApi是renderer channel log+Agent/MCP模拟器，UI不启动Electron。时钟/文件/engine可注入保证可复现。
 
 并非一切都mock：bridge spec开真实Unix socket验证0600/超时/复用；oasdiff integration执行固定binary；HTTP e2e启动独立backend；旧离线 workbench/CDP suite 已撤除。模拟其他层只为隔离当前层，不能拿假的runner宣称真实HTTP已绿。
 
@@ -100,7 +100,7 @@ schema product-procurement是稳定真实树快照，validator case clone后修�
 
 integration把采购fixture复制temp：parse/strict、await ELK每对象/Context/pair几何、一跳highlight、real store两次save第二零churn/再parse、50mutations+50undos回原文档、编辑后再save字节不变。
 
-phase-3-loop把real runtime、fake Pi、transport和real ModelSession接起来，实际注册11工具而非旧六个，RFC6902补丁可一步undo；full sensor证明本地静态管线，无旧trace frontier/simulator断言。phase-4及renderer suites保护审查和导出/键盘闭环，不启动真实LLM。
+phase-3-loop把real runtime、fake Pi、transport和real ModelSession接起来，校验 15 项工具、主进程无需 renderer 确认即可提交、重放已提交 RFC 6902 补丁后一步撤销；完整传感器检查验证本地静态管线。Renderer suites 保护审查、画布生长、导出和键盘闭环，不启动真实LLM。
 
 ## CLI与CI的两种“测试”
 

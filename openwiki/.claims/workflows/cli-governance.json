@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:b3e10331e991b9d8579dff9c458e24e2574a7011cc315f01689ca6a676ea715b",
+  "pageVersion": "sha256:6ab49c0bdbb41a48ba687d0d2371900b888904308fb79f1b9c5c05998421df2a",
   "claims": [
     {
       "id": "claim_2e23d63c615949bcbde260388194c88b",
@@ -110,17 +110,35 @@
         },
         {
           "resource": "repo://apps/cli/src/commands/story.ts",
-          "version": "repo-file-v1:sha256:857d302107275cb9d6189c0885563c194966bf025bb95b519b7c704093bb47fa"
+          "version": "repo-file-v1:sha256:75a3ebb9ebc885f3b6e09ee588870ee827a4ff28197d89dc15310d6d4dc964ec"
         },
         {
           "resource": "repo://libs/evidence-api/src/loader/migrateOverlay.ts",
           "version": "repo-file-v1:sha256:96797d5e3eb1442b1c66c40e7be370ce22da0df8ff91ccae37295f9e2f439099"
         }
       ]
+    },
+    {
+      "id": "claim_acc2c45f55414e74ad50cbd76cc4a623",
+      "statement": "examples:verify 对多个履约模型运行 export --verify，校验已提交的 OpenAPI 与 Bruno 产物，不重写生成目录。",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/ci.yml#L72-L73",
+          "version": "repo-lines-v1:sha256:97c9082820805df3fb3597777ee61a7aac95059192721408821ca1e0b995a3b8:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzgwN2RkNDRhY2ZjYzFkYmJiMDA2NDUzOWYyNjBiYmFjODBkMWM2NDZkMGMwOGQzYTAzZDQxZmYwMzI2NjMzNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDhjNDU1N2YzOWFlMTFmNTI4MDVkNmVlZDIyNmMzYjk1NjhhZDNmOTZjNmRhY2FlZTgzNTg0ZDc0MGMzN2E2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODU2MGE0OWM0YmViNTBhNzE4NTZlMDA1MzJiMzE1MDc4ZWM5OTMxNjY4MTU3ZjcwZmYzZTY2NjMzOTE5MmEzNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZmUyY2NlMWFkODFlODQyZmJhNGE3NDA0OGNlYzlmOTcxYWNhMWFhMWIxNDMxYzkzN2ViMjBkYmY1ZmJmYzgyZiJ9"
+        },
+        {
+          "resource": "repo://package.json",
+          "version": "repo-file-v1:sha256:dede372592c0b80c3094dc143616b53ebdaa0cb7ed395730fca230ae6813845d"
+        },
+        {
+          "resource": "repo://tools/verify-fulfillment-examples.mjs",
+          "version": "repo-file-v1:sha256:6245cdc6a86a2781359caeb83309dfb0be8d02beae98c36bc15a4ea0220e370e"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-18T12:34:41.390Z"
+    "at": "2026-11-20T12:30:09.424Z"
   }
 }

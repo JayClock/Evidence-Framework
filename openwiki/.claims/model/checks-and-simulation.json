@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:babba670494b5922d72c078f6b0a7e8f73dd757e60532de4535286503d08f16f",
+  "pageVersion": "sha256:773116f1f02e2f3feb3487480d8f6f54e5aea1b44318d6d2bc95fac339d7fd90",
   "claims": [
     {
       "id": "claim_4260686904514941808ef785c7ef5562",
@@ -37,7 +37,7 @@
       "statement": "scope仅独立Context且不可重复，保留subtree/真实依赖，不因共享Party拖入其他合同。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/validation/scope.ts#L111-L222",
+          "resource": "repo://libs/evidence-model-core/src/validation/scope.ts#L112-L223",
           "version": "repo-lines-v1:sha256:7b361ce0be7ace89d87c8d0566cc0d4c892aaa2b3fc46f79263d47704edb7119:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIwM2NkNjAxNjJlM2U0YjZiMjcwNTdlY2IxYzdlZDZiM2UxNTJjOWY3ZDc5ZDQ0MDJmOTc1MWNkMDdkODJmYzEyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJiYTg0YzU4Y2FhZDYxNmNkMTA1NjE3OGM4MzdjYjRkMjA0ZDk0ZWQ4MDExMjUyYzJhZTM3NWZjOGI3NWI0ZjA1IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIwMzBjN2VkYzU4NzQ4Njk2ZWE2ODE0YTIyMmM0ODZjZTFkNjAwY2ExZDA1Mzk4MzcwZGVhYWUwYjk0MzIwNDU0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIwNDQwN2UyM2JhYTViMzkxYzE0NWE3OGY2NDQwNTk1MGM4NWM3YTdlMjc2Mjk4MzgzMjJiMjkyMmE4NDVmMDhlIn0"
         }
       ]
@@ -48,7 +48,7 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-model-core/src/validation/scope.ts",
-          "version": "repo-file-v1:sha256:30b0bc5204673c9d677c777a1fdcf69851b25c3c0827c756cdfcf300635a477c"
+          "version": "repo-file-v1:sha256:e1c17513499d42b14422b9a1c88a7f5a3845ee7cfe8f3d873049e31ecac8bc99"
         }
       ]
     },
@@ -68,7 +68,7 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-model-core/src/validation/scope.ts",
-          "version": "repo-file-v1:sha256:30b0bc5204673c9d677c777a1fdcf69851b25c3c0827c756cdfcf300635a477c"
+          "version": "repo-file-v1:sha256:e1c17513499d42b14422b9a1c88a7f5a3845ee7cfe8f3d873049e31ecac8bc99"
         }
       ]
     },
@@ -148,21 +148,35 @@
     },
     {
       "id": "claim_9449ddf442764ecaa2d73adcf292b8be",
-      "statement": "breach flow 完整性要求显式 references 被违约请求；补偿源为新请求且无环，升级为有责任角色和 hand-off notes 的 other_evidence，仍检查请求闭环。",
+      "statement": "范围完整性复用 breachFlowGaps 检查补偿或升级的违约来源、闭环和交接记录，补偿仍须满足合同内履约约束。",
       "evidence": [
         {
           "resource": "repo://libs/evidence-model-core/src/validation/breachFlow.ts",
           "version": "repo-file-v1:sha256:12e9e6e7439a714085754a60b7d647c095a8f13e32023b60996e94b29d90b824"
         },
         {
-          "resource": "repo://libs/evidence-model-core/src/validation/scope.ts",
-          "version": "repo-file-v1:sha256:30b0bc5204673c9d677c777a1fdcf69851b25c3c0827c756cdfcf300635a477c"
+          "resource": "repo://libs/evidence-model-core/src/validation/scope.ts#L510-L537",
+          "version": "repo-lines-v1:sha256:0cea5978f304ad1d04e85011375cabb6fd75fce6fdb915a732b6daf1c7dc0de4:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVmZGYzNGM5ZjU0ZDNlODNiOWI2N2JjYmFjOGIyMjg0MmRlNzc1OGY0M2FiOTM5YzcyOTdkMjFkYmM0N2ZkMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVjNDY0YzU1NGE0MjJiMTcwYmNlOThiZmU1NjJiMjA4NTg0NDA2NTAyMDI4NjM1OWZlYWJmZTYyMmU5NDBmMDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIyOTA3NDk4ZGJkZTg2MzBlZmNmZWVlNTZjODcwMDVkZmYyNWRkZTExNzU3NmEzYjUxY2M2ZWFmYjNiOTBlN2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkzOThlNzRiNTY0OGU5M2U0M2YxODJhYzcyMTdkYWQwY2M1ZTRmMjk1ODk0ZGU0OTk2YjRmYjZmNWZiYzEzYjgifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/documentSemantics.ts#L750-L764",
+          "version": "repo-lines-v1:sha256:464e119ce912e51809c482b630f30d917a4d77aa1d6d8731c14324f17295bf9c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRhYTZiNDk5MTc1Njk2ZTJkYzkwYTNiY2JhZTY0N2RhODQ5MTkzZjU5ZmVkOGY5NjRkZjkxMmI3YmFjYTBlNTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM4OTZhMDJmZTMxN2ZkNGFiODU0MDQ3NGE5MzRiMGFiNWJhZGI3ZWI0Y2IyZDNhZWNjMmY4Y2Y1MzczZGYxYTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ4NDE2NmQ0OTgwZjFhNjUzZmFhYWE2NDE2MjMxNzFkOWI1MzRjNGRmY2U0NGNjZTc5MjA3MDk3MmNkYmFmZjMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9b1387f5de6748ad822f4572ed6f71b5",
+      "statement": "What-If 模拟读取现有履约事实、评估假设而不写补丁；实际补偿另用写工具。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-tools/src/index.ts#L205-L268",
+          "version": "repo-lines-v1:sha256:7e2e63c86bc237419fc4e23407c5cc0bffcd679e9539abbd22418fd40cdbf927:eyJzZWxlY3RlZExpbmVDb3VudCI6NjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVkMGQwNDJmM2RhYWM2NzBlZTllNzc3NmQ2MDZiNDFlMDc2OTJjZWZlMmZlMTEyZGM2MjVjOGNjMmU2YTA5NDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVkMGQwNDJmM2RhYWM2NzBlZTllNzc3NmQ2MDZiNDFlMDc2OTJjZWZlMmZlMTEyZGM2MjVjOGNjMmU2YTA5NDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNmYmVlMzhmOWEwODQyYmU3NDU1NjBlZmI3ZTU1ZTg3YzU4ZDhkMTRmNmMzNzVmYzY5Y2RhOTE1MzA5ODgzOTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE0Y2ViODkyMzA3OGFmMTcxNWEwMjMwMjkxMmVjNDQ3MDQ2ZWFiMDM1ZDUzNzFmZDYxM2E5YTQ1YmY5OGNjNmIifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-18T12:34:41.390Z"
+    "at": "2026-11-20T12:30:09.424Z"
   }
 }

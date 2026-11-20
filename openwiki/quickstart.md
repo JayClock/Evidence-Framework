@@ -1,11 +1,11 @@
 ---
 type: guide
 title: 快速开始与任务导航
-description: 安装Evidence桌面与统一CLI，以FM v5建模、静态检查、导出 OpenAPI 与 Bruno 集合并对真实 HTTP 服务验收，以及按任务定位架构、桌面、语言和治理文档。
+description: 安装Evidence桌面与统一CLI，以 FM v6 建模、静态检查、导出 OpenAPI 与 Bruno 集合并对真实 HTTP 服务验收，以及按任务定位架构、桌面、语言和治理文档。
 tags: [quickstart, onboarding, navigation, commands]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-18T12:34:41.390Z
+    at: 2026-11-20T12:30:09.424Z
 sources:
   - id: openwiki-source-8037e2358a2c4f9b2c722a11
     resource: repo://AGENTS.md
@@ -47,7 +47,7 @@ sources:
     resource: repo://package.json
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "pi", at: "2026-11-18T12:34:41.390Z" }
+generated: { by: "pi", at: "2026-11-20T12:30:09.424Z" }
 ---
 
 # 快速开始与任务导航
@@ -123,13 +123,13 @@ pnpm evidence diff baseline.evidence.json procurement.evidence.json --format mar
 
 ## 开始桌面工作
 
-open选择含.evidence/fm的项目或Bundle；新项目选模板，或从业务文本/协议/蓝图读取draft、人工修正再compile创建。开项目不运行 project 指令，也不生成后端。AI badge、Cmd/Ctrl+, 或命令面板可配置提供商/模型；无配置时静态建模、规则摄取与离线事实故事仍可用。密钥由主进程安全存储，Pi CLI auth 只有显式导入。
+open选择含.evidence/fm的项目或Bundle；新项目选模板，或从业务文本/协议/蓝图读取draft、人工修正再compile创建。开项目不运行 project 指令，也不生成后端。AI 设置读取共享 Pi 配置，可选择默认模型和思考级别、重载配置或打开配置目录。无可用模型时，静态建模、规则摄取和离线事实故事仍可用。
 
-默认业务泳道呈现七阶段、责任与补偿轨道，topology 模式由 ELK 异步布置 compound Context，React Flow管视口，Inspector编辑语义；所有mutations/RFC6902共用Immer历史。Agent补丁先应用并给tool结果，再显示保留/最新时一步撤销；后续编辑后不能用旧review误撤工作。
+默认旅程按邀请投标、投标、合同签约、履约履行四阶段展开；topology 由 ELK 布置，Inspector 编辑语义。Mod+K 打开画布 Storming 先铺凭证；节点内 Inquiry 追溯来源、模拟 What-If 或继续建模。Agent 补丁由主进程先提交，renderer 重放到同一撤销历史，最新事务可一步回退。
 
-左侧导轨从上到下是总台账、门禁与诊断、AI 协同、共创工作坊，对应 Mod+1 至 Mod+4。总台账与画布共用选区；交付预览通过命令面板或 Alt+D 打开。诊断与当前模型修订匹配才标到画布，外部文件写入只提示重新加载。
+左侧导轨是实体表、门禁与诊断、对象目录，对应 Mod+1、Mod+2、Mod+4。实体表与画布共用选区；Alt+D 打开全窗交付产物预览。诊断只匹配当前 revision；外部变更可在无未存编辑时安全加载。
 
-外部Agent通过per-user socket；desktop同binary支持--mcp-stdio，当前 13 个工具，五个 write（patch+四算子）最终走renderer session，不直接写源。MCP/内置Agent的参数用共享Zod校验，算子优先。
+外部Agent通过per-user socket；desktop同binary支持--mcp-stdio，当前 17 个工具，八个写工具走 renderer 会话事务，不直接写源。MCP/内置Agent的参数用共享Zod校验，算子优先。
 
 ## 第一天必须分清的门槛
 
@@ -145,20 +145,20 @@ open选择含.evidence/fm的项目或Bundle；新项目选模板，或从业务�
 | --- | --- |
 | CLI导出、真实验收、regression/DoD、pending、CI baseline | [统一CLI与双门禁](./workflows/cli-governance.md) |
 | 包依赖、两应用、universal/Node/browser边界 | [系统架构](./architecture/overview.md) |
-| FM可写什么、Zod strict/refinement、责任/引用红线 | [FM v5语言](./language/fm-dsl.md) |
+| FM可写什么、Zod strict/refinement、责任/引用红线 | [FM v6 语言](./language/fm-dsl.md) |
 | 金额/截止时间谁提供、native CEL属性lineage、文本来源 | [关键数据与来源](./language/key-data-and-provenance.md) |
 | Tree/Bundle、pack/unpack、摘要、保存冲突 | [源格式](./model/source-formats.md) |
 | Immer recipes、RFC6902安全、原子历史和选择 | [模型变更与会话](./model/commands-and-session.md) |
 | 静态v6证明什么、scope、CEL精确整数/样例oracle | [检查与样例求值](./model/checks-and-simulation.md) |
 | sensor severity、版本化stage gate、治理策略 | [传感器](./agents/sensor-orchestration.md) |
-| Pi会话/随包指令、11工具、镜像与补丁 | [内置Agent](./agents/pi-harness.md) |
-| 外部Cursor/Claude、socket、安全/超时/14工具 | [MCP](./agents/mcp-integration.md) |
+| Pi会话/随包指令、15 项工具、镜像与补丁 | [内置Agent](./agents/pi-harness.md) |
+| 外部Cursor/Claude、socket、超时与 17 项工具 | [MCP](./agents/mcp-integration.md) |
 | 模型→OpenAPI、overlay、内联examples投影 | [API契约](./contracts/api-projection.md) |
 | 服务/路由、字段来源、oasdiff、冻结draft导出 | [交付差异](./contracts/delivery-routes-and-diff.md) |
 | 旧 HTML 工作台退役与当前替代入口 | [迁移说明](./contracts/offline-workbench.md) |
 | Electron/main/preload、项目存储、Chokidar监控 | [桌面宿主](./desktop/app-shell.md) |
 | 单会话、异步布局竞态、live revision、跨pane定位 | [renderer状态](./desktop/renderer-state.md) |
-| rail/drawer/ledger/split/hubs和键盘所有权 | [工作区界面](./desktop/workspace-surfaces.md) |
+| 对象目录、实体表、Storming、交付 Hub 与快捷键 | [工作区界面](./desktop/workspace-surfaces.md) |
 | ELK geometry、React Flow和Inspector/CEL编辑 | [画布与检查器](./desktop/canvas-and-inspector.md) |
 | 文本摄取、draft采纳、Agent补丁审查 | [摄取与审查](./desktop/ingestion-and-patch-review.md) |
 | setup、Nx/Forge、边界lint、CI/OpenWiki维护 | [构建与维护](./operations/build-and-package.md) |

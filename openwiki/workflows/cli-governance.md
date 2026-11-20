@@ -5,8 +5,10 @@ description: evidence 如何从 FM 模型导出 OpenAPI 与 Bruno 集合，对�
 tags: [cli, acceptance, governance, bruno, oasdiff, drift, ci]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-18T12:34:41.390Z
+    at: 2026-11-20T12:30:09.424Z
 sources:
+  - id: openwiki-source-164e2da859b5277df81c7d94
+    resource: repo://.github/workflows/ci.yml
   - id: openwiki-source-17a7254439d5e92a919764bb
     resource: repo://.github/workflows/evidence-governance.yml
   - id: openwiki-source-4c0b31aad45d3c1bd1d286ce
@@ -33,9 +35,13 @@ sources:
     resource: repo://libs/evidence-acceptance/src/runner/suiteSelection.ts
   - id: openwiki-source-a8ee2373695bb6cdbd087639
     resource: repo://libs/evidence-api/src/loader/migrateOverlay.ts
+  - id: openwiki-source-5b54a58d1b51cd490b0e7162
+    resource: repo://package.json
   - id: openwiki-source-c22dc8548266abcfb6970baf
     resource: repo://templates/ci/evidence-ci.gitlab-ci.yml
-generated: { by: "pi", at: "2026-11-18T12:34:41.390Z" }
+  - id: openwiki-source-7c69eb298e88106dc73939dd
+    resource: repo://tools/verify-fulfillment-examples.mjs
+generated: { by: "pi", at: "2026-11-20T12:30:09.424Z" }
 ---
 
 # 统一 CLI 与双门禁验收工作流
@@ -59,7 +65,7 @@ router注册check/test/export/diff、pack/unpack/compile/inspect/lineage、story
 
 ## 从模型到产物
 
-loadModel按树或Bundle加载，parse issues导致FM_INVALID，不修补源。`check [model] --scope ... --json`输出静态FM v6（testExampleCount只是声明数）；compile/lineage有checkable约束，pack/unpack/inspect见[源格式](../model/source-formats.md)。旧 review/workbench 已删除；story 从声明 flow 生成事实卡片或可选 AI 故事，不运行后端。
+loadModel按树或Bundle加载，parse issues导致FM_INVALID，不修补源。`check [model] --scope ... --json`输出静态FM v6（testExampleCount只是声明数）；compile/lineage有checkable约束，pack/unpack/inspect见[源格式](../model/source-formats.md)。旧 review/workbench 已删除；story 从声明 flow 生成事实卡片或可选 AI 故事，不运行后端。独立的 `pnpm examples:verify` 对履约示例的已提交产物执行只读核验。
 
 ```bash
 pnpm evidence check examples/b2b-escrow/model/b2b-escrow.evidence.json --json

@@ -1,18 +1,14 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:a16521a945482ae6b4128ce327f340e84a683a46a7e56dfd8fd4c1f82e7884e1",
+  "pageVersion": "sha256:0fa9363e7cec0cf18406ce11d0bdc3fc46377318f2d1957fbeab5091ec635e6e",
   "claims": [
     {
       "id": "claim_d69b4a3b54db4f69a4cfa0a7b8a8e9d4",
-      "statement": "模型编辑是Immer recipe产生next/forward/inverse patches，session保存一批历史，不再ModelCommand返回inverse command。",
+      "statement": "Immer recipe 生成文档和 forward/inverse patches，session 保存为一次历史，不使用逆向命令对象。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L132-L160",
-          "version": "repo-lines-v1:sha256:6ed75942301b0a469cf65ca4f02daaebb7cfeccdc63d94cd40eca5d8be54099f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlYmRiMzY1YmMwYjU3OWE3NzI2OGE2YTY3YjYwZTQwYzAwYWYxMDM3ODBlYzFlNzU2MjNhMTRlZGYzN2ZmYWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQzYzQ3YTc3YzM3NjNkY2QyM2QzYjg4ZTAyMDA5MDkzN2M2N2EwMzIzM2MwZDQ4NmFkYzUzNjgzOGFlZGYxYjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAyOWQ3ZGU2MjNiYjA2YTk0OGUwNWJlOGIyYjllYTgyYmQyZDFkNzE5YWMzZTY0YTQwODJmOTI5YjhjMTc5Y2EifQ"
-        },
-        {
-          "resource": "repo://libs/evidence-model-core/src/session/types.ts",
-          "version": "repo-file-v1:sha256:41b595c6deec5c1ba8227da7940d6cbf3e077c0ede45d371366975601316cdb4"
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L141-L170",
+          "version": "repo-lines-v1:sha256:ccb50e81c662fbde353af32ddc3df21d5074bb9c567c5140a01f18bfab35719f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUzY2ZmOTk4MzFmMWM4ZjI4YmQ4ZGRhYzhjZmIwMTgxYjVjMjVjNjA2YjNjMGVmY2QwNWVjOTcyMGFjNDU4MDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlYmRiMzY1YmMwYjU3OWE3NzI2OGE2YTY3YjYwZTQwYzAwYWYxMDM3ODBlYzFlNzU2MjNhMTRlZGYzN2ZmYWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM1MWNiNDA3ZWE3ZDc4M2U1ZTRhM2ZhMjRlYzNkMjZiNmRhNTYyNzM4NGZlMzE2YTE2YzU5YzJkZmZkOTU0ZTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNhMDQ3YzcxODAxYWM5MDhkZWY4N2ZlNjU0NGYwOThlMDI1OGJjOTZjMzhjZjM3ODQ4N2ZmZjRiMmIzOWQwYmUifQ"
         }
       ]
     },
@@ -22,7 +18,7 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-model-core/src/mutations/errors.ts",
-          "version": "repo-file-v1:sha256:7e460e1bf7c6c8607625a807e4060dc986d20b006bc868e628075649743b2bc5"
+          "version": "repo-file-v1:sha256:757bcd6b92b7e5618274f34076f565ffa167028beece6bcb005965c1a31efb3a"
         }
       ]
     },
@@ -32,7 +28,7 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-model-core/src/mutations/guards.ts",
-          "version": "repo-file-v1:sha256:8a01df2d80761beca0dc120890c46176436f59324e3716d9a8b56549325bbf59"
+          "version": "repo-file-v1:sha256:ac7686aafafd2a6a7db3870783af2c1c3ac254883ef93aab5e3ac27558ab5e44"
         }
       ]
     },
@@ -42,7 +38,7 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-model-core/src/mutations/derivationMutations.ts",
-          "version": "repo-file-v1:sha256:9a6624ae9923647ff89431347731121634807bf95a2454da30e7851be9b16b07"
+          "version": "repo-file-v1:sha256:0640d853d291ded4ee7a61c32c608ac1da7c51b94132682f7b09923c92b7df0d"
         }
       ]
     },
@@ -52,11 +48,11 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-model-core/src/mutations/attributeMutations.ts",
-          "version": "repo-file-v1:sha256:a5c174d79d69730bb49a7374feffe729fba509a47dfb372ddadabe805e20e460"
+          "version": "repo-file-v1:sha256:e43b6ed525c530ca2afedc5ff7da21dde24cc0521ca0763a1899fec6722db752"
         },
         {
           "resource": "repo://libs/evidence-model-core/src/mutations/entityMutations.ts",
-          "version": "repo-file-v1:sha256:c28c8ebcb718567e752f3b457cd3d89e5f3f50fb50b6d31a76d20fdc78d1fc83"
+          "version": "repo-file-v1:sha256:b09aa7ba6d15e3e77ff9390507f46eb2e16cd3a8671b42c75d1fba65a556c9f9"
         },
         {
           "resource": "repo://libs/evidence-model-core/src/mutations/ruleMutations.ts",
@@ -70,25 +66,25 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-model-core/src/mutations/derivationMutations.ts",
-          "version": "repo-file-v1:sha256:9a6624ae9923647ff89431347731121634807bf95a2454da30e7851be9b16b07"
+          "version": "repo-file-v1:sha256:0640d853d291ded4ee7a61c32c608ac1da7c51b94132682f7b09923c92b7df0d"
         },
         {
           "resource": "repo://libs/evidence-model-core/src/mutations/entityMutations.ts",
-          "version": "repo-file-v1:sha256:c28c8ebcb718567e752f3b457cd3d89e5f3f50fb50b6d31a76d20fdc78d1fc83"
+          "version": "repo-file-v1:sha256:b09aa7ba6d15e3e77ff9390507f46eb2e16cd3a8671b42c75d1fba65a556c9f9"
         },
         {
           "resource": "repo://libs/evidence-model-core/src/mutations/fulfillmentMutations.ts",
-          "version": "repo-file-v1:sha256:5a1e8f1254385be7b50c9544a3abfbb1ae9015e5bf7f00820eeb1f7e5707e4af"
+          "version": "repo-file-v1:sha256:a8403f973525f5b6b1c9acca1201a76e588d0af341d37ddad89cb4b7e5682917"
         }
       ]
     },
     {
       "id": "claim_e3f0904e962b4b85b02c6701f4c89cc5",
-      "statement": "多mutator在同produceWithPatches中原子提交，抛错不record，无patch不发事件/清redo，取代CommandSequence。",
+      "statement": "同一 recipe 的多个 mutator 原子提交；异常不 record，无 patch 不清 redo 或发布文档变更。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L132-L160",
-          "version": "repo-lines-v1:sha256:6ed75942301b0a469cf65ca4f02daaebb7cfeccdc63d94cd40eca5d8be54099f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlYmRiMzY1YmMwYjU3OWE3NzI2OGE2YTY3YjYwZTQwYzAwYWYxMDM3ODBlYzFlNzU2MjNhMTRlZGYzN2ZmYWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQzYzQ3YTc3YzM3NjNkY2QyM2QzYjg4ZTAyMDA5MDkzN2M2N2EwMzIzM2MwZDQ4NmFkYzUzNjgzOGFlZGYxYjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAyOWQ3ZGU2MjNiYjA2YTk0OGUwNWJlOGIyYjllYTgyYmQyZDFkNzE5YWMzZTY0YTQwODJmOTI5YjhjMTc5Y2EifQ"
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L147-L170",
+          "version": "repo-lines-v1:sha256:fa3ebb3023dd8821a25bd70ce5d57d42031e406ccd64a0d2dfdc37c053780872:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMzN2RlY2NiZTkxZDRlZDkwMGZjODk4NTU4NmJhZmNmMTk0MTljZDliMTIwMDFkYjc1ZmUxNjA0ZjEzYjU1OTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlYmRiMzY1YmMwYjU3OWE3NzI2OGE2YTY3YjYwZTQwYzAwYWYxMDM3ODBlYzFlNzU2MjNhMTRlZGYzN2ZmYWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNmN2ZjYWVmNmVlYjdmN2JjODVlZmQxZGVkN2VkNzIzMGFiM2UyMDVhMTViYmEyYzIwY2FjMmQzMDJkNTdkYjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNhMDQ3YzcxODAxYWM5MDhkZWY4N2ZlNjU0NGYwOThlMDI1OGJjOTZjMzhjZjM3ODQ4N2ZmZjRiMmIzOWQwYmUifQ"
         }
       ]
     },
@@ -98,7 +94,7 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-model-core/src/mutations/entityMutations.ts",
-          "version": "repo-file-v1:sha256:c28c8ebcb718567e752f3b457cd3d89e5f3f50fb50b6d31a76d20fdc78d1fc83"
+          "version": "repo-file-v1:sha256:b09aa7ba6d15e3e77ff9390507f46eb2e16cd3a8671b42c75d1fba65a556c9f9"
         }
       ]
     },
@@ -108,7 +104,7 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-model-core/src/mutations/attributeMutations.ts",
-          "version": "repo-file-v1:sha256:a5c174d79d69730bb49a7374feffe729fba509a47dfb372ddadabe805e20e460"
+          "version": "repo-file-v1:sha256:e43b6ed525c530ca2afedc5ff7da21dde24cc0521ca0763a1899fec6722db752"
         }
       ]
     },
@@ -118,7 +114,7 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-model-core/src/session/jsonPatches.ts",
-          "version": "repo-file-v1:sha256:dab9ea44e0ed35c3e38eb6903256147bea9da369b3baa5aba1184e1f56edb7cb"
+          "version": "repo-file-v1:sha256:507bf3e4f63fedb1df07bd4597c2fc20a8ad73fc5e568fd3997da3d910fd6f90"
         },
         {
           "resource": "repo://libs/evidence-schema/src/ast/jsonPatch.ts",
@@ -128,11 +124,11 @@
     },
     {
       "id": "claim_c2122fa4bf1b49db991ad993366f3097",
-      "statement": "record可选validateOnDispatch严格gate，默认false，失败无提交，成功先历史/文档再同步events。",
+      "statement": "可选 validateOnDispatch 严格校验，默认关闭；失败不提交，成功先改文档与历史再通知。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L125-L160",
-          "version": "repo-lines-v1:sha256:61631962f67f3da0f30460e94039e23c351cf57ba93816a44998a187492a794b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlYmRiMzY1YmMwYjU3OWE3NzI2OGE2YTY3YjYwZTQwYzAwYWYxMDM3ODBlYzFlNzU2MjNhMTRlZGYzN2ZmYWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ2ZjZmY2QyY2VlZThlYWIxMjk5ZmI2NmY2ZjE5Y2ZhOTY0YjJmMTkwMjc4YWE5NmE5NWEwYzU1NWVjZTI5YWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAyOWQ3ZGU2MjNiYjA2YTk0OGUwNWJlOGIyYjllYTgyYmQyZDFkNzE5YWMzZTY0YTQwODJmOTI5YjhjMTc5Y2EifQ"
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L141-L159",
+          "version": "repo-lines-v1:sha256:84c247fd3fd982932f0708b22c5629519f419f45440eab354b79362235205f99:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUzY2ZmOTk4MzFmMWM4ZjI4YmQ4ZGRhYzhjZmIwMTgxYjVjMjVjNjA2YjNjMGVmY2QwNWVjOTcyMGFjNDU4MDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM1MWNiNDA3ZWE3ZDc4M2U1ZTRhM2ZhMjRlYzNkMjZiNmRhNTYyNzM4NGZlMzE2YTE2YzU5YzJkZmZkOTU0ZTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE4ZGViNTU1MmNhOTY5ZjRhNTlmNzE3OTgwMzFlMTcyOGNmYjFmMzRkNGMyOGJmNjlhNWM5NTI1ZGQxZDAwMGEifQ"
         }
       ]
     },
@@ -141,8 +137,8 @@
       "statement": "历史默认100、undo/redo应用已存patch，new edit清redo，replace默认走record/gate，resetHistory直接替换并清历史。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L159-L235",
-          "version": "repo-lines-v1:sha256:64b41f38d8e1900ddb5c82461fb6bb89d42f906a4dfb9d5741a554dc7268eccd:eyJzZWxlY3RlZExpbmVDb3VudCI6NzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY3MDlkYjI0NTQxMGRiMGFiYjBlNjZkNGQzMjEwMWU2ZDExMjExNjdjOGRiYWIxYmU0MTkyMmI2MjU5MzUxMmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1N2RhNjFjZDg4YTVlNjVhZDI5Mjg1MTNkOTZhOWFhYzU2ZGYzNjg2NDU5OTZhM2Y4MzM0Njc3MWY5Yzk0ODUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRiNDQ2MmQwNzIyZmRmYzA2YmE3YmZlNWMyMTA5ZThhM2RlZDY0N2U3MGNjYTY4MTU1NzBhOWU4MzE1ZDBkM2IifQ"
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L169-L273",
+          "version": "repo-lines-v1:sha256:e0158149efa541541050b793da86f7e9478a3ed1c0b31633787e264ec39d96d5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIyODhiNTllNTZlOTMwMWQ5ZGZhNDZmZTgyNTNkN2QzYzYwNDA1ODMzMDhhYWE5NWMxMzVhOTUyMTRmNTZkZWM4IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIxZjBjZGI5NzJhN2JmYjdlZDI0NmY5ZmY2NzIzODVlNTVmNDk2OGZjMTEwNDNkYzViNjg0ZDUxZGZhMzFkYmNiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIxNTdkYTYxY2Q4OGE1ZTY1YWQyOTI4NTEzZDk2YTlhYWM1NmRmMzY4NjQ1OTk2YTNmODMzNDY3NzFmOWM5NDg1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MiwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJkYjQ0NjJkMDcyMmZkZmMwNmJhN2JmZTVjMjEwOWU4YTNkZWQ2NDdlNzBjY2E2ODE1NTcwYTllODMxNWQwZDNiIn0"
         }
       ]
     },
@@ -151,7 +147,7 @@
       "statement": "换文档时选中对象消失清selection，仅属性消失清attributeName，Inspector不持过期选择。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L110-L123",
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L124-L137",
           "version": "repo-lines-v1:sha256:43ed7072304c5ee99ba9608ec37213cbe62ddcb8a73f8a97a9ef48588b7dcced:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJhMGM4OTVlNzYzMjA2YWRmZTI3OTllMzJiZTc0NDQ0ODk1ZGQ0MzNiNzE4MDZjNTI4N2IzZmJkODBmMTkxMjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwNjc3MjY0NWE2OGMxMGI3YmUzMGNhZGM5YWVhOGFjZWY5MWEwNDBiOTAwMTcyNmI5NzhmNTM3ZGI1Nzc5YWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFkZTM0MGZlMGNhY2IzYWE2MDkyNTk3Y2ViMTJjNmM4YzU0OGNlMGE5M2YxZTY5ODY0YTc3YzA5NDJlNjY0NzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM1MWNiNDA3ZWE3ZDc4M2U1ZTRhM2ZhMjRlYzNkMjZiNmRhNTYyNzM4NGZlMzE2YTE2YzU5YzJkZmZkOTU0ZTUifQ"
         }
       ]
@@ -161,22 +157,26 @@
       "statement": "createDomainGraph builds Map indexes once per document and is memoised by the session; fulfillment pairs are derived lazily and cached, collecting confirmations that reference the request, other_evidence proofs, the root Contract and the completion/breach rules bound to the request.",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/model/graph.ts#L95-L195",
-          "version": "repo-lines-v1:sha256:1220c2ab60a0e2acd04bcf96201f99d82afc652eaff6a7257ee753a47518239f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIzODE2ZjZjZTkxZmY5NWJmMGU3OGQzODM3MzljOTY5YTgxZmY4ODhiMzdjMDM5NDg4MzA2YjU4YTU5NzQ3NGEyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIxMDNiYTUzMWFjOGY2NzczNjcwZGI4YTI4MjZlMjlkZWE2ODc3MWJlYmNlZmY2ODgxZjI1MGYzYjNiMDk4MjUzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyNjRlYjg2NzkzYjA4ZTU4Yjk5MGUxMWNhMGZkMDMxNWQ2ODJhMjBiMDNmMzMyNmU5YzcwMzc2NGY5N2I4YTk5IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJiMzc1NWVhYzljN2ExYWVkYWI5MDVlMDQwY2ZmOGQ5NjgwYTFjNTUwZjBjNDBiODFiZDBiOTI1ZWYzODczZjEyIn0"
+          "resource": "repo://libs/evidence-model-core/src/model/graph.ts#L105-L248",
+          "version": "repo-lines-v1:sha256:939f0beb9c420d0331312140212814dae370885fd4933a133016d772147c32e2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQ0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIzODE2ZjZjZTkxZmY5NWJmMGU3OGQzODM3MzljOTY5YTgxZmY4ODhiMzdjMDM5NDg4MzA2YjU4YTU5NzQ3NGEyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIxMDNiYTUzMWFjOGY2NzczNjcwZGI4YTI4MjZlMjlkZWE2ODc3MWJlYmNlZmY2ODgxZjI1MGYzYjNiMDk4MjUzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyNjRlYjg2NzkzYjA4ZTU4Yjk5MGUxMWNhMGZkMDMxNWQ2ODJhMjBiMDNmMzMyNmU5YzcwMzc2NGY5N2I4YTk5IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJiMzc1NWVhYzljN2ExYWVkYWI5MDVlMDQwY2ZmOGQ5NjgwYTFjNTUwZjBjNDBiODFiZDBiOTI1ZWYzODczZjEyIn0"
         }
       ]
     },
     {
       "id": "claim_edc96125a4ad496eb6480d34cda9ed85",
-      "statement": "ModelSession持文档、惰性图、selection、历史和监听器，写API为mutate/applyPatchBatch/replaceDocument，limit有限值取floor至少1否则100。",
+      "statement": "ModelSession 拥有文档、惰性图、选区、历史与订阅，历史默认 100；支持文档锁和已提交事务重放。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L38-L59",
-          "version": "repo-lines-v1:sha256:b68c1c8efcba77cc07f14ad0bd703aaefa822e550e7ddf0c3a230492f2766f6d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5NmE2MGFhNTNmNzRhOTEyZmEwMWFiMGUwODU5MWQwYzQ5MDgyOTU2N2JhZGM0OTc0ZTRkOWYzMjk3MTA2NDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjYzMzZjBkZThiM2Q0YzhjMGMyZGMyNmQ3MWEyZGI3YTNjNWUwYTgyYTIwYjcwNmQ4ZTg5YWNmODQ4ZmI1ZDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiNTgwZTk2NGY4M2E0NzNmNDNkNDQzODQ2Mjk0OWQ2OGI1NjAwZmRhNzg3ZjE2Mzc0NWQwMGRlODljYmYzNmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE2MDIxMmMwYmVlZDU5MzZiNzRiNTAzZWU1ODI3ZTA0NWVhZDc1NzgyYmUyNzNkYzY0MWExMTA1YjUwZTMxZmEifQ"
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L199-L228",
+          "version": "repo-lines-v1:sha256:9c1858768cc3505270fc748d59a0c6cd2d544d5d1672c4ca03a4c78ff322332a:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5NWZhMGYxMTE3YjVlYTQwNDM0MTQwZGRlMWEzNDBjNzIwZGRiZjMyNjIxMmUxOTE4MzhkNGIxNTZkMzE2YmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2MTZmM2Y1NDE4OTJjZmJjZGJjN2MzMzA2YTdiMDI0YTIyNDY5YTljOGUzYmM1MGQ1NGM3MDU4ZGI2ZTBkODQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZjZWFjZDVlYTJjYThkMzMwMWI0YzVkZWIzMWIxMzc5MjU5YmNiMGM3MjY4YjI4YTMzNjYzMDk5YTk5OWM1N2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFjYWVhNzE5ODk5M2E5M2Y3ZTcxNGU2OGJjNmY4ODJiMmM5ZWRkMWE4YmQxOWNkODBjMjI0ZjIzMDQwYjZkN2IifQ"
         },
         {
-          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L88-L105",
-          "version": "repo-lines-v1:sha256:85ece73fbc5da8c0afd564c7b02353de19ad1f05e3cdab63417a914e7ad2cad7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM1YWE5MzdmOWRmNjEyZTA0OGJiODUyZTkzODZkMTg1ZGZhN2FhNGJjMjU3NmQ2MjI4ZTZhZjkxMTYyZjZkYmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxYWMyMjBiMzBhMDQ4YmQ3ZTEwNjk4N2ZkZjk2ZDFkNjVjYjM5ZDY4OWI3YTVmZDBiM2IxNDg2MmZkYmE2MTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE2MWMyZjFmZmFhYTNlYzBhNGMzNDE3ZTkwNWYwMTJjYzA4ZDkxOTJiYjE2YTg3ZTA2YjNkOTFiYzA2M2Y2NjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE4NDQxNTdmZDI2NzJhNGU0ZTlhY2U5YmYwNTM4ZjVjMzAwMzRlNDZkYWJmZTc2MmEwZjE2ZTA4ZDkxZWE1YzMifQ"
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L39-L68",
+          "version": "repo-lines-v1:sha256:17768ad95bdbc5da7cc5085270c168ea217af6b3c58e1503e17760dfa6813f57:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5NmE2MGFhNTNmNzRhOTEyZmEwMWFiMGUwODU5MWQwYzQ5MDgyOTU2N2JhZGM0OTc0ZTRkOWYzMjk3MTA2NDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjYzMzZjBkZThiM2Q0YzhjMGMyZGMyNmQ3MWEyZGI3YTNjNWUwYTgyYTIwYjcwNmQ4ZTg5YWNmODQ4ZmI1ZDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiNTgwZTk2NGY4M2E0NzNmNDNkNDQzODQ2Mjk0OWQ2OGI1NjAwZmRhNzg3ZjE2Mzc0NWQwMGRlODljYmYzNmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE2MDIxMmMwYmVlZDU5MzZiNzRiNTAzZWU1ODI3ZTA0NWVhZDc1NzgyYmUyNzNkYzY0MWExMTA1YjUwZTMxZmEifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L97-L111",
+          "version": "repo-lines-v1:sha256:d3c15181d9191307fea12fc043386a509b18b08e218e1b1d6113fbeb72bf77ae:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM1YWE5MzdmOWRmNjEyZTA0OGJiODUyZTkzODZkMTg1ZGZhN2FhNGJjMjU3NmQ2MjI4ZTZhZjkxMTYyZjZkYmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjMDc3Yzk4OTRjNGRlMDA1Nzk1ZjNiZGQ1N2QxMDVhYWRmNjg5NmM2MWEwM2YyOTM0YzlmN2MyNWZlYzMzODgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE2MWMyZjFmZmFhYTNlYzBhNGMzNDE3ZTkwNWYwMTJjYzA4ZDkxOTJiYjE2YTg3ZTA2YjNkOTFiYzA2M2Y2NjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFlZGE4ZjM1ODZhNDFlMDk2YjRhOTE0MTA3ZTllOTU0YTRmMDlhYmI1Y2EwODVhOGE0NzU4MzAzZDRiODZlOTcifQ"
         }
       ]
     },
@@ -185,8 +185,8 @@
       "statement": "document/history/selection三事件同步发送，doc先history，commands字段现在为事务label，undo/redo加前缀。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L132-L183",
-          "version": "repo-lines-v1:sha256:e769809cf77caf7a79a340302db0564aa75db4814161151b05de19a3794c6dc2:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmYWM0ZTQzNjMwYWJmNjhjM2E0YTc1NzNmZDRjNDMwMDhiYTc5OGRkNzZjMzc1OWVlZWY1M2U2Y2ZmOGQyZTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQzYzQ3YTc3YzM3NjNkY2QyM2QzYjg4ZTAyMDA5MDkzN2M2N2EwMzIzM2MwZDQ4NmFkYzUzNjgzOGFlZGYxYjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJiNTM4NmQ4Njk3ODcxMTZkY2UwYjJhYThmMTU2ZWY2NzQ1OTUzZTdmZTJlMWI4ZDUwMTNiNjcwOGZkOWJjZDYifQ"
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L146-L197",
+          "version": "repo-lines-v1:sha256:c0cb3068e5ff681352e15dc733be74ee700d3d6d48b0c7d4d1863abc4cdfc2eb:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmYWM0ZTQzNjMwYWJmNjhjM2E0YTc1NzNmZDRjNDMwMDhiYTc5OGRkNzZjMzc1OWVlZWY1M2U2Y2ZmOGQyZTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQzYzQ3YTc3YzM3NjNkY2QyM2QzYjg4ZTAyMDA5MDkzN2M2N2EwMzIzM2MwZDQ4NmFkYzUzNjgzOGFlZGYxYjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJiNTM4NmQ4Njk3ODcxMTZkY2UwYjJhYThmMTU2ZWY2NzQ1OTUzZTdmZTJlMWI4ZDUwMTNiNjcwOGZkOWJjZDYifQ"
         }
       ]
     },
@@ -195,11 +195,11 @@
       "statement": "listener Set同步顺序调用，抛错时文档已提交，不是回滚，后续listener可能未通知。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L132-L148",
-          "version": "repo-lines-v1:sha256:bd39085faaab1f45917245bf3452cc5746834510a51abe7e69467678d749a780:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjYzYzMjAzMjBlNWY0NGFjNDI4ODgwOWUyM2RiZDMyMWFhZjljZjVlZDA5NjdmOWY4YzYxMTdhNjkzMmMyZDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQzYzQ3YTc3YzM3NjNkY2QyM2QzYjg4ZTAyMDA5MDkzN2M2N2EwMzIzM2MwZDQ4NmFkYzUzNjgzOGFlZGYxYjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNiY2M5YzU4M2JhM2YwMWIzZmJkNjVmMzJlMzVmYmE3MGI2ODU0MWQyOTBhM2Y5ZTQyYzJhMDVjMWJlMDVlMTEifQ"
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L146-L157",
+          "version": "repo-lines-v1:sha256:b90802bc66946d07b6579b4eab167e97fff22bc88f165c60fb582191df518c73:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlYzUwNDVhNjg0ZjQ2Mzk2ZGZjNTIzZGI0YjZlM2Y5MjQ1ZDUzM2NlOWI2ZmYwNDMyZWU5MzQ2MTc3NDQ3ZDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQzYzQ3YTc3YzM3NjNkY2QyM2QzYjg4ZTAyMDA5MDkzN2M2N2EwMzIzM2MwZDQ4NmFkYzUzNjgzOGFlZGYxYjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNiY2M5YzU4M2JhM2YwMWIzZmJkNjVmMzJlMzVmYmE3MGI2ODU0MWQyOTBhM2Y5ZTQyYzJhMDVjMWJlMDVlMTEifQ"
         },
         {
-          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L99-L108",
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L113-L122",
           "version": "repo-lines-v1:sha256:f59a94e72aa7117eed2cbe64a7b9bf42dee88616a51e03326f7303df3ff2b0d9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmNjRiYjczNzNmMDdmNjhhZDI2MjIyY2M4ODU0MTUwN2RlNDYxMzQ2YWY4NTdhYTJmMThhNjliMWNmNjg1YTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdiMzc5Y2ZkOGFlMjdmZWM1OTE1NDlmMTRhZDkzNzczMGI4YjhlYmJlMTRhZjEwY2RkZjE4OTU1MTJhNjc4NGYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFmYzYyZWYxMGM4NDc2ZWNiMTEyMTBjNGUxYzBhNjYwNzI5Y2YxMDdhNjJlNjZhOWRiNzcxODUyNWRmYmIyOTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg5MWQ0ZTExN2Y1OWQzZmZmYzU0NjFlOWU5Yjc5YzIwZmNlZjk3NDU2ODhmMTFhMmZlZTdiYmJjMjIyMTQ3ZTgifQ"
         }
       ]
@@ -209,7 +209,7 @@
       "statement": "选择修复同时处理删除实体和仅删除所选属性，后者清attributeName而保留实体。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L110-L123",
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L124-L137",
           "version": "repo-lines-v1:sha256:43ed7072304c5ee99ba9608ec37213cbe62ddcb8a73f8a97a9ef48588b7dcced:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJhMGM4OTVlNzYzMjA2YWRmZTI3OTllMzJiZTc0NDQ0ODk1ZGQ0MzNiNzE4MDZjNTI4N2IzZmJkODBmMTkxMjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwNjc3MjY0NWE2OGMxMGI3YmUzMGNhZGM5YWVhOGFjZWY5MWEwNDBiOTAwMTcyNmI5NzhmNTM3ZGI1Nzc5YWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFkZTM0MGZlMGNhY2IzYWE2MDkyNTk3Y2ViMTJjNmM4YzU0OGNlMGE5M2YxZTY5ODY0YTc3YzA5NDJlNjY0NzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM1MWNiNDA3ZWE3ZDc4M2U1ZTRhM2ZhMjRlYzNkMjZiNmRhNTYyNzM4NGZlMzE2YTE2YzU5YzJkZmZkOTU0ZTUifQ"
         }
       ]
@@ -233,54 +233,50 @@
           "version": "repo-lines-v1:sha256:ae8f03bc07dc6c550af567c91a2f7bb273c39ccff6cf93e499c4f830c989bf9d:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWU3ODZmMzNjNmU0YmQyMTNkMmRmYzZmMDQyYWY1ZTg5NWZiYTlkYzZhMDk5MmIzZWJiMDU3NDcyODgzZjJiYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzAwODY2MjVjYzZhOWFmZTUzOWIzZjhkMDI5YWE5MTFmMWVlMTliYTQ0ZWNmMzM2MzI4YjIzNTMxMzc4NThjMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjY2ODdjMTU5NWYzMjgzNzk4NmIzNzg2YzM5ZWQyNjgyOTdiZmYwZTM4NmI3MGMwMTgyMjFkZWI1Yjg3ZjNkOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTk2NWRlZjE0NGRiZDE0ZDIxMmRlMmUxNzRmOGY5NTlkYjlmNzY5NTQyZWEyZTEyNTVmZmUxM2U3YjJjMTA1NyJ9"
         },
         {
-          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L125-L148",
-          "version": "repo-lines-v1:sha256:e0c4f7267c31df06c606d2bdc490c1f18c21a5b5957e79469b9154aa58730e2e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjYzYzMjAzMjBlNWY0NGFjNDI4ODgwOWUyM2RiZDMyMWFhZjljZjVlZDA5NjdmOWY4YzYxMTdhNjkzMmMyZDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ2ZjZmY2QyY2VlZThlYWIxMjk5ZmI2NmY2ZjE5Y2ZhOTY0YjJmMTkwMjc4YWE5NmE5NWEwYzU1NWVjZTI5YWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNiY2M5YzU4M2JhM2YwMWIzZmJkNjVmMzJlMzVmYmE3MGI2ODU0MWQyOTBhM2Y5ZTQyYzJhMDVjMWJlMDVlMTEifQ"
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L139-L157",
+          "version": "repo-lines-v1:sha256:50394ef1fbc5583324f4a4f57ce474fc34fdc64d776e3bf245eaf7998f2e4ec5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlYzUwNDVhNjg0ZjQ2Mzk2ZGZjNTIzZGI0YjZlM2Y5MjQ1ZDUzM2NlOWI2ZmYwNDMyZWU5MzQ2MTc3NDQ3ZDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ2ZjZmY2QyY2VlZThlYWIxMjk5ZmI2NmY2ZjE5Y2ZhOTY0YjJmMTkwMjc4YWE5NmE5NWEwYzU1NWVjZTI5YWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNiY2M5YzU4M2JhM2YwMWIzZmJkNjVmMzJlMzVmYmE3MGI2ODU0MWQyOTBhM2Y5ZTQyYzJhMDVjMWJlMDVlMTEifQ"
         }
       ]
     },
     {
       "id": "claim_e9f207ee1c4a41bebb06c36dac8e7799",
-      "statement": "Agent/MCP再parse共享Zod并一次applyPatchBatch共享历史，MCP返回op/revision/posthoc诊断，Agent真变更才record review。",
+      "statement": "MCP 在 renderer applyPatchBatch，Pi 主进程原子提交、renderer applyCommittedPatch 重放；共享历史，只在真变更后建立 Agent 审阅。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useMcpBridge.ts",
-          "version": "repo-file-v1:sha256:851cbe7af65bb60efd37e0ecc16999402964c0c1b8145037d2016e7b4cd3f22e"
+          "resource": "repo://apps/desktop/src/main/agentRuntime.ts#L131-L182",
+          "version": "repo-lines-v1:sha256:960736a1c215ef42ae5b71373133133a280aebce63df027effa461bd62c0a681:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk4ZjRkMzUxOTU0Y2FlMDAyYzU4NjRjYzlhMWQzNDUyZDFiMGE0MGNhZWNjNzcyYzIyYjVlZTk0YWQyYWFkMDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJmOTcxNGFkYjU1Y2Q3YjQ0MGUxNzQ2YTg3MDNhODAwY2UxNTNlNzM3OTg5NDA4ZWMxZTQ1NTc4OTVjNjM5NmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE4NzVkMmQ3NWVmNGQwYTZmM2Q4MTJlZGRhZjU3YTg0ODkzOTgyOGRlZDI4ZTM5NTFmOTIzNTM4ZDVlZjc4M2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZkMWI4YjY1ODA0ZDQ4OWVkMDNiYzVlZGE2M2Y2ZDBlNThiN2RkYTNjODY1NDJkOGQ1YzZiMmE3NjJmNWUzODYifQ"
         },
         {
-          "resource": "repo://libs/desktop/feature-agent/src/state/useAgentPatchBridge.ts",
-          "version": "repo-file-v1:sha256:afc96e6610d906ea684a85f946385c5d2e9ba318c26eb7f608e3133bd6a521af"
+          "resource": "repo://apps/desktop/src/renderer/state/useLiveModelBridge.ts#L66-L109",
+          "version": "repo-lines-v1:sha256:ac27e5ae9a20acf96af177f05c90466e9174471743f572405d81145c500eaf74:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg4MDA1ZDU3MTA2YTM2MmViMDAwZGFmM2RhNDY3NGM4MmI1MThmZjVhMmUyZjY3ZWU4ZTc1N2EzMzNjMmFmNjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdlMDlkNjk5NjI2MWE3YzY5MDJiMGEwMWY5OTY5ZWI4NTdjYTY0YzI3ZTQ3MDc3ZjFlYmUyYTA4Mzk4Y2M0YzgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVhNjQwNzk4OTE2ZDFiOGIzNTE1OGVkMWI5N2M0YmRlY2JiNDkxOTc1Y2JlOWM0ZjdmZGMzODAwYmJhMjc5MjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhmOGQxNmQyYWNiNjE1ZmJlNzc0MTMzMTExNGM5ODg4NGM2NDgwZjQxMjJiZmNkY2U3NTNmODc1MzZkODFmY2IifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/renderer/state/useMcpBridge.ts#L308-L347",
+          "version": "repo-lines-v1:sha256:cbd1fc8911dca240865ebfce2659a5dc9e1e82526bf53c859aa335730c4a773f:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5YzEzNTkwNjY1NjMyM2QxYzVlYTQxNjU0ZWU2NmFmYjU4NWFjZGNmYWVhY2ExMjFkNWUzMGJmMTkzZWVkZDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk5MTUzZWRhOTM2MDk4M2Q4YWM1Y2Q4MTVjOGYxODE1YThlZGE5MjNlMjE1Yzg4YTZiNGUwNjAzYjQ1MzY2NTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc3ZTk3ZTkzM2MxNjRhMzk2MGUyZWIxNzVkZmZhZjA3NTY1YmI0OThhMjcxZDUyYzYxYjNhOWI0Y2Q0MWY2MGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRjMDUxOTdiMDE5YjBlNTgyMjY3NjE1ZWQ2MTQxOTc5YmI3ZmMxZTA3ZDM3NGVhNjllMjAxOTQwOTlkNDY2YTgifQ"
         }
       ]
     },
     {
       "id": "claim_2a18ed6317a54572a462706f362d9efe",
-      "statement": "useLiveModelBridge publishes {rootPath, revision, document, baseDocument} to agent.notifyModelChanged on every document-changed event and once at mount, with its own monotonic revision counter, so undo and redo publish but selection changes do not.",
+      "statement": "live bridge 挂载及本地文档变更发布 editorId 和递增 revision；选区或事务重放不回发。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useLiveModelBridge.spec.tsx#L9-L45",
-          "version": "repo-lines-v1:sha256:4ae56f7a81e36fd922bb5660c9421ec7d1697cfb1e93c041f09e3556d2b1619a:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwNDBjYjE1NDI3MTI3NzgwYmUwMGU0NmI4YjhmYTM0MjQ4MTVhMTk4NjRjZjhmOWM4NGI2YmM5MjcxODIyYmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFiYTkzY2RhZDRlZGI5NDc2OTQ2YzE2YzNhOTdmNDFlYjIzNWFmZjRhNDhjMTBhNzA1MjYxY2E1ZmFmMmU5ZDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImViM2QyNDkwYThiMWQ2MDNhMjQ5MmJkMDllMzQ4OGU1NmY0MTM2Mjg0MjRkOWYwZTM3ZDEzMGUzNjUyZGE0MmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJkMTcyNTdmOGQ4NjViZjE3ZWJiOTlhODcwYzA3MjYyNzU4Mzg0NTIxMmNiMjAzYThjMmJlMTAyZTNmOWVmZjcifQ"
-        },
-        {
-          "resource": "repo://apps/desktop/src/renderer/state/useLiveModelBridge.ts#L1-L45",
-          "version": "repo-lines-v1:sha256:a4eadc00b8dc0b86b1b2cf02f32b5724b6f7d1d8e4148b8e20c339087bd68b25:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmNDhhZGU3MDZlYzA3MjY4NDBiNTU3ZWVkOTMxNDFhY2ExZjhmZDYxODc4NjVkMTQyM2E4M2VjM2E1ZmIyOTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://apps/desktop/src/renderer/state/useLiveModelBridge.ts#L35-L117",
+          "version": "repo-lines-v1:sha256:8018b8c794f26a6963209f6e7a090b68fef2d619fe7e22e1e7a040a1ac8971d9:eyJzZWxlY3RlZExpbmVDb3VudCI6ODMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1NTU5NzE0M2U5YWRjNmJiYTI4ZGVkMjM5N2M2YjJiMzhlM2M0MWQ5NGZiOTNlMzYxMTExOGZkMzM5OThkN2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNlZTZhODYwZjc1MjZhMGE3ZDgzMjZlN2ZhYTQ2MDZmMmVjOWRmOTljMGNlNjY0ZDM5OWU2NWRlZmFhZDdjYTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc5NDI4ZTY3YjE5NDhkYjE0NzY1ZmIwMGExM2I2NjM2OTdlMzlhMjRjMWIwNTVjNjVlY2ZjZjY5NzFlOGRhMzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU1OGU2MWUzOGFkM2ZiYjc3MWExNjg5ZWExZGIyODlhMGQ1MGE3Nzc1NWE5MzhlMjJiMzI0NmRhNDYzY2VlMTIifQ"
         }
       ]
     },
     {
       "id": "claim_5378202300e542c396b3f603305a27d8",
-      "statement": "The live model is published synchronously inside the dispatch, before an agent patch is acknowledged, and baseDocument stays the editor-open document: the main runtime keeps the first baseline it received, drops payloads whose revision is not greater than the stored one, clones accepted payloads and schedules the debounced background sensor run.",
+      "statement": "提示轮等待最新镜像并锁定本地文档；main 拒绝旧 revision、保留首个基线并触发防抖检查。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/agentRuntime.ts",
-          "version": "repo-file-v1:sha256:03e3b8aacc5423729bbdb69484256ea40902a252ddef58a4f959ee53f90713cc"
+          "resource": "repo://apps/desktop/src/main/agentRuntime.ts#L346-L370",
+          "version": "repo-lines-v1:sha256:3f0910b5314084e1186543bb4d7f51aa7aa9ee11240d619cf79feb6d3f1bc135:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM2Y2Y1Nzg5ZGQ5NjY4OWVkYmE2MTc5MDk4OWM1Mzc3ZmE3OGRhYzFhY2E4OGRiN2NkNzllYTY2Y2NkZjQyYWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhZTVjYTVlMzUyYTdhMTllOTNkOGI3NGM2YTliMzZlNThmNGM4NWIzNDI1Y2I4YTNiOTIyYTk3M2I3MDY3MjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZlZTQ0ZTk5MWJmNTg4MTYxMTZkZmY0NDgzMWNiMmE5ZDdmODFmMGEwMzQyOWEyMDgzZTc3ZWU3YzI0M2E4NjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3MmY0OGE2Y2JmZjYxMjgzMTExYTMwNThkZmM0NTgzMDg4ZDFhNmZmMTRlZGY3NGVlYTUyN2I5NDEwMzVjNWYifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useLiveModelBridge.ts",
-          "version": "repo-file-v1:sha256:a4eadc00b8dc0b86b1b2cf02f32b5724b6f7d1d8e4148b8e20c339087bd68b25"
-        },
-        {
-          "resource": "repo://libs/desktop/contracts/src/delivery.ts",
-          "version": "repo-file-v1:sha256:96af347645bf3044d7c8dbafb33e64a931f6f335d08be2b0b7ff974b16ddd9f0"
+          "resource": "repo://apps/desktop/src/renderer/state/useLiveModelBridge.ts#L118-L145",
+          "version": "repo-lines-v1:sha256:0c610fc081c9c715daa8e8b87a84f59afda0f2b629c28d2d70841dfd101b8ed0:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlY2MyNjIxNzg0OWViZDZjYmJhYmZiODRkNzBjNDAxYzAxNjAwMTZjZmNhMTYzNDNkZjQ0M2YwODkxYjI4MjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI5NzhlMjUwM2I4Y2YzN2EwNmY3ZDZmMGEzYTZiNmZlMzU2OTFmYmNhYjUwYjg3NzVjYWI2ZmFiYzcxYzU5MmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc2M2ZlZGU4YzI2Zjg5ZTMxOTRlOGY1MmE3NDZjY2E2ODJlM2M2NWI1ZGYyYjI1ZDgwYzgwYTNlODg1N2M0M2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkwYWZhYmEyN2M4MTJjMDQ2NzEwZmZhNzk2Y2FlNjBiOGY2NTc1MjM0YWQ2ZWQzZTEyODJhOGQ1OTZlMTAyYTIifQ"
         }
       ]
     },
@@ -290,29 +286,25 @@
       "evidence": [
         {
           "resource": "repo://libs/desktop/feature-agent/src/state/usePatchReview.ts",
-          "version": "repo-file-v1:sha256:8468ebb8cdb134ad81e5cd676b450020069289dda2653d7d27e220fada8b1048"
+          "version": "repo-file-v1:sha256:256675d5229728b0d28bd56086ddb54b510283e92475fb0a9a914a14094f0750"
         },
         {
           "resource": "repo://libs/evidence-model-core/src/diff/modelDiff.ts",
-          "version": "repo-file-v1:sha256:849c99178aaf2f32cfcf7cbbcb0a1104c18369496801b0ae0d0568d903cb6d3b"
+          "version": "repo-file-v1:sha256:0001fb4b0b244f868b1577783b636fdd9fff94a86739e908fb38ae06d4bc5fa5"
         }
       ]
     },
     {
       "id": "claim_79ae6ef7ba6a47b39f4ae5c1126be439",
-      "statement": "四个 guarded 算子与 apply_model_patch 在 universal evidence-tools 注册，Pi/MCP 共享 schema/描述/非幂等写注解；createModelPatch 生成标准 patch 后一次交 renderer，无特权写路径。",
+      "statement": "通用补丁与七项写算子由 evidence-tools 注册，同 schema 与非幂等语义，标准补丁由宿主提交；What-If 只读。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/mutations/operators.ts",
-          "version": "repo-file-v1:sha256:8ca08862a27a67b9c6b2e797b7162a404f604da3a2a9d0a2482e0b69385a85d6"
-        },
-        {
           "resource": "repo://libs/evidence-model-core/src/session/jsonPatches.ts",
-          "version": "repo-file-v1:sha256:dab9ea44e0ed35c3e38eb6903256147bea9da369b3baa5aba1184e1f56edb7cb"
+          "version": "repo-file-v1:sha256:507bf3e4f63fedb1df07bd4597c2fc20a8ad73fc5e568fd3997da3d910fd6f90"
         },
         {
           "resource": "repo://libs/evidence-tools/src/index.ts",
-          "version": "repo-file-v1:sha256:ebe9c1094ade94db3a0ca0df10ed3bb3ecbc60689a9dcc5bbb2b728fffb69992"
+          "version": "repo-file-v1:sha256:d4e56de6eed58ae8514a7f4db9e4eb69210dbcd91d5345191e79f76d6e4cf9a9"
         }
       ]
     },
@@ -325,7 +317,7 @@
           "version": "repo-lines-v1:sha256:638a001963370feb7cb1ccb377bc94e4bbd68bea6512465652b8b4475c56b179:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdlZTNhMDM5NTdiNTg2ZjgzYmY4OTk3MTZhOThmYjEzYjllYjg5Zjg4YjNlMWM4NmIyZjg5MzZiZDFiMDU0NzIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk0ZjFjM2ZhYjI3ZjY2ZjZjOTVhOGUwMThiYTVmMWI3ZmRmZWUwYmRjNjQxOWZiMmQzYmRiMDcxZDkxODFjMzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdkMTAxMzZmNmM3ZDdlY2Q2NmZkMTE1ZDJmMDVmYmFiZDE5ZDcxN2E3ZjhlNTBiNzkwNjNiMTdkNDNmMDc4MzQifQ"
         },
         {
-          "resource": "repo://libs/evidence-model-core/src/ingestion/compileDraft.ts#L92-L106",
+          "resource": "repo://libs/evidence-model-core/src/ingestion/compileDraft.ts#L95-L109",
           "version": "repo-lines-v1:sha256:e3ea833751bad6917696b0b3981b2a6996bc4551a4fac12e7d550a24612d867b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE2YTI2ZmZhMDE5YTQzYjgzZGU2ZDA5NDU0Y2I2YTVmMWZhOTgzNWI1ZmMwMjU4NWUwYzU2ZjkyNDZmY2U3NDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk5OTNlYmQyZjYzNTc0MWVmMTM4MmIwOWE2ZTYyNGQ1ODUzMTQwNDdiMTIzOWJhOWEwMTMxMzgzNmZlZjg1NTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA4YjdkNzgzMmE4MTQwYTJhYjMwYTJjYTI0OTk2NzEyYTc0NjIyMzFhOWYwMmMyYTA5N2YzNjI5NjZkNzQzYjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc4NDJlNmNjZTE5MDBlMGNlZmY1MjY5YmNkODAwN2I5Y2JkMTNhYjU2NzA4YTk4Yjg3YmU4Mzk4ZGI3YTQ4MDcifQ"
         }
       ]
@@ -339,10 +331,20 @@
           "version": "repo-lines-v1:sha256:d73ab5df15f49459a9d72808d4636d871dd34ba4aaafd57473eac350c7e27985:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5OTU2NWQ2NzE1OGZjYjQ0ZDY2NmFmMzg4YjQzNGJhMTAxYjgyOWM4ZDVhMWFkZGZkMzI4OTdiMjc2Zjk4ZTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
+    },
+    {
+      "id": "claim_463228922a184151bb7b07dc04078909",
+      "statement": "证据可不先定责而独立生长，后续可拆分请求/确认、绑定结构化来源、为履约组指定上下文并记录补偿。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-model-core/src/mutations/evidenceGrowth.ts",
+          "version": "repo-file-v1:sha256:4898428c73547acf578c026791e5a5902ccb3c620aa2748ab3c2f91f1f5711d2"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-17T06:43:02.055Z"
+    "at": "2026-11-20T12:30:09.424Z"
   }
 }

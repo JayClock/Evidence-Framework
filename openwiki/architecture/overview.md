@@ -5,7 +5,7 @@ description: 两个应用宿主与十七个共享库如何围绕 FM 文档协作
 tags: [architecture, workspace, dependencies, nx, data-flow, monorepo]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-18T12:34:41.390Z
+    at: 2026-11-20T12:30:09.424Z
 sources:
   - id: openwiki-source-8037e2358a2c4f9b2c722a11
     resource: repo://AGENTS.md
@@ -13,12 +13,16 @@ sources:
     resource: repo://apps/cli/package.json
   - id: openwiki-source-de5c5760d707be19e09eb7e3
     resource: repo://apps/desktop/project.json
+  - id: openwiki-source-55138c775f581f8c989ca7dc
+    resource: repo://apps/desktop/src/main/agentRuntime.ts
   - id: openwiki-source-5d33672c45ec58cd29dce507
     resource: repo://apps/desktop/src/main/main.ts
   - id: openwiki-source-f278221a7db6307920fce03f
     resource: repo://apps/desktop/src/main/mcpRequestHandler.ts
   - id: openwiki-source-f0f06a0981a7ca97c510b44d
     resource: repo://apps/desktop/src/renderer/state/useEditorSession.ts
+  - id: openwiki-source-87e5669496e1e215691f3e0c
+    resource: repo://apps/desktop/src/renderer/state/useLiveModelBridge.ts
   - id: openwiki-source-034a304691f6c1f77f682d25
     resource: repo://apps/desktop/src/renderer/state/useMcpBridge.ts
   - id: openwiki-source-b5ea8c8713a5b04ee1c21d2d
@@ -31,8 +35,6 @@ sources:
     resource: repo://ENVIRONMENT.md
   - id: openwiki-source-2fda883e9b76745f69f487f7
     resource: repo://eslint.config.mjs
-  - id: openwiki-source-8a3964422b76faf8b78c4915
-    resource: repo://libs/desktop/feature-agent/src/state/useAgentPatchBridge.ts
   - id: openwiki-source-3487fdf20c88f517d0a744eb
     resource: repo://libs/evidence-acceptance/package.json
   - id: openwiki-source-9d54a30ae7fe8603951dd3dd
@@ -51,8 +53,6 @@ sources:
     resource: repo://libs/evidence-api/src/types.ts
   - id: openwiki-source-7c4f607b2d42287b8ffedc0c
     resource: repo://libs/evidence-model-core/package.json
-  - id: openwiki-source-b4abb2821db0f045818014a1
-    resource: repo://libs/evidence-model-core/src/session/createModelSession.ts
   - id: openwiki-source-bcadd1e63a7d140ce717e9ea
     resource: repo://libs/evidence-model-io/package.json
   - id: openwiki-source-4fa503355d9f3a8084bea718
@@ -73,7 +73,7 @@ sources:
     resource: repo://tsconfig.base.json
   - id: openwiki-source-98d5ddb014a0fd4d678f6f2a
     resource: repo://tsconfig.json
-generated: { by: "pi", at: "2026-11-18T12:34:41.390Z" }
+generated: { by: "pi", at: "2026-11-20T12:30:09.424Z" }
 ---
 
 # 系统架构与依赖边界
@@ -84,7 +84,7 @@ Evidence 的真相源是 `DomainModelDocument`：manifest、entities、relations
 
 | 层 | 所有者及关键机制 |
 | --- | --- |
-| schema/universal | evidence-schema：Zod FM v5 AST、语法与跨对象 refinement、稳定 FM 诊断、工具输入、canonical JSON；依赖 zod、fast-json-stable-stringify、tslib，不依赖工作区上层 |
+| schema/universal | evidence-schema：Zod FM v6 AST、语法与跨对象 refinement、稳定 FM 诊断、工具输入、canonical JSON；依赖 zod、fast-json-stable-stringify、tslib，不依赖工作区上层 |
 | domain/universal | model-core：图、guarded draft mutations、Immer 会话/历史、RFC 6902、原生 cel-js、追溯和静态 FM 检查；同步 SHA-256 使用 noble/hashes |
 | domain/universal | canvas-interaction：headless async ELK 布局、模型/ELK 适配、可序列化布局和作用域，不持有 DOM/React Flow 视口 |
 | io/node | model-io：源树/Bundle 发现、字节摘要、读写、pack/unpack 及共享模型命令 |
@@ -109,7 +109,7 @@ ESLint 同时约束 type、layer、platform、scope：universal 只能引用 uni
 ## 从建模到交付
 
 1. `.evidence/fm/` 源树或 `*.evidence.json` Bundle 经 model-io 加载，core 规范化为同一文档。generated/cache/dot 内容不作为源；旧 validation Scenario/Instance 已撤除。
-2. renderer ModelSession 用 `mutate(recipe)` 或 `applyPatchBatch` 原子变更，维护选择、撤销/重做与惰性图；Agent/MCP 补丁也进同一 renderer 会话。
+2. renderer ModelSession 用 `mutate(recipe)` 或 `applyPatchBatch` 原子变更，维护选择、撤销/重做与惰性图；MCP 补丁直接作用于 renderer 会话；Pi Agent 补丁由主进程原子提交给唯一 editor owner，renderer 重放并并入同一撤销历史。
 3. 静态检查以 Zod strict + semantics、CEL 和 scoped completeness 给出 FM check v6；内联 examples 提供 CEL 编译期 oracle，不代表真实 HTTP 成功。
 4. API 投影生成 draft snapshot，携带 model/design/check-report digest、排序诊断和 limitations。固定 check 报告失效或摘要过期成为显式 gap，不抹掉草稿可见性；正式交付再要求门禁。
 5. Stage gate 消费 v6 报告，要求一致、完整、有效、输入未变化、无 errors/gaps 且覆盖非空 scope；API 目标还重新投影检查和比摘要。
@@ -117,7 +117,7 @@ ESLint 同时约束 type、layer、platform、scope：universal 只能引用 uni
 
 ## 两个宿主与进程边界
 
-桌面 main 注册项目、摄取、AI、delivery、Agent IPC，创建 Agent runtime 与 MCP bridge。`--mcp-stdio` 是同一可执行文件的无窗口代理模式，转发到已运行桌面，不读取项目存储。preload 暴露 typed EvidenceDesktopApi，renderer 不拿 fs/ipcRenderer。
+桌面 main 注册项目、摄取、AI、story、delivery、Agent IPC，创建 Agent runtime 与 MCP bridge。`--mcp-stdio` 是同一可执行文件的无窗口代理模式，转发到已运行桌面，不读取项目存储。preload 暴露 typed EvidenceDesktopApi，renderer 不拿 fs/ipcRenderer。
 
 renderer 拥有实时会话、异步布局与 UI；main 执行 Node 文件操作、传感器与交付。saved 导出描述磁盘来源；live delivery export 冻结预览快照并校验摘要，不能混淆。
 

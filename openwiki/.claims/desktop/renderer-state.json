@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:9fd91412efedf42122530b2bc05d093e670f83276c2b0fa87c769ee14cb6650c",
+  "pageVersion": "sha256:f6de75d49886f3851a670b0e3a34a935ae971fa48f8cda2173176b75cf4587c5",
   "claims": [
     {
       "id": "claim_5bc15eddd9434496a5f9aae91810a602",
@@ -8,11 +8,11 @@
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/renderer/state/useEditorSession.ts",
-          "version": "repo-file-v1:sha256:1c370ef02de7e823f8f917263addbe788c56313c6b140e44b726aa7937aab347"
+          "version": "repo-file-v1:sha256:411827498bf8931b4411cd7b1e690fc87c37dc79b10044d9e137b548eea47f2c"
         },
         {
           "resource": "repo://apps/desktop/src/renderer/state/useGraphLayout.ts",
-          "version": "repo-file-v1:sha256:35a26da5fa7435c176d0fc6571cae2995f9ea12c901c8a83e8c9a20bad5d4d6d"
+          "version": "repo-file-v1:sha256:3aca5e864e4edf5b7ebb3517a94369e54937315f5a9c386dec7999c178c4368d"
         }
       ]
     },
@@ -22,7 +22,7 @@
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/renderer/state/useEditorSession.ts",
-          "version": "repo-file-v1:sha256:1c370ef02de7e823f8f917263addbe788c56313c6b140e44b726aa7937aab347"
+          "version": "repo-file-v1:sha256:411827498bf8931b4411cd7b1e690fc87c37dc79b10044d9e137b548eea47f2c"
         }
       ]
     },
@@ -32,7 +32,7 @@
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/renderer/state/useEditorSession.ts",
-          "version": "repo-file-v1:sha256:1c370ef02de7e823f8f917263addbe788c56313c6b140e44b726aa7937aab347"
+          "version": "repo-file-v1:sha256:411827498bf8931b4411cd7b1e690fc87c37dc79b10044d9e137b548eea47f2c"
         }
       ]
     },
@@ -42,59 +42,55 @@
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx",
-          "version": "repo-file-v1:sha256:2cae815b99c3f2747c9abf184ed98223b2c52f0a4e2f7f121716ee058a113824"
+          "version": "repo-file-v1:sha256:d8b8c09310947611b6d2cc8e71cf9a864124191d9b922547793438d36fe0edd8"
         },
         {
           "resource": "repo://libs/desktop/contracts/src/delivery.ts",
-          "version": "repo-file-v1:sha256:96af347645bf3044d7c8dbafb33e64a931f6f335d08be2b0b7ff974b16ddd9f0"
+          "version": "repo-file-v1:sha256:65eee11d9ff37c0b55977fefac45116b50254e37e55eb53d6dab94c81b8e6b81"
         }
       ]
     },
     {
       "id": "claim_d415d3fe23654f0c839a745bd880e86e",
-      "statement": "live bridge mount/document-changed 同步发布 revision/document/base，applyPatchBatch 返回前已通知，Agent ack 在其后；selection 不发模型。",
+      "statement": "live bridge 按 editorId 注册，挂载和本地文档变更递增发布 revision，等待最新发布后启动 prompt；selection 或已提交事务重放不重新发布。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useLiveModelBridge.ts",
-          "version": "repo-file-v1:sha256:a4eadc00b8dc0b86b1b2cf02f32b5724b6f7d1d8e4148b8e20c339087bd68b25"
-        },
-        {
-          "resource": "repo://libs/desktop/feature-agent/src/state/useAgentPatchBridge.ts",
-          "version": "repo-file-v1:sha256:afc96e6610d906ea684a85f946385c5d2e9ba318c26eb7f608e3133bd6a521af"
+          "resource": "repo://apps/desktop/src/renderer/state/useLiveModelBridge.ts#L35-L142",
+          "version": "repo-lines-v1:sha256:699fc37b5c882e5249b6e3b6391c5dacf29bbef618854f9cb6d27ea9d2738877:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlNTU1OTcxNDNlOWFkYzZiYmEyOGRlZDIzOTdjNmIyYjM4ZTNjNDFkOTRmYjkzZTM2MTExMThmZDMzOTk4ZDdiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0NjRkYjM0ZTIyZDdmMTIwZjFlMzg0NzEyMDUyNzM2ODVkYzA1NmExNmEyOWY1MTdmNWYwOTc5ZmMyYTc2ZDY5IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3OTQyOGU2N2IxOTQ4ZGIxNDc2NWZiMDBhMTNiNjYzNjk3ZTM5YTI0YzFiMDU1YzY1ZWNmY2Y2OTcxZThkYTM3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJiNDNhYTAxMjYwYmUzOGY1Yzc1MjIxMjI1MmI0MTBiNjA0YmY0MmU5OGYyMzRhYTU5YmU4ODkzNzIxMWE0ODkwIn0"
         }
       ]
     },
     {
       "id": "claim_85d7f6b6ec8e4f8a9b19481a9f50f58e",
-      "statement": "The main-process agent runtime keeps the published document as its `live` mirror that `loadDocument` and sensor runs read, ignores a revision that is not greater than the one it already holds, clears `latestReport` on a new revision and re-arms the debounced sensor run.",
+      "statement": "主进程以最新 live 镜像供工具与传感器读取，拒绝旧 revision，新 revision 清理缓存并重启 debounce。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/agentRuntime.ts#L114-L137",
-          "version": "repo-lines-v1:sha256:feaaf8013c6eff27c5ee636a6ad97ac7b7c1d8b922e6f263455e2f5f8f34009d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhiZmUxMWQzOTQ0OTBiYjc2NzFkZTA0MzhhODk3MmMzN2Q3ZTEzYzIyYzVjMGIyOTM3MjU2MjhlYjNlNDMyNTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhiNjA5NjEzYjAzYTdiM2Y0MTBlZjYzMzViYjA1MDRkNjE2NjE1Y2Y2ZGNjOTAzMzcyYzg4ZjAxNDM5YjFmNzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxZWVlNGU5NDZmZjBiYWM4ZmZlYzI1YjI0MjFiNjMzNTIxZGUzYmQ4MTk3YWRmNTk3NWM1N2FmMmJlNjllYjAifQ"
+          "resource": "repo://apps/desktop/src/main/agentRuntime.ts#L185-L242",
+          "version": "repo-lines-v1:sha256:75263f9fb1f048c2481ecab33afa3c345d2d99853696b183cb7bb1ff9501e3d7:eyJzZWxlY3RlZExpbmVDb3VudCI6NTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZmZWU4ZDY2ZTg0ZWRlZDQxNTExNjcxM2NjNDdmMmFlMjM5NjJmYzE2NDhmYWIyYzY3NWQ0NjU1YjcyNTZkODUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY1OWZiN2MxOWYwMDIzMzdiZDIyOWQ4ZDNlMGQ3YzRjNDc1ZDhmNDYxMjFiMWQ2ZGNkYTJjNDU5YmEzNDk0OTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRhOGFiZDhiZjYwYTI0ODE4ZThhNjkyODIyMjlmZDQwNDg5NDNlMWVjZDZlMDUwYWEwODc2ZWMwMzYwYWNhNzcifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/main/agentRuntime.ts#L244-L257",
-          "version": "repo-lines-v1:sha256:6a4667ad3a1211741cfdf1e159e942a1179f81ddaa2e27d567d9fb63c289a863:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMwMGQyNTQ0ZDhjOWQzOTg2ODJkYmMzYmE2ZjYyYzAwNWU3YWQ1OTljN2FiNzg0NzliZGUzMTBkMzk4YWJhMmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZjMTVkZDU4NWQ4NWRkYmQ2NTQzNmQzYTQxYTU4MzM3YzEwOTlmZDIxZDU4ZjEzMmI1NWVjMjI2ZDE1ZDliNjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQwZGJkOGVjNDQwNTM3NmY1ZDdmNGQ2NDBhN2YzYTdmMTk5NzFlNDMwZjU4ZjRkN2JjOThjNDEyMTM5MDYxNjMifQ"
+          "resource": "repo://apps/desktop/src/main/agentRuntime.ts#L346-L370",
+          "version": "repo-lines-v1:sha256:3f0910b5314084e1186543bb4d7f51aa7aa9ee11240d619cf79feb6d3f1bc135:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM2Y2Y1Nzg5ZGQ5NjY4OWVkYmE2MTc5MDk4OWM1Mzc3ZmE3OGRhYzFhY2E4OGRiN2NkNzllYTY2Y2NkZjQyYWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhZTVjYTVlMzUyYTdhMTllOTNkOGI3NGM2YTliMzZlNThmNGM4NWIzNDI1Y2I4YTNiOTIyYTk3M2I3MDY3MjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZlZTQ0ZTk5MWJmNTg4MTYxMTZkZmY0NDgzMWNiMmE5ZDdmODFmMGEwMzQyOWEyMDgzZTc3ZWU3YzI0M2E4NjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3MmY0OGE2Y2JmZjYxMjgzMTExYTMwNThkZmM0NTgzMDg4ZDFhNmZmMTRlZGY3NGVlYTUyN2I5NDEwMzVjNWYifQ"
         }
       ]
     },
     {
       "id": "claim_70652be346d84dad9eb79f875c7d61e0",
-      "statement": "The editor marks sensor findings stale and hands the canvas no diagnostics whenever the live bridge reported an error, the sensors are loading or errored, or `report.documentRevision` differs from the live bridge revision — so findings can never be attributed to a different edit than the one on screen.",
+      "statement": "加载、同步错误或 revision 不匹配时不给画布诊断，防止旧报告落在当前模型。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L248-L264",
-          "version": "repo-lines-v1:sha256:d37670551359005081df16958d48491b2c7869075cc1fe46d722323c9be7a992:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdhYjEyMGYyY2E4NTZhNGY4MmJlOTQ3NjE1Njk3MDlmNzVhNjIwNDlmZTc5YjJjY2I5MDVhN2E0ZDQzZDgzMWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1ZmI0ZjI1MjAzNTFlMzBjZTlkYTJjMDY0NTc3ODY2ZmQzYjhjOTFjMjQyNDA2OWJiYmEzN2JjM2EwYmQzNTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZhNDEwZTgwYzcxYWY1MzdhOWFiNGJhNjgxMDc1MGMwMzQ0ZjQ0ZWE4MmJhODgyNjA1MGU4ZDIxNTBhMDllMjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM0MDE3MDZhM2JhMmJmMDkzYzllZDA3NmFmNmI3NDliYWMwYjY4N2EwNjViYzZhOTIxMjhlZGQ0ODY1MzYxMWQifQ"
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L304-L325",
+          "version": "repo-lines-v1:sha256:79ea9fbbc44b26a9c462163225dac4b44b9db4eddeb862d07ad8215a73b734df:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNmYWVkNGJjNzg5MzY2ZGFlNWM1MzlmZGZmNWFiZDcyNTdlZDYyMGU0Mjk3ODVjOWNkYWEwZGNlNjcxODFjYjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg1NDJiNjUwZWJiMzU3YzFjNzBkMDAzMGJkYzczMDBhMGE3ZDZiZmY4MjIwYzIxNGM1MTVlODZjYTljZmI5MDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEyMjk5YjRhYzViZjAyMzgyNDJhNWQ2Yjg0MDlhMzRiZTczNTQwNjgwNTkyY2VhZGU4ZWI0MTdkMjYwZjk2NjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUzZWIzMDk5ZDkxYWY1YzZiZGIyNjNmNmE0N2I0OGFjMjIyMDYxYzEyMTg5OTY4NTAxMzM4NThiN2E3ZGQxY2UifQ"
         }
       ]
     },
     {
       "id": "claim_9a4224022ff047a8a60603867c140b03",
-      "statement": "Agent bridge 再解析 Zod，单批 JSON Patch 后回复 op，真变更才交 before/after review，失败/no-op 不建审查。",
+      "statement": "Renderer 重放已提交事务，用 editorId/revision 去重、按序 applyCommittedPatch 并记录 before/after；缺口或基线不符报告同步错误。",
       "evidence": [
         {
-          "resource": "repo://libs/desktop/feature-agent/src/state/useAgentPatchBridge.ts",
-          "version": "repo-file-v1:sha256:afc96e6610d906ea684a85f946385c5d2e9ba318c26eb7f608e3133bd6a521af"
+          "resource": "repo://apps/desktop/src/renderer/state/useLiveModelBridge.ts#L66-L142",
+          "version": "repo-lines-v1:sha256:de32329720f4e25cf5674fddde95c2ce01e0d769d060e689f1674bc21883c95b:eyJzZWxlY3RlZExpbmVDb3VudCI6NzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg4MDA1ZDU3MTA2YTM2MmViMDAwZGFmM2RhNDY3NGM4MmI1MThmZjVhMmUyZjY3ZWU4ZTc1N2EzMzNjMmFmNjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ2NGRiMzRlMjJkN2YxMjBmMWUzODQ3MTIwNTI3MzY4NWRjMDU2YTE2YTI5ZjUxN2Y1ZjA5NzlmYzJhNzZkNjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVhNjQwNzk4OTE2ZDFiOGIzNTE1OGVkMWI5N2M0YmRlY2JiNDkxOTc1Y2JlOWM0ZjdmZGMzODAwYmJhMjc5MjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI0M2FhMDEyNjBiZTM4ZjVjNzUyMjEyMjUyYjQxMGI2MDRiZjQyZTk4ZjIzNGFhNTliZTg4OTM3MjExYTQ4OTAifQ"
         }
       ]
     },
@@ -104,7 +100,7 @@
       "evidence": [
         {
           "resource": "repo://libs/desktop/feature-agent/src/state/usePatchReview.ts",
-          "version": "repo-file-v1:sha256:8468ebb8cdb134ad81e5cd676b450020069289dda2653d7d27e220fada8b1048"
+          "version": "repo-file-v1:sha256:256675d5229728b0d28bd56086ddb54b510283e92475fb0a9a914a14094f0750"
         }
       ]
     },
@@ -156,7 +152,7 @@
         },
         {
           "resource": "repo://libs/desktop/feature-delivery/src/state/useDeliveryHub.ts",
-          "version": "repo-file-v1:sha256:76c9b7ce7f57989d8ab9a7eb179344e5f2c47b780c5a934c065850363bec6f12"
+          "version": "repo-file-v1:sha256:dd1fa5dd696b125ac3c281321a5209dabc7465a899e6c7042656157e7e1ebd4c"
         }
       ]
     },
@@ -172,25 +168,21 @@
     },
     {
       "id": "claim_a95d922f47f34c84ba1c9ecb464fbb4c",
-      "statement": "`useAgentSession` folds five streamed event kinds into a transcript capped at the last 8,000 characters, an activity list keyed by tool call id with running/completed/failed status, the active tool name and an error; `submit` steers a live run instead of prompting a new one, and a `rootPath` change resets the whole state.",
+      "statement": "useAgentSession 处理文本与思考及最终消息校准，保留 8000 字符上限和 toolCallId 状态；根切换重置，运行中阻止重复 prompt。",
       "evidence": [
         {
           "resource": "repo://libs/desktop/feature-agent/src/state/useAgentSession.ts",
-          "version": "repo-file-v1:sha256:98ca4abb66db16271ce8cf41982f708b11e40e27cb257c0ed746deb0b2dfb34b"
+          "version": "repo-file-v1:sha256:60488e742d8cbb2a8055c676da8df06991a2b9c7d51c85d719e485ea2a074e6f"
         }
       ]
     },
     {
       "id": "claim_6fb3931eb4c94d9ea257ecaafb875bd0",
-      "statement": "布局控制器管理导轨、固定状态、底部诊断、内联副驾和交付对话框；四个导轨入口使用 Mod+1 至 Mod+4。",
+      "statement": "布局控制器管理目录、诊断与交付状态；Mod+1/2/4 对应实体表、诊断、目录，没有 Copilot tab。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceLayoutState.spec.ts",
-          "version": "repo-file-v1:sha256:4243594541b0892e6c4d4ff0a751503a1b43de5dcca51b0df5d45617e87718a6"
-        },
-        {
           "resource": "repo://apps/desktop/src/renderer/state/useWorkspaceLayoutState.ts",
-          "version": "repo-file-v1:sha256:7985d3e982f1ec197acb5b14ad6408db5fcffef3541a3bb33547d2c16f77ad5a"
+          "version": "repo-file-v1:sha256:fe40d7c6918cd2d50f8ed0a7fdb56def6861b75fabf4b4cc1ded5dcc224a08b8"
         }
       ]
     },
@@ -214,7 +206,7 @@
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/renderer/state/commandRegistry.ts",
-          "version": "repo-file-v1:sha256:0059788c3de092d1949c77415bae3150eaa130ec93a1c8c9dab843ca0e7d02ac"
+          "version": "repo-file-v1:sha256:f69302b55483d9e3148b994149d8acb1d21d5947ecad87afa16435fe21b596c7"
         },
         {
           "resource": "repo://apps/desktop/src/renderer/state/useCommandRegistry.ts",
@@ -228,7 +220,7 @@
       "evidence": [
         {
           "resource": "repo://libs/desktop/testing/src/desktopApi.ts",
-          "version": "repo-file-v1:sha256:0a237d3277020ebeeacc10fdc471853f38e940c8296623700a3fc21ab9f584bb"
+          "version": "repo-file-v1:sha256:99265629370f1c7e393e05068a40f7b0da279d6689ef21102a7796783abc8dd6"
         }
       ]
     },
@@ -238,21 +230,21 @@
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx",
-          "version": "repo-file-v1:sha256:2cae815b99c3f2747c9abf184ed98223b2c52f0a4e2f7f121716ee058a113824"
+          "version": "repo-file-v1:sha256:d8b8c09310947611b6d2cc8e71cf9a864124191d9b922547793438d36fe0edd8"
         },
         {
           "resource": "repo://apps/desktop/src/renderer/state/useEditorSession.ts",
-          "version": "repo-file-v1:sha256:1c370ef02de7e823f8f917263addbe788c56313c6b140e44b726aa7937aab347"
+          "version": "repo-file-v1:sha256:411827498bf8931b4411cd7b1e690fc87c37dc79b10044d9e137b548eea47f2c"
         },
         {
           "resource": "repo://libs/desktop/feature-story/src/state/useStoryPlayback.ts",
-          "version": "repo-file-v1:sha256:79f477ea25a073bb122c5f264e703556ce22b54e3dda5039d0c501c97943e3f8"
+          "version": "repo-file-v1:sha256:75fa5b750c56a7cd79c161ac3061887b31dd21505da94a242952ea35f49df6be"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-18T12:34:41.390Z"
+    "at": "2026-11-20T12:30:09.424Z"
   }
 }

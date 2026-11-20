@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:823fcb114ba96b5e02f7e4510e341bb0c65d8a072e8da49f3f93452ff8d6dc32",
+  "pageVersion": "sha256:64093bd59357acc92bdca329f19217b5561e4c0cb6737618486e244273e11bf0",
   "claims": [
     {
       "id": "claim_43d00c9569fe434d960f89fac57a8acd",
@@ -26,23 +26,23 @@
     },
     {
       "id": "claim_3b74ee517c6c4d9c9f81fbdee3d87f17",
-      "statement": "Pi SDK/session/runtime/transport、AI runtime 和 delivery/dialog 可注入，测试自身合同无需真实模型或 OS 对话框；renderer 用 desktop-testing 窄端口 fixture。",
+      "statement": "会话测试 mock Pi SDK；桌面注入 sessionFactory、sensors、transport、delivery/dialog，renderer 用 scripted desktop-testing 夹具，无真实模型或 OS 窗口。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/agentRuntime.ts",
-          "version": "repo-file-v1:sha256:03e3b8aacc5423729bbdb69484256ea40902a252ddef58a4f959ee53f90713cc"
+          "resource": "repo://apps/desktop/src/main/agentRuntime.spec.ts",
+          "version": "repo-file-v1:sha256:319addedc24499d60379d1aeb28572e12ff21c226bf33dc8382168db4995d25b"
         },
         {
           "resource": "repo://apps/desktop/src/main/deliveryIpc.ts",
-          "version": "repo-file-v1:sha256:dbabd79c6015dd3705b481aae965093212321f728e29118579a14a2a2f7dceb4"
+          "version": "repo-file-v1:sha256:533a9c130eaa737df00e5e6ad6825bcdd460de78f7a57c1e3b1d13ef8b2c11f5"
         },
         {
           "resource": "repo://libs/desktop/testing/src/desktopApi.ts",
-          "version": "repo-file-v1:sha256:0a237d3277020ebeeacc10fdc471853f38e940c8296623700a3fc21ab9f584bb"
+          "version": "repo-file-v1:sha256:99265629370f1c7e393e05068a40f7b0da279d6689ef21102a7796783abc8dd6"
         },
         {
-          "resource": "repo://libs/evidence-agent/src/session/evidenceAgentSession.ts",
-          "version": "repo-file-v1:sha256:601abbf629d88688424b3e5d3d4baa1015b053985f9877454556f8a44ed1a6b2"
+          "resource": "repo://libs/evidence-agent/src/session/evidenceAgentSession.spec.ts",
+          "version": "repo-file-v1:sha256:21fdfb1e5bd79d42bb1b74548ba06eb1bf6cf5c84f40ae2b0d24886a906a6838"
         }
       ]
     },
@@ -88,11 +88,11 @@
     },
     {
       "id": "claim_6ee9f065dd9f48d78f5e88f9d40dc0c5",
-      "statement": "phase3 real runtime+fake Pi+real session验证11工具、JSON Patch和undo，非六工具typed commands。",
+      "statement": "phase-3-loop 用实际 runtime、假 Pi 和实际 ModelSession 验证 15 项工具、先在主进程提交、重放事务后一步撤销。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/tests/phase-3-loop.spec.ts#L91-L193",
-          "version": "repo-lines-v1:sha256:fded7d4febd3c5746df69edc273c8d33f98d370d9c18e1738e4f0c45614edecd:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJkMzYxYzMyMjg2MTgzNzc5ZTk5MDE4MTI1MDU4YmIzNzllZTY4OTg0NmQ0NzQ0MWE1ZmNhNjUxZTQxMTgxNmFkIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIzYTNlNDZmOTQyNzZiNmY2ZjRlZDFmMDJhZjc4YmVmNmEyZWUxYzQzOWRkNTU4NGI5NzM5NDgzMTMyMTRkMmI3IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyN2Y2M2QzMGMzYTcyNDc4NWRmYjRiYmNmYTRiMTJmNWY1ZGJmOGE2NzZhYmI3OTMzZmNjY2FiNDE5YjM2NWM2IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI0ZjczZTgxYWUzZDgzODdmNDRiN2M4MDEwODkwMzI3ZjFmYzg5YjFlYThmZjI0YzhjYmMwNTM5ZjRjYzIxNTRkIn0"
+          "resource": "repo://apps/desktop/tests/phase-3-loop.spec.ts#L91-L199",
+          "version": "repo-lines-v1:sha256:994f7ab526d50bcb32492cbf50eb0fcb3da5b309f82b28c9dc81e39fb6816d27:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJkMzYxYzMyMjg2MTgzNzc5ZTk5MDE4MTI1MDU4YmIzNzllZTY4OTg0NmQ0NzQ0MWE1ZmNhNjUxZTQxMTgxNmFkIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwZWU1ZmNjYjZkMGY2OGVkNGY5MzA2NWE1MjBkNzAyZTExZTFmZTNhMGZkM2JkZjdjYmM3NmNjZTlmN2Y2OGQ3IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyN2Y2M2QzMGMzYTcyNDc4NWRmYjRiYmNmYTRiMTJmNWY1ZGJmOGE2NzZhYmI3OTMzZmNjY2FiNDE5YjM2NWM2IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI0YWQxYTRhZDA3MTY4MjM4MjZlODBkMDljMGI1ZGM4ZGQyOGRlNDRiNTAzZjY3MjE3YjAwNGU3MzNjMzg2MmUwIn0"
         }
       ]
     },
@@ -102,11 +102,11 @@
       "evidence": [
         {
           "resource": "repo://apps/desktop/tests/phase-3-loop.spec.ts",
-          "version": "repo-file-v1:sha256:7c571f522f05e3a1235ab031a43a2fd83780f8e2fbc490a4f5dce36463c05b5b"
+          "version": "repo-file-v1:sha256:31921b8ce48ce34aaa3e07e1bdeb43e2d90555ffdd6d090f61786391b0a81e90"
         },
         {
           "resource": "repo://libs/desktop/testing/src/desktopApi.ts",
-          "version": "repo-file-v1:sha256:0a237d3277020ebeeacc10fdc471853f38e940c8296623700a3fc21ab9f584bb"
+          "version": "repo-file-v1:sha256:99265629370f1c7e393e05068a40f7b0da279d6689ef21102a7796783abc8dd6"
         }
       ]
     },
@@ -148,7 +148,7 @@
         },
         {
           "resource": "repo://libs/evidence-api/src/delivery/routes.spec.ts",
-          "version": "repo-file-v1:sha256:5c1464be594cb29ea96893c382c8ea6034d2add25e7710bed5fea58c57e648fe"
+          "version": "repo-file-v1:sha256:a2e835910aca178af8ed1a3fd643f3a8fe1bedcacc1098007a839c5a8ec84208"
         },
         {
           "resource": "repo://libs/evidence-api/src/openapi/openapi.spec.ts",
@@ -181,6 +181,6 @@
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-18T12:34:41.390Z"
+    "at": "2026-11-20T12:30:09.424Z"
   }
 }

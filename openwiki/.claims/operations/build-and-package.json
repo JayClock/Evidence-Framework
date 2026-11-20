@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:04b3cade17a7e175d859ede8f5eceb917cc84a19e810ccb2827c057b958f0724",
+  "pageVersion": "sha256:3e9e750ea4d1b9857fb5feb5c46be429e61cbec065e42cce7ea3e213d2c44e70",
   "claims": [
     {
       "id": "claim_567a05d269c14d5e97a102d43a9b3bcf",
@@ -150,7 +150,7 @@
         },
         {
           "resource": "repo://docs/workspace-layout.md",
-          "version": "repo-file-v1:sha256:f5b93f8b95fe5bb17289e2b0f5ee3a04f5e314035dc67844e821f711b28e0149"
+          "version": "repo-file-v1:sha256:4c0d0b7ed766f0caa991b996ec19e0a05c761859a700c6e090d7e56540255245"
         },
         {
           "resource": "repo://libs/evidence-agent/package.json",
@@ -337,6 +337,6 @@
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-18T09:45:40.969Z"
+    "at": "2026-11-20T12:30:09.424Z"
   }
 }

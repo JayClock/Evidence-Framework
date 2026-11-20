@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:6eb0a63305bf948da86df86a629db0f85e98aaa4a2408fbf3c640f9ee00f71f4",
+  "pageVersion": "sha256:f7d91c2f7e77f41712d152c4572e2227f5e2451952500eb62429b52bda65b21a",
   "claims": [
     {
       "id": "claim_164af37c15bd455a9db772d5a23f1eed",
@@ -32,15 +32,15 @@
     },
     {
       "id": "claim_7a69b77ead874995aa5e45fc419a0560",
-      "statement": "universal model-core 使用原生 cel-js、Immer、JSON Patch 与 noble 哈希；磁盘边界由 model-io 负责。",
+      "statement": "universal model-core 使用 cel-js、Immer、JSON Patch 与 noble 哈希；model-io 负责磁盘 I/O。",
       "evidence": [
         {
           "resource": "repo://libs/evidence-model-core/package.json",
           "version": "repo-file-v1:sha256:a3f0e2640edbb8eb597180d691bb41999be62899307d3d9600ede8fc2b1b5f66"
         },
         {
-          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L38-L59",
-          "version": "repo-lines-v1:sha256:b68c1c8efcba77cc07f14ad0bd703aaefa822e550e7ddf0c3a230492f2766f6d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM5NmE2MGFhNTNmNzRhOTEyZmEwMWFiMGUwODU5MWQwYzQ5MDgyOTU2N2JhZGM0OTc0ZTRkOWYzMjk3MTA2NDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjYzMzZjBkZThiM2Q0YzhjMGMyZGMyNmQ3MWEyZGI3YTNjNWUwYTgyYTIwYjcwNmQ4ZTg5YWNmODQ4ZmI1ZDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiNTgwZTk2NGY4M2E0NzNmNDNkNDQzODQ2Mjk0OWQ2OGI1NjAwZmRhNzg3ZjE2Mzc0NWQwMGRlODljYmYzNmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE2MDIxMmMwYmVlZDU5MzZiNzRiNTAzZWU1ODI3ZTA0NWVhZDc1NzgyYmUyNzNkYzY0MWExMTA1YjUwZTMxZmEifQ"
+          "resource": "repo://libs/evidence-model-io/package.json",
+          "version": "repo-file-v1:sha256:39e9a6713d2cd56358abb6c4570aa7f493c4efbc551868875eb416645201d17c"
         }
       ]
     },
@@ -68,11 +68,11 @@
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/main/main.ts",
-          "version": "repo-file-v1:sha256:5c69369ed5af8a83f6d595da3fc733d39c6d556b485949077f252ee18d2077c2"
+          "version": "repo-file-v1:sha256:320808a8bc54cc3627aabc4e61d24d08e900c58ce2b64340063fe9b12f14c4eb"
         },
         {
           "resource": "repo://apps/desktop/src/renderer/state/useEditorSession.ts",
-          "version": "repo-file-v1:sha256:1c370ef02de7e823f8f917263addbe788c56313c6b140e44b726aa7937aab347"
+          "version": "repo-file-v1:sha256:411827498bf8931b4411cd7b1e690fc87c37dc79b10044d9e137b548eea47f2c"
         }
       ]
     },
@@ -186,25 +186,29 @@
         },
         {
           "resource": "repo://libs/evidence-agent/src/index.ts",
-          "version": "repo-file-v1:sha256:9c4c6e8f4c3118fab368fcedcbe11477a3c9f719cc50bd80fb08478ce15f48e1"
+          "version": "repo-file-v1:sha256:5ecc30066292092a2fa6fc3bb6f5af193d413855f1991cbc084d468b368fc988"
         }
       ]
     },
     {
       "id": "claim_8b07171bc0ec434fa67b0e33c141d860",
-      "statement": "Agent 和 MCP 写入在 renderer 的 ModelSession 共用历史，MCP 的传感器、交付及截图请求由主进程处理。",
+      "statement": "MCP 补丁直接写入 renderer 会话，Pi 补丁由主进程原子提交并由 renderer 重放，共用编辑历史；MCP 传感器、交付与截图由主进程处理。",
       "evidence": [
+        {
+          "resource": "repo://apps/desktop/src/main/agentRuntime.ts#L131-L182",
+          "version": "repo-lines-v1:sha256:960736a1c215ef42ae5b71373133133a280aebce63df027effa461bd62c0a681:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk4ZjRkMzUxOTU0Y2FlMDAyYzU4NjRjYzlhMWQzNDUyZDFiMGE0MGNhZWNjNzcyYzIyYjVlZTk0YWQyYWFkMDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJmOTcxNGFkYjU1Y2Q3YjQ0MGUxNzQ2YTg3MDNhODAwY2UxNTNlNzM3OTg5NDA4ZWMxZTQ1NTc4OTVjNjM5NmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE4NzVkMmQ3NWVmNGQwYTZmM2Q4MTJlZGRhZjU3YTg0ODkzOTgyOGRlZDI4ZTM5NTFmOTIzNTM4ZDVlZjc4M2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZkMWI4YjY1ODA0ZDQ4OWVkMDNiYzVlZGE2M2Y2ZDBlNThiN2RkYTNjODY1NDJkOGQ1YzZiMmE3NjJmNWUzODYifQ"
+        },
         {
           "resource": "repo://apps/desktop/src/main/mcpRequestHandler.ts",
           "version": "repo-file-v1:sha256:4f6a810a7875ff0da571576dd47da37d33093123bdc5f7cce7180c1efbdd2739"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useMcpBridge.ts",
-          "version": "repo-file-v1:sha256:851cbe7af65bb60efd37e0ecc16999402964c0c1b8145037d2016e7b4cd3f22e"
+          "resource": "repo://apps/desktop/src/renderer/state/useLiveModelBridge.ts",
+          "version": "repo-file-v1:sha256:f6091dfd73647df1569262179e4e9bea1779baa8a7a02acc5a94586fe09de2e5"
         },
         {
-          "resource": "repo://libs/desktop/feature-agent/src/state/useAgentPatchBridge.ts",
-          "version": "repo-file-v1:sha256:afc96e6610d906ea684a85f946385c5d2e9ba318c26eb7f608e3133bd6a521af"
+          "resource": "repo://apps/desktop/src/renderer/state/useMcpBridge.ts#L308-L347",
+          "version": "repo-lines-v1:sha256:cbd1fc8911dca240865ebfce2659a5dc9e1e82526bf53c859aa335730c4a773f:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5YzEzNTkwNjY1NjMyM2QxYzVlYTQxNjU0ZWU2NmFmYjU4NWFjZGNmYWVhY2ExMjFkNWUzMGJmMTkzZWVkZDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk5MTUzZWRhOTM2MDk4M2Q4YWM1Y2Q4MTVjOGYxODE1YThlZGE5MjNlMjE1Yzg4YTZiNGUwNjAzYjQ1MzY2NTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc3ZTk3ZTkzM2MxNjRhMzk2MGUyZWIxNzVkZmZhZjA3NTY1YmI0OThhMjcxZDUyYzYxYjNhOWI0Y2Q0MWY2MGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRjMDUxOTdiMDE5YjBlNTgyMjY3NjE1ZWQ2MTQxOTc5YmI3ZmMxZTA3ZDM3NGVhNjllMjAxOTQwOTlkNDY2YTgifQ"
         }
       ]
     },
@@ -214,7 +218,7 @@
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/main/main.ts",
-          "version": "repo-file-v1:sha256:5c69369ed5af8a83f6d595da3fc733d39c6d556b485949077f252ee18d2077c2"
+          "version": "repo-file-v1:sha256:320808a8bc54cc3627aabc4e61d24d08e900c58ce2b64340063fe9b12f14c4eb"
         }
       ]
     },
@@ -267,6 +271,6 @@
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-18T12:34:41.390Z"
+    "at": "2026-11-20T12:30:09.424Z"
   }
 }

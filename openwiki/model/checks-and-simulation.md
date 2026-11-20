@@ -5,7 +5,7 @@ description: FM check v6 如何分开一致性与scope完整性，native cel-js�
 tags: [validation, check, cel, examples, traceability]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-18T12:34:41.390Z
+    at: 2026-11-20T12:30:09.424Z
 sources:
   - id: openwiki-source-52a825b501b0001cef1b2ecc
     resource: repo://apps/cli/src/commands/check.ts
@@ -33,12 +33,16 @@ sources:
     resource: repo://libs/evidence-model-io/src/commands.ts
   - id: openwiki-source-5827654ee488871fab61b1a1
     resource: repo://libs/evidence-model-io/src/legacyRemoval.spec.ts
-generated: { by: "pi", at: "2026-11-18T12:34:41.390Z" }
+  - id: openwiki-source-58cc0dc028651165d939cdea
+    resource: repo://libs/evidence-schema/src/ast/documentSemantics.ts
+  - id: openwiki-source-f3dd6cff8734842de5630223
+    resource: repo://libs/evidence-tools/src/index.ts
+generated: { by: "pi", at: "2026-11-20T12:30:09.424Z" }
 ---
 
 # 静态门禁、CEL 与样例求值
 
-当前系统不再有Scenario/Instance文件、validation suite、内存timeline/simulator/replay、role-play pack或SimulationSandbox。历史页名为兼容导航保留，本页解释它们的实际替代：**静态FM v6 + native CEL + 编译期examples oracle + 标准HTTP验收**。
+当前系统不再有旧 Scenario/Instance 文件、validation suite、持久化 replay 或 role-play pack。保留的是瞬态 CEL 样例求值和只读 What-If。历史页名为兼容导航保留，本页解释它们的实际替代：**静态FM v6 + native CEL + 编译期examples oracle + 标准HTTP验收**。
 
 ## FM check v6只证明静态事实
 
@@ -52,7 +56,7 @@ currentDigest回调与输入digest比较，变化附Model inputs changed during 
 
 selectScope只收独立Context，拒绝非Context、child slice、重复scope。保留整个Context subtree、真实引用/规则依赖和角色实现；共享participant.party不把另一合同整包拖入，未知context-role实现不能猜造。
 
-completeness要求每属性valueType/required、业务时间、请求有confirmation/evidence-role、confirmation有request引用、contract context存在primary request、双方都作primary履约权利人等；已经是static error的不重复成gap。**不再要求scope有内存scenario覆盖**。
+completeness 要求每属性 valueType/required、显式业务时标、凭证归属与责任、请求有confirmation/evidence-role、confirmation有request引用、contract context存在primary request、双方都作primary履约权利人等；已经是static error的不重复成gap。**不再要求scope有内存scenario覆盖**。
 
 flowKind 的完整性检查要求补偿请求/升级记录显式 references 被违约请求；补偿源须为新请求且链不得循环，升级须 other_evidence、责任角色及交接端点 notes。它只证明结构，不判法律终局，不能绕过请求自身的确认闭环。
 
@@ -76,7 +80,7 @@ evidence-acceptance projector 从 examples[].test解析flow依赖，先清assert
 
 ## 故事与本地预演
 
-当前 scenarioStudio 编辑的是实体 examples[].test 的 flow，不创建独立 Scenario/Instance 文件。flowAggregator 按显式 basedOn 与时点构造只读轨迹，供故事投影。桌面 journey preview 仅对当前可见前缀与唯一非 test 示例求规则，缺绑定保持未知，求值错误可见；它不执行 HTTP，也不形成持久化 replay 结论。
+当前 scenarioStudio 编辑的是实体 examples[].test 的 flow，不创建独立 Scenario/Instance 文件。flowAggregator 按显式 basedOn 与时点构造只读轨迹，供故事投影。桌面 journey preview 仅对当前可见前缀与唯一非 test 示例求规则，缺绑定保持未知，求值错误可见；它不执行 HTTP，也不形成持久化 replay 结论。卡片 What-If 是基于当前履约对的只读假设评估；补偿只有另行确认并建模才会写入。
 
 ## CLI和桌面当前入口
 

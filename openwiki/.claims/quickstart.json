@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:c8fe6b6be4af8d7a2aa7bff76131590e4a8a6c7245410e30ce31428a34ab76f8",
+  "pageVersion": "sha256:2cf4ece994a3a5573071483a60096866209b24adb092c06b61b5ebabb7c46114",
   "claims": [
     {
       "id": "claim_df5076f9176f4575a1cdc338083b09af",
@@ -8,11 +8,11 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-schema/src/ast/document.ts",
-          "version": "repo-file-v1:sha256:f390474d5859895f22084afde3930f42e7955b3c8db09c39914034c70a4020a5"
+          "version": "repo-file-v1:sha256:803725e8b11f40c9f87e727283a1226fe1c8ca14dfd81fe0de1fa6595e0a2043"
         },
         {
           "resource": "repo://libs/evidence-schema/src/ast/entity.ts",
-          "version": "repo-file-v1:sha256:32860024081946a781a095076f3fbe84a568d24da036d3ec6062258fbf279a9c"
+          "version": "repo-file-v1:sha256:5dc9df1a05c91da67fcdd73596e6d54e5ca6957a2beba87c8ec8e4ef43a7747f"
         },
         {
           "resource": "repo://libs/evidence-schema/src/ast/rule.ts",
@@ -54,7 +54,7 @@
         },
         {
           "resource": "repo://libs/evidence-model-core/src/adapters/modelBundle.ts",
-          "version": "repo-file-v1:sha256:6a66859ee2bd17fd0e456a2b34e4cce601163f2a41633bad63470f129aac05f5"
+          "version": "repo-file-v1:sha256:c2250d3e9d6cfb8cf4791e843421111b43c426c966fced6c1e3eae51b95b5227"
         }
       ]
     },
@@ -102,19 +102,19 @@
     },
     {
       "id": "claim_954923a1673640c797f59bff06f86403",
-      "statement": "MCP 通过本地 socket 和同一桌面程序的 stdio 代理提供 13 个工具，补丁和四个算子最终写入 renderer 会话的撤销历史。",
+      "statement": "MCP 经本地 socket 和桌面程序的 stdio 代理提供 17 个工具，其中八项写工具由共享 registry 提供并写入 renderer 会话的撤销历史。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/main.ts",
-          "version": "repo-file-v1:sha256:5c69369ed5af8a83f6d595da3fc733d39c6d556b485949077f252ee18d2077c2"
+          "resource": "repo://apps/desktop/src/main/main.ts#L35-L58",
+          "version": "repo-lines-v1:sha256:a08f885f0f9133f273ebfc5a9241384c989b542987a75a3db24caaba2f761c6c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiOGY4NTU1YWNhZWRlZWIxMDk4NDc4ZWI2NjBmYjNmNGIyZDc0YzdmMzYyMWZlZGI0MWU1MGY1OGQ0ZjEzYTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY4NGEwZDYyZjQ0Y2RhZjIxOGM4M2QxOTMyYzBjMTk1MjAzNDNhNGE0M2IzZGRjZDUyYTIyOGJhOTUyYjEzZDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY1M2YxNTUwMzQ1ZGNhMGM1YjY2ZDE0NWFkNTk0NDBlNjJjNWJmYzg5NGIwMDY3YTZhYjc2YzMyNjFiZGFjODQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcyMTI5YzI3MzUyYjQ5NTU0OGIwNzFhZTM0YWI5MDgxMTcyODczNDI4ZjZmODdmNTRiNTgwZTUxNTNjOWFhMDIifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useMcpBridge.ts",
-          "version": "repo-file-v1:sha256:851cbe7af65bb60efd37e0ecc16999402964c0c1b8145037d2016e7b4cd3f22e"
+          "resource": "repo://apps/desktop/src/renderer/state/useMcpBridge.ts#L308-L347",
+          "version": "repo-lines-v1:sha256:cbd1fc8911dca240865ebfce2659a5dc9e1e82526bf53c859aa335730c4a773f:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5YzEzNTkwNjY1NjMyM2QxYzVlYTQxNjU0ZWU2NmFmYjU4NWFjZGNmYWVhY2ExMjFkNWUzMGJmMTkzZWVkZDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk5MTUzZWRhOTM2MDk4M2Q4YWM1Y2Q4MTVjOGYxODE1YThlZGE5MjNlMjE1Yzg4YTZiNGUwNjAzYjQ1MzY2NTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc3ZTk3ZTkzM2MxNjRhMzk2MGUyZWIxNzVkZmZhZjA3NTY1YmI0OThhMjcxZDUyYzYxYjNhOWI0Y2Q0MWY2MGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRjMDUxOTdiMDE5YjBlNTgyMjY3NjE1ZWQ2MTQxOTc5YmI3ZmMxZTA3ZDM3NGVhNjllMjAxOTQwOTlkNDY2YTgifQ"
         },
         {
-          "resource": "repo://libs/evidence-mcp/src/server/toolset.spec.ts",
-          "version": "repo-file-v1:sha256:934b0524b2dc5278152a24be9d3120fe2d38aae0e0e7ddfb5af7047cb1829000"
+          "resource": "repo://libs/evidence-mcp/src/server/toolset.spec.ts#L273-L314",
+          "version": "repo-lines-v1:sha256:1c99d9eb0ae89cb3792315515456cb625cf458cff7de71da0685ad492a6b67a6:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0ODU4NGE3ZWNiYjcwYzAxMWY3NDU1ZjI1NjMzZjU1YmJiNjgzNGZlZjk2YjRjYzYzNTY5YWM0NTYyNGY3NzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUzZDhmOTE0MmEyMDQyZjc4M2YzYWExMmIwYjVlY2M3YWQzNjM1YjFmZWZmMGQyMmE0ZmZkYjQ2ZTRjNjdlZTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRjMGVjOTBlOWVhODMwODNhZGYzNjBmZGEwNjNiZjExN2U2MjQ2MGUzYzBhZmE4NDQ5ODU4NWM4Mjc1MDg5OTMifQ"
         }
       ]
     },
@@ -128,17 +128,17 @@
         },
         {
           "resource": "repo://docs/api-projection-v6.md",
-          "version": "repo-file-v1:sha256:50a360c597d28aacccdaa69d6091c15a0eb10131b9a62da2a4d4ef34a950e0b7"
+          "version": "repo-file-v1:sha256:5ce492b5a070ff3aac4be9788ef62435da6dda44cc5cf21191dcc6c1acc157f0"
         },
         {
           "resource": "repo://libs/evidence-api/src/delivery/routes.ts",
-          "version": "repo-file-v1:sha256:c75ef6ece96c2763a40557fb6467015e2102b00a89ee1ca1bd03a39d744cb9a1"
+          "version": "repo-file-v1:sha256:e0f8536e076c000f85fa1391ecd34390137f5074c0e5d7aa8d08a7bb45f6b810"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-18T12:34:41.390Z"
+    "at": "2026-11-20T12:30:09.424Z"
   }
 }

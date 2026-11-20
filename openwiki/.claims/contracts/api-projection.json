@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:c40f82fc223e168fac0f53b689a752e4776b9cd5f58c9c2881d4bbdbe879591e",
+  "pageVersion": "sha256:f22e7413cad4983ef89b367300395e28e34a6ddfebef878ef274311815583539",
   "claims": [
     {
       "id": "claim_1ccbd29e511e46929319ccbea00159be",
@@ -144,7 +144,7 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-api/src/http/hateoasWeaver.spec.ts",
-          "version": "repo-file-v1:sha256:c7894cb08086dc73e8ba101d1d4005ef5eb6d0ee3bb37cc413609ba0e5d764b8"
+          "version": "repo-file-v1:sha256:e199cf1b3169ab4bceaebed5ecb76382764b6b9e476aa161a2a3f79ad1fe5a97"
         },
         {
           "resource": "repo://libs/evidence-api/src/http/hateoasWeaver.ts",
@@ -310,7 +310,7 @@
         },
         {
           "resource": "repo://libs/evidence-api/src/delivery/routes.ts",
-          "version": "repo-file-v1:sha256:c75ef6ece96c2763a40557fb6467015e2102b00a89ee1ca1bd03a39d744cb9a1"
+          "version": "repo-file-v1:sha256:e0f8536e076c000f85fa1391ecd34390137f5074c0e5d7aa8d08a7bb45f6b810"
         },
         {
           "resource": "repo://libs/evidence-api/src/delivery/segments.ts",
@@ -345,10 +345,24 @@
           "version": "repo-file-v1:sha256:96797d5e3eb1442b1c66c40e7be370ce22da0df8ff91ccae37295f9e2f439099"
         }
       ]
+    },
+    {
+      "id": "claim_f87a2f69d5d64db39d5d04b4887132f8",
+      "statement": "API 路由只从已归属上下文的业务凭证生成；未定归属的凭证允许保留在草稿画布，不推断公共路径。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/delivery/routes.ts#L575-L614",
+          "version": "repo-lines-v1:sha256:19064eaee6b5e7f72430d68615020237901d65021193a5fbfd955b6f18393b6d:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgyNTc1YjYzZWI4NDM3MTA0ZWM2YjRhOWI4Y2RhYWViYjYyNzIwOGRmY2ZhOWVkNWU1ZThkMWJjNmY1NWE5MDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhkMzc3YWMzMGNhNjIyNWRmMzI1YWNmMjU0OWE2NTBhMGY0ZWRjZTM2NDgyNmJhNjY1NzEyYWIzZmI0OGI4YjQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI5NWZjZWI4MjhhNWI2OGIzZDA2MmQ3MDFjNTg2NjM1MmE3ZmRjZjMxYmQwYWQ0Zjk5NTVhNjAzOGExNTAzNmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUzZjQ5OGI2ZDllMDQ1MjVlMmVlMDRjMTgzYzAwZDhhOTIxZjlmMDc3NWE3YTUxMTVkOWMxOGYzMTAyZGQxOGYifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/delivery/routes.ts#L682-L703",
+          "version": "repo-lines-v1:sha256:96c710aab64a9a2641c007d0e2c076337374a92c18c476c3fc647364dd19de56:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjNmUxM2RkMTI5N2E3NTg2YzAwN2MzNWFkNmZiODZiZGI4YmY1MWU5NjljOTFjMTc2NDljMDRlNjk5ZWVkNzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVlYmZhYWU1OWEwZTJkNmYwZmMwMGEzZmIzYjYxY2ZhOWIzMjU3ZDA1ODU5MmQ2NGY3NDkwNGQyYzQ1ZDVjODQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAyNjJhODM0ZDNkNDg0OWE2YTNlNTQ2MDc4MjI5NjUyMzgyMTUwMzZhMjkyZWE4NzU2NzQ3YmQwYmMxMzY5ZWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3MGJiZGZkYzU5ZjJmNDJhMTA1NjY1OTcyNjc5M2Q2MTdiMDQ4ZWFkNTY0MTBiMDUxMzZlMGU4NmNjNmY4NGYifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-18T09:45:40.969Z"
+    "at": "2026-11-20T12:30:09.424Z"
   }
 }

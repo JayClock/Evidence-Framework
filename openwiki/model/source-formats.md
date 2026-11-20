@@ -5,7 +5,7 @@ description: .evidence/fm树与单文件Bundle的纯格式/Node I/O分界、非�
 tags: [adapters, files, bundle, serialization, digest, churn, model-io, cli]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-17T06:43:02.055Z
+    at: 2026-11-20T12:30:09.424Z
 sources:
   - id: openwiki-source-934367cee5dc2ef07c9fb835
     resource: repo://apps/desktop/src/main/modelWatcher.ts
@@ -39,14 +39,16 @@ sources:
     resource: repo://libs/evidence-model-io/src/legacyRemoval.spec.ts
   - id: openwiki-source-7e8a4154b74359d73d641f4c
     resource: repo://libs/evidence-model-io/src/modelCli.ts
+  - id: openwiki-source-52858d6130375e8776a048e7
+    resource: repo://libs/evidence-schema/src/ast/document.ts
   - id: openwiki-source-5b54a58d1b51cd490b0e7162
     resource: repo://package.json
-generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
+generated: { by: "pi", at: "2026-11-20T12:30:09.424Z" }
 ---
 
 # 源模型、Bundle 与持久化
 
-一份DomainModelDocument有两种载体：Git友好的`.evidence/fm/`（model.json + entities/relationships/rules），便携`*.evidence.json`（fm_bundle envelope+manifest+三数组+可选readme）。内联 examples、实体 sourceSnippet 与 manifest.sourceDocument 随树/Bundle 往返；旧validation/scenarios/instances**拒绝而非兼容读取**。
+一份DomainModelDocument有两种载体：Git友好的`.evidence/fm/`（model.json + entities/relationships/rules），便携`*.evidence.json`（fm_bundle envelope+manifest+三数组+可选readme）。内联 examples、实体 sourceSnippet、属性 source/timeRole 与 manifest.sourceDocument 随树/Bundle 往返；旧validation/scenarios/instances**拒绝而非兼容读取**。
 
 ## 格式代码不碰磁盘
 
@@ -58,7 +60,7 @@ model-core/adapters的modelSourceFiles/modelBundle负责命名、parse/stringify
 
 parseModelSourceFiles对畸形JSON、非对象、unsupported type、重复ID、缺manifest给path issue而非throw；无实体model.empty区别可接受blank start。validate:true追加strict findings。现在遇validation路径明确legacy issue，不能当无关文件悄悄丢弃。
 
-parseModelBundleText要求对象、正确type；schemaVersion若出现必须5.0，缺失仍可读。错误item type/重复ID/非string readme/未知字段给issue，可读部分保留。validation是明确legacy source issue；serialize/投影旧validation文档直接拒绝，防pack后丢测试。Bundle serialize始终发type=fm_bundle/schemaVersion5.0，保留readme与实体内examples，不再带validation数组。
+parseModelBundleText要求对象、正确type；如有 envelope schemaVersion 必须为 6.0，缺失仍可读；内部 manifest 必须显式为 6.0。树 manifest 版本不符同样报告 `model.schema-version`。错误item type/重复ID/非string readme/未知字段给issue，可读部分保留。validation是明确legacy source issue；serialize/投影旧validation文档直接拒绝，防pack后丢测试。Bundle serialize始终发type=fm_bundle/schemaVersion=6.0，保留readme与实体内examples，不再带validation数组。
 
 ## 保存、打包、解包
 

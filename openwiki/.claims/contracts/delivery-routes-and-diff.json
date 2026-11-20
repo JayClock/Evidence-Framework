@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:8973bc927d805c1a1daff6ae3913a711a20453509e569a2a1b43f04ba6cc40b6",
+  "pageVersion": "sha256:049e3ca50999344d81aeba9d689caba790742ae458244d67c5c79aff5ad05c33",
   "claims": [
     {
       "id": "claim_5a482b78f8f34865acfedfb1f251ddba",
-      "statement": "每 Context 一个稳定 service ID；公开 URI 与 Context 名解耦，service 的 routePrefixes 和精确 routes 从最终 routes 计算，服务/links 排序稳定。",
+      "statement": "每 Context 一个稳定 service ID；公开 URI 与 Context 名解耦，routePrefixes 与精确 routes 从最终路由计算。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-api/src/delivery/segments.ts",
-          "version": "repo-file-v1:sha256:b7d097a409699fc39cae2b216912a436b767cff1ae8e84a8faa5115b46416d43"
+          "resource": "repo://libs/evidence-api/src/delivery/modelDelivery.ts",
+          "version": "repo-file-v1:sha256:94bbc77cf1fec0be91f0252c9f3119f53bcc75816db9c3d44de67ac82a85bd01"
         },
         {
           "resource": "repo://libs/evidence-api/src/delivery/topology.ts",
@@ -56,7 +56,7 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-api/src/delivery/modelDelivery.ts",
-          "version": "repo-file-v1:sha256:98815e906f0a8eeaf1f83990545b56691c59b652af26c1be960812c7ebfbdc65"
+          "version": "repo-file-v1:sha256:94bbc77cf1fec0be91f0252c9f3119f53bcc75816db9c3d44de67ac82a85bd01"
         }
       ]
     },
@@ -66,17 +66,21 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-api/src/delivery/routes.ts",
-          "version": "repo-file-v1:sha256:c89e334df9b5c064ebab899b5ea150f3b9d7b53ead5fc35112e84e3d685cc87b"
+          "version": "repo-file-v1:sha256:e0f8536e076c000f85fa1391ecd34390137f5074c0e5d7aa8d08a7bb45f6b810"
         }
       ]
     },
     {
       "id": "claim_e3a4221b6e4b4fe0810db699154f2e50",
-      "statement": "pre-contract 具名征询为业务根，proposal 有 references 时嵌套在征询下；domain thing 根只读，独立 other_evidence 具有 id 属性时可平铺只读。",
+      "statement": "征询是业务根，proposal 可按 references 嵌套；domain thing 根只读，具有标识和上下文归属的独立 other_evidence 可平铺只读。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-api/src/delivery/routes.ts",
-          "version": "repo-file-v1:sha256:c89e334df9b5c064ebab899b5ea150f3b9d7b53ead5fc35112e84e3d685cc87b"
+          "resource": "repo://libs/evidence-api/src/delivery/routes.ts#L480-L580",
+          "version": "repo-lines-v1:sha256:8cd0ad25336063babb8399a1b5384ff80db928b5e9d332c37a5806b09b5c8ccb:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2Mzk5NjNjZTg1OTBlMGQwYmQ5ZGY2M2EyOTUzNzQ0YTBmYmI3ZDMzOTI4YWEzZjZjNWQwOGE3ZWM3ZDNjNjc3IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmZWY2OTAwN2E3ZTc1Y2NkYjJjMTllZmE5ZDk1YzQzYmY3ODdmMzNhMmI5YzgyNjVjNGE1Y2U2NDJmZTZkYmVhIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlOTVlODMyZmQyNmU2YTFjZjhmZDllNjZkZDViOGEwMzFlNGQyZmNjN2JlNTFmNmIyZWE3ZmQwODExZjA0NWVjIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI5MmJkNjBlZmRjNjI3ZDQ2MGVmMTE5NzNiNGZhMjEyYTFjNjdhOGI3OTVkOGNiOWZkMTY1ZDc4YTQzOTMwMTViIn0"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/delivery/routes.ts#L680-L710",
+          "version": "repo-lines-v1:sha256:ea6110641eb0602499bf390a78908ee27e88abf28c79ff0b6f9e5bd319ca1b08:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3NTVlMjNmN2RhOWNlN2JiYjIyYjIzNTU2YWJkNzM3NGRlNGU5NGU4OWY2Y2Y5MDUxNjViNDg2ZDBkZjYwNjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1ZjFlNGYyNTVmNDI1YjY4MzRmZDUxMDAzMmZjYzJhZThiY2M2MmRjNDhmYThhNWRkYzA2NWRjM2E1Zjc0NWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ4ZGFhZTFjOTEzOWFiNTFiM2Y5YzRjMWExODk3ZmFjZTM2OTUyN2VlNWNlY2VmNWNhYjhiY2NhNjE0NzdmOWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -86,7 +90,7 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-api/src/delivery/segments.ts",
-          "version": "repo-file-v1:sha256:b7d097a409699fc39cae2b216912a436b767cff1ae8e84a8faa5115b46416d43"
+          "version": "repo-file-v1:sha256:17f3f0104f9e1a173190e539b0bc203a6b58e3c927a41149f16cb48adc351342"
         }
       ]
     },
@@ -96,31 +100,35 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-api/src/delivery/addressing.ts",
-          "version": "repo-file-v1:sha256:c68f3e683d9e3f3b862b01ef1fc03e75d8b16304e04371b43f81e1c29b8bf151"
+          "version": "repo-file-v1:sha256:d47c9e73b630b05d2b1f17e1d0ddfd076ff1ab5acf03c30f571a5100e65baa2b"
         },
         {
           "resource": "repo://libs/evidence-api/src/delivery/routes.ts",
-          "version": "repo-file-v1:sha256:c89e334df9b5c064ebab899b5ea150f3b9d7b53ead5fc35112e84e3d685cc87b"
+          "version": "repo-file-v1:sha256:e0f8536e076c000f85fa1391ecd34390137f5074c0e5d7aa8d08a7bb45f6b810"
         }
       ]
     },
     {
       "id": "claim_e33a40d5bc75461489d0aa269af21bab",
-      "statement": "callerRoles 受责任角色及真实 party plays_role 限制，空角色仍保留 internal 路由，不是删除接口。",
+      "statement": "callerRoles 以真实扮演者和责任限制访问；异步请求方只额外获得关联的同上下文确认读取权限，显式第三方回调角色仅被授予确认写入。无允许角色时保留 internal 路由。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-api/src/delivery/addressing.ts#L40-L77",
-          "version": "repo-lines-v1:sha256:e07b547fbd987b7f5cef3db49eed96ed2ca0e02194ba299e0b3f2b9721d85ddf:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY4M2MwNjliOTljYzgzOGYwOWE3ZThjZDVjM2I3ZDdjNzA0M2Y0ZjJkMDdjZGNmNjZlNWFjNTllZTdkNzgwZDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJiNzMxN2ZjM2FiYWNkMWRhMDMwMjQwNDgxZWM5ODcxNGU4ZDllMDI0NGNiNjM1OWQyZWMxNzVjMGJiYWE1ZTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAifQ"
+          "resource": "repo://libs/evidence-api/src/delivery/addressing.ts",
+          "version": "repo-file-v1:sha256:d47c9e73b630b05d2b1f17e1d0ddfd076ff1ab5acf03c30f571a5100e65baa2b"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/delivery/routes.ts#L319-L342",
+          "version": "repo-lines-v1:sha256:8ffb84c4071187000cd9e873ac24c98857fa5057ea249160cccd5776249c5e0f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA0MDkzOWYwY2RhODAyZjdjODY4NzRlOWQzMThiNThmYjllOWFlYjY3MDc1NDVmOGQ2MTNiOGU4NDJhYTMzNjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiMTNjMDA2Y2I5YzYyYzk1OGM1MjhjNzY5MGNlOWMxZDJhYTA1OTlhNmExNWMzMzA4MjRhMTI0ZDY4MWI0MjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZkOWFjYzQ4OGQ0Y2I3Yzk4ZjEzNzlkYzllMzYzMTMwMDg0ODBkZGNhNmRjYmEyMzMxZmY2NWI4MzkyYzc0OWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQwNGMxNDAwNTBmMGM5NGNkMGI4YmQ4NDQ0NjExM2QyNjQ0MGIzNGQyYjMwOTNlY2E4ZTE1ZDA2ZmEzMzM1ZmQifQ"
         }
       ]
     },
     {
       "id": "claim_de304ef32b6c4e759797cdf3a14aad37",
-      "statement": "字段先 derived 后 service-time 最后 caller；即使 derivedByRuleRef 悬空也不能变成客户端输入。",
+      "statement": "字段先 derived、再以显式 timeRole 判为 service-time、最后 caller；悬空 derivedByRuleRef 仍不能降为客户端输入。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-api/src/delivery/fieldOrigin.ts#L10-L35",
-          "version": "repo-lines-v1:sha256:f6e277e74bfcf29fecaf77eb43873f66d13c9287b2333cb53d689c01126729d3:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ2ODJiNjQxMDQwMTU2ZjI4Mzk3YzQ3NDQ1NmIzYzVhYzk2MDc2ZGJmOTUxMTdiYjA3NTg1YzU5NDZmOTQ1ZGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIyNjdhZGVmZjI4YTQ3YmY0NzI1OTE2OTk0OGRiYjZmOTE3OGFlMzBiNWFkNjc0ZjdkNWRiNmZmMzQ1N2IyNTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://libs/evidence-api/src/delivery/fieldOrigin.ts",
+          "version": "repo-file-v1:sha256:8b72ac85064b326fba3be45b97f7dee65f2daa0150012c3a71848e34b4df6509"
         }
       ]
     },
@@ -130,7 +138,7 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-api/src/delivery/modelDelivery.ts",
-          "version": "repo-file-v1:sha256:98815e906f0a8eeaf1f83990545b56691c59b652af26c1be960812c7ebfbdc65"
+          "version": "repo-file-v1:sha256:94bbc77cf1fec0be91f0252c9f3119f53bcc75816db9c3d44de67ac82a85bd01"
         }
       ]
     },
@@ -143,7 +151,7 @@
           "version": "repo-lines-v1:sha256:69db24c5ca44723fe20482296ea72b315bcd4b272ce7d65fd84916b19dde460d:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3OWUwODRlOTQ2ZGNkYmUwYjdmOWNiYzBiNmQ2Yzc2NjAzYjJmMWNkM2JmMDViOTNmOTIxMDc4NDBhY2E0NDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRhMWYxOTBmMTBmNmY0ZDVkNjM1ZTBhZGRjYTY0OTFhMjdmNzNlMzJkZWQ2YTcxMDA1NDcwZGU4NzhkYzMyOWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAzNzA3NDhlYmI4YWY2MmZjNWRjNGQ0ZGY1NGVjMzMzM2MyNzE2NWI4YjQ0MDQwNGY0NDJhNTcyNjljZGI2NGMifQ"
         },
         {
-          "resource": "repo://libs/evidence-api/src/delivery/modelDelivery.ts#L644-L667",
+          "resource": "repo://libs/evidence-api/src/delivery/modelDelivery.ts#L658-L681",
           "version": "repo-lines-v1:sha256:c5f03542d6f2cd528affb93e7ae7b27c987e0b201b16f1fde9806695b0d75352:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1YTYyZDUwZDlmYjAxZDA1OWYyODBkYWI4OGJlMzYyZjk3N2Y5NDczMDBiNjg3NDRjMjVkNWFjZGVmNDk5MjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFhMTYyM2IwOWMxMmExNGQxNTFkMzZmNDg5NDE3ZDlmMmEwNWVjNjU1MDU4YmIyZjkzZGUyMjZiOWRhYzhkODgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMwMDY4NThkMzlhY2FmMmI5NGJiZTBmZjE5MDNmZDU2YmM0NzZkODFmYWI5Njc3ZTQ0YTY4NzZlYzRiMDA0NWMifQ"
         }
       ]
@@ -168,27 +176,31 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-acceptance/src/commands.ts",
-          "version": "repo-file-v1:sha256:5323fc399254a538f75ecc034a6f0796686aa46572f84699e3043c16e59c99e8"
+          "version": "repo-file-v1:sha256:aa56e72bc6408bcb4a54d2fa88a1c2275f2ed3c7e46944af5f6be9e49613ee9d"
         }
       ]
     },
     {
       "id": "claim_0ae58825767948c882c80995a01b0689",
-      "statement": "live preview 分析内存当前/基线，返回双摘要、原生差异、覆盖/issues/bindings，无 blocking 才可导出草稿。",
+      "statement": "live preview 分析当前内存模型及基线，返回双摘要、原生差异、覆盖、问题与 bindings；只有可导出时生成实际文件预览。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/deliveryProjection.ts#L147-L177",
-          "version": "repo-lines-v1:sha256:8ac609c3071633ea1068618bcd71e5e0f83f13a2a774e79a9644535f8565047d:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjZTQ3YmJlM2M5OGFjYmY3Zjk4MTUwMjQ5MmQyOTBhMWM3MmRjYjMyMjUxYzc2MDc1ZDgwZjY1Y2ExYzI5OTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyMTI5YzI3MzUyYjQ5NTU0OGIwNzFhZTM0YWI5MDgxMTcyODczNDI4ZjZmODdmNTRiNTgwZTUxNTNjOWFhMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcxZDRkZTFkYTRmZmZmZjU1NmM3OTQwZjNlOGQxNzk1MjBjODNjZGQ5MWM1M2M4NjJmYTkwNWNkYmVmOTJjZTkifQ"
+          "resource": "repo://apps/desktop/src/main/deliveryProjection.ts#L177-L215",
+          "version": "repo-lines-v1:sha256:581d0a83f8d879baaabb512d975d9dcc6dd6bcd268efc2aefa9fa074ccb12057:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjZTQ3YmJlM2M5OGFjYmY3Zjk4MTUwMjQ5MmQyOTBhMWM3MmRjYjMyMjUxYzc2MDc1ZDgwZjY1Y2ExYzI5OTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE4YTkxNzU5NzJmZTE1ZTJhOTY0MWFiMTMxZjU3MWU2YzdjYWJjYTA2ODM3NjJlYmE1ZjIzNTNlNDgzYzNkNTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg5ZTBiZDk2OTY1MTliMTRmMTcxN2FiMjI0MjBjZjgzYjFiNjU4MDAwZmViY2M1YzA2OWU4ZDgyNDU1MzZmNDkifQ"
         }
       ]
     },
     {
       "id": "claim_8bccfa373f6d4d038b260fdf5fe9650c",
-      "statement": "live export 在 picker 前冻结并分析，拒绝过期 digest/block，输出交付树及 draft-status/releaseAuthorized=false 和 changelog。",
+      "statement": "live export 在 picker 前冻结并分析，拒绝过期 digest 或阻塞诊断，写与预览一致的交付树（含 changelog 和 releaseAuthorized=false）。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/deliveryIpc.ts#L113-L172",
-          "version": "repo-lines-v1:sha256:2ea86793ba1bb83484bcdc3765377a582e62ed3088ded01e33bad9d09be17a63:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1ZGZkMDMxMGU3MjQzNTU3MjI0NTM5MjY4YWY1YWI5YzcxNjU3Yzk0MTE1ZGY2YmUyNmM3MDc2MzAyNTQ3NjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5YTdlNjUwNDc0YWVmNGU5Zjg1MDI0MGY5MzgzMzkwNzNiMWRjOTQxNTg2OTI0NmM5YWM5NmQ3ODdkZDY0ZDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEzMGM1OGE5MTcwNWFhODYzZTdmZDIzOTJkZGE0ZGNhYzM0YjQwODQ0ZjQ2NzgxZGNjOWI2M2VlYTM3ZmRjMmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA4Nzg0YmRkMzZlYzExNGI3ZmY0MjI5NzcyOTEyNThmNjk2MDRmYjQ1MWI3N2E3ZjVlNWZmYjIzNjE3Nzg4NTUifQ"
+          "resource": "repo://apps/desktop/src/main/deliveryIpc.ts#L99-L150",
+          "version": "repo-lines-v1:sha256:12e1e0592a7669158173b1e1d7b856f09d0d08a50725aa77983de604d13ee42b:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc0YTBkNDBhNWIxMGJjMjIwM2Y2NmQ0MzkxZTc4MmZlYzg5ZjI4ODRkNWZhZDYyNmJkYjlhNjE5MDIzNDE5MGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1ZGZkMDMxMGU3MjQzNTU3MjI0NTM5MjY4YWY1YWI5YzcxNjU3Yzk0MTE1ZGY2YmUyNmM3MDc2MzAyNTQ3NjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBiOWExODM4ZjJkY2YzMzJmZDkzYTNmNjNlN2I4ODM4ZTMwYzQ0ODlmOGI5MDU4YmMyN2U1NzQ0NzdmNGIyYTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ4Yjk0MWE3ODVjNmEzMjM5YmU5ZWQzYmYwZjI3OTEyMzA2YTVmMGI4YTE0NWNkY2FhNjUzNDE5YTYzZDZmYWQifQ"
+        },
+        {
+          "resource": "repo://apps/desktop/src/main/deliveryProjection.ts#L144-L200",
+          "version": "repo-lines-v1:sha256:1ec7b0eb7cb77d13f417c9634012a532781cd5ca3b820f17f87fb8a911f9a5aa:eyJzZWxlY3RlZExpbmVDb3VudCI6NTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjODAzMTcxNWY0NGE4NGMxN2E2M2E1MmEyMTY0YzliOTYyMTE5ZTExZmM4M2JkODNiNTdmMzI5OWJkYmFlNGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVmM2I4ZGEyZjA2ZjczMTFiNTlhZjFiYWFjMzJhNzEwYzQyNDRiMmJhNzAxMmVhNDE3NTFlZTNhNThhN2JjZjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZlMTI1MzIzODcwY2FkMGJmOGIzZGVhNTFiYWNmNTY2YWJmYTgzODdkNWQyM2VkYzI0NDlmMmU4YWFiZTEzNmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNjZjVlNGE5MjNlN2UyNjQ2MGQ4MjMzMWVmNWRhZWZlMmEzODlkZWJlMDYyNDZjZWQ2ZDUxZTIyNTQ0NmMyM2QifQ"
         }
       ]
     },
@@ -197,11 +209,11 @@
       "statement": "The saved-project path previews and exports by re-projecting the sources on disk through `readDelivery`, which refuses a model with errors, writes only `deliveryFilesOf` output, and suggests `<project>/delivery`; unlike the live path it carries no digest handshake, so a model saved between preview and export is exported as it now stands on disk.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/deliveryIpc.ts#L176-L215",
+          "resource": "repo://apps/desktop/src/main/deliveryIpc.ts#L157-L196",
           "version": "repo-lines-v1:sha256:de0d9d52b415fa7707af54113651632f058ae0c9f090d8c1f14bc168f3734159:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1Y2RlZjgwODVhZTc0YWI2MzZkNjQ1OWY1YzZkNWZiZmIwZGIyNjRmMWIwZDc1YmFjNTE5YzliM2Y2NzE3YWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA4Nzg0YmRkMzZlYzExNGI3ZmY0MjI5NzcyOTEyNThmNjk2MDRmYjQ1MWI3N2E3ZjVlNWZmYjIzNjE3Nzg4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/main/deliveryProjection.ts#L110-L131",
+          "resource": "repo://apps/desktop/src/main/deliveryProjection.ts#L112-L133",
           "version": "repo-lines-v1:sha256:54c59662643b739503abccd5d7c8d1c024c542407db2dbab49530d2b7ed5dc54:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIzNzg3ZDM0MDkyMzU3NWIxZDE5MzgwZTYzMzMzZjQ1MDZkZGY1ZTE5N2VjMWRmZGVhZjU4ZTdlMmI2ODgxYjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNjNWRmYTRiMWRjYzY3NDczMTc5ZDBhYzhjZWQyNDAzOWViYjhkMDkwNTYwOTQ0NWVmODc3NTU3ZGQ3NjIxMzIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc5YTI2NDJiODJlYmYyMDJiNjAwZjgzMGU4ZWYzNmUyYzE3OTgxYjFjYjdkMDU3YjY5YjQ5MWIwYmYwYzUyMDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJmMGU3YzhhNGQ3N2Y4Yjg2ZDlmMGZhNDc0ZTgxMzYxMjI4NWY4YjMyN2VmNWIyMTdhN2ZhNWRlYzNiMGJlMTMifQ"
         }
       ]
@@ -216,21 +228,17 @@
         },
         {
           "resource": "repo://libs/desktop/feature-delivery/src/state/useDeliveryHub.ts",
-          "version": "repo-file-v1:sha256:76c9b7ce7f57989d8ab9a7eb179344e5f2c47b780c5a934c065850363bec6f12"
+          "version": "repo-file-v1:sha256:dd1fa5dd696b125ac3c281321a5209dabc7465a899e6c7042656157e7e1ebd4c"
         }
       ]
     },
     {
       "id": "claim_1e68d04deabb4989950b04aff1c17cf3",
-      "statement": "DeliveryHub 分全览与增量页面，展示边界/路由和原生 oasdiff changes/changelog、双摘要、coverage 与警告，不使用旧字段 shifted taxonomy。",
+      "statement": "DeliveryHub 以产物文件为默认视图，另有契约全览与原生 oasdiff 增量视图；过期或不可导出预览不能导出。",
       "evidence": [
         {
           "resource": "repo://libs/desktop/feature-delivery/src/components/delivery/DeliveryHub.tsx",
-          "version": "repo-file-v1:sha256:9fd8a06128c4ba51a2f2a08b444cfafae49c0a118146581af0a3eb2abbece1ea"
-        },
-        {
-          "resource": "repo://libs/desktop/feature-delivery/src/components/delivery/IncrementalDiffPanel.tsx",
-          "version": "repo-file-v1:sha256:e58d1cfbb8b9a53cf6b4c91c0a6a80b3a9a0b179f79bb16c2048a30a22854afe"
+          "version": "repo-file-v1:sha256:27244c103ff331cbf648d03740edf452f92ec50ed5b92967f1e32fd5d2a33bc7"
         }
       ]
     },
@@ -258,13 +266,31 @@
         },
         {
           "resource": "repo://libs/evidence-mcp/src/server/toolset.ts",
-          "version": "repo-file-v1:sha256:1f410babf84280cf300e889b5733d80a553eb785384c7d499928cf8cc798d326"
+          "version": "repo-file-v1:sha256:a692bd6c34d54d0c6b5b876c2836e5817006c1b15ec7911c13386e9fcfcf897e"
+        }
+      ]
+    },
+    {
+      "id": "claim_d61717bfe1a34820a1301e1d6000d8c6",
+      "statement": "异步履约请求可返回 202 和查询 Location；共享确认的请求体要求非空且元素唯一的 request_ids。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-api/src/delivery/modelDelivery.ts#L287-L314",
+          "version": "repo-lines-v1:sha256:39b6164607bd637734bd6ea56b3d16d7546ad7746ac9bce2fd2cbc2d45b9765f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJjODM5MDYzNTE4ZDkyYzFlNDhjYjE2NjIyM2Q4NDI5Yjk1MmQ2YWQ4OTlhOTlkNGEwOWI1ZmE1ZjJlY2ZmOGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5NWZhMGYxMTE3YjVlYTQwNDM0MTQwZGRlMWEzNDBjNzIwZGRiZjMyNjIxMmUxOTE4MzhkNGIxNTZkMzE2YmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIwMGU0NDMzZTZiMThmOGQ4MDJhNDkzZWZkYWNhYjZkODE3OGM3Y2Y2YzQ0OTI2MDRkYmE2N2NiY2EwM2ZmZmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMyOTQ3MWNiYTY4OTNkZWQ4NGM4MTI5MWMzZDBiNWE3MWQ2ZDZhNGMyMDI5OTM0ZmMzMzBjZWFlYTEzMDgxOTAifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/delivery/modelDelivery.ts#L361-L391",
+          "version": "repo-lines-v1:sha256:3c66649ec4b9770228fc869a95d627232214e042b3a54ae2477bf886bd67f7b6:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAyN2JhMmZiMGUzZjBhZGZjZDZmMTEzZDc0YWZiM2EyNGFhZjhlMjA1NTRhYmVmOThhODQxODAxOTcxNGYzMjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5MzRhNjc3MDg1ZGUwMDNlZjQ2NzcyYjY1NGMyZTU0M2VkMDc3MmM1NWMzZmJjYmZkNzVlMmNiMTBlMTc4ZmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM4NjY2MTk4NjBmZTQzMmRhMmI5OGZjNGFiZGM1ODBmNmFjZDNkZTMxNzllODI4MTA2MGVkNDFjOWFlNmUzZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRiNTBhNGU4YjEwYjdiNzBhOGMzYzAyNTg2M2U2NDc2N2MxNmE2YzQ4YWE0NTA1NjY2MDczNjU5OTRmMWE4NDEifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-api/src/delivery/routes.ts#L247-L316",
+          "version": "repo-lines-v1:sha256:9387cb9e4a54e920eb169897b25f4899b17123502d117de641a16d2fbc9cf88a:eyJzZWxlY3RlZExpbmVDb3VudCI6NzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY2OWYyMTJiNmQ3NzQ1Njc3OGI5NGNmYTg1ZGYxZmU1YWFkNTVkNjE4OGM1N2EwOThjYzZlMGI3YmZhZDhiNTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg4YjQ2YmQ2ODI2ZjU4MWQyOGQyZGY1NjUzNWVjOTMxYWZiOGQ3MjJkMmQ0YzU1ZTc1NmQ4ZWIzYTBiZmMwODAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIwZWZhODI1ZGUxYTJiZDc3YTljMDgyOTEzZDJmODc3MzhiYzgwNDM3ZTVlNzk1OGNjNTcxMWU1OTQxZTlkODciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxOGU4MzI5ZjExOWE5NzJiYjZlZTA3ZTUwZmRkZTE0ZDhmZDc1ODhlMmZlMjJjYjYxNzUwN2YxNDI2ZDc5MjMifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-17T06:43:02.055Z"
+    "at": "2026-11-20T12:30:09.424Z"
   }
 }

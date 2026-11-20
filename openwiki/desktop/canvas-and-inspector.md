@@ -5,10 +5,12 @@ description: headless ELK 的 compound 图与正交线路如何异步投影到 R
 tags: [canvas, layout, elk, react-flow, inspector, cel, renderer]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-17T06:43:02.055Z
+    at: 2026-11-20T12:30:09.424Z
 sources:
   - id: openwiki-source-2ff5ad29deef1166ab3731d6
     resource: repo://apps/desktop/src/renderer/components/canvas/CanvasFloatingHud.tsx
+  - id: openwiki-source-9459ee1a8fc917f2d94619ce
+    resource: repo://apps/desktop/src/renderer/screens/EditorScreen.tsx
   - id: openwiki-source-f0f06a0981a7ca97c510b44d
     resource: repo://apps/desktop/src/renderer/state/useEditorSession.ts
   - id: openwiki-source-50f41d92dd610018f85692d8
@@ -31,8 +33,6 @@ sources:
     resource: repo://libs/desktop/feature-canvas/src/useReactFlowAdapter.spec.ts
   - id: openwiki-source-6d874554d1c41740fadb809b
     resource: repo://libs/desktop/feature-canvas/src/useReactFlowAdapter.ts
-  - id: openwiki-source-e2b5a1cbd3a170a50d182ec0
-    resource: repo://libs/desktop/feature-inspector/package.json
   - id: openwiki-source-082c14eef6df0c4c3ab791f2
     resource: repo://libs/desktop/feature-inspector/src/inspector/ApiFieldBadge.tsx
   - id: openwiki-source-000b39f31699cab4b8d68ff9
@@ -41,8 +41,6 @@ sources:
     resource: repo://libs/desktop/feature-inspector/src/inspector/cel/CelCodeMirrorEditor.tsx
   - id: openwiki-source-dee623b77a0e08e0c4e4a734
     resource: repo://libs/desktop/feature-inspector/src/inspector/cel/celCompletion.ts
-  - id: openwiki-source-49d65fe1a848743b22a1f221
-    resource: repo://libs/desktop/feature-inspector/src/inspector/cel/celLanguage.ts
   - id: openwiki-source-2dc78a0ad51effda9e61ea16
     resource: repo://libs/desktop/feature-inspector/src/inspector/DerivedRuleSection.tsx
   - id: openwiki-source-2705304ded6d7ebcd7c41094
@@ -53,10 +51,6 @@ sources:
     resource: repo://libs/desktop/feature-inspector/src/inspector/KeyDataProvenancePicker.tsx
   - id: openwiki-source-329e2fdd1b963b693d975c9a
     resource: repo://libs/desktop/feature-inspector/src/RightInspector.tsx
-  - id: openwiki-source-e455638d22c6c7e96fc2208a
-    resource: repo://libs/desktop/ui-kit/src/components/code/celLanguage.ts
-  - id: openwiki-source-5fd24ccc578cf591f24df968
-    resource: repo://libs/desktop/ui-kit/src/index.ts
   - id: openwiki-source-fccb570e109bfa43112e2a49
     resource: repo://libs/evidence-canvas-interaction/src/adapter/domainToElk.ts
   - id: openwiki-source-a9f2ab41a3c0d7cc61e3fa58
@@ -65,8 +59,6 @@ sources:
     resource: repo://libs/evidence-canvas-interaction/src/adapter/elkToLayout.ts
   - id: openwiki-source-fc3115a3d9d8f16505989d87
     resource: repo://libs/evidence-canvas-interaction/src/engine/layoutEngine.spec.ts
-  - id: openwiki-source-848e24844e664baadc8329eb
-    resource: repo://libs/evidence-canvas-interaction/src/engine/layoutEngine.ts
   - id: openwiki-source-abc633034c7c8d642614f964
     resource: repo://libs/evidence-canvas-interaction/src/engine/swimlaneLayout.ts
   - id: openwiki-source-0ae760ad3a5c96a106b90cc0
@@ -77,11 +69,13 @@ sources:
     resource: repo://libs/evidence-canvas-interaction/src/selection/contextScope.ts
   - id: openwiki-source-40ed2cf21089af3de30a0699
     resource: repo://libs/evidence-canvas-interaction/src/selection/hoverHighlight.ts
+  - id: openwiki-source-33794ec4dbf0b0b8815e5e81
+    resource: repo://libs/evidence-schema/src/ast/lifecycle.ts
   - id: openwiki-source-765a818dd2c076288d6080cc
     resource: repo://libs/evidence-schema/src/inspector/groups.ts
   - id: openwiki-source-f7425e64fedf4f34deb929e7
     resource: repo://libs/evidence-schema/src/inspector/registry.ts
-generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
+generated: { by: "pi", at: "2026-11-20T12:30:09.424Z" }
 ---
 
 # ELK 画布与属性检查器
@@ -96,7 +90,7 @@ generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
 
 topology 模式把所有有效 relationship，以及每 fulfillment request→confirmation/proof 成对边交给 ELK；无端点引用交由 schema 报错，布局跳过它让有效草稿仍可见。已移除旧 fulfillment row/frame、reserved lifecycle lanes、shared band 与 sharedResultIds 算法；同一实体只建一个 compound node。
 
-独立 swimlane 模式按七个业务里程碑、局部责任角色泳道和补偿轨道布置，共享 Context 所有权与相同 layout DTO；引用关系确定因果次序，环用稳定排序保持可见。useGraphLayout 同时按 graph/viewMode/layoutMode 丢弃过期结果。
+独立 swimlane 模式按邀请投标、投标、合同签约、履约履行四阶段布置；Context 依其所含凭证跨阶段取范围，阶段内按引用保留因果次序，环用稳定排序保持可见。与 topology 共享 layout DTO。useGraphLayout 同时按 graph/viewMode/layoutMode 丢弃过期结果。
 
 elkToLayout 保留 local box 和累积 worldBox，把 edge.container（或所在 node）的坐标加到 ELK sections 上，按 incoming/outgoing 链连接、去重相接点；缺 route、未知 container、断开的 section 显式拒绝，不用手写 midpoint 猜线。返回节点/Context 的索引、关系正交 routes、独立 fulfillmentPairs、显式 roleRefs/responsibleRoleRef 的责任 links、bounds。
 
@@ -106,15 +100,15 @@ elkToLayout 保留 local box 和累积 worldBox，把 edge.container（或所在
 
 adapter 父 Context 先列，使用 **local box + parentId/extent=parent**，free node 是 root 坐标；另存 worldBox 供范围/诊断。显式 initialWidth/Height 与 invisible source/target handles 让首次测量前边就能渲染。关系保留世界坐标 polyline；pairLink 直接使用 ELK fulfillmentPairs，不再从旧 frame 合成线。
 
-CanvasViewport 经 ReactFlowProvider 管理 pan、pinch、marquee/fit animation，非业务模型拖拽编辑器：不可 draggable/connectable，wheel zoom 关闭，pane click 清选区。范围0.1–2现在在 renderer 配置，旧 viewport math/fit/boxSelection 模块不再是库 API。partial marquee 只回报首个 entity，Context 是不可交互底纸。
+CanvasViewport 经 ReactFlowProvider 管理 pan、pinch、marquee/fit animation，非业务模型拖拽编辑器：不可 draggable/connectable，wheel zoom 关闭，pane click 清选区。范围 0.1–2 由 CanvasViewport 配置，旧 viewport math/fit/boxSelection 模块不再是库 API。partial marquee 只回报首个 entity，Context 是不可交互底纸。
 
-fit/scope/density/focus/zoom 由 token 驱动，避免重渲染重放快捷键，bounds 至少1×1；scope 或密度变化清 hover 并重框。HUD render prop 只暴露 zoom/fit/reset/grid/minimap，app 叠加视图/密度/分屏。controls 带 capture-hide，层级低于 activity drawer；三种背景 dots/lines/none、折叠 radar 与业务 legend 不修改模型。
+fit/scope/density/focus/zoom 由 token 驱动，避免重渲染重放快捷键，bounds 至少1×1；scope 变化清理 hover 并重框；同 scope 布局更新保留视口语境，新建凭证可另行请求聚焦。HUD render prop 暴露 zoom/fit/reset/grid/minimap，app 叠加密度和清选区等工作区动作。controls 带 capture-hide，层级低于 activity drawer；三种背景 dots/lines/none、折叠 radar 与业务 legend 不修改模型。
 
 scope 是 canonical layout 的 mask：目标 Context subtree、拥有对象与一跳邻居、需要的 frame（祖先仅 frame）、触边和 bounds；不重新布局另一张图。computeHighlight 只扩一跳，未知 ID 返回空/不 dim，hover 优先、否则选择保持可读。
 
 ## 节点、边、补丁与诊断
 
-NodeCard 用 category spine 和 interval/moment/card 表现时段/时刻，domainRole participant 为 capability 形状，显示 party/responsibility/API badges；standard 更多 ID、时间、属性和计数。API 待刷新不伪装覆盖成功。out-of-scope 不可点击/键盘进入。
+NodeCard 用 category spine 和 interval/moment/card 表现时段/时刻，domainRole participant 为 capability 形状，显示 party/responsibility/API badges；卡片按 timeRole 标记时点或时段端点，详情提供关键数据来源；凭证节点可打开卡片内 Inquiry。API 待刷新不伪装覆盖成功。out-of-scope 不可点击/键盘进入。
 
 FulfillmentEdge 绘制布局提供的 polyline，flowKind 用独立颜色/线型区分主流程、违约补偿和升级；其余包括、diagnostic halo、plays_role arrow、cardinality chips 和 hover label；simplified 隐藏未 hover/highlight 的 plays_role。pairLink 是细虚线无箭头，语义为履约声明而非虚构关系。ChangeRing 只标当前模型新增/删除/修改，不改对象颜色。
 
@@ -124,7 +118,7 @@ DiagnosticIndex 只用已知 target（#前实体/关系）或真实 Context fall
 
 schema registry 声明 general/责任/attributes，fulfillment/rules 是专用 section；每字段给 editor/options/reference/helper。reference 约束 category/kind/sameContext，责任 picker 只供同合同 party role，单引用允许“未声明”。ID 只读，text/select/boolean/reference/attribute-table 等控件由注册信息驱动。
 
-字段编辑现在 `session.mutate(draft=>...Mutator)`，不再 dispatch Command。文本 local draft 在 blur/Enter 且值改变才提交，Escape 恢复，按 entity ID key 重挂避免草稿串对象。CEL/provenance 在属性行/台账的绑定上下文编辑，不在通用 rail 乱造文本提供方。
+字段编辑现在 `session.mutate(draft=>...Mutator)`，不再 dispatch Command。文本 local draft 在 blur/Enter 且值改变才提交，Escape 恢复，按 entity ID key 重挂避免草稿串对象。CEL/provenance 在属性行或检查器的字段台账中编辑，不在通用 rail 乱造文本提供方；此字段台账不是工作区的只读实体表。
 
 FulfillmentPairSection 从 graph.fulfillmentPair 显示 completion/confirmation/breach，pair/breach 调 guarded mutator，拒绝在面板显示原因。AttributeDataGrid 添加/更新/cascade删除属性、来源 picker、DerivedRuleSection 都同一会话事务；派生绑定可一次创建/更新规则并连接目标，一次撤销。
 
@@ -132,9 +126,9 @@ ApiFieldBadge 复用 browser-safe fieldFor：Input、CEL Derived、Service Times
 
 ## CEL 是原生分析，不是 tokenizer 裁判
 
-ui-kit CodeEditor 服务只读 CEL/OpenAPI；feature-inspector CelCodeMirrorEditor 管 model-aware completion/lint/history/commit。tokenizer 仅着色；真正语法、作用域和未知标识符来自 model-core 的 cel-js native scoped AST。many bindings 的宏作用域变量不能被误报为模型 alias，源码 offset 诊断定位 gutter。200ms lint 提供输入反馈，不替代全局门禁。
+feature-inspector 的 CelCodeMirrorEditor 管 model-aware completion/lint/history/commit；交付产物使用独立只读预览。tokenizer 仅着色；真正语法、作用域和未知标识符来自 model-core 的 cel-js native scoped AST。many bindings 的宏作用域变量不能被误报为模型 alias，源码 offset 诊断定位 gutter。200ms lint 提供输入反馈，不替代全局门禁。
 
-completion 从 rule aliases/实体属性/many 宏上下文生成；blur/Mod+Enter 去重提交，外部 undo/patch 在 prop 真变化时同步 draft。两个呈现 tokenizer 若扩内建词需一致，但不能靠加关键词“修好”原生语法错误。
+completion 从 rule aliases/实体属性/many 宏上下文生成；blur/Mod+Enter 去重提交，外部 undo/patch 在 prop 真变化时同步 draft。不能靠给着色器加关键词“修好”原生语法错误。
 
 ## 测试地图
 

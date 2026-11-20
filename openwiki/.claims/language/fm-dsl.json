@@ -1,96 +1,104 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:2fb1abe1fbabee39bcfe2b5d0702c6aa68e637ceab64b25f4428a6c3583453e7",
+  "pageVersion": "sha256:a97a9a2bbf371b02c4c0923d8b7c0de631374aaa0aaf107e8b7f1140340df8fb",
   "claims": [
     {
       "id": "claim_16f83966cd85429c854a0516c9100549",
-      "statement": "FM v5文档含strict manifest和三平集合，Zod允许明确portable envelope/readme，拒绝未知及旧validation字段。",
+      "statement": "FM v6 文档含 strict manifest 与三平集合，可携 portable envelope/readme，拒绝未知与旧 validation 字段。",
       "evidence": [
         {
           "resource": "repo://libs/evidence-schema/src/ast/document.ts",
-          "version": "repo-file-v1:sha256:f390474d5859895f22084afde3930f42e7955b3c8db09c39914034c70a4020a5"
+          "version": "repo-file-v1:sha256:803725e8b11f40c9f87e727283a1226fe1c8ca14dfd81fe0de1fa6595e0a2043"
         }
       ]
     },
     {
       "id": "claim_1730ce1342df4ffbaa93e0f6eb6daa61",
-      "statement": "ID/属性/version/alias各有grammar，ID跨三集合唯一，重复不替换首次索引。",
+      "statement": "ID 全局唯一，重复不覆盖首个对象索引；ID、属性、版本和 alias 分别校验各自语法。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/ast/documentSemantics.ts#L895-L954",
-          "version": "repo-lines-v1:sha256:d940bb2499131a45ec56bdf0adc0cbc3790d9ce3739ec56d820518aebf59fe59:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUyMmE3MWE4YWY4MGZkZDJkYWRkYWQ3ZDZhZmQwMjAzOWI2OTJkZDQxNjI4Y2YwMzhkNTU4M2MyNGZiOWE4NTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlhMDNlZTg3ZDllZWJlODljNzJkYTc0YmEwMmQzMDBkMGYwODRjMTk5ODE1ZjcyMDQ0OTFkMTJlMTg1OWEyZWIifQ"
+          "resource": "repo://libs/evidence-schema/src/ast/documentSemantics.ts#L973-L1058",
+          "version": "repo-lines-v1:sha256:eaa07ce1ec83ed69761e71467ac3ae5b68a2fcbb23b8a29e07cec5c2b42c4be9:eyJzZWxlY3RlZExpbmVDb3VudCI6ODYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMxOWNkMTAxMDg0ZjBmYjAzNWNmNzQ2MzlkYjdjMDM0YzM2OWE5NjJjOGZkMjIxMjhhNjEwMTc5NmMyMTlhMjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1OTRmZDk3YjlmOGM0Y2FlYmZjMTUzYTFjYzc1N2M2YTRmNmZmZTI1OGMwMzE2MjJjMjI0NDYzZDYzMjQ1NjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjExYjhiOTExOWRmMDVhYjRlOWRmZjg5MWQ2MmVkOGJlZDczZjZjYWFjNjcxNDk3NmIwZjA1MDhlMmNhMWZiOWEifQ"
         },
         {
-          "resource": "repo://libs/evidence-schema/src/ast/id.ts#L10-L25",
-          "version": "repo-lines-v1:sha256:08b2f3e65fc332df26754582ea7e211440539411f9d4ebbbab25d1b930faa282:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMyOWY3N2MzMDE3ZDJkYzFkNjk0MzI2MGRkMDQ3YTdjZjNlM2UxNjJlMjVkNTA2ZThjZDlmOGNlZDNjNGJlMWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgzYTE2NTlmYmE0ZTQzMTI3ZmIxNzhhZmRiNTNhNThiMWYwMzljNzVlNjg3N2FlMzJhY2IxNTYzMGNjNDgyYjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM1OWQyYjA4Zjc0ODIzNzVhN2IwZDMwMjI3Y2U0YWE2NWQyZTk5YmNlMGQ3MjFmMWNhMzJiNWE5NDM1NzM4MmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM3ODI5ZDFjOGFlOGFhMDM4YzRkNTNlMmE4NThhOGExMTFmNTcwZmE2NTQ5YTRhOTdhZGExY2Y1Njk2MDJlNGIifQ"
+          "resource": "repo://libs/evidence-schema/src/ast/id.ts",
+          "version": "repo-file-v1:sha256:bf50b9842181399cddd0bac116557497359c2b50c92d14fe9e8cbf0519e5f202"
         }
       ]
     },
     {
       "id": "claim_4e647c83d02c49308680f8ec9d8a005a",
-      "statement": "The language declares sixteen value types covering CEL scalars plus business types such as decimal, money, enum, id, list, map and dynamic.",
+      "statement": "FM 值类型包含 CEL 标量以及 decimal、money、enum、id、list、map 和 dynamic。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/ast/values.ts#L3-L22",
-          "version": "repo-lines-v1:sha256:b7700a460957763f2ae18fc4c300cdf649b7c486f4cda9d93b6d8ee44a47ee18:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdkYmUyNGVkMmNjOWI1YjhiN2IwMzk5ODUxMmQ5NjRjYTVmMjdkMTY2YjBkZTgzZjBmYWUxMWNlNGM0YWExYzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUxOWQ2ODYyMmYyMjQyNDM4MGMyYTFlNmU2ZWU1OTczN2Q4ZjAxNDg1Mjk1NzU2NWVhYTFhN2RiODQyNDQzZDQifQ"
+          "resource": "repo://libs/evidence-schema/src/ast/values.ts",
+          "version": "repo-file-v1:sha256:d1c2a31e5ac817e34767fd9ee36d9607f6035e361ebff091f39c5d1f1fd20006"
         }
       ]
     },
     {
       "id": "claim_502e8e259444414eb7966e2ede4a05c4",
-      "statement": "FM四category为evidence/participant/role/context，分别六/二/五/三kind，由共享词表生成Zod枚举。",
+      "statement": "evidence、participant、role 和 context 的 kinds 由共享词表生成 Zod 枚举。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/ast/entity.ts#L15-L130",
-          "version": "repo-lines-v1:sha256:5dab0fbed4f3090d6d574a59c05fbaf297726bb46b9384970a6463a83d53665f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTE2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIwZGM2ZjQ1YThlOTUyODFlODYwNzM0NTFlMGFkZTRkOTNlYjBiODc2YTA5Yzc3OTgzOTQ5YTRmMTEwZjkzNTU1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0OTk2N2VjMWVkMzgzNmY4ZWIxN2FmZjE3MmI1YmZlZjdkZTYwNDg1YTQzOWM2Y2ExMWM1OTFlMTc1NTczOWFlIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhOTk4YmFhN2EyY2RhOWYzZjdjZTgxYTU5MzY0MDMzZDdlNDEyOWZiNzU0NmRlNjMyZGQxOGFhNGE3MzVlNmE5IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIyMGY3YWVkMzE4NzgyOTI1ODg3YTJkYjUxMmQzNDdiMDQ5ZmExZjM2NTMxNTVjYTBlNzdmZTNhN2E2Mjk0YzJmIn0"
+          "resource": "repo://libs/evidence-schema/src/ast/entity.ts#L13-L148",
+          "version": "repo-lines-v1:sha256:4fa5c6b06e257dc4fb51ee3a0179ed7757252645b3fcb777146e5286cba32c9f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTM2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlMDc1NTVhYTM3N2Y5YWM2ZWI4OTdkNTVlM2QyZDYzNzVmZGFmYmY1NmEyNTQzYTczZDMxNzE2M2UwZTI1YzNhIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJiYTkxMmVlMDE1MTE4Zjc3YjE3NGU1NzEzMDI3N2ZhMjE2MDk5OThhODhhNTQ0ZjZkYTU0ZGQwZmIzOGMwOTQ4IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI0NWMyZTVmMTM1YmVjMjRlYWI5Yjc5ZGUyNmVjMzhjMjFjOGY4ZjVhYmI3M2Q0ODFjNmE3MjQ1NGQ4MjIxMjE0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJiYWVkMjkyYjNlYjc0OTkxNGJjNzcwMzcxOGI5YzFjODE5OGQ3ZjI3OTMzZTM0M2EyYzgyZDUyMzFlOGYwMzJkIn0"
         }
       ]
     },
     {
       "id": "claim_6ea62c75e2dd422699dbb65659f6f01d",
-      "statement": "Evidence必需业务时间按kind定义，所有认出的时间须required/keyData/timestamp，缺失或类型标记错误为finding。",
+      "statement": "FM v6 用显式 timeRole 定义业务时标；已声明时标唯一并匹配凭证形状，且是 required keyData timestamp，缺失另作为完整性缺口。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/ast/documentSemantics.ts#L113-L178",
-          "version": "repo-lines-v1:sha256:19b124241322f470799219e6ebb6b6e61b524c0b3730da2056342558bcf5a057:eyJzZWxlY3RlZExpbmVDb3VudCI6NjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiNjE3MDNlN2Q4NjM5ODc4ZGY1NmFhNGYxMTM4ODdhNjI4ZWQ4NjQ0OWE0MmU4NDA5ZDRjNzlhMjk3OWEwMjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyMTI5YzI3MzUyYjQ5NTU0OGIwNzFhZTM0YWI5MDgxMTcyODczNDI4ZjZmODdmNTRiNTgwZTUxNTNjOWFhMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVmNmIyNjYxMjYzOTFmNzIyNjk2ZDk5YTFkYWVhZTc1YTU0MDM0Y2M2MTZmNzE1OTliNjQ5ZWIzMjlmNWYwZTkifQ"
+          "resource": "repo://libs/evidence-model-core/src/validation/scope.ts",
+          "version": "repo-file-v1:sha256:e1c17513499d42b14422b9a1c88a7f5a3845ee7cfe8f3d873049e31ecac8bc99"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/documentSemantics.ts#L172-L239",
+          "version": "repo-lines-v1:sha256:5b5b7a36c54c6fac360f22484db476435afcc0690a8ce23ec50b9ee579e23387:eyJzZWxlY3RlZExpbmVDb3VudCI6NjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiNjE3MDNlN2Q4NjM5ODc4ZGY1NmFhNGYxMTM4ODdhNjI4ZWQ4NjQ0OWE0MmU4NDA5ZDRjNzlhMjk3OWEwMjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyMTI5YzI3MzUyYjQ5NTU0OGIwNzFhZTM0YWI5MDgxMTcyODczNDI4ZjZmODdmNTRiNTgwZTUxNTNjOWFhMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVmNmIyNjYxMjYzOTFmNzIyNjk2ZDk5YTFkYWVhZTc1YTU0MDM0Y2M2MTZmNzE1OTliNjQ5ZWIzMjlmNWYwZTkifQ"
         }
       ]
     },
     {
       "id": "claim_4fe5551de0bf438fa88c0529eca0dda7",
-      "statement": "非contract Evidence需合法负责party role，pre_contract借parent合同；contract须owned root及两个不同同Context party roles。",
+      "statement": "凭证允许先不指定归属与责任；声明的责任角色须符合合同边界，合同允许暂缺角色但不能声明重复或超过两位 Party Role。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/ast/documentSemantics.ts#L253-L404",
-          "version": "repo-lines-v1:sha256:0984ec2088948bef3f72014fb96f4f9e3211ac33b4bee5f9b0c5f2e08fa80e17:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxMDdhODdlZGUxZTI5MWRhNTNkODg0NGJmY2JlYzE1NDBiYTM1NjY3ODJkYzg4OTgyMjljNDdiOWMxNDQ1NGNkIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3MjEyOWMyNzM1MmI0OTU1NDhiMDcxYWUzNGFiOTA4MTE3Mjg3MzQyOGY2Zjg3ZjU0YjU4MGU1MTUzYzlhYTAyIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIwMTUyZDNiMGI3MDI2ODhkNmNlMDBjYTQ4MGM2MzBjNTA0OTA5M2ZiNjkxYTJhY2VhZjFmYzNlODMzMWVmMDliIn0"
+          "resource": "repo://libs/evidence-schema/src/ast/documentSemantics.ts#L301-L429",
+          "version": "repo-lines-v1:sha256:f1eea66dd0c810449db1e109d4d952bd34ca12194fbb8ad14ed2e3af5bb0f59f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTI5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxMDdhODdlZGUxZTI5MWRhNTNkODg0NGJmY2JlYzE1NDBiYTM1NjY3ODJkYzg4OTgyMjljNDdiOWMxNDQ1NGNkIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIyN2U1Nzg4ZDVkOWQ3M2QyNGE4MWRiYzBhNWE3NGJmYTgyYzljM2IzYWY5OWU1MmFmNzk2ZTkwYjQ2OGE4YTNkIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3MjEyOWMyNzM1MmI0OTU1NDhiMDcxYWUzNGFiOTA4MTE3Mjg3MzQyOGY2Zjg3ZjU0YjU4MGU1MTUzYzlhYTAyIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI3NmNmODU4ZDgzZmMzZTU1NTA5YTY3ZTdjNWEzOGE5MmNmNWVkZjIxZDEzNDQ1NTJjMjcyMGMwNTQ2MjJiNTNiIn0"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/entity.ts",
+          "version": "repo-file-v1:sha256:5dc9df1a05c91da67fcdd73596e6d54e5ca6957a2beba87c8ec8e4ef43a7747f"
         }
       ]
     },
     {
       "id": "claim_60c9eb67fbb74ba08b43b04ce3c034ee",
-      "statement": "party 不得携带 contextRef，thing 必须属于 domain Context，Role 不得携带 Evidence 责任字段；结构与语义由 Zod 及 refinement 共同限制。",
+      "statement": "party 不带 contextRef，thing 必须属于 domain Context，Role 不携凭证责任字段。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/ast/documentSemantics.ts#L406-L570",
-          "version": "repo-lines-v1:sha256:6a36bc6755568c04f1e5c1d8ef49f888f21bfda09cf785ef4100407fa2f0e3ef:eyJzZWxlY3RlZExpbmVDb3VudCI6MTY1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI0ZjRhMzc1ZjI0YWNjNDU4ZDUzZjhkMmU0ZDExYjEwOTBkNzZmMTM3ODgxN2ZkNTYyOWU5Zjg0YTA1MzE1MGViIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI3ZTk2NDFjYzhlYTFkNmRjZWMyYWVlYjhkNGNiZTBiNGQ0YzIwOTZiM2QzOTgzODQzZDM2NmE0ZGNhODJiY2JiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3MjEyOWMyNzM1MmI0OTU1NDhiMDcxYWUzNGFiOTA4MTE3Mjg3MzQyOGY2Zjg3ZjU0YjU4MGU1MTUzYzlhYTAyIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJiZjIxMTdmZDkzMDBiZWI3MDIwMmQxNmJmNTBmMDAwYzcxMGI4ZWI2NGY2NjczZGQyOWVjYTJkODM3MDA4ODQ2In0"
+          "resource": "repo://libs/evidence-schema/src/ast/documentSemantics.ts#L456-L527",
+          "version": "repo-lines-v1:sha256:54cb1f2a81423a6d9feda8fbd669dce093d7da8aeff15770668c705ec0d14460:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYxMTEwY2M2ODViZjA4ODZhYTM1ZTczMzI1YTRkNDk3ODQ5MzNmMDI3M2NmZjk1N2FkZGMzNTk4OWFkYzc3NzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkN2Q5MWE3MWViZmI1ZmRkNTlhNmI2YjMzYzlmNjMxYjE2MzMxZDc4MzRhNzNlZjRkYzBjMmE5MzY5NDMxZWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg4NjIxYzVhNmQyZTAwOGRiOGE4Y2UxZTc0NTk4ODUwNDUzZjZmMjY2YTA0MDY4ZTkxMjM1OTIwODQ4MDY5OGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY5ZjBhODE2MjgzOTAzOTc1ODM2MzdiYjA1MWZlMWE5NTMwN2M3YmU4NTA0M2EzNTlhNzA1ZDUwYTE1YzZjMjYifQ"
         },
         {
           "resource": "repo://libs/evidence-schema/src/ast/entity.ts",
-          "version": "repo-file-v1:sha256:32860024081946a781a095076f3fbe84a568d24da036d3ec6062258fbf279a9c"
+          "version": "repo-file-v1:sha256:5dc9df1a05c91da67fcdd73596e6d54e5ca6957a2beba87c8ec8e4ef43a7747f"
         }
       ]
     },
     {
       "id": "claim_10480cde162b46da90513c6e0a905df0",
-      "statement": "Context无contextRef，contract/domain需真实roots，contract唯一owned合同root，父链不得循环。",
+      "statement": "已有 Context roots 必须解析到自身成员，合同 Context 声明根时必须是唯一的合同根，Context 父链不可循环。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/ast/documentSemantics.ts#L180-L251",
-          "version": "repo-lines-v1:sha256:00c2ef0c07a52575dbc64f231666146db3b97481b9af52b8c0406058d3c978bf:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE4YmNjOTYwOWRmMzA0NWU4MzlhYzYzNGQ5ZDdkZjRlMDI1MDFmZjE1NTBmZDJlZjczMzFjN2JjODBhZWY5NzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyMTI5YzI3MzUyYjQ5NTU0OGIwNzFhZTM0YWI5MDgxMTcyODczNDI4ZjZmODdmNTRiNTgwZTUxNTNjOWFhMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3NThiMWRiNDFmMDEyMmEzYzc3NGNkMDMzZDA2YTVlYzk1MGMzN2U4ZGYyMDVjODJlYzE4OWE4ZmExNGU1OTEifQ"
+          "resource": "repo://libs/evidence-schema/src/ast/documentSemantics.ts#L241-L299",
+          "version": "repo-lines-v1:sha256:c9ebb60fe4e8caa54069f6d0eed82721c4bd2862c9a3f68c10a3b1a98c61d6f8:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE4YmNjOTYwOWRmMzA0NWU4MzlhYzYzNGQ5ZDdkZjRlMDI1MDFmZjE1NTBmZDJlZjczMzFjN2JjODBhZWY5NzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyMTI5YzI3MzUyYjQ5NTU0OGIwNzFhZTM0YWI5MDgxMTcyODczNDI4ZjZmODdmNTRiNTgwZTUxNTNjOWFhMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3NThiMWRiNDFmMDEyMmEzYzc3NGNkMDMzZDA2YTVlYzk1MGMzN2U4ZGYyMDVjODJlYzE4OWE4ZmExNGU1OTEifQ"
         },
         {
-          "resource": "repo://libs/evidence-schema/src/ast/documentSemantics.ts#L406-L460",
-          "version": "repo-lines-v1:sha256:506b454b12a691d018a8056364ff557ba18078c100c01b85b682bcfd6e208dd6:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmNGEzNzVmMjRhY2M0NThkNTNmOGQyZTRkMTFiMTA5MGQ3NmYxMzc4ODE3ZmQ1NjI5ZTlmODRhMDUzMTUwZWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImExYTNjYmZjYmE3ZGRiYjZkMDNlY2EwNmU0ZGM1NTYzZmUwMDFiZDJiYTFiM2UxYzY4YzNiYmM3YjRiYWI0MGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyMTI5YzI3MzUyYjQ5NTU0OGIwNzFhZTM0YWI5MDgxMTcyODczNDI4ZjZmODdmNTRiNTgwZTUxNTNjOWFhMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA3ZDVkZmRiNjEzYWVhNTNiNzkzZjIyYTNlN2ExNDQzMzRjMTUzOWQxMmVlYzBhYjhlNzI2MDMzYWU0ZmRkZjUifQ"
+          "resource": "repo://libs/evidence-schema/src/ast/documentSemantics.ts#L603-L632",
+          "version": "repo-lines-v1:sha256:466de2581bc8bd5030b8990a27f98090fa87e7db2de58ecebc6fc40a62dce8de:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdlOTY0MWNjOGVhMWQ2ZGNlYzJhZWViOGQ0Y2JlMGI0ZDRjMjA5NmIzZDM5ODM4NDNkMzY2YTRkY2E4MmJjYmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc3MjZlNzJiNzkxZGM2NGM1MjBjZTAwOTAzNjQyYTQ5ZWNkOGE0ZGM4M2E0MDZlOTdhY2Y3ZTg0ZDYzODhhZDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImExNDZkNjgxMjA4YTM3NTVmNWQ0ZWRkODE4OGVjMjcwMzBmZTA0Yzc1MmViNzRhMTczMzUwOTQ2YWI3ZjQxODYifQ"
         }
       ]
     },
@@ -99,18 +107,18 @@
       "statement": "关系拒绝self/contract-pair，plays_role端点白名单且只有跨Context moment Evidence可扮演evidence role。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/ast/documentSemantics.ts#L601-L713",
+          "resource": "repo://libs/evidence-schema/src/ast/documentSemantics.ts#L634-L746",
           "version": "repo-lines-v1:sha256:86ab911842fa6661bbde6ed700e2aa41a006bdea67cbb5ec6813c697a00facc5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI3YTE1YmJiZmY3NTVkMzIzZTI3NmM3ODcyMDQyYWVkMTdhY2M1MzQyM2JmMGZhNTU5MTRhNmYzMjZmZDIxYzYyIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIyZjc3Y2E3NTE3MDg2ZDhmOWE4ZjhlZDAyZThmNTc3Y2VmMDFmODhjYWIyMzYyMDI5ZDYxZDk5OTliYzQ3ZjFjIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3MjEyOWMyNzM1MmI0OTU1NDhiMDcxYWUzNGFiOTA4MTE3Mjg3MzQyOGY2Zjg3ZjU0YjU4MGU1MTUzYzlhYTAyIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJjODk2YTAyZmUzMTdmZDRhYjg1NDA0NzRhOTM0YjBhYjViYWRiN2ViNGNiMmQzYWVjYzJmOGNmNTM3M2RmMWEyIn0"
         }
       ]
     },
     {
       "id": "claim_07bd643773de492e8201395d3f95f3e7",
-      "statement": "跨 Context references 允许合同到其前合同 proposal、Evidence 到 thing 或 confirmation/other 事实，以及履约确认到履约请求；拒绝跨界引用 evidence role。",
+      "statement": "跨归属 references 允许合同引用其前合同 proposal，或凭证引用外部领域事实/确认；确认和请求及违约补偿需同归属或均未归属。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/ast/documentSemantics.ts#L702-L739",
-          "version": "repo-lines-v1:sha256:bbe8598359271c4a69c29114934eca7a776b309ec70755865fc9883d12c50a95:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgyM2Y4Yjc1ZDA4MjFiMDcyNjEyNTE3YzQ5YmYwZTk3NDllYjg5OThmNzIwY2I4YWU4YmQxNmM3NGNkMjgzNWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc4OWY1MmJhMTc4YTEyNjY3NTcxYjU0OGE3NjNlODM0ZDZhZTc5NGJkZjU4MmUxZWFlZWE0ZWQ3NDlhZmFiYWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU4YWM5MzE3ZmEyOTQ0ZmU3YjQ2MWNlZDIyY2Y2OGI0ODIyNzI2ZTQ4MWFkMDJlYTU5ZTc3NDc3NDM2YzQ5N2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQyNWJjYWY3MTJjMDM0ZTU2ZjZiOGY2ZjM5ZDZlNjFhNzZiMjUyYmFkNDkwYmNiMjI2ZWU0YjAzNmI2M2I1OWEifQ"
+          "resource": "repo://libs/evidence-schema/src/ast/documentSemantics.ts#L744-L806",
+          "version": "repo-lines-v1:sha256:b15d964c01df25765ef6c987ce7911c89129fe6904aedca870af183106257ce9:eyJzZWxlY3RlZExpbmVDb3VudCI6NjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjNDZlYzk0NzEwNGE0ZTYzYjczZWZmYzdmZDA2YTJlYTJkN2VmOGYyNjA5MmEwZWE3ZGE2YzQ4OTJmZDY4MjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhZGY3OTU0ZjkxMzNjNjI0ZWU0ZDUwNGIxNTdmNGM4OGQ0NWJiZjk5OGRiZmYwMGE2NTlhMjc4NGJlZTBjM2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYwMzRlNmJmNDZkYzU4NTVmZjAxYTNiY2E0YTI1MGM3NTgzMzMwNTQ1ODg2NGM0NjgxYTBjOTM3MmI2YjRjZTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYwNTZlOWU1Y2ZjNGEyMmJjMzJhNzc0YzExMWIxMjk5MTM2MDc5N2I1YmMyNDZiYzUzMmJjOGUzNmZkNTYzZTEifQ"
         }
       ]
     },
@@ -119,7 +127,7 @@
       "statement": "六类CEL规则中仅derivation可/必须target，其他bool；binding严格互斥ref/type、alias合法、Context和ref需解析。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/ast/documentSemantics.ts#L771-L837",
+          "resource": "repo://libs/evidence-schema/src/ast/documentSemantics.ts#L822-L888",
           "version": "repo-lines-v1:sha256:fe173ce9ab7cbe5c077b18a1e69ce9aa5b8c46d73318c2f156b12c1ede6d132d:eyJzZWxlY3RlZExpbmVDb3VudCI6NjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2YjkwOGM4M2FjM2ViZWE3NjBmYTc4YzM1NTAwMTMzZThiYjdlZmE4Yzc5ODFmMzZjZDVlODM5OTAzNGVlYzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyMTI5YzI3MzUyYjQ5NTU0OGIwNzFhZTM0YWI5MDgxMTcyODczNDI4ZjZmODdmNTRiNTgwZTUxNTNjOWFhMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI5MDUzZGM4ODg0NzRhOGZhODdkY2RkZDgxODMxMWNjNTg3OWIwN2FmM2MxZDU4NmUzNGMyODkxM2VkNzQyYzEifQ"
         },
         {
@@ -133,7 +141,7 @@
       "statement": "属性derivedByRuleRef与derivation target必须双向对齐同Context精确实体/属性。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/ast/documentSemantics.ts#L839-L880",
+          "resource": "repo://libs/evidence-schema/src/ast/documentSemantics.ts#L890-L931",
           "version": "repo-lines-v1:sha256:b00f3185ece086c1948c6d7e2299350084eb0918ac1702d6fd7e18d0b9dde3fa:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY3YjAzNmFiYmM1OWFmOWY1NGQ4NGE4ZDVlODRhMmRiZDI3NjliYmIyM2JiNTZhZDgxY2Y1NTkzZDY1MjhjYmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyMTI5YzI3MzUyYjQ5NTU0OGIwNzFhZTM0YWI5MDgxMTcyODczNDI4ZjZmODdmNTRiNTgwZTUxNTNjOWFhMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlhYjA2Y2FlY2IwMjg3MWJkODIwYmVmODlkZWM0NDFjNDg0NzBhZTMyZDJiYjcwMDI5YzNhZTNkNjQwZmE4MGUifQ"
         }
       ]
@@ -143,8 +151,8 @@
       "statement": "schema负责syntax和图语义而不执行CEL/HTTP，scope/provider/traceability下沉core；阅读词表不是落盘字段。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/ast/documentSemantics.ts#L883-L982",
-          "version": "repo-lines-v1:sha256:e0bc242bea1c7207c4d16665bf782d882ed1dfba6c3565817ffa0aa1f3a9c0de:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIzMTljZDEwMTA4NGYwZmIwMzVjZjc0NjM5ZGI3YzAzNGMzNjlhOTYyYzhmZDIyMTI4YTYxMDE3OTZjMjE5YTIwIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIxNTk0ZmQ5N2I5ZjhjNGNhZWJmYzE1M2ExY2M3NTdjNmE0ZjZmZmUyNThjMDMxNjIyYzIyNDQ2M2Q2MzI0NTY3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+          "resource": "repo://libs/evidence-schema/src/ast/documentSemantics.ts#L973-L1064",
+          "version": "repo-lines-v1:sha256:464120d435c3ced42c15d830de9c684cf1382e945e987f410067c7a2eec70ff0:eyJzZWxlY3RlZExpbmVDb3VudCI6OTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMxOWNkMTAxMDg0ZjBmYjAzNWNmNzQ2MzlkYjdjMDM0YzM2OWE5NjJjOGZkMjIxMjhhNjEwMTc5NmMyMTlhMjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1OTRmZDk3YjlmOGM0Y2FlYmZjMTUzYTFjYzc1N2M2YTRmNmZmZTI1OGMwMzE2MjJjMjI0NDYzZDYzMjQ1NjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         },
         {
           "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts",
@@ -158,7 +166,7 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-schema/src/ast/entity.ts",
-          "version": "repo-file-v1:sha256:32860024081946a781a095076f3fbe84a568d24da036d3ec6062258fbf279a9c"
+          "version": "repo-file-v1:sha256:5dc9df1a05c91da67fcdd73596e6d54e5ca6957a2beba87c8ec8e4ef43a7747f"
         },
         {
           "resource": "repo://libs/evidence-schema/src/vocabulary.ts",
@@ -189,12 +197,12 @@
       "statement": "category-specific strict Zod branches取代旧flat allowed-key表，未知键与refinement仍映射稳定FM诊断。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/ast/entity.ts#L183-L223",
-          "version": "repo-lines-v1:sha256:6e654666643084d38c1c3427a027a6075e57376332abb1d8bdb341923cc0f105:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJhNjc0Y2NhMWU5Y2Y0Mjk0MzUzMjkwNGM4NDJiMjA1YTZkYTBlZTQ3ODVjYTZiNDFhNWI1NzkyMDhlNmU2NWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ2N2Q3YjE5ZGY4ZjMwZjhiYjUzZDdlOGRhNDUyZmE2MmJmYTYzNzg0YWEzZGM3MTFlYzc2ZTFiMmU2NjZjNzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVhMGE0MGUxZjRiZDJjYTQ1MjMwYjU2OGU4OWVlOTE2MmVhNzI4MmEyODA5ZTg3NWNhN2NlODU5Mzk5MmFmZWEifQ"
+          "resource": "repo://libs/evidence-schema/src/ast/entity.ts#L178-L219",
+          "version": "repo-lines-v1:sha256:4a310a0fe014b8324962d0096da1efb4909581dbfc63ac4dfa1ee6823d01a65f:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJhNjc0Y2NhMWU5Y2Y0Mjk0MzUzMjkwNGM4NDJiMjA1YTZkYTBlZTQ3ODVjYTZiNDFhNWI1NzkyMDhlNmU2NWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ2N2Q3YjE5ZGY4ZjMwZjhiYjUzZDdlOGRhNDUyZmE2MmJmYTYzNzg0YWEzZGM3MTFlYzc2ZTFiMmU2NjZjNzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVhMGE0MGUxZjRiZDJjYTQ1MjMwYjU2OGU4OWVlOTE2MmVhNzI4MmEyODA5ZTg3NWNhN2NlODU5Mzk5MmFmZWEifQ"
         },
         {
           "resource": "repo://libs/evidence-schema/src/validation/mapZodIssues.ts",
-          "version": "repo-file-v1:sha256:ca1f0878bc6b57552d8fb797dd2ac868e50f1f70f58d70415e8a2cdf1a092ae0"
+          "version": "repo-file-v1:sha256:06cffdc2a94b2790af7d5aff5b4c6259ec3f06bc5589fe60e692980439e1c162"
         }
       ]
     },
@@ -203,11 +211,11 @@
       "statement": "仅participant.thing可声明calculator/checker domainRole，Party该字段拒绝。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/ast/documentSemantics.ts#L470-L481",
+          "resource": "repo://libs/evidence-schema/src/ast/documentSemantics.ts#L509-L520",
           "version": "repo-lines-v1:sha256:af28f6182f97c64874dfeecc0cb595ba5557076aa0a1dc4b79b6b81e2cf50770:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZhMDg5NDIzNWE5NTUwYmMwMTVkNmNkYTM4OTBiOGMwZTU4ODhhOTcyM2JhNzlmNThjZjVlNGQ4MWE2Njk5ODYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVmNDMwYzYyM2JmMGY4NzA2N2U4MWIyNzVjYTQ1ODkxYzIwM2MwYzU4OGQ1MWNiY2VjOTRmZWY2MjM5MGFmYzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlhZTgyMzRkNjY3NjlkMzM5ZmM0Y2Y2Zjk4OTc2YTRhODIwNmY5YjlmMDNjMTdlNmRlMjk0Y2MzZDcxNzZlZGQifQ"
         },
         {
-          "resource": "repo://libs/evidence-schema/src/ast/entity.ts#L84-L100",
+          "resource": "repo://libs/evidence-schema/src/ast/entity.ts#L72-L88",
           "version": "repo-lines-v1:sha256:fbee40c1bb7b007e713fcf2f1c6614cbc3368b180dc45ee7effeccd7d6a8e70b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdhODM3ZmZkZGQ3ZjU1NTBmYjliMzI3NzQ0NWNjNzIxN2FkMzA5YzRjZDFmYTczMTI5NTEwNzc5Y2Q5YTI3YjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBhNzljZGI1YmQ2ZTI4Zjk1MDExYTBkOTM4NGZjOTBlODgyMGM1MzdlN2E0YWQxNmU2OWViNzI5Zjc2ZWQ3MWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI1ZGM4Y2M1ZjMyNTYzMjUzMDM0YTllNTExYmVjMjYzZDNkNDIyZjBhYWY1ODQ2MmNiNTc2MjZmZWEzODVmMjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjExMGQ5Y2I4MDgyY2EwMGNiNjkzZjA4YjU2YzI2NDIzMjIyMzQ0NDg5ZTg4YTk2NzRlNjdiZWZkODRjNjNhOGYifQ"
         }
       ]
@@ -236,11 +244,11 @@
         },
         {
           "resource": "repo://libs/evidence-schema/src/ast/document.ts",
-          "version": "repo-file-v1:sha256:f390474d5859895f22084afde3930f42e7955b3c8db09c39914034c70a4020a5"
+          "version": "repo-file-v1:sha256:803725e8b11f40c9f87e727283a1226fe1c8ca14dfd81fe0de1fa6595e0a2043"
         },
         {
           "resource": "repo://libs/evidence-schema/src/ast/entity.ts",
-          "version": "repo-file-v1:sha256:32860024081946a781a095076f3fbe84a568d24da036d3ec6062258fbf279a9c"
+          "version": "repo-file-v1:sha256:5dc9df1a05c91da67fcdd73596e6d54e5ca6957a2beba87c8ec8e4ef43a7747f"
         },
         {
           "resource": "repo://libs/evidence-schema/src/ast/provenance.ts",
@@ -249,26 +257,12 @@
       ]
     },
     {
-      "id": "claim_767a4ccab25a4bc5ac64fd31b6293c87",
-      "statement": "The workshop order is a seven-step vocabulary (anchor-contract through connect-flow) plus a reverse-contract mode, exposed through workshopStepRank and workshopStepFocus so the desktop selector and the agent prompt agree; no step is recorded on disk.",
-      "evidence": [
-        {
-          "resource": "repo://libs/desktop/feature-agent/src/components/agent/AgentCopilot.tsx",
-          "version": "repo-file-v1:sha256:988b04e6a31408246af3c886e696693d5f73f9891323e8415259d57762912209"
-        },
-        {
-          "resource": "repo://libs/evidence-schema/src/ast/workshop.ts",
-          "version": "repo-file-v1:sha256:b3def3fffd9af80cf7c6690809564165770c4adb1935a2ff62ee070174a2c8f7"
-        }
-      ]
-    },
-    {
       "id": "claim_885399c31e924d1cbdd86b1ed0f934c3",
       "statement": "strictValidate是共享静态gate，compile/lineage/check/preview/API与可选session guard复用，默认渐进会话/保存不保证完整有效。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L125-L148",
-          "version": "repo-lines-v1:sha256:e0c4f7267c31df06c606d2bdc490c1f18c21a5b5957e79469b9154aa58730e2e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjYzYzMjAzMjBlNWY0NGFjNDI4ODgwOWUyM2RiZDMyMWFhZjljZjVlZDA5NjdmOWY4YzYxMTdhNjkzMmMyZDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ2ZjZmY2QyY2VlZThlYWIxMjk5ZmI2NmY2ZjE5Y2ZhOTY0YjJmMTkwMjc4YWE5NmE5NWEwYzU1NWVjZTI5YWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNiY2M5YzU4M2JhM2YwMWIzZmJkNjVmMzJlMzVmYmE3MGI2ODU0MWQyOTBhM2Y5ZTQyYzJhMDVjMWJlMDVlMTEifQ"
+          "resource": "repo://libs/evidence-model-core/src/session/createModelSession.ts#L139-L157",
+          "version": "repo-lines-v1:sha256:50394ef1fbc5583324f4a4f57ce474fc34fdc64d776e3bf245eaf7998f2e4ec5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlYzUwNDVhNjg0ZjQ2Mzk2ZGZjNTIzZGI0YjZlM2Y5MjQ1ZDUzM2NlOWI2ZmYwNDMyZWU5MzQ2MTc3NDQ3ZDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ2ZjZmY2QyY2VlZThlYWIxMjk5ZmI2NmY2ZjE5Y2ZhOTY0YjJmMTkwMjc4YWE5NmE5NWEwYzU1NWVjZTI5YWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNiY2M5YzU4M2JhM2YwMWIzZmJkNjVmMzJlMzVmYmE3MGI2ODU0MWQyOTBhM2Y5ZTQyYzJhMDVjMWJlMDVlMTEifQ"
         },
         {
           "resource": "repo://libs/evidence-model-io/src/commands.ts",
@@ -286,7 +280,7 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-schema/src/validation/mapZodIssues.ts",
-          "version": "repo-file-v1:sha256:ca1f0878bc6b57552d8fb797dd2ac868e50f1f70f58d70415e8a2cdf1a092ae0"
+          "version": "repo-file-v1:sha256:06cffdc2a94b2790af7d5aff5b4c6259ec3f06bc5589fe60e692980439e1c162"
         },
         {
           "resource": "repo://libs/evidence-schema/src/validation/strictValidate.ts",
@@ -296,15 +290,15 @@
     },
     {
       "id": "claim_41d2a06e8069469caea3ad44003c43ab",
-      "statement": "属性名snake_case且实体内唯一，label/meaning非空、类型与boolean标记严格，未知键拒绝。",
+      "statement": "属性名为 lower_snake_case 且实体内唯一，label/meaning 非空，类型和布尔标记严格，未知字段拒绝。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-schema/src/ast/documentSemantics.ts#L113-L178",
-          "version": "repo-lines-v1:sha256:19b124241322f470799219e6ebb6b6e61b524c0b3730da2056342558bcf5a057:eyJzZWxlY3RlZExpbmVDb3VudCI6NjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiNjE3MDNlN2Q4NjM5ODc4ZGY1NmFhNGYxMTM4ODdhNjI4ZWQ4NjQ0OWE0MmU4NDA5ZDRjNzlhMjk3OWEwMjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyMTI5YzI3MzUyYjQ5NTU0OGIwNzFhZTM0YWI5MDgxMTcyODczNDI4ZjZmODdmNTRiNTgwZTUxNTNjOWFhMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVmNmIyNjYxMjYzOTFmNzIyNjk2ZDk5YTFkYWVhZTc1YTU0MDM0Y2M2MTZmNzE1OTliNjQ5ZWIzMjlmNWYwZTkifQ"
+          "resource": "repo://libs/evidence-schema/src/ast/documentSemantics.ts#L172-L194",
+          "version": "repo-lines-v1:sha256:991d5c6d0fd69132d98e7954c0e163c2230f2e726fbfc1021bb5fbe27c16148f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiNjE3MDNlN2Q4NjM5ODc4ZGY1NmFhNGYxMTM4ODdhNjI4ZWQ4NjQ0OWE0MmU4NDA5ZDRjNzlhMjk3OWEwMjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgzZjE3MGJmM2UyYWRlOTc0OWE3YTc4Y2ExYWYxMTQ0ZGVjOWY4NTM3MjhjMmQ4NWVmOWViM2I2ZDM5ZjRjYmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyMTI5YzI3MzUyYjQ5NTU0OGIwNzFhZTM0YWI5MDgxMTcyODczNDI4ZjZmODdmNTRiNTgwZTUxNTNjOWFhMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkyNWMyMGFkYTAyODM3ZmU0NTAyYjc1ZTc2ZDE5ZTUyZTFjMWQ0M2FkM2IyNjliM2ZkNzA2ODI1ZWRjYjM3NzkifQ"
         },
         {
-          "resource": "repo://libs/evidence-schema/src/ast/entity.ts#L147-L168",
-          "version": "repo-lines-v1:sha256:58a487409e749f3f2ea4d94b2a066902fe961f6c9e38ad113f5fb3ea33914c57:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYxMmYyYmViZGY2MmY3YzVjMjlkMDQ2YmYwMjk5YTI4NDljOTFhNDQ1NDhkNzk5NjRhOTYyOWQ1MmQwYmE1MmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3OTI1YzJiMTg0OWJhZTcwNjVjZDM2Y2Y5NzYwZWVjOGMyODY0N2NlMDc3MmU1NTU3NWY3OWU3NDdiY2I2NzIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA3ODk1NTIxYTQ2NWUzZjNlNWQyMzkyNTZmM2JlZTdkODZjYzljODVjY2IzOTU4ZmM3MWZlMTJiNDYyMmZiNmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI0YmI3YTEwMWRkN2IxYmUwZTMyMjhkNjBjZWM3NGI1OWIyZmNhMmNjYzE1NTNmNmYzYTFjYWVhZTNmZjg4ZmIifQ"
+          "resource": "repo://libs/evidence-schema/src/ast/entity.ts",
+          "version": "repo-file-v1:sha256:5dc9df1a05c91da67fcdd73596e6d54e5ca6957a2beba87c8ec8e4ef43a7747f"
         }
       ]
     },
@@ -321,10 +315,24 @@
           "version": "repo-file-v1:sha256:80651107208737bbd762c7ec68397c4ce74c809f3c68ddceda8a9f550faaf6ab"
         }
       ]
+    },
+    {
+      "id": "claim_7d4d4e19b2fd416981fdc1a3ee108cf5",
+      "statement": "固定凭证种类的显式 stage 必须匹配 kind；四阶段词表统一阅读顺序。",
+      "evidence": [
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/documentSemantics.ts#L437-L451",
+          "version": "repo-lines-v1:sha256:84f711fe232aa6cc31377bf853fdfc03e0ec4518723d199dfd0fb3bb5a09bd0c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkZjQ1MDI1N2JkMWRmYWM3MDVhNWMzYTdiMGQ2MGU1OGNmMjRjMjM3N2IzNDViN2VhMjlmNGE1ODU2ZGYxOTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI4NDEwMTY4NWRkMTg0NDdhODU3MTc0MTk2ZjY3NWQyNmVjZjU0OWZmOWQ4OThiNDg5YTI0N2UwNjY5ZGRkMjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIzY2E0YTNiZmFhM2FmYzA0ZTJiNDZjMjBiYTkxYjgzOWE3NTczMjVmY2JhN2FkMTNmYWVlODkyNjBiMWJiZjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNmYTdmNDA4MWRlMzU1YzM5MmIwYzFkOTZjMTdiYzQ0MTg3ZDllOTlmZTMzMWFiN2FlYWI3NmNhZTc1Njg5ZmMifQ"
+        },
+        {
+          "resource": "repo://libs/evidence-schema/src/ast/lifecycle.ts#L32-L67",
+          "version": "repo-lines-v1:sha256:0b6fdac4ce6076a6e6087c1ec53aa0ac734920a53ce2f5570acde78556764e8f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5OTY3ZWMxZWQzODM2ZjhlYjE3YWZmMTcyYjViZmVmN2RlNjA0ODVhNDM5YzZjYTExYzU5MWUxNzU1NzM5YWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM3NTZkNDYwMDlmNThmMGI4ZDVhZmM3YmNmNTdhZTJkZGMyZjRjOWZiYTc2MGM0OWM2NzFlNDkzMmU2Y2M5NzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMwNjBkYWNlZDZiNjgxZmNkYjE2ZGY3MTQ2NTdmZjhjZDQ0NTcyOTE2MTZmNDg1ZTEwNzFkMGQ5YmQ5ZjM3NzgifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-18T09:45:40.969Z"
+    "at": "2026-11-20T12:30:09.424Z"
   }
 }

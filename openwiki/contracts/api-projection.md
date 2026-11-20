@@ -5,7 +5,7 @@ description: 模型与可选 overlay 如何投影 draft API snapshot、OpenAPI 3
 tags: [api, projection, openapi, overlay, diagnostics, cli, contract]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-18T09:45:40.969Z
+    at: 2026-11-20T12:30:09.424Z
 sources:
   - id: openwiki-source-4c0b31aad45d3c1bd1d286ce
     resource: repo://apps/cli/src/commands/api.ts
@@ -65,7 +65,7 @@ sources:
     resource: repo://libs/evidence-api/src/schemas/apiSchema.ts
   - id: openwiki-source-b6b6c0e38c718ba7eef29b0f
     resource: repo://libs/evidence-api/src/testing/openapi.ts
-generated: { by: "pi", at: "2026-11-18T09:45:40.969Z" }
+generated: { by: "pi", at: "2026-11-20T12:30:09.424Z" }
 ---
 
 # API v6 聚合根契约与 HAL 投影
@@ -84,7 +84,7 @@ generated: { by: "pi", at: "2026-11-18T09:45:40.969Z" }
 
 公共 URI 从具名业务聚合根开始，不加 Context/lane 前缀：`/product-inquiries/{inquiryId}`、`/product-procurements/{contractId}`。方案嵌套在征询之下；从方案签约和直接签约都返回新合同主 URI。每一个创建入口都有对应的实体 GET，集合创建也有集合 GET。
 
-references 无论箭头方向均读取 child endpoint 基数；普通子资源全部明确 max=1 才采用单例路径。履约确认的动作入口由拓扑决定：单份、可追加或共享确认的 POST 可以不同，但主 GET 都使用全局确认资源 URI。领域 thing 根以及具有 id 类型属性的独立 other_evidence 有只读集合/主 GET。根名在全局分配，子段在兄弟资源间分配，真实冲突用稳定身份后缀消歧，不受无关角色和 Context 重命名影响。
+references 无论箭头方向均读取 child endpoint 基数；普通子资源全部明确 max=1 才采用单例路径。履约确认的动作入口由拓扑决定：单份、可追加或共享确认的 POST 可以不同，但主 GET 都使用全局确认资源 URI。领域 thing 根以及具备可寻址标识和上下文的独立 other_evidence 有只读集合/主 GET；未归属上下文的凭证不生成公共路由。根名在全局分配，子段在兄弟资源间分配，真实冲突用稳定身份后缀消歧，不受无关角色和 Context 重命名影响。
 
 服务仍由 Context 划分，但用 routePrefixes 和精确 route IDs 表达所有权；proposal 下的签约入口由合同服务处理。最终 overlay routes 重新生成 topology、OpenAPI 与 Compose。Traefik 逐操作按 Method 与锚定路径正则路由，后端获得 EVIDENCE_ROUTE_PREFIXES/EVIDENCE_ROUTES；镜像和端口仍是部署草图占位。
 

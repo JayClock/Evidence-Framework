@@ -5,7 +5,7 @@ description: Immer recipes、guarded mutators与标准RFC6902如何构成原子�
 tags: [mutations, session, undo, subscriptions, patches, diff, graph, purity]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-17T06:43:02.055Z
+    at: 2026-11-20T12:30:09.424Z
 sources:
   - id: openwiki-source-55138c775f581f8c989ca7dc
     resource: repo://apps/desktop/src/main/agentRuntime.ts
@@ -13,16 +13,10 @@ sources:
     resource: repo://apps/desktop/src/main/ingestionIpc.ts
   - id: openwiki-source-f0f06a0981a7ca97c510b44d
     resource: repo://apps/desktop/src/renderer/state/useEditorSession.ts
-  - id: openwiki-source-46aa2f0fdf6e50b3fa7d4eb0
-    resource: repo://apps/desktop/src/renderer/state/useLiveModelBridge.spec.tsx
   - id: openwiki-source-87e5669496e1e215691f3e0c
     resource: repo://apps/desktop/src/renderer/state/useLiveModelBridge.ts
   - id: openwiki-source-034a304691f6c1f77f682d25
     resource: repo://apps/desktop/src/renderer/state/useMcpBridge.ts
-  - id: openwiki-source-55662d405492cfd3a6e7e1bd
-    resource: repo://libs/desktop/contracts/src/delivery.ts
-  - id: openwiki-source-8a3964422b76faf8b78c4915
-    resource: repo://libs/desktop/feature-agent/src/state/useAgentPatchBridge.ts
   - id: openwiki-source-0c662531e68a2db936eccc7f
     resource: repo://libs/desktop/feature-agent/src/state/usePatchReview.ts
   - id: openwiki-source-bab9cd022cd0c06c4edacf32
@@ -39,12 +33,12 @@ sources:
     resource: repo://libs/evidence-model-core/src/mutations/entityMutations.ts
   - id: openwiki-source-719c33f78b7e011a9ae31e2b
     resource: repo://libs/evidence-model-core/src/mutations/errors.ts
+  - id: openwiki-source-bbf79e218d6aafb73b87b3af
+    resource: repo://libs/evidence-model-core/src/mutations/evidenceGrowth.ts
   - id: openwiki-source-018d7f07550f9f8d085a8f81
     resource: repo://libs/evidence-model-core/src/mutations/fulfillmentMutations.ts
   - id: openwiki-source-435cf97447e9a87f2921f3cd
     resource: repo://libs/evidence-model-core/src/mutations/guards.ts
-  - id: openwiki-source-8e8fa89dba2bff1a19e45f56
-    resource: repo://libs/evidence-model-core/src/mutations/operators.ts
   - id: openwiki-source-32b6905d2b3e0b5d4b3caa0f
     resource: repo://libs/evidence-model-core/src/mutations/relationshipMutations.ts
   - id: openwiki-source-ff9543d041ae3c5c225cf524
@@ -55,13 +49,11 @@ sources:
     resource: repo://libs/evidence-model-core/src/session/createModelSession.ts
   - id: openwiki-source-5552b65f098f7942c5396da6
     resource: repo://libs/evidence-model-core/src/session/jsonPatches.ts
-  - id: openwiki-source-a8da42e803f5d90fae267d40
-    resource: repo://libs/evidence-model-core/src/session/types.ts
   - id: openwiki-source-307bb5e668d266a4bd7c1f2d
     resource: repo://libs/evidence-schema/src/ast/jsonPatch.ts
   - id: openwiki-source-f3dd6cff8734842de5630223
     resource: repo://libs/evidence-tools/src/index.ts
-generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
+generated: { by: "pi", at: "2026-11-20T12:30:09.424Z" }
 ---
 
 # 受控模型变更、会话与历史
@@ -70,7 +62,7 @@ generated: { by: "codex", at: "2026-11-17T06:43:02.055Z" }
 
 ## 会话所有权与提交
 
-session持current document、惰性memo DomainGraph、selection、undo/redo、listener Set。公开读getDocument/getGraph/getSelection/validate/canUndo/canRedo；写mutate(recipe,label)、applyPatchBatch、replaceDocument；历史undo/redo；选择select/selectAttribute/clearSelection与subscribe。
+session持current document、惰性memo DomainGraph、selection、undo/redo、listener Set。公开读getDocument/getGraph/getSelection/validate/canUndo/canRedo；写 mutate(recipe,label)、applyPatchBatch、applyCommittedPatch、replaceDocument；历史undo/redo；选择select/selectAttribute/clearSelection与subscribe。
 
 mutate在produceWithPatches隔离draft运行，snapshotRecipeResult避免返回revoked draft/别名；无patch为no-op，不清redo、不发文档事件。异常中途抛出就不record。record先可选strict gate，再提取affectedIds、裁undo、清redo、换document/清graph、发document-changed后history-changed。affectedIds比较前后对象身份并包含关系端点，数组移位不把所有后移对象都误报改动。
 
@@ -88,7 +80,7 @@ entity identity的id/type/category不可随update改，rule的id/type/kind/conte
 
 复合mutators一次写成完整业务结构：createContract连接rootRefs、bindDerivedRule连接rule与attribute、createFulfillmentPair写请求/确认/引用/完成rule并要求mandatory business time。caller在单个session.mutate中组合多个mutator即一批，失败全不提交，不再手算inverse Command。
 
-四领域算子introduceFulfillmentPair/addBreachCompensation/roleifyAndInvertDependency/isolateDomainCalculator也是guarded recipes，返回createdIds等OperatorResult；createModelPatch(document,recipe)在本地执行后只取标准patches与snapshot result。算子没有特权写通道。evidence-tools 的统一 registry 向 Pi/MCP 提供同一五个写工具的 schema、描述、非幂等写注解和执行路径；宿主继续拥有事务、历史与静态门禁。
+证据生长算子先铺可独立保存的凭证，再按事实配对、绑定来源、为同一履约组确定归属，或记录已确认的补偿。`createModelPatch(document,recipe)` 从 guarded recipe 取标准补丁和结果。共享 registry 向 Pi/MCP 提供八项写工具与只读 What-If；算子没有特权写通道，宿主拥有事务和门禁。
 
 ## RFC6902边界与安全
 
@@ -106,9 +98,9 @@ applyJsonPatchMutator先parse+structuredClone，避免freeze或alias调用者val
 
 ## 桌面、Agent与读取模型
 
-Agent/MCP renderer边界再parse共享schema并一次applyPatchBatch(agent:/mcp:rationale)。MCP返回op/revision/undoable与post-hoc strict diagnostics，只有真变更增revision；Agent只在真变更record before/after。usePatchReview以当前===after才undo，后续编辑后只关闭，accept不写。
+MCP 在 renderer 校验并 `applyPatchBatch`，返回 op/revision/undoable 与事后诊断；Pi 在主进程校验并准备 forward/inverse patches，只有真实变更提交并发布，renderer `applyCommittedPatch` 重放并保留 before/after 审阅。usePatchReview以当前===after才undo，后续编辑后只关闭，accept不写。
 
-useLiveModelBridge mount和每document-changed发root/revision/document/base，undo/redo也发、selection不发；同步emit让发布先于patch ack。main只接受更高revision并保留first baseline、clone镜像、调度sensors。baseline不随save自动变；报告按revision判stale。
+useLiveModelBridge 在 mount 及本地文档更改（含 undo/redo）发布 root/editorId/revision/document/base；选区和提交事务的重放不回发。Prompt 等发布完成后用锁保护活跃编辑轮次。Main 接收递增 revision，保留最初基线并调度传感器。baseline不随save自动变；报告按revision判stale。
 
 diffDomainModels是只读说明，分Context/业务实体/关系/规则及key-data drift，不是写入口，也不再给旧API自制breaking classifier供电。DomainGraph的indexed lookup/contextPath/rules/fulfillmentPairs是派生read model；pair由显式引用+完成/违约规则定义，canvas和Inspector共用，已无simulator消费者。
 

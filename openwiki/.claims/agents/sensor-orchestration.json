@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:ce269f161bd8df0c3c00a8de8ef4d5fd4949d61d59215646cd9429bc8ca0031c",
+  "pageVersion": "sha256:418a1c18edf25539fd62e8bee28880bc6aa8c638aaba675a31434fb0e9571119",
   "claims": [
     {
       "id": "claim_a007c15b40764a179f770eb7c0348624",
@@ -166,11 +166,11 @@
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/main/agentRuntime.spec.ts",
-          "version": "repo-file-v1:sha256:6a28fc53a208c72039eb5f66a06190953ed5da0187580bccbb6c3386da6aba15"
+          "version": "repo-file-v1:sha256:319addedc24499d60379d1aeb28572e12ff21c226bf33dc8382168db4995d25b"
         },
         {
           "resource": "repo://apps/desktop/src/main/agentRuntime.ts",
-          "version": "repo-file-v1:sha256:03e3b8aacc5423729bbdb69484256ea40902a252ddef58a4f959ee53f90713cc"
+          "version": "repo-file-v1:sha256:62310bb59183347c10567e9564bb565496d9e582f8837419d5b8f7a02200e482"
         },
         {
           "resource": "repo://apps/desktop/src/main/sensorRuntime.ts",
@@ -180,15 +180,15 @@
     },
     {
       "id": "claim_35db9263580d401c8a9c64cd25a9ee51",
-      "statement": "useSensorsState asks the main process for the latest published report first and only triggers a fresh run when none exists, then keeps updating from the pushed report channel while ignoring payloads for other project roots.",
+      "statement": "useSensorsState 订阅按根路径过滤的报告推送，初始化先读取 latestReport，无缓存时才触发检查。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/agentIpcHandlers.ts#L197-L213",
-          "version": "repo-lines-v1:sha256:faa86d2ef6939618e5a6022eb2ea3611fd20087f8ca93408e6376dc29a99cb10:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJjZDk4NjY3MzYzM2I0MDliOGU5MGNmOGRlMjEwN2FjYzg4MDE0ZTljNjM0ODY1NTUzZGQ4OWI1NGEyMmI3YmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1ZGZkMDMxMGU3MjQzNTU3MjI0NTM5MjY4YWY1YWI5YzcxNjU3Yzk0MTE1ZGY2YmUyNmM3MDc2MzAyNTQ3NjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEyZjJmMjgyOTM3N2U0M2RlNzRmNzFiOTFkOTdkOTgwNzVlODNiNDRjNzkzM2EzNDhjYzQ2YTc4MDI3ZTFmYzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRlZTY5ZDFmNjliY2ZlMzMxOGZhYWU1YWY5OTExMjhkZmVlNGYwZGU3ZTkxODQ4YmU3ZWVhYzc5MjIyYTAyY2UifQ"
+          "resource": "repo://apps/desktop/src/main/agentIpcHandlers.ts#L156-L173",
+          "version": "repo-lines-v1:sha256:b399bace5a8b11fab3b99d5dd7e26355af287646540df33bab4adce921271bec:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1ZGZkMDMxMGU3MjQzNTU3MjI0NTM5MjY4YWY1YWI5YzcxNjU3Yzk0MTE1ZGY2YmUyNmM3MDc2MzAyNTQ3NjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM2ZjVjYjUzNDhjZWRiMDZhZmI0Y2YyZDQ0MzM3NGRhYTcyYWRjM2JjM2ExMzRlOGM3OGI1Njk2ZjcxNTk2NTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM4OWE5MDE2OWY2NDljMzEwMTUyY2YwMjViODQ2ZjFlODllNTk4Mzc3YThmZGYyNTlhYjI1MGMzNDIyNjYwNDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRlNzQ2OTE2NjdhZTcxMTlhMTA4Y2Q0ODY3YzBkN2M0OGRhMWJiYjI3ZWRlMjFhMDFkMWQxZjc4YjBhMmZkZWQifQ"
         },
         {
-          "resource": "repo://apps/desktop/src/renderer/state/useSensorsState.ts#L29-L86",
-          "version": "repo-lines-v1:sha256:e52c1dda542057e3c4fbec2d7de66aa6ab8b0c8186f3351c0e6c3f5d5196368c:eyJzZWxlY3RlZExpbmVDb3VudCI6NTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkwOTI3NzkwMWNiODJhMmNjNGQ4ZDUyM2IxZDNiMjQxMzcxNjA2NjM0OGVmZjI4MzZjZjM5ZmYxYzEyOGJiMDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkOWUxMjU0NjQyNTU3NmQzZGVhZThjOWI5ZGJmMTI4ZDVkNmRkYWY1ZDdmZTg1NzkzNDkyN2RlZmZhM2I5ZGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVhY2Q5OWNkMjdmNTUwN2E1YmE3MDJkMDNiZmEyNjI0NTg3ZDkyZjI0YThmMzI2MmU2YzQwNTEzOTRhMzNhYWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZkMjkzYjIxNWZjOGI5NTY1NjU3ZGU1YWNjMmM5Y2JiMjgzZDcxM2IxOGZmOTdhMTlkYzdkOTZjNWM1MTdkNGEifQ"
+          "resource": "repo://apps/desktop/src/renderer/state/useSensorsState.ts#L47-L87",
+          "version": "repo-lines-v1:sha256:34c8174541eda729543489ed8a0ff48c93cf860ccc1e31536994a01f41f3faf8:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5NjZmYmZhODg5OThkYTc0NjU2YzUwMTk0OTU2YzI1ZjA4NDk0NTc2NjBjMDA5ZmU2M2QxZTlmYTlkYzkzMWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBiOWE5MTU3MDY0ZTI3NjBlODAzOTYxMWVkMzhkNTk0YzY4MWE2NWU5ZDA3NGIwYjAxNjUxNzYxZTZmOGQ1OGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlkYjBlNTA4YzhlNGRmNGZjN2JlMjM2NmMyOTdhNTc4Zjk4MDhmOWQwMjNmZDNlNjM3NjBlYzJjMzNmMzJmZGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQzYzhkMDlhODFmYzA1YzgwYmI5ZjhhOGVjYjgyMWI4NzU4MzBkZmQxZGMxNmUwMDA5NTk4YzJjNzU1OGExOGUifQ"
         }
       ]
     },
@@ -208,35 +208,27 @@
     },
     {
       "id": "claim_318d845b299a4fa995d5fd05598842a5",
-      "statement": "ProblemsPanel renders the report as a docked strip with severity tabs whose counts come from the report, an explicit stale marker, one row per finding with severity, message, code, target and suggestion, an active-row marker and a per-row locate action, and states in its empty state that machine checks are not business approval; the filtering rule lives in filterIssues outside the component so it is testable without a DOM.",
+      "statement": "ProblemsPanel 支持停靠与悬浮、严重级筛选和报告计数，标记过期和当前行，仅在可定位时显示定位动作，并区分机器检查和业务批准。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/components/console/ProblemsPanel.spec.tsx#L69-L136",
-          "version": "repo-lines-v1:sha256:dd4391303e6b12eff8c45325a93eafb3f590d8351187f27cb743aaec82c8ab83:eyJzZWxlY3RlZExpbmVDb3VudCI6NjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImViMDExOTY4MTllM2MxNWNiOGFhMjMyYzMwMzQ1MDAxNTEzYmIwOWFlZjFiNWFhODJhYmQ4NTViNTQxNDVmMjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMxMWVjZDM0MWJkOTIyM2MxY2QwNDg3MjhiMzJjM2EyYmYxOGRlNGI4Y2ZlMjAxMjI2MzhjMzNlNWE2YWM4YjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
-        },
-        {
-          "resource": "repo://apps/desktop/src/renderer/components/console/ProblemsPanel.tsx#L45-L188",
-          "version": "repo-lines-v1:sha256:1d0a1f6122c41cc55c733c4a3974eb869b77f7c8d1c7621153159d86e7022b11:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQ0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJmN2Q4ODYwMTVhZjkxMWEyMGI0ZjdiNDkzYzdiMDYwMDE3YjY5YjVkY2JjZTQwMzc1NzkwNWM0ZTBhMjIwZDMzIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0N2I4YzEwODVmOTVhMWFmYWJlNWQxNTJhZDU4ZGI5ZGMyNjMzNmMxMjE4ZTJiODQwYWU3YWQ4MjZhMGQ1NzQ4IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI5NzkzOWYwNWMxYmIyNThhZmQyZDdhZDk3MWU1NDJiZDQ3YjY2MTk0YjE2M2E1YzkzNGE4MjgwZTgzMjQ4ZjhmIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI3YjAwODU5YWZjZjgwNjg3ZDg5MGQ4NWE2NDM4ODhiM2E5Y2Y3MDBhY2ZmNjFiZjcxNmYzMjdmZjFjOTZmMjg5In0"
-        },
-        {
-          "resource": "repo://apps/desktop/src/renderer/components/console/problemFilters.ts#L10-L19",
-          "version": "repo-lines-v1:sha256:e4ff5ebbc713bab9394c14809d7794ffea89efa4f3b275d06bea5a56fa443aaf:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQzMGM0MDllZWEzYWUyOThjYzdkNGE5MDc4YTM1ZjEzMWVlNzI0YzJlMjc0MDBiZDI5YmZhNDYwYjdmODcwMTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmN2IwY2QwMGVmZjBkMDA1OWQ4YTY1N2Q0NWZiNjMxMmJkY2ExMTZhODFiMTRmYzI4OGJiMTFiOGYwNjQ5ZjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdmMmNhN2IyOGQyMDAzMzkzMDk1Y2Q4M2NlZjc4ODlkZDEyZGYwOTcyMTBjMGU2NDMzNWU1MzQ1ZGJhNTUyNjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+          "resource": "repo://apps/desktop/src/renderer/components/console/ProblemsPanel.tsx#L49-L204",
+          "version": "repo-lines-v1:sha256:650d754730fae4daf0fa27d2d5ec2d9ed915f30e838f636c3b3a90dbdee45845:eyJzZWxlY3RlZExpbmVDb3VudCI6MTU2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIwOWU2OThlMmViMTc5ZmNiOTYzMjEyNzBhNzA5Yzk3ODExNTNmMDFmMmQ1ZGNhYjI4ZGFjMmRhZmRjYzgxMzZkIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI4MmYzY2ZkMTFkYTYxNTAxOTdhY2VlZDA4NDA2YWM2NGIwNTAzNDBkZTdiYzA0MTI0YTRjYjdlZmE2NzEzNDBiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3OTNjMTViNGQ5MTVkY2ZhY2ZlOWIyOTcyNDQyN2Q2ODQzOWZlM2Y2MTI1OTlmYjA2NmNiNjc4NTVjNDA2MWM3IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI3NWY5ZmZlZTUxM2Y4ZDZiODcyNGMwYjBhOTczNDljNmQ0NzQxMmU1NTNlNjRmMjg3YTcxNWM0ZGVlMGU3MzE0In0"
         }
       ]
     },
     {
       "id": "claim_152b0c1ac16a4f2f91c1fc727f432376",
-      "statement": "Findings must describe the revision on screen: the editor builds the diagnostic index from null instead of a report unless the report's documentRevision equals the live model revision and neither the live bridge nor the sensor state is loading or errored, and it re-runs the sensors after each save.",
+      "statement": "画布诊断只接受与 live revision 相符且同步无加载或错误的报告；保存后触发重新检查。",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L248-L264",
-          "version": "repo-lines-v1:sha256:d37670551359005081df16958d48491b2c7869075cc1fe46d722323c9be7a992:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdhYjEyMGYyY2E4NTZhNGY4MmJlOTQ3NjE1Njk3MDlmNzVhNjIwNDlmZTc5YjJjY2I5MDVhN2E0ZDQzZDgzMWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1ZmI0ZjI1MjAzNTFlMzBjZTlkYTJjMDY0NTc3ODY2ZmQzYjhjOTFjMjQyNDA2OWJiYmEzN2JjM2EwYmQzNTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZhNDEwZTgwYzcxYWY1MzdhOWFiNGJhNjgxMDc1MGMwMzQ0ZjQ0ZWE4MmJhODgyNjA1MGU4ZDIxNTBhMDllMjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM0MDE3MDZhM2JhMmJmMDkzYzllZDA3NmFmNmI3NDliYWMwYjY4N2EwNjViYzZhOTIxMjhlZGQ0ODY1MzYxMWQifQ"
+          "resource": "repo://apps/desktop/src/renderer/screens/EditorScreen.tsx#L304-L325",
+          "version": "repo-lines-v1:sha256:79ea9fbbc44b26a9c462163225dac4b44b9db4eddeb862d07ad8215a73b734df:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNmYWVkNGJjNzg5MzY2ZGFlNWM1MzlmZGZmNWFiZDcyNTdlZDYyMGU0Mjk3ODVjOWNkYWEwZGNlNjcxODFjYjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg1NDJiNjUwZWJiMzU3YzFjNzBkMDAzMGJkYzczMDBhMGE3ZDZiZmY4MjIwYzIxNGM1MTVlODZjYTljZmI5MDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEyMjk5YjRhYzViZjAyMzgyNDJhNWQ2Yjg0MDlhMzRiZTczNTQwNjgwNTkyY2VhZGU4ZWI0MTdkMjYwZjk2NjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUzZWIzMDk5ZDkxYWY1YzZiZGIyNjNmNmE0N2I0OGFjMjIyMDYxYzEyMTg5OTY4NTAxMzM4NThiN2E3ZGQxY2UifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-18T12:34:41.390Z"
+    "at": "2026-11-20T12:30:09.424Z"
   }
 }

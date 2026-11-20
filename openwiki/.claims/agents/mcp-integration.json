@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:7a73cfcfe0284e17f51823bca752d08b84aa0e3052a349135ef447ce59949afb",
+  "pageVersion": "sha256:4ee5d7c17178eb83dba26fd926e83bf5d859e255b4c243ba6e16a97915615524",
   "claims": [
     {
       "id": "claim_93b8ecf8664543a185353872854bd036",
       "statement": "The desktop executable becomes a headless MCP stdio server when started with --mcp-stdio: that mode opens no window, reads no project store and performs no client registration, and only forwards tool calls to a running desktop over the local socket.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/main.ts#L148-L149",
+          "resource": "repo://apps/desktop/src/main/main.ts#L150-L151",
           "version": "repo-lines-v1:sha256:03a42be7aad9cf31e7126f6d67707fcf7150cecd596e9d7ec533b587ac8bf701:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTdmM2UxNDM5MDU4MTg1ZDRjOGNkZTQxMWJiOWI3NTgwZDhhN2QxMzA3ODlkODI3N2YxNGM4NGY2ZjI5MDY1YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmE3N2M4OTA3OTY5NDNkNTYyNDdmMGY1ZTRiZTljYTRkNjI4MGQ5ZTVhNDZhNWQyYTc1NDhkM2UwNzEyNTI0ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjAwNzE0Zjg5NWFlYjYzMDllNjI3MjE4YjAwOGZhYTc0YmRkZDM0YTQzNTU2YjAxYmIwMzg4ZDNiZDk5OTUyMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2JjNmI4OTRkODhkNDMyYjQ5NjliY2UzYmExNjNkYTc5ZGYzMmFhNmUzNzYzOTEyZmE2ZDY0N2I4ZjgxYjViNCJ9"
         },
         {
-          "resource": "repo://apps/desktop/src/main/main.ts#L36-L61",
+          "resource": "repo://apps/desktop/src/main/main.ts#L35-L60",
           "version": "repo-lines-v1:sha256:53d3e19492fa526c1610f5cd7fa49879a2ee7224d110ae761ad9a1c026323941:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNiOGY4NTU1YWNhZWRlZWIxMDk4NDc4ZWI2NjBmYjNmNGIyZDc0YzdmMzYyMWZlZGI0MWU1MGY1OGQ0ZjEzYTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ5YmYyYzFmYWRhMjcwNWU5NTIzYTIyOGY2M2QzMTk1ZjhlMzgyMmI4OTI0YzcwNTUwMWYwNjE2MjYzODUxN2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMyOTYyY2MzYmUzODkyNTE4MTkxMzZlYzNhZGIxZmNhMzg5ZDhjZWM1YmYxODYxZTQ1NmQ0NDgzY2NiODNhZTMifQ"
         }
       ]
@@ -50,33 +50,29 @@
     },
     {
       "id": "claim_2ab514563f724d02a28a6c905d1a3bab",
-      "statement": "MCP 注册 13 个工具：8 个只读，5 个由共享 registry 提供的非幂等写工具。",
+      "statement": "MCP 注册 17 个工具：9 个只读，8 个由共享 registry 提供的非幂等写工具。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-mcp/src/server/toolset.spec.ts",
-          "version": "repo-file-v1:sha256:934b0524b2dc5278152a24be9d3120fe2d38aae0e0e7ddfb5af7047cb1829000"
-        },
-        {
-          "resource": "repo://libs/evidence-mcp/src/server/toolset.ts",
-          "version": "repo-file-v1:sha256:0f7c38e72820b9505ca57f2da48e09418bca7ee00506964a2dbe9cee387acb0a"
+          "resource": "repo://libs/evidence-mcp/src/server/toolset.spec.ts#L273-L314",
+          "version": "repo-lines-v1:sha256:1c99d9eb0ae89cb3792315515456cb625cf458cff7de71da0685ad492a6b67a6:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0ODU4NGE3ZWNiYjcwYzAxMWY3NDU1ZjI1NjMzZjU1YmJiNjgzNGZlZjk2YjRjYzYzNTY5YWM0NTYyNGY3NzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUzZDhmOTE0MmEyMDQyZjc4M2YzYWExMmIwYjVlY2M3YWQzNjM1YjFmZWZmMGQyMmE0ZmZkYjQ2ZTRjNjdlZTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRjMGVjOTBlOWVhODMwODNhZGYzNjBmZGEwNjNiZjExN2U2MjQ2MGUzYzBhZmE4NDQ5ODU4NWM4Mjc1MDg5OTMifQ"
         }
       ]
     },
     {
       "id": "claim_fdd8551ba6d84affaabfc575ddc71886",
-      "statement": "Pi 和 MCP 复用 evidence-tools 的五个写工具；四个 recipe 从当前文档生成 guarded JSON Patch，构造失败不写入，成功只调用一次宿主 applyModelPatch。",
+      "statement": "Pi 和 MCP 复用 evidence-tools 的工具定义。七个写算子从当前文档生成 guarded JSON Patch，构造失败不写入，成功只调用一次宿主 applyModelPatch；What-If 模拟是只读工具。",
       "evidence": [
         {
-          "resource": "repo://libs/evidence-mcp/src/server/toolset.ts",
-          "version": "repo-file-v1:sha256:0f7c38e72820b9505ca57f2da48e09418bca7ee00506964a2dbe9cee387acb0a"
+          "resource": "repo://libs/evidence-mcp/src/server/toolset.ts#L140-L198",
+          "version": "repo-lines-v1:sha256:f9f509f554448d592a20e7a1d8395f8c676808ebadb7a3709e4d62e454ea701a:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk0MzNkMGVhOWVjZjJmMzljOWE1MDQwNzM5NWVlNDExNzJmZTY4MmM5Yzg4NWEzNTA4Zjc1YmRlZTE1MWVmZmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwMTk5NWYyYTNlNGEzYTcwZjJlYzZlZWVjZjdiODE2YmQ2OTI3OGQ0ZTNhNjc2YTlmZjQ5MTk0NDBiYWM3MmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUyNzA0Mjc2ZjU2ZGI1Mzc2NWMyOTY2MGZkNDQ2NWUxZTQxMmIwNTMyMzRhYTk0NDI5NGFlNWE1ZWY2Y2E1MGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkxNjEyMDVhZDViN2MyMGY4OThhOGQ3NmM5MzgyMjg5ZWJjMjQwOGMyZDBmOWM3YTdkNGEzMmVkYmQ5M2Y1MjUifQ"
         },
         {
-          "resource": "repo://libs/evidence-tools/README.md",
-          "version": "repo-file-v1:sha256:04fd05f0776788becb062c658df40976d3ff8f181d9e236ff7473402b822c840"
+          "resource": "repo://libs/evidence-tools/src/index.ts#L104-L136",
+          "version": "repo-lines-v1:sha256:fe2019388b3b8245053134eaa4c201545bca9ae3fe8aa1f7dad3f89fc4874da3:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjN2MwOGE4ZDUzY2Q0NGVmY2ExZDcwZTc5MTVkMjJjZDRiOGZkYWU5YmEwMTZiMzI4NGQxOTVhZGFjZTkzOWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRmMDdlMjE1ZGY2MmMwODc2ODJlNDU3YzU3MGMyNzE1N2Y0ZTJjN2ZmN2FhM2EwNWRiNThmNTYwMzFhYzY0ODIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVhNjZiMTJjMjU3OTgxY2Y3OGVjYWExMWFkZTBlYWE2NjU4Yjg5YTk4YmZjZTFkMDlkZGU5YzVmNjFhOTcyNjUifQ"
         },
         {
-          "resource": "repo://libs/evidence-tools/src/index.ts",
-          "version": "repo-file-v1:sha256:ebe9c1094ade94db3a0ca0df10ed3bb3ecbc60689a9dcc5bbb2b728fffb69992"
+          "resource": "repo://libs/evidence-tools/src/index.ts#L161-L291",
+          "version": "repo-lines-v1:sha256:f39a2c73dcee5417407dada9169d2dd454bb6a4bece6762ba3bc7cf8917c527f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI1ZDBkMDQyZjNkYWFjNjcwZWU5ZTc3NzZkNjA2YjQxZTA3NjkyY2VmZTJmZTExMmRjNjI1YzhjYzJlNmEwOTQ4IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwNDAxOTBhMzA1OGQ5YjFlNzZiM2M1NTM3ZTcyN2I1YmMzNmRiMDU1NGI4NzFlNTBkYmI4ZGM5NWI4Njk4MjYwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJkZWJkYzRiMmFjM2I0ODBjY2EyZGE1M2JjY2Q5ZTZmNzNiMzFiMWFmYmQ3MzUxNDZjODIwNDFmYmY5ZDEyNmM1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MSwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJhYTFkMWE2MzM5MDIyOWM3OTgzNDdlODNhMDQwNTQ0MWM5NDAwMDM1Mjg0YWQxNjhjMWJmNmNkZjFkNzBhMzcwIn0"
         }
       ]
     },
@@ -189,7 +185,7 @@
       "statement": "Renderer-bound MCP calls go to the first editor window returned by listEditorWindows, which yields Map insertion order rather than focus order; because the capture rectangle and the model reads share that one WebContents, a screenshot cannot depict a different project than the model the agent just read.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/main.ts#L105-L111",
+          "resource": "repo://apps/desktop/src/main/main.ts#L107-L113",
           "version": "repo-lines-v1:sha256:3099c121ff2c17975de531f1e5e88f8768391e6d2a12fa445f53995323a3ec5c:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmY3ZDRjOTg4MjUzZTdjMzJlZTc4MmQ4Y2ZmNWM0MjA5MWFkODQ2NTdmOWFlNWM4MDE3NDhkNTVlYjE3ZTk4MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWYwY2RiOTcyYTdiZmI3ZWQyNDZmOWZmNjcyMzg1ZTU1ZjQ5NjhmYzExMDQzZGM1YjY4NGQ1MWRmYTMxZGJjYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjAyMGQ3NjUwM2UzZjkzOTE4NDNiMWJkYzkyOTJjYTg2MjdmODZmZGU5YWI0ZWVkY2I5MmI1YWMxOWRhYjUxYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWMxYTFlYjBiZjMyYmFjY2NlMDc1MDJhYjYzZThlYTQ3M2Y0MmRlNWQ1NmJjN2VmMjY1YjMyN2RhZTA0ZGM3NyJ9"
         },
         {
@@ -204,7 +200,7 @@
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/main/deliveryProjection.ts",
-          "version": "repo-file-v1:sha256:43c033ca48862d34978460a7a0b9f228bb6abdd2a99a8f598dd47a02323e76d3"
+          "version": "repo-file-v1:sha256:ef873cc65234f719dbe055bcab5318a66ef0663233afbf75e7b43dd6f680f467"
         },
         {
           "resource": "repo://apps/desktop/src/main/mcpDeliveryService.spec.ts",
@@ -236,7 +232,7 @@
       "evidence": [
         {
           "resource": "repo://apps/desktop/src/main/main.ts",
-          "version": "repo-file-v1:sha256:5c69369ed5af8a83f6d595da3fc733d39c6d556b485949077f252ee18d2077c2"
+          "version": "repo-file-v1:sha256:320808a8bc54cc3627aabc4e61d24d08e900c58ce2b64340063fe9b12f14c4eb"
         },
         {
           "resource": "repo://apps/desktop/src/main/mcpBridgeRuntime.ts",
@@ -265,7 +261,7 @@
       "statement": "The bridge's connections counter is non-zero only while a call is in flight, because the stdio client opens one socket per request and destroys it once the answer arrives; registeredClients lists only the clients whose config sync succeeded.",
       "evidence": [
         {
-          "resource": "repo://apps/desktop/src/main/main.ts#L128-L134",
+          "resource": "repo://apps/desktop/src/main/main.ts#L130-L136",
           "version": "repo-lines-v1:sha256:5342e3e53fd0bdaecf7093f66f7a8a20a327d042865c46eb79b6fce81cc2dfa6:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTQ1YThiOTFjZjQ0NzNkYTVlMzc0YjVlMDVhZTY5M2I4YjQ1N2E5NTY0ZGMyMDRhYTBkMDNmMzVlMWNmZmMzNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2EzZTQ2Zjk0Mjc2YjZmNmY0ZWQxZjAyYWY3OGJlZjZhMmVlMWM0MzlkZDU1ODRiOTczOTQ4MzEzMjE0ZDJiNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTRjYTI5NThiOWY1MGZmOTlhMDlkYTFmYTQyNjg0NjdkOGZmOTI0ZmQyMTg0ZTM0NjZmYjZiNDY5YjAzY2U5YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYWQ3YTdmMjBkNmFlYjFjMmEwNzQzYmMyY2FjZTkyMGYzYWM3NWNlZTg2ODBlZjVhYjE4N2RlZTFkMzllMjkzOCJ9"
         },
         {
@@ -350,13 +346,13 @@
       "evidence": [
         {
           "resource": "repo://libs/evidence-mcp/src/server/toolset.ts",
-          "version": "repo-file-v1:sha256:0f7c38e72820b9505ca57f2da48e09418bca7ee00506964a2dbe9cee387acb0a"
+          "version": "repo-file-v1:sha256:a692bd6c34d54d0c6b5b876c2836e5817006c1b15ec7911c13386e9fcfcf897e"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-18T12:34:41.390Z"
+    "at": "2026-11-20T12:30:09.424Z"
   }
 }

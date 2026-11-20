@@ -1,24 +1,18 @@
 ---
 type: concept
 title: 关键数据、派生与来源追溯
-description: 八类来源分类、关键数据台账与 native CEL 属性依赖链如何协作，以及 sourceSnippet、业务时间、JSON精确整数和审查结论的边界。
+description: 九类来源分类、关键数据台账与 native CEL 属性依赖链如何协作，以及 sourceSnippet、业务时间、JSON精确整数和审查结论的边界。
 tags: [key-data, provider, provenance, ledger, lineage, business-time, sensors]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-18T12:34:41.390Z
+    at: 2026-11-20T12:30:09.424Z
 sources:
   - id: openwiki-source-14c1bd0ebaba9f1349ef58a4
     resource: repo://libs/desktop/feature-inspector/src/inspector/AttributeDataGrid.spec.tsx
-  - id: openwiki-source-000b39f31699cab4b8d68ff9
-    resource: repo://libs/desktop/feature-inspector/src/inspector/AttributeDataGrid.tsx
-  - id: openwiki-source-294ae639434a4e29c9572cbc
-    resource: repo://libs/desktop/feature-inspector/src/inspector/KeyDataLedgerSheet.tsx
   - id: openwiki-source-3046611767bc0c00a44d0bdb
     resource: repo://libs/desktop/feature-inspector/src/inspector/KeyDataProvenancePicker.tsx
   - id: openwiki-source-80031f5421964a543e95e5ba
     resource: repo://libs/evidence-agent/src/sensors/native/nativeKeyDataAudit.ts
-  - id: openwiki-source-925f1915fe23c3f1c07b66e9
-    resource: repo://libs/evidence-agent/src/sensors/native/nativeSensors.spec.ts
   - id: openwiki-source-819cda3e1e556eb778e9f02b
     resource: repo://libs/evidence-agent/src/sensors/native/nativeSensors.ts
   - id: openwiki-source-c1e4281890861794f7ffa119
@@ -41,6 +35,8 @@ sources:
     resource: repo://libs/evidence-model-core/src/keyData/keyDataLedger.ts
   - id: openwiki-source-9008514a60858ff717f539ab
     resource: repo://libs/evidence-model-core/src/validation/fmCheck.ts
+  - id: openwiki-source-bb6561cac02f8a21961ea926
+    resource: repo://libs/evidence-model-core/src/validation/scope.ts
   - id: openwiki-source-94d8041b675559a722964cce
     resource: repo://libs/evidence-model-core/src/validation/traceability.ts
   - id: openwiki-source-75b4a800cf064015957f9321
@@ -55,47 +51,38 @@ sources:
     resource: repo://libs/evidence-schema/src/ast/keyData.ts
   - id: openwiki-source-6dd8352adfce201b404ea1bf
     resource: repo://libs/evidence-schema/src/ast/provenance.ts
-generated: { by: "pi", at: "2026-11-18T12:34:41.390Z" }
+  - id: openwiki-source-f3dd6cff8734842de5630223
+    resource: repo://libs/evidence-tools/src/index.ts
+generated: { by: "pi", at: "2026-11-20T12:30:09.424Z" }
 ---
 
 # 关键数据、派生与来源追溯
 
 四个机制不可混淆：keyData标记决定纳入台账；来源分类解释提供方；lineage证明公式读了哪些模型属性；sourceSnippet说明对象从哪句文本读出。它们都不证明实际后端执行正确。
 
-## 八类来源与分类局限
+## 九类来源与分类顺序
 
-buildKeyDataLedger只统计attribute.keyData=true，金额名称不会自动强制打标；未标价格可能通过结构检查，建模纪律依赖人和prompt。KEY_DATA_SOURCE_DEFINITIONS单源声明label/resolved，分类优先级：
+buildKeyDataLedger 只统计 `attribute.keyData === true`，金额不会因为名字自动纳入。共享词表单源声明标签及是否闭合：derived、contract-term、domain-source、negotiation-source、preceding-evidence、result-fact、request-input、needs-decision、other。
 
-| 条件 | source |
-| --- | --- |
-| derivedByRuleRef存在 | derived |
-| evidence.contract | contract-term |
-| participant.thing | domain-source |
-| rfp/proposal | negotiation-source |
-| confirmation/other_evidence | result-fact |
-| fulfillment_request且字段在形成事实白名单 | request-input |
-| request其他字段 | needs-decision |
-| role/context等其他类别 | other |
+分类先看 `derivedByRuleRef`，再看持久化 `attribute.source`。未声明时，合同、领域对象和前合同凭证按对象类别推断；请求的 `timeRole: start` 属于请求形成事实，确认及其他凭证的 `occurrence` 属于结果事实。不从字段名称猜来源；请求的截止时间和未声明来源的其他确认字段仍待决。
 
-白名单为started_at、request_number、delivery_address、return_address、fault_description、asset_code、billing_period、settlement_period。expired_at不在其中：履约请求的必填截止时间必须有来源决议，常通过derivation建立。
+显式来源可保留 contract-term、domain-source、preceding-evidence 的对象与属性引用，或标记产生方上的 request-input/result-fact。Schema 检查目标存在、种类、类型匹配和直接来源环；同字段不能兼有直接来源和公式绑定。不能把其他类别或传感器计数当业务充分性证明：只有 needs-decision 进入待决清单，other 本身不在 resolved 集合中。
 
-分类是kind/name/ref的语法推断，不读取meaning、不验证事实真伪。isKeyDataDecisionOwed只识needs-decision，isKeyDataResolved排除needs-decision/other；但sensor summary以total-owed计算resolved，因此other可能被summary算已解决、却无真实提供方。不可将该计数当业务充分性证明。人类picker词表也不是持久化provider字段。
+## 同一台账，多个界面
 
-## 同一台账，两个消费者
+Inspector、画布卡片和 native audit 基于同一台账。Inspector 可绑定公式或撤回关键数据标记，不接受自由文本供应方；画布原位 Inquiry 可用建模算子绑定结构化来源。台账能显示直接引用与派生提供者，单次修改由会话事务记录。
 
-Inspector的AttributeDataGrid、KeyDataProvenancePicker、宽KeyDataLedgerSheet和nativeKeyDataAudit复用buildKeyDataLedger。展示来源label、derivation provider alias→对象/运行时type、规则和待决计数；按钮是绑定规则或撤回keyData，不可输入一个自由文本供应方。修改通过guarded mutator/session.mutate，规则formula bar也同会话撤销，旧UpdateAttribute/UpdateRule Command已撤。
+native audit 报告 bucket counts、待决字段和派生追溯。Sensor 最多发 40 个 KEY_DATA_DECISION_OWED warn，summary 用全量；零待决、零阻塞等条件用于门禁，但不是业务批准。
 
-native audit输出checkVersion1、valid=true、bucket counts、needsDecision的entity#attribute/context/meaning/type，以及traceability得到的derived sources；note明确待决不是错误。sensor只发最多40个KEY_DATA_DECISION_OWED warn，summary全量；无待决给KEY_DATA_RESOLVED info。passed只看block，stage-ready另需passing gate、零待决、零blocks/coverage/breaking。
+## 业务时间
 
-## 业务时间属于模型红线
-
-rfp/proposal/request需started_at+expired_at，contract signed_at，confirmation confirmed_at，other created_at；任何认出的时间属性需required/keyData/timestamp。documentSemantics报告attribute.time.missing/notKeyTimestamp，不再由巨大手写strictValidate函数实现。业务发生时间与技术写入时间不同，不能把客户端任意回填当合同事实。
+FM v6 用 `timeRole: start/deadline/occurrence` 声明实际命名的属性。已经声明的时标必须是 required keyData timestamp，错误由 schema 拒绝；缺失时标在 scope 完整性检查中报告。业务时间不是技术写入时间。
 
 ## Native CEL scoped AST 的lineage
 
 extractRuleAttributeAccesses直接编译cel-js AST，以walkCelAst/resolveCelReference跟踪宏词法scope，不用旧手写parser或regex。a.field、a['field']、optional访问等静态成员可追溯；many必须通过collection macro，macro不能把one绑定当many，动态索引不能假装确定属性。嵌套宏变量/shadowing按作用域解回模型binding，字符串内容不产生假read。
 
-analyzeTraceability建立entity#attribute nodes、source→target经rule edges、non-derivation constraints，排序稳定。它拒绝：未知属性、binding/ref不匹配、重复derivation目标、属性/target反向不对齐、lineage cycle。ParseError留给CEL静态诊断避免重复语法噪音，其他内部错误不伪装成功。
+analyzeTraceability建立entity#attribute nodes、source→target经rule edges、non-derivation constraints，排序稳定。直接来源也形成带 sourceKind 的边，与规则边共同检查循环。它拒绝：未知属性、binding/ref不匹配、重复derivation目标、属性/target反向不对齐、lineage cycle。ParseError留给CEL静态诊断避免重复语法噪音，其他内部错误不伪装成功。
 
 关键派生还必须至少读一个modeled attribute；**实际读取**的type-only scalar binding必须建成模型属性。仅声明但没用的scalar不会误报；宏局部变量不算自由scalar。注意这不是“禁止所有数字常量”：表达式中的字面量税率并不因这条规则自动识别为隐藏提供方，业务审查仍须判断。
 
@@ -115,6 +102,6 @@ native sensors不对照访谈记录，模型是唯一输入；interview仅是来
 
 diffDomainModels复算两侧ledger，报告source/rule/expression变化、hasKeyDataDrift和两侧owed计数；这是模型比较能力，不表示桌面有 branch API。
 
-keyDataLedger/keyData specs保护八类优先级、counts、other局限和未标排除；traceability/celAnalysis specs保护native成员/macro/shadowing、动态索引、cycle、scalar纪律。FM/sensor specs保护warn/block区分，Inspector specs保护来源展示/绑定/撤回的一次撤销与Sheet header。审查还需补问未标金额、other提供方、语义正确性、真实HTTP实现和scope闭环。
+keyDataLedger/keyData specs保护九类分类优先级、counts、other局限和未标排除；traceability/celAnalysis specs保护native成员/macro/shadowing、动态索引、cycle、scalar纪律。FM/sensor specs保护warn/block区分，Inspector specs保护来源展示/绑定/撤回的一次撤销与Sheet header。审查还需补问未标金额、other提供方、语义正确性、真实HTTP实现和scope闭环。
 
 相关：[语言](./fm-dsl.md) · [静态/CEL](../model/checks-and-simulation.md) · [传感器](../agents/sensor-orchestration.md) · [Inspector](../desktop/canvas-and-inspector.md)
