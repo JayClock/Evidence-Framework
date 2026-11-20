@@ -12,7 +12,7 @@ export const registerAiConfigIpc = (
       return await service.save(request);
     } catch {
       throw new Error(
-        '无法保存 AI 配置。请检查模型名称、端点、API Key 和系统密钥环。',
+        '无法保存 AI 配置。请检查模型名称、端点、API Key 和桌面配置目录。',
       );
     }
   });
@@ -23,7 +23,7 @@ export const registerAiConfigIpc = (
     try {
       return await service.importFromLocalPiCli();
     } catch {
-      throw new Error('无法导入 Pi CLI 配置，请检查凭证文件和系统密钥环。');
+      throw new Error('无法导入 Pi CLI 配置，请检查凭证文件和桌面配置目录。');
     }
   });
   const unsubscribe = service.onChanged(() => {

@@ -1,19 +1,29 @@
-import { mkdir, open, stat } from 'node:fs/promises';
+import { mkdir, open, readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
 import {
   InMemoryCredentialStore,
   InMemoryModelsStore,
+  type CredentialStore,
 } from '@earendil-works/pi-ai';
 import type {
   ModelRuntime,
   SettingsManager,
 } from '@earendil-works/pi-coding-agent';
 
-export const statIfPresent = (file: string) =>
-  stat(file).catch((error: NodeJS.ErrnoException) => {
-    if (error.code !== 'ENOENT') throw error;
-    return undefined;
-  });
+const ifPresent = (error: NodeJS.ErrnoException) => {
+  if (error.code !== 'ENOENT') throw error;
+  return undefined;
+};
+
+export const readPiFile = (file: string) =>
+  readFile(file, 'utf8').catch(ifPresent);
+
+export const parsePiObject = (text: string): Record<string, unknown> => {
+  const value: unknown = JSON.parse(text.replace(/^\uFEFF/, ''));
+  if (!value || typeof value !== 'object' || Array.isArray(value))
+    throw new Error('Invalid Pi configuration');
+  return value as Record<string, unknown>;
+};
 
 /** The desktop config uses only the global Pi settings, never a project's overrides. */
 export const readPiSettings = async (agentDir: string) => {
@@ -27,26 +37,40 @@ export const readPiSettings = async (agentDir: string) => {
 
 export const createPiRuntime = async (
   agentDir: string,
-  { persistAuth = false } = {},
+  {
+    persistAuth = false,
+    credentials,
+    modelsPath = path.join(agentDir, 'models.json'),
+    createRuntime,
+  }: {
+    persistAuth?: boolean;
+    credentials?: CredentialStore;
+    modelsPath?: string;
+    createRuntime?: typeof ModelRuntime.create;
+  } = {},
 ) => {
-  const { ModelRuntime } = await import('@earendil-works/pi-coding-agent');
+  const create =
+    createRuntime ??
+    (await import('@earendil-works/pi-coding-agent')).ModelRuntime.create;
   const authPath = path.join(agentDir, 'auth.json');
   const modelsStorePath = path.join(agentDir, 'models-store.json');
-  // Pi's file stores bootstrap on reads. With no existing file, keep the
-  // offline catalog and credentials in memory until the user saves.
+  // Pi's file stores bootstrap on reads. Keep initial reads side-effect free.
   const [auth, cache] = await Promise.all([
-    statIfPresent(authPath),
-    statIfPresent(modelsStorePath),
+    readPiFile(authPath),
+    stat(modelsStorePath).catch(ifPresent),
   ]);
-  return ModelRuntime.create({
+  if (auth !== undefined) parsePiObject(auth);
+  return create({
     authPath,
-    modelsPath: path.join(agentDir, 'models.json'),
+    modelsPath,
     modelsStorePath,
     allowModelNetwork: false,
-    ...(auth || persistAuth
-      ? {}
-      : { credentials: new InMemoryCredentialStore() }),
-    ...(cache ? {} : { modelsStore: new InMemoryModelsStore() }),
+    ...(credentials
+      ? { credentials }
+      : auth === undefined && !persistAuth
+        ? { credentials: new InMemoryCredentialStore() }
+        : {}),
+    ...(cache === undefined ? { modelsStore: new InMemoryModelsStore() } : {}),
   });
 };
 
@@ -74,15 +98,16 @@ export const savePiSelection = async (
     throw new Error('Cannot write Pi settings');
 };
 
+export const encodePiKey = (key: string) =>
+  key.replaceAll('$', () => '$$').replace(/^!/, () => '$!');
+
 export const savePiKey = (
   runtime: ModelRuntime,
   providerId: string,
   key: string,
 ) => {
-  // login() persists through the SDK's AuthStorage (not a public export).
-  // The desktop only handles single-secret setup, never interactive OAuth or
-  // multi-step credentials. Escape Pi's env interpolation for literal keys.
-  const literalKey = key.replaceAll('$', () => '$$').replace(/^!/, () => '$!');
+  // login() persists through Pi's AuthStorage, which is not a public export.
+  const literalKey = encodePiKey(key);
   return runtime.login(providerId, 'api_key', {
     prompt: async ({ type }) => {
       if (type !== 'secret')

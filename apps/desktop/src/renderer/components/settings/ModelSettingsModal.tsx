@@ -104,13 +104,15 @@ export const ModelSettingsModal = ({
         setApiKey('');
         setNotice(
           result.imported
-            ? '已导入安全存储；请选择模型并保存。已有桌面凭证不会被覆盖。'
+            ? '已导入桌面 Pi 配置；请选择模型并保存。已有桌面凭证不会被覆盖。'
             : '未发现可导入的凭证。',
         );
       }
     } catch {
       setFailed(true);
-      setNotice('操作失败。请检查配置、系统密钥环与网络；凭证不会明文保存。');
+      setNotice(
+        '操作失败。请检查桌面配置目录与网络；升级时可能需要解锁旧凭证的系统密钥环。',
+      );
     } finally {
       setPending(null);
     }
@@ -169,7 +171,7 @@ export const ModelSettingsModal = ({
                   id={keyId + '-storage'}
                   className="text-[11px] text-emerald-700"
                 >
-                  由系统 safeStorage 本地加密存储
+                  保存在桌面专用的 Pi auth.json 中（未加密）
                 </p>
               </div>
               <input

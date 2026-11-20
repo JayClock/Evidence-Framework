@@ -2,7 +2,6 @@ import path from 'node:path';
 
 import { app, BrowserWindow, nativeTheme, safeStorage } from 'electron';
 import { AiConfigService } from './ai/aiConfigService';
-import { DesktopSafeCredentialStore } from './ai/safeStorageStore';
 import { registerAiConfigIpc } from './ai/aiConfigIpc';
 import {
   getEvidenceMcpBridgeEndpoint,
@@ -71,7 +70,7 @@ const startApplication = async (): Promise<void> => {
   const userDataPath = app.getPath('userData');
   const aiConfig = new AiConfigService({
     userDataPath,
-    store: new DesktopSafeCredentialStore(userDataPath, safeStorage),
+    legacyEncryption: safeStorage,
   });
   const getModelOptions = () => aiConfig.getModelOptions();
   const agentIpc = registerAgentIpc({ getModelOptions });

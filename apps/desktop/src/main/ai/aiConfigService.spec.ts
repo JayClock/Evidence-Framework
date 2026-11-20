@@ -1,10 +1,16 @@
 import { createServer } from 'node:http';
 import type { AddressInfo } from 'node:net';
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import {
+  mkdir,
+  mkdtemp,
+  readFile,
+  rm,
+  stat,
+  writeFile,
+} from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { InMemoryCredentialStore } from '@earendil-works/pi-ai';
-import { ModelRuntime } from '@earendil-works/pi-coding-agent';
+import { ModelRuntime, SettingsManager } from '@earendil-works/pi-coding-agent';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { AiConfigService, validateAiRequest } from './aiConfigService';
 
@@ -12,20 +18,22 @@ const directories: string[] = [];
 const setup = async () => {
   const userDataPath = await mkdtemp(path.join(tmpdir(), 'ai-config-'));
   directories.push(userDataPath);
-  const store = new InMemoryCredentialStore();
   const createRuntime = vi.fn(ModelRuntime.create);
   const cliAuthPath = path.join(userDataPath, 'cli-auth.json');
+  const options = { userDataPath, createRuntime, cliAuthPath };
+  const service = new AiConfigService(options);
+  const native = (file: string) => path.join(service.agentDir, file);
+  const json = async (file: string) =>
+    JSON.parse(await readFile(native(file), 'utf8'));
   return {
-    userDataPath,
-    store,
-    createRuntime,
-    cliAuthPath,
-    service: new AiConfigService({
-      userDataPath,
-      store,
-      createRuntime,
-      cliAuthPath,
-    }),
+    ...options,
+    service,
+    native,
+    json,
+    noNativeAuth: () =>
+      expect(stat(native('auth.json'))).rejects.toMatchObject({
+        code: 'ENOENT',
+      }),
   };
 };
 const request = {
@@ -57,30 +65,41 @@ describe('AI configuration with the pinned Pi SDK', () => {
     expect(options.thinkingLevel).toBe('low');
     expect(f.createRuntime).toHaveBeenCalledWith(
       expect.objectContaining({
-        credentials: f.store,
-        modelsPath: path.join(f.userDataPath, 'ai-models.json'),
-        modelsStorePath: path.join(f.userDataPath, 'ai-models-store.json'),
+        authPath: f.native('auth.json'),
+        modelsPath: f.native('models.json'),
+        modelsStorePath: f.native('models-store.json'),
         allowModelNetwork: false,
       }),
     );
-    const settings = await readFile(
-      path.join(f.userDataPath, 'ai-settings.json'),
-      'utf8',
+    expect(await f.json('settings.json')).toEqual({
+      defaultProvider: request.providerId,
+      defaultModel: request.modelId,
+      defaultThinkingLevel: 'low',
+    });
+    expect(await f.json('models.json')).toMatchObject({
+      providers: { [request.providerId]: { baseUrl: request.baseUrl } },
+    });
+    expect(await f.json('auth.json')).toMatchObject({
+      [request.providerId]: { type: 'api_key', key: request.apiKey },
+    });
+    expect(await readFile(f.native('models.json'), 'utf8')).not.toContain(
+      request.apiKey,
     );
-    expect(settings).not.toContain(request.apiKey);
     expect(JSON.stringify(await f.service.getStatus())).not.toContain(
       request.apiKey,
     );
+    await expect(
+      stat(path.join(f.userDataPath, 'ai-settings.json')),
+    ).rejects.toMatchObject({ code: 'ENOENT' });
     const restored = new AiConfigService({
       userDataPath: f.userDataPath,
-      store: f.store,
       cliAuthPath: f.cliAuthPath,
     });
     expect((await restored.getStatus()).isConfigured).toBe(true);
     expect((await restored.getModelOptions()).model?.id).toBe(request.modelId);
   });
   it('retains a saved key for blank input; supports keyless loopback without masking a new key', async () => {
-    const { service, store } = await setup();
+    const { service, json } = await setup();
     await service.save({
       ...request,
       baseUrl: 'http://localhost:11434/v1',
@@ -93,9 +112,11 @@ describe('AI configuration with the pinned Pi SDK', () => {
       request.apiKey,
     );
     await service.save({ ...request, apiKey: '' });
-    expect(await store.read(request.providerId)).toEqual({
-      type: 'api_key',
-      key: request.apiKey,
+    expect(await json('auth.json')).toEqual({
+      [request.providerId]: {
+        type: 'api_key',
+        key: request.apiKey,
+      },
     });
   });
   it('detects DashScope environment credentials without CLI or prior settings', async () => {
@@ -117,7 +138,7 @@ describe('AI configuration with the pinned Pi SDK', () => {
     expect(
       (await (await f.service.getRuntime()).getAuth('qwen'))?.auth.apiKey,
     ).toBe('env-qwen-key');
-    expect(await f.store.list()).toEqual([]);
+    await f.noNativeAuth();
   });
   it('checks a real local OpenAI-compatible endpoint through the SDK without saving credentials', async () => {
     const f = await setup();
@@ -154,7 +175,7 @@ describe('AI configuration with the pinned Pi SDK', () => {
         stream: true,
       });
       expect(authorization).toBe('Bearer local-keyless');
-      expect(await f.store.list()).toEqual([]);
+      await f.noNativeAuth();
     } finally {
       server.closeAllConnections();
       await new Promise<void>((resolve, reject) =>
@@ -184,7 +205,7 @@ describe('AI configuration with the pinned Pi SDK', () => {
       error: expect.stringContaining('超时'),
     });
     expect(signal?.aborted).toBe(true);
-    expect(await f.store.list()).toEqual([]);
+    await f.noNativeAuth();
   });
   it('registers Qwen compatible models and preserves SDK protocols for built-ins', async () => {
     const { service } = await setup();
@@ -214,23 +235,31 @@ describe('AI configuration with the pinned Pi SDK', () => {
     const f = await setup();
     const cli = JSON.stringify({
       deepseek: { type: 'api_key', key: 'cli-key' },
-      openai: { type: 'api_key', key: '!echo dangerous' },
+      openai: { type: 'api_key', key: '!printf unsafe-command' },
+      google: { type: 'api_key', key: '$GEMINI_API_KEY' },
+      anthropic: { type: 'api_key', key: 'dollar$$key' },
     });
     await writeFile(f.cliAuthPath, cli);
     expect((await f.service.getStatus()).hasLocalPiCliConfig).toBe(true);
-    expect(await f.store.list()).toEqual([]);
+    await f.noNativeAuth();
     expect(await f.service.importFromLocalPiCli()).toEqual({
       imported: true,
       providerId: 'deepseek',
     });
-    expect(await f.store.read('deepseek')).toMatchObject({ key: 'cli-key' });
-    expect(await f.store.read('openai')).toBeUndefined();
-    await f.store.modify('deepseek', async () => ({
-      type: 'api_key',
-      key: 'desktop-wins',
-    }));
-    await f.service.importFromLocalPiCli();
-    expect(await f.store.read('deepseek')).toMatchObject({
+    expect(await f.json('auth.json')).toEqual({
+      deepseek: { type: 'api_key', key: 'cli-key' },
+      anthropic: { type: 'api_key', key: 'dollar$$key' },
+    });
+    expect(
+      (await (await f.service.getRuntime()).getAuth('anthropic'))?.auth.apiKey,
+    ).toBe('dollar$key');
+    await f.service.save({
+      providerId: 'deepseek',
+      modelId: 'deepseek-v4-pro',
+      apiKey: 'desktop-wins',
+    });
+    expect(await f.service.importFromLocalPiCli()).toEqual({ imported: false });
+    expect((await f.json('auth.json')).deepseek).toMatchObject({
       key: 'desktop-wins',
     });
     expect(await readFile(f.cliAuthPath, 'utf8')).toBe(cli);
@@ -258,10 +287,10 @@ describe('AI configuration with the pinned Pi SDK', () => {
         signal: expect.any(AbortSignal),
       }),
     );
-    expect(await f.store.list()).toEqual([]);
-    await expect(
-      readFile(path.join(f.userDataPath, 'ai-settings.json')),
-    ).rejects.toMatchObject({ code: 'ENOENT' });
+    await f.noNativeAuth();
+    await expect(stat(f.service.agentDir)).rejects.toMatchObject({
+      code: 'ENOENT',
+    });
     complete.mockResolvedValueOnce({
       stopReason: 'error',
       errorMessage: request.apiKey,
@@ -273,7 +302,7 @@ describe('AI configuration with the pinned Pi SDK', () => {
   it('fails with AI_NOT_CONFIGURED rather than using a different provider, then recovers on save', async () => {
     const f = await setup();
     await f.service.save(request);
-    await f.store.delete(request.providerId);
+    await rm(f.native('auth.json'));
     // Reconstruct to refresh availability after removing credentials.
     const service = new AiConfigService(f);
     await expect(service.getModelOptions()).rejects.toThrow(
@@ -282,19 +311,51 @@ describe('AI configuration with the pinned Pi SDK', () => {
     await service.save(request);
     expect((await service.getStatus()).isConfigured).toBe(true);
   });
-  it('keeps previous credentials and selection if settings cannot be persisted', async () => {
+  it('rolls back native auth and models when the native selection save fails', async () => {
     const f = await setup();
     await f.service.save(request);
-    await rm(path.join(f.userDataPath, 'ai-settings.json'));
-    const { mkdir } = await import('node:fs/promises');
-    await mkdir(path.join(f.userDataPath, 'ai-settings.json'));
+    const before = await Promise.all(
+      ['auth.json', 'models.json', 'settings.json'].map((file) =>
+        readFile(f.native(file), 'utf8'),
+      ),
+    );
+    const drainErrors = SettingsManager.prototype.drainErrors;
+    let flushed = false;
+    const flush = SettingsManager.prototype.flush;
+    vi.spyOn(SettingsManager.prototype, 'flush').mockImplementation(
+      async function (this: SettingsManager) {
+        await flush.call(this);
+        flushed = true;
+      },
+    );
+    vi.spyOn(SettingsManager.prototype, 'drainErrors').mockImplementation(
+      function (this: SettingsManager) {
+        return flushed
+          ? [{ scope: 'global', error: new Error('write failed') }]
+          : drainErrors.call(this);
+      },
+    );
     await expect(
-      f.service.save({ ...request, apiKey: 'replacement' }),
-    ).rejects.toThrow();
-    expect(await f.store.read(request.providerId)).toMatchObject({
-      key: request.apiKey,
-    });
-    expect((await f.service.getModelOptions()).model?.id).toBe(request.modelId);
+      f.service.save({
+        ...request,
+        apiKey: 'replacement',
+        baseUrl: 'https://another.example/v1',
+      }),
+    ).rejects.toThrow('Cannot write Pi settings');
+    expect(
+      await Promise.all(
+        ['auth.json', 'models.json', 'settings.json'].map((file) =>
+          readFile(f.native(file), 'utf8'),
+        ),
+      ),
+    ).toEqual(before);
+    expect(
+      (await (await f.service.getRuntime()).getAuth(request.providerId))?.auth
+        .apiKey,
+    ).toBe(request.apiKey);
+    expect((await f.service.getModelOptions()).model?.baseUrl).toBe(
+      request.baseUrl,
+    );
   });
   it('shares lazy runtime initialization and publishes changes only after a successful save', async () => {
     const f = await setup();
@@ -310,6 +371,143 @@ describe('AI configuration with the pinned Pi SDK', () => {
     expect(listener).not.toHaveBeenCalled();
     await f.service.save(request);
     expect(listener).toHaveBeenCalledOnce();
+  });
+});
+
+describe('one-time desktop migration', () => {
+  const encrypted = Buffer.from('legacy encrypted bytes');
+  const literalKey = 'old' + '$' + 'LITERAL';
+  const legacy = async () => {
+    const f = await setup();
+    const file = (name: string) => path.join(f.userDataPath, name);
+    const decryptString = vi.fn(() =>
+      JSON.stringify({
+        [request.providerId]: { type: 'api_key', key: literalKey },
+        anthropic: { type: 'api_key', key: 'legacy-anthropic-key' },
+      }),
+    );
+    const legacyEncryption = {
+      isEncryptionAvailable: () => true,
+      decryptString,
+    };
+    await writeFile(file('ai-auth.bin'), encrypted);
+    await writeFile(
+      file('ai-settings.json'),
+      JSON.stringify({
+        activeProviderId: request.providerId,
+        activeModelId: request.modelId,
+        thinkingLevel: request.thinkingLevel,
+        baseUrl: request.baseUrl,
+      }),
+    );
+    await writeFile(
+      file('ai-models.json'),
+      '{\n // legacy custom override\n "providers": {"google":{"baseUrl":"https://legacy.example/v1"}}\n}',
+    );
+    return {
+      ...f,
+      file,
+      decryptString,
+      legacyEncryption,
+      service: new AiConfigService({ ...f, legacyEncryption }),
+    };
+  };
+
+  it('migrates selection, encrypted credentials and models, then archives the old files', async () => {
+    const f = await legacy();
+    const [status, options] = await Promise.all([
+      f.service.getStatus(),
+      f.service.getModelOptions(),
+    ]);
+    expect(status).toMatchObject({
+      isConfigured: true,
+      baseUrl: request.baseUrl,
+    });
+    expect(options).toMatchObject({
+      model: { id: request.modelId, baseUrl: request.baseUrl },
+      thinkingLevel: 'low',
+    });
+    expect(
+      (await options.modelRuntime?.getAuth(request.providerId))?.auth.apiKey,
+    ).toBe(literalKey);
+    expect(f.decryptString).toHaveBeenCalledExactlyOnceWith(encrypted);
+    expect(await readFile(f.native('models.json'), 'utf8')).toContain(
+      '// legacy custom override',
+    );
+    expect(options.modelRuntime?.getProvider('google')?.baseUrl).toBe(
+      'https://legacy.example/v1',
+    );
+    expect(await readFile(f.file('ai-auth.bin.migrated'))).toEqual(encrypted);
+    for (const name of ['ai-auth.bin', 'ai-settings.json', 'ai-models.json']) {
+      await expect(stat(f.file(name))).rejects.toMatchObject({
+        code: 'ENOENT',
+      });
+      expect((await stat(f.file(`${name}.migrated`))).isFile()).toBe(true);
+    }
+    const restarted = new AiConfigService(f);
+    expect((await restarted.getStatus()).isConfigured).toBe(true);
+    expect(f.decryptString).toHaveBeenCalledOnce();
+    if (process.platform !== 'win32')
+      expect((await stat(f.native('auth.json'))).mode & 0o777).toBe(0o600);
+  });
+
+  it('keeps existing native selection and credentials while merging other legacy entries', async () => {
+    const f = await legacy();
+    await mkdir(f.service.agentDir, { mode: 0o700 });
+    await writeFile(
+      f.native('settings.json'),
+      JSON.stringify({
+        defaultProvider: 'anthropic',
+        defaultModel: 'claude-sonnet-4-6',
+      }),
+    );
+    await writeFile(
+      f.native('auth.json'),
+      JSON.stringify({ anthropic: { type: 'api_key', key: 'native-wins' } }),
+    );
+    await writeFile(
+      f.native('models.json'),
+      JSON.stringify({
+        providers: { anthropic: { baseUrl: 'https://native.example/v1' } },
+      }),
+    );
+    const options = await f.service.getModelOptions();
+    expect(options.model).toMatchObject({
+      provider: 'anthropic',
+      baseUrl: 'https://native.example/v1',
+    });
+    expect(
+      (await options.modelRuntime?.getAuth('anthropic'))?.auth.apiKey,
+    ).toBe('native-wins');
+    expect(
+      (await options.modelRuntime?.listCredentials())?.map(
+        ({ providerId }) => providerId,
+      ),
+    ).toContain(request.providerId);
+    expect((await f.json('models.json')).providers.google.baseUrl).toBe(
+      'https://legacy.example/v1',
+    );
+  });
+
+  it('preserves the old files if the OS cannot decrypt or the model definitions are invalid', async () => {
+    const f = await legacy();
+    const unavailable = new AiConfigService({
+      ...f,
+      legacyEncryption: undefined,
+    });
+    expect(await unavailable.getStatus()).toMatchObject({
+      isConfigured: false,
+      error: expect.any(String),
+    });
+    await f.noNativeAuth();
+    expect(await readFile(f.file('ai-auth.bin'))).toEqual(encrypted);
+    await writeFile(f.file('ai-models.json'), '{ invalid');
+    expect(await f.service.getStatus()).toMatchObject({
+      isConfigured: false,
+      error: expect.any(String),
+    });
+    expect(await readFile(f.file('ai-auth.bin'))).toEqual(encrypted);
+    await f.noNativeAuth();
   });
 });
 

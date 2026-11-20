@@ -67,33 +67,42 @@ after 15 seconds; it does not save the draft key or change the active model.
   already-running one-shot ingestion requests keep their captured runtime.
 - The app never automatically reads or writes `~/.pi/agent/auth.json` or
   `models.json`. When an auth file exists, settings offers **一键导入现有配置**:
-  explicit, read-only credential import, no overwrite of existing desktop keys,
-  no execution of shell-backed API keys. CLI model definitions are not imported.
+  explicit, read-only API-key import, no overwrite of existing desktop keys,
+  no shell-backed keys, environment references or OAuth tokens. CLI model
+  definitions are not imported.
   SDK environment credentials are supported without importing; DashScope accepts
   `DASHSCOPE_API_KEY` / `QWEN_API_KEY`. Launch the app from the appropriate
   environment when using this developer path.
 
 All desktop AI state lives beneath Electron's `app.getPath('userData')`:
 
-| Path                   | Contents                                                             |
-| ---------------------- | -------------------------------------------------------------------- |
-| `ai-auth.bin`          | OS `safeStorage` encrypted credentials; atomic writes with mode 0600 |
-| `ai-settings.json`     | Provider, model, Base URL and thinking level; **no API keys**        |
-| `ai-models.json`       | Optional app-private SDK model definitions, not the CLI file         |
-| `ai-models-store.json` | SDK catalog cache                                                    |
-| `ai-agent/`            | SDK settings/resources and persisted agent transcripts             |
+| Path                         | Contents                                                 |
+| ---------------------------- | -------------------------------------------------------- |
+| `ai-agent/settings.json`     | Pi default provider, model and thinking level; no keys   |
+| `ai-agent/models.json`       | Optional Pi model definitions and Base URL overrides     |
+| `ai-agent/auth.json`         | Pi credentials in plaintext; restricted file permissions |
+| `ai-agent/models-store.json` | Optional local Pi catalog cache                          |
+| `ai-agent/sessions/`         | Persisted Pi transcripts                                 |
 
-The renderer only receives public model/status data, never saved keys. Keys are
+These are native Pi files in an app-specific agent directory. The desktop does
+not change the default CLI configuration. To use the desktop's directory with
+Pi CLI explicitly, set `PI_CODING_AGENT_DIR` to its absolute path.
+
+On first configuration access after upgrade, the desktop reads the legacy
+settings, model definitions and encrypted credentials and migrates them to the
+native files. Existing native selections and credentials win over old ones.
+After a successful migration the legacy files are renamed with a `.migrated`
+suffix (the old auth backup remains encrypted). If the old keyring is locked or
+files are invalid, the originals are preserved; unlock the keyring or repair the
+files before retrying. The obsolete model catalog cache is not migrated.
+
+The renderer receives public model/status data, never saved keys. Keys are
 password-masked, submitted via the restricted preload API and cleared from the
-form after save/provider change/close. Only send credentials to trusted Base
-URLs. On Linux, unavailable keyrings or the insecure `basic_text` backend **do
-not fall back to plaintext**: enable a system keyring or use environment
-credentials. Corrupt/undecryptable auth files fail closed and are preserved;
-there is no silent reset that could overwrite them.
-
-This intentionally tightens two contradictory examples in the original plan:
-CLI auth is explicit import rather than a hidden runtime fallback, and lack of
-OS encryption is an actionable error rather than plaintext persistence.
+form after save/provider change/close. Unlike the old store, Pi's `auth.json` is
+**not encrypted**. On Unix, new auth files are created with mode `0600` in a
+private directory. Keep the directory private and only send credentials to
+trusted Base URLs. Use environment credentials if you do not want to save a key
+to disk.
 
 ## Bundled instructions, no interpreter
 

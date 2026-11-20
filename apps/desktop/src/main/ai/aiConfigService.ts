@@ -1,19 +1,43 @@
-import { access, readFile } from 'node:fs/promises';
-import { homedir } from 'node:os';
+import { access, mkdtemp, rename, rm } from 'node:fs/promises';
+import { homedir, tmpdir } from 'node:os';
 import path from 'node:path';
-import type { CredentialStore } from '@earendil-works/pi-ai';
-import type { ModelRuntime } from '@earendil-works/pi-coding-agent';
+import { InMemoryCredentialStore } from '@earendil-works/pi-ai';
+import type {
+  ModelRuntime,
+  SettingsManager,
+} from '@earendil-works/pi-coding-agent';
 import type { EvidenceModelOptions } from '@evidence-poc/evidence-agent';
 import {
   AI_NOT_CONFIGURED,
   AI_PROVIDER_PRESETS,
   type AiConfigStatus,
-  type AiUserSettings,
   type SaveAiConfigRequest,
+  type SupportedProviderId,
   type TestAiConnectionResult,
 } from '@evidence-poc/desktop-contracts/aiConfig';
-import { isCredential } from './safeStorageStore';
-import { writePrivateFile } from './privateFile';
+import {
+  createPiRuntime,
+  parsePiObject,
+  readPiFile,
+  readPiSettings,
+  savePiKey,
+  savePiSelection,
+} from './piAgentConfig';
+import {
+  piJson,
+  readLegacyAuth,
+  replacePiFile,
+  updatePiFiles,
+  type LegacyCredentialEncryption,
+} from './piConfigFiles';
+import {
+  configuredBaseUrl,
+  mergeLegacyModels,
+  normalizeBaseUrl,
+  qwen,
+  qwenModels,
+  updateModels,
+} from './piModelConfig';
 
 export const validateAiRequest = (input: unknown): SaveAiConfigRequest => {
   const r = input as SaveAiConfigRequest | null;
@@ -30,25 +54,9 @@ export const validateAiRequest = (input: unknown): SaveAiConfigRequest => {
       !['off', 'low', 'medium', 'high'].includes(r.thinkingLevel))
   )
     throw new Error('无效的 AI 模型配置。');
-  let baseUrl: string | undefined;
-  if (r.baseUrl !== undefined && r.baseUrl !== '') {
-    if (typeof r.baseUrl !== 'string' || r.baseUrl.length > 2048)
-      throw new Error('无效的模型 Base URL。');
-    try {
-      const url = new URL(r.baseUrl);
-      if (
-        !['https:', 'http:'].includes(url.protocol) ||
-        url.username ||
-        url.password ||
-        url.search ||
-        url.hash
-      )
-        throw new Error();
-      baseUrl = url.toString().replace(/\/$/, '');
-    } catch {
-      throw new Error('Base URL 必须是无凭证、查询参数或片段的 HTTP(S) 地址。');
-    }
-  }
+  const baseUrl = normalizeBaseUrl(r.baseUrl);
+  if (r.baseUrl !== undefined && r.baseUrl !== '' && baseUrl === undefined)
+    throw new Error('Base URL 必须是无凭证、查询参数或片段的 HTTP(S) 地址。');
   if (r.providerId === 'custom-openai-compatible' && !baseUrl)
     throw new Error('请填写自定义端点 Base URL。');
   return {
@@ -60,31 +68,43 @@ export const validateAiRequest = (input: unknown): SaveAiConfigRequest => {
   };
 };
 
-const settingsFor = (r: SaveAiConfigRequest): AiUserSettings => ({
-  activeProviderId: r.providerId,
-  activeModelId: r.modelId,
-  ...(r.baseUrl ? { baseUrl: r.baseUrl } : {}),
-  thinkingLevel: r.thinkingLevel ?? 'off',
-});
+const selectedModel = (
+  available: Awaited<ReturnType<ModelRuntime['getAvailable']>>,
+  settings: SettingsManager,
+) => {
+  const provider = settings.getDefaultProvider();
+  const id = settings.getDefaultModel();
+  if (provider || id)
+    return available.find((m) => m.provider === provider && m.id === id);
+  return (
+    available.find((m) =>
+      AI_PROVIDER_PRESETS.some(
+        (p) =>
+          p.id === m.provider && p.recommendedModels.some((r) => r.id === m.id),
+      ),
+    ) ??
+    available.find((m) => AI_PROVIDER_PRESETS.some((p) => p.id === m.provider))
+  );
+};
 
 export class AiConfigService {
-  private runtime: Promise<ModelRuntime> | undefined;
-  private settings: AiUserSettings | null | undefined;
+  private loaded:
+    | Promise<{ runtime: ModelRuntime; settings: SettingsManager }>
+    | undefined;
+  private migration: Promise<void> | undefined;
   private queue: Promise<unknown> = Promise.resolve();
   private listeners = new Set<() => void>();
-  private readonly configPath: string;
   readonly agentDir: string;
 
   constructor(
     private readonly options: {
       userDataPath: string;
-      store: CredentialStore;
+      legacyEncryption?: LegacyCredentialEncryption;
       cliAuthPath?: string;
       createRuntime?: typeof ModelRuntime.create;
       connectionTimeoutMs?: number;
     },
   ) {
-    this.configPath = path.join(options.userDataPath, 'ai-settings.json');
     this.agentDir = path.join(options.userDataPath, 'ai-agent');
   }
 
@@ -108,180 +128,171 @@ export class AiConfigService {
       path.join(homedir(), '.pi', 'agent', 'auth.json')
     );
   }
-  private async loadSettings() {
-    if (this.settings !== undefined) return this.settings;
-    try {
-      const s = JSON.parse(
-        await readFile(this.configPath, 'utf8'),
-      ) as AiUserSettings;
-      return (this.settings = settingsFor(
-        validateAiRequest({
-          providerId: s.activeProviderId,
-          modelId: s.activeModelId,
-          baseUrl: s.baseUrl,
-          thinkingLevel: s.thinkingLevel,
-          apiKey: '',
-        }),
-      ));
-    } catch (error) {
-      if ((error as NodeJS.ErrnoException).code === 'ENOENT')
-        return (this.settings = null);
-      throw new Error('AI 设置文件无法读取或已损坏；请重新保存模型配置。');
-    }
+  private get modelsPath() {
+    return path.join(this.agentDir, 'models.json');
   }
-  private async buildRuntime(
-    settings: AiUserSettings | null,
-    store = this.options.store,
-  ) {
-    const create =
-      this.options.createRuntime ??
-      (await import('@earendil-works/pi-coding-agent')).ModelRuntime.create;
-    const runtime = await create({
-      credentials: store,
-      modelsPath: path.join(this.options.userDataPath, 'ai-models.json'),
-      modelsStorePath: path.join(
-        this.options.userDataPath,
-        'ai-models-store.json',
-      ),
-      allowModelNetwork: false,
+  private get authPath() {
+    return path.join(this.agentDir, 'auth.json');
+  }
+  private get settingsPath() {
+    return path.join(this.agentDir, 'settings.json');
+  }
+
+  private async buildRuntime(options?: Parameters<typeof createPiRuntime>[1]) {
+    const runtime = await createPiRuntime(this.agentDir, {
+      createRuntime: this.options.createRuntime,
+      ...options,
     });
-    // The pinned SDK has Qwen subscription plans, but no generic DashScope
-    // pay-as-you-go provider. Register its OpenAI-compatible preset explicitly.
-    const qwen = AI_PROVIDER_PRESETS.find((p) => p.id === 'qwen');
-    const compatible = [
-      {
-        providerId: 'qwen',
-        baseUrl:
-          settings?.activeProviderId === 'qwen'
-            ? (settings.baseUrl ?? qwen?.defaultBaseUrl)
-            : qwen?.defaultBaseUrl,
-        modelIds: [
-          ...new Set([
-            ...(qwen?.recommendedModels.map((m) => m.id) ?? []),
-            ...(settings?.activeProviderId === 'qwen'
-              ? [settings.activeModelId]
-              : []),
-          ]),
-        ],
-      },
-    ];
-    if (settings?.activeProviderId === 'custom-openai-compatible') {
-      compatible.push({
-        providerId: settings.activeProviderId,
-        baseUrl: settings.baseUrl,
-        modelIds: [settings.activeModelId],
-      });
-    }
-    for (const { providerId, baseUrl, modelIds } of compatible) {
-      runtime.registerProvider(providerId, {
+    if (runtime.getError()) throw new Error('无法加载 Pi 模型配置。');
+    // DashScope pay-as-you-go is not a built-in provider in the pinned SDK.
+    // Keep its preset available before the user has ever saved a configuration.
+    if (!runtime.getProvider('qwen'))
+      runtime.registerProvider('qwen', {
         api: 'openai-completions',
-        baseUrl,
+        baseUrl: qwen.defaultBaseUrl,
         authHeader: true,
-        models: modelIds.map((id) => ({
-          id,
-          name: id,
-          reasoning: false,
-          input: ['text'],
-          cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
-          contextWindow: 32768,
-          maxTokens: 4096,
-        })),
+        models: qwenModels,
       });
-      if (!(await store.read(providerId))) {
-        const envKey =
-          providerId === 'qwen'
-            ? (process.env.DASHSCOPE_API_KEY ?? process.env.QWEN_API_KEY)
-            : undefined;
-        const local =
-          providerId === 'custom-openai-compatible' &&
-          baseUrl &&
-          ['localhost', '127.0.0.1', '[::1]'].includes(
-            new URL(baseUrl).hostname,
-          );
-        if (envKey || local)
-          await runtime.setRuntimeApiKey(providerId, envKey ?? 'local-keyless');
-      }
-    }
+    const envKey = process.env.DASHSCOPE_API_KEY ?? process.env.QWEN_API_KEY;
+    if (envKey && !(await runtime.getAuth('qwen')))
+      await runtime.setRuntimeApiKey('qwen', envKey);
+    const custom = runtime.getProvider('custom-openai-compatible');
+    const baseUrl = custom?.baseUrl;
     if (
-      settings &&
-      !compatible.some((p) => p.providerId === settings.activeProviderId) &&
-      runtime.getModel(settings.activeProviderId, settings.activeModelId) &&
-      settings.baseUrl
-    ) {
-      runtime.registerProvider(settings.activeProviderId, {
-        baseUrl: settings.baseUrl,
-      });
-    }
+      baseUrl &&
+      ['localhost', '127.0.0.1', '[::1]'].includes(new URL(baseUrl).hostname) &&
+      !(await runtime.getAuth(custom.id))
+    )
+      await runtime.setRuntimeApiKey(custom.id, 'local-keyless');
     return runtime;
   }
-  async getRuntime() {
-    this.runtime ??= this.loadSettings().then((s) => this.buildRuntime(s));
-    try {
-      return await this.runtime;
-    } catch (error) {
-      this.runtime = undefined;
-      throw error;
+
+  private async migrateLegacy() {
+    const legacy = (file: string) => path.join(this.options.userDataPath, file);
+    const [selection, auth, models] = await Promise.all([
+      readPiFile(legacy('ai-settings.json')),
+      readLegacyAuth(legacy('ai-auth.bin'), this.options.legacyEncryption),
+      readPiFile(legacy('ai-models.json')),
+    ]);
+    if (selection === undefined && auth === undefined && models === undefined)
+      return;
+    const raw = selection === undefined ? undefined : parsePiObject(selection);
+    const previous =
+      raw &&
+      validateAiRequest({
+        providerId: raw.activeProviderId,
+        modelId: raw.activeModelId,
+        baseUrl: raw.baseUrl,
+        thinkingLevel: raw.thinkingLevel,
+        apiKey: '',
+      });
+    const settings = await readPiSettings(this.agentDir);
+    const useLegacySelection =
+      previous && !settings.getDefaultProvider() && !settings.getDefaultModel();
+    const source = mergeLegacyModels(await readPiFile(this.modelsPath), models);
+    const mergedModels = useLegacySelection
+      ? updateModels(source, previous)
+      : source;
+    const nativeAuth = await readPiFile(this.authPath);
+    const nativeCredentials =
+      nativeAuth === undefined ? {} : parsePiObject(nativeAuth);
+
+    await updatePiFiles(async (replace, track) => {
+      await replace(this.modelsPath, mergedModels);
+      if (auth)
+        await replace(this.authPath, piJson({ ...auth, ...nativeCredentials }));
+      // Verify that Pi can read the migrated definitions before retiring the legacy files.
+      await this.buildRuntime();
+      if (useLegacySelection) {
+        track(this.settingsPath, await readPiFile(this.settingsPath));
+        await savePiSelection(
+          this.agentDir,
+          settings,
+          previous.providerId,
+          previous.modelId,
+          previous.thinkingLevel,
+        );
+      }
+    });
+    for (const [file, present] of [
+      ['ai-settings.json', selection],
+      ['ai-auth.bin', auth],
+      ['ai-models.json', models],
+    ] as const) {
+      if (present !== undefined)
+        await rename(legacy(file), legacy(`${file}.migrated`));
     }
   }
-  private async resolveModel(
-    runtime: ModelRuntime,
-    settings: AiUserSettings | null,
-  ) {
-    const available = await runtime.getAvailable();
-    if (settings)
-      return available.find(
-        (m) =>
-          m.provider === settings.activeProviderId &&
-          m.id === settings.activeModelId,
-      );
-    // Environment credentials work without importing or reading CLI credentials.
-    return (
-      available.find((m) =>
-        AI_PROVIDER_PRESETS.some(
-          (p) =>
-            p.id === m.provider &&
-            p.recommendedModels.some((r) => r.id === m.id),
-        ),
-      ) ??
-      available.find((m) =>
-        AI_PROVIDER_PRESETS.some((p) => p.id === m.provider),
-      )
-    );
+
+  private async initialize() {
+    this.migration ??= this.migrateLegacy().catch((error: unknown) => {
+      this.migration = undefined;
+      throw error;
+    });
+    await this.migration;
   }
-  async getModelOptions(): Promise<EvidenceModelOptions> {
+  private async load() {
     await this.queue;
-    const runtime = await this.getRuntime();
-    const settings = await this.loadSettings();
-    const model = await this.resolveModel(runtime, settings);
+    await this.initialize();
+    this.loaded ??= Promise.all([
+      this.buildRuntime(),
+      readPiSettings(this.agentDir),
+    ])
+      .then(([runtime, settings]) => ({ runtime, settings }))
+      .catch((error: unknown) => {
+        this.loaded = undefined;
+        throw error;
+      });
+    return this.loaded;
+  }
+  async getRuntime() {
+    return (await this.load()).runtime;
+  }
+
+  async getModelOptions(): Promise<EvidenceModelOptions> {
+    let state: Awaited<ReturnType<AiConfigService['load']>>;
+    try {
+      state = await this.load();
+    } catch {
+      throw new Error(`${AI_NOT_CONFIGURED}: 无法加载桌面 Pi 配置。`);
+    }
+    const { runtime, settings } = state;
+    const model = selectedModel(await runtime.getAvailable(), settings);
     if (!model)
       throw new Error(`${AI_NOT_CONFIGURED}: 请先配置大模型提供商与 API Key。`);
     return {
       agentDir: this.agentDir,
       modelRuntime: runtime,
       model,
-      thinkingLevel: settings?.thinkingLevel ?? 'off',
+      thinkingLevel: this.thinkingLevel(settings),
     };
   }
+
+  private thinkingLevel(settings: SettingsManager) {
+    const level = settings.getDefaultThinkingLevel();
+    return level === 'low' || level === 'medium' || level === 'high'
+      ? level
+      : 'off';
+  }
+
   async getStatus(): Promise<AiConfigStatus> {
-    await this.queue;
     const hasLocalPiCliConfig = await access(this.cliAuthPath).then(
       () => true,
       () => false,
     );
     try {
-      const settings = await this.loadSettings();
-      const runtime = await this.getRuntime();
+      const { runtime, settings } = await this.load();
       const available = await runtime.getAvailable();
-      const model = await this.resolveModel(runtime, settings);
+      const model = selectedModel(available, settings);
+      const provider = settings.getDefaultProvider() ?? model?.provider;
+      const id = settings.getDefaultModel() ?? model?.id;
       return {
         isConfigured: !!model,
         activeProviderId:
-          settings?.activeProviderId ??
-          (model?.provider as AiConfigStatus['activeProviderId']) ??
-          null,
-        activeModelId: settings?.activeModelId ?? model?.id ?? null,
-        baseUrl: settings?.baseUrl,
-        thinkingLevel: settings?.thinkingLevel ?? 'off',
+          AI_PROVIDER_PRESETS.find((p) => p.id === provider)?.id ?? null,
+        activeModelId: id ?? null,
+        baseUrl: configuredBaseUrl(await readPiFile(this.modelsPath), provider),
+        thinkingLevel: this.thinkingLevel(settings),
         hasLocalPiCliConfig,
         availableModels: available.map(({ provider, id, name }) => ({
           provider,
@@ -297,102 +308,124 @@ export class AiConfigService {
         thinkingLevel: 'off',
         hasLocalPiCliConfig,
         availableModels: [],
-        error: '无法加载 AI 配置或安全凭证，请检查密钥环并重新保存设置。',
+        error: '无法加载桌面 Pi 配置；若正在升级，请解锁旧凭证的系统密钥环。',
       };
     }
   }
+
+  /** Preview exactly the models.json we would save. A draft key stays in memory. */
+  private async withDraft<T>(
+    request: SaveAiConfigRequest,
+    models: string | undefined,
+    run: (runtime: ModelRuntime) => Promise<T>,
+  ) {
+    const dir = await mkdtemp(path.join(tmpdir(), 'evidence-pi-draft-'));
+    try {
+      const modelsPath = path.join(dir, 'models.json');
+      await replacePiFile(modelsPath, models);
+      const credentials = request.apiKey
+        ? new InMemoryCredentialStore()
+        : undefined;
+      await credentials?.modify(request.providerId, async () => ({
+        type: 'api_key',
+        key: request.apiKey,
+      }));
+      return await run(await this.buildRuntime({ modelsPath, credentials }));
+    } finally {
+      await rm(dir, { force: true, recursive: true });
+    }
+  }
+
   async save(input: unknown) {
     const request = validateAiRequest(input);
     return this.serialize(async () => {
-      const settings = settingsFor(request);
-      // Validate the model before touching credentials or settings.
-      let runtime = await this.buildRuntime(settings);
-      if (!runtime.getModel(request.providerId, request.modelId))
-        throw new Error('该模型不在厂商目录中；私有模型请使用自定义兼容端点。');
-      const previous = await this.options.store.read(request.providerId);
-      if (request.apiKey)
-        await this.options.store.modify(request.providerId, async () => ({
-          type: 'api_key',
-          key: request.apiKey,
-        }));
-      try {
-        // Rebuild after persistence so a previous keyless/runtime override cannot
-        // take precedence over the newly supplied credential.
-        runtime = await this.buildRuntime(settings);
-        await runtime.refresh({ allowNetwork: false });
-        if (!(await this.resolveModel(runtime, settings)))
+      await this.initialize();
+      const settings = await readPiSettings(this.agentDir);
+      const models = updateModels(await readPiFile(this.modelsPath), request);
+      const { providerId, modelId, apiKey, thinkingLevel } = request;
+      await this.withDraft(request, models, async (runtime) => {
+        if (!runtime.getModel(providerId, modelId))
+          throw new Error(
+            '该模型不在厂商目录中；私有模型请使用自定义兼容端点。',
+          );
+        if (
+          !(await runtime.getAvailable(providerId)).some(
+            (model) => model.id === modelId,
+          )
+        )
           throw new Error('请填写 API Key，或配置对应厂商的环境变量。');
-        await writePrivateFile(
-          this.configPath,
-          JSON.stringify(settings, null, 2),
+      });
+      const runtime = await updatePiFiles(async (replace, track) => {
+        await replace(this.modelsPath, models);
+        if (apiKey) track(this.authPath, await readPiFile(this.authPath));
+        const writer = await this.buildRuntime({ persistAuth: !!apiKey });
+        if (apiKey) await savePiKey(writer, providerId, apiKey);
+        // Reopen so a previous runtime fallback (for example local-keyless)
+        // cannot mask the just-saved key.
+        const ready = apiKey ? await this.buildRuntime() : writer;
+        track(this.settingsPath, await readPiFile(this.settingsPath));
+        await savePiSelection(
+          this.agentDir,
+          settings,
+          providerId,
+          modelId,
+          thinkingLevel,
         );
-      } catch (error) {
-        if (request.apiKey) {
-          if (previous)
-            await this.options.store.modify(
-              request.providerId,
-              async () => previous,
-            );
-          else await this.options.store.delete(request.providerId);
-        }
-        throw error;
-      }
-      this.settings = settings;
-      this.runtime = Promise.resolve(runtime);
+        return ready;
+      });
+      this.loaded = Promise.resolve({ runtime, settings });
       this.changed();
       return { success: true };
     });
   }
+
   async testConnection(input: unknown): Promise<TestAiConnectionResult> {
     const request = validateAiRequest(input);
     const started = Date.now();
     try {
-      const { InMemoryCredentialStore } = await import('@earendil-works/pi-ai');
-      const store = new InMemoryCredentialStore();
-      const existing = await this.options.store.read(request.providerId);
-      if (request.apiKey || existing)
-        await store.modify(request.providerId, async () =>
-          request.apiKey ? { type: 'api_key', key: request.apiKey } : existing,
+      await this.queue;
+      await this.initialize();
+      const models = updateModels(await readPiFile(this.modelsPath), request);
+      return await this.withDraft(request, models, async (runtime) => {
+        const model = (await runtime.getAvailable(request.providerId)).find(
+          ({ id }) => id === request.modelId,
         );
-      const settings = settingsFor(request);
-      const runtime = await this.buildRuntime(settings, store);
-      const model = await this.resolveModel(runtime, settings);
-      if (!model)
-        return {
-          success: false,
-          error: '模型不可用，请检查模型名称与 API Key。',
-        };
-      const controller = new AbortController();
-      let timer: ReturnType<typeof setTimeout> | undefined;
-      try {
-        // Abort the SDK request and bound the UI even if a provider ignores it.
-        const deadline = new Promise<never>((_resolve, reject) => {
-          timer = setTimeout(() => {
-            controller.abort();
-            reject(new Error('AI connection timed out'));
-          }, this.options.connectionTimeoutMs ?? 15000);
-        });
-        const response = await Promise.race([
-          runtime.completeSimple(
-            model,
-            {
-              messages: [
-                { role: 'user', content: 'Reply OK.', timestamp: Date.now() },
-              ],
-            },
-            { maxTokens: 8, signal: controller.signal },
-          ),
-          deadline,
-        ]);
-        if (
-          response.stopReason === 'error' ||
-          response.stopReason === 'aborted'
-        )
-          throw new Error();
-      } finally {
-        clearTimeout(timer);
-      }
-      return { success: true, latencyMs: Date.now() - started };
+        if (!model)
+          return {
+            success: false,
+            error: '模型不可用，请检查模型名称与 API Key。',
+          };
+        const controller = new AbortController();
+        let timer: ReturnType<typeof setTimeout> | undefined;
+        try {
+          const deadline = new Promise<never>((_resolve, reject) => {
+            timer = setTimeout(() => {
+              controller.abort();
+              reject(new Error('AI connection timed out'));
+            }, this.options.connectionTimeoutMs ?? 15000);
+          });
+          const response = await Promise.race([
+            runtime.completeSimple(
+              model,
+              {
+                messages: [
+                  { role: 'user', content: 'Reply OK.', timestamp: Date.now() },
+                ],
+              },
+              { maxTokens: 8, signal: controller.signal },
+            ),
+            deadline,
+          ]);
+          if (
+            response.stopReason === 'error' ||
+            response.stopReason === 'aborted'
+          )
+            throw new Error();
+        } finally {
+          clearTimeout(timer);
+        }
+        return { success: true, latencyMs: Date.now() - started };
+      });
     } catch {
       return {
         success: false,
@@ -400,29 +433,37 @@ export class AiConfigService {
       };
     }
   }
+
   async importFromLocalPiCli() {
-    // Explicit, read-only, literal credentials only: never execute CLI key commands.
-    let data: Record<string, unknown>;
-    try {
-      data = JSON.parse(await readFile(this.cliAuthPath, 'utf8'));
-    } catch {
-      throw new Error('无法读取本地 Pi CLI 凭证配置。');
-    }
-    if (!data || typeof data !== 'object' || Array.isArray(data))
-      throw new Error('无效的 Pi CLI 凭证配置。');
-    const providerId = await this.serialize(async () => {
-      let first: string | undefined;
-      for (const preset of AI_PROVIDER_PRESETS) {
-        const credential = data[preset.id];
-        if (!isCredential(credential)) continue;
-        if (!(await this.options.store.read(preset.id)))
-          await this.options.store.modify(preset.id, async () => credential);
-        first ??= preset.id;
+    const cli = await readPiFile(this.cliAuthPath);
+    if (cli === undefined) throw new Error('无法读取本地 Pi CLI 凭证配置。');
+    const data = parsePiObject(cli);
+    return this.serialize(async () => {
+      await this.initialize();
+      const current = await readPiFile(this.authPath);
+      const credentials = current === undefined ? {} : parsePiObject(current);
+      let first: SupportedProviderId | undefined;
+      for (const { id } of AI_PROVIDER_PRESETS) {
+        const entry = data[id] as { type?: unknown; key?: unknown } | undefined;
+        // Import only literal Pi keys, including escaped dollars/bangs. Never
+        // import shell commands, env references, or rotating CLI credentials.
+        if (
+          entry?.type !== 'api_key' ||
+          typeof entry.key !== 'string' ||
+          !entry.key.trim() ||
+          entry.key.trim().startsWith('!') ||
+          entry.key.replace(/\$[!$]/g, '').includes('$') ||
+          Object.hasOwn(credentials, id)
+        )
+          continue;
+        credentials[id] = { type: 'api_key', key: entry.key };
+        first ??= id;
       }
-      this.runtime = undefined;
+      if (!first) return { imported: false };
+      await replacePiFile(this.authPath, piJson(credentials));
+      this.loaded = undefined;
       this.changed();
-      return first;
+      return { imported: true, providerId: first };
     });
-    return { imported: !!providerId, ...(providerId ? { providerId } : {}) };
   }
 }

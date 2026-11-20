@@ -77,12 +77,6 @@ export const AI_PROVIDER_PRESETS: readonly ProviderPreset[] = [
   },
 ];
 
-export interface AiUserSettings {
-  activeProviderId: SupportedProviderId;
-  activeModelId: string;
-  baseUrl?: string;
-  thinkingLevel: AiThinkingLevel;
-}
 export interface AiConfigStatus {
   isConfigured: boolean;
   activeProviderId: SupportedProviderId | null;

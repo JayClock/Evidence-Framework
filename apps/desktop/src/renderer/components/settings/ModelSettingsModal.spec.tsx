@@ -137,7 +137,7 @@ describe('model settings', () => {
     const { api } = setup();
     expect(api.importCli).not.toHaveBeenCalled();
     fireEvent.click(screen.getByRole('button', { name: '一键导入现有配置' }));
-    await screen.findByText(/已导入安全存储/);
+    await screen.findByText(/已导入桌面 Pi 配置/);
     vi.mocked(api.save).mockRejectedValueOnce(
       new Error('raw secret must not appear'),
     );
