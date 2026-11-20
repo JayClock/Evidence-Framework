@@ -58,10 +58,10 @@ after 15 seconds; it does not save the draft key or change the active model.
   `http://localhost:11434/v1`. Loopback custom endpoints can be keyless;
   remote endpoints require a key. Blank API-key input retains the stored key;
   **清空输入** clears only the form, not the saved credential.
-- Without configuration, Copilot offers setup instead of sending. Story mode
+- Without configuration, canvas storming and node inquiries offer setup instead of sending. Story mode
   uses **仅模型事实** offline; AI narration and What-If offer setup. Contract,
   blueprint and rule-based text import remain available without a model.
-- Saving replaces the shared runtime, aborts/disposes old Copilot sessions and
+- Saving replaces the shared runtime, aborts/disposes active agent sessions and
   resumes their persisted transcript on the next prompt. Canvas edits, undo
   history and sensor state stay intact. Story AI projectors are invalidated;
   already-running one-shot ingestion requests keep their captured runtime.
@@ -81,7 +81,7 @@ All desktop AI state lives beneath Electron's `app.getPath('userData')`:
 | `ai-settings.json`     | Provider, model, Base URL and thinking level; **no API keys**        |
 | `ai-models.json`       | Optional app-private SDK model definitions, not the CLI file         |
 | `ai-models-store.json` | SDK catalog cache                                                    |
-| `ai-agent/`            | SDK settings/resources and persisted Copilot transcripts             |
+| `ai-agent/`            | SDK settings/resources and persisted agent transcripts             |
 
 The renderer only receives public model/status data, never saved keys. Keys are
 password-masked, submitted via the restricted preload API and cleared from the
@@ -145,7 +145,7 @@ Renderer behavior is shared through Nx libraries:
 | IPC DTOs and channel constants           | `@evidence-poc/desktop-contracts`                                                                     |
 | layout, viewport, rulers                 | `@evidence-poc/evidence-canvas-interaction`                                                           |
 | canvas and inspector UI                  | `@evidence-poc/desktop-feature-canvas`, `desktop-feature-inspector`                                   |
-| story, delivery, Copilot UI/hooks | `desktop-feature-story`, `desktop-feature-delivery`, `desktop-feature-agent` |
+| story, delivery, modeling agent UI/hooks | `desktop-feature-story`, `desktop-feature-delivery`, `desktop-feature-agent` |
 | browser sensor/event DTOs and labels     | `@evidence-poc/evidence-agent/browser`                                                                |
 | inline acceptance compilation            | `@evidence-poc/evidence-acceptance/projection`                                                        |
 | shared scripted API/renderer fixtures    | `@evidence-poc/desktop-testing` (tests only)                                                          |
@@ -207,16 +207,21 @@ a library's `/browser` entry whenever a Node-only adapter exists.
 - Wheel pans, Ctrl/Cmd+wheel zooms at the pointer, space+drag pans, dragging the
   background draws a marquee selection.
 
-Use **铺设凭证** to bring a business example into Copilot. Select a piece of
-evidence and choose **AI 追溯关键数据** in the inspector to ask where its unknown
-fields come from. A paired request or confirmation also offers **探问 What-If**.
-The opening inquiries are read-only and keep their node focus even when the
-canvas selection changes. Follow-up answers can propose model patches for review.
+Type a business example on an empty canvas or press **Cmd/Ctrl+K** to open
+**业务场景头脑风暴** on an existing canvas. The agent places evidence cards in
+lifecycle order and the viewport frames the new cards. Command search is still
+available from the header or **Cmd/Ctrl+Shift+K**.
+
+Use **溯源** directly on an evidence card to ask where its unknown fields come
+from. A paired request or confirmation also offers **What-If**. The opening
+question is read-only; follow-up answers stay pinned to the initiating evidence
+and can propose model patches. The right inspector only shows model properties,
+key data and rules, or an overview when nothing is selected.
 
 ## Agent and sensors (phase 3)
 
 ```text
-AgentCopilot ──IPC: agent:prompt──▶ agentRuntime (main)
+Canvas storming / node inquiry ──▶ agentRuntime (main) via agent:prompt
                                     │ Pi AgentSession + built-in instructions
                                     │ custom tools: get_focused_node_context,
                                     │   evidence growth, apply_model_patch
@@ -240,11 +245,10 @@ AgentCopilot ──IPC: agent:prompt──▶ agentRuntime (main)
 - Key data that still owes a provider decision is a warning, not a static error,
   but it keeps `isStageGateReady` false — the model can be saved, the gate stays
   shut.
-- `AgentCopilot` sends when idle and steers the live run when busy, so a wrong
-  assumption is corrected in place instead of restarting the round. It shares
-  the right rail with the inspector: reasoning folds away, each tool call opens
-  for its input, and a pending patch is reviewed inline with a click that pans
-  the canvas to the object it touched.
+- Modeling turns run one at a time. A node inquiry shows reasoning, tool activity
+  and its patch review on the card. Storming patches and reviews whose inquiry
+  closed are shown in a canvas banner. Apply keeps the live preview; undo takes
+  it back while it is still the newest edit. Saving remains explicit.
 
 ## Key data, CEL and fulfillment editing (phase 4)
 

@@ -1,13 +1,5 @@
-export {
-  AgentCopilot,
-  type AgentCopilotProps,
-  type PromptFocus,
-} from './components/agent/AgentCopilot';
-export {
-  InlinePatchCopilot,
-  type InlinePatchCopilotProps,
-  type InlineFocus,
-} from './components/agent/InlinePatchCopilot';
+export { EvidenceInquiryConversation } from './components/agent/EvidenceInquiryConversation';
+export { InlinePatchCard } from './components/agent/InlinePatchCard';
 export * from './state/useAgentPatchBridge';
 export * from './state/useAgentSession';
 export * from './state/usePatchReview';

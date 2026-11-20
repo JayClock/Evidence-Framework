@@ -44,13 +44,6 @@ const readyCanvas = async () => {
   return title;
 };
 
-const openInterview = async () => {
-  fireEvent.click(screen.getByRole('button', { name: '打开快速命令' }));
-  fireEvent.click(
-    await screen.findByRole('option', { name: /向 AI 建模副驾提问/ }),
-  );
-};
-
 describe('EditorScreen', () => {
   it('defaults to journey and retains the selected object and camera across topology and ledger switches', async () => {
     vi.stubGlobal('matchMedia', (query: string) => ({
@@ -154,7 +147,7 @@ describe('EditorScreen', () => {
     expect(screen.getByLabelText('选择业务流')).toHaveValue('正常签约案例');
     expect(api.projects.save).not.toHaveBeenCalled();
   });
-  it('starts storming in the Copilot without submitting an empty business example', async () => {
+  it('opens canvas storming from the directory without submitting an empty business example', async () => {
     const api = readyProject();
     render(<EditorScreen rootPath="/models/procurement" />);
     await readyCanvas();
@@ -164,9 +157,7 @@ describe('EditorScreen', () => {
         { name: '铺设凭证' },
       ),
     );
-    expect(
-      await screen.findByLabelText<HTMLTextAreaElement>('访谈内容'),
-    ).toHaveProperty('value', expect.stringContaining('业务例子：'));
+    expect(await screen.findByLabelText('业务场景')).toHaveValue('');
     expect(api.calls.prompt).toEqual([]);
     expect(api.calls.save).toEqual([]);
   });
@@ -251,6 +242,17 @@ describe('EditorScreen', () => {
       <EditorScreen rootPath="/models/procurement" />,
     );
     await readyCanvas();
+    const prompt = api.agent.prompt;
+    api.agent.prompt = async (input) => {
+      const result = prompt(input);
+      if (input.focus?.inquiry === 'trace') {
+        api.agentMock.emitEvent({
+          type: 'text-delta',
+          delta: '实付金额来自哪里？',
+        });
+      }
+      return result;
+    };
     const canvas = screen.getByRole('group', {
       name: '业务全生命周期四阶段泳道',
     });
@@ -308,6 +310,7 @@ describe('EditorScreen', () => {
     ).toBeNull();
     expect(api.calls.prompt).toEqual([]);
     expect(api.calls.save).toEqual([]);
+    fireEvent.click(screen.getByRole('button', { name: '应用' }));
     const positionedX = (id: string) =>
       Number(
         (
@@ -328,12 +331,6 @@ describe('EditorScreen', () => {
     const sourcing = await screen.findByRole('dialog', {
       name: '关键数据溯源：付款凭证',
     });
-    act(() =>
-      api.agentMock.emitEvent({
-        type: 'text-delta',
-        delta: '实付金额来自哪里？',
-      }),
-    );
     expect(within(sourcing).getByLabelText('AI 回复')).toHaveTextContent(
       '实付金额来自哪里？',
     );
@@ -369,6 +366,7 @@ describe('EditorScreen', () => {
     expect(trace).toHaveAttribute('aria-expanded', 'true');
     expect(sourcing).toBeInTheDocument();
     expect(container.querySelector('[data-pair-link]')).not.toBeNull();
+    fireEvent.click(within(sourcing).getByRole('button', { name: '应用' }));
     fireEvent.click(within(sourcing).getByRole('button', { name: '关闭' }));
 
     fireEvent.click(screen.getByRole('button', { name: 'What-If：付款凭证' }));
@@ -398,6 +396,7 @@ describe('EditorScreen', () => {
       { nodeId: 'evidence.payment' },
     ]);
     expect(api.calls.save).toEqual([]);
+    fireEvent.click(within(whatIf).getByRole('button', { name: '应用' }));
     fireEvent.click(within(whatIf).getByRole('button', { name: '关闭' }));
     fireEvent.click(screen.getByRole('button', { name: '保存模型' }));
     await waitFor(() =>
@@ -457,7 +456,7 @@ describe('EditorScreen', () => {
     expect(
       screen.getByText('选择画布上的业务对象查看属性。'),
     ).toBeInTheDocument();
-    expect(screen.queryByLabelText('AI 建模副驾')).toBeNull();
+    expect(screen.queryByLabelText('访谈内容')).toBeNull();
     expect(screen.getByText('履约连线 1')).toBeInTheDocument();
     expect(screen.getByText('上下文 2')).toBeInTheDocument();
   });
@@ -727,7 +726,7 @@ describe('EditorScreen', () => {
     );
     // Undo has no history to walk, and the hub reports that instead of the
     // header, which no longer carries a greyed-out history button.
-    fireEvent.keyDown(window, { key: 'k', metaKey: true });
+    fireEvent.keyDown(window, { key: 'K', metaKey: true, shiftKey: true });
     expect(await screen.findByRole('option', { name: /撤销/ })).toHaveAttribute(
       'aria-disabled',
       'true',
@@ -756,7 +755,7 @@ describe('EditorScreen', () => {
     expect(
       container.querySelector('[data-node-id="evidence.request"]'),
     ).toHaveAttribute('aria-disabled', 'true');
-    fireEvent.keyDown(window, { key: 'k', metaKey: true });
+    fireEvent.keyDown(window, { key: 'K', metaKey: true, shiftKey: true });
     fireEvent.change(await screen.findByLabelText('搜索命令或业务对象'), {
       target: { value: '交付请求' },
     });
@@ -868,7 +867,7 @@ describe('EditorScreen', () => {
     expect(
       screen.getByRole('button', { name: '保存模型' }),
     ).toBeInTheDocument();
-    fireEvent.keyDown(window, { key: 'k', ctrlKey: true });
+    fireEvent.keyDown(window, { key: 'K', ctrlKey: true, shiftKey: true });
     const palette = await screen.findByRole('dialog', { name: '快速命令' });
     fireEvent.change(within(palette).getByRole('combobox'), {
       target: { value: '交付' },
@@ -1023,7 +1022,6 @@ describe('EditorScreen sensors', () => {
       }),
     );
 
-    await openInterview();
     expect(await screen.findByLabelText('AI 补丁复核')).toBeInTheDocument();
     expect(screen.getByText('新增审计员参与方')).toBeInTheDocument();
     expect(screen.getByText('新增 1')).toBeInTheDocument();
@@ -1072,8 +1070,7 @@ describe('EditorScreen sensors', () => {
       }),
     );
 
-    await openInterview();
-    fireEvent.click(await screen.findByRole('button', { name: '保留' }));
+    fireEvent.click(await screen.findByRole('button', { name: '应用' }));
 
     await waitFor(() => {
       expect(screen.queryByLabelText('AI 补丁复核')).toBeNull();
@@ -1081,22 +1078,22 @@ describe('EditorScreen sensors', () => {
     expect(screen.queryByLabelText('本次补丁新增 审计员')).toBeNull();
   });
 
-  it('opens the command hub on Cmd+K and reaches the copilot from it', async () => {
+  it('opens command search on Cmd+Shift+K and can launch canvas storming from it', async () => {
     readyProject();
 
     render(<EditorScreen rootPath="/models/procurement" />);
     await readyCanvas();
 
-    fireEvent.keyDown(window, { key: 'k', metaKey: true });
+    fireEvent.keyDown(window, { key: 'K', metaKey: true, shiftKey: true });
 
     expect(
       await screen.findByRole('dialog', { name: '快速命令' }),
     ).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('option', { name: /向 AI 建模副驾提问/ }));
+    fireEvent.click(screen.getByRole('option', { name: /铺设业务凭证/ }));
 
     await waitFor(() =>
-      expect(document.activeElement).toBe(screen.getByLabelText('访谈内容')),
+      expect(screen.getByLabelText('业务场景')).toHaveFocus(),
     );
     expect(screen.queryByRole('dialog', { name: '快速命令' })).toBeNull();
   });
@@ -1107,7 +1104,7 @@ describe('EditorScreen sensors', () => {
     render(<EditorScreen rootPath="/models/procurement" />);
     await readyCanvas();
 
-    fireEvent.keyDown(window, { key: 'k', metaKey: true });
+    fireEvent.keyDown(window, { key: 'K', metaKey: true, shiftKey: true });
     fireEvent.change(await screen.findByLabelText('搜索命令或业务对象'), {
       target: { value: '采购协议' },
     });
@@ -1125,61 +1122,12 @@ describe('EditorScreen sensors', () => {
     render(<EditorScreen rootPath="/models/procurement" />);
     await readyCanvas();
 
-    fireEvent.keyDown(window, { key: 'k', metaKey: true });
+    fireEvent.keyDown(window, { key: 'K', metaKey: true, shiftKey: true });
     fireEvent.click(await screen.findByRole('option', { name: /拓扑图/ }));
 
     expect(screen.getByRole('button', { name: /拓扑图/ })).toHaveAttribute(
       'aria-pressed',
       'true',
-    );
-  });
-
-  it('opens the agent on the selection with Cmd+J', async () => {
-    readyProject();
-    const { container } = render(
-      <EditorScreen rootPath="/models/procurement" />,
-    );
-    await readyCanvas();
-
-    fireEvent.click(
-      container.querySelector('[data-node-id="evidence.contract"]') as Element,
-    );
-    fireEvent.keyDown(window, { key: 'j', metaKey: true });
-
-    expect(await screen.findByLabelText('行内 AI 协同')).toBeInTheDocument();
-    expect(screen.getByTestId('inline-copilot-focus')).toHaveTextContent(
-      '采购协议（Procurement Contract）',
-    );
-
-    fireEvent.keyDown(window, { key: 'Escape' });
-
-    await waitFor(() =>
-      expect(screen.queryByLabelText('行内 AI 协同')).toBeNull(),
-    );
-    // Closing the card must not clear the object it was about: the inspector
-    // still shows the contract the question named.
-    expect(
-      screen.getByDisplayValue('采购协议（Procurement Contract）'),
-    ).toBeInTheDocument();
-  });
-
-  it('tells the copilot what the next question is about', async () => {
-    readyProject();
-
-    const { container } = render(
-      <EditorScreen rootPath="/models/procurement" />,
-    );
-    await readyCanvas();
-    await openInterview();
-
-    expect(screen.queryByTestId('agent-copilot-focus')).toBeNull();
-
-    fireEvent.click(
-      container.querySelector('[data-node-id="evidence.contract"]') as Element,
-    );
-
-    expect(await screen.findByTestId('agent-copilot-focus')).toHaveTextContent(
-      '焦点：',
     );
   });
 });

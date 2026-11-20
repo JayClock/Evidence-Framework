@@ -1,4 +1,5 @@
 import type {
+  AgentActionResult,
   AgentTurnFocus,
   EvidenceAgentApi,
 } from '@evidence-poc/desktop-contracts/agentIpc';
@@ -27,10 +28,11 @@ export interface AgentSessionState {
 
 export interface AgentSessionController {
   state: AgentSessionState;
-  /** Prompts when idle; steers the live run when busy. */
-  submit: (text: string, focus?: AgentTurnFocus) => Promise<void>;
+  /** Starts one turn when idle; reports whether it completed successfully. */
+  submit: (text: string, focus?: AgentTurnFocus) => Promise<AgentActionResult>;
   stop: () => Promise<void>;
   dismissError: () => void;
+  reset: () => void;
 }
 
 const MAX_TRANSCRIPT = 8_000;
@@ -75,14 +77,9 @@ const reduce = (
         ),
       };
     case 'agent-settled':
-      return { ...state, running: false, activeToolName: null };
+      return { ...state, activeToolName: null };
     case 'agent-error':
-      return {
-        ...state,
-        running: false,
-        activeToolName: null,
-        error: event.message,
-      };
+      return { ...state, activeToolName: null, error: event.message };
     default:
       return state;
   }
@@ -99,81 +96,73 @@ const initialState: AgentSessionState = {
 /**
  * Owns the renderer side of one Pi conversation.
  *
- * It only reads streamed events; prompts, steers and aborts are main-process
+ * It only reads streamed events; prompts and aborts are main-process
  * calls. The hook therefore works the same whether the model is local or
  * remote, and tests drive it with a scripted event source.
  */
 export const useAgentSession = (
-  api: Pick<EvidenceAgentApi, 'onEvent' | 'prompt' | 'steer' | 'abort'>,
+  api: Pick<EvidenceAgentApi, 'onEvent' | 'prompt' | 'abort'>,
   rootPath: string,
 ): AgentSessionController => {
   const [state, setState] = useState<AgentSessionState>(initialState);
-  const stateRef = useRef(state);
-  stateRef.current = state;
+  const active = useRef<{ interrupted: boolean } | null>(null);
 
   useEffect(() => {
+    active.current = null;
     setState(initialState);
 
-    const unsubscribe = api.onEvent(({ event }) => {
+    const unsubscribe = api.onEvent((payload) => {
+      if (payload.rootPath !== rootPath || active.current === null) return;
+      const { event } = payload;
+      if (
+        event.type === 'agent-error' ||
+        (event.type === 'agent-settled' && event.aborted)
+      ) {
+        active.current.interrupted = true;
+      }
       setState((current) => reduce(current, event));
     });
 
-    return unsubscribe;
+    return () => {
+      active.current = null;
+      unsubscribe();
+    };
   }, [api, rootPath]);
 
   const submit = useCallback(
     async (text: string, focus?: AgentTurnFocus) => {
       const trimmed = text.trim();
+      if (trimmed === '' || active.current !== null)
+        return { success: false, error: '请等待当前问询结束并输入业务内容。' };
 
-      if (trimmed === '') {
-        return;
-      }
-
-      const running = stateRef.current.running;
-      if (running && focus?.inquiry !== undefined) return;
-
-      setState((current) => ({
-        ...current,
-        error: null,
-        ...(current.running ? {} : { transcript: '', activities: [] }),
-        running: true,
-        activeToolName: current.running ? current.activeToolName : null,
-      }));
+      const turn = { interrupted: false };
+      active.current = turn;
+      setState({ ...initialState, running: true });
 
       try {
-        if (running) {
-          const result = await api.steer({
-            rootPath,
-            text: trimmed,
-          });
-
-          if (result.success === false) {
-            setState((current) => ({ ...current, error: result.error }));
-          }
-
-          return;
-        }
-
         const result = await api.prompt({
           rootPath,
           text: trimmed,
           ...(focus === undefined ? {} : { focus }),
         });
-
-        if (result.success === false) {
-          setState((current) => ({
-            ...current,
-            running: false,
-            error: result.error,
-          }));
+        if (active.current !== turn)
+          return { success: false, error: '项目已切换。' };
+        if (!result.success) {
+          setState((current) => ({ ...current, error: result.error }));
+          return result;
         }
+        return turn.interrupted
+          ? { success: false, error: '本轮未完成，可以重试。' }
+          : result;
       } catch (error) {
-        setState((current) => ({
-          ...current,
-          error: error instanceof Error ? error.message : '访谈请求失败。',
-        }));
+        const message =
+          error instanceof Error ? error.message : '访谈请求失败。';
+        if (active.current === turn)
+          setState((current) => ({ ...current, error: message }));
+        return { success: false, error: message };
       } finally {
-        if (!running) {
+        if (active.current === turn) {
+          active.current = null;
           setState((current) => ({
             ...current,
             running: false,
@@ -186,17 +175,30 @@ export const useAgentSession = (
   );
 
   const stop = useCallback(async () => {
-    await api.abort({ rootPath });
-    setState((current) => ({
-      ...current,
-      running: false,
-      activeToolName: null,
-    }));
+    const turn = active.current;
+    if (turn === null) return;
+    turn.interrupted = true;
+    try {
+      const result = await api.abort({ rootPath });
+      if (!result.success) throw new Error(result.error);
+    } catch (error) {
+      if (active.current === turn) {
+        turn.interrupted = false;
+        setState((current) => ({
+          ...current,
+          error: error instanceof Error ? error.message : '停止请求失败。',
+        }));
+      }
+    }
   }, [api, rootPath]);
 
   const dismissError = useCallback(() => {
     setState((current) => ({ ...current, error: null }));
   }, []);
 
-  return { state, submit, stop, dismissError };
+  const reset = useCallback(() => {
+    if (active.current === null) setState(initialState);
+  }, []);
+
+  return { state, submit, stop, dismissError, reset };
 };

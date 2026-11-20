@@ -2,7 +2,7 @@
 
 Nx project: `desktop-feature-agent`; package: `@evidence-poc/desktop-feature-agent`.
 
-Owns the Copilot and inline patch UI, transcript/tool activity presentation,
+Owns the node inquiry and patch review UI, transcript/tool activity presentation,
 session hook, patch bridge and patch-review state. Internal presentation helpers
 are private to the feature. Pi sessions, model loading and sensors remain in the
 Node `evidence-agent` library and desktop main-process adapters.

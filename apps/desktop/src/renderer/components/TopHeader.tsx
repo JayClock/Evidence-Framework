@@ -15,6 +15,7 @@ import {
   TooltipTrigger,
 } from '@evidence-poc/desktop-ui-kit';
 
+import { CHORDS } from '../state/commandRegistry';
 import { AiModelStatusPill } from './settings/AiModelStatusPill';
 import { McpStatusPill } from './McpStatusPill';
 
@@ -153,7 +154,7 @@ export const TopHeader = ({
               >
                 <Search aria-hidden="true" className="size-3.5" />
                 <span>快速命令</span>
-                <KbdChord chord="⌘+K" />
+                <KbdChord chord={CHORDS.palette} />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">搜索命令与业务对象</TooltipContent>

@@ -7,7 +7,6 @@ export interface WorkspaceLayoutState {
   readonly isDirectoryOpen: boolean;
   readonly isProblemsPanelOpen: boolean;
   readonly activeIssueId: string | null;
-  readonly isInlineCopilotOpen: boolean;
   readonly isDeliveryOpen: boolean;
 }
 
@@ -17,8 +16,6 @@ export interface WorkspaceLayoutActions {
   openProblemsPanel: () => void;
   openProblemsWithIssue: (issueId: string) => void;
   closeProblemsPanel: () => void;
-  openInlineCopilot: () => void;
-  closeInlineCopilot: () => void;
   openDelivery: () => void;
   closeDelivery: () => void;
 }
@@ -66,7 +63,6 @@ export const useWorkspaceLayoutState = (
   const [isDirectoryOpen, setDirectoryOpen] = useState(true);
   const [isProblemsPanelOpen, setProblemsPanelOpen] = useState(false);
   const [activeIssueId, setActiveIssueId] = useState<string | null>(null);
-  const [isInlineCopilotOpen, setInlineCopilotOpen] = useState(false);
   const [isDeliveryOpen, setDeliveryOpen] = useState(false);
 
   /** Route clicks and shortcuts to the same workspace surfaces. */
@@ -111,14 +107,6 @@ export const useWorkspaceLayoutState = (
     setActiveIssueId(null);
   }, []);
 
-  const openInlineCopilot = useCallback(() => {
-    setInlineCopilotOpen(true);
-  }, []);
-
-  const closeInlineCopilot = useCallback(() => {
-    setInlineCopilotOpen(false);
-  }, []);
-
   const openDelivery = useCallback(() => {
     setDeliveryOpen(true);
   }, []);
@@ -159,15 +147,12 @@ export const useWorkspaceLayoutState = (
     isDirectoryOpen,
     isProblemsPanelOpen,
     activeIssueId,
-    isInlineCopilotOpen,
     isDeliveryOpen,
     toggleRailTab,
     toggleProblemsPanel,
     openProblemsPanel,
     openProblemsWithIssue,
     closeProblemsPanel,
-    openInlineCopilot,
-    closeInlineCopilot,
     openDelivery,
     closeDelivery,
   };

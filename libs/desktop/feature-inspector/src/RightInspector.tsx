@@ -9,6 +9,7 @@ import {
   getReferenceConstraint,
 } from '@evidence-poc/evidence-schema';
 import {
+  buildKeyDataLedger,
   updateEntityMutator,
   type DomainGraph,
   type ModelSelection,
@@ -22,9 +23,14 @@ import { KeyDataLedgerSheet } from './inspector/KeyDataLedgerSheet';
 import { InvariantRulesSection } from './inspector/InvariantRulesSection';
 
 interface RightInspectorProps {
-  /** The workspace shell can provide its own heading/switcher. */
+  /** The workspace shell can provide its own heading. */
   showHeading?: boolean;
   active?: boolean;
+  gateReport?: {
+    blockCount: number;
+    warnCount: number;
+    isStageGateReady: boolean;
+  } | null;
   graph: DomainGraph;
   session: ModelSession;
   selection: ModelSelection;
@@ -71,6 +77,7 @@ const referenceOptions = (
 export const RightInspector = ({
   showHeading = true,
   active = true,
+  gateReport = null,
   graph,
   session,
   selection,
@@ -79,7 +86,7 @@ export const RightInspector = ({
     selection.nodeId === null ? undefined : graph.getEntity(selection.nodeId);
   return entity === undefined ? (
     <InspectorShell showHeading={showHeading}>
-      选择画布上的业务对象查看属性。
+      <InspectorOverview graph={graph} gateReport={gateReport} />
     </InspectorShell>
   ) : (
     <SelectedInspector
@@ -91,6 +98,43 @@ export const RightInspector = ({
       session={session}
       selection={selection}
     />
+  );
+};
+
+const InspectorOverview = ({
+  graph,
+  gateReport,
+}: Pick<RightInspectorProps, 'graph' | 'gateReport'>) => {
+  const ledger = useMemo(
+    () => buildKeyDataLedger(graph.document),
+    [graph.document],
+  );
+  return (
+    <>
+      <p>选择画布上的业务对象查看属性。</p>
+      <section aria-label="关键数据台账" className="flex flex-col gap-2">
+        <h3 className="font-semibold">关键数据台账</h3>
+        <dl className="grid grid-cols-[1fr_auto] gap-1">
+          <dt>关键数据项</dt>
+          <dd>{ledger.entries.length}</dd>
+          <dt>来源待决</dt>
+          <dd>{ledger.decisionOwed.length}</dd>
+          <dt>绑定派生规则</dt>
+          <dd>{ledger.derived.length}</dd>
+        </dl>
+      </section>
+      <section aria-label="门禁健康度" className="flex flex-col gap-2">
+        <h3 className="font-semibold">门禁健康度</h3>
+        {gateReport == null ? (
+          <p>等待当前模型的诊断结果。</p>
+        ) : (
+          <p>
+            {gateReport.isStageGateReady ? '已就绪' : '未就绪'} · 阻塞{' '}
+            {gateReport.blockCount} · 警告 {gateReport.warnCount}
+          </p>
+        )}
+      </section>
+    </>
   );
 };
 

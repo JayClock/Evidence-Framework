@@ -27,7 +27,6 @@ const handlers = (): CommandHandlers => ({
   zoomToSelection: vi.fn(),
   openDelivery: vi.fn(),
   rerunSensors: vi.fn(),
-  askAgent: vi.fn(),
   startStorming: vi.fn(),
   openProblems: vi.fn(),
   toggleProblems: vi.fn(),
@@ -39,12 +38,14 @@ const find = (id: string, overrides: Partial<CommandCapabilities> = {}) =>
   );
 
 describe('buildCommands', () => {
-  it('covers every group it declares', () => {
+  it('covers the built-in groups; AI settings is registered by the workspace', () => {
     const commands = buildCommands(capabilities(), handlers());
     const groups = new Set(commands.map((command) => command.category));
 
     expect([...groups].sort()).toEqual(
-      COMMAND_GROUPS.map((group) => group.id).sort(),
+      COMMAND_GROUPS.filter((group) => group.id !== 'agent')
+        .map((group) => group.id)
+        .sort(),
     );
   });
 
@@ -52,6 +53,7 @@ describe('buildCommands', () => {
     expect(find('model.save')?.shortcut).toBe(CHORDS.save);
     expect(find('view.journey')?.shortcut).toBe(CHORDS.journey);
     expect(find('delivery.contract')?.shortcut).toBe(CHORDS.delivery);
+    expect(find('model.storming')?.shortcut).toBe(CHORDS.storming);
   });
 
   it('keeps evidence storming discoverable and opens diagnostics in the problems panel', () => {
@@ -113,12 +115,17 @@ describe('buildCommands', () => {
 
 describe('groupCommands', () => {
   it('orders buckets as declared and drops the empty ones', () => {
-    const buckets = groupCommands(
-      buildCommands(capabilities(), handlers()).filter(
-        (command) =>
-          command.category === 'agent' || command.category === 'model',
+    const buckets = groupCommands([
+      {
+        id: 'ai-settings',
+        title: '配置大模型',
+        category: 'agent',
+        perform: vi.fn(),
+      },
+      ...buildCommands(capabilities(), handlers()).filter(
+        ({ category }) => category === 'model',
       ),
-    );
+    ]);
 
     expect(buckets.map((bucket) => bucket.group.id)).toEqual([
       'model',

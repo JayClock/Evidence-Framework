@@ -70,7 +70,8 @@ export const CHORDS = {
   save: '⌘+S',
   undo: '⌘+Z',
   redo: '⌘+Shift+Z',
-  palette: '⌘+K',
+  palette: '⌘+Shift+K',
+  storming: '⌘+K',
   journey: '⌥+1',
   graph: '⌥+2',
   zoomSelection: '⇧+2',
@@ -96,7 +97,6 @@ export interface CommandHandlers {
   zoomToSelection: () => void;
   openDelivery: () => void;
   rerunSensors: () => void;
-  askAgent: () => void;
   startStorming: () => void;
   openProblems: () => void;
   toggleProblems: () => void;
@@ -191,6 +191,7 @@ export const buildCommands = (
       title: '铺设业务凭证',
       subtitle: '从业务例子开始头脑风暴',
       category: 'model',
+      shortcut: CHORDS.storming,
       icon: Sparkles,
       keywords: ['evidence', 'storming', '新建', '头脑风暴'],
       perform: handlers.startStorming,
@@ -224,15 +225,6 @@ export const buildCommands = (
       icon: Activity,
       keywords: ['diagnostics', 'sensors', 'lint', '门禁'],
       perform: handlers.rerunSensors,
-    },
-    {
-      id: 'agent.ask',
-      title: '向 AI 建模副驾提问',
-      subtitle: '把当前选区交给协同栏',
-      category: 'agent',
-      icon: Sparkles,
-      keywords: ['agent', 'copilot', 'ask', 'ai'],
-      perform: handlers.askAgent,
     },
   ];
 };

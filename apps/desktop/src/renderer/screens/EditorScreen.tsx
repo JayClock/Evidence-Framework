@@ -26,8 +26,9 @@ import { EntityDrawer } from '../components/layout/EntityDrawer';
 import { InspectorShell } from '../components/layout/InspectorShell';
 import { ViewModeBar } from '../components/layout/ViewModeBar';
 import {
-  AgentCopilot,
-  InlinePatchCopilot,
+  EvidenceInquiryConversation,
+  InlinePatchCard,
+  type AppliedPatch,
   useAgentPatchBridge,
   useAgentSession,
   usePatchReview,
@@ -195,15 +196,6 @@ const EditorWorkspace = ({
     active: ledgerActive,
     returnToGraph: workspaceView.returnToGraph,
   });
-  const [rightPane, setRightPane] = useState<'inspector' | 'copilot'>(
-    'inspector',
-  );
-  const showInspector = useCallback(() => setRightPane('inspector'), []);
-  const showInterview = useCallback(() => {
-    if (ledgerActive) workspaceView.returnToGraph();
-    expandRightRail();
-    setRightPane('copilot');
-  }, [expandRightRail, ledgerActive, workspaceView.returnToGraph]);
   const {
     state,
     save,
@@ -296,17 +288,34 @@ const EditorWorkspace = ({
     if (state.savedAt !== null) void sensors.refresh();
   }, [state.savedAt, sensors.refresh]);
   const [inquiry, setInquiry] = useState<CanvasEvidenceInquiry['target']>(null);
-  const [copilotPrefill, setCopilotPrefill] = useState<{
-    token: number;
-    text: string;
-  } | null>(null);
-
+  const [stormingOpen, setStormingOpen] = useState(false);
+  const [stormingFocus, setStormingFocus] = useState(0);
+  const [stormingBusy, setStormingBusy] = useState(false);
+  const [stormingError, setStormingError] = useState<string | null>(null);
+  const [stormingFrame, setStormingFrame] = useState<readonly string[] | null>(
+    null,
+  );
+  const stormingReturnFocus = useRef<HTMLElement | null>(null);
+  const stormingAdded = useRef<Set<string> | null>(null);
   const patchReview = usePatchReview(state.session, state.document);
-
+  const { record: recordPatch } = patchReview;
+  const recordAgentPatch = useCallback(
+    (patch: AppliedPatch) => {
+      recordPatch(patch);
+      const added = stormingAdded.current;
+      if (added === null) return;
+      const before = new Set(patch.before.entities.map(({ id }) => id));
+      for (const entity of patch.after.entities) {
+        if (!before.has(entity.id) && isEvidenceEntity(entity))
+          added.add(entity.id);
+      }
+    },
+    [recordPatch],
+  );
   useAgentPatchBridge(
     window.evidenceAPI.agent,
     state.session,
-    patchReview.record,
+    recordAgentPatch,
   );
 
   // Monotonic document revision so an external agent can tell whether the model
@@ -334,8 +343,6 @@ const EditorWorkspace = ({
     token: number;
   } | null>(null);
   const tokenRef = useRef(0);
-  // ⌘K bumps this, which moves the caret into the agent composer.
-  const [agentFocusToken, setAgentFocusToken] = useState(0);
 
   // The table and the graph share one selection, so leaving the ledger lands on
   // the object that was being read instead of the fit-to-content corner.
@@ -398,10 +405,7 @@ const EditorWorkspace = ({
         if (scope !== null && !scope.nodeIds.has(target.id))
           setSelectedScope(null);
         state.session.selectAttribute(target.id, target.attributeName);
-        if (target.attributeName !== null) {
-          showInspector();
-          if (!ledgerActive) expandRightRail();
-        }
+        if (target.attributeName !== null && !ledgerActive) expandRightRail();
       } else {
         setSelectedScope(null);
         if (ledgerActive) state.session.clearSelection();
@@ -412,7 +416,6 @@ const EditorWorkspace = ({
     },
     [
       expandRightRail,
-      showInspector,
       ledgerActive,
       resolveIssueTarget,
       scope,
@@ -421,32 +424,80 @@ const EditorWorkspace = ({
     ],
   );
 
-  // What the next question will be about: the canvas selection, reduced to what
-  // the composer can name without a graph.
-  const selectedEntity =
-    state.selection.nodeId === null
-      ? undefined
-      : state.graph.getEntity(state.selection.nodeId);
-  const promptFocus =
-    selectedEntity === undefined
-      ? null
-      : {
-          nodeId: selectedEntity.id,
-          label: selectedEntity.label,
-          kind: selectedEntity.category,
-        };
-
   const startStorming = useCallback(() => {
+    const active = document.activeElement;
+    if (
+      active instanceof HTMLElement &&
+      !active.closest('[data-canvas-storming]')
+    ) {
+      stormingReturnFocus.current = active;
+    }
     setInquiry(null);
-    state.session.clearSelection();
     workspaceView.setMode('journey');
-    tokenRef.current += 1;
-    setCopilotPrefill({
-      token: tokenRef.current,
-      text: '请根据下面的业务例子做头脑风暴，按邀请投标、投标、签约、履约批量铺设有依据的凭证。\n\n业务例子：',
-    });
-    showInterview();
-  }, [showInterview, state.session, workspaceView.setMode]);
+    setStormingOpen(true);
+    setStormingFocus((token) => token + 1);
+  }, [workspaceView.setMode]);
+
+  const closeStorming = useCallback(() => {
+    setStormingOpen(false);
+    const previous = stormingReturnFocus.current;
+    stormingReturnFocus.current = null;
+    if (
+      previous?.isConnected &&
+      previous !== document.body &&
+      !previous.closest('[inert], [hidden]')
+    ) {
+      previous.focus({ preventScroll: true });
+    } else {
+      returnToCanvas();
+    }
+  }, [returnToCanvas]);
+
+  const submitStorming = async (text: string): Promise<boolean> => {
+    if (
+      agent.state.running ||
+      stormingAdded.current !== null ||
+      patchReview.review !== null ||
+      ai?.aiConfigured === false
+    )
+      return false;
+    const added = new Set<string>();
+    stormingAdded.current = added;
+    setStormingOpen(true);
+    setStormingBusy(true);
+    setStormingError(null);
+    setSelectedScope(null);
+    workspaceView.setMode('journey');
+    const result = await agent.submit(
+      '请从以下业务场景提取有依据的业务记录，按邀请投标、投标、签约、履约归类，使用 batch_add_evidence_stubs 批量铺设凭证。引用原文，提取已知的关键数据与时标语义，未知的留空，不强行补齐阶段。\n\n业务场景：\n' +
+        text,
+      { nodeId: null },
+    );
+    stormingAdded.current = null;
+    setStormingBusy(false);
+    const frame = state.session
+      .getDocument()
+      .entities.filter(({ id }) => added.has(id))
+      .map(({ id }) => id);
+    if (frame.length === 0) {
+      setStormingError(
+        result.success
+          ? '未生成新凭证，请补充可识别的业务记录后再试。'
+          : result.error,
+      );
+      return false;
+    }
+    setStormingFrame(frame);
+    if (
+      document.activeElement === document.body ||
+      document.activeElement?.closest('[data-canvas-storming]')
+    ) {
+      closeStorming();
+    } else {
+      setStormingOpen(false);
+    }
+    return true;
+  };
 
   const pairedNodeIds = useMemo(() => {
     const ids = new Set<string>();
@@ -477,21 +528,26 @@ const EditorWorkspace = ({
   const openInquiry = (nodeId: string, kind: EvidenceInquiryKind) => {
     if (
       agent.state.running ||
+      patchReview.review !== null ||
       (kind === 'what-if' && !pairedNodeIds.has(nodeId))
     )
       return;
     if (!isEvidenceEntity(state.graph.getEntity(nodeId))) return;
     state.session.select(nodeId);
-    showInspector();
-    layout.closeInlineCopilot();
+    setStormingOpen(false);
     setInquiry({ nodeId, kind });
-    if (ai?.aiConfigured === false) return;
+    if (ai?.aiConfigured === false) {
+      agent.reset();
+      return;
+    }
     const question =
       kind === 'trace'
         ? '先问我这张凭证最关键的待决数据项从哪里来；有来源的不要重复问。若没有关键数据项，先问这张凭证记录了哪些关键事实。'
         : '针对这张凭证关联的履约对，提出一个与现有约定最相关的 What-If 问题（例如超时、拒绝或中止）。如果有多个请求，先问我推演哪一项。不要假定补偿措施。';
     void agent.submit(question, { nodeId, inquiry: kind });
   };
+
+  const clearStormingFrame = useCallback(() => setStormingFrame(null), []);
 
   const requestZoom = useCallback((direction: ZoomDirection) => {
     tokenRef.current += 1;
@@ -537,17 +593,11 @@ const EditorWorkspace = ({
       zoomToSelection: () => requestZoom('selection'),
       openDelivery: layout.openDelivery,
       rerunSensors: () => void sensors.refresh(),
-      askAgent: () => {
-        setInquiry(null);
-        showInterview();
-        setAgentFocusToken((token) => token + 1);
-      },
       startStorming,
       openProblems: layout.openProblemsPanel,
       toggleProblems: layout.toggleProblemsPanel,
     }),
     [
-      showInterview,
       startStorming,
       layout.openDelivery,
       layout.openProblemsPanel,
@@ -594,6 +644,8 @@ const EditorWorkspace = ({
       },
       save: () => void save(),
       openCommandPalette: () => setPaletteOpen(true),
+      startStorming,
+      ...(stormingOpen ? { closeStorming } : {}),
       rerunSensors: () => void sensors.refresh(),
       openDelivery: layout.openDelivery,
       clearSelection: () => state.session.clearSelection(),
@@ -603,18 +655,19 @@ const EditorWorkspace = ({
       fitCanvas: () => requestZoom('fit'),
       zoomToSelection: () => requestZoom('selection'),
       toggleRightRail,
-      openInlineCopilot: layout.openInlineCopilot,
       toggleProblems: layout.toggleProblemsPanel,
       ...(storyActive ? { closeStory: workspaceView.returnToGraph } : {}),
       ...(patchReview.review === null ? {} : { acceptPatch, revertPatch }),
     }),
     [
       acceptPatch,
+      closeStorming,
+      startStorming,
+      stormingOpen,
       patchReview.review,
       requestZoom,
       revertPatch,
       layout.openDelivery,
-      layout.openInlineCopilot,
       layout.toggleProblemsPanel,
       save,
       sensors.refresh,
@@ -712,6 +765,8 @@ const EditorWorkspace = ({
         focusRequest={focusRequest}
         zoomCommand={zoomCommand}
         viewportMemory={canvasMemory}
+        frameRequest={stormingFrame}
+        onFrameComplete={clearStormingFrame}
         storyFocus={story.canvasFocus}
         hud={(controls) => (
           <CanvasFloatingHud
@@ -724,21 +779,43 @@ const EditorWorkspace = ({
           />
         )}
         diagnostics={diagnostics}
+        storming={
+          storyActive
+            ? undefined
+            : {
+                open: stormingOpen,
+                focusToken: stormingFocus,
+                busy: stormingBusy,
+                blocked:
+                  patchReview.review !== null ||
+                  (agent.state.running && !stormingBusy),
+                error: stormingError,
+                aiConfigured: ai?.aiConfigured,
+                onConfigureAi: ai?.openSettings,
+                onClose: closeStorming,
+                onStorm: submitStorming,
+                onStop: () => void agent.stop(),
+              }
+        }
         evidenceInquiry={
           storyActive
             ? undefined
             : {
                 target: inquiryTarget,
                 pairedNodeIds,
-                busy: agent.state.running,
+                busy: agent.state.running || patchReview.review !== null,
+                onAcceptPatch:
+                  patchReview.review === null ? undefined : acceptPatch,
+                onRevertPatch: patchReview.review?.revertable
+                  ? revertPatch
+                  : undefined,
                 onOpen: openInquiry,
                 onClose: closeInquiry,
                 content:
                   inquiryTarget === null ? null : (
-                    <AgentCopilot
+                    <EvidenceInquiryConversation
                       key={`${inquiryTarget.nodeId}:${inquiryTarget.kind}`}
-                      embedded
-                      focus={promptFocus}
+                      nodeId={inquiryTarget.nodeId}
                       controller={agent}
                       patchReview={patchReview}
                       onFocusEntity={revealOnGraph}
@@ -946,75 +1023,45 @@ const EditorWorkspace = ({
                 ref={rightRail}
               >
                 {!ledgerActive ? (
-                  rightPane === 'inspector' ? (
-                    <InspectorShell
-                      collapsed={rightRailCollapsed}
-                      onReturnToCanvas={returnToCanvas}
-                      returnOnEscape={
-                        !storyActive && patchReview.review === null
-                      }
-                    >
-                      <RightInspector
-                        graph={state.graph}
-                        session={state.session}
-                        selection={state.selection}
-                        showHeading={false}
-                        active={!rightRailCollapsed}
-                      />
-                    </InspectorShell>
-                  ) : (
-                    <div
-                      className="flex h-full flex-col"
-                      inert={rightRailCollapsed}
-                    >
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        onClick={showInspector}
-                      >
-                        返回实体属性检查
-                      </Button>
-                      <div className="min-h-0 flex-1">
-                        <AgentCopilot
-                          aiConfigured={ai?.aiConfigured}
-                          onConfigureAi={ai?.openSettings}
-                          controller={agent}
-                          patchReview={patchReview}
-                          focus={promptFocus}
-                          onClearFocus={() => state.session.clearSelection()}
-                          onFocusEntity={revealOnGraph}
-                          focusToken={agentFocusToken}
-                          prefill={copilotPrefill}
-                          onPrefillConsumed={() => setCopilotPrefill(null)}
-                        />
-                      </div>
-                    </div>
-                  )
+                  <InspectorShell
+                    collapsed={rightRailCollapsed}
+                    onReturnToCanvas={returnToCanvas}
+                    returnOnEscape={
+                      !storyActive &&
+                      patchReview.review === null &&
+                      !stormingOpen
+                    }
+                  >
+                    <RightInspector
+                      graph={state.graph}
+                      session={state.session}
+                      selection={state.selection}
+                      showHeading={false}
+                      active={!rightRailCollapsed}
+                      gateReport={diagnosticsStale ? null : sensors.report}
+                    />
+                  </InspectorShell>
                 ) : null}
               </ResizablePanel>
             </ResizablePanelGroup>
           </div>
 
-          {layout.isInlineCopilotOpen ? (
+          {patchReview.review === null || inquiryTarget !== null ? null : (
             <div
               data-canvas-control=""
               data-evidence-capture-hide=""
-              className="pointer-events-none absolute inset-x-0 bottom-16 z-40 flex justify-center px-4"
+              className="pointer-events-none absolute inset-x-0 bottom-4 z-40 flex justify-center px-4"
             >
-              <InlinePatchCopilot
-                focus={promptFocus}
-                controller={agent}
-                patchReview={patchReview}
-                onFocusEntity={focusNode}
-                onClose={layout.closeInlineCopilot}
-                onOpenFullInterview={() => {
-                  layout.closeInlineCopilot();
-                  showInterview();
-                  setAgentFocusToken((token) => token + 1);
-                }}
-              />
+              <div className="pointer-events-auto max-h-64 w-full max-w-lg overflow-y-auto">
+                <InlinePatchCard
+                  review={patchReview.review}
+                  onAccept={acceptPatch}
+                  onRevert={revertPatch}
+                  onFocusEntity={revealOnGraph}
+                />
+              </div>
             </div>
-          ) : null}
+          )}
         </div>
 
         {layout.isDeliveryOpen ? (

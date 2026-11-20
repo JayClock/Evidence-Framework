@@ -1,4 +1,10 @@
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import { installDesktopApi } from '@evidence-poc/desktop-testing/desktopApi';
@@ -28,9 +34,24 @@ const Harness = ({ rootPath }: { rootPath: string }) => {
   );
 };
 
+const holdPrompt = (api: ReturnType<typeof installDesktopApi>) => {
+  const prompt = api.agent.prompt;
+  let finish: () => void = () => undefined;
+  const pending = new Promise<void>((resolve) => {
+    finish = resolve;
+  });
+  api.agent.prompt = async (input) => {
+    const result = await prompt(input);
+    await pending;
+    return result;
+  };
+  return finish;
+};
+
 describe('useAgentSession', () => {
   it('sends a prompt and streams the reply and tool calls', async () => {
     const api = installDesktopApi();
+    const finish = holdPrompt(api);
 
     render(<Harness rootPath="/models/procurement" />);
     fireEvent.click(screen.getByText('提交'));
@@ -70,61 +91,60 @@ describe('useAgentSession', () => {
       'run_sensors:completed',
     );
     expect(screen.getByTestId('tool')).toHaveTextContent('none');
+    finish();
+    await waitFor(() =>
+      expect(screen.getByTestId('running')).toHaveTextContent('idle'),
+    );
   });
 
-  it('steers the live run instead of starting a second one', async () => {
+  it('does not start or steer a second turn before the first IPC call finishes', async () => {
     const api = installDesktopApi();
-
+    const finish = holdPrompt(api);
     render(<Harness rootPath="/models/procurement" />);
     fireEvent.click(screen.getByText('提交'));
-
-    // The main process keeps the invoke pending until the run settles, so the
-    // hook still reports the run as active.
-    act(() => {
-      api.agentMock.emitEvent({
-        type: 'tool-call-started',
-        toolCallId: 'call-1',
-        toolName: 'apply_model_patch',
-        input: {},
-      });
-    });
+    act(() =>
+      api.agentMock.emitEvent({ type: 'agent-settled', aborted: false }),
+    );
 
     fireEvent.click(screen.getByText('提交'));
-
-    expect(api.calls.steer).toHaveLength(1);
+    expect(screen.getByTestId('running')).toHaveTextContent('running');
+    expect(api.calls.steer).toHaveLength(0);
     expect(api.calls.prompt).toHaveLength(1);
+    finish();
+    await waitFor(() =>
+      expect(screen.getByTestId('running')).toHaveTextContent('idle'),
+    );
   });
 
-  it('surfaces a streamed agent error', () => {
+  it('surfaces a streamed error and ignores unrelated events once idle', async () => {
     const api = installDesktopApi();
-
+    const finish = holdPrompt(api);
     render(<Harness rootPath="/models/procurement" />);
-    act(() => {
-      api.agentMock.emitEvent({ type: 'agent-error', message: '缺少模型凭据' });
-    });
-
+    fireEvent.click(screen.getByText('提交'));
+    act(() =>
+      api.agentMock.emitEvent({ type: 'agent-error', message: '缺少模型凭据' }),
+    );
     expect(screen.getByTestId('error')).toHaveTextContent('缺少模型凭据');
-    expect(screen.getByTestId('running')).toHaveTextContent('idle');
+    finish();
+    await waitFor(() =>
+      expect(screen.getByTestId('running')).toHaveTextContent('idle'),
+    );
+    act(() =>
+      api.agentMock.emitEvent({ type: 'text-delta', delta: '过期回复' }),
+    );
+    expect(screen.getByTestId('transcript')).toBeEmptyDOMElement();
   });
 
-  it('stops the run through the api', () => {
+  it('aborts an active turn through the API', async () => {
     const api = installDesktopApi();
-
+    const finish = holdPrompt(api);
     render(<Harness rootPath="/models/procurement" />);
+    fireEvent.click(screen.getByText('提交'));
     fireEvent.click(screen.getByText('停止'));
-
     expect(api.calls.abort).toEqual(['/models/procurement']);
-    expect(screen.getByTestId('running')).toHaveTextContent('idle');
-  });
-
-  it('settles to idle when the agent reports it', () => {
-    const api = installDesktopApi();
-
-    render(<Harness rootPath="/models/procurement" />);
-    act(() => {
-      api.agentMock.emitEvent({ type: 'agent-settled', aborted: false });
-    });
-
-    expect(screen.getByTestId('running')).toHaveTextContent('idle');
+    finish();
+    await waitFor(() =>
+      expect(screen.getByTestId('running')).toHaveTextContent('idle'),
+    );
   });
 });

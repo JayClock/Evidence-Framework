@@ -25,9 +25,9 @@ const commands: readonly CommandItem[] = [
     perform: () => undefined,
   },
   {
-    id: 'agent.ask',
-    title: '向 AI 建模副驾提问',
-    category: 'agent',
+    id: 'model.storming',
+    title: '铺设业务凭证',
+    category: 'model',
     perform: () => undefined,
   },
 ];
@@ -92,7 +92,7 @@ describe('CommandPalette', () => {
 
     render(<Harness onOpenChange={onOpenChange} />);
 
-    fireEvent.click(screen.getByRole('option', { name: /向 AI 建模副驾提问/ }));
+    fireEvent.click(screen.getByRole('option', { name: /铺设业务凭证/ }));
 
     await waitFor(() => expect(onOpenChange).toHaveBeenCalledWith(false));
   });

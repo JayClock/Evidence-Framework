@@ -47,7 +47,7 @@ Evidence 不仅是一个桌面设计器，更是贯穿**业务意图澄清 ➔ �
 │                                                                                        │
 │  [阶段 1: 业务意图]    [阶段 2: 履约建模]    [阶段 3: 架构师门禁]    [阶段 4: 契约向下投影]    [阶段 5: AI 驱动编码]     [阶段 6: HTTP 验收]  │
 │    需求澄清访谈  ──>    FM v6 形式化模型 ──>   桌面图谱与故事  ──>   OpenAPI + Bruno  ──>   多语言 TDD 实现  ──>   运行时黑盒验证   │
-│   (AI Copilot)        (AST + CEL 守护)      (Human Gate)         (Evidence Export)      (Red-Green 循环)       (Bruno + oasdiff)│
+│   (AI 建模)           (AST + CEL 守护)      (Human Gate)         (Evidence Export)      (Red-Green 循环)       (Bruno + oasdiff)│
 │                                                                                        │
 │   ── 宏观由 Evidence 门禁锁死安全边界与验收用例；微观由 AI Coding 自由探索具体语言实现 ──      │
 └────────────────────────────────────────┬───────────────────────────────────────────────┘
@@ -212,7 +212,7 @@ pnpm evidence export --model b2b-escrow.evidence.json --out generated/ --verify
 │   │   ├── feature-inspector/           # 属性审查面板、CEL 代码高亮与自动补全
 │   │   ├── feature-story/               # 故事回放、事实卡片与 What-If 交互
 │   │   ├── feature-delivery/            # 交付中心、增量预览与导出状态
-│   │   ├── feature-agent/               # Copilot 会话、补丁桥接与审查
+│   │   ├── feature-agent/               # 节点问询、Agent 会话与补丁复核
 │   │   └── testing/                     # 桌面端渲染测试夹具与 Mock 容器
 │   ├── evidence-schema/                 # 领域模型 AST 定义与严格语法校验基石
 │   ├── evidence-model-core/             # 纯内存图引擎、命令总线 (Undo/Redo)、CEL 仿真执行器 (Universal)

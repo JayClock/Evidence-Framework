@@ -11,6 +11,7 @@ const setup = (
     redo: vi.fn(),
     save: vi.fn(),
     openCommandPalette: vi.fn(),
+    startStorming: vi.fn(),
     clearSelection: vi.fn(),
     zoomIn: vi.fn(),
     zoomOut: vi.fn(),
@@ -18,7 +19,6 @@ const setup = (
     fitCanvas: vi.fn(),
     toggleRightRail: vi.fn(),
     toggleProblems: vi.fn(),
-    openInlineCopilot: vi.fn(),
     ...overrides,
   };
 
@@ -65,12 +65,9 @@ describe('useEditorShortcuts', () => {
 
     fireEvent.keyDown(window, { key: 'i', metaKey: true });
     fireEvent.keyDown(window, { key: '\\', metaKey: true });
-    fireEvent.keyDown(window, { key: 'j', ctrlKey: true });
     fireEvent.keyDown(window, { code: 'KeyX', altKey: true });
 
     expect(handlers.toggleRightRail).toHaveBeenCalledTimes(2);
-    // Mod+J is the agent, Alt+X is the findings list.
-    expect(handlers.openInlineCopilot).toHaveBeenCalledTimes(1);
     expect(handlers.toggleProblems).toHaveBeenCalledTimes(1);
   });
 
@@ -84,12 +81,14 @@ describe('useEditorShortcuts', () => {
     expect(handlers.fitCanvas).toHaveBeenCalledTimes(1);
   });
 
-  it('opens the command palette on Mod+K', () => {
+  it('uses Mod+K for storming and Mod+Shift+K for commands', () => {
     const handlers = setup();
 
     fireEvent.keyDown(window, { key: 'k', metaKey: true });
+    fireEvent.keyDown(window, { key: 'K', ctrlKey: true, shiftKey: true });
 
-    expect(handlers.openCommandPalette).toHaveBeenCalledTimes(1);
+    expect(handlers.startStorming).toHaveBeenCalledOnce();
+    expect(handlers.openCommandPalette).toHaveBeenCalledOnce();
   });
 
   it('exposes the gate and navigation chords the palette prints', () => {

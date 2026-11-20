@@ -7,6 +7,7 @@ export interface InlinePatchCardProps {
   review: PatchReview;
   onAccept: () => void;
   onRevert: () => void;
+  enterToAccept?: boolean;
   /** Pans the canvas to an object the patch touched. */
   onFocusEntity?: (entityId: string) => void;
 }
@@ -19,17 +20,15 @@ const Count = ({ label, count }: { label: string; count: number }) =>
   );
 
 /**
- * What the agent wrote, inside the conversation that asked for it.
- *
- * The old bar floated over the canvas and could only count changes. Here each
- * touched object is a control: clicking one puts the canvas on it, which is the
- * only way to check a patch without memorising ids from the transcript.
+ * Review of a live, undoable patch. Each touched object can be located on the
+ * canvas from either the node inquiry or the workspace review banner.
  */
 export const InlinePatchCard = ({
   review,
   onAccept,
   onRevert,
   onFocusEntity,
+  enterToAccept = false,
 }: InlinePatchCardProps) => {
   const changed =
     review.addedIds.length > 0 ||
@@ -48,7 +47,7 @@ export const InlinePatchCard = ({
             aria-hidden="true"
             className="h-3 w-3 text-evidence-accent"
           />
-          AI 已写入模型
+          AI 补丁预览
         </span>
         <span className="flex shrink-0 items-center gap-1">
           {changed ? (
@@ -105,7 +104,7 @@ export const InlinePatchCard = ({
       <div className="mt-2 flex items-center justify-between gap-2 border-t border-evidence-line/60 pt-1.5">
         <span className="min-w-0 text-[10px] text-evidence-muted">
           {review.revertable
-            ? '⌘/Ctrl + Enter 保留 · Esc 撤销这次补丁'
+            ? `${enterToAccept ? 'Enter' : '⌘/Ctrl + Enter'} 应用 · Esc 撤销这次补丁`
             : '模型之后又有改动，撤销已不可用；可在顶部按 ⌘Z 逐步回退'}
         </span>
 
@@ -126,7 +125,7 @@ export const InlinePatchCard = ({
             className="flex items-center gap-1 rounded bg-evidence-accent px-2.5 py-1 text-[10px] text-white hover:bg-[#274c76]"
           >
             <Check aria-hidden="true" className="h-3 w-3" />
-            保留
+            应用
           </button>
         </span>
       </div>

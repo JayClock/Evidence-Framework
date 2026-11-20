@@ -47,6 +47,7 @@ export const CanvasStormingBar = ({
   return (
     <div
       data-canvas-control=""
+      data-canvas-storming=""
       data-evidence-capture-hide=""
       className={cn(
         'pointer-events-none absolute inset-x-3 z-40 flex justify-center',
@@ -105,7 +106,14 @@ export const CanvasStormingBar = ({
           className="w-full resize-y rounded-md border border-workbench-border bg-workbench-background px-2.5 py-2 text-xs text-evidence-ink focus-visible:border-evidence-accent focus-visible:ring-1 focus-visible:ring-evidence-accent"
           onChange={(event) => setDraft(event.target.value)}
           onKeyDown={(event) => {
-            if (event.key !== 'Enter' || event.shiftKey || event.altKey) return;
+            if (
+              event.key !== 'Enter' ||
+              event.shiftKey ||
+              event.altKey ||
+              event.metaKey ||
+              event.ctrlKey
+            )
+              return;
             event.preventDefault();
             if (event.nativeEvent.isComposing || event.keyCode === 229) return;
             event.currentTarget.form?.requestSubmit();

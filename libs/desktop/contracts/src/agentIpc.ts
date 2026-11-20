@@ -36,11 +36,14 @@ export interface AgentProjectInput {
   rootPath: string;
 }
 
-export interface AgentTurnFocus {
-  nodeId: string;
-  /** Opening a sourcing or What-If question is a read-only turn. */
-  inquiry?: 'trace' | 'what-if';
-}
+/** An explicit null node starts a canvas-wide turn without inheriting selection. */
+export type AgentTurnFocus =
+  | { nodeId: null; inquiry?: never }
+  | {
+      nodeId: string;
+      /** Opening a sourcing or What-If question is a read-only turn. */
+      inquiry?: 'trace' | 'what-if';
+    };
 
 export interface AgentSteerInput extends AgentProjectInput {
   text: string;

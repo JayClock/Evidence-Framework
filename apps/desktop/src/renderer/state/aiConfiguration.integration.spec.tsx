@@ -50,28 +50,25 @@ const setup = async () => {
 };
 
 describe('new-install AI onboarding integration', () => {
-  it('configures from the Copilot empty state and enables a prompt without reloading the project', async () => {
+  it('configures from canvas storming and enables a prompt without reloading the project', async () => {
     const api = await setup();
-    fireEvent.click(screen.getByRole('button', { name: '打开快速命令' }));
-    fireEvent.click(
-      await screen.findByRole('option', { name: /向 AI 建模副驾提问/ }),
-    );
-    expect(screen.getByLabelText('访谈内容')).toBeDisabled();
-    fireEvent.click(screen.getByRole('button', { name: '立刻配置 API Key' }));
+    fireEvent.keyDown(window, { key: 'k', metaKey: true });
+    expect(screen.getByLabelText('业务场景')).toBeDisabled();
+    fireEvent.click(screen.getByRole('button', { name: '配置 AI 模型' }));
     fireEvent.change(screen.getByLabelText(/API 密钥/), {
       target: { value: 'private-input-only' },
     });
     fireEvent.click(screen.getByRole('button', { name: '保存并立即生效' }));
     await waitFor(() =>
-      expect(screen.getByLabelText('访谈内容')).not.toBeDisabled(),
+      expect(screen.getByLabelText('业务场景')).not.toBeDisabled(),
     );
     expect(
       screen.getByRole('button', { name: '配置大模型' }),
     ).toHaveTextContent('deepseek-chat');
-    fireEvent.change(screen.getByLabelText('访谈内容'), {
+    fireEvent.change(screen.getByLabelText('业务场景'), {
       target: { value: '澄清付款条件' },
     });
-    fireEvent.click(screen.getByRole('button', { name: /发送/ }));
+    fireEvent.click(screen.getByRole('button', { name: /发起发散/ }));
     await waitFor(() => expect(api.calls.prompt).toHaveLength(1));
     expect(api.calls.open).toHaveLength(1);
     expect(api.calls.save).toEqual([]);

@@ -4,8 +4,10 @@ interface ShortcutHandlers {
   undo: () => void;
   redo: () => void;
   save: () => void;
-  /** Opens commands and business-object search (Mod+K). */
+  /** Opens commands and business-object search (Mod+Shift+K). */
   openCommandPalette?: () => void;
+  startStorming?: () => void;
+  closeStorming?: () => void;
   /** Re-runs the AST gate and the sensors. */
   rerunSensors?: () => void;
   openDelivery?: () => void;
@@ -24,8 +26,6 @@ interface ShortcutHandlers {
   toggleRightRail?: () => void;
   /** Slides the problems panel in or out (Alt+X). */
   toggleProblems?: () => void;
-  /** Opens the agent on the current selection (Mod+J). */
-  openInlineCopilot?: () => void;
   /**
    * Settles a pending agent patch.
    *
@@ -70,13 +70,26 @@ export const useEditorShortcuts = (handlers: ShortcutHandlers): void => {
         return;
       }
 
-      // The palette is the way in: it is the only chord the header advertises,
-      // and other surfaces such as copilot and exports have rows inside it.
       const key = event.key.toLowerCase();
-      if (mod && key === 'k' && handlers.openCommandPalette) {
-        event.preventDefault();
-        handlers.openCommandPalette();
-        return;
+      const dialog =
+        event.target instanceof Element
+          ? event.target.closest('[role="dialog"]')
+          : null;
+      if (
+        mod &&
+        !event.altKey &&
+        key === 'k' &&
+        (dialog === null ||
+          (!event.shiftKey && dialog.hasAttribute('data-evidence-inquiry')))
+      ) {
+        const action = event.shiftKey
+          ? handlers.openCommandPalette
+          : handlers.startStorming;
+        if (action !== undefined) {
+          event.preventDefault();
+          if (!event.repeat) action();
+          return;
+        }
       }
 
       if (mod && event.shiftKey) {
@@ -108,20 +121,6 @@ export const useEditorShortcuts = (handlers: ShortcutHandlers): void => {
         }
       }
 
-      // The agent comes to the selection rather than asking the modeler to
-      // leave the canvas, so Mod+J opens the inline composer.
-      if (
-        mod &&
-        !event.shiftKey &&
-        !typing &&
-        event.key.toLowerCase() === 'j' &&
-        handlers.openInlineCopilot !== undefined
-      ) {
-        event.preventDefault();
-        handlers.openInlineCopilot();
-        return;
-      }
-
       // Layout keys belong to the workspace, but a text field may want them for
       // its own formatting, so they only fire outside an input.
       if (mod && !typing) {
@@ -138,9 +137,31 @@ export const useEditorShortcuts = (handlers: ShortcutHandlers): void => {
         }
       }
 
+      if (
+        event.key === 'Escape' &&
+        handlers.closeStorming !== undefined &&
+        dialog === null
+      ) {
+        event.preventDefault();
+        handlers.closeStorming();
+        return;
+      }
+
       if (event.key === 'Escape' && handlers.revertPatch !== undefined) {
         event.preventDefault();
         handlers.revertPatch();
+        return;
+      }
+
+      if (
+        mod &&
+        event.key === 'Enter' &&
+        handlers.acceptPatch !== undefined &&
+        !typing &&
+        dialog === null
+      ) {
+        event.preventDefault();
+        handlers.acceptPatch();
         return;
       }
 
@@ -151,12 +172,6 @@ export const useEditorShortcuts = (handlers: ShortcutHandlers): void => {
       if (event.key === 'Escape' && handlers.closeStory !== undefined) {
         event.preventDefault();
         handlers.closeStory();
-        return;
-      }
-
-      if (mod && event.key === 'Enter' && handlers.acceptPatch !== undefined) {
-        event.preventDefault();
-        handlers.acceptPatch();
         return;
       }
 

@@ -30,7 +30,7 @@ describe('InlinePatchCard', () => {
     expect(screen.getByText('新增 1')).toBeInTheDocument();
     expect(screen.getByText('修改 1')).toBeInTheDocument();
     expect(
-      screen.getByText('⌘/Ctrl + Enter 保留 · Esc 撤销这次补丁'),
+      screen.getByText('⌘/Ctrl + Enter 应用 · Esc 撤销这次补丁'),
     ).toBeInTheDocument();
   });
 
@@ -82,7 +82,7 @@ describe('InlinePatchCard', () => {
     );
 
     fireEvent.click(screen.getByRole('button', { name: '撤销补丁' }));
-    fireEvent.click(screen.getByRole('button', { name: '保留' }));
+    fireEvent.click(screen.getByRole('button', { name: '应用' }));
 
     expect(onRevert).toHaveBeenCalledTimes(1);
     expect(onAccept).toHaveBeenCalledTimes(1);

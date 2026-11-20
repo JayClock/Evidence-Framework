@@ -14,6 +14,7 @@ import {
   VALUE_TYPES,
   type AttributeAST,
   type EntityAST,
+  type TimeRole,
   type ValueType,
 } from '@evidence-poc/evidence-schema';
 import {
@@ -40,6 +41,11 @@ interface AttributeDataGridProps {
 }
 
 const columnHelper = createColumnHelper<AttributeAST>();
+const TIME_ROLE_LABELS: Record<TimeRole, string> = {
+  start: '开始时间',
+  deadline: '截止时间',
+  occurrence: '发生时刻',
+};
 
 const nextAttributeName = (
   attributes: readonly AttributeAST[],
@@ -146,6 +152,11 @@ export const AttributeDataGrid = ({
                     entityRef={entity.id}
                     graph={graph}
                   />
+                  {attribute.timeRole === undefined ? null : (
+                    <span className="rounded bg-workbench-subtle px-1 text-[9px] text-workbench-label">
+                      {TIME_ROLE_LABELS[attribute.timeRole]}
+                    </span>
+                  )}
                   {attribute.derivedByRuleRef !== undefined ? (
                     <span className="rounded bg-[#eef2f7] px-1 text-[8px] text-evidence-accent">
                       派生

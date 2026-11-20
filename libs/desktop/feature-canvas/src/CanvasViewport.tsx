@@ -113,6 +113,9 @@ interface CanvasViewportProps {
   scope?: ContextScope | null;
   evidenceInquiry?: CanvasEvidenceInquiry;
   storming?: CanvasStormingControls;
+  /** Newly grown evidence to frame once the next layout is ready. */
+  frameRequest?: readonly string[] | null;
+  onFrameComplete?: () => void;
   onScopeChange?: (contextId: string | null) => void;
   onSelect: (nodeId: string) => void;
   onClearSelection: () => void;
@@ -228,6 +231,8 @@ const CanvasSurface = ({
   onScopeChange,
   evidenceInquiry,
   storming,
+  frameRequest,
+  onFrameComplete,
   onSelect,
   onClearSelection,
 }: CanvasViewportProps) => {
@@ -521,6 +526,39 @@ const CanvasSurface = ({
       duration: reducedMotion() ? 0 : 600,
     });
   }, [storyFocus, layout, setCenter, viewportInitialized, viewportSized]);
+
+  useEffect(() => {
+    if (
+      !frameRequest?.length ||
+      storyFocus !== null ||
+      !viewportInitialized ||
+      !viewportSized
+    )
+      return;
+    const boxes = frameRequest.map((id) => layout.nodeById.get(id)?.worldBox);
+    if (boxes.some((box) => box === undefined)) return;
+    const nodes = boxes.filter((box) => box !== undefined);
+    const x = Math.min(...nodes.map((box) => box.x));
+    const y = Math.min(...nodes.map((box) => box.y));
+    void fitBounds(
+      {
+        x,
+        y,
+        width: Math.max(...nodes.map((box) => box.x + box.width)) - x,
+        height: Math.max(...nodes.map((box) => box.y + box.height)) - y,
+      },
+      { padding: 0.22, duration: reducedMotion() ? 0 : 250 },
+    );
+    onFrameComplete?.();
+  }, [
+    fitBounds,
+    frameRequest,
+    layout,
+    onFrameComplete,
+    storyFocus,
+    viewportInitialized,
+    viewportSized,
+  ]);
 
   const interaction = useMemo<CanvasInteraction>(
     () => ({

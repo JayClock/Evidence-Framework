@@ -236,10 +236,13 @@ export const createAgentRuntime = ({
     prompt: async (text, focus) => {
       if (activeTurn !== null) throw new Error('本轮访谈尚未结束。');
       const nodeId =
-        focus === undefined ? null : DomainIdSchema.parse(focus.nodeId);
+        focus === undefined || focus.nodeId === null
+          ? null
+          : DomainIdSchema.parse(focus.nodeId);
       const turn = {
         canvas:
-          nodeId === null || nodeId === canvasContext.selection.nodeId
+          focus === undefined ||
+          (nodeId !== null && nodeId === canvasContext.selection.nodeId)
             ? canvasContext
             : {
                 projectRoot: canvasContext.projectRoot,

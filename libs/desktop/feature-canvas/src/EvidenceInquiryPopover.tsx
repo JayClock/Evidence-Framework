@@ -15,6 +15,8 @@ export interface CanvasEvidenceInquiry {
   busy: boolean;
   onOpen: (nodeId: string, kind: EvidenceInquiryKind) => void;
   onClose: (nodeId: string) => void;
+  onAcceptPatch?: () => void;
+  onRevertPatch?: () => void;
   content: ReactNode;
 }
 
@@ -85,8 +87,45 @@ export const EvidenceInquiryPopover = ({
           collisionPadding={12}
           updatePositionStrategy="always"
           data-workbench-chrome=""
+          data-evidence-inquiry=""
           data-evidence-capture-hide=""
           className="nodrag nopan nowheel flex h-[min(28rem,var(--radix-popover-content-available-height))] w-[min(24rem,calc(100vw-1.5rem))] flex-col overflow-hidden p-0"
+          onOpenAutoFocus={(event) => {
+            const field = document
+              .getElementById(panelId)
+              ?.querySelector<HTMLTextAreaElement>('textarea:not(:disabled)');
+            if (field !== undefined && field !== null) {
+              event.preventDefault();
+              field.focus({ preventScroll: true });
+            }
+          }}
+          onEscapeKeyDown={(event) => {
+            if (!inquiry.onRevertPatch || event.isComposing) return;
+            event.preventDefault();
+            inquiry.onRevertPatch();
+          }}
+          onKeyDown={(event) => {
+            if (
+              event.key !== 'Enter' ||
+              event.shiftKey ||
+              event.altKey ||
+              event.nativeEvent.isComposing ||
+              event.keyCode === 229 ||
+              !inquiry.onAcceptPatch
+            )
+              return;
+            // Keep normal Enter behavior on buttons (close, revert, locate).
+            if (
+              !(
+                event.metaKey ||
+                event.ctrlKey ||
+                event.target instanceof HTMLTextAreaElement
+              )
+            )
+              return;
+            event.preventDefault();
+            inquiry.onAcceptPatch();
+          }}
           onCloseAutoFocus={(event) => {
             event.preventDefault();
             if (document.activeElement === document.body)
