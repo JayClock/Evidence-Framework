@@ -44,6 +44,13 @@ const readyCanvas = async () => {
   return title;
 };
 
+const openInterview = async () => {
+  fireEvent.click(screen.getByRole('button', { name: '打开快速命令' }));
+  fireEvent.click(
+    await screen.findByRole('option', { name: /向 AI 建模副驾提问/ }),
+  );
+};
+
 describe('EditorScreen', () => {
   it('defaults to journey and retains the selected object and camera across topology and ledger switches', async () => {
     vi.stubGlobal('matchMedia', (query: string) => ({
@@ -447,14 +454,10 @@ describe('EditorScreen', () => {
       container.querySelector('[data-node-id="evidence.contract"]'),
     ).not.toBeNull();
     expect(screen.getByText('业务对象 8')).toBeInTheDocument();
-    // Inspection owns the right pane until the modeler switches to Copilot.
     expect(
       screen.getByText('选择画布上的业务对象查看属性。'),
     ).toBeInTheDocument();
     expect(screen.queryByLabelText('AI 建模副驾')).toBeNull();
-    fireEvent.click(screen.getByRole('button', { name: 'AI Copilot' }));
-    expect(screen.getByLabelText('AI 建模副驾')).toBeInTheDocument();
-    expect(screen.getByLabelText('访谈内容')).toBeInTheDocument();
     expect(screen.getByText('履约连线 1')).toBeInTheDocument();
     expect(screen.getByText('上下文 2')).toBeInTheDocument();
   });
@@ -591,34 +594,26 @@ describe('EditorScreen', () => {
       await screen.findByLabelText('门禁问题面板'),
     );
     expect(
-      screen.getByRole('region', { name: '检查与协同' }),
+      screen.getByRole('region', { name: '实体属性检查' }),
     ).not.toContainElement(screen.getByLabelText('门禁问题面板'));
     fireEvent.keyDown(window, { code: 'KeyX', altKey: true });
     expect(screen.queryByLabelText('门禁问题面板')).toBeNull();
   });
 
-  it('shares one resizable right pane between inspection and Copilot', async () => {
+  it('collapses and reopens the inspector without a tab switch', async () => {
     readyProject();
     render(<EditorScreen rootPath="/models/procurement" />);
     await readyCanvas();
 
-    const pane = screen.getByRole('region', { name: '检查与协同' });
-    const inspector = within(pane).getByRole('button', {
-      name: '实体属性检查',
-    });
-    const copilot = within(pane).getByRole('button', { name: 'AI Copilot' });
-    expect(inspector).toHaveAttribute('aria-pressed', 'true');
-    fireEvent.click(copilot);
-    expect(copilot).toHaveAttribute('aria-pressed', 'true');
-    expect(pane).toContainElement(screen.getByLabelText('访谈内容'));
+    const pane = screen.getByRole('region', { name: '实体属性检查' });
+    expect(
+      within(pane).getByRole('heading', { name: '实体属性检查' }),
+    ).toBeVisible();
 
     fireEvent.keyDown(window, { key: 'i', metaKey: true });
     expect(pane).toHaveAttribute('inert');
     fireEvent.keyDown(window, { key: 'i', metaKey: true });
     expect(pane).not.toHaveAttribute('inert');
-    expect(copilot).toHaveAttribute('aria-pressed', 'true');
-    fireEvent.click(inspector);
-    expect(inspector).toHaveAttribute('aria-pressed', 'true');
     expect(pane).toHaveTextContent('选择画布上的业务对象查看属性。');
   });
 
@@ -632,7 +627,7 @@ describe('EditorScreen', () => {
       '[data-node-id="evidence.contract"]',
     )!;
     fireEvent.click(node);
-    const pane = screen.getByRole('region', { name: '检查与协同' });
+    const pane = screen.getByRole('region', { name: '实体属性检查' });
     const back = within(pane).getByRole('button', { name: '返回画布' });
     back.focus();
     fireEvent.keyDown(back, { key: 'Escape' });
@@ -1028,7 +1023,7 @@ describe('EditorScreen sensors', () => {
       }),
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'AI Copilot' }));
+    await openInterview();
     expect(await screen.findByLabelText('AI 补丁复核')).toBeInTheDocument();
     expect(screen.getByText('新增审计员参与方')).toBeInTheDocument();
     expect(screen.getByText('新增 1')).toBeInTheDocument();
@@ -1077,7 +1072,7 @@ describe('EditorScreen sensors', () => {
       }),
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'AI Copilot' }));
+    await openInterview();
     fireEvent.click(await screen.findByRole('button', { name: '保留' }));
 
     await waitFor(() => {
@@ -1175,7 +1170,7 @@ describe('EditorScreen sensors', () => {
       <EditorScreen rootPath="/models/procurement" />,
     );
     await readyCanvas();
-    fireEvent.click(screen.getByRole('button', { name: 'AI Copilot' }));
+    await openInterview();
 
     expect(screen.queryByTestId('agent-copilot-focus')).toBeNull();
 

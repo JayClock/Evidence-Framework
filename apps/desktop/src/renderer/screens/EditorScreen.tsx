@@ -23,7 +23,7 @@ import { useEntityLedger } from '../components/ledger/useEntityLedger';
 import { CanvasFloatingHud } from '../components/canvas/CanvasFloatingHud';
 import { ActivityRail } from '../components/layout/ActivityRail';
 import { EntityDrawer } from '../components/layout/EntityDrawer';
-import { RightPaneShell } from '../components/layout/RightPaneShell';
+import { InspectorShell } from '../components/layout/InspectorShell';
 import { ViewModeBar } from '../components/layout/ViewModeBar';
 import {
   AgentCopilot,
@@ -195,7 +195,9 @@ const EditorWorkspace = ({
     active: ledgerActive,
     returnToGraph: workspaceView.returnToGraph,
   });
-  const [rightPane, setRightPane] = useState<'inspector' | 'copilot'>('inspector');
+  const [rightPane, setRightPane] = useState<'inspector' | 'copilot'>(
+    'inspector',
+  );
   const showInspector = useCallback(() => setRightPane('inspector'), []);
   const showInterview = useCallback(() => {
     if (ledgerActive) workspaceView.returnToGraph();
@@ -944,17 +946,14 @@ const EditorWorkspace = ({
                 ref={rightRail}
               >
                 {!ledgerActive ? (
-                  <RightPaneShell
-                    collapsed={rightRailCollapsed}
-                    pane={rightPane}
-                    onShowInspector={showInspector}
-                    onShowCopilot={showInterview}
-                    onReturnToCanvas={
-                      rightPane === 'inspector' ? returnToCanvas : undefined
-                    }
-                    returnOnEscape={!storyActive && patchReview.review === null}
-                  >
-                    {rightPane === 'inspector' ? (
+                  rightPane === 'inspector' ? (
+                    <InspectorShell
+                      collapsed={rightRailCollapsed}
+                      onReturnToCanvas={returnToCanvas}
+                      returnOnEscape={
+                        !storyActive && patchReview.review === null
+                      }
+                    >
                       <RightInspector
                         graph={state.graph}
                         session={state.session}
@@ -962,21 +961,35 @@ const EditorWorkspace = ({
                         showHeading={false}
                         active={!rightRailCollapsed}
                       />
-                    ) : (
-                      <AgentCopilot
-                        aiConfigured={ai?.aiConfigured}
-                        onConfigureAi={ai?.openSettings}
-                        controller={agent}
-                        patchReview={patchReview}
-                        focus={promptFocus}
-                        onClearFocus={() => state.session.clearSelection()}
-                        onFocusEntity={revealOnGraph}
-                        focusToken={agentFocusToken}
-                        prefill={copilotPrefill}
-                        onPrefillConsumed={() => setCopilotPrefill(null)}
-                      />
-                    )}
-                  </RightPaneShell>
+                    </InspectorShell>
+                  ) : (
+                    <div
+                      className="flex h-full flex-col"
+                      inert={rightRailCollapsed}
+                    >
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={showInspector}
+                      >
+                        返回实体属性检查
+                      </Button>
+                      <div className="min-h-0 flex-1">
+                        <AgentCopilot
+                          aiConfigured={ai?.aiConfigured}
+                          onConfigureAi={ai?.openSettings}
+                          controller={agent}
+                          patchReview={patchReview}
+                          focus={promptFocus}
+                          onClearFocus={() => state.session.clearSelection()}
+                          onFocusEntity={revealOnGraph}
+                          focusToken={agentFocusToken}
+                          prefill={copilotPrefill}
+                          onPrefillConsumed={() => setCopilotPrefill(null)}
+                        />
+                      </div>
+                    </div>
+                  )
                 ) : null}
               </ResizablePanel>
             </ResizablePanelGroup>

@@ -52,7 +52,10 @@ const setup = async () => {
 describe('new-install AI onboarding integration', () => {
   it('configures from the Copilot empty state and enables a prompt without reloading the project', async () => {
     const api = await setup();
-    fireEvent.click(screen.getByRole('button', { name: 'AI Copilot' }));
+    fireEvent.click(screen.getByRole('button', { name: '打开快速命令' }));
+    fireEvent.click(
+      await screen.findByRole('option', { name: /向 AI 建模副驾提问/ }),
+    );
     expect(screen.getByLabelText('访谈内容')).toBeDisabled();
     fireEvent.click(screen.getByRole('button', { name: '立刻配置 API Key' }));
     fireEvent.change(screen.getByLabelText(/API 密钥/), {
