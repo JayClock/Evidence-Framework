@@ -1,4 +1,8 @@
 export {
+  EvidenceNodeCard,
+  type EvidenceNodeCardProps,
+} from './EvidenceNodeCard.js';
+export {
   LifecycleSwimlaneOverlay,
   type LifecycleSwimlaneOverlayProps,
 } from './LifecycleSwimlaneOverlay.js';

@@ -11,6 +11,9 @@
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "references": [
     {
+      "path": "../ui-kit/tsconfig.lib.json"
+    },
+    {
       "path": "../testing/tsconfig.lib.json"
     },
     {
