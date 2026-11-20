@@ -162,6 +162,52 @@ describe('EditorScreen', () => {
     expect(api.calls.save).toEqual([]);
   });
 
+  it('opens storming from the ledger with Cmd+K and restores canvas focus on Escape', async () => {
+    const api = readyProject();
+    const { container } = render(
+      <EditorScreen rootPath="/models/procurement" />,
+    );
+    await readyCanvas();
+    fireEvent.click(screen.getByRole('button', { name: '总台账' }));
+    expect(screen.getByLabelText('领域模型总台账')).toBeInTheDocument();
+    fireEvent.keyDown(window, { key: 'k', metaKey: true });
+    expect(screen.queryByLabelText('领域模型总台账')).toBeNull();
+    expect(screen.queryByRole('dialog', { name: '快速命令' })).toBeNull();
+    const input = screen.getByLabelText('业务场景');
+    expect(input).toHaveFocus();
+    fireEvent.keyDown(input, { key: 'Escape' });
+    expect(screen.queryByLabelText('业务场景')).toBeNull();
+    expect(container.querySelector('[aria-busy][tabindex="-1"]')).toHaveFocus();
+    expect(api.calls.prompt).toEqual([]);
+  });
+
+  it('keeps the draft when no evidence was produced and leaves the inspector untouched', async () => {
+    const api = readyProject();
+    const { container } = render(
+      <EditorScreen rootPath="/models/procurement" />,
+    );
+    await readyCanvas();
+    const contract = container.querySelector<HTMLElement>(
+      '[data-node-id="evidence.contract"]',
+    )!;
+    fireEvent.click(contract);
+    contract.focus();
+    fireEvent.keyDown(contract, { key: 'k', ctrlKey: true });
+    const input = screen.getByLabelText('业务场景');
+    const inspector = screen.getByRole('region', { name: '实体属性检查' });
+    expect(
+      within(inspector).getByDisplayValue('采购协议（Procurement Contract）'),
+    ).toBeVisible();
+    fireEvent.change(input, { target: { value: '追补一份交接记录' } });
+    fireEvent.click(screen.getByRole('button', { name: /发起发散/ }));
+    expect(await screen.findByText(/未生成新凭证/)).toBeVisible();
+    expect(input).toHaveValue('追补一份交接记录');
+    expect(api.calls.prompt[0]?.focus).toEqual({ nodeId: null });
+    fireEvent.keyDown(input, { key: 'Escape' });
+    expect(contract).toHaveFocus();
+    expect(contract).toHaveAttribute('aria-pressed', 'true');
+  });
+
   it('opens a read-only sourcing turn beside the exact evidence card', async () => {
     const api = readyProject();
     render(<EditorScreen rootPath="/models/procurement" />);
@@ -175,6 +221,7 @@ describe('EditorScreen', () => {
       name: /^关键数据溯源：交付请求/,
     });
     expect(trace).toHaveAttribute('aria-expanded', 'true');
+    expect(within(dialog).getByLabelText('访谈内容')).toHaveFocus();
     await waitFor(() =>
       expect(api.calls.prompt).toEqual([
         expect.objectContaining({
@@ -242,17 +289,6 @@ describe('EditorScreen', () => {
       <EditorScreen rootPath="/models/procurement" />,
     );
     await readyCanvas();
-    const prompt = api.agent.prompt;
-    api.agent.prompt = async (input) => {
-      const result = prompt(input);
-      if (input.focus?.inquiry === 'trace') {
-        api.agentMock.emitEvent({
-          type: 'text-delta',
-          delta: '实付金额来自哪里？',
-        });
-      }
-      return result;
-    };
     const canvas = screen.getByRole('group', {
       name: '业务全生命周期四阶段泳道',
     });
@@ -274,43 +310,103 @@ describe('EditorScreen', () => {
       });
       document = applyModelPatches(document, patches);
     };
-    apply('头脑风暴', (draft) =>
-      batchAddEvidenceMutator(draft, {
-        evidences: [
-          { id: 'evidence.enquiry', label: '询价', stage: 'rfp' },
-          { id: 'evidence.quotation', label: '报价', stage: 'proposal' },
-          { id: 'evidence.sale', label: '口头合同', stage: 'contract' },
-          {
-            id: 'evidence.payment',
-            label: '付款凭证',
-            stage: 'fulfillment',
-            times: [
+    const example =
+      '买家发出询价，摊主报价 20 元，双方订立口头合同，买家完成付款。';
+    const sourcedFromRequest = '金额由买方在付款申请中填写。';
+    const remedyCondition = '超时之后按约定启动退款。';
+    const prompt = api.agent.prompt;
+    api.agent.prompt = async (input) => {
+      const result = prompt(input);
+      if (input.focus?.nodeId === null) {
+        expect(input.text).toContain('batch_add_evidence_stubs');
+        expect(input.text).toContain(example);
+        apply('头脑风暴', (draft) =>
+          batchAddEvidenceMutator(draft, {
+            evidences: [
+              { id: 'evidence.enquiry', label: '询价', stage: 'rfp' },
+              { id: 'evidence.quotation', label: '报价', stage: 'proposal' },
+              { id: 'evidence.sale', label: '口头合同', stage: 'contract' },
               {
-                name: 'paid_at',
-                label: '付款时间',
-                meaning: '到账时刻',
-                timeRole: 'occurrence',
+                id: 'evidence.payment',
+                label: '付款凭证',
+                stage: 'fulfillment',
+                times: [
+                  {
+                    name: 'paid_at',
+                    label: '付款时间',
+                    meaning: '到账时刻',
+                    timeRole: 'occurrence',
+                  },
+                ],
+                keyData: [
+                  {
+                    name: 'amount',
+                    label: '实付金额',
+                    meaning: '实际付款金额',
+                    valueType: 'decimal',
+                  },
+                ],
               },
             ],
-            keyData: [
+          }),
+        );
+      } else if (input.focus?.inquiry === 'trace') {
+        api.agentMock.emitEvent({
+          type: 'text-delta',
+          delta: '实付金额来自哪里？',
+        });
+      } else if (input.focus?.inquiry === 'what-if') {
+        api.agentMock.emitEvent({
+          type: 'text-delta',
+          delta: '如果买方超时未付款怎么办？',
+        });
+      } else if (input.text === sourcedFromRequest) {
+        apply('溯源并配对', (draft) =>
+          splitEvidenceToPairMutator(draft, {
+            evidenceRef: 'evidence.payment',
+            request: {
+              mode: 'create',
+              id: 'request.payment',
+              label: '付款申请',
+            },
+            inputAttributes: [
               {
-                name: 'amount',
-                label: '实付金额',
-                meaning: '实际付款金额',
-                valueType: 'decimal',
+                confirmationAttribute: 'amount',
+                requestAttribute: 'requested_amount',
               },
             ],
-          },
-        ],
-      }),
-    );
+          }),
+        );
+      } else if (input.text === remedyCondition) {
+        apply('生长补偿', (draft) =>
+          growBreachCompensationMutator(draft, {
+            requestRef: 'request.payment',
+            condition: remedyCondition,
+            request: { id: 'request.refund', label: '退款请求' },
+            confirmation: { id: 'evidence.refund', label: '退款确认' },
+          }),
+        );
+      }
+      return result;
+    };
+
+    const inspector = screen.getByRole('region', { name: '实体属性检查' });
+    const scenario = screen.getByLabelText('业务场景');
+    expect(scenario.closest('[data-region="canvas-viewport"]')).not.toBeNull();
+    expect(inspector).not.toContainElement(scenario);
+    fireEvent.change(scenario, { target: { value: example } });
+    fireEvent.keyDown(scenario, { key: 'Enter' });
     const trace = await screen.findByRole('button', { name: '溯源：付款凭证' });
     expect(
       screen.queryByRole('button', { name: 'What-If：付款凭证' }),
     ).toBeNull();
-    expect(api.calls.prompt).toEqual([]);
+    expect(api.calls.prompt).toHaveLength(1);
     expect(api.calls.save).toEqual([]);
+    await waitFor(() => expect(screen.queryByLabelText('业务场景')).toBeNull());
     fireEvent.click(screen.getByRole('button', { name: '应用' }));
+    expect(
+      within(inspector).getByRole('region', { name: '关键数据台账' }),
+    ).toHaveTextContent('来源待决');
     const positionedX = (id: string) =>
       Number(
         (
@@ -343,19 +439,8 @@ describe('EditorScreen', () => {
       await waitFor(() => expect(send).toBeEnabled());
       fireEvent.click(send);
     };
-    await answer(sourcing, '金额由买方在付款申请中填写。');
-    apply('溯源并配对', (draft) =>
-      splitEvidenceToPairMutator(draft, {
-        evidenceRef: 'evidence.payment',
-        request: { mode: 'create', id: 'request.payment', label: '付款申请' },
-        inputAttributes: [
-          {
-            confirmationAttribute: 'amount',
-            requestAttribute: 'requested_amount',
-          },
-        ],
-      }),
-    );
+    await answer(sourcing, sourcedFromRequest);
+
     const request = await screen.findByRole('button', {
       name: '溯源：付款申请',
     });
@@ -366,7 +451,15 @@ describe('EditorScreen', () => {
     expect(trace).toHaveAttribute('aria-expanded', 'true');
     expect(sourcing).toBeInTheDocument();
     expect(container.querySelector('[data-pair-link]')).not.toBeNull();
-    fireEvent.click(within(sourcing).getByRole('button', { name: '应用' }));
+    expect(inspector).toContainElement(screen.getByDisplayValue('付款凭证'));
+    expect(within(inspector).getByText('发生时刻')).toBeVisible();
+    expect(within(inspector).queryByLabelText('访谈内容')).toBeNull();
+    expect(within(sourcing).getByLabelText('AI 补丁复核')).toBeInTheDocument();
+    const reply = within(sourcing).getByLabelText('访谈内容');
+    fireEvent.keyDown(reply, { key: 'Enter', isComposing: true });
+    expect(within(sourcing).getByLabelText('AI 补丁复核')).toBeInTheDocument();
+    fireEvent.keyDown(reply, { key: 'Enter' });
+    expect(within(sourcing).queryByLabelText('AI 补丁复核')).toBeNull();
     fireEvent.click(within(sourcing).getByRole('button', { name: '关闭' }));
 
     fireEvent.click(screen.getByRole('button', { name: 'What-If：付款凭证' }));
@@ -374,28 +467,34 @@ describe('EditorScreen', () => {
       name: 'What-If 异常履约：付款凭证',
     });
     expect(screen.queryByRole('button', { name: '溯源：退款确认' })).toBeNull();
-    await answer(whatIf, '超时之后按约定启动退款。');
-    apply('生长补偿', (draft) =>
-      growBreachCompensationMutator(draft, {
-        requestRef: 'request.payment',
-        condition: '超时之后按约定启动退款',
-        request: { id: 'request.refund', label: '退款请求' },
-        confirmation: { id: 'evidence.refund', label: '退款确认' },
-      }),
+    expect(within(whatIf).getByLabelText('AI 回复')).toHaveTextContent(
+      '如果买方超时未付款怎么办？',
     );
+    await answer(whatIf, remedyCondition);
+
     expect(
       await screen.findByRole('button', { name: '溯源：退款确认' }),
     ).toBeInTheDocument();
     expect(
       container.querySelector('[data-corridor-kind="remedy_corridor"]'),
     ).not.toBeNull();
+    expect(
+      document.relationships.some(
+        (edge) =>
+          edge.flowKind === 'breach_compensation' &&
+          edge.sourceRef === 'request.refund' &&
+          edge.targetRef === 'request.payment',
+      ),
+    ).toBe(true);
     expect(api.calls.prompt.map(({ focus }) => focus)).toEqual([
+      { nodeId: null },
       { nodeId: 'evidence.payment', inquiry: 'trace' },
       { nodeId: 'evidence.payment' },
       { nodeId: 'evidence.payment', inquiry: 'what-if' },
       { nodeId: 'evidence.payment' },
     ]);
     expect(api.calls.save).toEqual([]);
+    expect(within(whatIf).getByLabelText('AI 补丁复核')).toBeInTheDocument();
     fireEvent.click(within(whatIf).getByRole('button', { name: '应用' }));
     fireEvent.click(within(whatIf).getByRole('button', { name: '关闭' }));
     fireEvent.click(screen.getByRole('button', { name: '保存模型' }));
@@ -457,6 +556,11 @@ describe('EditorScreen', () => {
       screen.getByText('选择画布上的业务对象查看属性。'),
     ).toBeInTheDocument();
     expect(screen.queryByLabelText('访谈内容')).toBeNull();
+    expect(
+      within(screen.getByRole('navigation', { name: '活动导轨' })).getAllByRole(
+        'button',
+      ),
+    ).toHaveLength(3);
     expect(screen.getByText('履约连线 1')).toBeInTheDocument();
     expect(screen.getByText('上下文 2')).toBeInTheDocument();
   });

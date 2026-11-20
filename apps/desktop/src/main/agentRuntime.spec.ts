@@ -450,6 +450,47 @@ const registeredTool = (name: string) => {
 };
 
 describe('agent patch transport', () => {
+  it('keeps a canvas-wide turn independent of the selected evidence', async () => {
+    const { transport } = createTransport();
+    const fake = createFakeSession();
+    const runtime = runtimeWith({ transport, fake });
+    const document = createDesktopFixture();
+    runtime.notifyModelChanged({
+      rootPath: runtime.rootPath,
+      revision: 1,
+      document,
+      baseDocument: document,
+    });
+    runtime.setCanvasContext({
+      projectRoot: runtime.rootPath,
+      selection: { nodeId: 'evidence.contract', attributeName: null },
+      selected: {
+        nodeId: 'evidence.contract',
+        label: '采购协议',
+        kind: 'evidence',
+      },
+    });
+    fake.session.prompt = async (text) => {
+      expect(text).toBe('为画布追加凭证');
+      const focus = await registeredTool('get_focused_node_context').execute(
+        'read',
+        {},
+      );
+      expect(focus.details).toMatchObject({
+        selection: { nodeId: null },
+        entity: null,
+      });
+    };
+    try {
+      await runtime.prompt('为画布追加凭证', { nodeId: null });
+      expect(runtime.getCanvasContext().selection.nodeId).toBe(
+        'evidence.contract',
+      );
+    } finally {
+      runtime.dispose();
+    }
+  });
+
   it.each(['trace', 'what-if'] as const)(
     'pins focus and refuses all patch writes during a %s inquiry',
     async (inquiry) => {

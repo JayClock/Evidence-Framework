@@ -351,6 +351,34 @@ describe('CanvasViewport', () => {
     ).not.toHaveStyle({ opacity: '0.35' });
   });
 
+  it('waits for all grown evidence to be laid out before framing the batch', async () => {
+    vi.stubGlobal('matchMedia', () => ({ matches: true }));
+    const onFrameComplete = vi.fn();
+    const props = {
+      document,
+      graph,
+      layout,
+      viewMode: 'standard' as const,
+      selection: { nodeId: null, attributeName: null },
+      focusRequest: null,
+      zoomCommand: null,
+      onSelect: vi.fn(),
+      onClearSelection: vi.fn(),
+      frameRequest: ['evidence.request', 'evidence.confirmation'],
+      onFrameComplete,
+    };
+    const nodeById = new Map(layout.nodeById);
+    nodeById.delete('evidence.confirmation');
+    const { container, rerender } = render(
+      <CanvasViewport {...props} layout={{ ...layout, nodeById }} />,
+    );
+    expect(onFrameComplete).not.toHaveBeenCalled();
+    const before = viewportTransform(container);
+    rerender(<CanvasViewport {...props} />);
+    await waitFor(() => expect(viewportTransform(container)).not.toBe(before));
+    expect(onFrameComplete).toHaveBeenCalledOnce();
+  });
+
   it('reveals a target the sidebar or a finding asked for', async () => {
     const props = {
       document,

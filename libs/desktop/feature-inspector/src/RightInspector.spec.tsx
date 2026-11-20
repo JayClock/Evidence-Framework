@@ -22,12 +22,31 @@ const setup = (nodeId: string | null) => {
 };
 
 describe('RightInspector', () => {
-  it('asks for a selection before showing fields', () => {
-    setup(null).renderInspector();
-
+  it('summarizes key data and gate health until an entity is selected', () => {
+    const { session } = setup(null);
+    const { rerender } = render(
+      <RightInspector
+        graph={session.getGraph()}
+        session={session}
+        selection={{ nodeId: null, attributeName: null }}
+        gateReport={{ blockCount: 2, warnCount: 3, isStageGateReady: false }}
+      />,
+    );
+    const ledger = screen.getByRole('region', { name: '关键数据台账' });
+    expect(ledger).toHaveTextContent('来源待决');
+    expect(ledger).toHaveTextContent('绑定派生规则');
     expect(
-      screen.getByText('选择画布上的业务对象查看属性。'),
-    ).toBeInTheDocument();
+      screen.getByRole('region', { name: '门禁健康度' }),
+    ).toHaveTextContent('未就绪 · 阻塞 2 · 警告 3');
+    rerender(
+      <RightInspector
+        graph={session.getGraph()}
+        session={session}
+        selection={{ nodeId: 'evidence.request', attributeName: null }}
+      />,
+    );
+    expect(screen.queryByRole('region', { name: '门禁健康度' })).toBeNull();
+    expect(screen.getByRole('region', { name: '模型属性' })).toBeVisible();
   });
 
   it('renders the registry groups and the stable id read-only', () => {
