@@ -1,7 +1,12 @@
 import type { CSSProperties } from 'react';
 
 import { useLiveApi } from './LiveApiContext';
-import { timeAttributeOf, type EntityAST } from '@evidence-poc/evidence-schema';
+import {
+  KEY_DATA_SOURCE_LABELS,
+  isKeyDataResolved,
+  timeAttributeOf,
+  type EntityAST,
+} from '@evidence-poc/evidence-schema';
 import type {
   CanvasViewMode,
   LayoutNode,
@@ -372,7 +377,9 @@ export const NodeCard = ({
                 ? '盖章确认'
                 : entity.kind === 'contract'
                   ? '签署时刻'
-                  : '报价时刻'
+                  : entity.kind === 'proposal'
+                    ? '报价时刻'
+                    : '凭证时刻'
             }
           />
         ) : null}
@@ -402,12 +409,27 @@ export const NodeCard = ({
             return (
               <div
                 key={field.name}
-                className="truncate font-mono text-workbench-body"
+                className="flex min-w-0 items-center gap-1 text-workbench-body"
                 title={`${field.label}${detail === undefined ? '' : `: ${detail}`}`}
               >
-                {field.name}
-                {detail === undefined ? '' : `: ${detail}`}
-                {field.key ? ' · Key' : ''}
+                <span className="truncate font-mono">
+                  {field.name}
+                  {detail === undefined ? '' : `: ${detail}`}
+                  {field.key ? ' · Key' : ''}
+                </span>
+                {field.source === undefined ? null : (
+                  <span
+                    data-key-data-source={field.source}
+                    title={KEY_DATA_SOURCE_LABELS[field.source]}
+                    className={
+                      isKeyDataResolved(field.source)
+                        ? 'shrink-0 rounded bg-emerald-50 px-1 text-emerald-800'
+                        : 'shrink-0 rounded border border-dashed border-evidence-line px-1 text-evidence-muted'
+                    }
+                  >
+                    {KEY_DATA_SOURCE_LABELS[field.source].split('（')[0]}
+                  </span>
+                )}
               </div>
             );
           })}

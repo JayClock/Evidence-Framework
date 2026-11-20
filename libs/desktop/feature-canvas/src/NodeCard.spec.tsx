@@ -118,6 +118,57 @@ describe('business card summaries', () => {
 });
 
 describe('NodeCard modes', () => {
+  it('shows a standalone brainstormed proof, its authored moment, and an unresolved field', async () => {
+    const document = createDesktopFixture();
+    const proof = {
+      type: 'entity',
+      category: 'evidence',
+      kind: 'other_evidence',
+      stage: 'fulfillment',
+      id: 'evidence.payment',
+      label: '付款凭证',
+      attributes: [
+        {
+          name: 'amount',
+          label: '实付金额',
+          meaning: '实际付款金额',
+          keyData: true,
+        },
+        {
+          name: 'paid_at',
+          label: '付款时间',
+          meaning: '到账时刻',
+          timeRole: 'occurrence',
+        },
+      ],
+    } as const;
+    document.entities.push(
+      structuredClone({ ...proof, attributes: [...proof.attributes] }),
+    );
+    const layout = await computeGraphLayout(createDomainGraph(document), {
+      layoutMode: 'swimlane',
+    });
+    render(
+      <NodeCard
+        node={layout.nodeById.get(proof.id)!}
+        summary={summarizeCards(document).get(proof.id)!}
+        selected={false}
+        dimmed={false}
+        highlighted={false}
+        viewMode="standard"
+        onHover={vi.fn()}
+        onSelect={vi.fn()}
+      />,
+    );
+    expect(screen.getByLabelText(/^凭证时刻：/)).toHaveAttribute(
+      'data-time-attribute',
+      'paid_at',
+    );
+    expect(screen.getByText('待决')).toHaveAttribute(
+      'data-key-data-source',
+      'needs-decision',
+    );
+  });
   it('distinguishes a rights window from a fixed confirmation stamp and exposes CEL guards', async () => {
     const document = createDesktopFixture();
     const layout = await computeGraphLayout(createDomainGraph(document), {

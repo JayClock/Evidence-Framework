@@ -1,6 +1,8 @@
-import type {
-  DomainModelDocument,
-  EntityAST,
+import {
+  classifyKeyDataSource,
+  type DomainModelDocument,
+  type EntityAST,
+  type KeyDataSourceKind,
 } from '@evidence-poc/evidence-schema';
 
 export interface CardSummary {
@@ -13,6 +15,7 @@ export interface CardSummary {
     label: string;
     valueType: string | undefined;
     key: boolean;
+    source?: KeyDataSourceKind;
   }[];
   remainingAttributes: number;
   keyDataCount: number;
@@ -145,14 +148,15 @@ export const summarizeCards = (
             ref === null ? null : (entities.get(ref)?.label ?? ref),
           responsibilityRef: ref,
           partyBadge: partyBadges.get(entity.id) ?? null,
-          attributes: attributes
-            .slice(0, 3)
-            .map(({ name, label, valueType, keyData }) => ({
-              name,
-              label,
-              valueType,
-              key: keyData === true,
-            })),
+          attributes: attributes.slice(0, 3).map((attribute) => ({
+            name: attribute.name,
+            label: attribute.label,
+            valueType: attribute.valueType,
+            key: attribute.keyData === true,
+            ...(entity.category === 'evidence' && attribute.keyData === true
+              ? { source: classifyKeyDataSource(entity, attribute) }
+              : {}),
+          })),
           remainingAttributes: Math.max(0, attributes.length - 3),
           keyDataCount: attributes.filter(
             (attribute) => attribute.keyData === true,

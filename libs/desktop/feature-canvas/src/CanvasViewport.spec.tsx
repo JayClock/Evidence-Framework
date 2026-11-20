@@ -127,7 +127,7 @@ describe('CanvasViewport', () => {
     fireEvent.click(screen.getByRole('button', { name: '切换泳道布局' }));
     await waitFor(() => expect(viewportTransform(container)).not.toBe(before));
     expect(
-      container.querySelector('[data-swimlane-kind="phase"]'),
+      container.querySelector('[data-milestone-stage="rfp"]'),
     ).not.toBeNull();
   });
   it('keeps breach markers visible without hover and alongside diagnostics', () => {

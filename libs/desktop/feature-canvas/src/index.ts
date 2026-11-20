@@ -7,14 +7,6 @@ export {
   type WhatIfStressPanelProps,
 } from './WhatIfStressPanel.js';
 export {
-  EvidenceNodeCard,
-  type EvidenceNodeCardProps,
-} from './EvidenceNodeCard.js';
-export {
-  LifecycleSwimlaneOverlay,
-  type LifecycleSwimlaneOverlayProps,
-} from './LifecycleSwimlaneOverlay.js';
-export {
   CanvasViewport,
   type CanvasGridStyle,
   type CanvasHudControls,

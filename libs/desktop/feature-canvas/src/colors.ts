@@ -110,6 +110,11 @@ export const entityShape = (entity: EntityAST): NodeShape => {
     case 'fulfillment_confirmation':
       return 'moment';
     case 'other_evidence':
-      return 'card';
+      return timeAttributeOf(entity, 'occurrence')
+        ? 'moment'
+        : timeAttributeOf(entity, 'start') ||
+            timeAttributeOf(entity, 'deadline')
+          ? 'interval'
+          : 'card';
   }
 };

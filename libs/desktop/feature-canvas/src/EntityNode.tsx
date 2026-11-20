@@ -58,6 +58,7 @@ export const EntityNode = ({ data }: NodeProps<EntityFlowNode>) => {
 
 const CONTEXT_FILL = {
   contract: 'rgba(255, 250, 240, 0.55)',
+  pre_contract: 'rgba(243, 244, 255, 0.55)',
   domain: 'rgba(240, 247, 242, 0.55)',
   support: 'rgba(246, 247, 250, 0.6)',
 } as const;
