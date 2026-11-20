@@ -1,4 +1,13 @@
 export {
+  LIFECYCLE_STAGE_GEOMETRIES,
+  calculateNodePlacement,
+  calculateStageBoundaries,
+  type CanvasDimensions,
+  type Point2D,
+  type StageBoundaryLine,
+  type StageGeometry,
+} from './engine/stageLayout.js';
+export {
   boundsOfRects,
   insetRect,
   normalizeRect,
