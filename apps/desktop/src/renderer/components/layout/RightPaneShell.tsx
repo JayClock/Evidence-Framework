@@ -3,10 +3,8 @@ import { ArrowLeft } from 'lucide-react';
 
 import { Button } from '@evidence-poc/desktop-ui-kit';
 
-import type { RightPane } from '../../state/useWorkspaceLayoutState';
-
 interface RightPaneShellProps {
-  pane: RightPane;
+  pane: 'inspector' | 'copilot';
   collapsed: boolean;
   onShowInspector: () => void;
   onShowCopilot: () => void;

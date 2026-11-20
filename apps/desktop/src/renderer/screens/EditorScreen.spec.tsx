@@ -452,7 +452,7 @@ describe('EditorScreen', () => {
       screen.getByText('选择画布上的业务对象查看属性。'),
     ).toBeInTheDocument();
     expect(screen.queryByLabelText('AI 建模副驾')).toBeNull();
-    fireEvent.click(screen.getByRole('button', { name: 'AI 协同' }));
+    fireEvent.click(screen.getByRole('button', { name: 'AI Copilot' }));
     expect(screen.getByLabelText('AI 建模副驾')).toBeInTheDocument();
     expect(screen.getByLabelText('访谈内容')).toBeInTheDocument();
     expect(screen.getByText('履约连线 1')).toBeInTheDocument();
@@ -597,7 +597,7 @@ describe('EditorScreen', () => {
     expect(screen.queryByLabelText('门禁问题面板')).toBeNull();
   });
 
-  it('shares one resizable right pane between inspection and Copilot and reopens it from the rail', async () => {
+  it('shares one resizable right pane between inspection and Copilot', async () => {
     readyProject();
     render(<EditorScreen rootPath="/models/procurement" />);
     await readyCanvas();
@@ -607,22 +607,18 @@ describe('EditorScreen', () => {
       name: '实体属性检查',
     });
     const copilot = within(pane).getByRole('button', { name: 'AI Copilot' });
-    const rail = screen.getByRole('button', { name: 'AI 协同' });
     expect(inspector).toHaveAttribute('aria-pressed', 'true');
     fireEvent.click(copilot);
     expect(copilot).toHaveAttribute('aria-pressed', 'true');
-    expect(rail).toHaveAttribute('aria-pressed', 'true');
     expect(pane).toContainElement(screen.getByLabelText('访谈内容'));
 
     fireEvent.keyDown(window, { key: 'i', metaKey: true });
     expect(pane).toHaveAttribute('inert');
-    expect(rail).toHaveAttribute('aria-pressed', 'false');
-    fireEvent.click(rail);
+    fireEvent.keyDown(window, { key: 'i', metaKey: true });
     expect(pane).not.toHaveAttribute('inert');
     expect(copilot).toHaveAttribute('aria-pressed', 'true');
     fireEvent.click(inspector);
     expect(inspector).toHaveAttribute('aria-pressed', 'true');
-    expect(rail).toHaveAttribute('aria-pressed', 'false');
     expect(pane).toHaveTextContent('选择画布上的业务对象查看属性。');
   });
 
@@ -644,7 +640,7 @@ describe('EditorScreen', () => {
     expect(node).toHaveAttribute('aria-pressed', 'true');
   });
 
-  it('switches the ledger and still opens rail tools with Mod+1 to Mod+4', async () => {
+  it('switches the ledger and still opens rail tools with Mod+1, Mod+2 and Mod+4', async () => {
     readyProject();
     render(<EditorScreen rootPath="/models/procurement" />);
     await readyCanvas();
@@ -656,12 +652,6 @@ describe('EditorScreen', () => {
 
     fireEvent.keyDown(window, { key: '2', metaKey: true });
     expect(await screen.findByLabelText('门禁问题面板')).toBeInTheDocument();
-
-    fireEvent.keyDown(window, { key: '3', metaKey: true });
-    expect(await screen.findByLabelText('访谈内容')).toBeInTheDocument();
-
-    fireEvent.keyDown(window, { key: '3', metaKey: true });
-    await waitFor(() => expect(screen.queryByLabelText('访谈内容')).toBeNull());
 
     const directory = screen.getByRole('button', { name: '实体目录' });
     expect(directory).toHaveAttribute('aria-pressed', 'true');
@@ -1038,7 +1028,7 @@ describe('EditorScreen sensors', () => {
       }),
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'AI 协同' }));
+    fireEvent.click(screen.getByRole('button', { name: 'AI Copilot' }));
     expect(await screen.findByLabelText('AI 补丁复核')).toBeInTheDocument();
     expect(screen.getByText('新增审计员参与方')).toBeInTheDocument();
     expect(screen.getByText('新增 1')).toBeInTheDocument();
@@ -1087,7 +1077,7 @@ describe('EditorScreen sensors', () => {
       }),
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'AI 协同' }));
+    fireEvent.click(screen.getByRole('button', { name: 'AI Copilot' }));
     fireEvent.click(await screen.findByRole('button', { name: '保留' }));
 
     await waitFor(() => {
@@ -1185,7 +1175,7 @@ describe('EditorScreen sensors', () => {
       <EditorScreen rootPath="/models/procurement" />,
     );
     await readyCanvas();
-    fireEvent.click(screen.getByRole('button', { name: 'AI 协同' }));
+    fireEvent.click(screen.getByRole('button', { name: 'AI Copilot' }));
 
     expect(screen.queryByTestId('agent-copilot-focus')).toBeNull();
 
@@ -1303,10 +1293,6 @@ describe('EditorScreen stage navigation', () => {
     fireEvent.keyDown(window, { key: '2', metaKey: true });
     expect(await screen.findByLabelText('门禁问题面板')).toBeVisible();
     expect(ledger).toHaveAttribute('aria-pressed', 'true');
-    fireEvent.keyDown(window, { key: '3', metaKey: true });
-    expect(await screen.findByLabelText('访谈内容')).toBeVisible();
-    expect(ledger).toHaveAttribute('aria-pressed', 'false');
-    fireEvent.click(ledger);
     fireEvent.keyDown(window, { key: '4', metaKey: true });
     expect(
       screen.getByRole('complementary', { name: '实体目录' }),

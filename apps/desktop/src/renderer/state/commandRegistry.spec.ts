@@ -28,7 +28,6 @@ const handlers = (): CommandHandlers => ({
   openDelivery: vi.fn(),
   rerunSensors: vi.fn(),
   askAgent: vi.fn(),
-  openCopilot: vi.fn(),
   startStorming: vi.fn(),
   openProblems: vi.fn(),
   toggleProblems: vi.fn(),
@@ -53,15 +52,6 @@ describe('buildCommands', () => {
     expect(find('model.save')?.shortcut).toBe(CHORDS.save);
     expect(find('view.journey')?.shortcut).toBe(CHORDS.journey);
     expect(find('delivery.contract')?.shortcut).toBe(CHORDS.delivery);
-  });
-
-  it('opens the Copilot pane without touching the document', () => {
-    const spy = handlers();
-    const commands = buildCommands(capabilities(), spy);
-
-    commands.find((command) => command.id === 'view.rail-copilot')?.perform();
-
-    expect(spy.openCopilot).toHaveBeenCalledOnce();
   });
 
   it('keeps evidence storming discoverable and opens diagnostics in the problems panel', () => {

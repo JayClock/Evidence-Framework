@@ -1,6 +1,5 @@
 import {
   Activity,
-  Bot,
   Network,
   Redo2,
   Save,
@@ -98,7 +97,6 @@ export interface CommandHandlers {
   openDelivery: () => void;
   rerunSensors: () => void;
   askAgent: () => void;
-  openCopilot: () => void;
   startStorming: () => void;
   openProblems: () => void;
   toggleProblems: () => void;
@@ -187,16 +185,6 @@ export const buildCommands = (
       icon: ShieldCheck,
       keywords: ['rail', 'diagnostics', 'lint', '门禁'],
       perform: handlers.openProblems,
-    },
-    {
-      id: 'view.rail-copilot',
-      title: '打开 AI 协同面板',
-      subtitle: '多轮访谈、工具调用与补丁复核',
-      category: 'view',
-      shortcut: RAIL_TAB_CHORDS.copilot,
-      icon: Bot,
-      keywords: ['rail', 'agent', 'copilot', '协同'],
-      perform: handlers.openCopilot,
     },
     {
       id: 'model.storming',

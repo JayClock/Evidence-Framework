@@ -1,17 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 
-export type RightPane = 'inspector' | 'copilot';
-
-const ACTIVITY_RAIL_TABS = [
-  'ledger',
-  'diagnostics',
-  'copilot',
-  'directory',
-] as const;
+const ACTIVITY_RAIL_TABS = ['ledger', 'diagnostics', 'directory'] as const;
 export type ActivityRailTabId = (typeof ACTIVITY_RAIL_TABS)[number];
 
 export interface WorkspaceLayoutState {
-  readonly rightPane: RightPane;
   readonly isDirectoryOpen: boolean;
   readonly isProblemsPanelOpen: boolean;
   readonly activeIssueId: string | null;
@@ -20,8 +12,6 @@ export interface WorkspaceLayoutState {
 }
 
 export interface WorkspaceLayoutActions {
-  openCopilot: () => void;
-  showInspector: () => void;
   toggleRailTab: (tab: ActivityRailTabId) => void;
   toggleProblemsPanel: () => void;
   openProblemsPanel: () => void;
@@ -40,7 +30,6 @@ export type WorkspaceLayoutController = WorkspaceLayoutState &
 export const RAIL_TAB_CHORDS: Record<ActivityRailTabId, string> = {
   ledger: '⌘+1',
   diagnostics: '⌘+2',
-  copilot: '⌘+3',
   directory: '⌘+4',
 };
 
@@ -71,23 +60,14 @@ const isEditable = (target: EventTarget | null): boolean => {
  */
 export const useWorkspaceLayoutState = (
   toggleLedger: () => void,
-  expandRightRail: () => boolean,
   ledger?: { active: boolean; returnToGraph: () => void },
 ): WorkspaceLayoutController => {
   const leaveLedger = ledger?.active ? ledger.returnToGraph : undefined;
-  const [rightPane, setRightPane] = useState<RightPane>('inspector');
   const [isDirectoryOpen, setDirectoryOpen] = useState(true);
   const [isProblemsPanelOpen, setProblemsPanelOpen] = useState(false);
   const [activeIssueId, setActiveIssueId] = useState<string | null>(null);
   const [isInlineCopilotOpen, setInlineCopilotOpen] = useState(false);
   const [isDeliveryOpen, setDeliveryOpen] = useState(false);
-
-  const openCopilot = useCallback(() => {
-    leaveLedger?.();
-    expandRightRail();
-    setRightPane('copilot');
-  }, [expandRightRail, leaveLedger]);
-  const showInspector = useCallback(() => setRightPane('inspector'), []);
 
   /** Route clicks and shortcuts to the same workspace surfaces. */
   const toggleRailTab = useCallback(
@@ -107,22 +87,10 @@ export const useWorkspaceLayoutState = (
         return;
       }
 
-      if (tab === 'diagnostics') {
-        setActiveIssueId(null);
-        setProblemsPanelOpen((open) => !open);
-        return;
-      }
-
-      if (leaveLedger !== undefined) {
-        openCopilot();
-        return;
-      }
-      const reopened = expandRightRail();
-      setRightPane((current) =>
-        reopened || current === 'inspector' ? 'copilot' : 'inspector',
-      );
+      setActiveIssueId(null);
+      setProblemsPanelOpen((open) => !open);
     },
-    [expandRightRail, leaveLedger, openCopilot, toggleLedger],
+    [leaveLedger, toggleLedger],
   );
 
   const toggleProblemsPanel = useCallback(() => {
@@ -171,7 +139,7 @@ export const useWorkspaceLayoutState = (
       }
 
       const tab = ACTIVITY_RAIL_TABS.find(
-        (candidate, index) => event.key === String(index + 1),
+        (candidate) => RAIL_TAB_CHORDS[candidate] === `⌘+${event.key}`,
       );
 
       if (tab === undefined) {
@@ -188,14 +156,11 @@ export const useWorkspaceLayoutState = (
   }, [toggleRailTab]);
 
   return {
-    rightPane,
     isDirectoryOpen,
     isProblemsPanelOpen,
     activeIssueId,
     isInlineCopilotOpen,
     isDeliveryOpen,
-    openCopilot,
-    showInspector,
     toggleRailTab,
     toggleProblemsPanel,
     openProblemsPanel,

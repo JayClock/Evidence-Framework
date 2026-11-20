@@ -6,7 +6,6 @@ import { ActivityRail } from './ActivityRail';
 const closed = {
   ledger: false,
   diagnostics: false,
-  copilot: false,
   directory: false,
 };
 
@@ -20,20 +19,20 @@ describe('ActivityRail', () => {
       within(rail)
         .getAllByRole('button')
         .map((button) => button.getAttribute('aria-label')),
-    ).toEqual(['总台账', '门禁与诊断', 'AI 协同', '实体目录']);
+    ).toEqual(['总台账', '门禁与诊断', '实体目录']);
   });
 
-  it('marks ledger independently of the active drawer and reports its click', () => {
+  it('marks ledger independently of the directory and reports its click', () => {
     const onSelect = vi.fn();
 
     render(
       <ActivityRail
-        pressed={{ ...closed, ledger: true, copilot: true }}
+        pressed={{ ...closed, ledger: true, directory: true }}
         onSelect={onSelect}
       />,
     );
 
-    expect(screen.getByRole('button', { name: 'AI 协同' })).toHaveAttribute(
+    expect(screen.getByRole('button', { name: '实体目录' })).toHaveAttribute(
       'aria-pressed',
       'true',
     );
@@ -51,7 +50,6 @@ describe('ActivityRail', () => {
         onSelect={vi.fn()}
         badges={{
           diagnostics: { count: 3, tone: 'error' },
-          copilot: { tone: 'default' },
         }}
       />,
     );
@@ -59,10 +57,5 @@ describe('ActivityRail', () => {
     expect(
       screen.getByRole('button', { name: '门禁与诊断' }),
     ).toHaveTextContent('3');
-    expect(
-      screen
-        .getByRole('button', { name: 'AI 协同' })
-        .querySelectorAll('span[aria-hidden="true"]').length,
-    ).toBeGreaterThan(0);
   });
 });

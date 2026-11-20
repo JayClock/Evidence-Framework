@@ -3,8 +3,8 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { useWorkspaceLayoutState } from './useWorkspaceLayoutState';
 
-const setup = (toggleLedger = vi.fn(), expandRightRail = vi.fn(() => false)) =>
-  renderHook(() => useWorkspaceLayoutState(toggleLedger, expandRightRail));
+const setup = (toggleLedger = vi.fn()) =>
+  renderHook(() => useWorkspaceLayoutState(toggleLedger));
 
 const press = (init: KeyboardEventInit) => {
   act(() => {
@@ -17,8 +17,6 @@ const press = (init: KeyboardEventInit) => {
 describe('useWorkspaceLayoutState', () => {
   it('starts with the entity directory open but no tool drawer or overlay', () => {
     const { result } = setup();
-
-    expect(result.current.rightPane).toBe('inspector');
 
     expect(result.current.isDirectoryOpen).toBe(true);
     expect(result.current.isProblemsPanelOpen).toBe(false);
@@ -33,7 +31,7 @@ describe('useWorkspaceLayoutState', () => {
     press({ key: '1', metaKey: true });
 
     expect(toggleLedger).toHaveBeenCalledTimes(2);
-    expect(result.current.rightPane).toBe('inspector');
+    expect(result.current.isProblemsPanelOpen).toBe(false);
   });
 
   it('puts the diagnostics list under the canvas, not in a drawer', () => {
@@ -47,29 +45,16 @@ describe('useWorkspaceLayoutState', () => {
     expect(result.current.isProblemsPanelOpen).toBe(false);
   });
 
-  it('toggles the directory independently of the active tool drawer', () => {
+  it('toggles the directory with Mod+4 and leaves Mod+3 unbound', () => {
     const { result } = setup();
 
     press({ key: '3', metaKey: true });
+    expect(result.current.isDirectoryOpen).toBe(true);
     press({ key: '4', metaKey: true });
-
     expect(result.current.isDirectoryOpen).toBe(false);
-    expect(result.current.rightPane).toBe('copilot');
 
     press({ key: '4', ctrlKey: true });
     expect(result.current.isDirectoryOpen).toBe(true);
-  });
-
-  it('opens Copilot instead of turning it off when its panel was collapsed', () => {
-    const expandRightRail = vi.fn(() => false);
-    const { result } = setup(vi.fn(), expandRightRail);
-
-    press({ key: '3', metaKey: true });
-    expandRightRail.mockReturnValueOnce(true);
-    press({ key: '3', metaKey: true });
-    expect(result.current.rightPane).toBe('copilot');
-    press({ key: '3', metaKey: true });
-    expect(result.current.rightPane).toBe('inspector');
   });
 
   it('opens the problems panel on the finding it was asked for', () => {
@@ -102,7 +87,7 @@ describe('useWorkspaceLayoutState', () => {
       );
     });
 
-    expect(result.current.rightPane).toBe('inspector');
+    expect(result.current.isDirectoryOpen).toBe(true);
     expect(toggleLedger).not.toHaveBeenCalled();
     act(() => input.remove());
   });

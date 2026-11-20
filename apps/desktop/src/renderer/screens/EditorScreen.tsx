@@ -191,11 +191,17 @@ const EditorWorkspace = ({
   const toggleRightRail = useCallback(() => {
     if (!expandRightRail()) rightRail.current?.collapse();
   }, [expandRightRail]);
-  const layout = useWorkspaceLayoutState(
-    workspaceView.toggleLedger,
-    expandRightRail,
-    { active: ledgerActive, returnToGraph: workspaceView.returnToGraph },
-  );
+  const layout = useWorkspaceLayoutState(workspaceView.toggleLedger, {
+    active: ledgerActive,
+    returnToGraph: workspaceView.returnToGraph,
+  });
+  const [rightPane, setRightPane] = useState<'inspector' | 'copilot'>('inspector');
+  const showInspector = useCallback(() => setRightPane('inspector'), []);
+  const showInterview = useCallback(() => {
+    if (ledgerActive) workspaceView.returnToGraph();
+    expandRightRail();
+    setRightPane('copilot');
+  }, [expandRightRail, ledgerActive, workspaceView.returnToGraph]);
   const {
     state,
     save,
@@ -391,7 +397,7 @@ const EditorWorkspace = ({
           setSelectedScope(null);
         state.session.selectAttribute(target.id, target.attributeName);
         if (target.attributeName !== null) {
-          layout.showInspector();
+          showInspector();
           if (!ledgerActive) expandRightRail();
         }
       } else {
@@ -404,7 +410,7 @@ const EditorWorkspace = ({
     },
     [
       expandRightRail,
-      layout.showInspector,
+      showInspector,
       ledgerActive,
       resolveIssueTarget,
       scope,
@@ -437,8 +443,8 @@ const EditorWorkspace = ({
       token: tokenRef.current,
       text: '请根据下面的业务例子做头脑风暴，按邀请投标、投标、签约、履约批量铺设有依据的凭证。\n\n业务例子：',
     });
-    layout.openCopilot();
-  }, [layout.openCopilot, state.session, workspaceView.setMode]);
+    showInterview();
+  }, [showInterview, state.session, workspaceView.setMode]);
 
   const pairedNodeIds = useMemo(() => {
     const ids = new Set<string>();
@@ -474,7 +480,7 @@ const EditorWorkspace = ({
       return;
     if (!isEvidenceEntity(state.graph.getEntity(nodeId))) return;
     state.session.select(nodeId);
-    layout.showInspector();
+    showInspector();
     layout.closeInlineCopilot();
     setInquiry({ nodeId, kind });
     if (ai?.aiConfigured === false) return;
@@ -531,16 +537,15 @@ const EditorWorkspace = ({
       rerunSensors: () => void sensors.refresh(),
       askAgent: () => {
         setInquiry(null);
-        layout.openCopilot();
+        showInterview();
         setAgentFocusToken((token) => token + 1);
       },
-      openCopilot: layout.openCopilot,
       startStorming,
       openProblems: layout.openProblemsPanel,
       toggleProblems: layout.toggleProblemsPanel,
     }),
     [
-      layout.openCopilot,
+      showInterview,
       startStorming,
       layout.openDelivery,
       layout.openProblemsPanel,
@@ -867,10 +872,6 @@ const EditorWorkspace = ({
             pressed={{
               ledger: ledgerActive,
               diagnostics: layout.isProblemsPanelOpen,
-              copilot:
-                !ledgerActive &&
-                !rightRailCollapsed &&
-                layout.rightPane === 'copilot',
               directory: !ledgerActive && layout.isDirectoryOpen,
             }}
             onSelect={layout.toggleRailTab}
@@ -889,9 +890,6 @@ const EditorWorkspace = ({
                             : ('default' as const),
                     },
                   }),
-              ...(patchReview.review === null
-                ? {}
-                : { copilot: { tone: 'default' as const } }),
             }}
           />
 
@@ -948,17 +946,15 @@ const EditorWorkspace = ({
                 {!ledgerActive ? (
                   <RightPaneShell
                     collapsed={rightRailCollapsed}
-                    pane={layout.rightPane}
-                    onShowInspector={layout.showInspector}
-                    onShowCopilot={layout.openCopilot}
+                    pane={rightPane}
+                    onShowInspector={showInspector}
+                    onShowCopilot={showInterview}
                     onReturnToCanvas={
-                      layout.rightPane === 'inspector'
-                        ? returnToCanvas
-                        : undefined
+                      rightPane === 'inspector' ? returnToCanvas : undefined
                     }
                     returnOnEscape={!storyActive && patchReview.review === null}
                   >
-                    {layout.rightPane === 'inspector' ? (
+                    {rightPane === 'inspector' ? (
                       <RightInspector
                         graph={state.graph}
                         session={state.session}
@@ -1000,7 +996,7 @@ const EditorWorkspace = ({
                 onClose={layout.closeInlineCopilot}
                 onOpenFullInterview={() => {
                   layout.closeInlineCopilot();
-                  layout.openCopilot();
+                  showInterview();
                   setAgentFocusToken((token) => token + 1);
                 }}
               />

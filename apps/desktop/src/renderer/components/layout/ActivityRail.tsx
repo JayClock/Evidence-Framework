@@ -1,4 +1,4 @@
-import { Bot, ListTree, Table2, Zap, type LucideIcon } from 'lucide-react';
+import { ListTree, Table2, Zap, type LucideIcon } from 'lucide-react';
 
 import {
   Tooltip,
@@ -43,12 +43,6 @@ const RAIL_ITEMS: readonly {
     label: '门禁与诊断',
     hint: 'AST 检查、悬空引用与派生对称性',
     icon: Zap,
-  },
-  {
-    id: 'copilot',
-    label: 'AI 协同',
-    hint: '多轮访谈、工具调用与补丁复核',
-    icon: Bot,
   },
   {
     id: 'directory',
