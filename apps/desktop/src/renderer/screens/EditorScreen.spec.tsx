@@ -298,16 +298,7 @@ describe('EditorScreen', () => {
       build: Parameters<typeof createModelPatch>[1],
     ) => {
       const { patches } = createModelPatch(document, build);
-      act(() =>
-        api.agentMock.requestPatch({
-          requestId,
-          patch: { rationale: requestId, patches },
-        }),
-      );
-      expect(api.agentMock.patchResponses.at(-1)).toMatchObject({
-        requestId,
-        result: { success: true },
-      });
+      act(() => api.agentMock.commitPatch({ rationale: requestId, patches }));
       document = applyModelPatches(document, patches);
     };
     const example =
@@ -1105,24 +1096,21 @@ describe('EditorScreen sensors', () => {
       target: { value: 'context.procurement' },
     });
     act(() =>
-      api.agentMock.requestPatch({
-        requestId: 'patch-review',
-        patch: {
-          rationale: '新增审计员参与方',
-          patches: [
-            {
-              op: 'add',
-              path: '/entities/-',
-              value: {
-                type: 'entity',
-                id: 'party.auditor',
-                category: 'participant',
-                kind: 'party',
-                label: '审计员',
-              },
+      api.agentMock.commitPatch({
+        rationale: '新增审计员参与方',
+        patches: [
+          {
+            op: 'add',
+            path: '/entities/-',
+            value: {
+              type: 'entity',
+              id: 'party.auditor',
+              category: 'participant',
+              kind: 'party',
+              label: '审计员',
             },
-          ],
-        },
+          },
+        ],
       }),
     );
 
@@ -1153,24 +1141,21 @@ describe('EditorScreen sensors', () => {
     await readyCanvas();
 
     act(() =>
-      api.agentMock.requestPatch({
-        requestId: 'patch-keep',
-        patch: {
-          rationale: '新增审计员参与方',
-          patches: [
-            {
-              op: 'add',
-              path: '/entities/-',
-              value: {
-                type: 'entity',
-                id: 'party.auditor',
-                category: 'participant',
-                kind: 'party',
-                label: '审计员',
-              },
+      api.agentMock.commitPatch({
+        rationale: '新增审计员参与方',
+        patches: [
+          {
+            op: 'add',
+            path: '/entities/-',
+            value: {
+              type: 'entity',
+              id: 'party.auditor',
+              category: 'participant',
+              kind: 'party',
+              label: '审计员',
             },
-          ],
-        },
+          },
+        ],
       }),
     );
 

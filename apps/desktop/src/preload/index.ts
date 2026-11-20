@@ -3,13 +3,12 @@ import { contextBridge, ipcRenderer } from 'electron';
 
 import {
   EVIDENCE_AGENT_IPC_CHANNELS,
-  type AgentActionResult,
-  type AgentEventPayload,
   type AgentPromptInput,
+  type AgentPromptResult,
   type AgentSteerInput,
   type AgentSteerOutcome,
-  type ApplyPatchRequest,
-  type ApplyPatchResponse,
+  type AgentEventPayload,
+  type PatchCommittedPayload,
   type CanvasContextRegistration,
   type SensorReportPayload,
   type SensorTriggerInput,
@@ -98,7 +97,7 @@ const api: EvidenceDesktopApi = {
     },
   },
   agent: {
-    prompt: (input: AgentPromptInput): Promise<AgentActionResult> =>
+    prompt: (input: AgentPromptInput): Promise<AgentPromptResult> =>
       ipcRenderer.invoke(EVIDENCE_AGENT_IPC_CHANNELS.prompt, input),
     steer: (input: AgentSteerInput): Promise<AgentSteerOutcome> =>
       ipcRenderer.invoke(EVIDENCE_AGENT_IPC_CHANNELS.steer, input),
@@ -136,23 +135,14 @@ const api: EvidenceDesktopApi = {
         ipcRenderer.removeListener(EVIDENCE_AGENT_IPC_CHANNELS.report, handler);
       };
     },
-    onApplyPatch: (listener) => {
+    onPatchCommitted: (listener) => {
       const handler = (
         _event: Electron.IpcRendererEvent,
-        request: ApplyPatchRequest,
-      ) => listener(request);
-
-      ipcRenderer.on(EVIDENCE_AGENT_IPC_CHANNELS.applyPatch, handler);
-
-      return () => {
-        ipcRenderer.removeListener(
-          EVIDENCE_AGENT_IPC_CHANNELS.applyPatch,
-          handler,
-        );
-      };
-    },
-    respondPatch: (response: ApplyPatchResponse) => {
-      ipcRenderer.send(EVIDENCE_AGENT_IPC_CHANNELS.applyPatchResult, response);
+        payload: PatchCommittedPayload,
+      ) => listener(payload);
+      const channel = EVIDENCE_AGENT_IPC_CHANNELS.patchCommitted;
+      ipcRenderer.on(channel, handler);
+      return () => ipcRenderer.removeListener(channel, handler);
     },
   },
   mcp: {

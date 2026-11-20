@@ -1,12 +1,25 @@
 import type { Draft, Patch } from 'immer';
-import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
+import type {
+  DomainModelDocument,
+  JsonPatchOperation,
+} from '@evidence-poc/evidence-schema';
 
-export interface HistoryEntry {
+export type HistoryPatches =
+  | {
+      format: 'immer';
+      patches: readonly Patch[];
+      inversePatches: readonly Patch[];
+    }
+  | {
+      format: 'json';
+      patches: readonly JsonPatchOperation[];
+      inversePatches: readonly JsonPatchOperation[];
+    };
+
+export type HistoryEntry = HistoryPatches & {
   readonly label: string;
-  readonly patches: readonly Patch[];
-  readonly inversePatches: readonly Patch[];
   readonly affectedIds: readonly string[];
-}
+};
 
 /** Return values are detached from Immer drafts before the recipe scope closes. */
 export type ModelRecipe<TResult = void> = (

@@ -11,7 +11,14 @@ import type {
   ModelOverlay,
   OverlayChange,
 } from '@evidence-poc/desktop-feature-canvas';
-import type { AppliedPatch } from './useAgentPatchBridge';
+
+/** Model snapshots around a transaction already committed by the host. */
+export interface AppliedPatch {
+  rationale: string;
+  commands: readonly string[];
+  before: DomainModelDocument;
+  after: DomainModelDocument;
+}
 
 /** What one applied agent patch changed, kept until the modeler decides. */
 export interface PatchReview {
@@ -61,9 +68,8 @@ const idsWith = (diff: ModelDiff, change: 'added' | 'removed' | 'modified') =>
 /**
  * Turns an applied patch into a review the modeler can still refuse.
  *
- * The patch is already in the model and in the undo history, because the agent
- * needs an answer inside the tool call. What the review adds is the honest
- * follow-up: these objects changed, and one keystroke puts them back.
+ * The patch is already in the model and in the undo history. The review shows
+ * which objects changed and offers undo while this is still the newest edit.
  */
 export const usePatchReview = (
   session: ModelSession,
@@ -83,6 +89,7 @@ export const usePatchReview = (
   }, []);
 
   const revert = useCallback(() => {
+    if (session.isDocumentLocked()) return;
     const patched = patchedRef.current;
 
     patchedRef.current = null;

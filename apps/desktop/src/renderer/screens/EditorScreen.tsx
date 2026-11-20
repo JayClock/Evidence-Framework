@@ -29,7 +29,6 @@ import {
   EvidenceInquiryConversation,
   InlinePatchCard,
   type AppliedPatch,
-  useAgentPatchBridge,
   useAgentSession,
   usePatchReview,
 } from '@evidence-poc/desktop-feature-agent';
@@ -212,13 +211,7 @@ const EditorWorkspace = ({
     refreshSavedSources: state.externalChangeAt !== null,
     onInvalidated: reloadFromDiskIfClean,
   });
-  const agent = useAgentSession(window.evidenceAPI.agent, project.rootPath);
   const sensors = useSensorsState(project.rootPath);
-  const liveModel = useLiveModelBridge(
-    project.rootPath,
-    state.session,
-    initialDocument,
-  );
   const delivery = useDeliveryHub(
     window.evidenceAPI.projects,
     project.rootPath,
@@ -265,6 +258,49 @@ const EditorWorkspace = ({
   // The palette replaces a row of header buttons with one chord; every action
   // it runs is the same handler the header used to call.
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [inquiry, setInquiry] = useState<CanvasEvidenceInquiry['target']>(null);
+  const [stormingOpen, setStormingOpen] = useState(false);
+  const [stormingFocus, setStormingFocus] = useState(0);
+  const [stormingBusy, setStormingBusy] = useState(false);
+  const [stormingError, setStormingError] = useState<string | null>(null);
+  const [stormingFrame, setStormingFrame] = useState<readonly string[] | null>(
+    null,
+  );
+  const stormingReturnFocus = useRef<HTMLElement | null>(null);
+  const stormingAdded = useRef<Set<string> | null>(null);
+  const patchReviewState = usePatchReview(state.session, state.document);
+  const { record: recordPatch } = patchReviewState;
+  const recordAgentPatch = useCallback(
+    (patch: AppliedPatch) => {
+      recordPatch(patch);
+      const added = stormingAdded.current;
+      if (added === null) return;
+      const before = new Set(patch.before.entities.map(({ id }) => id));
+      for (const entity of patch.after.entities) {
+        if (!before.has(entity.id) && isEvidenceEntity(entity))
+          added.add(entity.id);
+      }
+    },
+    [recordPatch],
+  );
+  const liveModel = useLiveModelBridge(
+    project.rootPath,
+    state.session,
+    initialDocument,
+    recordAgentPatch,
+  );
+  const agent = useAgentSession(
+    window.evidenceAPI.agent,
+    project.rootPath,
+    liveModel.prompt,
+  );
+  const patchReview =
+    agent.state.running && patchReviewState.review
+      ? {
+          ...patchReviewState,
+          review: { ...patchReviewState.review, revertable: false },
+        }
+      : patchReviewState;
   // Findings must describe the exact live revision, including undo/redo.
   const diagnosticsStale =
     liveModel.error !== null ||
@@ -287,36 +323,6 @@ const EditorWorkspace = ({
   useEffect(() => {
     if (state.savedAt !== null) void sensors.refresh();
   }, [state.savedAt, sensors.refresh]);
-  const [inquiry, setInquiry] = useState<CanvasEvidenceInquiry['target']>(null);
-  const [stormingOpen, setStormingOpen] = useState(false);
-  const [stormingFocus, setStormingFocus] = useState(0);
-  const [stormingBusy, setStormingBusy] = useState(false);
-  const [stormingError, setStormingError] = useState<string | null>(null);
-  const [stormingFrame, setStormingFrame] = useState<readonly string[] | null>(
-    null,
-  );
-  const stormingReturnFocus = useRef<HTMLElement | null>(null);
-  const stormingAdded = useRef<Set<string> | null>(null);
-  const patchReview = usePatchReview(state.session, state.document);
-  const { record: recordPatch } = patchReview;
-  const recordAgentPatch = useCallback(
-    (patch: AppliedPatch) => {
-      recordPatch(patch);
-      const added = stormingAdded.current;
-      if (added === null) return;
-      const before = new Set(patch.before.entities.map(({ id }) => id));
-      for (const entity of patch.after.entities) {
-        if (!before.has(entity.id) && isEvidenceEntity(entity))
-          added.add(entity.id);
-      }
-    },
-    [recordPatch],
-  );
-  useAgentPatchBridge(
-    window.evidenceAPI.agent,
-    state.session,
-    recordAgentPatch,
-  );
 
   // Monotonic document revision so an external agent can tell whether the model
   // it read is still the model on screen.
@@ -572,12 +578,18 @@ const EditorWorkspace = ({
 
   const commandCapabilities = useMemo<CommandCapabilities>(
     () => ({
-      canUndo: state.canUndo,
-      canRedo: state.canRedo,
+      canUndo: !agent.state.running && state.canUndo,
+      canRedo: !agent.state.running && state.canRedo,
       viewMode: workspaceView.mode,
       hasSelection: state.selection.nodeId !== null,
     }),
-    [state.canUndo, state.canRedo, state.selection.nodeId, workspaceView.mode],
+    [
+      agent.state.running,
+      state.canUndo,
+      state.canRedo,
+      state.selection.nodeId,
+      workspaceView.mode,
+    ],
   );
 
   const commandHandlers = useMemo<CommandHandlers>(
@@ -1026,6 +1038,7 @@ const EditorWorkspace = ({
                   <InspectorShell
                     collapsed={rightRailCollapsed}
                     onReturnToCanvas={returnToCanvas}
+                    editingLocked={agent.state.running}
                     returnOnEscape={
                       !storyActive &&
                       patchReview.review === null &&
@@ -1111,7 +1124,7 @@ const EditorWorkspace = ({
           targets={commandTargets}
           onFocusTarget={focusNode}
         />
-        {scenarioOpen ? (
+        {scenarioOpen && !agent.state.running ? (
           <ScenarioStudioModal
             session={state.session}
             onClose={() => setScenarioOpen(false)}

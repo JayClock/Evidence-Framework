@@ -125,6 +125,24 @@ export const applyModelPatches = (
     applyJsonPatchMutator(draft, patches);
   })[0];
 
+/** Materialize one atomic transaction against the current document. */
+export const prepareModelPatchBatch = (
+  document: DomainModelDocument,
+  operations: readonly JsonPatchOperation[],
+) => {
+  const [next, patches, inversePatches] = produceWithPatches(
+    document,
+    (draft) => {
+      applyJsonPatchMutator(draft, operations);
+    },
+  );
+  return {
+    document: next,
+    patches: toJsonPatches(patches),
+    inversePatches: toJsonPatches(inversePatches),
+  };
+};
+
 /** Run a domain operator locally and send only its standard patches over IPC. */
 export const createModelPatch = <TResult>(
   document: DomainModelDocument,

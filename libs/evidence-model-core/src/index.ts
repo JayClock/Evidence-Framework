@@ -30,6 +30,7 @@ export * from './mutations/index.js';
 export {
   applyModelPatches,
   createModelPatch,
+  prepareModelPatchBatch,
   toJsonPatches,
 } from './session/jsonPatches.js';
 export type {

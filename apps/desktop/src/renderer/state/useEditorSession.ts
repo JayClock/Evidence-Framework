@@ -165,6 +165,7 @@ export const useEditorSession = (
       return;
     }
 
+    if (session.isDocumentLocked()) return;
     session.replaceDocument(result.document, { resetHistory: true });
     setExternalChangeAt(null);
     setSaveError(null);
@@ -177,7 +178,12 @@ export const useEditorSession = (
     const before = session.getDocument();
     const result = await window.evidenceAPI.projects.open(project.rootPath);
     // The inspector may have changed the model while the filesystem was read.
-    if (dirtyRef.current || session.getDocument() !== before) return;
+    if (
+      dirtyRef.current ||
+      session.isDocumentLocked() ||
+      session.getDocument() !== before
+    )
+      return;
     if (!result.success) throw new Error(result.error);
     // A save also notifies the watcher: equal content must retain undo history.
     if (compactCanonicalJson(result.document) !== compactCanonicalJson(before))

@@ -1,10 +1,7 @@
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import {
-  ModelRuntime,
-  type AgentSessionEvent,
-} from '@earendil-works/pi-coding-agent';
+import { ModelRuntime, SessionManager } from '@earendil-works/pi-coding-agent';
 import { describe, expect, it } from 'vitest';
 import {
   createEvidenceAgentSession,
@@ -167,33 +164,52 @@ describe('native Evidence sessions', () => {
       }
     }));
 
-  it('forks at an SDK history entry and abandons later context', () =>
-    withOptions(async (options) => {
-      const runtime = await openEvidenceSessionRuntime(options);
-      try {
-        const previous = runtime.session;
-        const manager = previous.sessionManager;
-        const point = manager.appendMessage({
-          role: 'user',
-          content: 'retained',
-          timestamp: 1,
+  it.each([true, false])(
+    'forks at an SDK history entry (in memory: %s)',
+    (inMemory) =>
+      withOptions(async (options) => {
+        const runtime = await openEvidenceSessionRuntime({
+          ...options,
+          inMemory,
         });
-        manager.appendMessage({
-          role: 'user',
-          content: 'abandoned',
-          timestamp: 2,
-        });
-        await expect(
-          runtime.fork(point, { position: 'at' }),
-        ).resolves.toMatchObject({ cancelled: false });
-        expect(runtime.session).not.toBe(previous);
-        expect(runtime.session.messages).toEqual([
-          { role: 'user', content: 'retained', timestamp: 1 },
-        ]);
-      } finally {
-        await runtime.dispose();
-      }
-    }));
+        try {
+          const previous = runtime.session;
+          const manager = previous.sessionManager;
+          const point = manager.appendMessage({
+            role: 'user',
+            content: 'retained',
+            timestamp: 1,
+          });
+          manager.appendMessage({
+            role: 'user',
+            content: 'abandoned',
+            timestamp: 2,
+          });
+          await expect(
+            runtime.fork(point, { position: 'at' }),
+          ).resolves.toMatchObject({ cancelled: false });
+          expect(runtime.session).not.toBe(previous);
+          expect(runtime.session.messages).toEqual([
+            { role: 'user', content: 'retained', timestamp: 1 },
+          ]);
+          if (!inMemory) {
+            const source = previous.sessionFile;
+            const fork = runtime.session.sessionFile;
+            if (!source || !fork)
+              throw new Error('Expected persisted transcripts');
+            expect(source).not.toEqual(fork);
+            expect(SessionManager.open(fork).getHeader()?.parentSession).toBe(
+              source,
+            );
+            expect(
+              SessionManager.open(source).buildSessionContext().messages,
+            ).toHaveLength(2);
+          }
+        } finally {
+          await runtime.dispose();
+        }
+      }),
+  );
 
   it('cannot publish a session after disposal during lazy startup', () =>
     withOptions(async (options) => {

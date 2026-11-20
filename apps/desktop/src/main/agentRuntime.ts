@@ -1,6 +1,14 @@
+import { randomUUID } from 'node:crypto';
 import type { LiveDeliveryInput } from '@evidence-poc/desktop-contracts/delivery';
-import type { AgentTurnFocus } from '@evidence-poc/desktop-contracts/agentIpc';
-import { DomainIdSchema } from '@evidence-poc/evidence-schema';
+import type {
+  AgentTurnFocus,
+  PatchTransaction,
+} from '@evidence-poc/desktop-contracts/agentIpc';
+import { prepareModelPatchBatch } from '@evidence-poc/evidence-model-core';
+import {
+  DomainIdSchema,
+  ModelPatchRequestSchema,
+} from '@evidence-poc/evidence-schema';
 import { validateLiveDeliveryInput } from './deliveryProjection';
 import path from 'node:path';
 
@@ -38,8 +46,7 @@ export const MODEL_DIRECTORY = path.join('.evidence', 'fm');
 export interface AgentRuntimeTransport {
   publishEvent: (event: AgentStreamEvent) => void;
   publishReport: (report: SensorReport) => void;
-  /** Asks the renderer to apply a patch through its live `ModelSession`. */
-  requestPatch: (patch: ModelPatchRequest) => Promise<ModelPatchResult>;
+  publishPatch: (transaction: PatchTransaction) => void;
 }
 
 export interface AgentRuntimeOptions {
@@ -60,7 +67,12 @@ export interface AgentRuntimeOptions {
 export interface AgentRuntime {
   readonly rootPath: string;
   readonly modelRoot: string;
-  prompt: (text: string, focus?: AgentTurnFocus) => Promise<void>;
+  prompt: (
+    text: string,
+    focus?: AgentTurnFocus,
+    expectedRevision?: number,
+    committed?: PatchTransaction[],
+  ) => Promise<void>;
   steer: (text: string) => Promise<'handled' | 'queued'>;
   abort: () => Promise<void>;
   /** Explicit sensor run, returning the verdict the caller awaits. */
@@ -81,9 +93,8 @@ const emptySelection = { nodeId: null, attributeName: null };
 /**
  * One Pi conversation, one sensor engine and one model source tree.
  *
- * Sessions start lazily on the first prompt so opening a project costs nothing,
- * and every patch travels back to the renderer's `ModelSession` so agent edits
- * land in the same undo history as human edits.
+ * Sessions start lazily. The main process commits agent edits; the renderer
+ * replays the published transactions in its local undo history.
  */
 export const createAgentRuntime = ({
   rootPath,
@@ -114,7 +125,65 @@ export const createAgentRuntime = ({
     selection: emptySelection,
   };
 
-  let activeTurn: { canvas: CanvasContext; readOnly: boolean } | null = null;
+  let activeTurn: {
+    canvas: CanvasContext;
+    readOnly: boolean;
+    cancelled: boolean;
+    committed: PatchTransaction[];
+  } | null = null;
+
+  const commitPatch = (
+    request: ModelPatchRequest,
+    generation: number,
+  ): ModelPatchResult => {
+    if (
+      disposed ||
+      generation !== modelGeneration ||
+      !activeTurn ||
+      activeTurn.cancelled
+    )
+      return { success: false, error: '访谈已结束，未提交模型变更。' };
+    if (activeTurn.readOnly)
+      return { success: false, error: '本轮只读探问，不提交模型变更。' };
+    if (!live)
+      return { success: false, error: '当前画布尚未同步，未提交模型变更。' };
+    try {
+      const { rationale, patches } = ModelPatchRequestSchema.parse(request);
+      const commands = patches.map(({ op }) => op);
+      const prepared = prepareModelPatchBatch(live.document, patches);
+      if (prepared.patches.length === 0)
+        return { success: true, appliedCommands: [] };
+      const transaction: PatchTransaction = {
+        id: randomUUID(),
+        baseRevision: live.revision,
+        revision: live.revision + 1,
+        rationale,
+        commands,
+        patches: prepared.patches,
+        inversePatches: prepared.inversePatches,
+      };
+      live = {
+        ...live,
+        revision: transaction.revision,
+        document: prepared.document,
+      };
+      latestReport = null;
+      activeTurn.committed.push(transaction);
+      backgroundSensors.schedule();
+      // A missed notification must not turn a committed write into a failed tool call.
+      try {
+        transport.publishPatch(transaction);
+      } catch {
+        /* replay on prompt settlement */
+      }
+      return { success: true, appliedCommands: commands };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : '模型补丁提交失败。',
+      };
+    }
+  };
 
   const runSensors = async (
     scopeRefs?: readonly string[],
@@ -204,13 +273,7 @@ export const createAgentRuntime = ({
           refreshApi: async () => {
             await runSensors();
           },
-          applyModelPatch: (patch) =>
-            activeTurn?.readOnly
-              ? Promise.resolve({
-                  success: false,
-                  error: '本轮只读探问，不提交模型变更。',
-                })
-              : transport.requestPatch(patch),
+          applyModelPatch: async (patch) => commitPatch(patch, generation),
           getCanvasContext: async () => activeTurn?.canvas ?? canvasContext,
           loadDocument,
         }),
@@ -233,8 +296,10 @@ export const createAgentRuntime = ({
   return {
     rootPath: resolvedRoot,
     modelRoot,
-    prompt: async (text, focus) => {
+    prompt: async (text, focus, expectedRevision, committed = []) => {
       if (activeTurn !== null) throw new Error('本轮访谈尚未结束。');
+      if (expectedRevision !== undefined && live?.revision !== expectedRevision)
+        throw new Error('画布修订版本已变化，请重试。');
       const nodeId =
         focus === undefined || focus.nodeId === null
           ? null
@@ -250,10 +315,13 @@ export const createAgentRuntime = ({
                 selection: { nodeId, attributeName: null },
               },
         readOnly: focus?.inquiry !== undefined,
+        cancelled: false,
+        committed,
       };
       activeTurn = turn;
       try {
         const active = await ensureSession();
+        if (turn.cancelled) throw new Error('访谈已取消。');
         const prefix = nodeId === null ? '' : `【凭证焦点：${nodeId}】\n`;
         const inquiry =
           focus?.inquiry === 'trace'
@@ -276,6 +344,7 @@ export const createAgentRuntime = ({
       return session.steer(text);
     },
     abort: async () => {
+      if (activeTurn) activeTurn.cancelled = true;
       if (session !== null) {
         await session.abort();
       }
@@ -288,6 +357,7 @@ export const createAgentRuntime = ({
         if (path.resolve(input.rootPath) !== resolvedRoot)
           throw new Error('模型不属于当前项目。');
         if (live !== undefined && input.revision <= live.revision) return;
+        if (activeTurn) throw new Error('AI 正在编辑模型，请等待本轮结束。');
         live = structuredClone({
           ...input,
           baseDocument: live?.baseDocument ?? input.baseDocument,
@@ -302,6 +372,7 @@ export const createAgentRuntime = ({
     getCanvasContext: () => canvasContext,
     getSession: () => session,
     resetModel: async () => {
+      if (activeTurn) activeTurn.cancelled = true;
       ++modelGeneration;
       const previous = session;
       if (previous) sessionFile = previous.getSessionFile() ?? sessionFile;

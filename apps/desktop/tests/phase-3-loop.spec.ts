@@ -1,12 +1,12 @@
 import path from 'node:path';
 
+import type { PatchTransaction } from '@evidence-poc/desktop-contracts/agentIpc';
 import { describe, expect, it } from 'vitest';
 
 import {
   createSensorsEngine,
   type EvidenceAgentSession,
   type EvidenceAgentSessionOptions,
-  type ModelPatchRequest,
   type SensorReport,
 } from '@evidence-poc/evidence-agent';
 import { createModelSession } from '@evidence-poc/evidence-model-core';
@@ -94,7 +94,8 @@ describe('phase 3 control loop', () => {
     const before = session.getDocument();
 
     const published: SensorReport[] = [];
-    const applied: ModelPatchRequest[] = [];
+    const applied: PatchTransaction[] = [];
+    const agentSession = fakeSession();
     let captured: EvidenceAgentSessionOptions | null = null;
     const auditor: EntityAST = {
       type: 'entity',
@@ -115,19 +116,13 @@ describe('phase 3 control loop', () => {
       sessionFactory: (options) => {
         captured = options;
 
-        return fakeSession();
+        return agentSession;
       },
       transport: {
         publishEvent: () => undefined,
         publishReport: (report) => published.push(report),
-        requestPatch: async (patch) => {
-          applied.push(patch);
-          session.applyPatchBatch(patch.patches, `agent:${patch.rationale}`);
-
-          return {
-            success: true,
-            appliedCommands: patch.patches.map((operation) => operation.op),
-          };
+        publishPatch: (tx) => {
+          applied.push(tx);
         },
       },
     });
@@ -138,7 +133,13 @@ describe('phase 3 control loop', () => {
     expect(outcome.report.isStageGateReady).toBe(false);
     expect(published).toEqual([outcome.report]);
 
-    await runtime.prompt('补一个审计员参与方');
+    runtime.notifyModelChanged({
+      rootPath: PROJECT_ROOT,
+      revision: 1,
+      document: before,
+      baseDocument: before,
+    });
+    await runtime.prompt('初始化');
 
     const options = captured as EvidenceAgentSessionOptions | null;
 
@@ -166,18 +167,20 @@ describe('phase 3 control loop', () => {
       'read_service_blueprint',
     ]);
 
-    const appliedResult = await apply?.execute('call-1', {
-      rationale: '补一个审计员参与方',
-      patches: [{ op: 'add', path: '/entities/-', value: auditor }],
-    });
-
-    expect(appliedResult?.isError).toBeUndefined();
-    expect(applied).toEqual([
-      {
+    agentSession.prompt = async () => {
+      const appliedResult = await apply?.execute('call-1', {
         rationale: '补一个审计员参与方',
         patches: [{ op: 'add', path: '/entities/-', value: auditor }],
-      },
-    ]);
+      });
+      expect(appliedResult?.isError).toBeUndefined();
+    };
+    await runtime.prompt('补一个审计员参与方', undefined, 1);
+    // No renderer has applied the patch yet, but the main turn has finished.
+    expect(session.getDocument()).toBe(before);
+    expect(applied).toHaveLength(1);
+    const [tx] = applied;
+    if (!tx) throw new Error('Expected a committed transaction');
+    session.applyCommittedPatch(tx.patches, tx.inversePatches, tx.rationale);
     expect(
       session.getDocument().entities.some((e) => e.id === auditor.id),
     ).toBe(true);

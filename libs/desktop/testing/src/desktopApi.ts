@@ -1,9 +1,12 @@
+import { prepareModelPatchBatch } from '@evidence-poc/evidence-model-core';
 import { liveDeliveryPreview } from './liveDelivery';
 import type {
   AgentEventPayload,
   AgentPromptInput,
   AgentSteerInput,
-  ApplyPatchRequest,
+  LiveModelInput,
+  ModelPatchRequest,
+  PatchCommittedPayload,
   CanvasContextRegistration,
   SensorReport,
   SensorReportPayload,
@@ -95,10 +98,10 @@ export interface AgentMockController {
   emitEvent: (event: AgentEventPayload['event']) => void;
   /** Streams one sensor verdict to every renderer subscriber. */
   emitReport: (report: SensorReport) => void;
-  /** Asks the renderer to apply a patch, as the main process would. */
-  requestPatch: (request: ApplyPatchRequest) => void;
-  /** Patch results the renderer answered, in order. */
-  patchResponses: unknown[];
+  /** Commits to the mocked main-process model, then streams the transaction. */
+  commitPatch: (patch: ModelPatchRequest) => PatchCommittedPayload;
+  emitPatch: (payload: PatchCommittedPayload) => void;
+  liveModel: () => LiveModelInput | undefined;
   /** Canvas selections the renderer published. */
   canvasContexts: CanvasContextRegistration[];
 }
@@ -229,8 +232,9 @@ export const installDesktopApi = ({
 
   const eventListeners = new Set<(payload: AgentEventPayload) => void>();
   const reportListeners = new Set<(payload: SensorReportPayload) => void>();
-  const patchListeners = new Set<(request: ApplyPatchRequest) => void>();
-  const patchResponses: unknown[] = [];
+  const patchListeners = new Set<(payload: PatchCommittedPayload) => void>();
+  let live: LiveModelInput | undefined;
+  let nextPatchId = 0;
   const canvasContexts: CanvasContextRegistration[] = [];
   let latest: SensorReport | null = null;
 
@@ -288,12 +292,35 @@ export const installDesktopApi = ({
         listener({ rootPath, report });
       }
     },
-    requestPatch: (request) => {
-      for (const listener of patchListeners) {
-        listener(request);
-      }
+    liveModel: () => live,
+    emitPatch: (payload) => {
+      for (const listener of patchListeners) listener(payload);
     },
-    patchResponses,
+    commitPatch: ({ rationale, patches }) => {
+      if (!live) throw new Error('No live model');
+      const prepared = prepareModelPatchBatch(live.document, patches);
+      const transaction = {
+        id: `tx-${++nextPatchId}`,
+        baseRevision: live.revision,
+        revision: live.revision + 1,
+        rationale,
+        commands: patches.map(({ op }) => op),
+        patches: prepared.patches,
+        inversePatches: prepared.inversePatches,
+      };
+      live = {
+        ...live,
+        revision: transaction.revision,
+        document: prepared.document,
+      };
+      const payload = {
+        rootPath: live.rootPath,
+        editorId: live.editorId,
+        transaction,
+      };
+      agentMock.emitPatch(payload);
+      return payload;
+    },
     canvasContexts,
   };
 
@@ -397,8 +424,9 @@ export const installDesktopApi = ({
 
         return sensorReport;
       },
-      notifyModelChanged: async ({ rootPath }) => {
-        calls.modelChanged.push(rootPath);
+      notifyModelChanged: async (input) => {
+        calls.modelChanged.push(input.rootPath);
+        live = input;
       },
       latestReport: async () => latest,
       publishCanvasContext: async (input) => {
@@ -414,13 +442,9 @@ export const installDesktopApi = ({
 
         return () => reportListeners.delete(listener);
       },
-      onApplyPatch: (listener) => {
+      onPatchCommitted: (listener) => {
         patchListeners.add(listener);
-
         return () => patchListeners.delete(listener);
-      },
-      respondPatch: (response) => {
-        patchResponses.push(response);
       },
     },
     mcp: {

@@ -3,23 +3,16 @@
 Nx project: `desktop-feature-agent`; package: `@evidence-poc/desktop-feature-agent`.
 
 Owns the node inquiry and patch review UI, transcript/tool activity presentation,
-session hook, patch bridge and patch-review state. Internal presentation helpers
+session hook and patch-review state. Internal presentation helpers
 are private to the feature. Pi sessions, model loading and sensors remain in the
 Node `evidence-agent` library and desktop main-process adapters.
 
-The editor composes these hooks with its existing `ModelSession`:
-
-```tsx
-const agent = useAgentSession(desktopApi.agent, rootPath);
-const review = usePatchReview(session, document);
-useAgentPatchBridge(desktopApi.agent, session, review.record);
-```
-
-The transport is an injected, narrow subset of `EvidenceAgentApi` from
-`desktop-contracts/agentIpc`. Patch validation and atomic application still run
-through `ModelSession`, so successful edits remain undoable and rejected batches
-are not partially applied. Review overlays reuse `desktop-feature-canvas` types;
-there is no application import or global IPC lookup in production feature code.
+The editor supplies a prompt function that publishes its current revision and
+replays the main process's committed transactions into its local `ModelSession`.
+It passes the resulting before/after snapshots to `usePatchReview` for canvas
+highlights and undo. There is no renderer acknowledgement for agent tools.
+The feature uses the injected `EvidenceAgentApi` from
+`desktop-contracts/agentIpc`; it has no application import or global IPC lookup.
 
 ```bash
 pnpm exec nx run-many -t test,typecheck,lint -p desktop-feature-agent

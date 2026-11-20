@@ -18,7 +18,7 @@ const controller = (
     activeToolName: null,
     ...overrides,
   },
-  submit: vi.fn(async () => ({ success: true })),
+  submit: vi.fn(async () => ({ success: true as const })),
   stop: vi.fn(async () => undefined),
   dismissError: vi.fn(),
   reset: vi.fn(),

@@ -1,277 +1,204 @@
-import type { LiveDeliveryInput } from '@evidence-poc/desktop-contracts/delivery';
-import { randomUUID } from 'node:crypto';
-
+import path from 'node:path';
 import { ipcMain, type WebContents } from 'electron';
-
-import type {
-  ModelPatchRequest,
-  ModelPatchResult,
-  SensorReport,
-} from '@evidence-poc/evidence-agent';
-
 import {
-  EVIDENCE_AGENT_IPC_CHANNELS,
+  EVIDENCE_AGENT_IPC_CHANNELS as channels,
   type AgentActionResult,
   type AgentPromptInput,
+  type AgentPromptResult,
   type AgentSteerInput,
   type AgentSteerOutcome,
-  type ApplyPatchResponse,
   type CanvasContextRegistration,
+  type LiveModelInput,
+  type PatchTransaction,
   type SensorTriggerInput,
 } from '@evidence-poc/desktop-contracts/agentIpc';
-
 import {
   createAgentRuntime,
   type AgentRuntime,
   type AgentRuntimeOptions,
 } from './agentRuntime';
 
-export const PATCH_TIMEOUT_MS = 15_000;
-
 export interface AgentIpcOptions {
-  /** Test injection: production builds the default runtime. */
   createRuntime?: typeof createAgentRuntime;
-  patchTimeoutMs?: number;
   getModelOptions?: AgentRuntimeOptions['getModelOptions'];
 }
 
-interface PendingPatch {
-  resolve: (result: ModelPatchResult) => void;
-  timer: ReturnType<typeof setTimeout>;
-}
+type Owner = {
+  sender: WebContents;
+  runtime: AgentRuntime;
+  editorId?: string;
+  detach: () => void;
+};
 
 const toMessage = (error: unknown): string =>
   error instanceof Error ? error.message : '未知错误。';
 
-/**
- * Owns one runtime per project root and routes IPC to it.
- *
- * Patch application is a round trip: the main process asks the renderer to
- * dispatch the commands, because only the renderer holds the live
- * `ModelSession` that keeps undo working.
- */
+/** A project's write stream belongs to the editor that published its live model. */
 export const registerAgentIpc = ({
   createRuntime = createAgentRuntime,
-  patchTimeoutMs = PATCH_TIMEOUT_MS,
   getModelOptions,
-}: AgentIpcOptions = {}): {
-  dispose: () => void;
-  resetModels: () => Promise<void>;
-} => {
-  const runtimes = new Map<string, AgentRuntime>();
-  const starting = new Map<string, Promise<AgentRuntime>>();
-  const ownedBy = new Map<number, Set<string>>();
-  const pending = new Map<string, PendingPatch>();
-
-  const runtimeFor = async (
-    sender: WebContents,
-    rootPath: string,
-  ): Promise<AgentRuntime> => {
-    const existing = runtimes.get(rootPath);
-
-    if (existing !== undefined) {
-      return existing;
-    }
-
-    const inFlight = starting.get(rootPath);
-
-    if (inFlight !== undefined) {
-      return inFlight;
-    }
-
-    const created = createRuntimeFor(sender, rootPath);
-
-    starting.set(rootPath, created);
-
-    try {
-      return await created;
-    } finally {
-      starting.delete(rootPath);
-    }
+}: AgentIpcOptions = {}) => {
+  const owners = new Map<string, Owner>();
+  const canonicalRoot = (rootPath: string) => {
+    if (typeof rootPath !== 'string' || !path.isAbsolute(rootPath))
+      throw new Error('无效的项目路径。');
+    return path.resolve(rootPath);
   };
-
-  const createRuntimeFor = async (
-    sender: WebContents,
-    rootPath: string,
-  ): Promise<AgentRuntime> => {
-    const ownsPatch = (patch: ModelPatchRequest): Promise<ModelPatchResult> =>
-      new Promise((resolve) => {
-        if (sender.isDestroyed()) {
-          resolve({ success: false, error: '编辑器窗口已关闭。' });
-          return;
-        }
-
-        const requestId = randomUUID();
-        const timer = setTimeout(() => {
-          pending.delete(requestId);
-          resolve({
-            success: false,
-            error: '画布没有在时限内应用补丁，请重试或手动编辑。',
-          });
-        }, patchTimeoutMs);
-
-        pending.set(requestId, { resolve, timer });
-        sender.send(EVIDENCE_AGENT_IPC_CHANNELS.applyPatch, {
-          requestId,
-          patch,
-        });
-      });
-
+  const existingOwner = (sender: WebContents, root: string) => {
+    const owner = owners.get(root);
+    if (owner && owner.sender !== sender)
+      throw new Error('该项目已由另一个编辑窗口打开。');
+    return owner;
+  };
+  const ownerFor = (sender: WebContents, rootPath: string): Owner => {
+    const root = canonicalRoot(rootPath);
+    const existing = existingOwner(sender, root);
+    if (existing) return existing;
+    const send = (channel: string, payload: object) => {
+      if (!sender.isDestroyed()) sender.send(channel, { rootPath, ...payload });
+    };
     const runtime = createRuntime({
       rootPath,
       getModelOptions,
       transport: {
-        publishEvent: (event) => {
-          if (!sender.isDestroyed()) {
-            sender.send(EVIDENCE_AGENT_IPC_CHANNELS.events, {
-              rootPath,
-              event,
-            });
-          }
-        },
-        publishReport: (report) => {
-          if (!sender.isDestroyed()) {
-            sender.send(EVIDENCE_AGENT_IPC_CHANNELS.report, {
-              rootPath,
-              report,
-            });
-          }
-        },
-        requestPatch: ownsPatch,
+        publishEvent: (event) => send(channels.events, { event }),
+        publishReport: (report) => send(channels.report, { report }),
+        publishPatch: (transaction) =>
+          send(channels.patchCommitted, {
+            editorId: owner.editorId,
+            transaction,
+          }),
       },
     });
-
-    runtimes.set(rootPath, runtime);
-    const owned = ownedBy.get(sender.id) ?? new Set<string>();
-
-    owned.add(rootPath);
-    ownedBy.set(sender.id, owned);
-    sender.once('destroyed', () => {
+    const detach = () => {
+      sender.removeListener('destroyed', detach);
       runtime.dispose();
-      runtimes.delete(rootPath);
-      ownedBy.delete(sender.id);
-    });
-
-    return runtime;
+      owners.delete(root);
+    };
+    const owner: Owner = { sender, runtime, detach };
+    owners.set(root, owner);
+    sender.once('destroyed', detach);
+    return owner;
   };
 
   ipcMain.handle(
-    EVIDENCE_AGENT_IPC_CHANNELS.prompt,
-    async (event, input: AgentPromptInput): Promise<AgentActionResult> => {
+    channels.prompt,
+    async (event, input: AgentPromptInput): Promise<AgentPromptResult> => {
+      const transactions: PatchTransaction[] = [];
       try {
-        await (
-          await runtimeFor(event.sender, input.rootPath)
-        ).prompt(input.text, input.focus);
-
-        return { success: true };
+        const owner = existingOwner(
+          event.sender,
+          canonicalRoot(input.rootPath),
+        );
+        if (
+          !owner ||
+          !owner.editorId ||
+          input.editorId !== owner.editorId ||
+          !Number.isSafeInteger(input.revision)
+        )
+          throw new Error('当前画布尚未同步。');
+        await owner.runtime.prompt(
+          input.text,
+          input.focus,
+          input.revision,
+          transactions,
+        );
+        return { success: true, transactions };
       } catch (error) {
-        return { success: false, error: toMessage(error) };
+        return {
+          success: false,
+          error: toMessage(error),
+          transactions,
+        };
       }
     },
   );
 
   ipcMain.handle(
-    EVIDENCE_AGENT_IPC_CHANNELS.steer,
+    channels.steer,
     async (event, input: AgentSteerInput): Promise<AgentSteerOutcome> => {
       try {
+        const owner = existingOwner(
+          event.sender,
+          canonicalRoot(input.rootPath),
+        );
+        if (!owner) throw new Error('还没有正在进行的访谈，无法插话。');
         return {
           success: true,
-          disposition: await (
-            await runtimeFor(event.sender, input.rootPath)
-          ).steer(input.text),
+          disposition: await owner.runtime.steer(input.text),
         };
       } catch (error) {
         return { success: false, error: toMessage(error) };
       }
     },
   );
-
   ipcMain.handle(
-    EVIDENCE_AGENT_IPC_CHANNELS.abort,
+    channels.abort,
     async (event, input: { rootPath: string }): Promise<AgentActionResult> => {
       try {
-        await runtimes.get(input.rootPath)?.abort();
-
+        await existingOwner(
+          event.sender,
+          canonicalRoot(input.rootPath),
+        )?.runtime.abort();
         return { success: true };
       } catch (error) {
         return { success: false, error: toMessage(error) };
       }
     },
   );
-
   ipcMain.handle(
-    EVIDENCE_AGENT_IPC_CHANNELS.triggerSensors,
-    async (event, input: SensorTriggerInput): Promise<SensorReport> => {
-      const outcome = await (
-        await runtimeFor(event.sender, input.rootPath)
-      ).runSensors(input.scopeRefs);
-
-      return outcome.report;
-    },
+    channels.triggerSensors,
+    async (event, input: SensorTriggerInput) =>
+      (
+        await ownerFor(event.sender, input.rootPath).runtime.runSensors(
+          input.scopeRefs,
+        )
+      ).report,
   );
-
   ipcMain.handle(
-    EVIDENCE_AGENT_IPC_CHANNELS.latestReport,
-    async (_event, input: { rootPath: string }): Promise<SensorReport | null> =>
-      runtimes.get(input.rootPath)?.latestReport() ?? null,
+    channels.latestReport,
+    (event, input: { rootPath: string }) =>
+      existingOwner(
+        event.sender,
+        canonicalRoot(input.rootPath),
+      )?.runtime.latestReport() ?? null,
   );
-
+  ipcMain.handle(channels.modelChanged, (event, input: LiveModelInput) => {
+    if (
+      typeof input.editorId !== 'string' ||
+      input.editorId.length === 0 ||
+      input.editorId.length > 100
+    )
+      throw new Error('无效的编辑会话。');
+    const root = canonicalRoot(input.rootPath);
+    const previous = existingOwner(event.sender, root);
+    if (previous?.editorId !== input.editorId) {
+      if (input.revision !== 1) throw new Error('编辑会话已关闭。');
+      if (previous?.editorId !== undefined) previous.detach();
+    }
+    const owner = ownerFor(event.sender, input.rootPath);
+    owner.runtime.notifyModelChanged(input);
+    owner.editorId = input.editorId;
+  });
   ipcMain.handle(
-    EVIDENCE_AGENT_IPC_CHANNELS.modelChanged,
-    async (
-      event,
-      input: { rootPath: string } | LiveDeliveryInput,
-    ): Promise<void> => {
-      (await runtimeFor(event.sender, input.rootPath)).notifyModelChanged(
-        'document' in input ? input : undefined,
-      );
-    },
-  );
-
-  ipcMain.handle(
-    EVIDENCE_AGENT_IPC_CHANNELS.canvasContext,
-    async (event, input: CanvasContextRegistration): Promise<void> => {
-      (await runtimeFor(event.sender, input.rootPath)).setCanvasContext(
+    channels.canvasContext,
+    (event, input: CanvasContextRegistration) => {
+      ownerFor(event.sender, input.rootPath).runtime.setCanvasContext(
         input.context,
       );
-    },
-  );
-
-  ipcMain.on(
-    EVIDENCE_AGENT_IPC_CHANNELS.applyPatchResult,
-    (_event, response: ApplyPatchResponse) => {
-      const entry = pending.get(response.requestId);
-
-      if (entry === undefined) {
-        return;
-      }
-
-      clearTimeout(entry.timer);
-      pending.delete(response.requestId);
-      entry.resolve(response.result);
     },
   );
 
   return {
     resetModels: async () => {
       await Promise.all(
-        [...runtimes.values()].map((runtime) => runtime.resetModel()),
+        [...owners.values()].map(({ runtime }) => runtime.resetModel()),
       );
     },
     dispose: () => {
-      for (const entry of pending.values()) {
-        clearTimeout(entry.timer);
-      }
-
-      pending.clear();
-
-      for (const runtime of runtimes.values()) {
-        runtime.dispose();
-      }
-
-      runtimes.clear();
-      starting.clear();
-      ownedBy.clear();
+      for (const owner of owners.values()) owner.detach();
+      for (const channel of Object.values(channels))
+        ipcMain.removeHandler(channel);
     },
   };
 };

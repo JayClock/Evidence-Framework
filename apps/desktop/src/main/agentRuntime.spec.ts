@@ -1,15 +1,11 @@
-import { mkdtemp, rm } from 'node:fs/promises';
-import os from 'node:os';
-import path from 'node:path';
-
-import { writeModelDirectory } from '@evidence-poc/evidence-model-io';
+import type { PatchTransaction } from '@evidence-poc/desktop-contracts/agentIpc';
+import { applyModelPatches } from '@evidence-poc/evidence-model-core';
 import { describe, expect, it, vi } from 'vitest';
 
 import type {
   EvidenceAgentSession,
   EvidenceAgentSessionOptions,
   ModelPatchRequest,
-  ModelPatchResult,
   SensorOutcome,
   SensorReport,
   SensorsEngine,
@@ -40,15 +36,11 @@ const OUTCOME: SensorOutcome = { report: REPORT };
 const createTransport = () => {
   const events: unknown[] = [];
   const reports: SensorReport[] = [];
-  const patches: ModelPatchRequest[] = [];
+  const patches: PatchTransaction[] = [];
   const transport: AgentRuntimeTransport = {
     publishEvent: (event) => events.push(event),
     publishReport: (report) => reports.push(report),
-    requestPatch: async (patch) => {
-      patches.push(patch);
-
-      return { success: true, appliedCommands: ['create-entity'] };
-    },
+    publishPatch: (patch) => patches.push(patch),
   };
 
   return { transport, events, reports, patches };
@@ -566,67 +558,89 @@ describe('agent patch transport', () => {
     },
   );
 
-  it('returns the renderer verdict to the tool', async () => {
-    const applied: ModelPatchResult = {
-      success: false,
-      error: 'key data keeps no provider',
-    };
-    const { transport } = createTransport();
-    transport.requestPatch = async (patch) => {
-      void patch;
-
-      return applied;
-    };
-    const fake = createFakeSession();
-    const runtime = runtimeWith({ transport, fake });
-
-    await runtime.prompt('开工');
-
-    const result = await registeredTool('apply_model_patch').execute('call-1', {
-      rationale: '补齐退货',
-      patches: [{ op: 'add', path: '/entities/-', value: {} }],
-    });
-
-    expect(result.details).toEqual(applied);
-    expect(result.isError).toBe(true);
-  });
-
-  it('reads the project tree to guard an evidence batch against concurrent edits', async () => {
-    const tempRoot = await mkdtemp(
-      path.join(os.tmpdir(), 'evidence-operator-'),
-    );
+  it('commits against main revisions with no renderer acknowledgement and publishes only real changes', async () => {
     const { transport, patches } = createTransport();
     const fake = createFakeSession();
-    const runtime = runtimeWith({ transport, fake, rootPath: tempRoot });
-
-    await writeModelDirectory(
-      path.join(tempRoot, '.evidence', 'fm'),
-      createDesktopFixture(),
+    const runtime = runtimeWith({ transport, fake });
+    const base = createDesktopFixture();
+    const input = {
+      rootPath: runtime.rootPath,
+      revision: 1,
+      document: base,
+      baseDocument: base,
+    };
+    runtime.notifyModelChanged(input);
+    await expect(runtime.prompt('stale', undefined, 0)).rejects.toThrow(
+      '修订版本',
     );
-
+    fake.session.prompt = async () => {
+      const apply = registeredTool('apply_model_patch');
+      const mutate = (patches: ModelPatchRequest['patches']) =>
+        apply.execute('call', { rationale: '补齐退款', patches });
+      expect(
+        (await mutate([{ op: 'add', path: '/entities/-', value: {} }])).isError,
+      ).toBe(true);
+      expect(
+        (
+          await mutate([
+            { op: 'test', path: '/manifest/name', value: base.manifest.name },
+          ])
+        ).isError,
+      ).toBeUndefined();
+      expect(() =>
+        runtime.notifyModelChanged({ ...input, revision: 2 }),
+      ).toThrow('请等待本轮结束');
+      expect(
+        (
+          await registeredTool('batch_add_evidence_stubs').execute('operator', {
+            evidences: [
+              {
+                id: 'evidence.refund',
+                label: '退款确认',
+                stage: 'fulfillment',
+              },
+            ],
+          })
+        ).isError,
+      ).toBeUndefined();
+      // A second operator must see the document committed by the first.
+      expect(
+        (
+          await mutate([
+            {
+              op: 'replace',
+              path: '/entities/' + base.entities.length + '/label',
+              value: '新的退款确认',
+            },
+          ])
+        ).isError,
+      ).toBeUndefined();
+    };
     try {
-      await runtime.prompt('补一组退款履约');
-
-      const operator = registeredTool('batch_add_evidence_stubs');
-      const result = await operator.execute('call-1', {
-        evidences: [
-          { id: 'evidence.refund', label: '退款确认', stage: 'fulfillment' },
-        ],
-      });
-      expect(result.isError).toBeUndefined();
-      expect(patches[0]?.patches).toEqual([
-        expect.objectContaining({
-          op: 'test',
-          path: '',
-          value: expect.objectContaining({ entities: expect.any(Array) }),
-        }),
-        expect.objectContaining({
-          op: 'add',
-          value: expect.objectContaining({ id: 'evidence.refund' }),
-        }),
+      const committed: PatchTransaction[] = [];
+      await runtime.prompt('补一组退款履约', undefined, 1, committed);
+      expect(committed).toEqual(patches);
+      expect(
+        patches.map(({ baseRevision, revision }) => [baseRevision, revision]),
+      ).toEqual([
+        [1, 2],
+        [2, 3],
       ]);
+      const [firstTransaction, secondTransaction] = patches;
+      if (!firstTransaction || !secondTransaction)
+        throw new Error('Expected two commits');
+      const first = applyModelPatches(base, firstTransaction.patches);
+      const second = applyModelPatches(first, secondTransaction.patches);
+      expect(second.entities.at(-1)?.label).toBe('新的退款确认');
+      expect(
+        applyModelPatches(second, secondTransaction.inversePatches),
+      ).toEqual(first);
+      expect(applyModelPatches(first, firstTransaction.inversePatches)).toEqual(
+        base,
+      );
+      expect((await runtime.runSensors()).report.documentRevision).toBe(3);
     } finally {
-      await rm(tempRoot, { recursive: true, force: true });
+      runtime.dispose();
     }
   });
 });

@@ -148,16 +148,16 @@ pins `preload.js` — the name `windows.ts` loads.
 
 Renderer behavior is shared through Nx libraries:
 
-| Renderer concern                         | Source of truth                                                                                       |
-| ---------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| documents, undo, commands                | `@evidence-poc/evidence-model-core` (universal)                                                       |
-| IPC DTOs and channel constants           | `@evidence-poc/desktop-contracts`                                                                     |
-| layout, viewport, rulers                 | `@evidence-poc/evidence-canvas-interaction`                                                           |
-| canvas and inspector UI                  | `@evidence-poc/desktop-feature-canvas`, `desktop-feature-inspector`                                   |
+| Renderer concern                         | Source of truth                                                              |
+| ---------------------------------------- | ---------------------------------------------------------------------------- |
+| documents, undo, commands                | `@evidence-poc/evidence-model-core` (universal)                              |
+| IPC DTOs and channel constants           | `@evidence-poc/desktop-contracts`                                            |
+| layout, viewport, rulers                 | `@evidence-poc/evidence-canvas-interaction`                                  |
+| canvas and inspector UI                  | `@evidence-poc/desktop-feature-canvas`, `desktop-feature-inspector`          |
 | story, delivery, modeling agent UI/hooks | `desktop-feature-story`, `desktop-feature-delivery`, `desktop-feature-agent` |
-| browser sensor/event DTOs and labels     | `@evidence-poc/evidence-agent/browser`                                                                |
-| inline acceptance compilation            | `@evidence-poc/evidence-acceptance/projection`                                                        |
-| shared scripted API/renderer fixtures    | `@evidence-poc/desktop-testing` (tests only)                                                          |
+| browser sensor/event DTOs and labels     | `@evidence-poc/evidence-agent/browser`                                       |
+| inline acceptance compilation            | `@evidence-poc/evidence-acceptance/projection`                               |
+| shared scripted API/renderer fixtures    | `@evidence-poc/desktop-testing` (tests only)                                 |
 
 The feature libraries own their colocated tests. `EditorScreen` still coordinates
 selection, layout and cross-feature behavior; project services, window lifecycle
@@ -224,7 +224,7 @@ available from the header or **Cmd/Ctrl+Shift+K**.
 Use **溯源** directly on an evidence card to ask where its unknown fields come
 from. A paired request or confirmation also offers **What-If**. The opening
 question is read-only; follow-up answers stay pinned to the initiating evidence
-and can propose model patches. The right inspector only shows model properties,
+and can commit model patches. The right inspector only shows model properties,
 key data and rules, or an overview when nothing is selected.
 
 ## Agent and sensors (phase 3)
@@ -235,20 +235,20 @@ Canvas storming / node inquiry ──▶ agentRuntime (main) via agent:prompt
                                     │ custom tools: get_focused_node_context,
                                     │   evidence growth, apply_model_patch
                                     ▼
-                     IPC: agent:apply-patch ──▶ ModelSession (renderer)
-                                    ▲
-                                    └─ respondPatch(result) — same undo stack
-                     IPC: sensor:model-changed ──▶ debounced sensorRuntime
+                main commits an atomic PatchTransaction to its live model
+                                    │
                                     ▼
-                     IPC: sensor:report ──▶ status bar + docked console
+                agent:patch-committed ──▶ ModelSession (renderer undo history)
+                sensor:model-changed  ──▶ debounced sensors (human edits)
+                sensor:report         ──▶ status bar + diagnostics
 ```
 
-- The renderer never receives saved model credentials (only transient settings
-  form input) and never runs Python; it asks the
-  main process and applies patches through its live session.
-- A patch is plain JSON (`ModelPatchCommand`), decoded into real commands by
-  `evidence-model-core` so guards and `Cmd/Ctrl+Z` behave exactly as for a human
-  edit.
+- The renderer never receives stored model credentials. During a turn, local
+  document writes pause while main validates and commits AI patches against the
+  published revision. Tool calls do not wait for a renderer acknowledgement.
+- The editor replays versioned RFC 6902 transactions using the provided inverse
+  patches. The result also carries committed transactions so missed broadcasts
+  can be recovered in order. `Cmd/Ctrl+Z` undoes them alongside human edits.
 - Sensors run in-process and are the only implementation: there is no mode to
   select and no interpreter to install.
 - Key data that still owes a provider decision is a warning, not a static error,
@@ -256,8 +256,8 @@ Canvas storming / node inquiry ──▶ agentRuntime (main) via agent:prompt
   shut.
 - Modeling turns run one at a time. A node inquiry shows reasoning, tool activity
   and its patch review on the card. Storming patches and reviews whose inquiry
-  closed are shown in a canvas banner. Apply keeps the live preview; undo takes
-  it back while it is still the newest edit. Saving remains explicit.
+  closed are shown in a canvas banner. Applying the review keeps the committed
+  edits; undo takes the latest edit back. Saving remains explicit.
 
 ## Key data, CEL and fulfillment editing (phase 4)
 

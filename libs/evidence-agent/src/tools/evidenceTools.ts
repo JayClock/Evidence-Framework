@@ -91,7 +91,7 @@ export interface EvidenceToolsHandlers {
     scope?: string;
     signal?: AbortSignal;
   }) => Promise<SensorReport>;
-  /** Applies a patch through the renderer's ModelSession so undo keeps working. */
+  /** Submits a patch to the host's atomic model writer. */
   applyModelPatch: (patch: ModelPatchRequest) => Promise<ModelPatchResult>;
   /** Reads the current selection from the canvas. */
   getCanvasContext: () => Promise<CanvasContext>;
@@ -139,6 +139,9 @@ export const createEvidenceToolsExtension =
         label: tool.label,
         description: tool.description,
         parameters: tool.parameters,
+        executionMode: tool.annotations.readOnlyHint
+          ? 'parallel'
+          : 'sequential',
         execute: async (_id, input) => {
           const result = await tool.run(input);
           return {

@@ -1,3 +1,4 @@
+import type { JsonPatchOperation } from '@evidence-poc/evidence-schema';
 import type { LiveDeliveryInput } from './delivery.js';
 import type {
   AgentStreamEvent,
@@ -10,17 +11,15 @@ import type {
 /**
  * IPC channels shared by the main process, the preload bridge and the renderer.
  *
- * The renderer never runs a check or a model: it asks, the main process works,
- * and patches come back for `ModelSession` to apply so undo keeps covering agent
- * edits.
+ * The renderer never runs a model inference. The main process commits AI
+ * edits and publishes history entries for the renderer to replay.
  */
 export const EVIDENCE_AGENT_IPC_CHANNELS = {
   prompt: 'evidence:agent:prompt',
   steer: 'evidence:agent:steer',
   abort: 'evidence:agent:abort',
   events: 'evidence:agent:events',
-  applyPatch: 'evidence:agent:apply-patch',
-  applyPatchResult: 'evidence:agent:apply-patch-result',
+  patchCommitted: 'evidence:agent:patch-committed',
   canvasContext: 'evidence:agent:canvas-context',
   triggerSensors: 'evidence:sensor:trigger',
   modelChanged: 'evidence:sensor:model-changed',
@@ -51,7 +50,12 @@ export interface AgentSteerInput extends AgentProjectInput {
 
 export interface AgentPromptInput extends AgentSteerInput {
   focus?: AgentTurnFocus;
+  /** The editor's last published document revision. */
+  revision?: number;
+  editorId?: string;
 }
+
+export type LiveModelInput = LiveDeliveryInput & { editorId: string };
 
 export type AgentActionResult =
   | { success: true }
@@ -66,16 +70,26 @@ export type AgentSteerOutcome =
   | AgentSteerResult
   | { success: false; error: string };
 
-/** Main asks the renderer to apply a patch through its live `ModelSession`. */
-export interface ApplyPatchRequest {
-  requestId: string;
-  patch: ModelPatchRequest;
+export interface PatchTransaction {
+  readonly id: string;
+  readonly baseRevision: number;
+  readonly revision: number;
+  readonly rationale: string;
+  readonly commands: readonly string[];
+  readonly patches: readonly JsonPatchOperation[];
+  readonly inversePatches: readonly JsonPatchOperation[];
 }
 
-export interface ApplyPatchResponse {
-  requestId: string;
-  result: ModelPatchResult;
+export interface PatchCommittedPayload {
+  readonly rootPath: string;
+  readonly editorId: string;
+  readonly transaction: PatchTransaction;
 }
+
+/** On settlement, replay committed events if the renderer missed any live broadcasts. */
+export type AgentPromptResult = AgentActionResult & {
+  transactions?: readonly PatchTransaction[];
+};
 
 export interface AgentEventPayload {
   rootPath: string;
@@ -99,14 +113,12 @@ export interface CanvasContextRegistration {
 
 /** The agent surface the renderer may reach. */
 export interface EvidenceAgentApi {
-  prompt: (input: AgentPromptInput) => Promise<AgentActionResult>;
+  prompt: (input: AgentPromptInput) => Promise<AgentPromptResult>;
   steer: (input: AgentSteerInput) => Promise<AgentSteerOutcome>;
   abort: (input: AgentProjectInput) => Promise<AgentActionResult>;
   triggerSensors: (input: SensorTriggerInput) => Promise<SensorReport>;
   /** Fires on every model edit; the main process debounces the sensor run. */
-  notifyModelChanged: (
-    input: AgentProjectInput | LiveDeliveryInput,
-  ) => Promise<void>;
+  notifyModelChanged: (input: LiveModelInput) => Promise<void>;
   latestReport: (input: AgentProjectInput) => Promise<SensorReport | null>;
   /** Publishes the current selection so tools can read it. */
   publishCanvasContext: (input: CanvasContextRegistration) => Promise<void>;
@@ -114,10 +126,9 @@ export interface EvidenceAgentApi {
   onEvent: (listener: (payload: AgentEventPayload) => void) => () => void;
   /** Subscribes to sensor verdicts; returns an unsubscribe. */
   onReport: (listener: (payload: SensorReportPayload) => void) => () => void;
-  /** Applies agent patches to the live session; returns an unsubscribe. */
-  onApplyPatch: (listener: (request: ApplyPatchRequest) => void) => () => void;
-  /** Answers one `onApplyPatch` request. */
-  respondPatch: (response: ApplyPatchResponse) => void;
+  onPatchCommitted: (
+    listener: (payload: PatchCommittedPayload) => void,
+  ) => () => void;
 }
 
 export type {

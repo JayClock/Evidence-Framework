@@ -1,5 +1,7 @@
 import type {
   AgentActionResult,
+  AgentPromptInput,
+  AgentPromptResult,
   AgentTurnFocus,
   EvidenceAgentApi,
 } from '@evidence-poc/desktop-contracts/agentIpc';
@@ -141,6 +143,10 @@ const initialState: StreamState = {
 export const useAgentSession = (
   api: Pick<EvidenceAgentApi, 'onEvent' | 'prompt' | 'abort'>,
   rootPath: string,
+  executePrompt: (
+    input: AgentPromptInput,
+    isCancelled: () => boolean,
+  ) => Promise<AgentPromptResult> = api.prompt,
 ): AgentSessionController => {
   const [state, setState] = useState<StreamState>(initialState);
   const active = useRef<{
@@ -180,11 +186,14 @@ export const useAgentSession = (
       setState({ ...initialState, running: true });
 
       try {
-        const result = await api.prompt({
-          rootPath,
-          text: trimmed,
-          ...(focus === undefined ? {} : { focus }),
-        });
+        const result = await executePrompt(
+          {
+            rootPath,
+            text: trimmed,
+            ...(focus === undefined ? {} : { focus }),
+          },
+          () => turn.interrupted,
+        );
         if (active.current !== turn)
           return { success: false, error: '项目已切换。' };
         if (!result.success) {
@@ -214,7 +223,7 @@ export const useAgentSession = (
         }
       }
     },
-    [api, rootPath],
+    [executePrompt, rootPath],
   );
 
   const stop = useCallback(async () => {

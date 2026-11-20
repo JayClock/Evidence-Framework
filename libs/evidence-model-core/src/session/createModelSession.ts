@@ -1,4 +1,4 @@
-import { applyPatches, produceWithPatches, type Patch } from 'immer';
+import { applyPatches, produceWithPatches } from 'immer';
 import {
   type DomainModelDocument,
   type JsonPatchOperation,
@@ -6,9 +6,10 @@ import {
   strictValidateDomainModel,
 } from '@evidence-poc/evidence-schema';
 import { createDomainGraph, type DomainGraph } from '../model/graph.js';
-import { applyJsonPatchMutator } from './jsonPatches.js';
+import { applyJsonPatchMutator, applyModelPatches } from './jsonPatches.js';
 import { snapshotRecipeResult } from './recipeResult.js';
 import type {
+  HistoryPatches,
   HistoryEntry,
   ModelRecipe,
   ModelSelection,
@@ -44,6 +45,14 @@ export interface ModelSession {
   canRedo(): boolean;
   mutate<TResult>(recipe: ModelRecipe<TResult>, label?: string): TResult;
   applyPatchBatch(patches: readonly JsonPatchOperation[], label?: string): void;
+  /** Suspend local writes while an external writer owns the document. Selection remains local. */
+  isDocumentLocked(): boolean;
+  lockDocument(): () => void;
+  applyCommittedPatch(
+    patches: readonly JsonPatchOperation[],
+    inversePatches: readonly JsonPatchOperation[],
+    label: string,
+  ): void;
   undo(): boolean;
   redo(): boolean;
   select(nodeId: string | null): void;
@@ -96,6 +105,11 @@ export function createModelSession(options: ModelSessionOptions): ModelSession {
   let selection: ModelSelection = { nodeId: null, attributeName: null };
   let undoStack: HistoryEntry[] = [];
   let redoStack: HistoryEntry[] = [];
+  let writeLocks = 0;
+  const assertWritable = () => {
+    if (writeLocks !== 0)
+      throw new Error('AI 正在编辑模型，请先结束本轮访谈。');
+  };
   const emit = (event: ModelSessionEvent): void => {
     for (const listener of listeners) listener(event);
   };
@@ -132,40 +146,40 @@ export function createModelSession(options: ModelSessionOptions): ModelSession {
   };
   const record = (
     next: DomainModelDocument,
-    patches: Patch[],
-    inversePatches: Patch[],
-    label: string,
+    entry: HistoryPatches & { label: string },
   ): void => {
-    if (patches.length === 0) return;
+    if (entry.patches.length === 0) return;
     guard(next);
     const affectedIds = extractAffectedIds(document, next);
-    undoStack = [
-      ...undoStack,
-      { label, patches, inversePatches, affectedIds },
-    ].slice(-historyLimit);
+    undoStack = [...undoStack, { ...entry, affectedIds }].slice(-historyLimit);
     redoStack = [];
     updateDocument(next);
-    emit({ type: 'document-changed', commands: [label], affectedIds });
+    emit({ type: 'document-changed', commands: [entry.label], affectedIds });
     emitHistory();
   };
   const mutate = <TResult>(
     recipe: ModelRecipe<TResult>,
     label = 'mutation',
   ): TResult => {
+    assertWritable();
     let result!: TResult;
     const [next, patches, inverse] = produceWithPatches(document, (draft) => {
       result = snapshotRecipeResult(recipe(draft));
     });
-    record(next, patches, inverse, label);
+    record(next, { format: 'immer', patches, inversePatches: inverse, label });
     return result;
   };
   const travel = (undo: boolean): boolean => {
+    if (writeLocks !== 0) return false;
     const entry = (undo ? undoStack : redoStack).at(-1);
     if (!entry) return false;
-    const next = applyPatches(
-      document,
-      undo ? entry.inversePatches : entry.patches,
-    );
+    const next =
+      entry.format === 'immer'
+        ? applyPatches(document, undo ? entry.inversePatches : entry.patches)
+        : applyModelPatches(
+            document,
+            undo ? entry.inversePatches : entry.patches,
+          );
     if (undo) {
       undoStack.pop();
       redoStack.push(entry);
@@ -193,6 +207,24 @@ export function createModelSession(options: ModelSessionOptions): ModelSession {
     applyPatchBatch: (patches, label = 'batch-patches') => {
       mutate((draft) => applyJsonPatchMutator(draft, patches), label);
     },
+    isDocumentLocked: () => writeLocks !== 0,
+    lockDocument: () => {
+      writeLocks++;
+      let held = true;
+      return () => {
+        if (!held) return;
+        held = false;
+        writeLocks--;
+      };
+    },
+    applyCommittedPatch: (patches, inversePatches, label) => {
+      const next = applyModelPatches(document, patches);
+      record(next, {
+        format: 'json',
+        ...structuredClone({ patches, inversePatches }),
+        label,
+      });
+    },
     undo: () => travel(true),
     redo: () => travel(false),
     select: (nodeId) => {
@@ -208,6 +240,7 @@ export function createModelSession(options: ModelSessionOptions): ModelSession {
       emit({ type: 'selection-changed', selection });
     },
     replaceDocument: (next, opts) => {
+      assertWritable();
       if (opts?.resetHistory) {
         undoStack = [];
         redoStack = [];
@@ -224,7 +257,12 @@ export function createModelSession(options: ModelSessionOptions): ModelSession {
           document,
           () => next,
         );
-        record(replacement, patches, inverse, 'replace-document');
+        record(replacement, {
+          format: 'immer',
+          patches,
+          inversePatches: inverse,
+          label: 'replace-document',
+        });
       }
     },
     subscribe: (listener) => {
