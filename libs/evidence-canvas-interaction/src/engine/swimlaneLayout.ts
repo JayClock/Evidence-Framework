@@ -81,14 +81,17 @@ export const computeSwimlaneLayout = (
   const laneOf = (entity: EntityAST): string =>
     entity.category === 'evidence' && entity.kind === 'contract'
       ? '__agreement__'
-      : (placements.get(entity.id)?.roleId ?? '__support__');
+      : (placements.get(entity.id)?.roleId ??
+        (entity.category === 'evidence' ? '__evidence__' : '__support__'));
   const trackOf = (entity: EntityAST) => placements.get(entity.id)!.corridor;
   const laneLabel = (lane: string) =>
     lane === '__agreement__'
       ? '共同约定'
       : lane === '__support__'
-        ? '标的物与能力支撑'
-        : (graph.getEntity(lane)?.label ?? `待核对角色：${lane}`);
+        ? '参与方、标的物与领域能力'
+        : lane === '__evidence__'
+          ? '业务凭证'
+          : (graph.getEntity(lane)?.label ?? `待核对角色：${lane}`);
   const nextSlot = new Map<string, number>();
   const slots = new Map<string, number>();
   const widths = LIFECYCLE_STAGE_ORDER.map(() => pitch);
@@ -145,7 +148,35 @@ export const computeSwimlaneLayout = (
     x: phaseX[order]!,
     width: widths[order]!,
   }));
+  const stageSpanByContext = new Map<string, { first: number; last: number }>();
+  const stageSpan = (node: ElkNode) => {
+    const entity = graph.getEntity(node.id)!;
+    let first = phaseOf(entity);
+    let last = first;
+    if (entity.category === 'context') {
+      if (entity.kind === 'pre_contract') {
+        first = lifecycleStageRank('rfp');
+        last = lifecycleStageRank('proposal');
+      } else if (entity.kind === 'contract') {
+        last = lifecycleStageRank('fulfillment');
+      }
+      for (const child of node.children ?? []) {
+        const span = stageSpan(child);
+        first = Math.min(first, span.first);
+        last = Math.max(last, span.last);
+      }
+      stageSpanByContext.set(node.id, { first, last });
+    }
+    return { first, last };
+  };
+  for (const child of root.children ?? []) stageSpan(child);
+
   const place = (container: ElkNode, originX: number, originY: number) => {
+    const span = stageSpanByContext.get(container.id);
+    const right = span
+      ? phaseX[span.last]! + widths[span.last]! - 32
+      : totalWidth;
+    const laneWidth = right - originX - 48;
     const cards = (container.children ?? []).filter(
       (n) => graph.getEntity(n.id)?.category !== 'context',
     );
@@ -200,7 +231,7 @@ export const computeSwimlaneLayout = (
           box: {
             x: originX + 24,
             y: originY + y + i * rowHeight,
-            width: totalWidth - originX - 72,
+            width: laneWidth,
             height: rowHeight,
           },
         });
@@ -214,22 +245,23 @@ export const computeSwimlaneLayout = (
         box: {
           x: originX + 24,
           y: originY + top,
-          width: totalWidth - originX - 72,
+          width: laneWidth,
           height: y - top,
         },
       });
       y += 32;
     };
     placeTrack('primary_track');
+    placeTrack('remedy_corridor');
     for (const child of contexts) {
-      child.x = 24;
+      const first = stageSpanByContext.get(child.id)!.first;
+      const left = Math.max(originX + 24, phaseX[first]! - 164);
+      child.x = left - originX;
       child.y = y;
-      place(child, originX + 24, originY + y);
+      place(child, left, originY + y);
       y += (child.height ?? 84) + 32;
     }
-    placeTrack('remedy_corridor');
-    container.width =
-      totalWidth - originX - (container.id === root.id ? 0 : 24);
+    container.width = right - originX;
     container.height = y + 24;
   };
   place(root, 0, 0);

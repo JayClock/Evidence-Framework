@@ -162,6 +162,32 @@ describe('responsibility swimlanes', () => {
     },
   );
 
+  it('frames channel, contract and domain contexts in their lifecycle regions', async () => {
+    const model = createFixtureDocument();
+    const contract = model.entities.find(
+      (entity) => entity.id === 'context.product-procurement',
+    );
+    if (contract?.category !== 'context')
+      throw new Error('Missing contract context');
+    delete contract.parentContextRef;
+    const layout = await computeGraphLayout(createDomainGraph(model), {
+      layoutMode: 'swimlane',
+    });
+    const frame = (ref: string) => layout.contextGroupById.get(ref)!.worldBox;
+    const column = (stage: string) =>
+      layout.journeyMilestones!.find((item) => item.stage === stage)!;
+    const channel = frame('context.product-sourcing');
+    const agreement = frame(contract.id);
+    const domain = frame('context.product-catalog');
+    expect(channel.x + channel.width).toBeLessThan(column('contract').x);
+    expect(agreement.x).toBeGreaterThan(column('proposal').x);
+    expect(agreement.x + agreement.width).toBeGreaterThan(
+      column('fulfillment').x,
+    );
+    expect(domain.y).toBeGreaterThan(agreement.y + agreement.height);
+    expect(domain.x).toBeGreaterThan(column('contract').x);
+  });
+
   it('keeps anonymous requests and confirmations in the fulfillment stage in causal order', async () => {
     const model = createFixtureDocument();
     const request = model.entities.find(
