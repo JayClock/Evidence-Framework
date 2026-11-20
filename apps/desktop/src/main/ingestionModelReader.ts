@@ -44,6 +44,7 @@ export const createModelIngestionReader = ({
       projectRoot: cwd,
       instructions: [systemPrompt],
       noTools: 'all',
+      inMemory: true,
     });
 
     let reply = '';
@@ -72,7 +73,7 @@ export const createModelIngestionReader = ({
       return reply;
     } finally {
       unsubscribe();
-      session.dispose();
+      await session.dispose();
 
       if (workingDirectory === undefined) {
         await rm(cwd, { recursive: true, force: true }).catch(() => undefined);

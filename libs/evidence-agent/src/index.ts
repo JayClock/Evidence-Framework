@@ -46,20 +46,11 @@ export {
 
 export {
   createEvidenceAgentSession,
-  loadPiSdkPort,
+  openEvidenceSessionRuntime,
   type EvidenceAgentSession,
   type EvidenceAgentSessionOptions,
   type EvidenceModelOptions,
-  type PiSdkPort,
 } from './session/evidenceAgentSession.js';
-
-export {
-  SessionForkError,
-  forkSessionLines,
-  type SessionForkErrorCode,
-  type SessionForkOptions,
-  type SessionForkResult,
-} from './session/sessionFork.js';
 
 export {
   projectSessionEvent,

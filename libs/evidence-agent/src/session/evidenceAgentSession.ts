@@ -1,7 +1,7 @@
 import path from 'node:path';
-
 import type {
   AgentSession,
+  AgentSessionRuntime,
   InlineExtension,
   ModelRuntime,
   ToolDefinition,
@@ -10,7 +10,6 @@ import type {
 import { EVIDENCE_INSTRUCTIONS } from '../prompts/index.js';
 import { type AgentStreamEvent, projectSessionEvent } from './streamEvents.js';
 
-/** Explicit model dependencies shared by desktop AI entry points. */
 export interface EvidenceModelOptions {
   agentDir?: string;
   modelRuntime?: ModelRuntime;
@@ -18,250 +17,162 @@ export interface EvidenceModelOptions {
   thinkingLevel?: 'off' | 'low' | 'medium' | 'high';
 }
 
-/** The few Pi SDK entry points the desktop needs, narrowed for injection. */
-export interface PiSdkPort {
-  getAgentDir(): string;
-  createResourceLoader(options: {
-    cwd: string;
-    agentDir: string;
-    /** Sections appended to Pi's own system prompt, in order. */
-    instructions?: readonly string[];
-    extensionFactories?: readonly InlineExtension[];
-  }): { reload(): Promise<void> };
-  createSessionManager(cwd: string, sessionDirectory?: string): unknown;
-  /** Opens one persisted transcript so a branch resumes its own lineage. */
-  openSessionManager(sessionFile: string): unknown;
-  createAgentSession(
-    options: EvidenceModelOptions & {
-      cwd: string;
-      resourceLoader: unknown;
-      sessionManager: unknown;
-      customTools?: readonly ToolDefinition[];
-      tools?: readonly string[];
-      noTools?: 'all' | 'builtin';
-    },
-  ): Promise<{ session: AgentSession }>;
-}
-
 export interface EvidenceAgentSessionOptions extends EvidenceModelOptions {
-  /** Project root whose `.evidence/` and instructions are discovered. */
   projectRoot: string;
-  /** Defaults to `~/.pi/agent` through Pi's own resolver. */
-  agentDir?: string;
-  /**
-   * System-prompt sections appended after Pi's own prompt.
-   *
-   * Defaults to {@link EVIDENCE_INSTRUCTIONS}: the modeling rules travel with
-   * the code, so a project does not have to carry a skill tree for the agent to
-   * know how to behave.
-   */
   instructions?: readonly string[];
   extensionFactories?: readonly InlineExtension[];
   customTools?: readonly ToolDefinition[];
-  /** Where Pi persists the JSONL audit trail; defaults to Pi's session directory. */
   sessionDirectory?: string;
-  /**
-   * Persisted transcript this session continues.
-   *
-   * A branch owns its own forked transcript, so resuming it must not read the
-   * main conversation; when set, `sessionDirectory` is ignored.
-   */
   sessionFile?: string;
-  /** Tool allowlist; omit to keep Pi's defaults plus the custom tools. */
+  inMemory?: boolean;
   tools?: readonly string[];
   noTools?: 'all' | 'builtin';
-  /** Injected SDK boundary; tests pass a fake. */
-  sdk?: PiSdkPort;
 }
 
 export interface EvidenceAgentSession {
   readonly projectRoot: string;
-  /** Creates the SDK session once; later calls are a no-op. */
   start(): Promise<void>;
-  /** Live Pi session, or null before `start()`. */
   getSession(): AgentSession | null;
-  /** Transcript file Pi writes for this session, or null before it persists one. */
   getSessionFile(): string | null;
   prompt(text: string): Promise<void>;
-  /** Queues a correction while a run streams; never restarts the run. */
   steer(text: string): Promise<'handled' | 'queued'>;
   abort(): Promise<void>;
   subscribe(listener: (event: AgentStreamEvent) => void): () => void;
-  dispose(): void;
+  dispose(): void | Promise<void>;
 }
 
-/**
- * Adapts the Pi SDK to the narrow port above.
- *
- * The import stays dynamic so the package loads in unit tests without a
- * configured model, credentials or terminal.
- */
-export const loadPiSdkPort = async (): Promise<PiSdkPort> => {
+/** Pi owns history and replacement; the host owns project scope and tool access. */
+export const openEvidenceSessionRuntime = async (
+  options: EvidenceAgentSessionOptions,
+): Promise<AgentSessionRuntime> => {
   const sdk = await import('@earendil-works/pi-coding-agent');
-
-  return {
-    getAgentDir: () => sdk.getAgentDir(),
-    createResourceLoader: ({
-      cwd,
-      agentDir,
-      instructions = [],
-      extensionFactories = [],
-    }) =>
-      new sdk.DefaultResourceLoader({
+  const cwd = path.resolve(options.projectRoot);
+  const agentDir = options.agentDir ?? sdk.getAgentDir();
+  const sessionManager = options.sessionFile
+    ? sdk.SessionManager.open(
+        options.sessionFile,
+        options.sessionDirectory,
+        cwd,
+      )
+    : options.inMemory
+      ? sdk.SessionManager.inMemory(cwd)
+      : sdk.SessionManager.create(
+          cwd,
+          options.sessionDirectory ??
+            (options.agentDir ? path.join(agentDir, 'sessions') : undefined),
+        );
+  return sdk.createAgentSessionRuntime(
+    async (target) => {
+      if (target.cwd !== cwd) throw new Error('会话不属于当前项目。');
+      const services = await sdk.createAgentSessionServices({
         cwd,
         agentDir,
-        // A packaged app owns its instructions. Pi would otherwise scan the
-        // project and the user's agent directory for `SKILL.md`, which both
-        // widens the prompt with files the install never reviewed and asks the
-        // model to go looking for a skill that is not part of this product.
-        noSkills: true,
-        appendSystemPromptOverride: (base) => [...base, ...instructions],
-        extensionFactories: [...extensionFactories],
-      }),
-    createSessionManager: (cwd, sessionDirectory) =>
-      sessionDirectory === undefined
-        ? sdk.SessionManager.create(cwd)
-        : sdk.SessionManager.create(cwd, sessionDirectory),
-    openSessionManager: (sessionFile) => sdk.SessionManager.open(sessionFile),
-    createAgentSession: async (options) =>
-      sdk.createAgentSession({
-        cwd: options.cwd,
-        agentDir: options.agentDir,
         modelRuntime: options.modelRuntime,
-        model: options.model,
-        thinkingLevel: options.thinkingLevel,
-        resourceLoader: options.resourceLoader as never,
-        sessionManager: options.sessionManager as never,
-        ...(options.customTools === undefined
-          ? {}
-          : { customTools: [...options.customTools] }),
-        ...(options.tools === undefined ? {} : { tools: [...options.tools] }),
-        ...(options.noTools === undefined ? {} : { noTools: options.noTools }),
-      }),
-  };
+        settingsManager: sdk.SettingsManager.inMemory(),
+        resourceLoaderOptions: {
+          noSkills: true,
+          noExtensions: true,
+          noPromptTemplates: true,
+          noThemes: true,
+          noContextFiles: true,
+          systemPromptOverride: () =>
+            (options.instructions ?? EVIDENCE_INSTRUCTIONS).join('\n\n'),
+          appendSystemPromptOverride: () => [],
+          extensionFactories: [...(options.extensionFactories ?? [])],
+        },
+      });
+      return {
+        ...(await sdk.createAgentSessionFromServices({
+          services,
+          sessionManager: target.sessionManager,
+          sessionStartEvent: target.sessionStartEvent,
+          model: options.model,
+          thinkingLevel: options.thinkingLevel,
+          noTools: options.noTools ?? 'builtin',
+          tools: options.tools ? [...options.tools] : undefined,
+          customTools: options.customTools
+            ? [...options.customTools]
+            : undefined,
+        })),
+        services,
+        diagnostics: services.diagnostics,
+      };
+    },
+    { cwd, agentDir, sessionManager },
+  );
 };
 
-/**
- * One in-process evidence modeling conversation.
- *
- * Sessions are created lazily because the factory reads credentials and project
- * trust; the desktop should only pay that cost when the user actually asks a
- * question.
- */
 export const createEvidenceAgentSession = (
   options: EvidenceAgentSessionOptions,
 ): EvidenceAgentSession => {
   const projectRoot = path.resolve(options.projectRoot);
   const listeners = new Set<(event: AgentStreamEvent) => void>();
-  let session: AgentSession | null = null;
-  let unsubscribePi: (() => void) | null = null;
-  let starting: Promise<void> | null = null;
+  let runtime: AgentSessionRuntime | undefined;
+  let starting: Promise<void> | undefined;
+  let disposed = false;
+  let unsubscribe: (() => void) | undefined;
 
-  const emit = (events: readonly AgentStreamEvent[]): void => {
-    for (const streamEvent of events) {
-      for (const listener of listeners) {
-        listener(streamEvent);
+  const start = async () => {
+    if (disposed) throw new Error('会话已关闭。');
+    if (runtime) return;
+    const pending = (starting ??= (async () => {
+      const next = await openEvidenceSessionRuntime(options);
+      const bind = async (session: AgentSession) => {
+        unsubscribe?.();
+        unsubscribe = session.subscribe((event) => {
+          for (const projected of projectSessionEvent(event)) {
+            for (const listener of listeners) listener(projected);
+          }
+        });
+        await session.bindExtensions({});
+      };
+      try {
+        if (disposed) throw new Error('会话已关闭。');
+        next.setRebindSession(bind);
+        await bind(next.session);
+        if (disposed) throw new Error('会话已关闭。');
+        runtime = next;
+      } catch (error) {
+        unsubscribe?.();
+        await next.dispose();
+        throw error;
       }
-    }
-  };
-
-  const start = async (): Promise<void> => {
-    if (session !== null) {
-      return;
-    }
-
-    starting ??= (async () => {
-      const sdk = options.sdk ?? (await loadPiSdkPort());
-      const agentDir = options.agentDir ?? sdk.getAgentDir();
-      const resourceLoader = sdk.createResourceLoader({
-        cwd: projectRoot,
-        agentDir,
-        instructions: options.instructions ?? EVIDENCE_INSTRUCTIONS,
-        ...(options.extensionFactories === undefined
-          ? {}
-          : { extensionFactories: options.extensionFactories }),
-      });
-
-      await resourceLoader.reload();
-
-      const created = await sdk.createAgentSession({
-        cwd: projectRoot,
-        agentDir,
-        modelRuntime: options.modelRuntime,
-        model: options.model,
-        thinkingLevel: options.thinkingLevel,
-        resourceLoader,
-        sessionManager:
-          options.sessionFile === undefined
-            ? sdk.createSessionManager(
-                projectRoot,
-                options.sessionDirectory ??
-                  (options.agentDir === undefined
-                    ? undefined
-                    : path.join(agentDir, 'sessions')),
-              )
-            : sdk.openSessionManager(options.sessionFile),
-        ...(options.customTools === undefined
-          ? {}
-          : { customTools: options.customTools }),
-        ...(options.tools === undefined ? {} : { tools: options.tools }),
-        ...(options.noTools === undefined ? {} : { noTools: options.noTools }),
-      });
-
-      session = created.session;
-      unsubscribePi = session.subscribe((event) => {
-        emit(projectSessionEvent(event));
-      });
-    })();
-
+    })());
     try {
-      await starting;
-    } catch (error) {
-      starting = null;
-      throw error;
+      await pending;
+    } finally {
+      if (starting === pending) starting = undefined;
     }
   };
 
-  const requireSession = async (): Promise<AgentSession> => {
+  const requireSession = async () => {
     await start();
-
-    if (session === null) {
-      throw new Error('Pi agent session failed to start.');
-    }
-
-    return session;
+    if (!runtime || disposed) throw new Error('会话已关闭。');
+    return runtime.session;
   };
 
   return {
     projectRoot,
     start,
-    getSession: () => session,
-    getSessionFile: () => session?.sessionManager.getSessionFile() ?? null,
-    prompt: async (text) => {
-      const active = await requireSession();
-
-      await active.prompt(text);
-    },
+    getSession: () => runtime?.session ?? null,
+    getSessionFile: () => runtime?.session.sessionFile ?? null,
+    prompt: async (text) => (await requireSession()).prompt(text),
     steer: async (text) => (await requireSession()).steer(text),
     abort: async () => {
-      if (session !== null) {
-        await session.abort();
-      }
+      await runtime?.session.abort();
     },
     subscribe: (listener) => {
       listeners.add(listener);
-
-      return () => {
-        listeners.delete(listener);
-      };
+      return () => listeners.delete(listener);
     },
-    dispose: () => {
-      unsubscribePi?.();
-      unsubscribePi = null;
-      session?.dispose();
-      session = null;
-      starting = null;
+    dispose: async () => {
+      disposed = true;
+      unsubscribe?.();
       listeners.clear();
+      const previous = runtime;
+      runtime = undefined;
+      await previous?.dispose();
+      await starting?.catch(() => undefined);
     },
   };
 };

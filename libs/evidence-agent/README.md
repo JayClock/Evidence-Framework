@@ -2,12 +2,7 @@
 
 进程内的 Pi Harness 底座，提供桌面端建模副驾的会话、传感器和工具：
 
-1. **Agent 会话**（`session/`）——把 `@earendil-works/pi-coding-agent` 收敛成一个窄接口
-   （`PiSdkPort`），把内置建模指令（`prompts/`：角色、建模红线、一轮如何推进）追加到
-   Pi 的系统提示词后启动，并把 Pi 的事件流投影成桌面端可渲染的 `AgentStreamEvent`。
-   会话以 `noSkills: true` 启动，不扫描工作目录寻找 `SKILL.md`。传入 `sessionFile` 时
-   改为续写该份记录，分支因此能拥有自己的对话谱系。记录分叉（`forkSessionLines`）是纯
-   函数，按检查点只保留祖先链并改写 `session` 头（新 `id` 与 `parentSession`）。
+1. **Agent 会话**（`session/`）——由 Pi 的 `AgentSessionRuntime` 和 `SessionManager` 管理会话、恢复与分叉。宿主显式提供建模指令与工具，不加载工作目录里的扩展、技能、模板或上下文文件。Pi 事件投影为桌面端可渲染的 `AgentStreamEvent`，SDK 替换会话后重新绑定订阅。
 2. **传感器**（`sensors/`）——把模型一致性检查、关键数据台账和 API 诊断
    汇总到 `SensorReport`，并据此判定阶段门禁。
 3. **工具注入**（`tools/`）——`createEvidenceToolsExtension` 把模型补丁、API 差异投影
@@ -34,4 +29,4 @@
 npx vitest run --project evidence-agent
 ```
 
-`PiSdkPort` 是注入点：测试用假实现断言参数与事件投影，不会真的启动 Agent。
+会话测试使用真实 SDK 的内存会话，不发送模型请求。

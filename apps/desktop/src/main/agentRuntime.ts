@@ -225,7 +225,7 @@ export const createAgentRuntime = ({
       session = created;
       return created;
     } catch (error) {
-      created.dispose();
+      await created.dispose();
       throw error;
     }
   };
@@ -310,7 +310,7 @@ export const createAgentRuntime = ({
       try {
         await previous?.abort();
       } finally {
-        previous?.dispose();
+        await previous?.dispose();
       }
     },
     dispose: () => {
@@ -318,7 +318,7 @@ export const createAgentRuntime = ({
       ++runSequence;
       live = undefined;
       backgroundSensors.cancel();
-      session?.dispose();
+      void Promise.resolve(session?.dispose()).catch(console.error);
       session = null;
       starting = null;
     },
