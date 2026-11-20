@@ -18,6 +18,7 @@ const Harness = ({ rootPath }: { rootPath: string }) => {
       <p data-testid="running">{agent.state.running ? 'running' : 'idle'}</p>
       <p data-testid="tool">{agent.state.activeToolName ?? 'none'}</p>
       <p data-testid="transcript">{agent.state.transcript}</p>
+      <p data-testid="thinking">{agent.state.thinking}</p>
       <p data-testid="error">{agent.state.error ?? 'none'}</p>
       <ul data-testid="activities">
         {agent.state.activities.map((activity) => (
@@ -91,6 +92,36 @@ describe('useAgentSession', () => {
       'run_sensors:completed',
     );
     expect(screen.getByTestId('tool')).toHaveTextContent('none');
+    finish();
+    await waitFor(() =>
+      expect(screen.getByTestId('running')).toHaveTextContent('idle'),
+    );
+  });
+
+  it('reconciles final messages without duplicating deltas and clears retry errors', async () => {
+    const api = installDesktopApi();
+    const finish = holdPrompt(api);
+    render(<Harness rootPath="/models/procurement" />);
+    fireEvent.click(screen.getByText('提交'));
+    act(() => {
+      api.agentMock.emitEvent({ type: 'text-delta', delta: 'failed partial' });
+      api.agentMock.emitEvent({ type: 'agent-error', message: 'retry' });
+      api.agentMock.emitEvent({
+        type: 'thinking-delta',
+        delta: 'partial reasoning',
+      });
+      api.agentMock.emitEvent({ type: 'text-delta', delta: 'partial answer' });
+      api.agentMock.emitEvent({
+        type: 'assistant-message-ended',
+        text: '<thought>literal text</thought>',
+        thinking: 'final reasoning',
+      });
+    });
+    expect(screen.getByTestId('transcript')).toHaveTextContent(
+      '<thought>literal text</thought>',
+    );
+    expect(screen.getByTestId('thinking')).toHaveTextContent('final reasoning');
+    expect(screen.getByTestId('error')).toHaveTextContent('none');
     finish();
     await waitFor(() =>
       expect(screen.getByTestId('running')).toHaveTextContent('idle'),

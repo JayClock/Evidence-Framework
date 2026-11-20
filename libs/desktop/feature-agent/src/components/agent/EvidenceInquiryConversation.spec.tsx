@@ -11,6 +11,8 @@ const controller = (
   state: {
     running: false,
     transcript: '',
+    thinking: '',
+    thinkingActive: false,
     activities: [],
     error: null,
     activeToolName: null,
@@ -105,8 +107,8 @@ describe('EvidenceInquiryConversation', () => {
   it('folds reasoning, lists tool calls and preserves the answer when reporting an error', () => {
     const { controller: agent } = setup({
       controller: controller({
-        transcript:
-          '<thought>请求是时段，确认是时刻。</thought>退款需要补一个确认端。',
+        transcript: '退款需要补一个确认端。',
+        thinking: '请求是时段，确认是时刻。',
         activities: [
           {
             id: 'call-1',

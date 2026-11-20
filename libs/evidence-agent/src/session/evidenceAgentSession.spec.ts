@@ -13,7 +13,7 @@ import {
 import { projectSessionEvent } from './streamEvents.js';
 
 describe('projectSessionEvent', () => {
-  it('keeps text deltas and drops unrelated assistant updates', () => {
+  it('projects separate text and thinking deltas', () => {
     expect(
       projectSessionEvent({
         type: 'message_update',
@@ -29,9 +29,31 @@ describe('projectSessionEvent', () => {
       projectSessionEvent({
         type: 'message_update',
         message: { role: 'assistant' } as never,
-        assistantMessageEvent: { type: 'thinking_delta' } as never,
+        assistantMessageEvent: {
+          type: 'thinking_delta',
+          delta: '核对来源',
+        } as never,
       }),
-    ).toEqual([]);
+    ).toEqual([{ type: 'thinking-delta', delta: '核对来源' }]);
+  });
+
+  it('projects final text and unredacted thinking from message_end', () => {
+    expect(
+      projectSessionEvent({
+        type: 'message_end',
+        message: {
+          role: 'assistant',
+          stopReason: 'stop',
+          content: [
+            { type: 'thinking', thinking: 'hidden', redacted: true },
+            { type: 'thinking', thinking: 'reason' },
+            { type: 'text', text: 'answer' },
+          ],
+        } as never,
+      }),
+    ).toEqual([
+      { type: 'assistant-message-ended', text: 'answer', thinking: 'reason' },
+    ]);
   });
 
   it('maps tool execution to started and completed events', () => {

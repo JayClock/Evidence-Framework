@@ -8,6 +8,8 @@ import type { AgentSessionEvent } from '@earendil-works/pi-coding-agent';
  */
 export type AgentStreamEvent =
   | { type: 'text-delta'; delta: string }
+  | { type: 'thinking-delta'; delta: string }
+  | { type: 'assistant-message-ended'; text: string; thinking: string }
   | {
       type: 'tool-call-started';
       toolCallId: string;
@@ -27,8 +29,7 @@ export type AgentStreamEvent =
 /**
  * Projects one Pi event onto zero or more desktop stream events.
  *
- * Unknown Pi events (thinking deltas, retries, compaction) are dropped here
- * instead of leaking the SDK's event vocabulary into the renderer.
+ * Low-level agent_end is not a terminal event: retries can follow it.
  */
 export const projectSessionEvent = (
   event: AgentSessionEvent,
@@ -37,9 +38,11 @@ export const projectSessionEvent = (
     case 'message_update': {
       const update = event.assistantMessageEvent;
 
-      return update.type === 'text_delta'
-        ? [{ type: 'text-delta', delta: update.delta }]
-        : [];
+      if (update.type === 'text_delta')
+        return [{ type: 'text-delta', delta: update.delta }];
+      if (update.type === 'thinking_delta')
+        return [{ type: 'thinking-delta', delta: update.delta }];
+      return [];
     }
 
     case 'tool_execution_start':
@@ -69,11 +72,29 @@ export const projectSessionEvent = (
     case 'message_end': {
       const message = event.message;
 
-      return message.role === 'assistant' &&
-        message.stopReason === 'error' &&
-        typeof message.errorMessage === 'string'
-        ? [{ type: 'agent-error', message: message.errorMessage }]
-        : [];
+      if (message.role !== 'assistant') return [];
+      if (message.stopReason === 'error') {
+        return [
+          {
+            type: 'agent-error',
+            message: message.errorMessage ?? '模型请求失败。',
+          },
+        ];
+      }
+      if (message.stopReason === 'aborted') return [];
+      return [
+        {
+          type: 'assistant-message-ended',
+          text: message.content
+            .map((part) => (part.type === 'text' ? part.text : ''))
+            .join(''),
+          thinking: message.content
+            .map((part) =>
+              part.type === 'thinking' && !part.redacted ? part.thinking : '',
+            )
+            .join(''),
+        },
+      ];
     }
 
     default:

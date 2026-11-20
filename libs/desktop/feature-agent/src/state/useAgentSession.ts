@@ -20,6 +20,8 @@ export interface AgentSessionState {
   running: boolean;
   /** Streamed assistant text of the current run. */
   transcript: string;
+  thinking: string;
+  thinkingActive: boolean;
   activities: readonly AgentActivity[];
   error: string | null;
   /** Tool currently executing, for the dock's status line. */
@@ -37,16 +39,41 @@ export interface AgentSessionController {
 
 const MAX_TRANSCRIPT = 8_000;
 
-const reduce = (
-  state: AgentSessionState,
-  event: AgentStreamEvent,
-): AgentSessionState => {
+const append = (left: string, right: string) =>
+  (left + right).slice(-MAX_TRANSCRIPT);
+
+type StreamState = AgentSessionState & {
+  finalizedText: string;
+  finalizedThinking: string;
+};
+
+const reduce = (state: StreamState, event: AgentStreamEvent): StreamState => {
   switch (event.type) {
     case 'text-delta':
       return {
         ...state,
-        transcript: (state.transcript + event.delta).slice(-MAX_TRANSCRIPT),
+        transcript: append(state.transcript, event.delta),
+        thinkingActive: false,
       };
+    case 'thinking-delta':
+      return {
+        ...state,
+        thinking: append(state.thinking, event.delta),
+        thinkingActive: true,
+      };
+    case 'assistant-message-ended': {
+      const text = append(state.finalizedText, event.text);
+      const thinking = append(state.finalizedThinking, event.thinking);
+      return {
+        ...state,
+        finalizedText: text,
+        finalizedThinking: thinking,
+        transcript: text,
+        thinking,
+        thinkingActive: false,
+        error: null,
+      };
+    }
     case 'tool-call-started':
       return {
         ...state,
@@ -77,17 +104,28 @@ const reduce = (
         ),
       };
     case 'agent-settled':
-      return { ...state, activeToolName: null };
+      return { ...state, activeToolName: null, thinkingActive: false };
     case 'agent-error':
-      return { ...state, activeToolName: null, error: event.message };
+      return {
+        ...state,
+        activeToolName: null,
+        thinkingActive: false,
+        transcript: state.finalizedText,
+        thinking: state.finalizedThinking,
+        error: event.message,
+      };
     default:
       return state;
   }
 };
 
-const initialState: AgentSessionState = {
+const initialState: StreamState = {
   running: false,
   transcript: '',
+  thinking: '',
+  thinkingActive: false,
+  finalizedText: '',
+  finalizedThinking: '',
   activities: [],
   error: null,
   activeToolName: null,
@@ -104,8 +142,11 @@ export const useAgentSession = (
   api: Pick<EvidenceAgentApi, 'onEvent' | 'prompt' | 'abort'>,
   rootPath: string,
 ): AgentSessionController => {
-  const [state, setState] = useState<AgentSessionState>(initialState);
-  const active = useRef<{ interrupted: boolean } | null>(null);
+  const [state, setState] = useState<StreamState>(initialState);
+  const active = useRef<{
+    interrupted: boolean;
+    failure: string | null;
+  } | null>(null);
 
   useEffect(() => {
     active.current = null;
@@ -114,12 +155,11 @@ export const useAgentSession = (
     const unsubscribe = api.onEvent((payload) => {
       if (payload.rootPath !== rootPath || active.current === null) return;
       const { event } = payload;
-      if (
-        event.type === 'agent-error' ||
-        (event.type === 'agent-settled' && event.aborted)
-      ) {
+      if (event.type === 'agent-settled' && event.aborted)
         active.current.interrupted = true;
-      }
+      if (event.type === 'agent-error') active.current.failure = event.message;
+      if (event.type === 'assistant-message-ended')
+        active.current.failure = null;
       setState((current) => reduce(current, event));
     });
 
@@ -135,7 +175,7 @@ export const useAgentSession = (
       if (trimmed === '' || active.current !== null)
         return { success: false, error: '请等待当前问询结束并输入业务内容。' };
 
-      const turn = { interrupted: false };
+      const turn = { interrupted: false, failure: null as string | null };
       active.current = turn;
       setState({ ...initialState, running: true });
 
@@ -151,6 +191,8 @@ export const useAgentSession = (
           setState((current) => ({ ...current, error: result.error }));
           return result;
         }
+        if (turn.failure !== null)
+          return { success: false, error: turn.failure };
         return turn.interrupted
           ? { success: false, error: '本轮未完成，可以重试。' }
           : result;
@@ -166,6 +208,7 @@ export const useAgentSession = (
           setState((current) => ({
             ...current,
             running: false,
+            thinkingActive: false,
             activeToolName: null,
           }));
         }

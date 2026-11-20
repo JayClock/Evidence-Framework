@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { CornerDownLeft, Square } from 'lucide-react';
 
 import { Button } from '@evidence-poc/desktop-ui-kit';
@@ -7,7 +7,6 @@ import type { PatchReviewController } from '../../state/usePatchReview';
 import { InlinePatchCard } from './InlinePatchCard';
 import { ThinkingBlock } from './ThinkingBlock';
 import { ToolActivityItem } from './ToolActivityItem';
-import { parseStreamedTranscript } from './thinkingParser';
 
 interface EvidenceInquiryConversationProps {
   nodeId: string;
@@ -32,11 +31,7 @@ export const EvidenceInquiryConversation = ({
   const composerId = useId();
   const bottomRef = useRef<HTMLDivElement>(null);
   const review = patchReview.review;
-  const transcript = aiConfigured ? state.transcript : '';
-  const { thinking, content, thinkingActive } = useMemo(
-    () => parseStreamedTranscript(transcript),
-    [transcript],
-  );
+  const { transcript: content, thinking, thinkingActive } = state;
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView?.({ block: 'end' });
@@ -74,7 +69,10 @@ export const EvidenceInquiryConversation = ({
                 </Button>
               </div>
             )}
-            <ThinkingBlock thinking={thinking} active={thinkingActive} />
+            <ThinkingBlock
+              thinking={thinking || null}
+              active={thinkingActive}
+            />
             {content === '' ? null : (
               <pre
                 aria-label="AI 回复"

@@ -55,6 +55,14 @@ export const createModelIngestionReader = ({
         reply += event.delta;
       }
 
+      if (event.type === 'assistant-message-ended') {
+        reply = event.text;
+        failure = null;
+      }
+      if (event.type === 'agent-settled' && event.aborted) {
+        failure = '模型读取已取消。';
+      }
+
       // A subscriber runs inside Pi's dispatch loop, so an error is recorded and
       // rethrown after the turn instead of being thrown into a void.
       if (event.type === 'agent-error') {
