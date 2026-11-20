@@ -73,7 +73,10 @@ const startApplication = async (): Promise<void> => {
     legacyEncryption: safeStorage,
   });
   const getModelOptions = () => aiConfig.getModelOptions();
-  const agentIpc = registerAgentIpc({ getModelOptions });
+  const agentIpc = registerAgentIpc({
+    getModelOptions,
+    sessionsRoot: path.join(userDataPath, 'sessions'),
+  });
 
   registerProjectIpc({ projectStore, openEditorWindow });
   registerIngestionIpc({

@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { ipcMain, type WebContents } from 'electron';
 import {
@@ -21,6 +22,7 @@ import {
 export interface AgentIpcOptions {
   createRuntime?: typeof createAgentRuntime;
   getModelOptions?: AgentRuntimeOptions['getModelOptions'];
+  sessionsRoot?: string;
 }
 
 type Owner = {
@@ -37,6 +39,7 @@ const toMessage = (error: unknown): string =>
 export const registerAgentIpc = ({
   createRuntime = createAgentRuntime,
   getModelOptions,
+  sessionsRoot,
 }: AgentIpcOptions = {}) => {
   const owners = new Map<string, Owner>();
   const canonicalRoot = (rootPath: string) => {
@@ -57,9 +60,13 @@ export const registerAgentIpc = ({
     const send = (channel: string, payload: object) => {
       if (!sender.isDestroyed()) sender.send(channel, { rootPath, ...payload });
     };
+    const sessionDirectory = sessionsRoot
+      ? path.join(sessionsRoot, createHash('sha256').update(root).digest('hex'))
+      : undefined;
     const runtime = createRuntime({
       rootPath,
       getModelOptions,
+      sessionDirectory,
       transport: {
         publishEvent: (event) => send(channels.events, { event }),
         publishReport: (report) => send(channels.report, { report }),

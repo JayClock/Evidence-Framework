@@ -1,4 +1,5 @@
 import { EventEmitter } from 'node:events';
+import path from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
 import {
   EVIDENCE_AGENT_IPC_CHANNELS as channels,
@@ -106,7 +107,7 @@ describe('agent transaction IPC', () => {
     expect(ipc.size).toBe(0);
   });
 
-  it('starts a fresh runtime when the same window reopens the project', () => {
+  it('assigns a stable desktop transcript directory to each project', () => {
     const owner = renderer();
     const dispose = vi.fn();
     const createRuntime = vi.fn<typeof createAgentRuntime>((options) => ({
@@ -114,7 +115,8 @@ describe('agent transaction IPC', () => {
       notifyModelChanged: vi.fn(),
       dispose,
     }));
-    const binding = registerAgentIpc({ createRuntime });
+    const sessionsRoot = path.resolve('desktop-sessions');
+    const binding = registerAgentIpc({ createRuntime, sessionsRoot });
     try {
       invoke(channels.modelChanged, owner, initial);
       invoke(channels.modelChanged, owner, {
@@ -126,8 +128,16 @@ describe('agent transaction IPC', () => {
       expect(() =>
         invoke(channels.modelChanged, owner, { ...initial, revision: 2 }),
       ).toThrow('编辑会话已关闭');
+      const first = createRuntime.mock.calls[0]?.[0].sessionDirectory;
+      expect(first && path.dirname(first)).toBe(sessionsRoot);
+      expect(createRuntime.mock.calls[1]?.[0].sessionDirectory).toBe(first);
       owner.emit('destroyed');
       expect(dispose).toHaveBeenCalledTimes(2);
+      invoke(channels.modelChanged, renderer(), {
+        ...initial,
+        rootPath: '/models/another-project',
+      });
+      expect(createRuntime.mock.calls[2]?.[0].sessionDirectory).not.toBe(first);
     } finally {
       binding.dispose();
     }
