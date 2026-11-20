@@ -224,6 +224,17 @@ body[data-evidence-capture='true'] [data-evidence-capture-hide] {
   }
 }
 
+@keyframes evidence-storming-in {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes evidence-slide-in-top {
   from {
     transform: translateY(-100%);

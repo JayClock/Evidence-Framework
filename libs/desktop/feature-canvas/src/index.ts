@@ -1,3 +1,4 @@
+export type { CanvasStormingControls } from './CanvasStormingBar.js';
 export type {
   CanvasEvidenceInquiry,
   EvidenceInquiryKind,

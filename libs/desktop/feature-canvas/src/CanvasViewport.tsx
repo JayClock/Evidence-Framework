@@ -53,6 +53,10 @@ import { applyStoryFocus, type CanvasStoryFocus } from './storyFocus';
 import { LifecycleSwimlaneOverlay } from './LifecycleSwimlaneOverlay';
 import type { CanvasEvidenceInquiry } from './EvidenceInquiryPopover';
 import { BusinessLegend } from './BusinessLegend';
+import {
+  CanvasStormingBar,
+  type CanvasStormingControls,
+} from './CanvasStormingBar';
 import { ContextGroupNode, EntityNode } from './EntityNode';
 import { FulfillmentEdge, PairLinkEdge } from './FulfillmentEdge';
 import { ScopeFilterControl } from './ScopeFilterControl';
@@ -108,6 +112,7 @@ interface CanvasViewportProps {
   onOpenIssues?: (issues: readonly SensorIssue[]) => void;
   scope?: ContextScope | null;
   evidenceInquiry?: CanvasEvidenceInquiry;
+  storming?: CanvasStormingControls;
   onScopeChange?: (contextId: string | null) => void;
   onSelect: (nodeId: string) => void;
   onClearSelection: () => void;
@@ -222,6 +227,7 @@ const CanvasSurface = ({
   scope = null,
   onScopeChange,
   evidenceInquiry,
+  storming,
   onSelect,
   onClearSelection,
 }: CanvasViewportProps) => {
@@ -710,6 +716,13 @@ const CanvasSurface = ({
       ) : null}
 
       <BusinessLegend compact viewMode={viewMode} />
+
+      {storming === undefined ? null : (
+        <CanvasStormingBar
+          {...storming}
+          empty={document.entities.length === 0}
+        />
+      )}
 
       {/* The radar is a pill until it is asked for. */}
       <button
