@@ -51,6 +51,7 @@ import {
 } from './CanvasInteractionContext';
 import { applyStoryFocus, type CanvasStoryFocus } from './storyFocus';
 import { LifecycleSwimlaneOverlay } from './LifecycleSwimlaneOverlay';
+import type { CanvasEvidenceInquiry } from './EvidenceInquiryPopover';
 import { BusinessLegend } from './BusinessLegend';
 import { ContextGroupNode, EntityNode } from './EntityNode';
 import { FulfillmentEdge, PairLinkEdge } from './FulfillmentEdge';
@@ -106,6 +107,7 @@ interface CanvasViewportProps {
   diagnostics?: DiagnosticIndex;
   onOpenIssues?: (issues: readonly SensorIssue[]) => void;
   scope?: ContextScope | null;
+  evidenceInquiry?: CanvasEvidenceInquiry;
   onScopeChange?: (contextId: string | null) => void;
   onSelect: (nodeId: string) => void;
   onClearSelection: () => void;
@@ -219,6 +221,7 @@ const CanvasSurface = ({
   onOpenIssues,
   scope = null,
   onScopeChange,
+  evidenceInquiry,
   onSelect,
   onClearSelection,
 }: CanvasViewportProps) => {
@@ -230,6 +233,7 @@ const CanvasSurface = ({
     zoomTo,
     getZoom,
     getViewport,
+    setViewport,
     viewportInitialized,
   } = useReactFlow<CanvasFlowNode, CanvasFlowEdge>();
   const { zoom } = useViewport();
@@ -329,7 +333,31 @@ const CanvasSurface = ({
     ]);
     const previous = previousFit.current;
     previousFit.current = { key, scopeId, layout };
-    if (previous?.key === key) return;
+    if (previous?.key === key) {
+      if (previous.layout === layout) return;
+      if (previous.layout.nodes.length === 0 && layout.nodes.length > 0) {
+        fitToContent();
+        return;
+      }
+      const inquiryId = evidenceInquiry?.target?.nodeId;
+      if (inquiryId !== undefined) {
+        const oldBox = previous.layout.nodeById.get(inquiryId)?.worldBox;
+        const newBox = layout.nodeById.get(inquiryId)?.worldBox;
+        if (
+          oldBox !== undefined &&
+          newBox !== undefined &&
+          (oldBox.x !== newBox.x || oldBox.y !== newBox.y)
+        ) {
+          const camera = getViewport();
+          void setViewport({
+            x: camera.x + (oldBox.x - newBox.x) * camera.zoom,
+            y: camera.y + (oldBox.y - newBox.y) * camera.zoom,
+            zoom: camera.zoom,
+          });
+        }
+      }
+      return;
+    }
     if (!previous && viewportMemory?.current?.scopeId === scopeId) {
       const remembered = selectedBox(layout, {
         nodeId: selection.nodeId ?? viewportMemory.current.nodeId,
@@ -379,6 +407,8 @@ const CanvasSurface = ({
     setCenter,
     selection.nodeId,
     hoveredNodeId,
+    evidenceInquiry?.target?.nodeId,
+    setViewport,
     viewportWidth,
     viewportHeight,
     viewportMemory,
@@ -492,9 +522,10 @@ const CanvasSurface = ({
       onHoverNode: setHoveredNodeId,
       onHoverContext: setHoveredContextId,
       onHoverEdge: setHoveredEdgeId,
+      evidenceInquiry,
       onSelect,
     }),
-    [onSelect, viewMode],
+    [evidenceInquiry, onSelect, viewMode],
   );
 
   const changeRings = useMemo(

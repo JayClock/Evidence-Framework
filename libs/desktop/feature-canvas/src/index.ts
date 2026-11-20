@@ -1,11 +1,7 @@
-export {
-  NodeSourcingPopover,
-  type NodeSourcingPopoverProps,
-} from './NodeSourcingPopover.js';
-export {
-  WhatIfStressPanel,
-  type WhatIfStressPanelProps,
-} from './WhatIfStressPanel.js';
+export type {
+  CanvasEvidenceInquiry,
+  EvidenceInquiryKind,
+} from './EvidenceInquiryPopover.js';
 export {
   CanvasViewport,
   type CanvasGridStyle,

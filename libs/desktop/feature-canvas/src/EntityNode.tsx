@@ -2,42 +2,50 @@ import { Handle, Position, type NodeProps } from '@xyflow/react';
 
 import { useCanvasInteraction } from './CanvasInteractionContext';
 import { NodeCard } from './NodeCard';
+import { EvidenceInquiryPopover } from './EvidenceInquiryPopover';
 import type { ContextFlowNode, EntityFlowNode } from './useReactFlowAdapter';
 
-/**
- * One business object as a React Flow node.
- *
- * The card is unchanged — it still draws its own paper, spine and badges — so
- * what the model reads is exactly what the hand-written stage drew. The wrapper
- * contributes the three things the engine needs: a measured box, the handles a
- * routed edge attaches to, and nothing else.
- *
- * The handles are invisible because the polyline is not derived from them: the
- * layout already routed the edge, and an anchor that snapped to a node side
- * would throw that geometry away.
- */
 export const EntityNode = ({ data }: NodeProps<EntityFlowNode>) => {
-  const { viewMode, onHoverNode, onSelect } = useCanvasInteraction();
+  const { viewMode, onHoverNode, onSelect, evidenceInquiry } =
+    useCanvasInteraction();
+  const { entity, box } = data.node;
+  const inquiry =
+    !data.outOfScope && entity.category === 'evidence'
+      ? evidenceInquiry
+      : undefined;
+  const card = (
+    <NodeCard
+      node={data.node}
+      viewMode={viewMode}
+      summary={data.summary}
+      storyValues={data.storyValues}
+      storyStep={data.storyStep}
+      triggeredRuleIds={data.triggeredRuleIds}
+      selected={data.selected}
+      highlighted={data.highlighted}
+      dimmed={data.dimmed}
+      outOfScope={data.outOfScope}
+      hasInquiryActions={inquiry !== undefined}
+      onHover={onHoverNode}
+      onSelect={onSelect}
+    />
+  );
 
   return (
-    <div
-      className="relative"
-      style={{ width: data.node.box.width, height: data.node.box.height }}
-    >
-      <NodeCard
-        node={data.node}
-        viewMode={viewMode}
-        summary={data.summary}
-        storyValues={data.storyValues}
-        storyStep={data.storyStep}
-        triggeredRuleIds={data.triggeredRuleIds}
-        selected={data.selected}
-        highlighted={data.highlighted}
-        dimmed={data.dimmed}
-        outOfScope={data.outOfScope}
-        onHover={onHoverNode}
-        onSelect={onSelect}
-      />
+    <div className="relative" style={{ width: box.width, height: box.height }}>
+      {inquiry ? (
+        <EvidenceInquiryPopover
+          nodeId={entity.id}
+          label={entity.label}
+          width={box.width}
+          height={box.height}
+          inquiry={inquiry}
+        >
+          {card}
+        </EvidenceInquiryPopover>
+      ) : (
+        card
+      )}
       <Handle
         id="source"
         type="source"
@@ -60,7 +68,6 @@ const CONTEXT_FILL = {
   contract: 'rgba(255, 250, 240, 0.55)',
   pre_contract: 'rgba(243, 244, 255, 0.55)',
   domain: 'rgba(240, 247, 242, 0.55)',
-  support: 'rgba(246, 247, 250, 0.6)',
 } as const;
 
 /**

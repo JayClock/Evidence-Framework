@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { DomainGraph } from '@evidence-poc/evidence-model-core';
 import {
   computeGraphLayout,
+  computeSwimlaneLayout,
   EMPTY_GRAPH_LAYOUT,
   type CanvasLayoutMode,
   type CanvasViewMode,
@@ -30,7 +31,20 @@ export const useGraphLayout = (
     layout: DomainGraphLayout;
     error: string | null;
   } | null>(null);
+  const lifecycle = useMemo(() => {
+    if (layoutMode !== 'swimlane') return null;
+    try {
+      return { layout: computeSwimlaneLayout(graph, viewMode), error: null };
+    } catch (error) {
+      return {
+        layout: EMPTY_LAYOUT,
+        error: error instanceof Error ? error.message : String(error),
+      };
+    }
+  }, [graph, viewMode, layoutMode]);
+
   useEffect(() => {
+    if (layoutMode !== 'topology') return;
     let cancelled = false;
     void computeGraphLayout(graph, { viewMode, layoutMode }).then(
       (layout) => {
@@ -52,6 +66,13 @@ export const useGraphLayout = (
       cancelled = true;
     };
   }, [graph, viewMode, layoutMode]);
+  if (lifecycle !== null)
+    return {
+      layout: lifecycle.layout,
+      layoutPending: false,
+      layoutError: lifecycle.error,
+    };
+
   const current =
     result?.graph === graph &&
     result.viewMode === viewMode &&

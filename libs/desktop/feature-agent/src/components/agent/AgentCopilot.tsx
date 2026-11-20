@@ -41,6 +41,7 @@ export interface AgentCopilotProps {
   onPrefillConsumed?: () => void;
   aiConfigured?: boolean;
   onConfigureAi?: () => void;
+  embedded?: boolean;
 }
 
 /**
@@ -62,6 +63,7 @@ export const AgentCopilot = ({
   onPrefillConsumed,
   aiConfigured = true,
   onConfigureAi,
+  embedded = false,
 }: AgentCopilotProps) => {
   const { state, submit, stop, dismissError } = controller;
   const [value, setValue] = useState('');
@@ -105,12 +107,12 @@ export const AgentCopilot = ({
   const send = useCallback(async () => {
     const text = value.trim();
 
-    if (!aiConfigured || text === '') return;
+    if (!aiConfigured || text === '' || (embedded && state.running)) return;
 
     setValue('');
     if (focus === null) await submit(text);
     else await submit(text, { nodeId: focus.nodeId });
-  }, [aiConfigured, focus, submit, value]);
+  }, [aiConfigured, embedded, state.running, focus, submit, value]);
 
   const empty =
     state.transcript === '' &&
@@ -125,7 +127,7 @@ export const AgentCopilot = ({
       <header className="flex min-h-9 shrink-0 flex-wrap items-center justify-between gap-x-2 gap-y-1 border-b border-workbench-border px-3 py-1">
         <span className="flex items-center gap-1.5 text-[11px] font-semibold text-evidence-ink">
           <Bot aria-hidden="true" className="size-3.5 text-evidence-accent" />
-          Evidence Copilot
+          {embedded ? '节点问询' : 'Evidence Copilot'}
         </span>
         <span className="truncate text-[10px] text-evidence-muted">
           {state.running ? (
@@ -244,16 +246,18 @@ export const AgentCopilot = ({
                 焦点：{focus.label}（{focus.kind}）
               </span>
             </span>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon-xs"
-              aria-label="清除焦点"
-              onClick={onClearFocus}
-            >
-              <X aria-hidden="true" />
-            </Button>
-            {aiConfigured ? (
+            {!embedded && onClearFocus !== undefined ? (
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-xs"
+                aria-label="清除焦点"
+                onClick={onClearFocus}
+              >
+                <X aria-hidden="true" />
+              </Button>
+            ) : null}
+            {aiConfigured && !embedded ? (
               <Button
                 type="button"
                 variant="outline"
@@ -299,8 +303,12 @@ export const AgentCopilot = ({
             !aiConfigured
               ? '请先配置 API Key'
               : state.running
-                ? '插话纠偏：运费由买方承担，不是卖方'
-                : '描述经营事实，或提出要澄清的履约与凭证'
+                ? embedded
+                  ? '等待本轮问询结束'
+                  : '插话纠偏：运费由买方承担，不是卖方'
+                : embedded
+                  ? '回答业务问题，或补充已有约定'
+                  : '描述经营事实，或提出要澄清的履约与凭证'
           }
           className="max-h-40 w-full resize-none rounded-md border border-workbench-border bg-workbench-background px-2.5 py-2 text-xs leading-relaxed text-evidence-ink outline-none placeholder:text-workbench-muted focus-visible:border-evidence-accent focus-visible:ring-1 focus-visible:ring-evidence-accent"
         />
@@ -322,9 +330,13 @@ export const AgentCopilot = ({
             <Button
               type="submit"
               size="xs"
-              disabled={!aiConfigured || value.trim() === ''}
+              disabled={
+                !aiConfigured ||
+                value.trim() === '' ||
+                (embedded && state.running)
+              }
             >
-              {state.running ? '插话' : '发送'}
+              {state.running && !embedded ? '插话' : '发送'}
               <CornerDownLeft aria-hidden="true" />
             </Button>
           </span>

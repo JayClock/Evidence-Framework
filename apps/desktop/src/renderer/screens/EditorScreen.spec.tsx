@@ -50,7 +50,7 @@ describe('EditorScreen', () => {
     );
     await readyCanvas();
     expect(
-      container.querySelector('[data-swimlane-kind="phase"]'),
+      container.querySelector('[data-milestone-stage="rfp"]'),
     ).not.toBeNull();
     const world = () =>
       container.querySelector('.react-flow__viewport') as HTMLElement;
@@ -62,7 +62,7 @@ describe('EditorScreen', () => {
     fireEvent.keyDown(window, { code: 'Digit2', altKey: true });
     await waitFor(() =>
       expect(
-        container.querySelector('[data-swimlane-kind="phase"]'),
+        container.querySelector('[data-milestone-stage="rfp"]'),
       ).toBeNull(),
     );
     expect(screen.getByRole('button', { name: /拓扑图/ })).toHaveAttribute(
@@ -157,18 +157,19 @@ describe('EditorScreen', () => {
     expect(api.calls.save).toEqual([]);
   });
 
-  it('opens a read-only sourcing turn for the exact selected evidence', async () => {
+  it('opens a read-only sourcing turn beside the exact evidence card', async () => {
     const api = readyProject();
-    const { container } = render(
-      <EditorScreen rootPath="/models/procurement" />,
-    );
+    render(<EditorScreen rootPath="/models/procurement" />);
     await readyCanvas();
-    fireEvent.click(
-      container.querySelector('[data-node-id="evidence.request"]')!,
-    );
-    fireEvent.click(
-      await screen.findByRole('button', { name: 'AI 追溯关键数据' }),
-    );
+    const trace = await screen.findByRole('button', {
+      name: /^溯源：交付请求/,
+    });
+    trace.focus();
+    fireEvent.click(trace);
+    const dialog = await screen.findByRole('dialog', {
+      name: /^关键数据溯源：交付请求/,
+    });
+    expect(trace).toHaveAttribute('aria-expanded', 'true');
     await waitFor(() =>
       expect(api.calls.prompt).toEqual([
         expect.objectContaining({
@@ -177,23 +178,25 @@ describe('EditorScreen', () => {
         }),
       ]),
     );
+    fireEvent.keyDown(dialog, { key: 'Escape' });
+    await waitFor(() => expect(dialog).not.toBeInTheDocument());
     expect(api.calls.save).toEqual([]);
   });
 
-  it('offers What-If for a pair and keeps the follow-up attached when selection moves', async () => {
+  it('offers What-If only for a paired card and pins the follow-up to that evidence', async () => {
     const api = readyProject();
     render(<EditorScreen rootPath="/models/procurement" />);
     await readyCanvas();
-    const directory = within(
-      screen.getByRole('complementary', { name: '实体目录' }),
-    );
-    const evidence = (id: string) =>
-      directory.getByTitle(new RegExp(` · ${id}$`));
-    fireEvent.click(evidence('evidence.contract'));
-    expect(screen.queryByRole('button', { name: '探问 What-If' })).toBeNull();
-    fireEvent.click(evidence('evidence.confirmation'));
+    expect(
+      screen.queryByRole('button', { name: /^What-If：采购协议/ }),
+    ).toBeNull();
     fireEvent.click(
-      await screen.findByRole('button', { name: '探问 What-If' }),
+      await screen.findByRole('button', { name: /^What-If：交付确认/ }),
+    );
+    const dialog = within(
+      await screen.findByRole('dialog', {
+        name: /^What-If 异常履约：交付确认/,
+      }),
     );
     await waitFor(() =>
       expect(api.calls.prompt[0]?.focus).toEqual({
@@ -201,11 +204,13 @@ describe('EditorScreen', () => {
         inquiry: 'what-if',
       }),
     );
-    fireEvent.click(evidence('evidence.contract'));
-    fireEvent.change(await screen.findByLabelText('访谈内容'), {
+    fireEvent.change(dialog.getByLabelText('访谈内容'), {
       target: { value: '超时则通知采购方。' },
     });
-    fireEvent.click(screen.getByRole('button', { name: '发送' }));
+    await waitFor(() =>
+      expect(dialog.getByRole('button', { name: '发送' })).toBeEnabled(),
+    );
+    fireEvent.click(dialog.getByRole('button', { name: '发送' }));
     await waitFor(() =>
       expect(api.calls.prompt[1]?.focus).toEqual({
         nodeId: 'evidence.confirmation',

@@ -32,7 +32,7 @@ describe('LifecycleSwimlaneOverlay', () => {
     for (const [i, line] of [...lines].entries()) {
       const column = layout.journeyMilestones![i + 1]!;
       expect(Number(line.getAttribute('x1'))).toBeLessThan(column.x);
-      expect(Number(line.getAttribute('x1'))).toBeLessThan(
+      expect(Number(line.getAttribute('x1'))).toBeGreaterThan(
         Number(line.getAttribute('x2')),
       );
     }

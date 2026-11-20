@@ -8,7 +8,10 @@ import type {
   LayoutNode,
 } from '@evidence-poc/evidence-canvas-interaction';
 import type { ModelSelection } from '@evidence-poc/evidence-model-core';
-import type { DomainModelDocument } from '@evidence-poc/evidence-schema';
+import type {
+  ContextKind,
+  DomainModelDocument,
+} from '@evidence-poc/evidence-schema';
 import type { SensorSeverity } from '@evidence-poc/evidence-agent/browser';
 
 import type { CardSummary } from './cardSummary';
@@ -34,7 +37,7 @@ export interface EntityNodeData extends Record<string, unknown> {
 export interface ContextNodeData extends Record<string, unknown> {
   contextId: string;
   label: string;
-  kind: 'contract' | 'domain' | 'support';
+  kind: ContextKind;
   highlighted: boolean;
   dimmed: boolean;
   outOfScope: boolean;
@@ -153,12 +156,7 @@ export const convertLayoutToReactFlow = ({
       data: {
         contextId: group.contextId,
         label: group.entity.label,
-        kind:
-          group.entity.kind === 'contract'
-            ? 'contract'
-            : group.entity.kind === 'domain'
-              ? 'domain'
-              : 'support',
+        kind: group.entity.kind,
         highlighted,
         dimmed: dimmed && !highlighted,
         outOfScope,

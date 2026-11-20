@@ -1,20 +1,14 @@
 import { createContext, useContext } from 'react';
 
 import type { CanvasViewMode } from '@evidence-poc/evidence-canvas-interaction';
+import type { CanvasEvidenceInquiry } from './EvidenceInquiryPopover';
 
-/**
- * What a node needs from the surface it floats on.
- *
- * Hover and selection are gestures, not data: putting them in every node's data
- * would rebuild the whole graph on each pointer move and would make the layout
- * adapter untestable outside React. The context carries the two callbacks and
- * nothing else.
- */
 export interface CanvasInteraction {
   viewMode: CanvasViewMode;
   onHoverNode: (nodeId: string | null) => void;
   onHoverContext: (contextId: string | null) => void;
   onHoverEdge: (edgeId: string | null) => void;
+  evidenceInquiry?: CanvasEvidenceInquiry;
   onSelect: (nodeId: string) => void;
 }
 

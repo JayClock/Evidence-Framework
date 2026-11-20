@@ -478,6 +478,9 @@ importers:
 
   libs/desktop/feature-canvas:
     dependencies:
+      '@evidence-poc/desktop-ui-kit':
+        specifier: workspace:*
+        version: link:../ui-kit
       '@evidence-poc/evidence-agent':
         specifier: workspace:*
         version: link:../../evidence-agent
@@ -3551,6 +3554,7 @@ packages:
   '@typespec/ts-http-runtime@0.3.10':
     resolution: {integrity: sha512-vddvvtZ7sejSlCv+OIkn2ztjB1O31Fc2JsxI/YK725r3elXXlF/J3o3lbXJFRhoeWRWK1tjdZ+GTi6Fdtrp+EA==}
     engines: {node: '>=22.0.0'}
+    deprecated: A newer version 0.3.11 has been published.
 
   '@usebruno/cli@4.3.0':
     resolution: {integrity: sha512-UPq2JfRNdACk01/uZhcewVu7JR8nha4opuOLzoFvf3f/wQyLUj8V+sEc0suUja7mVDLvLhT1IVvSeDotrgGqPw==}

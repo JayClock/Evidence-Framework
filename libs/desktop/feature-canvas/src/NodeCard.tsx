@@ -34,6 +34,7 @@ interface NodeCardProps {
   storyStep?: StoryStepMarker;
   triggeredRuleIds?: readonly string[];
   outOfScope?: boolean;
+  hasInquiryActions?: boolean;
   onHover: (nodeId: string | null) => void;
   onSelect: (nodeId: string) => void;
 }
@@ -191,6 +192,7 @@ export const NodeCard = ({
   storyStep,
   triggeredRuleIds,
   outOfScope = false,
+  hasInquiryActions = false,
   onHover,
   onSelect,
 }: NodeCardProps) => {
@@ -237,6 +239,7 @@ export const NodeCard = ({
           top: box.y,
           width: box.width,
           height: box.height,
+          paddingBottom: hasInquiryActions ? 26 : undefined,
           '--canvas-card-stroke': selected
             ? 'var(--color-evidence-accent)'
             : shape === 'moment'

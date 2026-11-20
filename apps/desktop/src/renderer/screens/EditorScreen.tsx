@@ -31,7 +31,6 @@ import {
   useAgentPatchBridge,
   useAgentSession,
   usePatchReview,
-  type PromptFocus,
 } from '@evidence-poc/desktop-feature-agent';
 import { ScenarioStudioModal } from '../components/scenario/ScenarioStudioModal';
 import {
@@ -50,6 +49,8 @@ import {
   createDiagnosticIndex,
   type CanvasViewMode,
   type CanvasViewportMemory,
+  type CanvasEvidenceInquiry,
+  type EvidenceInquiryKind,
   type ZoomDirection,
 } from '@evidence-poc/desktop-feature-canvas';
 import { RightInspector } from '@evidence-poc/desktop-feature-inspector';
@@ -286,7 +287,7 @@ const EditorWorkspace = ({
   useEffect(() => {
     if (state.savedAt !== null) void sensors.refresh();
   }, [state.savedAt, sensors.refresh]);
-  const [inquiryFocus, setInquiryFocus] = useState<PromptFocus | null>(null);
+  const [inquiry, setInquiry] = useState<CanvasEvidenceInquiry['target']>(null);
   const [copilotPrefill, setCopilotPrefill] = useState<{
     token: number;
     text: string;
@@ -428,7 +429,7 @@ const EditorWorkspace = ({
         };
 
   const startStorming = useCallback(() => {
-    setInquiryFocus(null);
+    setInquiry(null);
     state.session.clearSelection();
     workspaceView.setMode('journey');
     tokenRef.current += 1;
@@ -439,35 +440,50 @@ const EditorWorkspace = ({
     layout.openCopilot();
   }, [layout.openCopilot, state.session, workspaceView.setMode]);
 
-  const askAboutEvidence = (inquiry: 'trace' | 'what-if') => {
+  const pairedNodeIds = useMemo(() => {
+    const ids = new Set<string>();
+    for (const { request, confirmations } of state.graph.fulfillmentPairs()) {
+      if (confirmations.length === 0) continue;
+      ids.add(request.id);
+      for (const confirmation of confirmations) ids.add(confirmation.id);
+    }
+    return ids;
+  }, [state.graph]);
+  const inquiryTarget =
+    !storyActive &&
+    !ledgerActive &&
+    inquiry !== null &&
+    state.selection.nodeId === inquiry.nodeId &&
+    isEvidenceEntity(state.graph.getEntity(inquiry.nodeId)) &&
+    (scope === null || scope.nodeIds.has(inquiry.nodeId))
+      ? inquiry
+      : null;
+  useEffect(() => {
+    if (inquiry !== null && inquiryTarget === null) setInquiry(null);
+  }, [inquiry, inquiryTarget]);
+
+  const closeInquiry = useCallback((nodeId: string) => {
+    setInquiry((current) => (current?.nodeId === nodeId ? null : current));
+  }, []);
+
+  const openInquiry = (nodeId: string, kind: EvidenceInquiryKind) => {
     if (
-      !isEvidenceEntity(selectedEntity) ||
-      promptFocus === null ||
-      ai?.aiConfigured === false ||
-      agent.state.running
+      agent.state.running ||
+      (kind === 'what-if' && !pairedNodeIds.has(nodeId))
     )
       return;
-    setInquiryFocus(promptFocus);
-    layout.openCopilot();
-    setAgentFocusToken((token) => token + 1);
+    if (!isEvidenceEntity(state.graph.getEntity(nodeId))) return;
+    state.session.select(nodeId);
+    layout.showInspector();
+    layout.closeInlineCopilot();
+    setInquiry({ nodeId, kind });
+    if (ai?.aiConfigured === false) return;
     const question =
-      inquiry === 'trace'
-        ? '先问我这张凭证最关键的待决数据项从哪里来；有来源的不要重复问。'
-        : '针对这张凭证关联的履约对，提出一个与现有约定最相关的 What-If 问题。如果有多个请求，先问我推演哪一项。';
-    void agent.submit(question, { nodeId: selectedEntity.id, inquiry });
+      kind === 'trace'
+        ? '先问我这张凭证最关键的待决数据项从哪里来；有来源的不要重复问。若没有关键数据项，先问这张凭证记录了哪些关键事实。'
+        : '针对这张凭证关联的履约对，提出一个与现有约定最相关的 What-If 问题（例如超时、拒绝或中止）。如果有多个请求，先问我推演哪一项。不要假定补偿措施。';
+    void agent.submit(question, { nodeId, inquiry: kind });
   };
-  const hasFocusedPair =
-    isEvidenceEntity(selectedEntity) &&
-    (selectedEntity.kind === 'fulfillment_request'
-      ? (state.graph.fulfillmentPair(selectedEntity.id)?.confirmations.length ??
-          0) > 0
-      : selectedEntity.kind === 'fulfillment_confirmation' &&
-        state.graph
-          .fulfillmentConfirmations()
-          .some(
-            ({ entity, incomingRequests }) =>
-              entity.id === selectedEntity.id && incomingRequests.length > 0,
-          ));
 
   const requestZoom = useCallback((direction: ZoomDirection) => {
     tokenRef.current += 1;
@@ -514,7 +530,7 @@ const EditorWorkspace = ({
       openDelivery: layout.openDelivery,
       rerunSensors: () => void sensors.refresh(),
       askAgent: () => {
-        setInquiryFocus(null);
+        setInquiry(null);
         layout.openCopilot();
         setAgentFocusToken((token) => token + 1);
       },
@@ -701,6 +717,30 @@ const EditorWorkspace = ({
           />
         )}
         diagnostics={diagnostics}
+        evidenceInquiry={
+          storyActive
+            ? undefined
+            : {
+                target: inquiryTarget,
+                pairedNodeIds,
+                busy: agent.state.running,
+                onOpen: openInquiry,
+                onClose: closeInquiry,
+                content:
+                  inquiryTarget === null ? null : (
+                    <AgentCopilot
+                      key={`${inquiryTarget.nodeId}:${inquiryTarget.kind}`}
+                      embedded
+                      focus={promptFocus}
+                      controller={agent}
+                      patchReview={patchReview}
+                      onFocusEntity={revealOnGraph}
+                      aiConfigured={ai?.aiConfigured}
+                      onConfigureAi={ai?.openSettings}
+                    />
+                  ),
+              }
+        }
         onOpenIssues={(issues) => {
           if (issues[0] === undefined) return;
           layout.openProblemsWithIssue(issues[0].issueId);
@@ -925,21 +965,6 @@ const EditorWorkspace = ({
                         selection={state.selection}
                         showHeading={false}
                         active={!rightRailCollapsed}
-                        evidenceActions={
-                          ai?.aiConfigured === false ||
-                          agent.state.running ||
-                          !isEvidenceEntity(selectedEntity)
-                            ? undefined
-                            : {
-                                onTrace: () => askAboutEvidence('trace'),
-                                ...(hasFocusedPair
-                                  ? {
-                                      onWhatIf: () =>
-                                        askAboutEvidence('what-if'),
-                                    }
-                                  : {}),
-                              }
-                        }
                       />
                     ) : (
                       <AgentCopilot
@@ -947,11 +972,8 @@ const EditorWorkspace = ({
                         onConfigureAi={ai?.openSettings}
                         controller={agent}
                         patchReview={patchReview}
-                        focus={inquiryFocus ?? promptFocus}
-                        onClearFocus={() => {
-                          setInquiryFocus(null);
-                          state.session.clearSelection();
-                        }}
+                        focus={promptFocus}
+                        onClearFocus={() => state.session.clearSelection()}
                         onFocusEntity={revealOnGraph}
                         focusToken={agentFocusToken}
                         prefill={copilotPrefill}
