@@ -1,4 +1,10 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import {
   installDesktopApi,
@@ -19,24 +25,21 @@ const setup = async () => {
       issues: [],
     },
   });
-  let status: AiConfigStatus = {
+  const status: AiConfigStatus = {
     isConfigured: false,
     activeProviderId: null,
     activeModelId: null,
+    activeModelName: null,
+    agentDir: '/test/pi',
     thinkingLevel: 'off',
-    hasLocalPiCliConfig: false,
     availableModels: [],
   };
+  let publishStatus: (next: AiConfigStatus) => void = () => undefined;
   api.aiConfig.getStatus = async () => status;
-  api.aiConfig.save = vi.fn(async () => {
-    status = {
-      ...status,
-      isConfigured: true,
-      activeProviderId: 'deepseek',
-      activeModelId: 'deepseek-chat',
-    };
-    return { success: true };
-  });
+  api.aiConfig.onChanged = (listener) => {
+    publishStatus = listener;
+    return () => undefined;
+  };
   render(
     <AiConfigurationProvider>
       <EditorScreen rootPath="/models/procurement" />
@@ -46,25 +49,34 @@ const setup = async () => {
   await waitFor(() =>
     expect(screen.queryByText('正在计算画布布局…')).toBeNull(),
   );
-  return api;
+  return { api, publishStatus };
 };
 
-describe('new-install AI onboarding integration', () => {
-  it('configures from canvas storming and enables a prompt without reloading the project', async () => {
-    const api = await setup();
+describe('Pi model onboarding integration', () => {
+  it('enables canvas storming when a configured Pi model becomes available', async () => {
+    const { api, publishStatus } = await setup();
     fireEvent.keyDown(window, { key: 'k', metaKey: true });
     expect(screen.getByLabelText('业务场景')).toBeDisabled();
     fireEvent.click(screen.getByRole('button', { name: '配置 AI 模型' }));
-    fireEvent.change(screen.getByLabelText(/API 密钥/), {
-      target: { value: 'private-input-only' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: '保存并立即生效' }));
+    expect(await screen.findByText(/没有可用模型/)).toBeVisible();
+    fireEvent.keyDown(screen.getByRole('dialog'), { key: 'Escape' });
+    act(() =>
+      publishStatus({
+        agentDir: '/test/pi',
+        isConfigured: true,
+        activeProviderId: 'magpie',
+        activeModelId: 'routing/flash',
+        activeModelName: 'Flash Gateway',
+        thinkingLevel: 'off',
+        availableModels: [],
+      }),
+    );
     await waitFor(() =>
       expect(screen.getByLabelText('业务场景')).not.toBeDisabled(),
     );
     expect(
       screen.getByRole('button', { name: '配置大模型' }),
-    ).toHaveTextContent('deepseek-chat');
+    ).toHaveTextContent('Flash Gateway');
     fireEvent.change(screen.getByLabelText('业务场景'), {
       target: { value: '澄清付款条件' },
     });
@@ -74,7 +86,7 @@ describe('new-install AI onboarding integration', () => {
     expect(api.calls.save).toEqual([]);
   });
   it('keeps stories offline and opens settings when attempting AI narration', async () => {
-    const api = await setup();
+    const { api } = await setup();
     api.story.listFlows = async () => [storyFlow()];
     api.story.project = vi.fn(async () => storyResult());
     fireEvent.click(screen.getByRole('button', { name: /业务流放映/ }));
@@ -98,6 +110,6 @@ describe('new-install AI onboarding integration', () => {
       target: { value: 'AI Settings' },
     });
     fireEvent.click(await screen.findByRole('option', { name: /配置大模型/ }));
-    expect(screen.getByRole('dialog')).toHaveTextContent('API Key');
+    expect(screen.getByRole('dialog')).toHaveTextContent('Pi 配置目录');
   });
 });

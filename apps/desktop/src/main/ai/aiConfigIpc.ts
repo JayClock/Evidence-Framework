@@ -6,46 +6,34 @@ export const registerAiConfigIpc = (
   service: AiConfigService,
   resetModels: () => Promise<void>,
 ) => {
-  ipcMain.handle(AI.getStatus, () => service.getStatus());
-  ipcMain.handle(AI.save, async (_event, request: unknown) => {
+  const publishSelection = async () => {
     try {
-      return await service.save(request);
+      await resetModels();
     } catch {
-      throw new Error(
-        '无法保存 AI 配置。请检查模型名称、端点、API Key 和桌面配置目录。',
-      );
+      process.stderr.write('无法刷新 AI 会话，请重新打开项目。\n');
     }
+    const status = await service.getStatus();
+    for (const window of BrowserWindow.getAllWindows()) {
+      if (!window.isDestroyed()) window.webContents.send(AI.changed, status);
+    }
+    return status;
+  };
+
+  ipcMain.handle(AI.getStatus, () => service.getStatus());
+  ipcMain.handle(AI.selectModel, async (_event, request: unknown) => {
+    try {
+      await service.selectModel(request);
+    } catch {
+      throw new Error('无法保存 Pi 模型选择，请检查模型可用性和配置目录权限。');
+    }
+    await publishSelection();
   });
   ipcMain.handle(AI.testConnection, (_event, request: unknown) =>
     service.testConnection(request),
   );
-  ipcMain.handle(AI.importCli, async () => {
-    try {
-      return await service.importFromLocalPiCli();
-    } catch {
-      throw new Error('无法导入 Pi CLI 配置，请检查凭证文件和桌面配置目录。');
-    }
-  });
-  const unsubscribe = service.onChanged(() => {
-    void (async () => {
-      await resetModels();
-      const status = await service.getStatus();
-      for (const window of BrowserWindow.getAllWindows()) {
-        if (!window.isDestroyed()) window.webContents.send(AI.changed, status);
-      }
-    })().catch(() => {
-      process.stderr.write('AI 配置已保存，但会话刷新失败，请重新打开工程。\n');
-    });
-  });
   return {
     dispose: () => {
-      unsubscribe();
-      for (const channel of [
-        AI.getStatus,
-        AI.save,
-        AI.testConnection,
-        AI.importCli,
-      ])
+      for (const channel of [AI.getStatus, AI.selectModel, AI.testConnection])
         ipcMain.removeHandler(channel);
     },
   };

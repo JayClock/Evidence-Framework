@@ -4,6 +4,7 @@ import type {
   AgentSessionRuntime,
   InlineExtension,
   ModelRuntime,
+  SettingsManager,
   ToolDefinition,
 } from '@earendil-works/pi-coding-agent';
 
@@ -14,7 +15,7 @@ export interface EvidenceModelOptions {
   agentDir?: string;
   modelRuntime?: ModelRuntime;
   model?: Parameters<ModelRuntime['completeSimple']>[0];
-  thinkingLevel?: 'off' | 'low' | 'medium' | 'high';
+  thinkingLevel?: Parameters<SettingsManager['setDefaultThinkingLevel']>[0];
 }
 
 export interface EvidenceAgentSessionOptions extends EvidenceModelOptions {

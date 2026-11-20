@@ -636,7 +636,7 @@ const EditorWorkspace = ({
               title: '配置大模型 / AI Settings',
               category: 'agent' as const,
               shortcut: '⌘+,',
-              keywords: ['API Key', '模型', 'provider'],
+              keywords: ['Pi', '模型', 'provider'],
               perform: ai.openSettings,
             },
           ]

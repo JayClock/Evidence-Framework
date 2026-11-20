@@ -228,7 +228,7 @@ export const IngestDraftModal = ({
                     className="text-evidence-accent underline"
                     onClick={ai.openSettings}
                   >
-                    配置 API Key
+                    配置 Pi 模型
                   </button>
                   。
                 </aside>

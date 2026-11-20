@@ -49,7 +49,7 @@ export const EvidenceInquiryConversation = ({
               size="xs"
               onClick={onConfigureAi}
             >
-              立刻配置 API Key
+              配置 Pi 模型
             </Button>
           </div>
         ) : (

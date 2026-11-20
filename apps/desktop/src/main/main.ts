@@ -1,6 +1,6 @@
 import path from 'node:path';
 
-import { app, BrowserWindow, nativeTheme, safeStorage } from 'electron';
+import { app, BrowserWindow, nativeTheme } from 'electron';
 import { AiConfigService } from './ai/aiConfigService';
 import { registerAiConfigIpc } from './ai/aiConfigIpc';
 import {
@@ -68,9 +68,9 @@ const startApplication = async (): Promise<void> => {
   });
 
   const userDataPath = app.getPath('userData');
+  const { getAgentDir } = await import('@earendil-works/pi-coding-agent');
   const aiConfig = new AiConfigService({
-    userDataPath,
-    legacyEncryption: safeStorage,
+    agentDir: path.resolve(getAgentDir()),
   });
   const getModelOptions = () => aiConfig.getModelOptions();
   const agentIpc = registerAgentIpc({

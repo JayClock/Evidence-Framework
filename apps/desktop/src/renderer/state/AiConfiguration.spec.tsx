@@ -7,8 +7,9 @@ const empty: AiConfigStatus = {
   isConfigured: false,
   activeProviderId: null,
   activeModelId: null,
+  activeModelName: null,
+  agentDir: '/test/pi',
   thinkingLevel: 'off',
-  hasLocalPiCliConfig: false,
   availableModels: [],
 };
 const Harness = () => {
@@ -46,6 +47,7 @@ describe('AI application shell', () => {
         isConfigured: true,
         activeProviderId: 'deepseek',
         activeModelId: 'deepseek-chat',
+        activeModelName: 'DeepSeek Chat',
       }),
     );
     expect(screen.getByText('configured')).toBeInTheDocument();

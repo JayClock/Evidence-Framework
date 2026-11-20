@@ -40,69 +40,28 @@ nx make desktop         # installers in apps/desktop/out/make
   current model and can be undone; passing the inline syntax/reference check
   does not imply the model passed the gate. **Cmd/Ctrl+Shift+R** reruns checks.
 
-## AI configuration (no Pi CLI required)
+## AI configuration
 
-Use the **AI** badge on the dashboard/editor, **Cmd/Ctrl+,**, or search for
-**配置大模型 / AI Settings** in the editor's **Cmd/Ctrl+K** command palette.
-Select a provider, enter its API key and model, optionally customize Base URL
-and thinking level, then **测试连通性** or **保存并生效**. Testing sends a small
-completion request (possibly billable), uses a temporary runtime and times out
-after 15 seconds; it does not save the draft key or change the active model.
+Evidence uses the Pi SDK to read the global Pi settings, model definitions and
+credentials from `~/.pi/agent` or from `PI_CODING_AGENT_DIR` in the app's launch
+environment. Set up credentials in Pi (for example, with `/login`) and define
+custom endpoints in Pi's [`models.json`](https://pi.dev/docs/models-configuration).
+Only providers and credentials the SDK can resolve are available; terminal-only
+environment variables must also be present in the app's environment. Evidence
+loads neither project settings nor user CLI extensions for its modeling sessions.
 
-- Presets cover DeepSeek, Qwen/DashScope, Anthropic, OpenAI, Gemini, OpenRouter,
-  MiniMax, Kimi and custom OpenAI-compatible gateways. Built-in model metadata
-  and wire protocols come from the pinned Pi SDK. DashScope and custom model
-  IDs use an explicit OpenAI-completions provider with conservative text-only
-  metadata (32K context / 4K output); they do not discover server capabilities.
-- For Ollama, choose the custom endpoint, enter an installed model ID and
-  `http://localhost:11434/v1`. Loopback custom endpoints can be keyless;
-  remote endpoints require a key. Blank API-key input retains the stored key;
-  **清空输入** clears only the form, not the saved credential.
-- Without configuration, canvas storming and node inquiries offer setup instead of sending. Story mode
-  uses **仅模型事实** offline; AI narration and What-If offer setup. Contract,
-  blueprint and rule-based text import remain available without a model.
-- Saving replaces the shared runtime, aborts/disposes active agent sessions and
-  resumes their persisted transcript on the next prompt. Canvas edits, undo
-  history and sensor state stay intact. Story AI projectors are invalidated;
-  already-running one-shot ingestion requests keep their captured runtime.
-- The app never automatically reads or writes `~/.pi/agent/auth.json` or
-  `models.json`. When an auth file exists, settings offers **一键导入现有配置**:
-  explicit, read-only API-key import, no overwrite of existing desktop keys,
-  no shell-backed keys, environment references or OAuth tokens. CLI model
-  definitions are not imported.
-  SDK environment credentials are supported without importing; DashScope accepts
-  `DASHSCOPE_API_KEY` / `QWEN_API_KEY`. Launch the app from the appropriate
-  environment when using this developer path.
+Open **配置大模型 / AI Settings** from the AI badge, **Cmd/Ctrl+,**, or the
+editor command palette. The panel shows the effective model and groups the
+available models by provider. **设为默认模型** updates the shared Pi default;
+choosing a thinking level also updates Pi settings. **测试连通性** sends a small,
+potentially billable completion request and times out after 15 seconds. It does
+not change the model selection.
 
-All desktop AI state lives beneath Electron's `app.getPath('userData')`:
-
-| Path                         | Contents                                                 |
-| ---------------------------- | -------------------------------------------------------- |
-| `ai-agent/settings.json`     | Pi default provider, model and thinking level; no keys   |
-| `ai-agent/models.json`       | Optional Pi model definitions and Base URL overrides     |
-| `ai-agent/auth.json`         | Pi credentials in plaintext; restricted file permissions |
-| `ai-agent/models-store.json` | Optional local Pi catalog cache                          |
-| `ai-agent/sessions/`         | Persisted Pi transcripts                                 |
-
-These are native Pi files in an app-specific agent directory. The desktop does
-not change the default CLI configuration. To use the desktop's directory with
-Pi CLI explicitly, set `PI_CODING_AGENT_DIR` to its absolute path.
-
-On first configuration access after upgrade, the desktop reads the legacy
-settings, model definitions and encrypted credentials and migrates them to the
-native files. Existing native selections and credentials win over old ones.
-After a successful migration the legacy files are renamed with a `.migrated`
-suffix (the old auth backup remains encrypted). If the old keyring is locked or
-files are invalid, the originals are preserved; unlock the keyring or repair the
-files before retrying. The obsolete model catalog cache is not migrated.
-
-The renderer receives public model/status data, never saved keys. Keys are
-password-masked, submitted via the restricted preload API and cleared from the
-form after save/provider change/close. Unlike the old store, Pi's `auth.json` is
-**not encrypted**. On Unix, new auth files are created with mode `0600` in a
-private directory. Keep the directory private and only send credentials to
-trusted Base URLs. Use environment credentials if you do not want to save a key
-to disk.
+Selecting a model refreshes the agent and story sessions; canvas edits and undo
+history are unaffected. Desktop transcripts are stored by project under
+`sessions/` in Electron's `userData` directory. Without an available model,
+canvas inquiries offer setup and offline story projection and import remain
+available.
 
 ## Bundled instructions, no interpreter
 

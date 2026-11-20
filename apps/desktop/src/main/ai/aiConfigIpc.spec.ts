@@ -5,6 +5,7 @@ import {
 } from '@evidence-poc/desktop-contracts/aiConfig';
 import type { AiConfigService } from './aiConfigService';
 import { registerAiConfigIpc } from './aiConfigIpc';
+
 const electron = vi.hoisted(() => ({
   handlers: new Map<string, (...args: unknown[]) => Promise<unknown>>(),
   send: vi.fn(),
@@ -29,26 +30,22 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 const status: AiConfigStatus = {
+  agentDir: '/test/pi',
   isConfigured: true,
-  activeProviderId: 'deepseek',
-  activeModelId: 'deepseek-chat',
+  activeProviderId: 'local-gateway',
+  activeModelId: 'route/flash',
+  activeModelName: 'Gateway Flash',
   thinkingLevel: 'off',
   availableModels: [],
-  hasLocalPiCliConfig: false,
 };
+
 describe('AI configuration IPC', () => {
-  it('publishes public status to all live windows after session reset and cleans up handlers', async () => {
-    let changed: () => void = () => undefined;
-    const unsubscribe = vi.fn();
+  it('publishes public status to live windows after resetting sessions', async () => {
+    const selection = { providerId: 'local-gateway', modelId: 'route/flash' };
     const service = {
       getStatus: vi.fn(async () => status),
-      save: vi.fn(),
+      selectModel: vi.fn(async () => undefined),
       testConnection: vi.fn(),
-      importFromLocalPiCli: vi.fn(),
-      onChanged: (listener: () => void) => {
-        changed = listener;
-        return unsubscribe;
-      },
     } as unknown as AiConfigService;
     let finish: () => void = () => undefined;
     const reset = vi.fn(
@@ -58,34 +55,28 @@ describe('AI configuration IPC', () => {
         }),
     );
     const ipc = registerAiConfigIpc(service, reset);
-    changed();
-    expect(reset).toHaveBeenCalledOnce();
+    const select = electron.handlers.get(AI.selectModel)?.({}, selection);
+    await vi.waitFor(() => expect(reset).toHaveBeenCalledOnce());
+    expect(service.selectModel).toHaveBeenCalledWith(selection);
     expect(electron.send).not.toHaveBeenCalled();
     finish();
-    await vi.waitFor(() =>
-      expect(electron.send).toHaveBeenCalledWith(AI.changed, status),
-    );
+    await select;
+    expect(electron.send).toHaveBeenCalledExactlyOnceWith(AI.changed, status);
     ipc.dispose();
-    expect(unsubscribe).toHaveBeenCalledOnce();
     expect(electron.handlers.size).toBe(0);
   });
-  it('never forwards raw credential or SDK errors in mutation responses', async () => {
-    const fail = async () => {
-      throw new Error('secret-key-in-provider-error');
-    };
+
+  it('does not forward raw SDK errors or reset sessions when selection fails', async () => {
     const service = {
-      getStatus: vi.fn(),
-      save: fail,
-      testConnection: vi.fn(),
-      importFromLocalPiCli: fail,
-      onChanged: () => () => undefined,
+      selectModel: async () => {
+        throw new Error('private provider error');
+      },
     } as unknown as AiConfigService;
-    registerAiConfigIpc(service, async () => undefined);
-    await expect(electron.handlers.get(AI.save)?.({}, {})).rejects.toThrow(
-      '无法保存 AI 配置',
-    );
-    await expect(electron.handlers.get(AI.importCli)?.({})).rejects.toThrow(
-      '无法导入 Pi CLI 配置',
-    );
+    const reset = vi.fn();
+    registerAiConfigIpc(service, reset);
+    await expect(
+      electron.handlers.get(AI.selectModel)?.({}, {}),
+    ).rejects.toThrow('无法保存 Pi 模型选择');
+    expect(reset).not.toHaveBeenCalled();
   });
 });

@@ -161,10 +161,11 @@ describe('DashboardScreen', () => {
     const api = installDesktopApi();
     api.aiConfig.getStatus = async () => ({
       isConfigured: true,
-      activeProviderId: 'deepseek',
-      activeModelId: 'deepseek-chat',
+      activeProviderId: 'magpie',
+      activeModelId: 'routing/flash',
+      activeModelName: 'Flash Gateway',
+      agentDir: '/test/pi',
       thinkingLevel: 'off',
-      hasLocalPiCliConfig: false,
       availableModels: [],
     });
 
@@ -178,7 +179,7 @@ describe('DashboardScreen', () => {
       screen.getByText(`v${version} · Fulfillment Modeling`),
     ).toBeInTheDocument();
     fireEvent.click(
-      await screen.findByRole('button', { name: '配置大模型：deepseek-chat' }),
+      await screen.findByRole('button', { name: '配置大模型：Flash Gateway' }),
     );
     expect(
       await screen.findByRole('dialog', { name: /AI Model Settings/ }),

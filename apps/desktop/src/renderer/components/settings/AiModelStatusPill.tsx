@@ -9,15 +9,16 @@ export const AiModelStatusPill = ({
 }) => {
   const ai = useAiConfiguration();
   if (!ai) return null;
-
-  if (compact) {
-    const label =
-      ai.status === null
-        ? 'AI · 正在检测'
-        : ai.aiConfigured && ai.status.activeModelId
-          ? ai.status.activeModelId
+  const label =
+    ai.status === null
+      ? 'AI · 正在检测'
+      : ai.status.error
+        ? 'AI · 配置异常'
+        : ai.aiConfigured
+          ? (ai.status.activeModelName ?? ai.status.activeModelId)
           : 'AI · 未配置';
 
+  if (compact) {
     return (
       <Button
         type="button"
@@ -52,13 +53,7 @@ export const AiModelStatusPill = ({
           className="size-1.5 shrink-0 rounded-full bg-workbench-status-dot"
         />
       ) : null}
-      <span className="truncate">
-        {ai.status === null
-          ? 'AI · 正在检测'
-          : ai.aiConfigured
-            ? ai.status.activeModelId
-            : 'AI · 未配置'}
-      </span>
+      <span className="truncate">{label}</span>
     </Button>
   );
 };

@@ -33,9 +33,8 @@ import {
 const api: EvidenceDesktopApi = {
   aiConfig: {
     getStatus: () => ipcRenderer.invoke(AI.getStatus),
-    save: (request) => ipcRenderer.invoke(AI.save, request),
+    selectModel: (request) => ipcRenderer.invoke(AI.selectModel, request),
     testConnection: (request) => ipcRenderer.invoke(AI.testConnection, request),
-    importCli: () => ipcRenderer.invoke(AI.importCli),
     onChanged: (listener) => {
       const handler = (
         _event: Electron.IpcRendererEvent,

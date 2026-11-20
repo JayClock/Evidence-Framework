@@ -287,7 +287,7 @@ export const StoryDrawer = ({
         <aside className="rounded border border-evidence-line p-3">
           <p>当前为离线放映。配置大模型后可使用 AI 旁白与 What-If 推演。</p>
           <button type="button" className={buttonClass} onClick={onConfigureAi}>
-            配置 API Key
+            配置 Pi 模型
           </button>
         </aside>
       ) : null}

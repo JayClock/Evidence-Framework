@@ -64,7 +64,7 @@ describe('EvidenceInquiryConversation', () => {
     expect(screen.queryByText('上一轮回复')).toBeNull();
     expect(screen.getByRole('button', { name: /发送/ })).toBeDisabled();
     expect(agent.submit).not.toHaveBeenCalled();
-    fireEvent.click(screen.getByRole('button', { name: '立刻配置 API Key' }));
+    fireEvent.click(screen.getByRole('button', { name: '配置 Pi 模型' }));
     expect(configure).toHaveBeenCalledOnce();
   });
 

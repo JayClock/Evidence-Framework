@@ -192,8 +192,9 @@ describe('IngestDraftModal', () => {
       isConfigured: false,
       activeProviderId: null,
       activeModelId: null,
+      activeModelName: null,
+      agentDir: '/test/pi',
       thinkingLevel: 'off',
-      hasLocalPiCliConfig: false,
       availableModels: [],
     });
     render(
@@ -204,7 +205,7 @@ describe('IngestDraftModal', () => {
     fireEvent.change(screen.getByLabelText('业务原文'), {
       target: { value: '本地原文' },
     });
-    const trigger = screen.getByRole('button', { name: '配置 API Key' });
+    const trigger = screen.getByRole('button', { name: '配置 Pi 模型' });
     trigger.focus();
     fireEvent.click(trigger);
     const settings = screen.getByRole('dialog', { name: /AI Model Settings/ });
