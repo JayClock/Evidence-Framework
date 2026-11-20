@@ -1,6 +1,11 @@
 import type { ElkNode } from 'elkjs';
 import type { DomainGraph } from '@evidence-poc/evidence-model-core';
-import type { EntityAST } from '@evidence-poc/evidence-schema';
+import {
+  LIFECYCLE_STAGE_LABELS,
+  LIFECYCLE_STAGE_ORDER,
+  lifecycleStageRank,
+  type EntityAST,
+} from '@evidence-poc/evidence-schema';
 import {
   transformDomainGraphToElk,
   measureNodeSize,
@@ -13,11 +18,12 @@ import type {
   DomainGraphLayout,
   SwimlaneRegion,
 } from '../layout/types.js';
+import { inferJourneyPlacements } from './journeyStages.js';
 import {
-  inferJourneyPlacements,
-  isCapability,
-  JOURNEY_STAGES,
-} from './journeyStages.js';
+  LIFECYCLE_FOOTER_HEIGHT,
+  LIFECYCLE_HEADER_HEIGHT,
+  LIFECYCLE_STAGE_GUTTER,
+} from './stageLayout.js';
 
 /** Causal order within a stage; cycles stay visible, with stable tie breaking. */
 const causalRanks = (graph: DomainGraph): Map<string, number> => {
@@ -59,10 +65,6 @@ const crossesCard = (a: Point, b: Point, box: Rect) =>
       Math.max(a.x, b.x) > box.x &&
       Math.min(a.x, b.x) < box.x + box.width;
 
-/** Seven aligned milestones, local responsibility lanes and a separate remedy
- * track. Context ownership is unchanged; even nested cards use world-aligned
- * columns, so the gutters are guaranteed to stay free at every nesting depth.
- */
 export const computeSwimlaneLayout = (
   graph: DomainGraph,
   viewMode: CanvasViewMode = 'standard',
@@ -71,13 +73,11 @@ export const computeSwimlaneLayout = (
   const placements = inferJourneyPlacements(graph);
   const ranks = causalRanks(graph);
   const size = measureNodeSize(viewMode);
-  const pitch = size.width + 64;
+  const pitch = size.width + LIFECYCLE_STAGE_GUTTER;
   const rowHeight = size.height + 96;
   const regions: SwimlaneRegion[] = [];
   const phaseOf = (entity: EntityAST) =>
-    JOURNEY_STAGES.findIndex(
-      ({ stage }) => stage === placements.get(entity.id)!.stage,
-    );
+    lifecycleStageRank(placements.get(entity.id)!.stage);
   const laneOf = (entity: EntityAST): string =>
     entity.category === 'evidence' && entity.kind === 'contract'
       ? '__agreement__'
@@ -89,16 +89,42 @@ export const computeSwimlaneLayout = (
       : lane === '__support__'
         ? '标的物与能力支撑'
         : (graph.getEntity(lane)?.label ?? `待核对角色：${lane}`);
-  const counts = new Map<string, number>();
-  const widths = JOURNEY_STAGES.map(() => pitch);
-  for (const entity of graph.entities()) {
-    if (entity.category === 'context') continue;
+  const nextSlot = new Map<string, number>();
+  const slots = new Map<string, number>();
+  const widths = LIFECYCLE_STAGE_ORDER.map(() => pitch);
+  const requestsByConfirmation = new Map<string, string[]>();
+  for (const { request, confirmations } of graph.fulfillmentPairs()) {
+    for (const confirmation of confirmations) {
+      const requests = requestsByConfirmation.get(confirmation.id) ?? [];
+      requests.push(request.id);
+      requestsByConfirmation.set(confirmation.id, requests);
+    }
+  }
+  const groupKey = (entity: EntityAST) => [
+    'contextRef' in entity ? (entity.contextRef ?? null) : null,
+    trackOf(entity),
+    phaseOf(entity),
+  ];
+  const cards = graph.entities().filter((e) => e.category !== 'context');
+  cards.sort((a, b) => ranks.get(a.id)! - ranks.get(b.id)!);
+  for (const entity of cards) {
+    const group = groupKey(entity);
+    const key = JSON.stringify([...group, laneOf(entity)]);
+    let slot = nextSlot.get(key) ?? 0;
+    for (const requestId of requestsByConfirmation.get(entity.id) ?? []) {
+      const requestSlot = slots.get(requestId);
+      const request = graph.getEntity(requestId);
+      if (
+        requestSlot !== undefined &&
+        request !== undefined &&
+        groupKey(request).every((part, i) => group[i] === part)
+      )
+        slot = Math.max(slot, requestSlot + 1);
+    }
+    slots.set(entity.id, slot);
+    nextSlot.set(key, slot + 1);
     const phase = phaseOf(entity);
-    const owner = 'contextRef' in entity ? entity.contextRef : '';
-    const key = JSON.stringify([owner, trackOf(entity), laneOf(entity), phase]);
-    const count = (counts.get(key) ?? 0) + 1;
-    counts.set(key, count);
-    widths[phase] = Math.max(widths[phase]!, count * pitch);
+    widths[phase] = Math.max(widths[phase]!, (slot + 1) * pitch);
   }
   const depthOf = (node: ElkNode): number =>
     1 +
@@ -111,10 +137,10 @@ export const computeSwimlaneLayout = (
     (_, i) => leftInset + widths.slice(0, i).reduce((a, b) => a + b, 0),
   );
   const totalWidth = leftInset + 64 + widths.reduce((a, b) => a + b, 0);
-  const milestones = JOURNEY_STAGES.map(({ stage, label }, order) => ({
+  const milestones = LIFECYCLE_STAGE_ORDER.map((stage, order) => ({
     id: `journey:${stage}`,
     stage,
-    label,
+    label: LIFECYCLE_STAGE_LABELS[stage],
     order,
     x: phaseX[order]!,
     width: widths[order]!,
@@ -125,7 +151,17 @@ export const computeSwimlaneLayout = (
     );
     const contexts = (container.children ?? [])
       .filter((n) => graph.getEntity(n.id)?.category === 'context')
-      .sort((a, b) => a.id.localeCompare(b.id));
+      .sort((a, b) => {
+        const rank = (id: string) => {
+          const context = graph.getEntity(id);
+          return context?.kind === 'pre_contract'
+            ? 0
+            : context?.kind === 'domain'
+              ? 2
+              : 1;
+        };
+        return rank(a.id) - rank(b.id) || a.id.localeCompare(b.id);
+      });
     container.children = [
       ...cards.sort((a, b) => a.id.localeCompare(b.id)),
       ...contexts,
@@ -133,21 +169,7 @@ export const computeSwimlaneLayout = (
     const contextId = container.id === root.id ? null : container.id;
     const addRegion = (region: Omit<SwimlaneRegion, 'contextId'>) =>
       regions.push({ ...region, contextId });
-    if (cards.length)
-      for (const milestone of milestones)
-        addRegion({
-          id: `${container.id}:phase:${milestone.stage}`,
-          kind: 'phase',
-          label: milestone.label,
-          stage: milestone.stage,
-          box: {
-            x: milestone.x,
-            y: originY + 52,
-            width: milestone.width,
-            height: 36,
-          },
-        });
-    let y = cards.length ? 104 : 60;
+    let y = contextId === null ? LIFECYCLE_HEADER_HEIGHT + 16 : 60;
     const placeTrack = (track: 'primary_track' | 'remedy_corridor') => {
       const trackCards = cards.filter(
         (n) => trackOf(graph.getEntity(n.id)!) === track,
@@ -156,35 +178,16 @@ export const computeSwimlaneLayout = (
       const top = y;
       const lanes = [
         ...new Set(trackCards.map((n) => laneOf(graph.getEntity(n.id)!))),
-      ].sort();
-      const slots = new Map<string, number>();
-      // Capabilities occupy the rightmost auxiliary slots of their consumer's
-      // stage, but keep their authored Context (no duplicate/reparented nodes).
-      const ordered = [...trackCards].sort(
+      ].sort(
         (a, b) =>
-          Number(isCapability(graph.getEntity(a.id)!)) -
-            Number(isCapability(graph.getEntity(b.id)!)) ||
-          (ranks.get(a.id) ?? 0) - (ranks.get(b.id) ?? 0),
+          Number(a === '__support__') - Number(b === '__support__') ||
+          a.localeCompare(b),
       );
-      for (const card of ordered) {
+      for (const card of trackCards) {
         const entity = graph.getEntity(card.id)!;
         const phase = phaseOf(entity);
         const lane = laneOf(entity);
-        const key = JSON.stringify([phase, lane]);
-        let slot = slots.get(key) ?? 0;
-        if (isCapability(entity)) {
-          const remaining = ordered.filter(
-            (n) =>
-              isCapability(graph.getEntity(n.id)!) &&
-              phaseOf(graph.getEntity(n.id)!) === phase &&
-              laneOf(graph.getEntity(n.id)!) === lane &&
-              !slots.has(`placed:${n.id}`),
-          ).length;
-          slot = Math.max(slot, widths[phase]! / pitch - remaining);
-        }
-        slots.set(key, slot + 1);
-        slots.set(`placed:${card.id}`, 1);
-        card.x = phaseX[phase]! - originX + slot * pitch;
+        card.x = phaseX[phase]! - originX + slots.get(entity.id)! * pitch;
         card.y = y + lanes.indexOf(lane) * rowHeight + 24;
       }
       for (const [i, lane] of lanes.entries())
@@ -230,8 +233,7 @@ export const computeSwimlaneLayout = (
     container.height = y + 24;
   };
   place(root, 0, 0);
-  if (!root.children?.length)
-    return extractElkResultToLayout({ ...root, width: 0, height: 0 }, graph);
+  if (!root.children?.length) root.height = 240;
 
   const boxes = new Map<string, Rect>();
   const walk = (node: ElkNode, x: number, y: number) => {
@@ -310,7 +312,7 @@ export const computeSwimlaneLayout = (
         height: remedyIndex * 12 + 16,
       },
     });
-  root.height = routeTop + remedyIndex * 12 + 32;
+  root.height = routeTop + remedyIndex * 12 + 32 + LIFECYCLE_FOOTER_HEIGHT;
   const layout = extractElkResultToLayout(root, graph);
   const nodes = layout.nodes.map((node) => ({
     ...node,

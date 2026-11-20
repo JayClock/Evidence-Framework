@@ -1,6 +1,7 @@
 import type {
   ContextEntityAST,
   EntityAST,
+  LifecycleStage,
 } from '@evidence-poc/evidence-schema';
 import type { Point, Rect } from '../geometry.js';
 
@@ -70,18 +71,9 @@ export interface ResponsibilityLink {
 
 export type CanvasLayoutMode = 'topology' | 'swimlane';
 
-export type BusinessMilestoneStage =
-  | 'sourcing'
-  | 'agreement'
-  | 'advance'
-  | 'dispatch'
-  | 'inspection'
-  | 'breach_remedy'
-  | 'clearing';
-
 export interface JourneyMilestone {
   readonly id: string;
-  readonly stage: BusinessMilestoneStage;
+  readonly stage: LifecycleStage;
   readonly label: string;
   readonly order: number;
   readonly x: number;
@@ -95,19 +87,16 @@ export interface SwimlaneCorridor {
 }
 
 export interface JourneyNodePlacement {
-  readonly stage: BusinessMilestoneStage;
+  readonly stage: LifecycleStage;
   readonly corridor: SwimlaneCorridor['kind'];
   readonly roleId?: string;
-  /** Capability attachment without changing the entity's Context ownership. */
-  readonly auxiliaryFor?: string;
 }
 
 export interface SwimlaneRegion {
   id: string;
-  kind: 'phase' | 'lane' | 'corridor';
+  kind: 'lane' | 'corridor';
   label: string;
   contextId: string | null;
-  stage?: BusinessMilestoneStage;
   roleId?: string;
   corridorKind?: SwimlaneCorridor['kind'];
   /** Absolute coordinates; never written into the business model. */

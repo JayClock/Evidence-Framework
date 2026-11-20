@@ -1,12 +1,4 @@
-export {
-  LIFECYCLE_STAGE_GEOMETRIES,
-  calculateNodePlacement,
-  calculateStageBoundaries,
-  type CanvasDimensions,
-  type Point2D,
-  type StageBoundaryLine,
-  type StageGeometry,
-} from './engine/stageLayout.js';
+export { calculateStageBoundaries } from './engine/stageLayout.js';
 export {
   boundsOfRects,
   insetRect,
@@ -51,7 +43,6 @@ export {
 } from './layout/serializable.js';
 export type {
   CanvasLayoutMode,
-  BusinessMilestoneStage,
   JourneyMilestone,
   JourneyNodePlacement,
   SwimlaneCorridor,

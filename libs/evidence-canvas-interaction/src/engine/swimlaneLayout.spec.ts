@@ -30,9 +30,6 @@ describe('responsibility swimlanes', () => {
     expect(a).toEqual(b);
     expect(JSON.stringify(model)).toBe(before);
     expect(a.nodes.length + a.contextGroups.length).toBe(model.entities.length);
-    expect(
-      a.swimlaneRegions?.filter((r) => r.kind === 'phase').length,
-    ).toBeGreaterThanOrEqual(4);
     for (const node of a.nodes) {
       const parent = node.contextId
         ? a.contextGroupById.get(node.contextId)
@@ -65,7 +62,7 @@ describe('responsibility swimlanes', () => {
     }
   });
   it.each(['simplified', 'standard', 'expanded'] as const)(
-    'aligns all seven stages and isolates remedy trunks at %s density',
+    'aligns four lifecycle stages and isolates remedy trunks at %s density',
     async (viewMode) => {
       const model = JSON.parse(
         readFileSync(
@@ -82,34 +79,32 @@ describe('responsibility swimlanes', () => {
         viewMode,
       });
       expect(layout.journeyMilestones?.map((m) => m.stage)).toEqual([
-        'sourcing',
-        'agreement',
-        'advance',
-        'dispatch',
-        'inspection',
-        'breach_remedy',
-        'clearing',
+        'rfp',
+        'proposal',
+        'contract',
+        'fulfillment',
       ]);
       for (const [id, stage] of Object.entries({
-        'doc-sourcing-rfp': 'sourcing',
-        'doc-supplier-proposal': 'sourcing',
-        'doc-procurement-contract': 'agreement',
-        'req-advance-payment': 'advance',
-        'conf-advance-payment': 'advance',
-        'req-equipment-delivery': 'dispatch',
-        'conf-equipment-delivery': 'dispatch',
-        'doc-sgs-inspection-cert': 'inspection',
-        'req-breach-penalty': 'breach_remedy',
-        'conf-breach-settlement': 'breach_remedy',
-        'req-escrow-release': 'clearing',
-        'conf-escrow-release': 'clearing',
-        'thing-tariff-calculator': 'breach_remedy',
-        'thing-compliance-checker': 'inspection',
+        'doc-sourcing-rfp': 'rfp',
+        'doc-supplier-proposal': 'proposal',
+        'doc-procurement-contract': 'contract',
+        'req-advance-payment': 'fulfillment',
+        'conf-advance-payment': 'fulfillment',
+        'req-equipment-delivery': 'fulfillment',
+        'conf-equipment-delivery': 'fulfillment',
+        'doc-sgs-inspection-cert': 'fulfillment',
+        'req-breach-penalty': 'fulfillment',
+        'conf-breach-settlement': 'fulfillment',
+        'req-escrow-release': 'fulfillment',
+        'conf-escrow-release': 'fulfillment',
+        'thing-tariff-calculator': 'fulfillment',
+        'thing-compliance-checker': 'fulfillment',
       }))
         expect(layout.nodeById.get(id)?.journey?.stage, id).toBe(stage);
-      expect(
-        layout.nodeById.get('thing-tariff-calculator')?.journey?.auxiliaryFor,
-      ).toBe('req-breach-penalty');
+      for (const id of ['req-breach-penalty', 'conf-breach-settlement'])
+        expect(layout.nodeById.get(id)?.journey?.corridor).toBe(
+          'remedy_corridor',
+        );
       const routeBand = layout.swimlaneRegions!.find((r) =>
         r.id.endsWith(':remedy-routing'),
       )!;
@@ -167,7 +162,7 @@ describe('responsibility swimlanes', () => {
     },
   );
 
-  it('infers anonymous fulfillment stages from causal dependencies, not id conventions', async () => {
+  it('keeps anonymous requests and confirmations in the fulfillment stage in causal order', async () => {
     const model = createFixtureDocument();
     const request = model.entities.find(
       (e) => e.id === 'evidence.delivery-request',
@@ -192,21 +187,22 @@ describe('responsibility swimlanes', () => {
     const layout = await computeGraphLayout(createDomainGraph(model), {
       layoutMode: 'swimlane',
     });
-    expect(layout.nodeById.get(request.id)?.journey?.stage).toBe('advance');
-    expect(layout.nodeById.get(second.id)?.journey?.stage).toBe('dispatch');
+    expect(layout.nodeById.get(request.id)?.journey?.stage).toBe('fulfillment');
+    expect(layout.nodeById.get(second.id)?.journey?.stage).toBe('fulfillment');
+    expect(layout.nodeById.get(request.id)!.worldBox.x).toBeLessThan(
+      layout.nodeById.get(confirmation.id)!.worldBox.x,
+    );
   });
 
   it('handles empty models and preserves cycle rejection', async () => {
     const model = createFixtureDocument();
     model.entities = [];
     model.relationships = [];
-    expect(
-      (
-        await computeGraphLayout(createDomainGraph(model), {
-          layoutMode: 'swimlane',
-        })
-      ).bounds.width,
-    ).toBe(0);
+    const empty = await computeGraphLayout(createDomainGraph(model), {
+      layoutMode: 'swimlane',
+    });
+    expect(empty.bounds.width).toBeGreaterThan(0);
+    expect(empty.journeyMilestones).toHaveLength(4);
     const cyclic = createFixtureDocument();
     const context = cyclic.entities.find((e) => e.category === 'context')!;
     if (context.category === 'context') context.parentContextRef = context.id;

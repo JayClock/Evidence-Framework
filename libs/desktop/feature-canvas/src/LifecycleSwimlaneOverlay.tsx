@@ -1,81 +1,107 @@
-import React, { useMemo } from 'react';
 import {
-  LIFECYCLE_STAGE_GEOMETRIES,
   calculateStageBoundaries,
+  type JourneyMilestone,
+  type SwimlaneRegion,
 } from '@evidence-poc/evidence-canvas-interaction';
+import {
+  LIFECYCLE_STAGE_ENGLISH_LABELS,
+  type LifecycleStage,
+  type RelationshipFlowKind,
+} from '@evidence-poc/evidence-schema';
 
-export interface LifecycleSwimlaneOverlayProps {
-  readonly width: number;
-  readonly height: number;
-  readonly activeStage?: string;
-}
-
-export const LifecycleSwimlaneOverlay: React.FC<LifecycleSwimlaneOverlayProps> = ({
+export const LifecycleSwimlaneOverlay = ({
   width,
   height,
+  milestones,
+  regions,
   activeStage,
-}) => {
-  const boundaries = useMemo(
-    () => calculateStageBoundaries({ width, height, skewAngleDeg: -18 }),
-    [width, height],
-  );
-
-  return (
-    <div
-      className="pointer-events-none absolute inset-0 overflow-hidden select-none"
-      aria-label="业务全生命周期四阶段泳道"
-    >
-      <div className="absolute top-0 left-0 right-0 h-14 flex items-center px-6 border-b border-[#e2e8f0]/60 bg-gradient-to-b from-[#f8fafc]/90 to-transparent backdrop-blur-[2px]">
-        {LIFECYCLE_STAGE_GEOMETRIES.map((g) => (
-          <div
-            key={g.stage}
-            className="flex-1 flex flex-col items-center justify-center transition-opacity"
-            style={{
-              opacity: !activeStage || activeStage === g.stage ? 1 : 0.45,
-            }}
-          >
-            <span className="text-[13px] font-bold tracking-wide text-[#1e293b]">
-              {g.label}
-            </span>
-            <span className="text-[10px] font-mono text-[#64748b]">
-              {g.subLabel}
-            </span>
-          </div>
-        ))}
-      </div>
-
-      <svg className="absolute inset-0 w-full h-full">
-        <defs>
-          <linearGradient id="slashFade" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#cbd5e1" stopOpacity="0.8" />
-            <stop offset="90%" stopColor="#cbd5e1" stopOpacity="0.3" />
-            <stop offset="100%" stopColor="#94a3b8" stopOpacity="0.8" />
-          </linearGradient>
-        </defs>
-
-        {boundaries.slice(0, -1).map(({ stage, top, bottom }) => (
-          <g key={stage}>
-            <line
-              x1={top.x}
-              y1={top.y + 48}
-              x2={bottom.x}
-              y2={bottom.y - 48}
-              stroke="url(#slashFade)"
-              strokeWidth="1.5"
-              strokeDasharray="6 6"
-            />
-          </g>
-        ))}
-      </svg>
-
-      <div className="absolute bottom-4 left-8 right-8 flex items-center gap-3">
-        <div className="h-[2px] flex-1 bg-gradient-to-r from-[#94a3b8]/30 via-[#64748b]/60 to-[#334155] rounded-full relative">
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-0 h-0 border-y-[4px] border-y-transparent border-l-[8px] border-l-[#334155]" />
+  activeFlowKind,
+}: {
+  width: number;
+  height: number;
+  milestones: readonly JourneyMilestone[];
+  regions: readonly SwimlaneRegion[];
+  activeStage?: LifecycleStage;
+  activeFlowKind?: RelationshipFlowKind;
+}) => (
+  <div
+    role="group"
+    aria-label="业务全生命周期四阶段泳道"
+    className="pointer-events-none absolute select-none"
+    style={{ width, height }}
+  >
+    {[...regions]
+      .sort((a, b) => Number(a.kind === 'lane') - Number(b.kind === 'lane'))
+      .map(({ id, label, kind, box, roleId, corridorKind }) => (
+        <div
+          key={id}
+          data-swimlane-kind={kind}
+          data-responsible-role={roleId}
+          data-corridor-kind={corridorKind}
+          data-story-corridor={
+            kind === 'corridor' &&
+            corridorKind === 'remedy_corridor' &&
+            activeFlowKind !== 'primary'
+              ? activeFlowKind
+              : undefined
+          }
+          className={
+            kind === 'lane'
+              ? 'absolute border-y border-evidence-line bg-workbench-subtle/40 px-3 py-2 text-[11px] text-evidence-muted'
+              : corridorKind === 'remedy_corridor'
+                ? 'absolute border-l-4 border-dashed border-amber-600 bg-amber-50/30 px-3 py-2 text-[11px] text-amber-900'
+                : 'absolute border-l-4 border-emerald-700 bg-emerald-50/20'
+          }
+          style={{
+            left: box.x,
+            top: box.y,
+            width: box.width,
+            height: box.height,
+          }}
+        >
+          {kind === 'lane' || corridorKind === 'remedy_corridor' ? (
+            <span className="inline-block max-w-32 break-words">{label}</span>
+          ) : null}
         </div>
-        <span className="text-[10px] font-mono font-semibold tracking-wider text-[#475569] uppercase">
-          Business Life Cycle Time Horizon →
+      ))}
+    {milestones.map(({ stage, label, x, width: columnWidth }) => (
+      <div
+        key={stage}
+        data-milestone-stage={stage}
+        data-story-milestone={stage === activeStage ? stage : undefined}
+        className="absolute top-0 flex h-16 flex-col justify-center border-b border-evidence-line bg-workbench-subtle px-3 text-evidence-ink data-[story-milestone]:border-b-4 data-[story-milestone]:border-b-evidence-accent"
+        style={{ left: x, width: columnWidth }}
+      >
+        <span className="text-sm font-semibold">{label}</span>
+        <span className="text-[10px] text-evidence-muted">
+          {LIFECYCLE_STAGE_ENGLISH_LABELS[stage]}
         </span>
       </div>
+    ))}
+    <svg
+      aria-hidden="true"
+      width={width}
+      height={height}
+      className="absolute inset-0"
+    >
+      {calculateStageBoundaries(milestones, height).map(
+        ({ stage, top, bottom }) => (
+          <line
+            key={stage}
+            x1={top.x}
+            y1={top.y}
+            x2={bottom.x}
+            y2={bottom.y}
+            className="stroke-evidence-muted"
+            strokeWidth="1.5"
+            strokeDasharray="6 6"
+          />
+        ),
+      )}
+    </svg>
+    <div className="absolute inset-x-8 bottom-4 flex items-center gap-3 text-[11px] text-evidence-muted">
+      <span aria-hidden="true" className="h-px flex-1 bg-current" />
+      <span>业务生命周期 →</span>
     </div>
-  );
-};
+  </div>
+);

@@ -50,7 +50,7 @@ import {
   type CanvasInteraction,
 } from './CanvasInteractionContext';
 import { applyStoryFocus, type CanvasStoryFocus } from './storyFocus';
-import { SwimlaneOverlay } from './SwimlaneOverlay';
+import { LifecycleSwimlaneOverlay } from './LifecycleSwimlaneOverlay';
 import { BusinessLegend } from './BusinessLegend';
 import { ContextGroupNode, EntityNode } from './EntityNode';
 import { FulfillmentEdge, PairLinkEdge } from './FulfillmentEdge';
@@ -319,17 +319,13 @@ const CanvasSurface = ({
     layout: DomainGraphLayout;
   } | null>(null);
   useEffect(() => {
-    if (
-      !viewportInitialized ||
-      !viewportSized ||
-      (layout.nodes.length === 0 && layout.contextGroups.length === 0)
-    )
+    if (!viewportInitialized || !viewportSized || layout.bounds.width === 0)
       return;
     const scopeId = scope?.contextId ?? null;
     const key = JSON.stringify([
       scopeId,
       viewMode,
-      Boolean(layout.swimlaneRegions),
+      Boolean(layout.journeyMilestones),
     ]);
     const previous = previousFit.current;
     previousFit.current = { key, scopeId, layout };
@@ -598,14 +594,16 @@ const CanvasSurface = ({
               className="pointer-events-none absolute"
               style={{ zIndex: 0, left: 0, top: 0 }}
             >
-              {layout.swimlaneRegions ? (
-                <SwimlaneOverlay
-                  regions={layout.swimlaneRegions}
+              {layout.journeyMilestones ? (
+                <LifecycleSwimlaneOverlay
+                  width={layout.bounds.width}
+                  height={layout.bounds.height}
+                  milestones={layout.journeyMilestones}
+                  regions={layout.swimlaneRegions ?? []}
                   activeStage={
-                    storyFocus
-                      ? layout.nodeById.get(storyFocus.activeEntityId)?.journey
-                          ?.stage
-                      : undefined
+                    layout.nodeById.get(
+                      storyFocus?.activeEntityId ?? selection.nodeId ?? '',
+                    )?.journey?.stage
                   }
                   activeFlowKind={storyFocus?.flowKind}
                 />
