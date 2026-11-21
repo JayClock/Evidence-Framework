@@ -317,9 +317,14 @@ describe('createAgentRuntime', () => {
     const runtime = runtimeWith({ transport, fake });
 
     await runtime.prompt('开工');
-    fake.emit({ type: 'text-delta', delta: '合同' } as never);
+    const snapshot = {
+      type: 'assistant-message',
+      parts: [{ type: 'text', text: '合同' }],
+      done: false,
+    } as const;
+    fake.emit(snapshot as never);
 
-    expect(events).toEqual([{ type: 'text-delta', delta: '合同' }]);
+    expect(events).toEqual([snapshot]);
   });
 
   it('refuses to steer before a session exists', async () => {

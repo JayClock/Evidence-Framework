@@ -51,13 +51,11 @@ export const createModelIngestionReader = ({
     let failure: string | null = null;
 
     const unsubscribe = session.subscribe((event) => {
-      if (event.type === 'text-delta') {
-        reply += event.delta;
-      }
-
-      if (event.type === 'assistant-message-ended') {
-        reply = event.text;
-        failure = null;
+      if (event.type === 'assistant-message') {
+        reply = event.parts
+          .flatMap((part) => (part.type === 'text' ? [part.text] : []))
+          .join('');
+        if (event.done) failure = null;
       }
       if (event.type === 'agent-settled' && event.aborted) {
         failure = '模型读取已取消。';

@@ -343,13 +343,15 @@ describe('EditorScreen', () => {
         );
       } else if (input.focus?.inquiry === 'trace') {
         api.agentMock.emitEvent({
-          type: 'text-delta',
-          delta: '实付金额来自哪里？',
+          type: 'assistant-message',
+          parts: [{ type: 'text', text: '**实付金额**来自哪里？' }],
+          done: true,
         });
       } else if (input.focus?.inquiry === 'what-if') {
         api.agentMock.emitEvent({
-          type: 'text-delta',
-          delta: '如果买方超时未付款怎么办？',
+          type: 'assistant-message',
+          parts: [{ type: 'text', text: '如果买方超时未付款怎么办？' }],
+          done: true,
         });
       } else if (input.text === sourcedFromRequest) {
         apply('溯源并配对', (draft) =>
@@ -418,9 +420,9 @@ describe('EditorScreen', () => {
     const sourcing = await screen.findByRole('dialog', {
       name: '关键数据溯源：付款凭证',
     });
-    expect(within(sourcing).getByLabelText('AI 回复')).toHaveTextContent(
-      '实付金额来自哪里？',
-    );
+    expect(
+      await within(sourcing).findByText('实付金额', { selector: 'strong' }),
+    ).toBeVisible();
     const answer = async (dialog: HTMLElement, text: string) => {
       const panel = within(dialog);
       fireEvent.change(panel.getByLabelText('访谈内容'), {
@@ -458,9 +460,9 @@ describe('EditorScreen', () => {
       name: 'What-If 异常履约：付款凭证',
     });
     expect(screen.queryByRole('button', { name: '溯源：退款确认' })).toBeNull();
-    expect(within(whatIf).getByLabelText('AI 回复')).toHaveTextContent(
-      '如果买方超时未付款怎么办？',
-    );
+    expect(
+      await within(whatIf).findByText('如果买方超时未付款怎么办？'),
+    ).toBeVisible();
     await answer(whatIf, remedyCondition);
 
     expect(

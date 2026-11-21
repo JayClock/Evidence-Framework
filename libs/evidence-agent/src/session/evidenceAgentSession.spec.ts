@@ -10,28 +10,30 @@ import {
 import { projectSessionEvent } from './streamEvents.js';
 
 describe('projectSessionEvent', () => {
-  it('projects separate text and thinking deltas', () => {
+  it('projects the current assistant snapshot without provider metadata', () => {
     expect(
       projectSessionEvent({
         type: 'message_update',
-        message: { role: 'assistant' } as never,
-        assistantMessageEvent: {
-          type: 'text_delta',
-          delta: '先说履约',
+        message: {
+          role: 'assistant',
+          content: [
+            { type: 'thinking', thinking: '不公开', redacted: true },
+            { type: 'thinking', thinking: '核对来源', signature: 'private' },
+            { type: 'text', text: '先说履约' },
+          ],
         } as never,
+        assistantMessageEvent: { type: 'text_delta', delta: '履约' } as never,
       }),
-    ).toEqual([{ type: 'text-delta', delta: '先说履约' }]);
-
-    expect(
-      projectSessionEvent({
-        type: 'message_update',
-        message: { role: 'assistant' } as never,
-        assistantMessageEvent: {
-          type: 'thinking_delta',
-          delta: '核对来源',
-        } as never,
-      }),
-    ).toEqual([{ type: 'thinking-delta', delta: '核对来源' }]);
+    ).toEqual([
+      {
+        type: 'assistant-message',
+        done: false,
+        parts: [
+          { type: 'reasoning', text: '核对来源' },
+          { type: 'text', text: '先说履约' },
+        ],
+      },
+    ]);
   });
 
   it('projects final text and unredacted thinking from message_end', () => {
@@ -49,7 +51,14 @@ describe('projectSessionEvent', () => {
         } as never,
       }),
     ).toEqual([
-      { type: 'assistant-message-ended', text: 'answer', thinking: 'reason' },
+      {
+        type: 'assistant-message',
+        done: true,
+        parts: [
+          { type: 'reasoning', text: 'reason' },
+          { type: 'text', text: 'answer' },
+        ],
+      },
     ]);
   });
 

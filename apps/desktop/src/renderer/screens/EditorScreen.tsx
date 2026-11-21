@@ -26,10 +26,10 @@ import { EntityDrawer } from '../components/layout/EntityDrawer';
 import { InspectorShell } from '../components/layout/InspectorShell';
 import { ViewModeBar } from '../components/layout/ViewModeBar';
 import {
-  EvidenceInquiryConversation,
+  EvidenceAgentThread,
   InlinePatchCard,
   type AppliedPatch,
-  useAgentSession,
+  usePiConversation,
   usePatchReview,
 } from '@evidence-poc/desktop-feature-agent';
 import { ScenarioStudioModal } from '../components/scenario/ScenarioStudioModal';
@@ -289,13 +289,13 @@ const EditorWorkspace = ({
     initialDocument,
     recordAgentPatch,
   );
-  const agent = useAgentSession(
+  const agent = usePiConversation(
     window.evidenceAPI.agent,
     project.rootPath,
     liveModel.prompt,
   );
   const patchReview =
-    agent.state.running && patchReviewState.review
+    agent.running && patchReviewState.review
       ? {
           ...patchReviewState,
           review: { ...patchReviewState.review, revertable: false },
@@ -461,7 +461,7 @@ const EditorWorkspace = ({
 
   const submitStorming = async (text: string): Promise<boolean> => {
     if (
-      agent.state.running ||
+      agent.running ||
       stormingAdded.current !== null ||
       patchReview.review !== null ||
       ai?.aiConfigured === false
@@ -533,7 +533,7 @@ const EditorWorkspace = ({
 
   const openInquiry = (nodeId: string, kind: EvidenceInquiryKind) => {
     if (
-      agent.state.running ||
+      agent.running ||
       patchReview.review !== null ||
       (kind === 'what-if' && !pairedNodeIds.has(nodeId))
     )
@@ -542,10 +542,8 @@ const EditorWorkspace = ({
     state.session.select(nodeId);
     setStormingOpen(false);
     setInquiry({ nodeId, kind });
-    if (ai?.aiConfigured === false) {
-      agent.reset();
-      return;
-    }
+    agent.reset();
+    if (ai?.aiConfigured === false) return;
     const question =
       kind === 'trace'
         ? '先问我这张凭证最关键的待决数据项从哪里来；有来源的不要重复问。若没有关键数据项，先问这张凭证记录了哪些关键事实。'
@@ -578,13 +576,13 @@ const EditorWorkspace = ({
 
   const commandCapabilities = useMemo<CommandCapabilities>(
     () => ({
-      canUndo: !agent.state.running && state.canUndo,
-      canRedo: !agent.state.running && state.canRedo,
+      canUndo: !agent.running && state.canUndo,
+      canRedo: !agent.running && state.canRedo,
       viewMode: workspaceView.mode,
       hasSelection: state.selection.nodeId !== null,
     }),
     [
-      agent.state.running,
+      agent.running,
       state.canUndo,
       state.canRedo,
       state.selection.nodeId,
@@ -800,7 +798,7 @@ const EditorWorkspace = ({
                 busy: stormingBusy,
                 blocked:
                   patchReview.review !== null ||
-                  (agent.state.running && !stormingBusy),
+                  (agent.running && !stormingBusy),
                 error: stormingError,
                 aiConfigured: ai?.aiConfigured,
                 onConfigureAi: ai?.openSettings,
@@ -815,7 +813,7 @@ const EditorWorkspace = ({
             : {
                 target: inquiryTarget,
                 pairedNodeIds,
-                busy: agent.state.running || patchReview.review !== null,
+                busy: agent.running || patchReview.review !== null,
                 onAcceptPatch:
                   patchReview.review === null ? undefined : acceptPatch,
                 onRevertPatch: patchReview.review?.revertable
@@ -825,10 +823,10 @@ const EditorWorkspace = ({
                 onClose: closeInquiry,
                 content:
                   inquiryTarget === null ? null : (
-                    <EvidenceInquiryConversation
+                    <EvidenceAgentThread
                       key={`${inquiryTarget.nodeId}:${inquiryTarget.kind}`}
                       nodeId={inquiryTarget.nodeId}
-                      controller={agent}
+                      conversation={agent}
                       patchReview={patchReview}
                       onFocusEntity={revealOnGraph}
                       aiConfigured={ai?.aiConfigured}
@@ -1038,7 +1036,7 @@ const EditorWorkspace = ({
                   <InspectorShell
                     collapsed={rightRailCollapsed}
                     onReturnToCanvas={returnToCanvas}
-                    editingLocked={agent.state.running}
+                    editingLocked={agent.running}
                     returnOnEscape={
                       !storyActive &&
                       patchReview.review === null &&
@@ -1124,7 +1122,7 @@ const EditorWorkspace = ({
           targets={commandTargets}
           onFocusTarget={focusNode}
         />
-        {scenarioOpen && !agent.state.running ? (
+        {scenarioOpen && !agent.running ? (
           <ScenarioStudioModal
             session={state.session}
             onClose={() => setScenarioOpen(false)}

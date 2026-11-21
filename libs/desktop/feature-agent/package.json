@@ -30,7 +30,6 @@
     "@evidence-poc/desktop-contracts": "workspace:*",
     "@evidence-poc/desktop-feature-canvas": "workspace:*",
     "@evidence-poc/desktop-ui-kit": "workspace:*",
-    "@evidence-poc/evidence-agent": "workspace:*",
     "@evidence-poc/evidence-model-core": "workspace:*",
     "@evidence-poc/evidence-schema": "workspace:*",
     "@radix-ui/react-avatar": "^1.3.1",

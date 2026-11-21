@@ -1,15 +1,16 @@
 import type { AgentSessionEvent } from '@earendil-works/pi-coding-agent';
 
-/**
- * The subset of Pi session activity the desktop surfaces.
- *
- * Everything is a plain value so it can cross the IPC boundary unchanged and be
- * asserted in tests without a live model.
- */
+type AssistantPart =
+  | { type: 'text' | 'reasoning'; text: string }
+  | { type: 'tool-call'; toolCallId: string; toolName: string; input: unknown };
+
+/** Browser-safe snapshots without provider metadata or redacted reasoning. */
 export type AgentStreamEvent =
-  | { type: 'text-delta'; delta: string }
-  | { type: 'thinking-delta'; delta: string }
-  | { type: 'assistant-message-ended'; text: string; thinking: string }
+  | {
+      type: 'assistant-message';
+      parts: readonly AssistantPart[];
+      done: boolean;
+    }
   | {
       type: 'tool-call-started';
       toolCallId: string;
@@ -26,23 +27,40 @@ export type AgentStreamEvent =
   | { type: 'agent-settled'; aborted: boolean }
   | { type: 'agent-error'; message: string };
 
-/**
- * Projects one Pi event onto zero or more desktop stream events.
- *
- * Low-level agent_end is not a terminal event: retries can follow it.
- */
+/** Project Pi's snapshots rather than rebuilding text from deltas in the UI. */
 export const projectSessionEvent = (
   event: AgentSessionEvent,
 ): readonly AgentStreamEvent[] => {
   switch (event.type) {
-    case 'message_update': {
-      const update = event.assistantMessageEvent;
-
-      if (update.type === 'text_delta')
-        return [{ type: 'text-delta', delta: update.delta }];
-      if (update.type === 'thinking_delta')
-        return [{ type: 'thinking-delta', delta: update.delta }];
-      return [];
+    case 'message_update':
+    case 'message_end': {
+      const { message } = event;
+      if (message.role !== 'assistant') return [];
+      const done = event.type === 'message_end';
+      if (done && message.stopReason === 'error')
+        return [
+          {
+            type: 'agent-error',
+            message: message.errorMessage ?? '模型请求失败。',
+          },
+        ];
+      if (done && message.stopReason === 'aborted') return [];
+      const parts = message.content.flatMap<AssistantPart>((part) => {
+        if (part.type === 'text') return [{ type: 'text', text: part.text }];
+        if (part.type === 'thinking' && !part.redacted)
+          return [{ type: 'reasoning', text: part.thinking }];
+        if (part.type === 'toolCall' && part.id && part.name)
+          return [
+            {
+              type: 'tool-call',
+              toolCallId: part.id,
+              toolName: part.name,
+              input: part.arguments,
+            },
+          ];
+        return [];
+      });
+      return [{ type: 'assistant-message', parts, done }];
     }
 
     case 'tool_execution_start':
@@ -66,36 +84,9 @@ export const projectSessionEvent = (
         },
       ];
 
+    // Low-level agent_end is not terminal: Pi may retry after it.
     case 'agent_settled':
       return [{ type: 'agent-settled', aborted: event.aborted }];
-
-    case 'message_end': {
-      const message = event.message;
-
-      if (message.role !== 'assistant') return [];
-      if (message.stopReason === 'error') {
-        return [
-          {
-            type: 'agent-error',
-            message: message.errorMessage ?? '模型请求失败。',
-          },
-        ];
-      }
-      if (message.stopReason === 'aborted') return [];
-      return [
-        {
-          type: 'assistant-message-ended',
-          text: message.content
-            .map((part) => (part.type === 'text' ? part.text : ''))
-            .join(''),
-          thinking: message.content
-            .map((part) =>
-              part.type === 'thinking' && !part.redacted ? part.thinking : '',
-            )
-            .join(''),
-        },
-      ];
-    }
 
     default:
       return [];

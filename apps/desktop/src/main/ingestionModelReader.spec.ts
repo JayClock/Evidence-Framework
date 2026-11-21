@@ -47,6 +47,12 @@ const scriptedSession = (
   }) as unknown as typeof import('@evidence-poc/evidence-agent').createEvidenceAgentSession;
 };
 
+const snapshot = (text: string, done = false): AgentStreamEvent => ({
+  type: 'assistant-message',
+  parts: [{ type: 'text', text }],
+  done,
+});
+
 describe('reading prose with the configured model', () => {
   it('injects the same explicit model dependencies as other desktop entry points', async () => {
     const log: EvidenceAgentSessionOptions[] = [];
@@ -57,10 +63,7 @@ describe('reading prose with the configured model', () => {
       thinkingLevel: 'medium' as const,
     };
     const read = createModelIngestionReader({
-      sessionFactory: scriptedSession(
-        [{ type: 'text-delta', delta: 'ok' }],
-        log,
-      ),
+      sessionFactory: scriptedSession([snapshot('ok', true)], log),
       workingDirectory: async () => '/tmp/scratch',
       getModelOptions: async () => modelOptions,
     });
@@ -95,9 +98,9 @@ describe('reading prose with the configured model', () => {
     const read = createModelIngestionReader({
       sessionFactory: scriptedSession(
         [
-          { type: 'text-delta', delta: '```json\n' },
-          { type: 'text-delta', delta: '{"modelName":"x"}' },
-          { type: 'text-delta', delta: '\n```' },
+          snapshot('```json\n'),
+          snapshot('```json\n{"modelName":"x"}'),
+          snapshot('```json\n{"modelName":"x"}\n```', true),
           { type: 'agent-settled', aborted: false },
         ],
         log,
@@ -110,7 +113,7 @@ describe('reading prose with the configured model', () => {
       userPrompt: '### 业务原文',
     });
 
-    expect(reply).toContain('modelName');
+    expect(reply).toBe('```json\n{"modelName":"x"}\n```');
     expect(log[0]?.instructions).toEqual(['读法']);
   });
 
@@ -139,7 +142,7 @@ describe('reading prose with the configured model', () => {
     const read = createModelIngestionReader({
       sessionFactory: scriptedSession(
         [
-          { type: 'text-delta', delta: '读到这里' },
+          snapshot('读到这里'),
           { type: 'agent-error', message: '模型没有配置' },
         ],
         log,

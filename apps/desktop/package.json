@@ -8,9 +8,14 @@
   "dependencies": {
     "@earendil-works/pi-ai": "^1.5.2",
     "@earendil-works/pi-coding-agent": "^1.5.2",
+    "@evidence-poc/desktop-contracts": "workspace:*",
+    "@evidence-poc/desktop-feature-agent": "workspace:*",
     "@evidence-poc/desktop-feature-canvas": "workspace:*",
+    "@evidence-poc/desktop-feature-delivery": "workspace:*",
     "@evidence-poc/desktop-feature-inspector": "workspace:*",
+    "@evidence-poc/desktop-feature-story": "workspace:*",
     "@evidence-poc/desktop-ui-kit": "workspace:*",
+    "@evidence-poc/evidence-acceptance": "workspace:*",
     "@evidence-poc/evidence-agent": "workspace:*",
     "@evidence-poc/evidence-api": "workspace:*",
     "@evidence-poc/evidence-canvas-interaction": "workspace:*",
@@ -25,11 +30,7 @@
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-resizable-panels": "^2.1.9",
-    "@evidence-poc/desktop-contracts": "workspace:*",
-    "@evidence-poc/desktop-feature-story": "workspace:*",
-    "@evidence-poc/desktop-feature-delivery": "workspace:*",
-    "@evidence-poc/desktop-feature-agent": "workspace:*",
-    "@evidence-poc/evidence-acceptance": "workspace:*"
+    "tw-shimmer": "0.4.14"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.10.2",

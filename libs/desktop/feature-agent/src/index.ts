@@ -1,4 +1,4 @@
-export { EvidenceInquiryConversation } from './components/agent/EvidenceInquiryConversation';
+export { EvidenceAgentThread } from './components/agent/EvidenceAgentThread';
 export { InlinePatchCard } from './components/agent/InlinePatchCard';
-export * from './state/useAgentSession';
+export { usePiConversation } from './state/usePiConversation';
 export * from './state/usePatchReview';
