@@ -55,12 +55,8 @@ describe('Pi model settings', () => {
     const { api, onStatus, onClose } = setup();
     expect(screen.getByText(/当前：Gateway Flash/)).toBeVisible();
     const group = screen.getByRole('group', { name: 'another-gateway' });
-    const option = within(group).getByRole<HTMLOptionElement>('option', {
-      name: 'Another Flash',
-    });
-    fireEvent.change(screen.getByLabelText('模型'), {
-      target: { value: option.value },
-    });
+    const option = within(group).getByRole('option', { name: /Another Flash/ });
+    fireEvent.click(option);
     expect(api.selectModel).not.toHaveBeenCalled();
     fireEvent.change(screen.getByLabelText('思考级别'), {
       target: { value: 'xhigh' },
@@ -73,6 +69,28 @@ describe('Pi model settings', () => {
       thinkingLevel: 'xhigh',
     });
     expect(onStatus).toHaveBeenCalledWith(status);
+  });
+
+  it('filters by provider, model ID and name without saving on Enter', async () => {
+    const { api } = setup();
+    const search = screen.getByRole('combobox', { name: '搜索可用模型' });
+    expect(search).toHaveFocus();
+    fireEvent.change(search, { target: { value: 'route/flash' } });
+    const models = within(screen.getByRole('listbox', { name: 'Pi 可用模型' }));
+    expect(models.getAllByRole('option')).toHaveLength(2);
+    fireEvent.change(search, { target: { value: 'another-gateway' } });
+    expect(screen.queryByRole('option', { name: /Gateway Flash/ })).toBeNull();
+    fireEvent.keyDown(search, { key: 'Enter' });
+    expect(
+      screen.getByRole('option', { name: /Another Flash.*已选择/ }),
+    ).toBeVisible();
+    expect(api.selectModel).not.toHaveBeenCalled();
+    fireEvent.change(search, { target: { value: 'unknown' } });
+    expect(screen.getByText('没有匹配的模型')).toBeVisible();
+    fireEvent.change(search, { target: { value: 'Gateway Flash' } });
+    expect(
+      await screen.findByRole('option', { name: /Gateway Flash/ }),
+    ).toBeVisible();
   });
 
   it('tests the selected model without saving a new default', async () => {

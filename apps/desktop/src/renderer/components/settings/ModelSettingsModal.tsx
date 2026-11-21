@@ -1,5 +1,13 @@
 import { useState, type SubmitEvent } from 'react';
-import { Button } from '@evidence-poc/desktop-ui-kit';
+import {
+  Button,
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@evidence-poc/desktop-ui-kit';
 import type {
   AiConfigStatus,
   AiModelDescriptor,
@@ -36,6 +44,7 @@ export const ModelSettingsModal = ({
   onClose: () => void;
 }) => {
   const [key, setKey] = useState('');
+  const [query, setQuery] = useState('');
   const [level, setLevel] = useState('');
   const [pending, setPending] = useState<
     'select' | 'test' | 'reload' | 'open' | null
@@ -110,6 +119,7 @@ export const ModelSettingsModal = ({
         const next = await api.reload();
         onStatus(next);
         setKey('');
+        setQuery('');
         setLevel('');
         if (!next.error) setMessage('已重新读取 Pi 配置。');
       }
@@ -178,31 +188,55 @@ export const ModelSettingsModal = ({
         ) : null}
         {models.length > 0 && (
           <>
-            <label className="flex flex-col gap-1.5 text-sm">
-              模型
-              <select
-                name="model"
-                data-dialog-autofocus=""
-                className={selectClass}
-                value={selected ? modelKey(selected) : ''}
-                disabled={busy}
-                onChange={(event) => {
-                  setKey(event.target.value);
-                  setLevel('');
-                  setMessage('');
-                }}
+            <div role="search" aria-label="模型选择">
+              <Command
+                label="搜索可用模型"
+                className="rounded-md border border-workbench-border"
               >
-                {[...groups].map(([provider, entries]) => (
-                  <optgroup key={provider} label={provider}>
-                    {entries.map((entry) => (
-                      <option key={entry.id} value={modelKey(entry)}>
-                        {entry.name}
-                      </option>
-                    ))}
-                  </optgroup>
-                ))}
-              </select>
-            </label>
+                <CommandInput
+                  name="modelSearch"
+                  aria-label="搜索可用模型"
+                  data-dialog-autofocus=""
+                  placeholder="搜索模型名称、ID 或提供商…"
+                  autoCorrect="off"
+                  autoCapitalize="none"
+                  spellCheck={false}
+                  disabled={busy}
+                  value={query}
+                  onValueChange={setQuery}
+                />
+                <CommandList label="Pi 可用模型" className="max-h-44">
+                  <CommandEmpty>没有匹配的模型</CommandEmpty>
+                  {[...groups].map(([provider, entries]) => (
+                    <CommandGroup key={provider} heading={provider}>
+                      {entries.map((entry) => {
+                        const value = modelKey(entry);
+                        const chosen = selected && modelKey(selected) === value;
+                        return (
+                          <CommandItem
+                            key={value}
+                            value={value}
+                            keywords={[entry.name, entry.id, provider]}
+                            disabled={busy}
+                            onSelect={() => {
+                              setKey(value);
+                              setLevel('');
+                              setMessage('');
+                            }}
+                          >
+                            <span className="truncate">{entry.name}</span>
+                            <span className="ml-auto truncate text-workbench-muted">
+                              {entry.id}
+                            </span>
+                            {chosen && <span className="shrink-0">已选择</span>}
+                          </CommandItem>
+                        );
+                      })}
+                    </CommandGroup>
+                  ))}
+                </CommandList>
+              </Command>
+            </div>
             {selected && selected.thinkingLevels.length > 1 && (
               <label className="flex flex-col gap-1.5 text-sm">
                 思考级别
