@@ -29,6 +29,16 @@ export default [
     },
   },
   {
+    // Registry components are kept close to upstream for easy refreshes.
+    files: ['src/assistant-ui/**/*.{ts,tsx}'],
+    rules: {
+      'no-empty': ['error', { allowEmptyCatch: true }],
+      '@typescript-eslint/no-empty-function': 'off',
+      'jsx-a11y/heading-has-content': 'off',
+      'jsx-a11y/anchor-has-content': 'off',
+    },
+  },
+  {
     ignores: ['**/out-tsc'],
   },
 ];
